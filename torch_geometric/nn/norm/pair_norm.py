@@ -30,7 +30,7 @@ class PairNorm(torch.nn.Module):
     """
     def __init__(self, scale: float = 1., scale_individually: bool = False,
                  eps: float = 1e-5):
-        super(PairNorm, self).__init__()
+        super().__init__()
 
         self.scale = scale
         self.scale_individually = scale_individually

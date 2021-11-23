@@ -42,7 +42,7 @@ class RENet(torch.nn.Module):
     """
     def __init__(self, num_nodes, num_rels, hidden_channels, seq_len,
                  num_layers=1, dropout=0., bias=True):
-        super(RENet, self).__init__()
+        super().__init__()
 
         self.num_nodes = num_nodes
         self.hidden_channels = hidden_channels

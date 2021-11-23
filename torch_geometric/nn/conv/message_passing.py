@@ -82,7 +82,7 @@ class MessagePassing(torch.nn.Module):
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
 
-        super(MessagePassing, self).__init__()
+        super().__init__()
 
         self.aggr = aggr
         assert self.aggr in ['add', 'mean', 'max', None]

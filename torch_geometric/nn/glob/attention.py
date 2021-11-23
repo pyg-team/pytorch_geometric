@@ -30,7 +30,7 @@ class GlobalAttention(torch.nn.Module):
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
     def __init__(self, gate_nn, nn=None):
-        super(GlobalAttention, self).__init__()
+        super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
 

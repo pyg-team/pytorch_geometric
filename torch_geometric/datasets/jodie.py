@@ -12,7 +12,7 @@ class JODIEDataset(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.names
 
-        super(JODIEDataset, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

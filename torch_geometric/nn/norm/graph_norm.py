@@ -27,7 +27,7 @@ class GraphNorm(torch.nn.Module):
             stability. (default: :obj:`1e-5`)
     """
     def __init__(self, in_channels: int, eps: float = 1e-5):
-        super(GraphNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps

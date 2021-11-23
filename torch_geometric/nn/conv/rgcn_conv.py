@@ -93,7 +93,7 @@ class RGCNConv(MessagePassing):
                  root_weight: bool = True,
                  bias: bool = True, **kwargs):  # yapf: disable
 
-        super(RGCNConv, self).__init__(aggr=aggr, node_dim=0, **kwargs)
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '

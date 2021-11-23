@@ -64,7 +64,7 @@ class GMMConv(MessagePassing):
                  out_channels: int, dim: int, kernel_size: int,
                  separate_gaussians: bool = False, aggr: str = 'mean',
                  root_weight: bool = True, bias: bool = True, **kwargs):
-        super(GMMConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

@@ -162,7 +162,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
         elif node_idx.dtype == torch.bool:
             node_idx = node_idx.nonzero(as_tuple=False).view(-1)
 
-        super(NeighborSampler, self).__init__(
+        super().__init__(
             node_idx.view(-1).tolist(), collate_fn=self.sample, **kwargs)
 
     def sample(self, batch):

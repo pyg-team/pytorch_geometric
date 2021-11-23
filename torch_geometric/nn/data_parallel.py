@@ -39,7 +39,7 @@ class DataParallel(torch.nn.DataParallel):
     """
     def __init__(self, module, device_ids=None, output_device=None,
                  follow_batch=[], exclude_keys=[]):
-        super(DataParallel, self).__init__(module, device_ids, output_device)
+        super().__init__(module, device_ids, output_device)
         self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys

@@ -79,7 +79,7 @@ class PNAConv(MessagePassing):
                  divide_input: bool = False, **kwargs):
 
         kwargs.setdefault('aggr', None)
-        super(PNAConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         if divide_input:
             assert in_channels % towers == 0

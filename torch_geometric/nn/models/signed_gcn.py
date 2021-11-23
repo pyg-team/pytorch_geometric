@@ -25,7 +25,7 @@ class SignedGCN(torch.nn.Module):
     """
     def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
                  bias=True):
-        super(SignedGCN, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels

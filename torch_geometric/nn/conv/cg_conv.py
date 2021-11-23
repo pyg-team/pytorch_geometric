@@ -43,7 +43,7 @@ class CGConv(MessagePassing):
     def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
                  aggr: str = 'add', batch_norm: bool = False,
                  bias: bool = True, **kwargs):
-        super(CGConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
         self.channels = channels
         self.dim = dim
         self.batch_norm = batch_norm

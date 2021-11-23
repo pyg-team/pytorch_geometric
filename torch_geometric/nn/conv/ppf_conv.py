@@ -63,7 +63,7 @@ class PPFConv(MessagePassing):
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'max')
-        super(PPFConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.local_nn = local_nn
         self.global_nn = global_nn

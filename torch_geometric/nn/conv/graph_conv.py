@@ -42,7 +42,7 @@ class GraphConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-        super(GraphConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

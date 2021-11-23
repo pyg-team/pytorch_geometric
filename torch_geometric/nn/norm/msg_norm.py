@@ -21,7 +21,7 @@ class MessageNorm(torch.nn.Module):
             (default: :obj:`False`)
     """
     def __init__(self, learn_scale: bool = False):
-        super(MessageNorm, self).__init__()
+        super().__init__()
 
         self.scale = Parameter(torch.Tensor([1.0]), requires_grad=learn_scale)
 

@@ -6,7 +6,6 @@ from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
 
 from torch_geometric.utils import to_dense_batch
 
-
 EPS = 1e-15
 
 
@@ -40,7 +39,7 @@ class MemPooling(torch.nn.Module):
     """
     def __init__(self, in_channels: int, out_channels: int, heads: int,
                  num_clusters: int, tau: float = 1.):
-        super(MemPooling, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads

@@ -67,7 +67,7 @@ class ChebConv(MessagePassing):
                  normalization: Optional[str] = 'sym', bias: bool = True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ChebConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         assert K > 0
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'

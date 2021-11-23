@@ -71,7 +71,7 @@ class SAGPooling(torch.nn.Module):
                  GNN: Callable = GraphConv, min_score: Optional[float] = None,
                  multiplier: float = 1.0, nonlinearity: Callable = torch.tanh,
                  **kwargs):
-        super(SAGPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio

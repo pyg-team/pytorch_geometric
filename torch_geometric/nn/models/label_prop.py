@@ -25,7 +25,7 @@ class LabelPropagation(MessagePassing):
         alpha (float): The :math:`\alpha` coefficient.
     """
     def __init__(self, num_layers: int, alpha: float):
-        super(LabelPropagation, self).__init__(aggr='add')
+        super().__init__(aggr='add')
         self.num_layers = num_layers
         self.alpha = alpha
 

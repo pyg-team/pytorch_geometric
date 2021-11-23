@@ -9,7 +9,7 @@ class DenseGINConv(torch.nn.Module):
     :rtype: :class:`Tensor`
     """
     def __init__(self, nn, eps=0, train_eps=False):
-        super(DenseGINConv, self).__init__()
+        super().__init__()
 
         self.nn = nn
         self.initial_eps = eps

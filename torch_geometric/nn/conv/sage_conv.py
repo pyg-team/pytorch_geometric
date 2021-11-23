@@ -40,7 +40,7 @@ class SAGEConv(MessagePassing):
                  root_weight: bool = True,
                  bias: bool = True, **kwargs):  # yapf: disable
         kwargs.setdefault('aggr', 'mean')
-        super(SAGEConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

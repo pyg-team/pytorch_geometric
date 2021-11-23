@@ -48,7 +48,7 @@ class SGConv(MessagePassing):
                  cached: bool = False, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(SGConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

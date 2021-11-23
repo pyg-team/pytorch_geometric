@@ -43,7 +43,7 @@ class GravNetConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,
                  num_workers: int = 1, **kwargs):
-        super(GravNetConv, self).__init__(flow='target_to_source', **kwargs)
+        super().__init__(flow='target_to_source', **kwargs)
 
         if knn is None:
             raise ImportError('`GravNetConv` requires `torch-cluster`.')
