@@ -43,7 +43,7 @@ html_theme_options = {
 
 html_logo = '_static/img/pyg2.png'
 html_static_path = ['_static']
-html_context = {'css_files': ['_static/css/custom.css']}
+html_css_files = ['css/custom.css']
 rst_context = {'torch_geometric': torch_geometric}
 
 add_module_names = False

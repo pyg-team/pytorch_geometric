@@ -12,8 +12,8 @@ class MLP(torch.nn.Module):
     Args:
         channel_list (List[int]): List of input, intermediate and output
             channels.
-            The length of the list denotes the number of layers of the
-            :class:`MLP`.
+            :obj:`len(channel_list) - 1` denotes the number of layers of the
+            MLP.
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
         batch_norm (bool, optional): If set to :obj:`False`, will not make use
@@ -47,6 +47,7 @@ class MLP(torch.nn.Module):
                 norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
+        """"""
         for lin, norm in zip(self.lins[:-1], self.norms):
             x = lin.forward(x)
             if self.relu_first:
