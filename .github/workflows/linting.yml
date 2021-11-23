@@ -28,7 +28,6 @@ jobs:
           flake8 .
 
   pylint:
-    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +43,7 @@ jobs:
           pip install pylint
 
       - name: Run linting
+        continue-on-error: true
         run: |
           pylint torch_geometric
 
@@ -67,7 +67,6 @@ jobs:
           pyroma --min=10 .
 
   mypy:
-    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
@@ -82,6 +81,7 @@ jobs:
         run: |
           pip install mypy
 
-      - name: Check package metadata
+      - name: Check type hints
+        continue-on-error: true
         run: |
           mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric
