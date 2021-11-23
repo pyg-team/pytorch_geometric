@@ -44,14 +44,24 @@ class LayerConfig:
 
 
 def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
-    return LayerConfig(has_batchnorm=cfg.gnn.batchnorm, bn_eps=cfg.bn.eps,
-                       bn_mom=cfg.bn.mom, mem_inplace=cfg.mem.inplace,
-                       dim_in=dim_in, dim_out=dim_out,
-                       edge_dim=cfg.dataset.edge_dim,
-                       has_l2norm=cfg.gnn.l2norm, dropout=cfg.gnn.dropout,
-                       has_act=has_act, final_act=True, act=cfg.gnn.act,
-                       has_bias=has_bias, keep_edge=cfg.gnn.keep_edge,
-                       dim_inner=cfg.gnn.dim_inner, num_layers=num_layers)
+    return LayerConfig(
+        has_batchnorm=cfg.gnn.batchnorm,
+        bn_eps=cfg.bn.eps,
+        bn_mom=cfg.bn.mom,
+        mem_inplace=cfg.mem.inplace,
+        dim_in=dim_in,
+        dim_out=dim_out,
+        edge_dim=cfg.dataset.edge_dim,
+        has_l2norm=cfg.gnn.l2norm,
+        dropout=cfg.gnn.dropout,
+        has_act=has_act,
+        final_act=True,
+        act=cfg.gnn.act,
+        has_bias=has_bias,
+        keep_edge=cfg.gnn.keep_edge,
+        dim_inner=cfg.gnn.dim_inner,
+        num_layers=num_layers,
+    )
 
 
 # General classes

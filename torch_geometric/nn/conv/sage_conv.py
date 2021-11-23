@@ -37,8 +37,7 @@ class SAGEConv(MessagePassing):
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, normalize: bool = False,
-                 root_weight: bool = True,
-                 bias: bool = True, **kwargs):  # yapf: disable
+                 root_weight: bool = True, bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'mean')
         super().__init__(**kwargs)
 

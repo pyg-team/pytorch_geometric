@@ -75,10 +75,13 @@ class PPFConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x: Union[OptTensor, PairOptTensor],
-                pos: Union[Tensor, PairTensor],
-                normal: Union[Tensor, PairTensor],
-                edge_index: Adj) -> Tensor:  # yapf: disable
+    def forward(
+        self,
+        x: Union[OptTensor, PairOptTensor],
+        pos: Union[Tensor, PairTensor],
+        normal: Union[Tensor, PairTensor],
+        edge_index: Adj,
+    ) -> Tensor:
         """"""
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
