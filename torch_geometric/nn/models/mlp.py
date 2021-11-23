@@ -7,6 +7,20 @@ from torch.nn import Linear, BatchNorm1d, Identity
 
 
 class MLP(torch.nn.Module):
+    r"""A multi-layer perception (MLP) model.
+
+    Args:
+        channel_list (List[int]): List of input, intermediate and output
+            channels.
+            The length of the list denotes the number of layers of the
+            :class:`MLP`.
+        dropout (float, optional): Dropout probability of each hidden
+            embedding. (default: :obj:`0.`)
+        batch_norm (bool, optional): If set to :obj:`True`, will make use of
+            batch normalization. (default: :obj:`False`)
+        relu_first (bool, optional): If set to :obj:`True`, ReLU activation is
+            applied before batch normalization. (default: :obj:`False`)
+    """
     def __init__(self, channel_list: List[int], dropout: float = 0.,
                  batch_norm: bool = False, relu_first: bool = False):
         super().__init__()
