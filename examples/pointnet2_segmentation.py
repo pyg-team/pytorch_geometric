@@ -5,10 +5,10 @@ import torch.nn.functional as F
 from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import knn_interpolate
+from torch_geometric.nn import MLP, knn_interpolate
 from torch_geometric.utils import intersection_and_union as i_and_u
 
-from pointnet2_classification import SAModule, GlobalSAModule, MLP
+from pointnet2_classification import SAModule, GlobalSAModule
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -31,7 +31,7 @@ test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
 
 class FPModule(torch.nn.Module):
     def __init__(self, k, nn):
-        super(FPModule, self).__init__()
+        super().__init__()
         self.k = k
         self.nn = nn
 
@@ -45,7 +45,7 @@ class FPModule(torch.nn.Module):
 
 class Net(torch.nn.Module):
     def __init__(self, num_classes):
-        super(Net, self).__init__()
+        super().__init__()
 
         # Input channels account for both `pos` and node features.
         self.sa1_module = SAModule(0.2, 0.2, MLP([3 + 3, 64, 64, 128]))
@@ -55,6 +55,9 @@ class Net(torch.nn.Module):
         self.fp3_module = FPModule(1, MLP([1024 + 256, 256, 256]))
         self.fp2_module = FPModule(3, MLP([256 + 128, 256, 128]))
         self.fp1_module = FPModule(3, MLP([128 + 3, 128, 128, 128]))
+
+        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5,
+                       batch_norm=False)
 
         self.lin1 = torch.nn.Linear(128, 128)
         self.lin2 = torch.nn.Linear(128, 128)
@@ -70,12 +73,7 @@ class Net(torch.nn.Module):
         fp2_out = self.fp2_module(*fp3_out, *sa1_out)
         x, _, _ = self.fp1_module(*fp2_out, *sa0_out)
 
-        x = F.relu(self.lin1(x))
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin2(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin3(x)
-        return F.log_softmax(x, dim=-1)
+        return self.mlp(x).log_softmax(dim=-1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

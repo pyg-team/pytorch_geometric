@@ -2,14 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Dropout, Linear as Lin
 from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import DynamicEdgeConv
+from torch_geometric.nn import MLP, DynamicEdgeConv
 from torch_geometric.utils import intersection_and_union as i_and_u
-
-from pointnet2_classification import MLP
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -37,10 +34,9 @@ class Net(torch.nn.Module):
         self.conv1 = DynamicEdgeConv(MLP([2 * 6, 64, 64]), k, aggr)
         self.conv2 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
         self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
-        self.lin1 = MLP([3 * 64, 1024])
 
-        self.mlp = Seq(MLP([1024, 256]), Dropout(0.5), MLP([256, 128]),
-                       Dropout(0.5), Lin(128, out_channels))
+        self.mlp = MLP([3 * 64, 1024, 256, 128, out_channels], dropout=0.5,
+                       batch_norm=False)
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
@@ -48,8 +44,7 @@ class Net(torch.nn.Module):
         x1 = self.conv1(x0, batch)
         x2 = self.conv2(x1, batch)
         x3 = self.conv3(x2, batch)
-        out = self.lin1(torch.cat([x1, x2, x3], dim=1))
-        out = self.mlp(out)
+        out = self.mlp(torch.cat([x1, x2, x3], dim=1))
         return F.log_softmax(out, dim=1)
 
 

@@ -6,8 +6,9 @@ import copy
 import torch
 from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU
+from torch.nn import ModuleList, Linear, ReLU
 
+from torch_geometric.nn.models import MLP
 from torch_geometric.nn.conv import (GCNConv, SAGEConv, GINConv, GATConv,
                                      PNAConv)
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
@@ -202,20 +203,11 @@ class GIN(BasicGNN):
         super().__init__(in_channels, hidden_channels, num_layers,
                          out_channels, dropout, act, norm, jk)
 
-        self.convs.append(
-            GINConv(GIN.MLP(in_channels, hidden_channels), **kwargs))
+        mlp = MLP([in_channels, hidden_channels, hidden_channels])
+        self.convs.append(GINConv(mlp, **kwargs))
         for _ in range(1, num_layers):
-            self.convs.append(
-                GINConv(GIN.MLP(hidden_channels, hidden_channels), **kwargs))
-
-    @staticmethod
-    def MLP(in_channels: int, out_channels: int) -> torch.nn.Module:
-        return Sequential(
-            Linear(in_channels, out_channels),
-            BatchNorm1d(out_channels),
-            ReLU(inplace=True),
-            Linear(out_channels, out_channels),
-        )
+            mlp = MLP([hidden_channels, hidden_channels, hidden_channels])
+            self.convs.append(GINConv(mlp, **kwargs))
 
 
 class GAT(BasicGNN):
