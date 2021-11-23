@@ -16,13 +16,13 @@ class MLP(torch.nn.Module):
             :class:`MLP`.
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
-        batch_norm (bool, optional): If set to :obj:`True`, will make use of
-            batch normalization. (default: :obj:`False`)
+        batch_norm (bool, optional): If set to :obj:`False`, will not make use
+            of batch normalization. (default: :obj:`True`)
         relu_first (bool, optional): If set to :obj:`True`, ReLU activation is
             applied before batch normalization. (default: :obj:`False`)
     """
     def __init__(self, channel_list: List[int], dropout: float = 0.,
-                 batch_norm: bool = False, relu_first: bool = False):
+                 batch_norm: bool = True, relu_first: bool = False):
         super().__init__()
         assert len(channel_list) >= 2
         self.channel_list = channel_list

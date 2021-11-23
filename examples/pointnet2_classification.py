@@ -2,16 +2,15 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
 from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import PointConv, fps, radius, global_max_pool
+from torch_geometric.nn import MLP, PointConv, fps, radius, global_max_pool
 
 
 class SAModule(torch.nn.Module):
     def __init__(self, ratio, r, nn):
-        super(SAModule, self).__init__()
+        super().__init__()
         self.ratio = ratio
         self.r = r
         self.conv = PointConv(nn, add_self_loops=False)
@@ -29,7 +28,7 @@ class SAModule(torch.nn.Module):
 
 class GlobalSAModule(torch.nn.Module):
     def __init__(self, nn):
-        super(GlobalSAModule, self).__init__()
+        super().__init__()
         self.nn = nn
 
     def forward(self, x, pos, batch):
@@ -40,25 +39,16 @@ class GlobalSAModule(torch.nn.Module):
         return x, pos, batch
 
 
-def MLP(channels, batch_norm=True):
-    return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]), ReLU(), BN(channels[i]))
-        for i in range(1, len(channels))
-    ])
-
-
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         # Input channels account for both `pos` and node features.
         self.sa1_module = SAModule(0.5, 0.2, MLP([3, 64, 64, 128]))
         self.sa2_module = SAModule(0.25, 0.4, MLP([128 + 3, 128, 128, 256]))
         self.sa3_module = GlobalSAModule(MLP([256 + 3, 256, 512, 1024]))
 
-        self.lin1 = Lin(1024, 512)
-        self.lin2 = Lin(512, 256)
-        self.lin3 = Lin(256, 10)
+        self.mlp = MLP([1024, 512, 256, 10], dropout=0.5, batch_norm=False)
 
     def forward(self, data):
         sa0_out = (data.x, data.pos, data.batch)
@@ -67,12 +57,7 @@ class Net(torch.nn.Module):
         sa3_out = self.sa3_module(*sa2_out)
         x, pos, batch = sa3_out
 
-        x = F.relu(self.lin1(x))
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = F.relu(self.lin2(x))
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin3(x)
-        return F.log_softmax(x, dim=-1)
+        return self.mlp(x).log_softmax(dim=-1)
 
 
 def train(epoch):
