@@ -55,7 +55,7 @@ class ASAPooling(torch.nn.Module):
                  GNN: Optional[Callable] = None, dropout: float = 0.0,
                  negative_slope: float = 0.2, add_self_loops: bool = False,
                  **kwargs):
-        super(ASAPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio

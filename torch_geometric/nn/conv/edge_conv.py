@@ -36,7 +36,7 @@ class EdgeConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
-        super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
 
@@ -79,8 +79,7 @@ class DynamicEdgeConv(MessagePassing):
     """
     def __init__(self, nn: Callable, k: int, aggr: str = 'max',
                  num_workers: int = 1, **kwargs):
-        super(DynamicEdgeConv,
-              self).__init__(aggr=aggr, flow='target_to_source', **kwargs)
+        super().__init__(aggr=aggr, flow='target_to_source', **kwargs)
 
         if knn is None:
             raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')

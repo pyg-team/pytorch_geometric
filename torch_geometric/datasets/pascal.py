@@ -69,8 +69,7 @@ class PascalVOCKeypoints(InMemoryDataset):
                  pre_transform=None, pre_filter=None):
         self.category = category.lower()
         assert self.category in self.categories
-        super(PascalVOCKeypoints, self).__init__(root, transform,
-                                                 pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
 

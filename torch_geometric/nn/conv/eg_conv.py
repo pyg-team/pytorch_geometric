@@ -76,7 +76,7 @@ class EGConv(MessagePassing):
                  aggregators: List[str] = ["symnorm"], num_heads: int = 8,
                  num_bases: int = 4, cached: bool = False,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
-        super(EGConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
             raise ValueError(

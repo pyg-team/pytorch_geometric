@@ -42,7 +42,7 @@ class DiffGroupNorm(torch.nn.Module):
     """
     def __init__(self, in_channels, groups, lamda=0.01, eps=1e-5, momentum=0.1,
                  affine=True, track_running_stats=True):
-        super(DiffGroupNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.groups = groups

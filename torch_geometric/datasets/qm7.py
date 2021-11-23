@@ -27,7 +27,7 @@ class QM7b(InMemoryDataset):
 
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(QM7b, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

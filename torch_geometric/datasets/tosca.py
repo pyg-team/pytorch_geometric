@@ -61,7 +61,7 @@ class TOSCA(InMemoryDataset):
         for cat in categories:
             assert cat in self.categories
         self.categories = categories
-        super(TOSCA, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

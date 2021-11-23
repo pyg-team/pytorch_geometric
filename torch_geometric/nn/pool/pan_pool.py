@@ -40,7 +40,7 @@ class PANPooling(torch.nn.Module):
     """
     def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1.0,
                  nonlinearity=torch.tanh):
-        super(PANPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio

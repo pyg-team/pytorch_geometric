@@ -33,7 +33,7 @@ qm9_target_dict = {
 
 class Envelope(torch.nn.Module):
     def __init__(self, exponent):
-        super(Envelope, self).__init__()
+        super().__init__()
         self.p = exponent + 1
         self.a = -(self.p + 1) * (self.p + 2) / 2
         self.b = self.p * (self.p + 2)
@@ -49,7 +49,7 @@ class Envelope(torch.nn.Module):
 
 class BesselBasisLayer(torch.nn.Module):
     def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5):
-        super(BesselBasisLayer, self).__init__()
+        super().__init__()
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
 
@@ -68,7 +68,7 @@ class BesselBasisLayer(torch.nn.Module):
 class SphericalBasisLayer(torch.nn.Module):
     def __init__(self, num_spherical, num_radial, cutoff=5.0,
                  envelope_exponent=5):
-        super(SphericalBasisLayer, self).__init__()
+        super().__init__()
         import sympy as sym
         from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
                                                              real_sph_harm)
@@ -111,7 +111,7 @@ class SphericalBasisLayer(torch.nn.Module):
 
 class EmbeddingBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, act=swish):
-        super(EmbeddingBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.emb = Embedding(95, hidden_channels)
@@ -133,7 +133,7 @@ class EmbeddingBlock(torch.nn.Module):
 
 class ResidualLayer(torch.nn.Module):
     def __init__(self, hidden_channels, act=swish):
-        super(ResidualLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.lin1 = Linear(hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, hidden_channels)
@@ -153,7 +153,7 @@ class ResidualLayer(torch.nn.Module):
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels, num_bilinear, num_spherical,
                  num_radial, num_before_skip, num_after_skip, act=swish):
-        super(InteractionBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
@@ -215,7 +215,7 @@ class InteractionBlock(torch.nn.Module):
 class OutputBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
                  act=swish):
-        super(OutputBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
@@ -288,7 +288,7 @@ class DimeNet(torch.nn.Module):
                  envelope_exponent: int = 5, num_before_skip: int = 1,
                  num_after_skip: int = 2, num_output_layers: int = 3,
                  act: Callable = swish):
-        super(DimeNet, self).__init__()
+        super().__init__()
 
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors

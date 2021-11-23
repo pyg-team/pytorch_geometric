@@ -57,7 +57,7 @@ class ARMAConv(MessagePassing):
                  act: Optional[Callable] = ReLU(), dropout: float = 0.,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ARMAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

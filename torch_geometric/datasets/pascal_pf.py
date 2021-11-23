@@ -48,9 +48,7 @@ class PascalPF(InMemoryDataset):
                  pre_filter=None):
         self.category = category.lower()
         assert self.category in self.categories
-        super(PascalPF, self).__init__(root, transform, pre_transform,
-                                       pre_filter)
-
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
         self.pairs = torch.load(self.processed_paths[1])
 

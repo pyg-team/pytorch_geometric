@@ -37,7 +37,7 @@ class NELL(InMemoryDataset):
     url = 'http://www.cs.cmu.edu/~zhiliny/data/nell_data.tar.gz'
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(NELL, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

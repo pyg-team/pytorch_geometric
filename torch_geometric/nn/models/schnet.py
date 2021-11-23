@@ -88,7 +88,7 @@ class SchNet(torch.nn.Module):
                  readout: str = 'add', dipole: bool = False,
                  mean: Optional[float] = None, std: Optional[float] = None,
                  atomref: Optional[torch.Tensor] = None):
-        super(SchNet, self).__init__()
+        super().__init__()
 
         import ase
 
@@ -278,7 +278,7 @@ class SchNet(torch.nn.Module):
 
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels, num_gaussians, num_filters, cutoff):
-        super(InteractionBlock, self).__init__()
+        super().__init__()
         self.mlp = Sequential(
             Linear(num_gaussians, num_filters),
             ShiftedSoftplus(),
@@ -309,7 +309,7 @@ class InteractionBlock(torch.nn.Module):
 
 class CFConv(MessagePassing):
     def __init__(self, in_channels, out_channels, num_filters, nn, cutoff):
-        super(CFConv, self).__init__(aggr='add')
+        super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
         self.nn = nn
@@ -337,7 +337,7 @@ class CFConv(MessagePassing):
 
 class GaussianSmearing(torch.nn.Module):
     def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
-        super(GaussianSmearing, self).__init__()
+        super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
         self.register_buffer('offset', offset)
@@ -349,7 +349,7 @@ class GaussianSmearing(torch.nn.Module):
 
 class ShiftedSoftplus(torch.nn.Module):
     def __init__(self):
-        super(ShiftedSoftplus, self).__init__()
+        super().__init__()
         self.shift = torch.log(torch.tensor(2.0)).item()
 
     def forward(self, x):
