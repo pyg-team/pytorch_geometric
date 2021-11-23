@@ -15,7 +15,7 @@ from torch_geometric.loader import NeighborSampler
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
                  num_layers=2):
-        super(SAGE, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
 
         self.convs = torch.nn.ModuleList()

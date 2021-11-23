@@ -28,7 +28,7 @@ if args.use_gdc:
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(dataset.num_features, 16, cached=True,
                              normalize=not args.use_gdc)
         self.conv2 = GCNConv(16, dataset.num_classes, cached=True,

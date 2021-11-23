@@ -14,7 +14,7 @@ data = dataset[0]
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = TAGConv(dataset.num_features, 16)
         self.conv2 = TAGConv(16, dataset.num_classes)
 

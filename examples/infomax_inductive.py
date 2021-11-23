@@ -24,7 +24,7 @@ test_loader = NeighborSampler(data.edge_index, node_idx=None,
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, hidden_channels):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.convs = torch.nn.ModuleList([
             SAGEConv(in_channels, hidden_channels),
             SAGEConv(hidden_channels, hidden_channels),
