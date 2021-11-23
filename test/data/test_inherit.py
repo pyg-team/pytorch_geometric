@@ -4,7 +4,7 @@ from torch_geometric.data import Data, InMemoryDataset, Dataset
 
 class MyData(Data):
     def __init__(self, x=None, edge_index=None, arg=None):
-        super(MyData, self).__init__(x=x, edge_index=edge_index, arg=arg)
+        super().__init__(x=x, edge_index=edge_index, arg=arg)
 
     def random(self):
         return torch.randn(list(self.x.size()) + list(self.arg.size()))
@@ -12,7 +12,7 @@ class MyData(Data):
 
 class MyInMemoryDataset(InMemoryDataset):
     def __init__(self):
-        super(MyInMemoryDataset, self).__init__('/tmp/MyInMemoryDataset')
+        super().__init__('/tmp/MyInMemoryDataset')
 
         x = torch.randn(4, 5)
         edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
@@ -30,7 +30,7 @@ class MyInMemoryDataset(InMemoryDataset):
 
 class MyDataset(Dataset):
     def __init__(self):
-        super(MyDataset, self).__init__('/tmp/MyDataset')
+        super().__init__('/tmp/MyDataset')
 
     def _download(self):
         pass

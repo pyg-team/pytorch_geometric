@@ -8,7 +8,7 @@ from torch_geometric.nn import GCNConv, GATConv, GNNExplainer, global_add_pool
 
 class GCN(torch.nn.Module):
     def __init__(self):
-        super(GCN, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 7)
 
@@ -21,7 +21,7 @@ class GCN(torch.nn.Module):
 
 class GAT(torch.nn.Module):
     def __init__(self):
-        super(GAT, self).__init__()
+        super().__init__()
         self.conv1 = GATConv(3, 16, heads=2, concat=True)
         self.conv2 = GATConv(2 * 16, 7, heads=2, concat=False)
 
