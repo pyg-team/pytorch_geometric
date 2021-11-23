@@ -5,7 +5,7 @@ from torch_geometric.nn import FastRGCNConv
 
 class RGCN(torch.nn.Module):
     def __init__(self, in_channels, out_channels, num_relations):
-        super(RGCN, self).__init__()
+        super().__init__()
         self.conv1 = FastRGCNConv(in_channels, 16, num_relations, num_bases=30)
         self.conv2 = FastRGCNConv(16, out_channels, num_relations,
                                   num_bases=30)

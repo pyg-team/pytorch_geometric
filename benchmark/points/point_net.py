@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, num_classes):
-        super(Net, self).__init__()
+        super().__init__()
 
         nn = Seq(Lin(3, 64), ReLU(), Lin(64, 64))
         self.conv1 = PointConv(local_nn=nn)
