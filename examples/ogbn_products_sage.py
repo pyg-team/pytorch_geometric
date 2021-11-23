@@ -26,7 +26,7 @@ subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
 
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
-        super(SAGE, self).__init__()
+        super().__init__()
 
         self.num_layers = num_layers
 

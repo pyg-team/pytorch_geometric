@@ -27,7 +27,7 @@ def normalized_cut_2d(edge_index, pos):
 
 class Net(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(),
                             nn.Linear(25, d.num_features * 32))
         self.conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')

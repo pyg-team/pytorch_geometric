@@ -12,7 +12,7 @@ dataset = Planetoid(path, dataset)
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, hidden_channels):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.conv = GCNConv(in_channels, hidden_channels, cached=True)
         self.prelu = nn.PReLU(hidden_channels)
 

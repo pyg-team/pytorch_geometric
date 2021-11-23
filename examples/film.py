@@ -20,7 +20,7 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  dropout=0.0):
-        super(Net, self).__init__()
+        super().__init__()
         self.dropout = dropout
 
         self.convs = torch.nn.ModuleList()

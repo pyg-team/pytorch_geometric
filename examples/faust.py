@@ -18,7 +18,7 @@ d = train_dataset[0]
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5, aggr='add')
         self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5, aggr='add')
         self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5, aggr='add')
