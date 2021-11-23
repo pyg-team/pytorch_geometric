@@ -45,7 +45,7 @@ jobs:
       - name: Run linting
         continue-on-error: true
         run: |
-          pylint torch_geometric
+          pylint **/*.py
 
   pyroma:
     runs-on: ubuntu-latest
