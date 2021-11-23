@@ -2,6 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from torch.nn import Linear
 from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
@@ -23,7 +24,7 @@ class Net(torch.nn.Module):
 
         self.conv1 = DynamicEdgeConv(MLP([2 * 3, 64, 64, 64]), k, aggr)
         self.conv2 = DynamicEdgeConv(MLP([2 * 64, 128]), k, aggr)
-        self.lin1 = MLP([128 + 64, 1024])
+        self.lin1 = Linear(128 + 64, 1024)
 
         self.mlp = MLP([1024, 512, 256, out_channels], dropout=0.5,
                        batch_norm=False)
