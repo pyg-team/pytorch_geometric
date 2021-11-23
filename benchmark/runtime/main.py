@@ -23,9 +23,9 @@ train_runtime(model, Cora[0], epochs=200, device=device)
 for d, Net in product([Cora, CiteSeer, PubMed], [GCN, GAT]):
     model = Net(d.num_features, d.num_classes)
     t = train_runtime(model, d[0], epochs=200, device=device)
-    print('{} - {}: {:.2f}s'.format(d.__repr__()[:-2], Net.__name__, t))
+    print(f'{d.__repr__()[:-2]} - {Net.__name__}: {t:.2f}s')
 
 for d, Net in product([MUTAG], [RGCN]):
     model = Net(d[0].num_nodes, d.num_classes, d.num_relations)
     t = train_runtime(model, d[0], epochs=200, device=device)
-    print('{} - {}: {:.2f}s'.format(d.__repr__()[:-2], Net.__name__, t))
+    print(f'{d.__repr__()[:-2]} - {Net.__name__}: {t:.2f}s')

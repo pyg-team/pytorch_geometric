@@ -38,7 +38,7 @@ for d, Net in product([Cora, CiteSeer, PubMed], [GCN, GCNSPMV, GAT, GATSPMV]):
     g.ndata['norm'] = norm.unsqueeze(1).to(device)
     model = Net(g, d.features.shape[1], d.num_labels).to(device)
     t = train_runtime(model, d, epochs=200, device=device)
-    print('{} - {}: {:.2f}s'.format(d.name, Net.__name__, t))
+    print(f'{d.name} - {Net.__name__}: {t:.2f}s')
 
 for d, Net in product([MUTAG], [RGCN, RGCNSPMV]):
     g = DGLGraph()
@@ -50,4 +50,4 @@ for d, Net in product([MUTAG], [RGCN, RGCNSPMV]):
     g.ndata['id'] = torch.arange(d.num_nodes, dtype=torch.long, device=device)
     model = Net(g, d.num_nodes, d.num_classes, d.num_rels)
     t = train_runtime(model, d, epochs=200, device=device)
-    print('{} - {}: {:.2f}s'.format(d.name, Net.__name__, t))
+    print(f'{d.name} - {Net.__name__}: {t:.2f}s')
