@@ -202,8 +202,8 @@ def repeat_interleave(
     repeats: List[int],
     device: Optional[torch.device] = None,
 ) -> Tensor:
-    batch = [torch.full((n), i, device=device) for i, n in enumerate(repeats)]
-    return torch.cat(batch, dim=0)
+    outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
+    return torch.cat(outs, dim=0)
 
 
 def cumsum(value: Union[Tensor, List[int]]) -> Tensor:
