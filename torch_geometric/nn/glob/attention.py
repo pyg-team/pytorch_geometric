@@ -54,6 +54,6 @@ class GlobalAttention(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}(gate_nn={}, nn={})'.format(self.__class__.__name__,
-                                              self.gate_nn, self.nn)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(gate_nn={self.gate_nn}, '
+                f'nn={self.nn})')

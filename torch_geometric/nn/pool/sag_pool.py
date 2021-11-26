@@ -109,10 +109,11 @@ class SAGPooling(torch.nn.Module):
 
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
-    def __repr__(self):
-        return '{}({}, {}, {}={}, multiplier={})'.format(
-            self.__class__.__name__, self.gnn.__class__.__name__,
-            self.in_channels,
-            'ratio' if self.min_score is None else 'min_score',
-            self.ratio if self.min_score is None else self.min_score,
-            self.multiplier)
+    def __repr__(self) -> str:
+        if self.min_score is None:
+            ratio = f'ratio={self.ratio}'
+        else:
+            ratio = f'min_score={self.min_score}'
+
+        return (f'{self.__class__.__name__}({self.gnn.__class__.__name__}, '
+                f'{self.in_channels}, {ratio}, multiplier={self.multiplier})')

@@ -211,7 +211,7 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self):
         for name in self.available_datasets[self.name]:
-            path = download_url('{}/{}'.format(self.url, name), self.raw_dir)
+            path = download_url(f'{self.url}/{name}', self.raw_dir)
             if name.endswith('.tar.gz'):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
@@ -243,5 +243,5 @@ class SNAPDataset(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return 'SNAP-{}({})'.format(self.name, len(self))
+    def __repr__(self) -> str:
+        return f'SNAP-{self.name}({len(self)})'

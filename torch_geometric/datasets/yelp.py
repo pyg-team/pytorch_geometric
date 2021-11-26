@@ -92,6 +92,3 @@ class Yelp(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

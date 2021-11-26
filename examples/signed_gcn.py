@@ -46,5 +46,5 @@ def test():
 for epoch in range(101):
     loss = train()
     auc, f1 = test()
-    print('Epoch: {:03d}, Loss: {:.4f}, AUC: {:.4f}, F1: {:.4f}'.format(
-        epoch, loss, auc, f1))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, AUC: {auc:.4f}, '
+          f'F1: {f1:.4f}')

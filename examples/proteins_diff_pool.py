@@ -52,7 +52,7 @@ class GNN(torch.nn.Module):
         batch_size, num_nodes, num_channels = x.size()
 
         x = x.view(-1, num_channels)
-        x = getattr(self, 'bn{}'.format(i))(x)
+        x = getattr(self, f'bn{i}')(x)
         x = x.view(batch_size, num_nodes, num_channels)
         return x
 

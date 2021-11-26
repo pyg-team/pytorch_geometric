@@ -21,8 +21,8 @@ class Net(torch.nn.Module):
         self.lin2 = torch.nn.Linear(128, dataset.num_classes)
 
     def forward(self, data):
-        print('Inside Model:  num graphs: {}, device: {}'.format(
-            data.num_graphs, data.batch.device))
+        print(f'Inside model - num graphs: {data.num_graphs}, '
+              f'device: {data.batch.device}')
 
         x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
         x = F.elu(self.conv1(x, edge_index, edge_attr))
@@ -33,7 +33,7 @@ class Net(torch.nn.Module):
 
 
 model = Net()
-print('Let\'s use', torch.cuda.device_count(), 'GPUs!')
+print(f"Let's use {torch.cuda.device_count()} GPUs!")
 model = DataParallel(model)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
@@ -42,7 +42,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 for data_list in loader:
     optimizer.zero_grad()
     output = model(data_list)
-    print('Outside Model: num graphs: {}'.format(output.size(0)))
+    print(f'Outside model - num graphs: {output.size(0)}')
     y = torch.cat([data.y for data in data_list]).to(output.device)
     loss = F.nll_loss(output, y)
     loss.backward()

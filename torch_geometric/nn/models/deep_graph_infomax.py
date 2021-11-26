@@ -80,5 +80,5 @@ class DeepGraphInfomax(torch.nn.Module):
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.hidden_channels)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.hidden_channels})'

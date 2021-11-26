@@ -117,7 +117,7 @@ class DynamicFAUST(InMemoryDataset):
 
         data_list = []
         for (sid, cat) in product(self.subjects, self.categories):
-            idx = '{}_{}'.format(sid, cat)
+            idx = f'{sid}_{cat}'
             if idx in fm:
                 pos = torch.from_numpy(fm[idx][()])
             elif idx in ff:

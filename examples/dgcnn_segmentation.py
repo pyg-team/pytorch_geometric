@@ -102,4 +102,4 @@ def test(loader):
 for epoch in range(1, 31):
     train()
     iou = test(test_loader)
-    print('Epoch: {:02d}, Test IoU: {:.4f}'.format(epoch, iou))
+    print(f'Epoch: {epoch:02d}, Test IoU: {iou:.4f}')

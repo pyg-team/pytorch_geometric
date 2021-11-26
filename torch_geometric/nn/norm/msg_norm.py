@@ -28,12 +28,12 @@ class MessageNorm(torch.nn.Module):
     def reset_parameters(self):
         self.scale.data.fill_(1.0)
 
-    def forward(self, x: Tensor, msg: Tensor, p: int = 2):
+    def forward(self, x: Tensor, msg: Tensor, p: int = 2) -> Tensor:
         """"""
         msg = F.normalize(msg, p=p, dim=-1)
         x_norm = x.norm(p=p, dim=-1, keepdim=True)
         return msg * x_norm * self.scale
 
-    def __repr__(self):
-        return ('{}(learn_scale={})').format(self.__class__.__name__,
-                                             self.scale.requires_grad)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}'
+                f'(learn_scale={self.scale.requires_grad})')

@@ -108,8 +108,7 @@ for epoch in range(1, 301):
     test_acc1 = test_correct[:5000].sum().item() / 5000
     test_acc2 = test_correct[5000:].sum().item() / 5000
 
-    print(('Epoch: {:03d}, Loss: {:.4f}, Train: {:.3f}, Val: {:.3f}, '
-           'Test Orig: {:.3f}, Test Large: {:.3f}, '
-           'Train/Val/Test Ratio={:.3f}/{:.3f}/{:.3f}').format(
-               epoch, loss, train_acc, val_acc, test_acc1, test_acc2,
-               train_ratio, val_ratio, test_ratio))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.3f}, '
+          f'Val: {val_acc:.3f}, Test Orig: {test_acc1:.3f}, '
+          f'Test Large: {test_acc2:.3f}, Train/Val/Test Ratio='
+          f'{train_ratio:.3f}/{val_ratio:.3f}/{test_ratio:.3f}')

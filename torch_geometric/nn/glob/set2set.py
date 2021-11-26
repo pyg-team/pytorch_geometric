@@ -52,7 +52,7 @@ class Set2Set(torch.nn.Module):
              x.new_zeros((self.num_layers, batch_size, self.in_channels)))
         q_star = x.new_zeros(batch_size, self.out_channels)
 
-        for i in range(self.processing_steps):
+        for _ in range(self.processing_steps):
             q, h = self.lstm(q_star.unsqueeze(0), h)
             q = q.view(batch_size, self.in_channels)
             e = (x * q.index_select(0, batch)).sum(dim=-1, keepdim=True)
@@ -62,6 +62,6 @@ class Set2Set(torch.nn.Module):
 
         return q_star
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

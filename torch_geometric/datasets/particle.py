@@ -48,8 +48,8 @@ class TrackMLParticleTrackingDataset(Dataset):
 
     def download(self):
         raise RuntimeError(
-            'Dataset not found. Please download it from {} and move all '
-            '*.csv files to {}'.format(self.url, self.raw_dir))
+            f'Dataset not found. Please download it from {self.url} and move '
+            f'all *.csv files to {self.raw_dir}')
 
     def len(self):
         return len(glob.glob(osp.join(self.raw_dir, 'event*-hits.csv')))

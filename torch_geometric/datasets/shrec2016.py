@@ -82,8 +82,8 @@ class SHREC2016(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        name = '{}_{}.pt'.format(self.part, self.cat)
-        return ['{}_{}'.format(i, name) for i in ['ref', 'training', 'test']]
+        name = f'{self.part}_{self.cat}.pt'
+        return [f'{i}_{name}' for i in ['ref', 'training', 'test']]
 
     def download(self):
         path = download_url(self.train_url, self.raw_dir)
@@ -101,29 +101,29 @@ class SHREC2016(InMemoryDataset):
 
     def process(self):
         ref_data = read_off(
-            osp.join(self.raw_paths[0], 'null', '{}.off'.format(self.cat)))
+            osp.join(self.raw_paths[0], 'null', f'{self.cat}.off'))
 
         train_list = []
-        name = '{}_{}_*.off'.format(self.part, self.cat)
+        name = f'{self.part}_{self.cat}_*.off'
         paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
         for path in paths:
-            data = read_off('{}.off'.format(path))
-            y = read_txt_array('{}.baryc_gt'.format(path))
+            data = read_off(f'{path}.off')
+            y = read_txt_array(f'{path}.baryc_gt')
             data.y = y[:, 0].to(torch.long) - 1
             data.y_baryc = y[:, 1:]
             train_list.append(data)
 
         test_list = []
-        name = '{}_{}_*.off'.format(self.part, self.cat)
+        name = f'{self.part}_{self.cat}_*.off'
         paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
         for path in paths:
-            test_list.append(read_off('{}.off'.format(path)))
+            test_list.append(read_off(f'{path}.off'))
 
         if self.pre_filter is not None:
             train_list = [d for d in train_list if self.pre_filter(d)]
@@ -138,6 +138,6 @@ class SHREC2016(InMemoryDataset):
         torch.save(self.collate(train_list), self.processed_paths[1])
         torch.save(self.collate(test_list), self.processed_paths[2])
 
-    def __repr__(self):
-        return '{}({}, partiality={}, category={})'.format(
-            self.__class__.__name__, len(self), self.part, self.cat)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.name__}({len(self)}, '
+                f'partiality={self.part}, category={self.cat})')

@@ -1,6 +1,6 @@
 import datetime
-import sphinx_rtd_theme
 import doctest
+import sphinx_rtd_theme
 import torch_geometric
 
 extensions = [
@@ -22,7 +22,7 @@ master_doc = 'index'
 
 author = 'Matthias Fey'
 project = 'pytorch_geometric'
-copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+copyright = f'{datetime.datetime.now().year}, {author}'
 
 version = torch_geometric.__version__
 release = torch_geometric.__version__

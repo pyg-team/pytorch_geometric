@@ -157,6 +157,5 @@ class FAConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * (alpha * edge_weight).view(-1, 1)
 
-    def __repr__(self):
-        return '{}({}, eps={})'.format(self.__class__.__name__, self.channels,
-                                       self.eps)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.channels}, eps={self.eps})'

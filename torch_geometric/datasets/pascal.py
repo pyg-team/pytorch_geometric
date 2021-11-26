@@ -141,7 +141,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             filename = '_'.join(name.split('/')[1].split('_')[:-1])
             idx = int(name.split('_')[-1].split('.')[0]) - 1
 
-            path = osp.join(info_path, '{}.xml'.format(filename))
+            path = osp.join(info_path, f'{filename}.xml')
             obj = minidom.parse(path).getElementsByTagName('object')[idx]
 
             trunc = obj.getElementsByTagName('truncated')[0].firstChild.data
@@ -189,7 +189,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
             pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
-            path = osp.join(image_path, '{}.jpg'.format(filename))
+            path = osp.join(image_path, f'{filename}.jpg')
             with open(path, 'rb') as f:
                 img = Image.open(f).convert('RGB').crop(box)
                 img = img.resize((256, 256), resample=Image.BICUBIC)
@@ -238,6 +238,6 @@ class PascalVOCKeypoints(InMemoryDataset):
         torch.save(self.collate(train_set), self.processed_paths[0])
         torch.save(self.collate(test_set), self.processed_paths[1])
 
-    def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
-                                            self.category)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'category={self.category})')

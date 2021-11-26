@@ -92,5 +92,5 @@ for epoch in range(1, 201):
     loss = train(epoch)
     train_acc = test(train_loader)
     test_acc = test(test_loader)
-    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.5f}, Test Acc: {:.5f}'.
-          format(epoch, loss, train_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.5f}, Train Acc: {train_acc:.5f}, '
+          f'Test Acc: {test_acc:.5f}')

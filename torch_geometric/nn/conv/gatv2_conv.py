@@ -208,8 +208,8 @@ class GATv2Conv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r),
-                             edge_attr=edge_attr, size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
+                             size=size)
 
         alpha = self._alpha
         self._alpha = None
@@ -251,7 +251,6 @@ class GATv2Conv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.unsqueeze(-1)
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')
