@@ -232,11 +232,9 @@ class RGCNConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,
-                                                     self.in_channels,
-                                                     self.out_channels,
-                                                     self.num_relations)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_relations={self.num_relations})')
 
 
 class FastRGCNConv(RGCNConv):

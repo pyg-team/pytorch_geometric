@@ -151,6 +151,6 @@ class ARMAConv(MessagePassing):
         delattr(module, '_hook')
 
     def __repr__(self) -> str:
-        return '{}({}, {}, num_stacks={}, num_layers={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.num_stacks, self.num_layers)
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_stacks={self.num_stacks}, '
+                f'num_layers={self.num_layers})')

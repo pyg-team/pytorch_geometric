@@ -283,9 +283,7 @@ class SuperGATConv(MessagePassing):
             self.att_y,
         )
 
-    def __repr__(self):
-        return '{}({}, {}, heads={}, type={})'.format(self.__class__.__name__,
-                                                      self.in_channels,
-                                                      self.out_channels,
-                                                      self.heads,
-                                                      self.attention_type)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'type={self.attention_type})')

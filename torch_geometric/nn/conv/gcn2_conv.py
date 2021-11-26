@@ -152,7 +152,6 @@ class GCN2Conv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, alpha={}, beta={})'.format(self.__class__.__name__,
-                                                  self.channels, self.alpha,
-                                                  self.beta)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'alpha={self.alpha}, beta={self.beta})')

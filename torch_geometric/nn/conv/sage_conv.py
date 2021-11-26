@@ -86,7 +86,3 @@ class SAGEConv(MessagePassing):
                               x: OptPairTensor) -> Tensor:
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

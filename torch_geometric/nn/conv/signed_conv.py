@@ -132,8 +132,6 @@ class SignedConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, first_aggr={})'.format(self.__class__.__name__,
-                                                  self.in_channels,
-                                                  self.out_channels,
-                                                  self.first_aggr)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, first_aggr={self.first_aggr})')

@@ -83,7 +83,7 @@ class PANPooling(torch.nn.Module):
 
         return x, edge_index, edge_attr, batch[perm], perm, score[perm]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{}({}, {}={}, multiplier={})'.format(
             self.__class__.__name__, self.in_channels,
             'ratio' if self.min_score is None else 'min_score',
