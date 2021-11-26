@@ -94,4 +94,4 @@ def test():
 for epoch in range(1, 31):
     train(epoch)
     test_acc = test()
-    print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))
+    print(f'Epoch: {epoch:02d}, Test: {test_acc:.4f}')

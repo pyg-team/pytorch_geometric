@@ -115,5 +115,5 @@ class SAGPooling(torch.nn.Module):
         else:
             ratio = f'min_score={self.min_score}'
 
-        return (f'{self.__class__.__name__}({self.in_channels}, {ratio}, '
-                f'multiplier={self.multiplier})')
+        return (f'{self.__class__.__name__}({self.gnn.__class__.__name__}, '
+                f'{self.in_channels}, {ratio}, multiplier={self.multiplier})')

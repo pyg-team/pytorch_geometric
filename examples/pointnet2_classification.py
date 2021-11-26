@@ -101,4 +101,4 @@ if __name__ == '__main__':
     for epoch in range(1, 201):
         train(epoch)
         test_acc = test(test_loader)
-        print('Epoch: {:03d}, Test: {:.4f}'.format(epoch, test_acc))
+        print(f'Epoch: {epoch:03d}, Test: {test_acc:.4f}')
