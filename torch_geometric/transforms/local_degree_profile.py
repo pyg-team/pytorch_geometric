@@ -40,6 +40,3 @@ class LocalDegreeProfile(BaseTransform):
             data.x = x
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

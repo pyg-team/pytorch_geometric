@@ -80,7 +80,7 @@ def write_off(data, path):
     face_repr = '\n'.join([x[2:-1] for x in face_repr.split('\n')])[:-1]
 
     with open(path, 'w') as f:
-        f.write('OFF\n{} {} 0\n'.format(num_nodes, num_faces))
+        f.write(f'OFF\n{num_nodes} {num_faces} 0\n')
         f.write(pos_repr)
         f.write('\n')
         f.write(face_repr)

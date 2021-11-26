@@ -62,4 +62,4 @@ class GridSampling(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return '{}(size={})'.format(self.__class__.__name__, self.size)
+        return f'{self.__class__.__name__}(size={self.size})'

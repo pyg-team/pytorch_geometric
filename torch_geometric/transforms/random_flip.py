@@ -23,6 +23,5 @@ class RandomFlip(BaseTransform):
             data.pos = pos
         return data
 
-    def __repr__(self):
-        return '{}(axis={}, p={})'.format(self.__class__.__name__, self.axis,
-                                          self.p)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(axis={self.axis}, p={self.p})'
