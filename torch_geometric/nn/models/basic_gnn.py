@@ -55,7 +55,7 @@ class BasicGNN(torch.nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, **kwargs))
-        if self.has_out_channels and jk == 'last':
+        if self.has_out_channels and self.jk_mode == 'last':
             self.convs.append(
                 self.init_conv(hidden_channels, out_channels, **kwargs))
         else:
@@ -67,20 +67,20 @@ class BasicGNN(torch.nn.Module):
             self.norms = ModuleList()
             for _ in range(num_layers - 1):
                 self.norms.append(copy.deepcopy(norm))
-            if not (self.has_out_channels and jk == 'last'):
+            if not (self.has_out_channels and self.jk_mode == 'last'):
                 self.norms.append(copy.deepcopy(norm))
 
-        if jk != 'last':
+        if self.jk_mode != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
 
         if self.has_out_channels:
             self.out_channels = out_channels
-            if jk == 'cat':
+            if self.jk_mode == 'cat':
                 self.lin = Linear(num_layers * hidden_channels, out_channels)
-            elif jk in {'max', 'lstm'}:
+            elif self.jk_mode in {'max', 'lstm'}:
                 self.lin = Linear(hidden_channels, out_channels)
         else:
-            if jk == 'cat':
+            if self.jk_mode == 'cat':
                 self.out_channels = num_layers * hidden_channels
             else:
                 self.out_channels = hidden_channels
@@ -139,7 +139,7 @@ class GCN(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -167,7 +167,7 @@ class GraphSAGE(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -195,7 +195,7 @@ class GIN(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -224,7 +224,7 @@ class GAT(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -260,7 +260,7 @@ class PNA(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
