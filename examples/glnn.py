@@ -11,18 +11,19 @@ from torch_geometric.nn import GCN, MLP
 from torch_geometric.datasets import Planetoid
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--lamb', type=float, default=0.5,
+parser.add_argument('--lamb', type=float, default=0.0,
                     help='Balances loss from hard labels and teacher outputs')
 args = parser.parse_args()
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora', transform=T.NormalizeFeatures())
-data = dataset[0]
+data = dataset[0].to(device)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 gnn = GCN(dataset.num_node_features, hidden_channels=16,
           out_channels=dataset.num_classes, num_layers=2).to(device)
-mlp = MLP([dataset.num_node_features, 16, dataset.num_classes], dropout=0.5,
+mlp = MLP([dataset.num_node_features, 64, dataset.num_classes], dropout=0.5,
           batch_norm=False).to(device)
 
 gnn_optimizer = torch.optim.Adam(gnn.parameters(), lr=0.01, weight_decay=5e-4)
@@ -32,8 +33,8 @@ mlp_optimizer = torch.optim.Adam(mlp.parameters(), lr=0.01, weight_decay=5e-4)
 def train_teacher():
     gnn.train()
     gnn_optimizer.zero_grad()
-    out = gnn(data.x, data.edge_index)[data.train_mask]
-    loss = F.cross_entropy(out, data.y[data.train_mask])
+    out = gnn(data.x, data.edge_index)
+    loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     gnn_optimizer.step()
     return float(loss)
@@ -64,10 +65,10 @@ with torch.no_grad():  # Obtain soft labels from the GNN:
 def train_student():
     mlp.train()
     mlp_optimizer.zero_grad()
-    out = mlp(data.x)[data.train_mask]
-    loss1 = F.cross_entropy(out, data.y[data.train_mask])
-    loss2 = F.kl_div(out.log_softmax(dim=-1), y_soft[data.train_mask],
-                     reduction='batchmean', log_target=True)
+    out = mlp(data.x)
+    loss1 = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+    loss2 = F.kl_div(out.log_softmax(dim=-1), y_soft, reduction='batchmean',
+                     log_target=True)
     loss = args.lamb * loss1 + (1 - args.lamb) * loss2
     loss.backward()
     mlp_optimizer.step()
@@ -85,7 +86,7 @@ def test_student():
 
 
 print('Training Student MLP:')
-for epoch in range(1, 201):
+for epoch in range(1, 501):
     loss = train_student()
     if epoch % 20 == 0:
         train_acc, val_acc, test_acc = test_student()
