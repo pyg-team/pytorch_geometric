@@ -56,5 +56,5 @@ def test():
 
 for epoch in range(1, 201):
     train()
-    log = 'Epoch: {:03d}, Train: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, *test()))
+    train_acc, test_acc = test()
+    print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Test: {test_acc:.4f}')
