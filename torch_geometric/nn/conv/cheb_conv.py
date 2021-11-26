@@ -160,5 +160,5 @@ class ChebConv(MessagePassing):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, K={len(self.lins)},'
+                f'{self.out_channels}, K={len(self.lins)}, '
                 f'normalization={self.normalization})')
