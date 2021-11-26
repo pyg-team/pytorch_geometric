@@ -192,5 +192,5 @@ class NeighborSampler(torch.utils.data.DataLoader):
         out = self.transform(*out) if self.transform is not None else out
         return out
 
-    def __repr__(self):
-        return '{}(sizes={})'.format(self.__class__.__name__, self.sizes)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(sizes={self.sizes})'

@@ -388,10 +388,12 @@ class Data(BaseData):
 
         if not has_dict:
             info = [size_repr(k, v) for k, v in self._store.items()]
-            return '{}({})'.format(cls, ', '.join(info))
+            info = ', '.join(info)
+            return f'{cls}({info})'
         else:
             info = [size_repr(k, v, indent=2) for k, v in self._store.items()]
-            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
+            info = ',\n'.join(info)
+            return f'{cls}(\n{info}\n)'
 
     def stores_as(self, data: 'Data'):
         return self
