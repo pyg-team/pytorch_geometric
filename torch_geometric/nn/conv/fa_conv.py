@@ -158,4 +158,4 @@ class FAConv(MessagePassing):
         return x_j * (alpha * edge_weight).view(-1, 1)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.in_channels}, eps={self.eps})'
+        return f'{self.__class__.__name__}({self.channels}, eps={self.eps})'
