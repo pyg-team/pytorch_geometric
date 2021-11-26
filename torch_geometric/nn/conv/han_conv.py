@@ -44,6 +44,9 @@ class HANConv(MessagePassing):
             (default: :obj:`1`)
         negative_slope (float, optional): LeakyReLU angle of the negative
             slope. (default: :obj:`0.2`)
+        dropout (float, optional): Dropout probability of the normalized
+            attention coefficients which exposes each node to a stochastically
+            sampled neighborhood during training. (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -54,6 +57,7 @@ class HANConv(MessagePassing):
         metadata: Metadata,
         heads: int = 1,
         negative_slope=0.2,
+        dropout: float = 0.0,
         **kwargs,
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
@@ -66,6 +70,7 @@ class HANConv(MessagePassing):
         self.out_channels = out_channels
         self.negative_slope = negative_slope
         self.metadata = metadata
+        self.dropout = dropout
         self.k_lin = nn.Linear(out_channels, out_channels)
         self.q = nn.Parameter(torch.Tensor(1, out_channels))
 
@@ -154,6 +159,7 @@ class HANConv(MessagePassing):
         alpha = alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         out = x_dst_i * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
 
