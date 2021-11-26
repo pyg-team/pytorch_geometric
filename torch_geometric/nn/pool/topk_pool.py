@@ -126,7 +126,7 @@ class TopKPooling(torch.nn.Module):
     def __init__(self, in_channels: int, ratio: Union[int, float] = 0.5,
                  min_score: Optional[float] = None, multiplier: float = 1.,
                  nonlinearity: Callable = torch.tanh):
-        super(TopKPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio

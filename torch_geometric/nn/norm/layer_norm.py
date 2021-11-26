@@ -31,7 +31,7 @@ class LayerNorm(torch.nn.Module):
             (default: :obj:`True`)
     """
     def __init__(self, in_channels, eps=1e-5, affine=True):
-        super(LayerNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps

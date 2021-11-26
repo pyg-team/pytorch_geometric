@@ -53,7 +53,7 @@ class EdgePooling(torch.nn.Module):
 
     def __init__(self, in_channels, edge_score_method=None, dropout=0,
                  add_to_edge_score=0.5):
-        super(EdgePooling, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         if edge_score_method is None:
             edge_score_method = self.compute_edge_score_softmax

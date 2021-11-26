@@ -121,7 +121,7 @@ class SuperGATConv(MessagePassing):
                  neg_sample_ratio: float = 0.5, edge_sample_ratio: float = 1.0,
                  is_undirected: bool = False, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(SuperGATConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

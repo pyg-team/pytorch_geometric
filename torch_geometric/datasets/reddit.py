@@ -29,7 +29,7 @@ class Reddit(InMemoryDataset):
     url = 'https://data.dgl.ai/dataset/reddit.zip'
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(Reddit, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

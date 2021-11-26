@@ -28,8 +28,7 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
     def __init__(self, root, group, name, transform=None, pre_transform=None):
         self.group = group
         self.name = name
-        super(SuiteSparseMatrixCollection,
-              self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

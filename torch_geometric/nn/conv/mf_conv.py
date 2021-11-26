@@ -38,7 +38,7 @@ class MFConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, max_degree: int = 10, bias=True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(MFConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

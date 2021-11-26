@@ -102,8 +102,7 @@ class ShapeNet(InMemoryDataset):
             categories = [categories]
         assert all(category in self.category_ids for category in categories)
         self.categories = categories
-        super(ShapeNet, self).__init__(root, transform, pre_transform,
-                                       pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
             path = self.processed_paths[0]

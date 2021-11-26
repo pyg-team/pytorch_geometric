@@ -53,7 +53,7 @@ class ResGatedGraphConv(MessagePassing):
     ):
 
         kwargs.setdefault('aggr', 'add')
-        super(ResGatedGraphConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

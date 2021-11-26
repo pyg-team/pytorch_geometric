@@ -6,8 +6,7 @@ from torch_geometric.io import read_txt_array
 class EventDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(EventDataset, self).__init__(root, transform, pre_transform,
-                                           pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
     @property
     def num_nodes(self):
@@ -67,8 +66,7 @@ class ICEWS18(EventDataset):
     def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
         assert split in ['train', 'val', 'test']
-        super(ICEWS18, self).__init__(root, transform, pre_transform,
-                                      pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index('{}.pt'.format(split))
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
@@ -102,7 +100,7 @@ class ICEWS18(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super(ICEWS18, self).process()
+        data_list = super().process()
         torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
         torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
         torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])

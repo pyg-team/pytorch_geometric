@@ -50,7 +50,7 @@ class DeepGCNLayer(torch.nn.Module):
     """
     def __init__(self, conv=None, norm=None, act=None, block='res+',
                  dropout=0., ckpt_grad=False):
-        super(DeepGCNLayer, self).__init__()
+        super().__init__()
 
         self.conv = conv
         self.norm = norm

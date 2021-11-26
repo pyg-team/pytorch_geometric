@@ -43,8 +43,7 @@ def GNNPreMP(dim_in, dim_out, num_layers):
     return GeneralMultiLayer(
         'linear',
         layer_config=new_layer_config(dim_in, dim_out, num_layers,
-                                      has_act=False,
-                                      has_bias=False, cfg=cfg))
+                                      has_act=False, has_bias=False, cfg=cfg))
 
 
 class GNNStackStage(nn.Module):
@@ -57,7 +56,7 @@ class GNNStackStage(nn.Module):
         num_layers (int): Number of GNN layers
     """
     def __init__(self, dim_in, dim_out, num_layers):
-        super(GNNStackStage, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
         for i in range(num_layers):
             if cfg.gnn.stage_type == 'skipconcat':
@@ -99,7 +98,7 @@ class FeatureEncoder(nn.Module):
         dim_in (int): Input feature dimension
     """
     def __init__(self, dim_in):
-        super(FeatureEncoder, self).__init__()
+        super().__init__()
         self.dim_in = dim_in
         if cfg.dataset.node_encoder:
             # Encode integer node features via nn.Embeddings
@@ -139,7 +138,7 @@ class GNN(nn.Module):
         **kwargs (optional): Optional additional args
     """
     def __init__(self, dim_in, dim_out, **kwargs):
-        super(GNN, self).__init__()
+        super().__init__()
         GNNStage = register.stage_dict[cfg.gnn.stage_type]
         GNNHead = register.head_dict[cfg.gnn.head]
 
@@ -147,8 +146,8 @@ class GNN(nn.Module):
         dim_in = self.encoder.dim_in
 
         if cfg.gnn.layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(
-                dim_in, cfg.gnn.dim_inner, cfg.gnn.layers_pre_mp)
+            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner,
+                                   cfg.gnn.layers_pre_mp)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
             self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,

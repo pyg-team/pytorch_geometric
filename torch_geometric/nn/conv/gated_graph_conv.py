@@ -41,7 +41,7 @@ class GatedGraphConv(MessagePassing):
     """
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
                  bias: bool = True, **kwargs):
-        super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.out_channels = out_channels
         self.num_layers = num_layers

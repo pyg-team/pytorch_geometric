@@ -41,7 +41,7 @@ class GINConv(MessagePassing):
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(GINConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
@@ -113,7 +113,7 @@ class GINEConv(MessagePassing):
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  edge_dim: Optional[int] = None, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(GINEConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:

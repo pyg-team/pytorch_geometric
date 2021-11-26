@@ -4,7 +4,7 @@ from torch import Tensor
 
 class Reshape(torch.nn.Module):
     def __init__(self, *shape):
-        super(Reshape, self).__init__()
+        super().__init__()
         self.shape = shape
 
     def forward(self, x: Tensor) -> Tensor:

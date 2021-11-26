@@ -20,7 +20,7 @@ class DeepGraphInfomax(torch.nn.Module):
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
     def __init__(self, hidden_channels, encoder, summary, corruption):
-        super(DeepGraphInfomax, self).__init__()
+        super().__init__()
         self.hidden_channels = hidden_channels
         self.encoder = encoder
         self.summary = summary

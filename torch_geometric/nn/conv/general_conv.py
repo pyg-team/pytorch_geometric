@@ -49,14 +49,21 @@ class GeneralConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: Optional[int], in_edge_channels: int = None,
-                 aggr: str = 'add', skip_linear: str = False,
-                 directed_msg: bool = True, heads: int = 1,
-                 attention: bool = False, attention_type: str = 'additive',
-                 l2_normalize: bool = False, bias: bool = True,
-                 **kwargs):  # yapf: disable
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: Optional[int],
+        in_edge_channels: int = None,
+        aggr: str = 'add',
+        skip_linear: str = False,
+        directed_msg: bool = True,
+        heads: int = 1,
+        attention: bool = False,
+        attention_type: str = 'additive',
+        l2_normalize: bool = False,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
 

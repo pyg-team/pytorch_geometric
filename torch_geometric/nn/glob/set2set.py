@@ -29,7 +29,7 @@ class Set2Set(torch.nn.Module):
             LSTM and computing the final results. (default: :obj:`1`)
     """
     def __init__(self, in_channels, processing_steps, num_layers=1):
-        super(Set2Set, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.out_channels = 2 * in_channels

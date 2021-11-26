@@ -15,7 +15,7 @@ from ..inits import uniform, kaiming_uniform
 
 class Linear(torch.nn.Module):
     def __init__(self, in_channels, out_channels, groups=1, bias=True):
-        super(Linear, self).__init__()
+        super().__init__()
         assert in_channels % groups == 0 and out_channels % groups == 0
 
         self.in_channels = in_channels
@@ -71,7 +71,7 @@ def restricted_softmax(src, dim: int = -1, margin: float = 0.):
 
 class Attention(torch.nn.Module):
     def __init__(self, dropout=0):
-        super(Attention, self).__init__()
+        super().__init__()
         self.dropout = dropout
 
     def forward(self, query, key, value):
@@ -102,7 +102,7 @@ class Attention(torch.nn.Module):
 class MultiHead(Attention):
     def __init__(self, in_channels, out_channels, heads=1, groups=1, dropout=0,
                  bias=True):
-        super(MultiHead, self).__init__(dropout)
+        super().__init__(dropout)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -230,7 +230,7 @@ class DNAConv(MessagePassing):
                  normalize: bool = True, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(DNAConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached
