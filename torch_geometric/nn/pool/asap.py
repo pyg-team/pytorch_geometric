@@ -135,6 +135,6 @@ class ASAPooling(torch.nn.Module):
 
         return x, edge_index, edge_weight, batch, perm
 
-    def __repr__(self):
-        return '{}({}, ratio={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.ratio)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'ratio={self.ratio})')

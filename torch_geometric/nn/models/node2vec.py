@@ -155,7 +155,6 @@ class Node2Vec(torch.nn.Module):
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__,
-                                   self.embedding.weight.size(0),
-                                   self.embedding.weight.size(1))
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.embedding.weight.size(0)}, '
+                f'{self.embedding.weight.size(1)})')

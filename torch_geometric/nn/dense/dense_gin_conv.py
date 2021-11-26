@@ -56,5 +56,5 @@ class DenseGINConv(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'

@@ -76,5 +76,5 @@ class JumpingKnowledge(torch.nn.Module):
             alpha = torch.softmax(alpha, dim=-1)
             return (x * alpha.unsqueeze(-1)).sum(dim=1)
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.mode)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.mode})'

@@ -121,7 +121,7 @@ class GraphUNet(torch.nn.Module):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         return edge_index, edge_weight
 
-    def __repr__(self):
-        return '{}({}, {}, {}, depth={}, pool_ratios={})'.format(
-            self.__class__.__name__, self.in_channels, self.hidden_channels,
-            self.out_channels, self.depth, self.pool_ratios)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels}, {self.out_channels}, '
+                f'depth={self.depth}, pool_ratios={self.pool_ratios})')

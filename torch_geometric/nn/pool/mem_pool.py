@@ -115,7 +115,7 @@ class MemPooling(torch.nn.Module):
 
         return x, S
 
-    def __repr__(self):
-        return '{}({}, {}, heads={}, num_clusters={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.heads, self.num_clusters)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'num_clusters={self.num_clusters})')

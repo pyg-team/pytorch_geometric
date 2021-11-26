@@ -222,8 +222,6 @@ class SignedGCN(torch.nn.Module):
 
         return auc, f1
 
-    def __repr__(self):
-        return '{}({}, {}, num_layers={})'.format(self.__class__.__name__,
-                                                  self.in_channels,
-                                                  self.hidden_channels,
-                                                  self.num_layers)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels}, num_layers={self.num_layers})')

@@ -104,6 +104,6 @@ class DiffGroupNorm(torch.nn.Module):
 
         return numerator / (denominator + eps)
 
-    def __repr__(self):
-        return '{}({}, groups={})'.format(self.__class__.__name__,
-                                          self.in_channels, self.groups)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'groups={self.groups})')

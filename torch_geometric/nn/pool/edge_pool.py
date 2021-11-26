@@ -189,5 +189,5 @@ class EdgePooling(torch.nn.Module):
         new_x = new_x[unpool_info.cluster]
         return new_x, unpool_info.edge_index, unpool_info.batch
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.in_channels)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.in_channels})'

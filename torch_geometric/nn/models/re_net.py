@@ -137,9 +137,8 @@ class RENet(torch.nn.Module):
 
                 return data
 
-            def __repr__(self):  # pragma: no cover
-                return '{}(seq_len={})'.format(self.__class__.__name__,
-                                               self.seq_len)
+            def __repr__(self) -> str:  # pragma: no cover
+                return f'{self.__class__.__name__}(seq_len={self.seq_len})'
 
         return PreTransform(seq_len)
 

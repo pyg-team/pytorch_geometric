@@ -102,5 +102,5 @@ class DeepGCNLayer(torch.nn.Module):
 
             return F.dropout(h, p=self.dropout, training=self.training)
 
-    def __repr__(self):
-        return '{}(block={})'.format(self.__class__.__name__, self.block)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(block={self.block})'
