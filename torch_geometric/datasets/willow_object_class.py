@@ -102,7 +102,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
         data_list = []
         for name in names:
-            pos = loadmat('{}.mat'.format(name))['pts_coord']
+            pos = loadmat(f'{name}.mat')['pts_coord']
             x, y = torch.from_numpy(pos).to(torch.float)
             pos = torch.stack([x, y], dim=1)
 
@@ -111,7 +111,7 @@ class WILLOWObjectClass(InMemoryDataset):
             if pos.size(0) != 10:
                 continue
 
-            with open('{}.png'.format(name), 'rb') as f:
+            with open(f'{name}.png', 'rb') as f:
                 img = Image.open(f).convert('RGB')
 
             # Rescale keypoints.
@@ -155,6 +155,6 @@ class WILLOWObjectClass(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
-                                            self.category)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'category={self.category})')

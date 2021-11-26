@@ -56,7 +56,7 @@ class PPI(InMemoryDataset):
     def raw_file_names(self):
         splits = ['train', 'valid', 'test']
         files = ['feats.npy', 'graph_id.npy', 'graph.json', 'labels.npy']
-        return ['{}_{}'.format(s, f) for s, f in product(splits, files)]
+        return [f'{split}_{name}' for split, name in product(splits, files)]
 
     @property
     def processed_file_names(self):

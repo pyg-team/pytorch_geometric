@@ -49,6 +49,3 @@ class KarateClub(InMemoryDataset):
         data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask)
 
         self.data, self.slices = self.collate([data])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

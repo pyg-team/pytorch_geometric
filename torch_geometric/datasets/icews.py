@@ -67,7 +67,7 @@ class ICEWS18(EventDataset):
                  pre_filter=None):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
-        idx = self.processed_file_names.index('{}.pt'.format(split))
+        idx = self.processed_file_names.index(f'{split}.pt')
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
     @property
@@ -80,7 +80,7 @@ class ICEWS18(EventDataset):
 
     @property
     def raw_file_names(self):
-        return ['{}.txt'.format(name) for name in ['train', 'valid', 'test']]
+        return [f'{name}.txt' for name in ['train', 'valid', 'test']]
 
     @property
     def processed_file_names(self):
@@ -88,7 +88,7 @@ class ICEWS18(EventDataset):
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, filename), self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process_events(self):
         events = []

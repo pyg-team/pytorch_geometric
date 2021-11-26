@@ -51,8 +51,7 @@ class S3DIS(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        test_area = self.test_area
-        return ['{}_{}.pt'.format(s, test_area) for s in ['train', 'test']]
+        return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
     def download(self):
         path = download_url(self.url, self.root)
@@ -77,7 +76,7 @@ class S3DIS(InMemoryDataset):
             xs += torch.from_numpy(f['data'][:]).unbind(0)
             ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
 
-        test_area = 'Area_{}'.format(self.test_area)
+        test_area = f'Area_{self.test_area}'
         train_data_list, test_data_list = [], []
         for i, (x, y) in enumerate(zip(xs, ys)):
             data = Data(pos=x[:, :3], x=x[:, 3:], y=y)

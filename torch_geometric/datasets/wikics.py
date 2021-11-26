@@ -39,7 +39,7 @@ class WikiCS(InMemoryDataset):
 
     def download(self):
         for name in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, name), self.raw_dir)
+            download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self):
         with open(self.raw_paths[0], 'r') as f:
@@ -71,6 +71,3 @@ class WikiCS(InMemoryDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

@@ -73,7 +73,7 @@ class ModelNet(InMemoryDataset):
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        folder = osp.join(self.root, 'ModelNet{}'.format(self.name))
+        folder = osp.join(self.root, f'ModelNet{self.name}')
         shutil.rmtree(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
@@ -93,7 +93,7 @@ class ModelNet(InMemoryDataset):
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob('{}/{}_*.off'.format(folder, category))
+            paths = glob.glob(f'{folder}/{category}_*.off')
             for path in paths:
                 data = read_off(path)
                 data.y = torch.tensor([target])
@@ -107,5 +107,5 @@ class ModelNet(InMemoryDataset):
 
         return self.collate(data_list)
 
-    def __repr__(self):
-        return '{}{}({})'.format(self.__class__.__name__, self.name, len(self))
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}{self.name}({len(self)})'

@@ -78,6 +78,6 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}(group={}, name={})'.format(self.__class__.__name__,
-                                              self.group, self.name)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(group={self.group}, '
+                f'name={self.name})')

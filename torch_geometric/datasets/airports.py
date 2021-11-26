@@ -91,4 +91,4 @@ class Airports(InMemoryDataset):
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return '{}Airports()'.format(self.name.capitalize())
+        return f'{self.name.capitalize()}Airports()'

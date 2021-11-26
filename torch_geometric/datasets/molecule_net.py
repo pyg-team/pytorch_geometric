@@ -216,5 +216,5 @@ class MoleculeNet(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({})'.format(self.names[self.name][0], len(self))
+    def __repr__(self) -> str:
+        return f'{self.names[self.name][0]}({len(self)})'
