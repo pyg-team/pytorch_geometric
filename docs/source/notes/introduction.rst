@@ -83,7 +83,7 @@ Besides holding a number of node-level, edge-level or graph-level attributes, :c
                 [1.0]])
 
     for key, item in data:
-        print("{} found in data".format(key))
+        print(f'{key} found in data')
     >>> x found in data
     >>> edge_index found in data
 
@@ -407,7 +407,7 @@ Finally, we can evaluate our model on the test nodes:
     pred = model(data).argmax(dim=1)
     correct = (pred[data.test_mask] == data.y[data.test_mask]).sum()
     acc = int(correct) / int(data.test_mask.sum())
-    print('Accuracy: {:.4f}'.format(acc))
+    print(f'Accuracy: {acc:.4f}')
     >>> Accuracy: 0.8150
 
 This is all it takes to implement your first graph neural network.

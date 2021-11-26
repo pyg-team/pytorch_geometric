@@ -114,7 +114,6 @@ class GravNetConv(MessagePassing):
                           reduce='max')
         return torch.cat([out_mean, out_max], dim=-1)
 
-    def __repr__(self):
-        return '{}({}, {}, k={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.out_channels,
-                                         self.k)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, k={self.k})')

@@ -77,8 +77,8 @@ class GINConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'
 
 
 class GINEConv(MessagePassing):
@@ -162,5 +162,5 @@ class GINEConv(MessagePassing):
 
         return (x_j + edge_attr).relu()
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'

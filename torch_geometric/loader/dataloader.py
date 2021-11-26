@@ -33,7 +33,7 @@ class Collater(object):
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
             return [self.collate(s) for s in zip(*batch)]
 
-        raise TypeError('DataLoader found invalid type: {}'.format(type(elem)))
+        raise TypeError(f'DataLoader found invalid type: {type(elem)}')
 
     def __call__(self, batch):
         return self.collate(batch)

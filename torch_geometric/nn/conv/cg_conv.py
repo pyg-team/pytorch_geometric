@@ -85,6 +85,5 @@ class CGConv(MessagePassing):
             z = torch.cat([x_i, x_j, edge_attr], dim=-1)
         return self.lin_f(z).sigmoid() * F.softplus(self.lin_s(z))
 
-    def __repr__(self):
-        return '{}({}, dim={})'.format(self.__class__.__name__, self.channels,
-                                       self.dim)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.channels}, dim={self.dim})'

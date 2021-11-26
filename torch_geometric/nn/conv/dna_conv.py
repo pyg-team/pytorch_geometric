@@ -56,10 +56,9 @@ class Linear(torch.nn.Module):
 
         return out
 
-    def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, groups={})'.format(self.__class__.__name__,
-                                              self.in_channels,
-                                              self.out_channels, self.groups)
+    def __repr__(self) -> str:  # pragma: no cover
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, groups={self.groups})')
 
 
 def restricted_softmax(src, dim: int = -1, margin: float = 0.):
@@ -95,8 +94,8 @@ class Attention(torch.nn.Module):
 
         return torch.matmul(score, value)
 
-    def __repr__(self):  # pragma: no cover
-        return '{}(dropout={})'.format(self.__class__.__name__, self.dropout)
+    def __repr__(self) -> str:  # pragma: no cover
+        return f'{self.__class__.__name__}(dropout={self.dropout})'
 
 
 class MultiHead(Attention):
@@ -163,10 +162,11 @@ class MultiHead(Attention):
 
         return out
 
-    def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, heads={}, groups={}, dropout={}, bias={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.heads, self.groups, self.dropout, self.bias)
+    def __repr__(self) -> str:  # pragma: no cover
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'groups={self.groups}, dropout={self.droput}, '
+                f'bias={self.bias})')
 
 
 class DNAConv(MessagePassing):
@@ -293,7 +293,7 @@ class DNAConv(MessagePassing):
         out = self.multi_head(x_i, x_j, x_j)  # [num_edges, 1, channels]
         return edge_weight.view(-1, 1) * out.squeeze(1)
 
-    def __repr__(self):
-        return '{}({}, heads={}, groups={})'.format(
-            self.__class__.__name__, self.multi_head.in_channels,
-            self.multi_head.heads, self.multi_head.groups)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.multi_head.in_channels}, '
+                f'heads={self.multi_head.heads}, '
+                f'groups={self.multi_head.groups})')

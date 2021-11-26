@@ -18,8 +18,7 @@ class LinearTransformation(BaseTransform):
         assert matrix.dim() == 2, (
             'Transformation matrix should be two-dimensional.')
         assert matrix.size(0) == matrix.size(1), (
-            'Transformation matrix should be square. Got [{} x {}] rectangular'
-            'matrix.'.format(*matrix.size()))
+            f'Transformation matrix should be square (got {matrix.size()})')
 
         # Store the matrix as its transpose.
         # We do this to enable post-multiplication in `__call__`.

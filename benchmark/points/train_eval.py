@@ -31,8 +31,8 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
 
         t_end = time.perf_counter()
 
-        print('Epoch: {:03d}, Test: {:.4f}, Duration: {:.2f}'.format(
-            epoch, test_acc, t_end - t_start))
+        print(f'Epoch: {epoch:03d}, Test: {test_acc:.4f}, '
+              f'Duration: {t_end - t_start:.2f}')
 
         if epoch % lr_decay_step_size == 0:
             for param_group in optimizer.param_groups:

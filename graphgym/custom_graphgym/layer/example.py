@@ -53,10 +53,6 @@ class ExampleConv1(MessagePassing):
             aggr_out = aggr_out + self.bias
         return aggr_out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
-
 
 # Remember to register your layer!
 register_layer('exampleconv1', ExampleConv1)
@@ -100,10 +96,6 @@ class ExampleConv2Layer(MessagePassing):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
         return aggr_out
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
 
 
 class ExampleConv2(nn.Module):

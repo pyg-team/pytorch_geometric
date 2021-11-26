@@ -53,8 +53,8 @@ class EdgeConv(MessagePassing):
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'
 
 
 class DynamicEdgeConv(MessagePassing):
@@ -117,6 +117,5 @@ class DynamicEdgeConv(MessagePassing):
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
-    def __repr__(self):
-        return '{}(nn={}, k={})'.format(self.__class__.__name__, self.nn,
-                                        self.k)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn}, k={self.k})'

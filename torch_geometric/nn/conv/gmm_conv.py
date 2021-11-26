@@ -187,6 +187,5 @@ class GMMConv(MessagePassing):
         delattr(module, '_hook')
 
     def __repr__(self) -> str:
-        return '{}({}, {}, dim={})'.format(self.__class__.__name__,
-                                           self.in_channels, self.out_channels,
-                                           self.dim)
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, dim={self.dim})')

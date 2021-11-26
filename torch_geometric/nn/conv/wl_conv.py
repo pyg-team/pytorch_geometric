@@ -69,6 +69,3 @@ class WLConv(torch.nn.Module):
             out /= out.norm(dim=-1, keepdim=True)
 
         return out
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

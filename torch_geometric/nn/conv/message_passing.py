@@ -598,3 +598,9 @@ class MessagePassing(torch.nn.Module):
         module.jittable = None
 
         return module
+
+    def __repr__(self) -> str:
+        if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
+            return (f'{self.__class__.__name__}({self.in_channels}, '
+                    f'{self.out_channels})')
+        return f'{self.__class__.__name__}()'

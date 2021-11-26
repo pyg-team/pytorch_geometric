@@ -40,7 +40,7 @@ class DataParallel(torch.nn.DataParallel):
     def __init__(self, module, device_ids=None, output_device=None,
                  follow_batch=[], exclude_keys=[]):
         super().__init__(module, device_ids, output_device)
-        self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
+        self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
@@ -60,9 +60,9 @@ class DataParallel(torch.nn.DataParallel):
         for t in chain(self.module.parameters(), self.module.buffers()):
             if t.device != self.src_device:
                 raise RuntimeError(
-                    ('Module must have its parameters and buffers on device '
-                     '{} but found one of them on device {}.').format(
-                         self.src_device, t.device))
+                    f"Module must have its parameters and buffers on device "
+                    f"'{self.src_device}' but found one of them on device "
+                    f"'{t.device}'")
 
         inputs = self.scatter(data_list, self.device_ids)
         replicas = self.replicate(self.module, self.device_ids[:len(inputs)])
@@ -87,7 +87,6 @@ class DataParallel(torch.nn.DataParallel):
             Batch.from_data_list(data_list[split[i]:split[i + 1]],
                                  follow_batch=self.follow_batch,
                                  exclude_keys=self.exclude_keys).to(
-                                     torch.device('cuda:{}'.format(
-                                         device_ids[i])))
+                                     torch.device(f'cuda:{device_ids[i]}'))
             for i in range(len(split) - 1)
         ]

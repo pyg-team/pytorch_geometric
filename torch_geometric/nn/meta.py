@@ -123,10 +123,9 @@ class MetaLayer(torch.nn.Module):
 
         return x, edge_attr, u
 
-    def __repr__(self):
-        return ('{}(\n'
-                '    edge_model={},\n'
-                '    node_model={},\n'
-                '    global_model={}\n'
-                ')').format(self.__class__.__name__, self.edge_model,
-                            self.node_model, self.global_model)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(\n'
+                f'  edge_model={self.edge_model},\n'
+                f'  node_model={self.node_model},\n'
+                f'  global_model={self.global_model}\n'
+                f')')

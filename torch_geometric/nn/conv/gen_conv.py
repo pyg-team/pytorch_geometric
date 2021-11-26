@@ -194,7 +194,6 @@ class GENConv(MessagePassing):
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, aggr={})'.format(self.__class__.__name__,
-                                            self.in_channels,
-                                            self.out_channels, self.aggr)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggr={self.aggr})')

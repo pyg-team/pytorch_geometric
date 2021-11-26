@@ -54,12 +54,12 @@ class GeneralConv(MessagePassing):
         in_channels: Union[int, Tuple[int, int]],
         out_channels: Optional[int],
         in_edge_channels: int = None,
-        aggr: str = 'add',
+        aggr: str = "add",
         skip_linear: str = False,
         directed_msg: bool = True,
         heads: int = 1,
         attention: bool = False,
-        attention_type: str = 'additive',
+        attention_type: str = "additive",
         l2_normalize: bool = False,
         bias: bool = True,
         **kwargs,
@@ -99,7 +99,7 @@ class GeneralConv(MessagePassing):
             self.lin_edge = Linear(in_edge_channels, out_channels * self.heads,
                                    bias=bias)
 
-        # todo: A general torch_geometric.nn.AttentionLayer
+        # TODO: A general torch_geometric.nn.AttentionLayer
         if self.attention:
             if self.attention_type == 'additive':
                 self.att_msg = Parameter(
@@ -108,8 +108,8 @@ class GeneralConv(MessagePassing):
                 self.scaler = torch.sqrt(
                     torch.tensor(out_channels, dtype=torch.float))
             else:
-                raise ValueError('attention_type: {} not supported'.format(
-                    self.attention_type))
+                raise ValueError(
+                    f"Attention type '{self.attention_type}' not supported")
 
         self.reset_parameters()
 
@@ -162,7 +162,3 @@ class GeneralConv(MessagePassing):
             return x_j_out * alpha
         else:
             return x_j_out
-
-    def __repr__(self) -> str:
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

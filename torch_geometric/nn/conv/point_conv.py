@@ -94,10 +94,9 @@ class PointNetConv(MessagePassing):
             msg = self.local_nn(msg)
         return msg
 
-    def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
-                                                      self.local_nn,
-                                                      self.global_nn)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
+                f'global_nn={self.global_nn})')
 
 
 PointConv = PointNetConv
