@@ -72,18 +72,18 @@ class PPI(InMemoryDataset):
         from networkx.readwrite import json_graph
 
         for s, split in enumerate(['train', 'valid', 'test']):
-            path = osp.join(self.raw_dir, '{}_graph.json').format(split)
+            path = osp.join(self.raw_dir, f'{split}_graph.json')
             with open(path, 'r') as f:
                 G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
 
-            x = np.load(osp.join(self.raw_dir, '{}_feats.npy').format(split))
+            x = np.load(osp.join(self.raw_dir, f'{split}_feats.npy'))
             x = torch.from_numpy(x).to(torch.float)
 
-            y = np.load(osp.join(self.raw_dir, '{}_labels.npy').format(split))
+            y = np.load(osp.join(self.raw_dir, f'{split}_labels.npy'))
             y = torch.from_numpy(y).to(torch.float)
 
             data_list = []
-            path = osp.join(self.raw_dir, '{}_graph_id.npy').format(split)
+            path = osp.join(self.raw_dir, f'{split}_graph_id.npy')
             idx = torch.from_numpy(np.load(path)).to(torch.long)
             idx = idx - idx.min()
 
