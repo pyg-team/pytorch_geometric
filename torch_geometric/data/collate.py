@@ -99,18 +99,15 @@ def collate(
             if (attr in follow_batch and isinstance(slices, Tensor)
                     and slices.dim() == 1):
                 repeats = slices[1:] - slices[:-1]
-                arange = torch.arange(len(values), device=device)
-                batch = arange.repeat_interleave(repeats.to(device))
+                batch = repeat_interleave(repeats.tolist(), device=device)
                 out_store[f'{attr}_batch'] = batch
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].can_infer_num_nodes):
-            arange = torch.arange(len(stores), device=device)
-            repeats = torch.tensor([store.num_nodes for store in stores],
-                                   device=device)
-            out_store.batch = arange.repeat_interleave(repeats)
-            out_store.ptr = cumsum(repeats)
+            repeats = [store.num_nodes for store in stores]
+            out_store.batch = repeat_interleave(repeats, device=device)
+            out_store.ptr = cumsum(torch.tensor(repeats, device=device))
 
     return out, slice_dict, inc_dict
 
@@ -199,6 +196,14 @@ def _collate(
 
 
 ###############################################################################
+
+
+def repeat_interleave(
+    repeats: List[int],
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
+    return torch.cat(outs, dim=0)
 
 
 def cumsum(value: Union[Tensor, List[int]]) -> Tensor:
