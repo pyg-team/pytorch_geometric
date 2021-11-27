@@ -268,7 +268,6 @@ class GATConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.unsqueeze(-1)
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

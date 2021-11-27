@@ -121,7 +121,7 @@ class SuperGATConv(MessagePassing):
                  neg_sample_ratio: float = 0.5, edge_sample_ratio: float = 1.0,
                  is_undirected: bool = False, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(SuperGATConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -283,9 +283,7 @@ class SuperGATConv(MessagePassing):
             self.att_y,
         )
 
-    def __repr__(self):
-        return '{}({}, {}, heads={}, type={})'.format(self.__class__.__name__,
-                                                      self.in_channels,
-                                                      self.out_channels,
-                                                      self.heads,
-                                                      self.attention_type)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'type={self.attention_type})')

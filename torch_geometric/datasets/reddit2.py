@@ -38,7 +38,7 @@ class Reddit2(InMemoryDataset):
     role_id = '1nJIKd77lcAGU4j-kVNx_AIGEkveIKz3A'
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(Reddit2, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -100,6 +100,3 @@ class Reddit2(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

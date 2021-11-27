@@ -279,8 +279,8 @@ For example, this is all it takes to implement a heterogeneous graph attention n
             return x
 
 
-   model = GAT(hidden_channels=64, out_channels=dataset.num_classes)
-   model = to_hetero(model, data.metadata(), aggr='sum')
+    model = GAT(hidden_channels=64, out_channels=dataset.num_classes)
+    model = to_hetero(model, data.metadata(), aggr='sum')
 
 Afterwards, the created model can be trained as usual:
 

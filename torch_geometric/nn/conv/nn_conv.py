@@ -51,7 +51,7 @@ class NNConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, nn: Callable, aggr: str = 'add',
                  root_weight: bool = True, bias: bool = True, **kwargs):
-        super(NNConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -103,11 +103,9 @@ class NNConv(MessagePassing):
         weight = weight.view(-1, self.in_channels_l, self.out_channels)
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
-    def __repr__(self):
-        return '{}({}, {}, aggr="{}", nn={})'.format(self.__class__.__name__,
-                                                     self.in_channels,
-                                                     self.out_channels,
-                                                     self.aggr, self.nn)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggr={self.aggr}, nn={self.nn})')
 
 
 ECConv = NNConv

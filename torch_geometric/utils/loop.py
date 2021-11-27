@@ -123,7 +123,7 @@ def add_self_loops(
         if fill_value is None:
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
-        elif isinstance(fill_value, float) or isinstance(fill_value, int):
+        elif isinstance(fill_value, (int, float)):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):
@@ -203,7 +203,7 @@ def add_remaining_self_loops(
         if fill_value is None:
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
-        elif isinstance(fill_value, float):
+        elif isinstance(fill_value, (int, float)):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):

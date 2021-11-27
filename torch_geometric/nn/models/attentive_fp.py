@@ -15,7 +15,7 @@ from ..inits import glorot, zeros
 class GATEConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  dropout: float = 0.0):
-        super(GATEConv, self).__init__(aggr='add', node_dim=0)
+        super().__init__(aggr='add', node_dim=0)
 
         self.dropout = dropout
 
@@ -76,7 +76,7 @@ class AttentiveFP(torch.nn.Module):
     def __init__(self, in_channels: int, hidden_channels: int,
                  out_channels: int, edge_dim: int, num_layers: int,
                  num_timesteps: int, dropout: float = 0.0):
-        super(AttentiveFP, self).__init__()
+        super().__init__()
 
         self.num_layers = num_layers
         self.num_timesteps = num_timesteps

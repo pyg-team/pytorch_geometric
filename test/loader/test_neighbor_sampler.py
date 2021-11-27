@@ -47,7 +47,7 @@ def test_neighbor_sampler_on_cora():
 
     class SAGE(torch.nn.Module):
         def __init__(self, in_channels, out_channels):
-            super(SAGE, self).__init__()
+            super().__init__()
 
             self.convs = torch.nn.ModuleList()
             self.convs.append(SAGEConv(in_channels, 16))
@@ -74,7 +74,7 @@ def test_neighbor_sampler_on_cora():
 
     class GAT(torch.nn.Module):
         def __init__(self, in_channels, out_channels):
-            super(SAGE, self).__init__()
+            super().__init__()
 
             self.convs = torch.nn.ModuleList()
             self.convs.append(GATConv(in_channels, 16, heads=2))

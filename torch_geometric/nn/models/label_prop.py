@@ -25,7 +25,7 @@ class LabelPropagation(MessagePassing):
         alpha (float): The :math:`\alpha` coefficient.
     """
     def __init__(self, num_layers: int, alpha: float):
-        super(LabelPropagation, self).__init__(aggr='add')
+        super().__init__(aggr='add')
         self.num_layers = num_layers
         self.alpha = alpha
 
@@ -67,7 +67,6 @@ class LabelPropagation(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}(num_layers={}, alpha={})'.format(self.__class__.__name__,
-                                                    self.num_layers,
-                                                    self.alpha)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(num_layers={self.num_layers}, '
+                f'alpha={self.alpha})')

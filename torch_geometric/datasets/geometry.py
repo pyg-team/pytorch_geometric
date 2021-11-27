@@ -75,7 +75,7 @@ class GeometricShapes(InMemoryDataset):
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob('{}/*.off'.format(folder))
+            paths = glob.glob(f'{folder}/*.off')
             for path in paths:
                 data = read_off(path)
                 data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)

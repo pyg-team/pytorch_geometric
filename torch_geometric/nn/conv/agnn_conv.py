@@ -38,7 +38,7 @@ class AGNNConv(MessagePassing):
     def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(AGNNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.requires_grad = requires_grad
         self.add_self_loops = add_self_loops
@@ -75,6 +75,3 @@ class AGNNConv(MessagePassing):
         alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
         return x_j * alpha.view(-1, 1)
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

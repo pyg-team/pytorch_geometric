@@ -53,7 +53,7 @@ class ResGatedGraphConv(MessagePassing):
     ):
 
         kwargs.setdefault('aggr', 'add')
-        super(ResGatedGraphConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -110,7 +110,3 @@ class ResGatedGraphConv(MessagePassing):
 
     def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor) -> Tensor:
         return self.act(k_i + q_j) * v_j
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

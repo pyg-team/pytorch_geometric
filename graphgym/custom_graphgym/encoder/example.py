@@ -13,7 +13,7 @@ class ExampleNodeEncoder(torch.nn.Module):
         num_classes - the number of classes for the embedding mapping to learn
     """
     def __init__(self, emb_dim, num_classes=None):
-        super(ExampleNodeEncoder, self).__init__()
+        super().__init__()
 
         self.encoder = torch.nn.Embedding(num_classes, emb_dim)
         torch.nn.init.xavier_uniform_(self.encoder.weight.data)
@@ -30,7 +30,7 @@ register_node_encoder('example', ExampleNodeEncoder)
 
 class ExampleEdgeEncoder(torch.nn.Module):
     def __init__(self, emb_dim):
-        super(ExampleEdgeEncoder, self).__init__()
+        super().__init__()
 
         self.bond_embedding_list = torch.nn.ModuleList()
         full_bond_feature_dims = get_bond_feature_dims()

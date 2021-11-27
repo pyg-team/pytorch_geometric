@@ -60,7 +60,7 @@ if __name__ == '__main__':
         logging.info(model)
         logging.info(cfg)
         cfg.params = params_count(model)
-        logging.info('Num parameters: {}'.format(cfg.params))
+        logging.info('Num parameters: %s', cfg.params)
         # Start training
         if cfg.train.mode == 'standard':
             train(loggers, loaders, model, optimizer, scheduler)
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done
     if args.mark_done:
-        os.rename(args.cfg_file, '{}_done'.format(args.cfg_file))
+        os.rename(args.cfg_file, f'{args.cfg_file}_done')

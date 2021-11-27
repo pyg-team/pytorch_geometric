@@ -43,7 +43,7 @@ class FeaStConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'mean')
-        super(FeaStConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -96,7 +96,6 @@ class FeaStConv(MessagePassing):
         x_j = self.lin(x_j).view(x_j.size(0), self.heads, -1)
         return (x_j * q.view(-1, self.heads, 1)).sum(dim=1)
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

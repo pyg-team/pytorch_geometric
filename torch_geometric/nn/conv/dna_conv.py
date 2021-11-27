@@ -15,7 +15,7 @@ from ..inits import uniform, kaiming_uniform
 
 class Linear(torch.nn.Module):
     def __init__(self, in_channels, out_channels, groups=1, bias=True):
-        super(Linear, self).__init__()
+        super().__init__()
         assert in_channels % groups == 0 and out_channels % groups == 0
 
         self.in_channels = in_channels
@@ -56,10 +56,9 @@ class Linear(torch.nn.Module):
 
         return out
 
-    def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, groups={})'.format(self.__class__.__name__,
-                                              self.in_channels,
-                                              self.out_channels, self.groups)
+    def __repr__(self) -> str:  # pragma: no cover
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, groups={self.groups})')
 
 
 def restricted_softmax(src, dim: int = -1, margin: float = 0.):
@@ -71,7 +70,7 @@ def restricted_softmax(src, dim: int = -1, margin: float = 0.):
 
 class Attention(torch.nn.Module):
     def __init__(self, dropout=0):
-        super(Attention, self).__init__()
+        super().__init__()
         self.dropout = dropout
 
     def forward(self, query, key, value):
@@ -95,14 +94,14 @@ class Attention(torch.nn.Module):
 
         return torch.matmul(score, value)
 
-    def __repr__(self):  # pragma: no cover
-        return '{}(dropout={})'.format(self.__class__.__name__, self.dropout)
+    def __repr__(self) -> str:  # pragma: no cover
+        return f'{self.__class__.__name__}(dropout={self.dropout})'
 
 
 class MultiHead(Attention):
     def __init__(self, in_channels, out_channels, heads=1, groups=1, dropout=0,
                  bias=True):
-        super(MultiHead, self).__init__(dropout)
+        super().__init__(dropout)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -163,10 +162,11 @@ class MultiHead(Attention):
 
         return out
 
-    def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, heads={}, groups={}, dropout={}, bias={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.heads, self.groups, self.dropout, self.bias)
+    def __repr__(self) -> str:  # pragma: no cover
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'groups={self.groups}, dropout={self.droput}, '
+                f'bias={self.bias})')
 
 
 class DNAConv(MessagePassing):
@@ -230,7 +230,7 @@ class DNAConv(MessagePassing):
                  normalize: bool = True, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(DNAConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached
@@ -293,7 +293,7 @@ class DNAConv(MessagePassing):
         out = self.multi_head(x_i, x_j, x_j)  # [num_edges, 1, channels]
         return edge_weight.view(-1, 1) * out.squeeze(1)
 
-    def __repr__(self):
-        return '{}({}, heads={}, groups={})'.format(
-            self.__class__.__name__, self.multi_head.in_channels,
-            self.multi_head.heads, self.multi_head.groups)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.multi_head.in_channels}, '
+                f'heads={self.multi_head.heads}, '
+                f'groups={self.multi_head.groups})')

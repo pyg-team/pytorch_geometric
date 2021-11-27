@@ -51,7 +51,7 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
     if start_epoch == cfg.optim.max_epoch:
         logging.info('Checkpoint found, Task already done')
     else:
-        logging.info('Start from epoch {}'.format(start_epoch))
+        logging.info('Start from epoch %s', start_epoch)
 
     num_splits = len(loggers)
     for cur_epoch in range(start_epoch, cfg.optim.max_epoch):
@@ -68,7 +68,7 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
     if cfg.train.ckpt_clean:
         clean_ckpt()
 
-    logging.info('Task done, results saved in {}'.format(cfg.run_dir))
+    logging.info('Task done, results saved in %s', cfg.run_dir)
 
 
 register_train('example', train_example)

@@ -19,15 +19,15 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, num_classes):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = XConv(0, 48, dim=3, kernel_size=8, hidden_channels=32)
-        self.conv2 = XConv(
-            48, 96, dim=3, kernel_size=12, hidden_channels=64, dilation=2)
-        self.conv3 = XConv(
-            96, 192, dim=3, kernel_size=16, hidden_channels=128, dilation=2)
-        self.conv4 = XConv(
-            192, 384, dim=3, kernel_size=16, hidden_channels=256, dilation=2)
+        self.conv2 = XConv(48, 96, dim=3, kernel_size=12, hidden_channels=64,
+                           dilation=2)
+        self.conv3 = XConv(96, 192, dim=3, kernel_size=16, hidden_channels=128,
+                           dilation=2)
+        self.conv4 = XConv(192, 384, dim=3, kernel_size=16,
+                           hidden_channels=256, dilation=2)
 
         self.lin1 = Lin(384, 256)
         self.lin2 = Lin(256, 128)

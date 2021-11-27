@@ -34,8 +34,10 @@ def test_hgt_conv_same_dimensions():
     assert out_dict1['author'].size() == (4, 16)
     assert out_dict1['paper'].size() == (6, 16)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
 
     # TODO: Test JIT functionality. We need to wait on this one until PyTorch
     # allows indexing `ParameterDict` mappings :(
@@ -75,8 +77,10 @@ def test_hgt_conv_different_dimensions():
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
 
 
 def test_hgt_conv_lazy():
@@ -110,5 +114,8 @@ def test_hgt_conv_lazy():
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)

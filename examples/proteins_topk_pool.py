@@ -19,7 +19,7 @@ train_loader = DataLoader(train_dataset, batch_size=60)
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GraphConv(dataset.num_features, 128)
         self.pool1 = TopKPooling(128, ratio=0.8)
@@ -92,5 +92,5 @@ for epoch in range(1, 201):
     loss = train(epoch)
     train_acc = test(train_loader)
     test_acc = test(test_loader)
-    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.5f}, Test Acc: {:.5f}'.
-          format(epoch, loss, train_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.5f}, Train Acc: {train_acc:.5f}, '
+          f'Test Acc: {test_acc:.5f}')

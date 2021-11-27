@@ -75,7 +75,7 @@ class CoraFull(CitationFull):
         super().__init__(root, 'cora', transform, pre_transform)
 
     def download(self):
-        super(CoraFull, self).download()
+        super().download()
 
     def process(self):
-        super(CoraFull, self).process()
+        super().process()

@@ -105,7 +105,7 @@ class Planetoid(InMemoryDataset):
 
     def download(self):
         for name in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, name), self.raw_dir)
+            download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)

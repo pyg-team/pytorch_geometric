@@ -24,7 +24,7 @@ test_loader = DataLoader(test_idx, batch_size=32 * 1024)
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.lins = torch.nn.ModuleList()
         for _ in range(K + 1):

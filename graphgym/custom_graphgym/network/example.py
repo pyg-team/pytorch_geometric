@@ -11,7 +11,7 @@ from torch_geometric.graphgym.register import register_network
 
 class ExampleGNN(torch.nn.Module):
     def __init__(self, dim_in, dim_out, num_layers=2, model_type='GCN'):
-        super(ExampleGNN, self).__init__()
+        super().__init__()
         conv_model = self.build_conv_model(model_type)
         self.convs = nn.ModuleList()
         self.convs.append(conv_model(dim_in, dim_in))
@@ -30,7 +30,7 @@ class ExampleGNN(torch.nn.Module):
         elif model_type == "GraphSage":
             return pyg_nn.SAGEConv
         else:
-            raise ValueError("Model {} unavailable".format(model_type))
+            raise ValueError(f'Model {model_type} unavailable')
 
     def forward(self, batch):
         x, edge_index = batch.x, batch.edge_index

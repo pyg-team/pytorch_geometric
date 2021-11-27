@@ -124,7 +124,7 @@ class MetaPath2Vec(torch.nn.Module):
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
         :obj:`node_type`."""
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
         r"""Returns the data loader that creates both positive and negative

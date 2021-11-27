@@ -19,7 +19,7 @@ from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
 class GIN(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels, num_layers=3,
                  dropout=0.5):
-        super(GIN, self).__init__()
+        super().__init__()
 
         self.dropout = dropout
 

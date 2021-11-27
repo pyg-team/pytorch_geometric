@@ -37,7 +37,7 @@ class ClusterGCNConv(MessagePassing):
                  diag_lambda: float = 0., add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ClusterGCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -94,8 +94,6 @@ class ClusterGCNConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, diag_lambda={})'.format(self.__class__.__name__,
-                                                   self.in_channels,
-                                                   self.out_channels,
-                                                   self.diag_lambda)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, diag_lambda={self.diag_lambda})')

@@ -76,7 +76,7 @@ class EGConv(MessagePassing):
                  aggregators: List[str] = ["symnorm"], num_heads: int = 8,
                  num_bases: int = 4, cached: bool = False,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
-        super(EGConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
             raise ValueError(
@@ -235,8 +235,6 @@ class EGConv(MessagePassing):
 
         return torch.stack(outs, dim=1) if len(outs) > 1 else outs[0]
 
-    def __repr__(self):
-        return '{}({}, {}, aggregators={})'.format(self.__class__.__name__,
-                                                   self.in_channels,
-                                                   self.out_channels,
-                                                   self.aggregators)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggregators={self.aggregators})')

@@ -83,8 +83,9 @@ class GCNConv(MessagePassing):
     Its node-wise formulation is given by:
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \sum_{j \in \mathcal{N}(v) \cup
-        \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j \hat{d}_i}} \mathbf{x}_j
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
     :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
@@ -123,7 +124,7 @@ class GCNConv(MessagePassing):
                  bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(GCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -194,7 +195,3 @@ class GCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

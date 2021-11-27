@@ -41,5 +41,5 @@ class KNNGraph(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(k={})'.format(self.__class__.__name__, self.k)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(k={self.k})'

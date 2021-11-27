@@ -18,7 +18,7 @@ data = dataset[0]
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = SplineConv(dataset.num_features, 16, dim=1, kernel_size=2)
         self.conv2 = SplineConv(16, dataset.num_classes, dim=1, kernel_size=2)
 
@@ -56,5 +56,5 @@ def test():
 
 for epoch in range(1, 201):
     train()
-    log = 'Epoch: {:03d}, Train: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, *test()))
+    train_acc, test_acc = test()
+    print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Test: {test_acc:.4f}')

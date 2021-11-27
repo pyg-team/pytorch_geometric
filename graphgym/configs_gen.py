@@ -119,10 +119,9 @@ def exclude_list_id(list, id):
 
 
 def gen_grid(args, config, config_budget={}):
-    task_name = '{}_grid_{}'.format(get_fname(args.config),
-                                    get_fname(args.grid))
+    task_name = f'{get_fname(args.config)}_grid_{get_fname(args.grid)}'
     fname_start = get_fname(args.config)
-    out_dir = '{}/{}'.format(args.out_dir, task_name)
+    out_dir = f'{args.out_dir}/{task_name}'
     makedirs_rm_exist(out_dir)
     config['out_dir'] = os.path.join(config['out_dir'], task_name)
 
@@ -132,8 +131,8 @@ def gen_grid(args, config, config_budget={}):
         vars_alias = [row[1] for row in out]
         vars_value = grid2list([string_to_python(row[2]) for row in out])
         if i == 0:
-            print('Variable label: {}'.format(vars_label))
-            print('Variable alias: {}'.format(vars_alias))
+            print(f'Variable label: {vars_label}')
+            print(f'Variable alias: {vars_alias}')
 
         for vars in vars_value:
             config_out = config.copy()
@@ -150,21 +149,19 @@ def gen_grid(args, config, config_budget={}):
                         }
                 else:
                     raise ValueError('Only 2-level config files are supported')
-                fname_out += '-{}={}'.format(vars_alias[id],
-                                             str(var).strip("[]").strip("''"))
+                var_repr = str(var).strip("[]").strip("''")
+                fname_out += f'-{vars_alias[id]}={var_repr}'
             if len(config_budget) > 0:
                 config_out = match_baseline_cfg(config_out, config_budget)
-            with open('{}/{}.yaml'.format(out_dir, fname_out), "w") as f:
+            with open(f'{out_dir}/{fname_out}.yaml', 'w') as f:
                 yaml.dump(config_out, f, default_flow_style=False)
-        print('{} configurations saved to: {}'.format(len(vars_value),
-                                                      out_dir))
+        print(f'{len(vars_value)} configurations saved to: {out_dir}')
 
 
 def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
-    task_name = '{}_grid_{}'.format(get_fname(args.config),
-                                    get_fname(args.grid))
+    task_name = f'{get_fname(args.config)}_grid_{get_fname(args.grid)}'
     fname_start = get_fname(args.config)
-    out_dir = '{}/{}'.format(args.out_dir, task_name)
+    out_dir = f'{args.out_dir}/{task_name}'
     makedirs_rm_exist(out_dir)
     config['out_dir'] = os.path.join(config['out_dir'], task_name)
     outs = load_search_file(args.grid)
@@ -187,8 +184,8 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
         vars_label = [row[0].split('.') for row in out]
         vars_alias = [row[1] for row in out]
         if i == 0:
-            print('Variable label: {}'.format(vars_label))
-            print('Variable alias: {}'.format(vars_alias))
+            print(f'Variable label: {vars_label}')
+            print(f'Variable alias: {vars_alias}')
         vars_grid = [string_to_python(row[2]) for row in out]
         for alias in compare_alias_list:
             alias_id = vars_alias.index(alias)
@@ -206,8 +203,7 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
             vars_grid[alias_id] = vars_grid_select
             for vars in vars_value:
                 config_out = config.copy()
-                fname_out = fname_start + '-sample={}'.format(
-                    vars_alias[alias_id])
+                fname_out = fname_start + f'-sample={vars_alias[alias_id]}'
                 for id, var in enumerate(vars):
                     if len(vars_label[id]) == 1:
                         config_out[vars_label[id][0]] = var
@@ -222,17 +218,16 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
                     else:
                         raise ValueError(
                             'Only 2-level config files are supported')
-                    fname_out += '-{}={}'.format(
-                        vars_alias[id],
-                        str(var).strip("[]").strip("''"))
+                    var_repr = str(var).strip("[]").strip("''")
+                    fname_out += f'-{vars_alias[id]}={var_repr}'
                 if len(config_budget) > 0:
                     config_out = match_baseline_cfg(config_out, config_budget,
                                                     verbose=False)
-                with open('{}/{}.yaml'.format(out_dir, fname_out), "w") as f:
+                with open(f'{out_dir}/{fname_out}.yaml', "w") as f:
                     yaml.dump(config_out, f, default_flow_style=False)
-            print('Chunk {}/{}: Perturbing design dimension {}, '
-                  '{} configurations saved to: {}'.format(
-                      i + 1, len(outs), alias, len(vars_value), out_dir))
+            print(f'Chunk {i + 1}/{len(outs)}: '
+                  f'Perturbing design dimension {alias}, '
+                  f'{len(vars_value)} configurations saved to: {out_dir}')
 
 
 args = parse_args()

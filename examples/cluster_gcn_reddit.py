@@ -20,7 +20,7 @@ subgraph_loader = NeighborSampler(data.edge_index, sizes=[-1], batch_size=1024,
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
         self.convs = ModuleList(
             [SAGEConv(in_channels, 128),
              SAGEConv(128, out_channels)])

@@ -41,7 +41,7 @@ class WikipediaNetwork(InMemoryDataset):
 
     raw_url = 'https://graphmining.ai/datasets/ptg/wiki'
     processed_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
-                     'geom-gcn/master')
+                     'geom-gcn/f1fc0d14b3b019c562737240d06ec83b07d16a8f')
 
     def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = True,
                  transform: Optional[Callable] = None,

@@ -67,7 +67,7 @@ class CorrectAndSmooth(torch.nn.Module):
     def __init__(self, num_correction_layers: int, correction_alpha: float,
                  num_smoothing_layers: int, smoothing_alpha: float,
                  autoscale: bool = True, scale: float = 1.0):
-        super(CorrectAndSmooth, self).__init__()
+        super().__init__()
         self.autoscale = autoscale
         self.scale = scale
 
