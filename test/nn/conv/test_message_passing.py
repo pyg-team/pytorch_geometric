@@ -42,6 +42,9 @@ class MyConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
+    def edge_message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+        return x_i + x_j
+
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
@@ -64,6 +67,10 @@ def test_my_conv():
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = True
+
+    out_edge = conv.edge_update(edge_index, x=x1)
+    print(out_edge.shape)
+    assert out_edge.size() == (4, 8)
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))

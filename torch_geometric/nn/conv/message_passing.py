@@ -393,7 +393,6 @@ class MessagePassing(torch.nn.Module):
 
             coll_dict = self.__collect__(self.__user_args__, edge_index,
                                             size, kwargs)
-            print(coll_dict.keys())
             msg_kwargs = self.inspector.distribute('edge_message', coll_dict)
             out = self.edge_message(**msg_kwargs)
 
