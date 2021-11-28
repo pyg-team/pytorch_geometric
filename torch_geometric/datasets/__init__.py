@@ -68,6 +68,8 @@ from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
 from .email_eu_core import EmailEUCore
+from .stochastic_blockmodel_dataset import StochasticBlockModelDataset
+from .stochastic_blockmodel_dataset import RandomPartitionGraphDataset
 
 __all__ = [
     'KarateClub',
@@ -142,6 +144,8 @@ __all__ = [
     'OMDB',
     'PolBlogs',
     'EmailEUCore',
+    'StochasticBlockModelDataset',
+    'RandomPartitionGraphDataset',
 ]
 
 classes = __all__
