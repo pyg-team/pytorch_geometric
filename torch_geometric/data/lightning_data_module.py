@@ -14,6 +14,36 @@ except (ImportError, ModuleNotFoundError):
 
 
 class LightningDataset(LightningDataModule):
+    r"""Converts a :class:`torch_geometric.data.Dataset` into a
+    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    automatically used as a :obj:`data_module` for multi-GPU training via
+    `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    :class:`LightningDataset` will take care of providing mini-batches via
+    :class:`torch_geometric.loader.DataLoader`.
+
+    .. note::
+
+        Currently only supports the :obj:`"ddp_spawn" training strategy of
+        PyTorch Lightning:
+
+        .. code-block::
+
+            import pytorch_lightning as pl
+            trainer = pl.Trainer(strategy='ddp_spawn')
+
+    Args:
+        train_dataset: (Dataset) The training dataset.
+        val_dataset: (Dataset) The validation dataset.
+        test_dataset: (Dataset, optional) The test dataset (if given).
+            (default: :obj:`None`)
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        num_workers: How many subprocesses to use for data loading.
+            :obj:`0` means that the data will be loaded in the main process.
+            (default: :obj:`0`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric..loader.DataLoader`.
+    """
     def __init__(self, train_dataset: Dataset, val_dataset: Dataset,
                  test_dataset: Optional[Dataset] = None, batch_size: int = 1,
                  num_workers: int = 0, **kwargs):
