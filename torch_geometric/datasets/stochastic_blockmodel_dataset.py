@@ -68,19 +68,12 @@ class StochasticBlockModelDataset(InMemoryDataset):
                f'-{self.edge_probs.tolist()}'
 
     @property
-    def raw_dir(self):
-        return os.path.join(self.root, self.__class__.__name__, 'raw')
-                            self.name, 'raw')
-
-    @property
     def processed_dir(self):
-        return os.path.join(self.root, self.__class__.__name__,
-                            self.name, 'processed')
+        return os.path.join(self.root, self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self):
         return f'{self.name}.pt'
-        return 'data.pt'
 
     def process(self):
         edge_index = stochastic_blockmodel_graph(
@@ -171,10 +164,6 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         return f'rpg-{self.num_channels}-{self._num_classes}' \
                f'-{self.num_nodes_per_class}-{self.node_homophily_ratio}' \
                f'-{self.average_degree}'
-
-    @property
-    def processed_file_names(self):
-        return 'data.pt'
 
     def process(self):
         return super().process()
