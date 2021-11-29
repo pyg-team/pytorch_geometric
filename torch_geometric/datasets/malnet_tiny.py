@@ -7,6 +7,7 @@ import os.path as osp
 import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
+from torch_geometric.utils import remove_isolated_nodes
 
 
 class MalNetTiny(InMemoryDataset):
@@ -14,7 +15,7 @@ class MalNetTiny(InMemoryDataset):
     `"A Large-Scale Database for Graph Representation Learning"
     <https://openreview.net/pdf?id=1xDTDk3XPW>`_ paper.
     :class:`MalNetTiny` contains 5,000 malicious and benign software function
-    call graphs across 5 different types.
+    call graphs across 5 different types. Each graph contains at most 5k nodes.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -64,8 +65,10 @@ class MalNetTiny(InMemoryDataset):
             for filename in filenames:
                 with open(filename, 'r') as f:
                     edges = f.read().split('\n')[5:-1]
-                edge_index = [[int(edge[0]), int(edge[-1])] for edge in edges]
+                edge_index = [[int(s) for s in edge.split()] for edge in edges]
                 edge_index = torch.tensor(edge_index).t().contiguous()
+                # Remove isolated nodes, including those with only a self-loop
+                edge_index = remove_isolated_nodes(edge_index)[0]
                 num_nodes = int(edge_index.max()) + 1
                 data = Data(edge_index=edge_index, y=y, num_nodes=num_nodes)
                 data_list.append(data)
