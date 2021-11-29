@@ -67,6 +67,8 @@ class MalNetTiny(InMemoryDataset):
                     edges = f.read().split('\n')[5:-1]
                 edge_index = [[int(s) for s in edge.split()] for edge in edges]
                 edge_index = torch.tensor(edge_index).t().contiguous()
+                # Remove isolated nodes, including those with only a self-loop
+                edge_index = remove_isolated_nodes(edge_index)[0]
                 num_nodes = int(edge_index.max()) + 1
                 data = Data(edge_index=edge_index, y=y, num_nodes=num_nodes)
                 data_list.append(data)
