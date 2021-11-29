@@ -85,7 +85,7 @@ class LightningDataset(LightningDataModule):
         if not isinstance(self.trainer.training_type_plugin, DDPSpawnPlugin):
             raise NotImplementedError(
                 f"'{self.__class__.__name__}' currently only supports the "
-                f"'ddp_spawn' training strategy of 'pyTorch_lightning'")
+                f"'ddp_spawn' training strategy of 'pytorch_lightning'")
 
     def dataloader(self, dataset_name: str, shuffle: bool) -> DataLoader:
         return DataLoader(
