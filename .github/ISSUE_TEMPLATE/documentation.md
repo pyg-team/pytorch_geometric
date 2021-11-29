@@ -1,5 +1,5 @@
 ---
-name: "Typos and Doc Fixes"
+name: "\U0001F4DA Typos and Doc Fixes"
 about: "Tell us about how we can improve our documentation"
 title: ""
 labels: documentation
