@@ -16,13 +16,20 @@ class LightningDataset(pl.LightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
+        print(self.trainer)
         print("PREPARE DATA")
 
     def setup(self, stage: Optional[str] = None):
-        print("SETUP", stage)
+        if not isinstance(self.trainer.training_type_plugin,
+                          pl.plugins.DDPSpawnPlugin):
+            raise NotImplementedError
 
     def train_dataloader(self):
         print("TRAIN DATALOADER")
+        x = self.train_dataset.data.x[0]
+        x.add_(1)
+        print(x)
+        print(x.is_shared())
         # TODO: shuffle=True
         # TODO: pin_memory=True?
         loader = DataLoader(self.train_dataset, **self.kwargs)

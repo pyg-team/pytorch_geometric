@@ -61,9 +61,10 @@ def test_lightning_dataset():
     model = LinearModule(dataset.num_features, 64, dataset.num_classes)
 
     trainer = pl.Trainer(
-        gpus=1,
+        gpus=2,
         max_epochs=5,
-        strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
+        strategy='ddp_spawn',
+        # strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
     trainer.fit(model, data_module)
 
