@@ -68,7 +68,7 @@ from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
 from .email_eu_core import EmailEUCore
-from .stochastic_blockmodel_dataset import StochasticBlockModelDataset
+from .sbm_dataset import StochasticBlockModelDataset, RandomPartitionGraphDataset
 from .stochastic_blockmodel_dataset import RandomPartitionGraphDataset
 
 __all__ = [
