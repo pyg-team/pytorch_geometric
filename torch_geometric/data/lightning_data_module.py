@@ -34,7 +34,8 @@ class LightningDataset(LightningDataModule):
         if 'shuffle' in kwargs:
             shuffle = kwargs['shuffle']
             warnings.warn(f"The 'shuffle={shuffle}' option is ignored in "
-                          f"'{self.__class__.__name__}'")
+                          f"'{self.__class__.__name__}'. Remove it from the "
+                          f"argument list disable this warning")
             del kwargs['shuffle']
 
         if 'pin_memory' in kwargs:
@@ -52,11 +53,11 @@ class LightningDataset(LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         from pytorch_lightning.plugins import DDPSpawnPlugin
         if not isinstance(self.trainer.training_type_plugin, DDPSpawnPlugin):
-            raise NotImplementedError
+            raise NotImplementedError(
+                f"'{self.__class__.__name__}' currently only supports the "
+                f"'ddp_spawn' training strategy of 'pyTorch_lightning'")
 
     def dataloader(self, dataset_name: str, shuffle: bool) -> DataLoader:
-        from torch.utils.data import IterableDataset
-        shuffle &= not isinstance(self.train_dataset, IterableDataset)
         return DataLoader(
             dataset=getattr(self, dataset_name),
             batch_size=self.batch_size,
@@ -68,7 +69,9 @@ class LightningDataset(LightningDataModule):
         )
 
     def train_dataloader(self) -> DataLoader:
-        return self.dataloader('train_dataset', shuffle=True)
+        from torch.utils.data import IterableDataset
+        shuffle = not isinstance(self.train_dataset, IterableDataset)
+        return self.dataloader('train_dataset', shuffle=shuffle)
 
     def val_dataloader(self) -> DataLoader:
         return self.dataloader('val_dataset', shuffle=False)
