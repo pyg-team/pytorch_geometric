@@ -26,7 +26,6 @@ class LinearModule(LightningModule):
 
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
 
     def forward(self, x, batch):
         x = self.lin1(x).relu()
@@ -46,11 +45,6 @@ class LinearModule(LightningModule):
         y_hat = self(data.x, data.batch)
         self.val_acc(y_hat.softmax(dim=-1), data.y)
         self.log('val_acc', self.val_acc, batch_size=data.num_graphs)
-
-    def test_step(self, data, batch_idx):
-        y_hat = self(data.x, data.batch)
-        self.test_acc(y_hat.softmax(dim=-1), data.y)
-        self.log('test_acc', self.test_acc, batch_size=data.num_graphs)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
