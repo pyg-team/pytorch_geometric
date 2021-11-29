@@ -69,7 +69,6 @@ from .omdb import OMDB
 from .polblogs import PolBlogs
 from .email_eu_core import EmailEUCore
 from .sbm_dataset import StochasticBlockModelDataset, RandomPartitionGraphDataset
-from .stochastic_blockmodel_dataset import RandomPartitionGraphDataset
 
 __all__ = [
     'KarateClub',
