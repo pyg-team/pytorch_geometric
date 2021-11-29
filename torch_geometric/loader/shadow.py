@@ -14,6 +14,12 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
     localized subgraphs.
     A deep GNN on this local graph then smooths the informative local signals.
 
+    .. note::
+
+        For an example of using :class:`ShaDowKHopSampler`, see
+        `examples/shadow.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/shadow.py>`_.
+
     Args:
         data (torch_geometric.data.Data): The graph data object.
         depth (int): The depth/number of hops of the localized subgraph.
