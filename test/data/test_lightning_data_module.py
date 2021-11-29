@@ -1,17 +1,26 @@
+import pytest
+
 import torch
 import torch.nn.functional as F
 
-import pytorch_lightning as pl
-from torchmetrics import Accuracy
-
+from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.data import LightningDataset
-from torch_geometric.datasets import Planetoid, TUDataset
+
+try:
+    from pytorch_lightning import LightningModule
+    no_pytorch_lightning = False
+except (ImportError, ModuleNotFoundError):
+    LightningModule = torch.nn.Module
+    no_pytorch_lightning = True
 
 
-class LinearModule(pl.LightningModule):
+class LinearModule(LightningModule):
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
+
+        from torchmetrics import Accuracy
+
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
@@ -47,25 +56,24 @@ class LinearModule(pl.LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_lightning_dataset():
-    dataset = Planetoid('/tmp/Planetoid', name='Cora')
-    # data_module = LightningDataModule(dataset, loader='NeighborLoader')
+    import pytorch_lightning as pl
 
     dataset = TUDataset('/tmp/TUDataset', name='MUTAG').shuffle()
     train_dataset = dataset[:50]
-    val_dataset = dataset[50:100]
-    test_dataset = dataset[100:150]
+    val_dataset = dataset[50:60]
+    test_dataset = dataset[60:70]
 
     data_module = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                   num_workers=2, persistent_workers=True)
+                                   batch_size=5, num_workers=2)
     model = LinearModule(dataset.num_features, 64, dataset.num_classes)
 
     trainer = pl.Trainer(
-        gpus=2,
-        max_epochs=5,
-        strategy='ddp_spawn',
-        # strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
+        gpus=torch.cuda.device_count(),
+        max_epochs=1,
+        log_every_n_steps=1,
+        strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
     trainer.fit(model, data_module)
-
-    pass
