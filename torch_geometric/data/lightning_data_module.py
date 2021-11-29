@@ -65,7 +65,7 @@ class LightningDataset(LightningDataModule):
             shuffle = kwargs['shuffle']
             warnings.warn(f"The 'shuffle={shuffle}' option is ignored in "
                           f"'{self.__class__.__name__}'. Remove it from the "
-                          f"argument list disable this warning")
+                          f"argument list to disable this warning")
             del kwargs['shuffle']
 
         if 'pin_memory' in kwargs:
