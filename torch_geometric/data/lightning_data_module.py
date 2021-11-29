@@ -23,18 +23,18 @@ class LightningDataset(LightningDataModule):
 
     .. note::
 
-        Currently only supports the :obj:`"ddp_spawn" training strategy of
+        Currently only supports the :obj:`"ddp_spawn"` training strategy of
         PyTorch Lightning:
 
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy='ddp_spawn')
+            trainer = pl.Trainer(strategy="ddp_spawn')
 
     Args:
         train_dataset: (Dataset) The training dataset.
         val_dataset: (Dataset) The validation dataset.
-        test_dataset: (Dataset, optional) The test dataset (if given).
+        test_dataset: (Dataset, optional) The test dataset.
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
