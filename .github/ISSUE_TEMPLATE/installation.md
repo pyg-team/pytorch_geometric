@@ -1,12 +1,12 @@
 ---
-name: "\U0001F4DA Installation"
+name: "\U0001F635 Installation"
 about: "Report an installation problem"
 title: ""
 labels: installation
 assignees: ""
 ---
 
-## 😫 Installation
+## 😵 Installation
 
 <!-- A clear and concise description of the installation error. If you have installation log files, please provide it here as well -->
 

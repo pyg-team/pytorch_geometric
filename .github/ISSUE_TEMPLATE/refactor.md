@@ -1,12 +1,12 @@
 ---
-name: "Refactor"
+name: "\U0001F6E0 Refactor"
 about: "Suggest a code refactor or deprecation"
 title: ""
 labels: refactor
 assignees: ""
 ---
 
-## 🛠️ Proposed Refactor
+## 🛠  Proposed Refactor
 
 <!-- A clear and concise description of the refactor -->
 
