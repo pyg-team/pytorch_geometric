@@ -32,7 +32,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
                 as :obj:`None`, node features are not generated.
             is_undirected (bool): Whether the graph to generate is undirected.
             **kwargs (optional): The keyword arguments that are passed down
-                to :obj:`'sklearn.datasets.make_classification'` method in
+                to :meth:`sklearn.datasets.make_classification` method in
                 drawing node features.
             transform (callable, optional): A function/transform that takes in
                 an :obj:`torch_geometric.data.Data` object and returns a
