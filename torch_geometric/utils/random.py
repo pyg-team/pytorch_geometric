@@ -49,9 +49,9 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
 
     size, prob = block_sizes, edge_probs
 
-    if not torch.is_tensor(size):
+    if not isinstance(size, torch.Tensor):
         size = torch.tensor(size, dtype=torch.long)
-    if not torch.is_tensor(prob):
+    if not isinstance(prob, torch.Tensor):
         prob = torch.tensor(prob, dtype=torch.float)
 
     assert size.dim() == 1

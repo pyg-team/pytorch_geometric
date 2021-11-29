@@ -108,7 +108,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
     and the average degree, and each community is considered as a class.
     The node features are sampled from normal distributions where the
     centers of clusters are vertices of a hypercube by
-    :obj:`'sklearn.datasets.make_classification'` method.
+    :meth:`sklearn.datasets.make_classification` method.
 
     Args:
         root (string): Root directory where the dataset should be saved.
