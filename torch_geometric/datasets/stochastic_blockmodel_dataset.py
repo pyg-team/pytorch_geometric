@@ -43,7 +43,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
                 transformed version. The data object will be transformed
                 before being saved to disk. (default: :obj:`None`)
         """
-        if not torch.is_tensor(block_sizes):
+        if not isinstance(block_sizes, torch.Tensor):
             block_sizes = torch.tensor(block_sizes, dtype=torch.long)
         if not torch.is_tensor(edge_probs):
             edge_probs = torch.tensor(edge_probs, dtype=torch.float)
