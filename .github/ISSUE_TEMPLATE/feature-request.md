@@ -1,18 +1,25 @@
 ---
 name: "\U0001F680 Feature Request"
-about: Submit a proposal/request for a new PyTorch Geometric feature
+about: "Propose a new feature
+title: ""
+labels: feature
+assignees: ""
 ---
-
-<!-- From now on, we recommend using our discussion forum (https://github.com/pyg-team/pytorch_geometric/discussions) for proposing new features. -->
 
 ## 🚀 Feature
 
-<!-- A clear and concise description of the feature proposal. Please provide a link to the paper and code in case they exist. -->
+<!-- A clear and concise description of the feature proposal -->
 
-## Motivation
+### Motivation
 
-<!-- Please outline the motivation for the proposal. Is your feature request related to a problem? e.g., I'm always frustrated when [...]. If this is related to another GitHub issue, please link here too. -->
+<!-- Please outline the motivation for the proposal -->
+<!-- Is your feature request related to a problem? -->
+<!-- If your feature is related to another GitHub issue, please link it here -->
 
-## Additional context
+### Pitch
 
-<!-- Add any other context or screenshots about the feature request here. -->
+<!-- A clear and concise description of what you want to happen -->
+
+### Additional context
+
+<!-- Add any other context or screenshots about the feature request here -->

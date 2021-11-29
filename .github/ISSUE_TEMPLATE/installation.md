@@ -1,29 +1,25 @@
 ---
 name: "\U0001F4DA Installation"
-about: Report an installation problem with PyTorch Geometric
+about: "Report an installation problem"
+title: ""
+labels: installation
+assignees: ""
 ---
 
-## 📚 Installation
+## 😫 Installation
 
-<!-- A clear and concise description of the installation error. If you have installation log file, please provide it here as well. -->
+<!-- A clear and concise description of the installation error. If you have installation log files, please provide it here as well -->
 
-## Environment
+### Environment
 
-* OS:
-* Python version:
-* PyTorch version:
+* PyG version (`torch_geometric.__version__`):
+* PyTorch version: (`torch.__version__`):
+* OS (*e.g.*, Linux):
+* Python version (*e.g.*, `3.9`):
 * CUDA/cuDNN version:
-* GCC version:
-* How did you try to install PyTorch Geometric and its extensions (wheel, source):
-* Any other relevant information:
+* How you installed PyTorch and PyG (`conda`, `pip`, source):
+* Any other relevant information (*e.g.*, version of `torch-scatter`):
 
-## Checklist
+### Additional context
 
-- [ ] I followed the [installation guide](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html).
-- [ ] I cannot find my error message in the [FAQ](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#id1).
-- [ ] I set up CUDA correctly and can compile CUDA code via `nvcc`.
-- [ ] I do have multiple CUDA versions on my machine.
-
-## Additional context
-
-<!-- Add any other context about the problem here. -->
+<!-- Add any other context about the problem here -->
