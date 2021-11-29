@@ -1,35 +1,33 @@
 ---
 name: "\U0001F41B Bug Report"
-about: Submit a bug report to help us improve PyTorch Geometric
+about: "Submit a bug report to help us improve"
+title: ""
+labels: bug
+assignees: ""
 ---
 
 ## 🐛 Bug
 
-<!-- A clear and concise description of what the bug is. -->
+<!-- A clear and concise description of the bug -->
 
-## To Reproduce
+### To Reproduce
 
-Steps to reproduce the behavior:
+<!-- A minimal example to reproduce the bug -->
 
-1.
-1.
-1.
+### Expected behavior
 
-<!-- If you have a code sample, error messages, stack traces, please provide it here as well. -->
+<!-- A clear and concise description of what you expected to happen -->
 
-## Expected behavior
+### Environment
 
-<!-- A clear and concise description of what you expected to happen. -->
-
-## Environment
-
-* OS:
-* Python version:
-* PyTorch version:
+* PyG version (`torch_geometric.__version__`):
+* PyTorch version: (`torch.__version__`):
+* OS (*e.g.*, Linux):
+* Python version (*e.g.*, `3.9`):
 * CUDA/cuDNN version:
-* GCC version:
-* Any other relevant information:
+* How you installed PyTorch and PyG (`conda`, `pip`, source):
+* Any other relevant information (*e.g.*, version of `torch-scatter`):
 
-## Additional context
+### Additional context
 
-<!-- Add any other context about the problem here. -->
+<!-- Add any other context about the problem here -->
