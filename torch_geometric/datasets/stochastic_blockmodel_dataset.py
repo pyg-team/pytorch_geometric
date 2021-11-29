@@ -79,6 +79,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self):
+        return f'{self.name}.pt'
         return 'data.pt'
 
     def process(self):
