@@ -69,7 +69,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return os.path.join(self.root, self.__class__.__name__,
+        return os.path.join(self.root, self.__class__.__name__, 'raw')
                             self.name, 'raw')
 
     @property
