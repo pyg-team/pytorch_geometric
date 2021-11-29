@@ -31,7 +31,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
             num_channels (int, optional): The number of node features. If given
                 as :obj:`None`, node features are not generated.
             is_undirected (bool): Whether the graph to generate is undirected.
-            x_kws (dict, optional): The keyword arguments that are passed down
+            **kwargs (optional): The keyword arguments that are passed down
                 to :obj:`'sklearn.datasets.make_classification'` method in
                 drawing node features.
             transform (callable, optional): A function/transform that takes in
