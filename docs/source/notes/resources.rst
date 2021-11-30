@@ -23,7 +23,7 @@ External Resources
 
 * Francesco Landolfi: **PyTorch Geometric Tutorial** [`PDF (0.4MB) <http://pages.di.unipi.it/citraro/files/slides/Landolfi_tutorial.pdf>`__]
 
-* Sachin Sharma: **How to Deploy (almost) any PyTorch Geometric model on Nvidia's Triton Inference Server with an Application to Amazon Product Recommendation and ArangoDB** [`Blog <https://sachinsharma9780.medium.com/how-to-deploy-almost-any-pytorch-geometric-model-on-nvidias-triton-inference-server-with-an-218d0c0c679c>`__]
+* Sachin Sharma: **How to Deploy (almost) any PyTorch Geometric Model on Nvidia's Triton Inference Server with an Application to Amazon Product Recommendation and ArangoDB** [`Blog <https://sachinsharma9780.medium.com/how-to-deploy-almost-any-pytorch-geometric-model-on-nvidias-triton-inference-server-with-an-218d0c0c679c>`__]
 
 * Amitoz Azad: **torch_pdegraph** - Solving PDEs on Graphs with PyTorch Geometric [`Devpost <https://devpost.com/software/gdfgddfd>`__, `GitHub <https://github.com/aGIToz/Pytorch_pdegraph>`__]
 
