@@ -68,6 +68,9 @@ def test_lightning_dataset():
 
     data_module = LightningDataset(train_dataset, val_dataset, test_dataset,
                                    batch_size=5, num_workers=2)
+    assert str(data_module) == (
+        'LightningDataset(train_dataset=MUTAG(50), val_dataset=MUTAG(10), '
+        'test_dataset=MUTAG(10), batch_size=5)')
     model = LinearModule(dataset.num_features, 64, dataset.num_classes)
 
     trainer = pl.Trainer(

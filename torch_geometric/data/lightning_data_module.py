@@ -108,3 +108,10 @@ class LightningDataset(LightningDataModule):
 
     def test_dataloader(self) -> DataLoader:
         return self.dataloader('test_dataset', shuffle=False)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}('
+                f'train_dataset={self.train_dataset}, '
+                f'val_dataset={self.val_dataset}, '
+                f'test_dataset={self.test_dataset}, '
+                f'batch_size={self.batch_size})')
