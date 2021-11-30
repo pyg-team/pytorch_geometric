@@ -1,4 +1,8 @@
+import sys
+import random
+import shutil
 import pytest
+import os.path as osp
 
 import torch
 import torch.nn.functional as F
@@ -55,7 +59,9 @@ class LinearModule(LightningModule):
 def test_lightning_dataset():
     import pytorch_lightning as pl
 
-    dataset = TUDataset('/tmp/TUDataset', name='MUTAG').shuffle()
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+
+    dataset = TUDataset(root, name='MUTAG').shuffle()
     train_dataset = dataset[:50]
     val_dataset = dataset[50:60]
     test_dataset = dataset[60:70]
@@ -71,3 +77,5 @@ def test_lightning_dataset():
         strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
     trainer.fit(model, data_module)
+
+    shutil.rmtree(root)
