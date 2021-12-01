@@ -7,9 +7,9 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import global_mean_pool
-from torch_geometric.data import LightningDataset
+from torch_geometric.datasets import TUDataset, Planetoid, DBLP
+from torch_geometric.data import LightningDataset, LightningNodeData
 
 try:
     from pytorch_lightning import LightningModule
@@ -57,6 +57,7 @@ class LinearModule(LightningModule):
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_lightning_dataset():
+    return
     import pytorch_lightning as pl
 
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
@@ -93,3 +94,34 @@ def test_lightning_dataset():
     trainer.fit(model, data_module)
     assert not trainer._data_connector._val_dataloader_source.is_defined()
     assert not trainer._data_connector._test_dataloader_source.is_defined()
+
+
+@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+def test_lightning_node_data():
+    import pytorch_lightning as pl
+
+    # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    root = '/tmp/dawdhhaiuad'
+    dataset = Planetoid(root, name='Cora')
+    data = dataset[0]
+    # shutil.rmtree(root)
+
+    data_module = LightningNodeData(data, loader='full', batch_size=5,
+                                    num_workers=2)
+    print(data_module)
+
+
+# @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
+# @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+# def test_lightning_hetero_node_data():
+#     import pytorch_lightning as pl
+
+#     # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+#     root = '/tmp/dawdhhaiuad2323'
+#     dataset = DBLP(root)
+#     data = dataset[0]
+#     # shutil.rmtree(root)
+
+#     data_module = LightningNodeData(data, batch_size=5, num_workers=2)
+#     # print(data_module)

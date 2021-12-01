@@ -1,9 +1,13 @@
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
+import copy
 import warnings
 
+import torch
+
+from torch_geometric.typing import OptTensor, NodeType
 from torch_geometric.data import Data, HeteroData, Dataset
-from torch_geometric.loader import DataLoader
+from torch_geometric.loader import DataLoader, NeighborLoader
 
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
@@ -15,6 +19,8 @@ except (ImportError, ModuleNotFoundError):
 
 class LightningDataModule(PLLightningDataModule):
     def __init__(self, has_val: bool, has_test: bool, **kwargs):
+        super().__init__()
+
         if no_pytorch_lightning:
             raise ModuleNotFoundError(
                 "No module named 'pytorch_lightning' found on this machine. "
@@ -47,10 +53,6 @@ class LightningDataModule(PLLightningDataModule):
                 f"'{self.__class__.__name__}' currently only supports the "
                 f"'ddp_spawn' training strategy of 'pytorch_lightning'")
 
-    def _kwargs_repr(self, **kwargs) -> str:
-        kwargs = [f'{k}={v}' for k, v in kwargs.items() if v is not None]
-        return ', '.join(kwargs)
-
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._kwargs_repr(**self.kwargs)})'
 
@@ -58,8 +60,8 @@ class LightningDataModule(PLLightningDataModule):
 class LightningDataset(LightningDataModule):
     r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
-    automatically used as a :obj:`data_module` for multi-GPU training via
-    `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    automatically used as a :obj:`data_module` for multi-GPU graph-level
+    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.DataLoader`.
 
@@ -124,19 +126,21 @@ class LightningDataset(LightningDataModule):
         return self.dataloader(self.test_dataset, shuffle=False)
 
     def __repr__(self) -> str:
-        kwargs_repr = self._kwargs_repr(train_dataset=self.train_dataset,
-                                        val_dataset=self.val_dataset,
-                                        test_dataset=self.test_dataset,
-                                        **self.kwargs)
-        return f'{self.__class__.__name__}({kwargs_repr})'
+        kwargs = kwargs_repr(train_dataset=self.train_dataset,
+                             val_dataset=self.val_dataset,
+                             test_dataset=self.test_dataset, **self.kwargs)
+        return f'{self.__class__.__name__}({kwargs})'
 
 
-class LightningData(LightningDataModule):
+InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+
+
+class LightningNodeData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
-    automatically used as a :obj:`data_module` for multi-GPU training via
-    `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    automatically used as a :obj:`data_module` for multi-GPU node-level
+    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.NeighborLoader`.
 
@@ -153,8 +157,8 @@ class LightningData(LightningDataModule):
 
     Args:
         data (Data or HeteroData):
-        loader (str, optional): The scalability technique to use
-            (:obj:`None`, :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        loader (str): The scalability technique to use (:obj:`"full",
+            `:obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -166,8 +170,114 @@ class LightningData(LightningDataModule):
     def __init__(
         self,
         data: Union[Data, HeteroData],
+        input_train_nodes: InputNodes = None,
+        input_val_nodes: InputNodes = None,
+        input_test_nodes: InputNodes = None,
+        loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+
+        assert loader in ['full', 'neighbor']
+
+        if input_train_nodes is None:
+            input_train_nodes = infer_input_nodes(data, split='train')
+
+        if input_val_nodes is None:
+            input_val_nodes = infer_input_nodes(data, split='val')
+
+        if input_val_nodes is None:
+            input_val_nodes = infer_input_nodes(data, split='valid')
+
+        if input_test_nodes is None:
+            input_test_nodes = infer_input_nodes(data, split='test')
+
+        if loader == 'full' and batch_size != 1:
+            warnings.warn(f"Re-setting 'batch_size' to '1' in "
+                          f"{self.__class__.__name__} for loader='full' "
+                          f"(got '{batch_size}')")
+            batch_size = 1
+
+        if loader == 'full' and num_workers != 0:
+            warnings.warn(f"Re-setting 'num_workers' to '1' in "
+                          f"{self.__class__.__name__} for loader='full' "
+                          f"(got '{num_workers}')")
+            num_workers = 0
+
+        if loader == 'full' and kwargs.get('pin_memory', False):
+            warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
+                          f"{self.__class__.__name__} for loader='full' "
+                          f"(got 'True')")
+            kwargs['pin_memory'] = False
+
+        super().__init__(
+            has_val=input_val_nodes is not None,
+            has_test=input_test_nodes is not None,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            **kwargs,
+        )
+
+        self.data = copy.copy(data)
+        if loader != 'full':
+            # self.data = self.data._csc()
+            pass
+        self.loader = loader
+        self.input_train_nodes = input_train_nodes
+        self.input_val_nodes = input_val_nodes
+        self.input_test_nodes = input_test_nodes
+
+    def dataloader(self, input_nodes: InputNodes) -> DataLoader:
+        if self.loader == 'full':
+            # TODO: Put data already on the device
+            return torch.utils.data.DataLoader([self.data], shuffle=False,
+                                               collate_fn=lambda xs: xs[0],
+                                               **self.kwargs)
+
+        if self.loader == 'neighbor':
+            return NeighborLoader(self.data, input_nodes=input_nodes,
+                                  shuffle=True, **self.kwargs)
+
         raise NotImplementedError
+
+    def train_dataloader(self) -> DataLoader:
+        return self.dataloader(self.input_train_nodes)
+
+    def val_dataloader(self) -> DataLoader:
+        return self.dataloader(self.input_val_nodes)
+
+    def test_dataloader(self) -> DataLoader:
+        return self.dataloader(self.input_test_nodes)
+
+    def __repr__(self) -> str:
+        kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
+        return f'{self.__class__.__name__}({kwargs})'
+
+
+def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
+    attr_name: Optional[str] = None
+    if f'{split}_mask' in data:
+        attr_name = f'{split}_mask'
+    elif f'{split}_idx' in data:
+        attr_name = f'{split}_idx'
+    elif f'{split}_index' in data:
+        attr_name = f'{split}_index'
+
+    if attr_name is None:
+        return None
+
+    if isinstance(data, Data):
+        return data[attr_name]
+    if isinstance(data, HeteroData):
+        input_nodes_dict = data.collect(attr_name)
+        if len(input_nodes_dict) != 1:
+            raise ValueError(f"Could not automatically determine the input "
+                             f"nodes of {data} since there exists multiple "
+                             f"types with attribute '{attr_name}'")
+        return list(input_nodes_dict.items())[0]
+    return None
+
+
+def kwargs_repr(**kwargs) -> str:
+    return ', '.join([f'{k}={v}' for k, v in kwargs.items() if v is not None])
