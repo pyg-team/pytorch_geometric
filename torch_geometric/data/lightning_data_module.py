@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 import warnings
 
-from torch_geometric.data import Dataset
+from torch_geometric.data import Data, HeteroData, Dataset
 from torch_geometric.loader import DataLoader
 
 try:
@@ -56,17 +56,18 @@ class LightningDataModule(PLLightningDataModule):
 
 
 class LightningDataset(LightningDataModule):
-    r"""Converts a :class:`torch_geometric.data.Dataset` into a
+    r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
     automatically used as a :obj:`data_module` for multi-GPU training via
     `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
-    :class:`torch_geometric.loader.DataLoader`.
+    :class:`~torch_geometric.loader.DataLoader`.
 
     .. note::
 
-        Currently only supports the :obj:`"ddp_spawn"` training strategy of
-        PyTorch Lightning:
+        Currently only the :obj:`"ddp_spawn"` training strategy of `PyTorch
+        Lightning <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`_ is supported:
 
         .. code-block::
 
@@ -85,7 +86,7 @@ class LightningDataset(LightningDataModule):
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
-            :class:`torch_geometric..loader.DataLoader`.
+            :class:`torch_geometric.loader.DataLoader`.
     """
     def __init__(
         self,
@@ -128,3 +129,45 @@ class LightningDataset(LightningDataModule):
                                         test_dataset=self.test_dataset,
                                         **self.kwargs)
         return f'{self.__class__.__name__}({kwargs_repr})'
+
+
+class LightningData(LightningDataModule):
+    r"""Converts a :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` object into a
+    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    automatically used as a :obj:`data_module` for multi-GPU training via
+    `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    :class:`LightningDataset` will take care of providing mini-batches via
+    :class:`~torch_geometric.loader.NeighborLoader`.
+
+    .. note::
+
+        Currently only the :obj:`"ddp_spawn"` training strategy of `PyTorch
+        Lightning <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`_ is supported:
+
+        .. code-block::
+
+            import pytorch_lightning as pl
+            trainer = pl.Trainer(strategy="ddp_spawn')
+
+    Args:
+        data (Data or HeteroData):
+        loader (str, optional): The scalability technique to use
+            (:obj:`None`, :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        num_workers: How many subprocesses to use for data loading.
+            :obj:`0` means that the data will be loaded in the main process.
+            (default: :obj:`0`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.loader.NeighborLoader`.
+    """
+    def __init__(
+        self,
+        data: Union[Data, HeteroData],
+        batch_size: int = 1,
+        num_workers: int = 0,
+        **kwargs,
+    ):
+        raise NotImplementedError
