@@ -83,6 +83,6 @@ for epoch in range(1, 200):
         patience -= 1
 
     if patience <= 0:
-        print('Stopping training as Val accuracy did not improve '
+        print('Stopping training as validation accuracy did not improve '
               f'for {start_patience} epochs')
         break
