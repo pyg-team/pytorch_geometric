@@ -129,34 +129,39 @@ def test_lightning_dataset():
 
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_lightning_node_data():
+@pytest.mark.parametrize('loader', ['full'])
+def test_lightning_node_data(loader):
     import pytorch_lightning as pl
+    print('==================================')
+    print('loader', loader)
 
     # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     root = '/tmp/dawdhhaiuad'
     dataset = Planetoid(root, name='Cora')
     data = dataset[0]
+    data_repr = ('Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], '
+                 'train_mask=[2708], val_mask=[2708], test_mask=[2708])')
     # shutil.rmtree(root)
 
     model = LinearNodeModule(dataset.num_features, dataset.num_classes)
 
     trainer = pl.Trainer(
-        gpus=1 if True else torch.cuda.device_count(),  # TODO
-        max_epochs=5,
+        gpus=1 if loader == 'full' else torch.cuda.device_count(),
+        max_epochs=1,
         log_every_n_steps=1,
-        # strategy='ddp',
-        # strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
+        strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
 
-    data_module = LightningNodeData(data, loader='full')
+    data_module = LightningNodeData(data, loader=loader)
     print(data_module)
-    # assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
-    #                             'val_dataset=MUTAG(10), '
-    #                             'test_dataset=MUTAG(10), batch_size=5, '
-    #                             'num_workers=2, pin_memory=True, '
-    #                             'persistent_workers=True)')
+    assert str(data_module) == (f'LightningDataset(data={data_repr}, '
+                                f'loader={loader}, batch_size=1, '
+                                f'num_workers=0, pin_memory=False, '
+                                f'persistent_workers=False)')
 
     trainer.fit(model, data_module)
+
+    print(data.x.device)
 
 
 # @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')

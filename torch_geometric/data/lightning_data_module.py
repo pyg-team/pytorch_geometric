@@ -157,6 +157,9 @@ class LightningNodeData(LightningDataModule):
 
     Args:
         data (Data or HeteroData):
+        TODO
+        TODO
+        TODO
         loader (str): The scalability technique to use (:obj:`"full",
             `:obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
@@ -194,13 +197,13 @@ class LightningNodeData(LightningDataModule):
             input_test_nodes = infer_input_nodes(data, split='test')
 
         if loader == 'full' and batch_size != 1:
-            warnings.warn(f"Re-setting 'batch_size' to '1' in "
+            warnings.warn(f"Re-setting 'batch_size' to 1 in "
                           f"'{self.__class__.__name__}' for loader='full' "
                           f"(got '{batch_size}')")
             batch_size = 1
 
         if loader == 'full' and num_workers != 0:
-            warnings.warn(f"Re-setting 'num_workers' to '1' in "
+            warnings.warn(f"Re-setting 'num_workers' to 0 in "
                           f"'{self.__class__.__name__}' for loader='full' "
                           f"(got '{num_workers}')")
             num_workers = 0
@@ -213,7 +216,6 @@ class LightningNodeData(LightningDataModule):
             **kwargs,
         )
 
-        # TODO
         if loader == 'full':
             if kwargs.get('pin_memory', False):
                 warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
@@ -232,7 +234,7 @@ class LightningNodeData(LightningDataModule):
 
     def prepare_data(self):
         if self.loader == 'full':
-            if self.trainer.num_processes != 1:
+            if self.trainer.num_processes != 1 or self.trainer.num_gpus != 1:
                 raise ValueError(f"'{self.__class__.__name__}' with loader="
                                  f"'full' requires training on a single GPU")
         else:
@@ -240,6 +242,8 @@ class LightningNodeData(LightningDataModule):
 
     def dataloader(self, input_nodes: InputNodes) -> DataLoader:
         if self.loader == 'full':
+            warnings.filterwarnings('ignore', '.*does not have many workers.*')
+            warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
             return torch.utils.data.DataLoader([self.data], shuffle=False,
                                                collate_fn=lambda xs: xs[0],
                                                **self.kwargs)
