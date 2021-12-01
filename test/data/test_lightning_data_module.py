@@ -60,17 +60,12 @@ def test_lightning_dataset():
     import pytorch_lightning as pl
 
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-
     dataset = TUDataset(root, name='MUTAG').shuffle()
     train_dataset = dataset[:50]
     val_dataset = dataset[50:60]
     test_dataset = dataset[60:70]
+    shutil.rmtree(root)
 
-    data_module = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                   batch_size=5, num_workers=2)
-    assert str(data_module) == (
-        'LightningDataset(train_dataset=MUTAG(50), val_dataset=MUTAG(10), '
-        'test_dataset=MUTAG(10), batch_size=5)')
     model = LinearModule(dataset.num_features, 64, dataset.num_classes)
 
     trainer = pl.Trainer(
@@ -79,15 +74,22 @@ def test_lightning_dataset():
         log_every_n_steps=1,
         strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
+
+    data_module = LightningDataset(train_dataset, val_dataset, test_dataset,
+                                   batch_size=5, num_workers=2)
+    assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
+                                'val_dataset=MUTAG(10), '
+                                'test_dataset=MUTAG(10), batch_size=5, '
+                                'num_workers=2, pin_memory=True, '
+                                'persistent_workers=True)')
     trainer.fit(model, data_module)
     assert trainer._data_connector._val_dataloader_source.is_defined()
     assert trainer._data_connector._test_dataloader_source.is_defined()
 
     data_module = LightningDataset(train_dataset, batch_size=5, num_workers=2)
     assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
-                                'batch_size=5)')
+                                'batch_size=5, num_workers=2, '
+                                'pin_memory=True, persistent_workers=True)')
     trainer.fit(model, data_module)
     assert not trainer._data_connector._val_dataloader_source.is_defined()
     assert not trainer._data_connector._test_dataloader_source.is_defined()
-
-    shutil.rmtree(root)
