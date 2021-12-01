@@ -46,7 +46,7 @@ class LightningDataModule(PLLightningDataModule):
 
         self.kwargs = kwargs
 
-    def setup(self, stage: Optional[str] = None):
+    def prepare_data(self):
         from pytorch_lightning.plugins import DDPSpawnPlugin
         if not isinstance(self.trainer.training_type_plugin, DDPSpawnPlugin):
             raise NotImplementedError(
@@ -195,21 +195,15 @@ class LightningNodeData(LightningDataModule):
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to '1' in "
-                          f"{self.__class__.__name__} for loader='full' "
+                          f"'{self.__class__.__name__}' for loader='full' "
                           f"(got '{batch_size}')")
             batch_size = 1
 
         if loader == 'full' and num_workers != 0:
             warnings.warn(f"Re-setting 'num_workers' to '1' in "
-                          f"{self.__class__.__name__} for loader='full' "
+                          f"'{self.__class__.__name__}' for loader='full' "
                           f"(got '{num_workers}')")
             num_workers = 0
-
-        if loader == 'full' and kwargs.get('pin_memory', False):
-            warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
-                          f"{self.__class__.__name__} for loader='full' "
-                          f"(got 'True')")
-            kwargs['pin_memory'] = False
 
         super().__init__(
             has_val=input_val_nodes is not None,
@@ -219,8 +213,16 @@ class LightningNodeData(LightningDataModule):
             **kwargs,
         )
 
+        # TODO
+        if loader == 'full':
+            if kwargs.get('pin_memory', False):
+                warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
+                              f"'{self.__class__.__name__}' for loader='full' "
+                              f"(got 'True')")
+            self.kwargs['pin_memory'] = False
+
         self.data = copy.copy(data)
-        if loader != 'full':
+        if loader != 'full':  # TODO
             # self.data = self.data._csc()
             pass
         self.loader = loader
@@ -228,9 +230,16 @@ class LightningNodeData(LightningDataModule):
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
 
+    def prepare_data(self):
+        if self.loader == 'full':
+            if self.trainer.num_processes != 1:
+                raise ValueError(f"'{self.__class__.__name__}' with loader="
+                                 f"'full' requires training on a single GPU")
+        else:
+            super().prepare_data()
+
     def dataloader(self, input_nodes: InputNodes) -> DataLoader:
         if self.loader == 'full':
-            # TODO: Put data already on the device
             return torch.utils.data.DataLoader([self.data], shuffle=False,
                                                collate_fn=lambda xs: xs[0],
                                                **self.kwargs)
