@@ -33,7 +33,8 @@ class LightningDataset(LightningDataModule):
 
     Args:
         train_dataset: (Dataset) The training dataset.
-        val_dataset: (Dataset) The validation dataset.
+        val_dataset: (Dataset, optional) The validation dataset.
+            (default: :obj:`None`)
         test_dataset: (Dataset, optional) The test dataset.
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
@@ -44,9 +45,15 @@ class LightningDataset(LightningDataModule):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric..loader.DataLoader`.
     """
-    def __init__(self, train_dataset: Dataset, val_dataset: Dataset,
-                 test_dataset: Optional[Dataset] = None, batch_size: int = 1,
-                 num_workers: int = 0, **kwargs):
+    def __init__(
+        self,
+        train_dataset: Dataset,
+        val_dataset: Optional[Dataset] = None,
+        test_dataset: Optional[Dataset] = None,
+        batch_size: int = 1,
+        num_workers: int = 0,
+        **kwargs,
+    ):
         super().__init__()
 
         if no_pytorch_lightning:
@@ -80,6 +87,12 @@ class LightningDataset(LightningDataModule):
         else:
             self.persistent_workers = num_workers > 0
 
+        if self.val_dataset is None:
+            self.val_dataloader = None
+
+        if self.test_dataset is None:
+            self.test_dataloader = None
+
     def setup(self, stage: Optional[str] = None):
         from pytorch_lightning.plugins import DDPSpawnPlugin
         if not isinstance(self.trainer.training_type_plugin, DDPSpawnPlugin):
@@ -110,8 +123,11 @@ class LightningDataset(LightningDataModule):
         return self.dataloader('test_dataset', shuffle=False)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}('
-                f'train_dataset={self.train_dataset}, '
-                f'val_dataset={self.val_dataset}, '
-                f'test_dataset={self.test_dataset}, '
-                f'batch_size={self.batch_size})')
+        args_repr = [f'train_dataset={self.train_dataset}']
+        if self.val_dataset is not None:
+            args_repr += [f'val_dataset={self.val_dataset}']
+        if self.test_dataset is not None:
+            args_repr += [f'test_dataset={self.test_dataset}']
+        args_repr += [f'batch_size={self.batch_size}']
+        args_repr = ', '.join(args_repr)
+        return f'{self.__class__.__name__}({args_repr})'

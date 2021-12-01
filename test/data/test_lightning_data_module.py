@@ -1,8 +1,8 @@
 import sys
 import random
 import shutil
-import pytest
 import os.path as osp
+import pytest
 
 import torch
 import torch.nn.functional as F
@@ -80,5 +80,14 @@ def test_lightning_dataset():
         strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
     )
     trainer.fit(model, data_module)
+    assert trainer._data_connector._val_dataloader_source.is_defined()
+    assert trainer._data_connector._test_dataloader_source.is_defined()
+
+    data_module = LightningDataset(train_dataset, batch_size=5, num_workers=2)
+    assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
+                                'batch_size=5)')
+    trainer.fit(model, data_module)
+    assert not trainer._data_connector._val_dataloader_source.is_defined()
+    assert not trainer._data_connector._test_dataloader_source.is_defined()
 
     shutil.rmtree(root)
