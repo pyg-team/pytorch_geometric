@@ -19,7 +19,7 @@ del data['director'], data['actor']
 print(data)
 
 
-class han(nn.Module):
+class HAN(nn.Module):
     def __init__(self, in_channels: Union[int, Dict[str, int]],
                  out_channels: int, hidden_channels=128, heads=8):
         super().__init__()
@@ -28,13 +28,12 @@ class han(nn.Module):
         self.lin = nn.Linear(hidden_channels, out_channels)
 
     def forward(self, x_dict, edge_index_dict):
-
         out = self.han_conv(x_dict, edge_index_dict)
         out = self.lin(out['movie'])
         return out
 
 
-model = han(in_channels=-1, out_channels=3)
+model = HAN(in_channels=-1, out_channels=3)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 data, model = data.to(device), model.to(device)
 
@@ -56,7 +55,7 @@ def train() -> float:
 
 
 @torch.no_grad()
-def test() -> List:
+def test() -> List[float]:
     model.eval()
     pred = model(data.x_dict, data.edge_index_dict).argmax(dim=-1)
 
