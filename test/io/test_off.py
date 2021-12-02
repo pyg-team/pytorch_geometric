@@ -25,7 +25,7 @@ def test_write_off():
     face = torch.tensor([[0, 1], [1, 2], [2, 3]])
 
     name = str(random.randrange(sys.maxsize))
-    path = osp.join('/', 'tmp', '{}.off'.format(name))
+    path = osp.join('/', 'tmp', f'{name}.off')
     write_off(Data(pos=pos, face=face), path)
     data = read_off(path)
     os.unlink(path)

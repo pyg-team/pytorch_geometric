@@ -67,6 +67,10 @@ from .airports import Airports
 from .ba_shapes import BAShapes
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
+from .polblogs import PolBlogs
+from .email_eu_core import EmailEUCore
+from .sbm_dataset import StochasticBlockModelDataset
+from .sbm_dataset import RandomPartitionGraphDataset
 
 __all__ = [
     'KarateClub',
@@ -140,6 +144,10 @@ __all__ = [
     'BAShapes',
     'MalNetTiny',
     'OMDB',
+    'PolBlogs',
+    'EmailEUCore',
+    'StochasticBlockModelDataset',
+    'RandomPartitionGraphDataset',
 ]
 
 classes = __all__

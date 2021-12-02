@@ -60,8 +60,7 @@ for dataset_name, Net in product(datasets, nets):
                              shuffle=False)
 
     for num_layers, hidden in product(layers, hiddens):
-        print('-----\n{} - {} - {} - {}'.format(dataset_name, Net.__name__,
-                                                num_layers, hidden))
+        print(f'--\n{dataset_name} - {Net.__name__} - {num_layers} - {hidden}')
 
         model = Net(dataset, num_layers, hidden).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)

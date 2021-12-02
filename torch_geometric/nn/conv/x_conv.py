@@ -59,7 +59,7 @@ class XConv(torch.nn.Module):
     def __init__(self, in_channels: int, out_channels: int, dim: int,
                  kernel_size: int, hidden_channels: Optional[int] = None,
                  dilation: int = 1, bias: bool = True, num_workers: int = 1):
-        super(XConv, self).__init__()
+        super().__init__()
 
         if knn_graph is None:
             raise ImportError('`XConv` requires `torch-cluster`.')
@@ -148,6 +148,6 @@ class XConv(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

@@ -34,5 +34,5 @@ class RandomTranslate(BaseTransform):
         data.pos = data.pos + torch.stack(ts, dim=-1)
         return data
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.translate)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.translate})'

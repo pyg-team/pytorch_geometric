@@ -42,7 +42,7 @@ class RENet(torch.nn.Module):
     """
     def __init__(self, num_nodes, num_rels, hidden_channels, seq_len,
                  num_layers=1, dropout=0., bias=True):
-        super(RENet, self).__init__()
+        super().__init__()
 
         self.num_nodes = num_nodes
         self.hidden_channels = hidden_channels
@@ -137,9 +137,8 @@ class RENet(torch.nn.Module):
 
                 return data
 
-            def __repr__(self):  # pragma: no cover
-                return '{}(seq_len={})'.format(self.__class__.__name__,
-                                               self.seq_len)
+            def __repr__(self) -> str:  # pragma: no cover
+                return f'{self.__class__.__name__}(seq_len={self.seq_len})'
 
         return PreTransform(seq_len)
 

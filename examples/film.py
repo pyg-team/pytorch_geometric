@@ -20,7 +20,7 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  dropout=0.0):
-        super(Net, self).__init__()
+        super().__init__()
         self.dropout = dropout
 
         self.convs = torch.nn.ModuleList()
@@ -81,5 +81,5 @@ for epoch in range(1, 501):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
-    print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
-        epoch, loss, val_f1, test_f1))
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
+          f'Test: {test_f1:.4f}')

@@ -6,7 +6,7 @@ from torch_geometric.visualization import influence
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(in_channels, out_channels)
         self.conv2 = GCNConv(out_channels, out_channels)
 
@@ -22,5 +22,5 @@ def test_influence():
 
     out = influence(Net(x.size(1), 16), x, data.edge_index)
     assert out.size() == (data.num_nodes, data.num_nodes)
-    assert torch.allclose(
-        out.sum(dim=-1), torch.ones(data.num_nodes), atol=1e-04)
+    assert torch.allclose(out.sum(dim=-1), torch.ones(data.num_nodes),
+                          atol=1e-04)

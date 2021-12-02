@@ -18,7 +18,7 @@ class ExampleConv1(MessagePassing):
 
     """
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
-        super(ExampleConv1, self).__init__(aggr=cfg.gnn.agg, **kwargs)
+        super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -53,10 +53,6 @@ class ExampleConv1(MessagePassing):
             aggr_out = aggr_out + self.bias
         return aggr_out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
-
 
 # Remember to register your layer!
 register_layer('exampleconv1', ExampleConv1)
@@ -69,7 +65,7 @@ class ExampleConv2Layer(MessagePassing):
 
     """
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
-        super(ExampleConv2Layer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
+        super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -101,14 +97,10 @@ class ExampleConv2Layer(MessagePassing):
             aggr_out = aggr_out + self.bias
         return aggr_out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
-
 
 class ExampleConv2(nn.Module):
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
-        super(ExampleConv2, self).__init__()
+        super().__init__()
         self.model = ExampleConv2Layer(dim_in, dim_out, bias=bias)
 
     def forward(self, batch):

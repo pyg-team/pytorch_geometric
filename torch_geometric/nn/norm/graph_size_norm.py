@@ -13,7 +13,7 @@ class GraphSizeNorm(nn.Module):
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x}_i}{\sqrt{|\mathcal{V}|}}
     """
     def __init__(self):
-        super(GraphSizeNorm, self).__init__()
+        super().__init__()
 
     def forward(self, x, batch=None):
         """"""

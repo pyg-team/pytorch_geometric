@@ -67,7 +67,7 @@ class ChebConv(MessagePassing):
                  normalization: Optional[str] = 'sym', bias: bool = True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ChebConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         assert K > 0
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
@@ -158,7 +158,7 @@ class ChebConv(MessagePassing):
     def message(self, x_j, norm):
         return norm.view(-1, 1) * x_j
 
-    def __repr__(self):
-        return '{}({}, {}, K={}, normalization={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            len(self.lins), self.normalization)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, K={len(self.lins)}, '
+                f'normalization={self.normalization})')

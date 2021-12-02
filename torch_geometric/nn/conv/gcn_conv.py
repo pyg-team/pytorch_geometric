@@ -124,7 +124,7 @@ class GCNConv(MessagePassing):
                  bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(GCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -195,7 +195,3 @@ class GCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

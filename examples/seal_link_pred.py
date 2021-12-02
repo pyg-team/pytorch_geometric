@@ -8,13 +8,13 @@ from scipy.sparse.csgraph import shortest_path
 import torch
 import torch.nn.functional as F
 from torch.nn import BCEWithLogitsLoss
-from torch.nn import ModuleList, Linear, Conv1d, MaxPool1d
+from torch.nn import ModuleList, Conv1d, MaxPool1d
 
 from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import Planetoid
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.transforms import RandomLinkSplit
-from torch_geometric.nn import GCNConv, global_sort_pool
+from torch_geometric.nn import GCNConv, global_sort_pool, MLP
 from torch_geometric.utils import k_hop_subgraph, to_scipy_sparse_matrix
 
 
@@ -162,8 +162,7 @@ class DGCNN(torch.nn.Module):
                             conv1d_kws[1], 1)
         dense_dim = int((self.k - 2) / 2 + 1)
         dense_dim = (dense_dim - conv1d_kws[1] + 1) * conv1d_channels[1]
-        self.lin1 = Linear(dense_dim, 128)
-        self.lin2 = Linear(128, 1)
+        self.mlp = MLP([dense_dim, 128, 1], dropout=0.5, batch_norm=False)
 
     def forward(self, x, edge_index, batch):
         xs = [x]
@@ -179,11 +178,7 @@ class DGCNN(torch.nn.Module):
         x = self.conv2(x).relu()
         x = x.view(x.size(0), -1)  # [num_graphs, dense_dim]
 
-        # MLP.
-        x = self.lin1(x).relu()
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin2(x)
-        return x
+        return self.mlp(x)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

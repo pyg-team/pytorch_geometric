@@ -26,7 +26,7 @@ class WikiCS(InMemoryDataset):
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(WikiCS, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -39,7 +39,7 @@ class WikiCS(InMemoryDataset):
 
     def download(self):
         for name in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, name), self.raw_dir)
+            download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self):
         with open(self.raw_paths[0], 'r') as f:
@@ -71,6 +71,3 @@ class WikiCS(InMemoryDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

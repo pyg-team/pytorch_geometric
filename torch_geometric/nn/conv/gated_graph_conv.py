@@ -41,7 +41,7 @@ class GatedGraphConv(MessagePassing):
     """
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
                  bias: bool = True, **kwargs):
-        super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.out_channels = out_channels
         self.num_layers = num_layers
@@ -81,7 +81,6 @@ class GatedGraphConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, num_layers={})'.format(self.__class__.__name__,
-                                              self.out_channels,
-                                              self.num_layers)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.out_channels}, '
+                f'num_layers={self.num_layers})')

@@ -2,6 +2,8 @@ import copy
 
 import torch
 import torch_geometric
+import torch.multiprocessing as mp
+
 from torch_geometric.data import Data
 
 
@@ -154,6 +156,7 @@ def test_copy_data():
     out = copy.copy(data)
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
@@ -163,6 +166,7 @@ def test_copy_data():
     out = copy.deepcopy(data)
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
@@ -185,3 +189,22 @@ def test_debug_data():
     Data(norm=torch.torch.randn(5, 3), num_nodes=5)
 
     torch_geometric.set_debug(False)
+
+
+def run(rank, data_list):
+    for data in data_list:
+        assert data.x.is_shared()
+        data.x.add_(1)
+
+
+def test_data_share_memory():
+    data_list = [Data(x=torch.zeros(8)) for _ in range(10)]
+
+    for data in data_list:
+        assert not data.x.is_shared()
+
+    mp.spawn(run, args=(data_list, ), nprocs=4, join=True)
+
+    for data in data_list:
+        assert data.x.is_shared()
+        assert torch.allclose(data.x, torch.full((8, ), 4.))

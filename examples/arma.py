@@ -14,7 +14,7 @@ data = dataset[0]
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = ARMAConv(dataset.num_features, 16, num_stacks=3,
                               num_layers=2, shared_weights=True, dropout=0.25)
@@ -61,5 +61,5 @@ for epoch in range(1, 401):
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
-    log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, train_acc, best_val_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, '
+          f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')

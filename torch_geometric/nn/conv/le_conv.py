@@ -36,7 +36,7 @@ class LEConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(LEConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

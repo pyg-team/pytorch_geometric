@@ -13,7 +13,7 @@ class IntegerFeatureEncoder(torch.nn.Module):
         embedding mapping to learn from
     """
     def __init__(self, emb_dim, num_classes=None):
-        super(IntegerFeatureEncoder, self).__init__()
+        super().__init__()
 
         self.encoder = torch.nn.Embedding(num_classes, emb_dim)
         torch.nn.init.xavier_uniform_(self.encoder.weight.data)
@@ -35,7 +35,7 @@ class AtomEncoder(torch.nn.Module):
         num_classes: None
     """
     def __init__(self, emb_dim, num_classes=None):
-        super(AtomEncoder, self).__init__()
+        super().__init__()
 
         from ogb.utils.features import get_atom_feature_dims
 
@@ -64,7 +64,7 @@ class BondEncoder(torch.nn.Module):
         emb_dim (int): Output edge embedding dimension
     """
     def __init__(self, emb_dim):
-        super(BondEncoder, self).__init__()
+        super().__init__()
 
         from ogb.utils.features import get_bond_feature_dims
 

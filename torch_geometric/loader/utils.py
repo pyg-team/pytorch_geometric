@@ -11,9 +11,13 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import NodeStorage, EdgeStorage
 
 
-def edge_type_to_str(edge_type: EdgeType) -> str:
+def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     # Since C++ cannot take dictionaries with tuples as key as input, edge type
     # triplets need to be converted into single strings.
+
+    if isinstance(edge_type, str):
+        return edge_type
+
     return '__'.join(edge_type)
 
 
