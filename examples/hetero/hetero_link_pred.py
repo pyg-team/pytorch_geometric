@@ -24,7 +24,7 @@ parser.add_argument('--num_val', type=float, default=0.1)
 parser.add_argument('--num_test', type=float, default=0.1)
 parser.add_argument('--num_epochs', type=int, default=201)
 parser.add_argument('--lr', type=float, default=0.01)
-parser.add_argument('--weight_decay', type=float, default=0.0005)
+parser.add_argument('--weight_decay', type=float, default=0.000)
 parser.add_argument('--hidden', type=int, default=32)
 args = parser.parse_args()
 
@@ -44,8 +44,8 @@ del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(
-    num_val=args.link_split_num_val,
-    num_test=args.link_split_num_test,
+    num_val=args.num_val,
+    num_test=args.num_test,
     disjoint_train_ratio=args.disjoint_train_ratio,
     neg_sampling_ratio=0.0,
     edge_types=[('user', 'rates', 'movie')],
@@ -137,10 +137,27 @@ class EdgeClassifier(torch.nn.Module):
         return (out)
 
 
-edge_labels = torch.unique(test_data['user', 'rates', 'movie'].edge_label)
+# We have an unbalanced dataset, with many labels for rating 3 and very
+# few for 0 and 1. Therefore we use a weighted MSE loss.
+edge_labels = torch.unique(train_data['user', 'rates', 'movie'].edge_label)
+num_samples_per_label = torch.bincount(
+    torch.squeeze(train_data['user', 'rates', 'movie']
+                  .edge_label.type(torch.int64)))
 
-hidden_dim = args.hidden
-model = EdgeClassifier(hidden_channels=hidden_dim, edge_labels=edge_labels)
+print("Number of samples per label:"
+      f"{dict(zip(edge_labels,num_samples_per_label))}")
+weights = 1 / num_samples_per_label
+# Normalise the weights
+weights = weights / torch.sum(weights)
+
+
+def weighted_mse_loss(input, target, weight):
+    expanded_weights = torch.index_select(weight, 0, target.type(torch.int64))
+    return torch.mean(expanded_weights * (input - target) ** 2)
+
+
+model = EdgeClassifier(hidden_channels=args.hidden, edge_labels=edge_labels)
+
 
 # Get number of model parameters
 # Due to lazy initialisation we need to run one model step so the number
@@ -174,9 +191,8 @@ def train():
     # Get true ratings
     target = train_data[('user', 'rates', 'movie')].edge_label
 
-    # Apply mse loss
-    loss = F.mse_loss(pred, torch.squeeze(target), reduction='mean')
-
+    # Apply weighted mse loss
+    loss = weighted_mse_loss(pred, torch.squeeze(target), weights)
     loss.backward()
     optimizer.step()
 
