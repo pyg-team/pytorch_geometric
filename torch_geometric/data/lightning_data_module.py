@@ -251,6 +251,7 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
+            warnings.filterwarnings('ignore', '.*turn this off for val/test.*')
             return NeighborLoader(self.data, input_nodes=input_nodes,
                                   shuffle=True, **self.kwargs)
 
