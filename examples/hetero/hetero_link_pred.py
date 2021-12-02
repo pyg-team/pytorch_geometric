@@ -137,15 +137,13 @@ class EdgeClassifier(torch.nn.Module):
         return (out)
 
 
-# We have an unbalanced dataset, with many labels for rating 3 and very
-# few for 0 and 1. Therefore we use a weighted MSE loss.
+# We have an unbalanced dataset, with many labels for higher ratings
+# and few for low ratings. Therefore we use a weighted MSE loss.
 edge_labels = torch.unique(train_data['user', 'rates', 'movie'].edge_label)
 num_samples_per_label = torch.bincount(
     torch.squeeze(train_data['user', 'rates', 'movie']
                   .edge_label.type(torch.int64)))
 
-print("Number of samples per label:"
-      f"{dict(zip(edge_labels,num_samples_per_label))}")
 weights = 1 / num_samples_per_label
 # Normalise the weights
 weights = weights / torch.sum(weights)
