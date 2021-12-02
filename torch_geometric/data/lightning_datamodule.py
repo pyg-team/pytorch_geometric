@@ -53,7 +53,7 @@ class LightningDataModule(PLLightningDataModule):
             raise NotImplementedError(
                 f"'{self.__class__.__name__}' currently only supports "
                 f"'{SingleDevicePlugin.__name__}' and "
-                f"'{DDPSpawnPlugin.__name__}' training tye plugins of "
+                f"'{DDPSpawnPlugin.__name__}' training type plugins of "
                 f"'pytorch_lightning' (got '{plugin.__class__.__name__}')")
 
     def __repr__(self) -> str:
@@ -64,15 +64,17 @@ class LightningDataset(LightningDataModule):
     r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
     automatically used as a :obj:`datamodule` for multi-GPU graph-level
-    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.DataLoader`.
 
     .. note::
 
-        Currently only the :obj:`"ddp_spawn"` training strategy of `PyTorch
-        Lightning <https://pytorch-lightning.readthedocs.io/en/latest/guides/
-        speed.html>`_ is supported:
+        Currently only the
+        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
+        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
+        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
+        latest/guides/speed.html>`__ are supported:
 
         .. code-block::
 
@@ -149,9 +151,11 @@ class LightningNodeData(LightningDataModule):
 
     .. note::
 
-        Currently only the :obj:`"ddp_spawn"` training strategy of `PyTorch
-        Lightning <https://pytorch-lightning.readthedocs.io/en/latest/guides/
-        speed.html>`_ is supported:
+        Currently only the
+        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
+        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
+        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
+        latest/guides/speed.html>`__ are supported:
 
         .. code-block::
 
