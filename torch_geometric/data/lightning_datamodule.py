@@ -79,7 +79,7 @@ class LightningDataset(LightningDataModule):
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn')
+            trainer = pl.Trainer(strategy="ddp_spawn")
 
     Args:
         train_dataset: (Dataset) The training dataset.
@@ -120,14 +120,17 @@ class LightningDataset(LightningDataModule):
         return DataLoader(dataset, shuffle=shuffle, **self.kwargs)
 
     def train_dataloader(self) -> DataLoader:
+        """"""
         from torch.utils.data import IterableDataset
         shuffle = not isinstance(self.train_dataset, IterableDataset)
         return self.dataloader(self.train_dataset, shuffle=shuffle)
 
     def val_dataloader(self) -> DataLoader:
+        """"""
         return self.dataloader(self.val_dataset, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
+        """"""
         return self.dataloader(self.test_dataset, shuffle=False)
 
     def __repr__(self) -> str:
@@ -160,15 +163,23 @@ class LightningNodeData(LightningDataModule):
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn')
+            trainer = pl.Trainer(strategy="ddp_spawn")
 
     Args:
-        data (Data or HeteroData):
-        TODO
-        TODO
-        TODO
-        loader (str): The scalability technique to use (:obj:`"full",
-            `:obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` graph object.
+        input_train_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+            indices of training nodes. If not given, will try to automatically
+            infer them from the :obj:`data` object. (default: :obj:`None`)
+        input_val_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+            indices of validation nodes. If not given, will try to
+            automatically infer them from the :obj:`data` object.
+            (default: :obj:`None`)
+        input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+            indices of test nodes. If not given, will try to automatically
+            infer them from the :obj:`data` object. (default: :obj:`None`)
+        loader (str): The scalability technique to use (:obj:`"full"`,
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -262,12 +273,15 @@ class LightningNodeData(LightningDataModule):
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
+        """"""
         return self.dataloader(self.input_train_nodes)
 
     def val_dataloader(self) -> DataLoader:
+        """"""
         return self.dataloader(self.input_val_nodes)
 
     def test_dataloader(self) -> DataLoader:
+        """"""
         return self.dataloader(self.input_test_nodes)
 
     def __repr__(self) -> str:
