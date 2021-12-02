@@ -24,7 +24,7 @@ parser.add_argument('--num_val', type=float, default=0.1)
 parser.add_argument('--num_test', type=float, default=0.1)
 parser.add_argument('--num_epochs', type=int, default=201)
 parser.add_argument('--lr', type=float, default=0.01)
-parser.add_argument('--weight_decay', type=float, default=0.000)
+parser.add_argument('--weight_decay', type=float, default=0.0)
 parser.add_argument('--hidden', type=int, default=32)
 args = parser.parse_args()
 
