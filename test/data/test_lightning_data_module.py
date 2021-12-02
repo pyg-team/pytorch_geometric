@@ -2,13 +2,14 @@ import sys
 import random
 import shutil
 import os.path as osp
+import warnings
 import pytest
 
 import torch
 import torch.nn.functional as F
 
 from torch_geometric.nn import global_mean_pool
-from torch_geometric.datasets import TUDataset, Planetoid, DBLP
+from torch_geometric.datasets import TUDataset, Planetoid
 from torch_geometric.data import LightningDataset, LightningNodeData
 
 try:
@@ -31,6 +32,9 @@ class LinearGraphModule(LightningModule):
         self.val_acc = Accuracy()
 
     def forward(self, x, batch):
+        # Basic test to ensure that the dataset is not replicated:
+        self.trainer.datamodule.train_dataset.data.x.add_(1)
+
         x = self.lin1(x).relu()
         x = global_mean_pool(x, batch)
         x = self.lin2(x)
@@ -53,6 +57,55 @@ class LinearGraphModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
+def test_lightning_dataset(strategy):
+    return
+    import pytorch_lightning as pl
+
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    dataset = TUDataset(root, name='MUTAG').shuffle()
+    train_dataset = dataset[:50]
+    val_dataset = dataset[50:60]
+    test_dataset = dataset[60:70]
+    shutil.rmtree(root)
+
+    gpus = 1 if strategy is None else torch.cuda.device_count()
+    if strategy == 'ddp_spawn':
+        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+
+    model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
+
+    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=1,
+                         log_every_n_steps=1)
+    datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
+                                  batch_size=5, num_workers=3)
+    old_x = train_dataset.data.x.clone()
+    assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
+                               'val_dataset=MUTAG(10), '
+                               'test_dataset=MUTAG(10), batch_size=5, '
+                               'num_workers=3, pin_memory=True, '
+                               'persistent_workers=True)')
+    trainer.fit(model, datamodule)
+    new_x = train_dataset.data.x.clone()
+    assert torch.allclose(old_x + 14, new_x)  # Ensure that data is shared.
+    assert trainer._data_connector._val_dataloader_source.is_defined()
+    assert trainer._data_connector._test_dataloader_source.is_defined()
+
+    # Test with `val_dataset=None` and `test_dataset=None`:
+    warnings.filterwarnings('ignore', '.*Skipping val loop.*')
+    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=1,
+                         log_every_n_steps=1)
+    datamodule = LightningDataset(train_dataset, batch_size=5, num_workers=3)
+    assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
+                               'batch_size=5, num_workers=3, '
+                               'pin_memory=True, persistent_workers=True)')
+    trainer.fit(model, datamodule)
+    assert not trainer._data_connector._val_dataloader_source.is_defined()
+    assert not trainer._data_connector._test_dataloader_source.is_defined()
+
+
 class LinearNodeModule(LightningModule):
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -64,6 +117,9 @@ class LinearNodeModule(LightningModule):
         self.val_acc = Accuracy()
 
     def forward(self, x):
+        # Basic test to ensure that the dataset is not replicated:
+        self.trainer.datamodule.data.x.add_(1)
+
         return self.lin(x)
 
     def training_step(self, data, batch_idx):
@@ -87,53 +143,10 @@ class LinearNodeModule(LightningModule):
 
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_lightning_dataset():
-    return
+@pytest.mark.parametrize('loader', ['neighbor'])
+@pytest.mark.parametrize('strategy', [None])
+def test_lightning_node_data(strategy, loader):
     import pytorch_lightning as pl
-
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, name='MUTAG').shuffle()
-    train_dataset = dataset[:50]
-    val_dataset = dataset[50:60]
-    test_dataset = dataset[60:70]
-    shutil.rmtree(root)
-
-    model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
-
-    trainer = pl.Trainer(
-        gpus=torch.cuda.device_count(),
-        max_epochs=1,
-        log_every_n_steps=1,
-        strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
-    )
-
-    data_module = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                   batch_size=5, num_workers=2)
-    assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
-                                'val_dataset=MUTAG(10), '
-                                'test_dataset=MUTAG(10), batch_size=5, '
-                                'num_workers=2, pin_memory=True, '
-                                'persistent_workers=True)')
-    trainer.fit(model, data_module)
-    assert trainer._data_connector._val_dataloader_source.is_defined()
-    assert trainer._data_connector._test_dataloader_source.is_defined()
-
-    data_module = LightningDataset(train_dataset, batch_size=5, num_workers=2)
-    assert str(data_module) == ('LightningDataset(train_dataset=MUTAG(50), '
-                                'batch_size=5, num_workers=2, '
-                                'pin_memory=True, persistent_workers=True)')
-    trainer.fit(model, data_module)
-    assert not trainer._data_connector._val_dataloader_source.is_defined()
-    assert not trainer._data_connector._test_dataloader_source.is_defined()
-
-
-@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-@pytest.mark.parametrize('loader', ['full'])
-def test_lightning_node_data(loader):
-    import pytorch_lightning as pl
-    print('==================================')
-    print('loader', loader)
 
     # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     root = '/tmp/dawdhhaiuad'
@@ -145,35 +158,48 @@ def test_lightning_node_data(loader):
 
     model = LinearNodeModule(dataset.num_features, dataset.num_classes)
 
-    trainer = pl.Trainer(
-        gpus=1 if loader == 'full' else torch.cuda.device_count(),
-        max_epochs=1,
-        log_every_n_steps=1,
-        strategy=pl.plugins.DDPSpawnPlugin(find_unused_parameters=False),
-    )
+    if strategy is None or loader == 'full':
+        gpus = 1
+    else:
+        gpus = torch.cuda.device_count()
 
-    data_module = LightningNodeData(data, loader=loader)
-    print(data_module)
-    assert str(data_module) == (f'LightningDataset(data={data_repr}, '
-                                f'loader={loader}, batch_size=1, '
-                                f'num_workers=0, pin_memory=False, '
-                                f'persistent_workers=False)')
+    if strategy == 'ddp_spawn' and loader == 'full':
+        data = data.cuda()  # This is necessary to test sharing of data.
 
-    trainer.fit(model, data_module)
+    if strategy == 'ddp_spawn':
+        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
 
-    print(data.x.device)
+    batch_size = 1 if loader == 'full' else 1024
+    num_workers = 0 if loader == 'full' else 3
+
+    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=5,
+                         log_every_n_steps=1)
+    datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
+                                   num_workers=num_workers)
+    old_x = data.x.clone().cpu()
+    assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
+                               f'loader={loader}, batch_size={batch_size}, '
+                               f'num_workers={num_workers}, '
+                               f'pin_memory={loader != "full"}, '
+                               f'persistent_workers={loader != "full"})')
+    trainer.fit(model, datamodule)
+    new_x = data.x.clone().cpu()
+    assert torch.allclose(old_x + 11, new_x)  # Ensure that data is shared.
+    assert trainer._data_connector._val_dataloader_source.is_defined()
+    assert trainer._data_connector._test_dataloader_source.is_defined()
 
 
-# @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
-# @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-# def test_lightning_hetero_node_data():
-#     import pytorch_lightning as pl
+@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
+@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+def test_lightning_hetero_node_data():
+    pass
+    # import pytorch_lightning as pl
 
-#     # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-#     root = '/tmp/dawdhhaiuad2323'
-#     dataset = DBLP(root)
-#     data = dataset[0]
-#     # shutil.rmtree(root)
+    # # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    # root = '/tmp/dawdhhaiuad2323'
+    # dataset = DBLP(root)
+    # data = dataset[0]
+    # # shutil.rmtree(root)
 
-#     data_module = LightningNodeData(data, batch_size=5, num_workers=2)
-#     # print(data_module)
+    # datamodule = LightningNodeData(data, batch_size=5, num_workers=2)
+    # # print(datamodule)

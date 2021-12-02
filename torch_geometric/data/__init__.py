@@ -16,7 +16,7 @@ __all__ = [
     'Dataset',
     'InMemoryDataset',
     'LightningDataset',
-    'LightningData',
+    'LightningNodeData',
     'download_url',
     'extract_tar',
     'extract_zip',

@@ -1,6 +1,5 @@
 from typing import Optional, Union, Tuple
 
-import copy
 import warnings
 
 import torch
@@ -47,11 +46,15 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
+        from pytorch_lightning.plugins import SingleDevicePlugin
         from pytorch_lightning.plugins import DDPSpawnPlugin
-        if not isinstance(self.trainer.training_type_plugin, DDPSpawnPlugin):
+        plugin = self.trainer.training_type_plugin
+        if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
             raise NotImplementedError(
-                f"'{self.__class__.__name__}' currently only supports the "
-                f"'ddp_spawn' training strategy of 'pytorch_lightning'")
+                f"'{self.__class__.__name__}' currently only supports "
+                f"'{SingleDevicePlugin.__name__}' and "
+                f"'{DDPSpawnPlugin.__name__}' training tye plugins of "
+                f"'pytorch_lightning' (got '{plugin.__class__.__name__}')")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._kwargs_repr(**self.kwargs)})'
@@ -60,7 +63,7 @@ class LightningDataModule(PLLightningDataModule):
 class LightningDataset(LightningDataModule):
     r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
-    automatically used as a :obj:`data_module` for multi-GPU graph-level
+    automatically used as a :obj:`datamodule` for multi-GPU graph-level
     training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.DataLoader`.
@@ -139,7 +142,7 @@ class LightningNodeData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
-    automatically used as a :obj:`data_module` for multi-GPU node-level
+    automatically used as a :obj:`datamodule` for multi-GPU node-level
     training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.NeighborLoader`.
@@ -223,7 +226,7 @@ class LightningNodeData(LightningDataModule):
                               f"(got 'True')")
             self.kwargs['pin_memory'] = False
 
-        self.data = copy.copy(data)
+        self.data = data
         if loader != 'full':  # TODO
             # self.data = self.data._csc()
             pass
@@ -237,8 +240,7 @@ class LightningNodeData(LightningDataModule):
             if self.trainer.num_processes != 1 or self.trainer.num_gpus != 1:
                 raise ValueError(f"'{self.__class__.__name__}' with loader="
                                  f"'full' requires training on a single GPU")
-        else:
-            super().prepare_data()
+        super().prepare_data()
 
     def dataloader(self, input_nodes: InputNodes) -> DataLoader:
         if self.loader == 'full':
