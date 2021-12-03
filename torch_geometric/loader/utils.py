@@ -56,61 +56,66 @@ def to_hetero_csc(
     return colptr_dict, row_dict, perm_dict
 
 
-def filter_node_store_(store: NodeStorage, index: Tensor) -> NodeStorage:
+def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
+                       index: Tensor) -> NodeStorage:
     # Filters a node storage object to only hold the nodes in `index`:
     data = store._parent()
 
     for key, value in store.items():
         if key == 'num_nodes':
-            store.num_nodes = index.numel()
+            out_store.num_nodes = index.numel()
 
         elif isinstance(data, Data) and data.is_node_attr(key):
-            store[key] = value[index]
+            out_store[key] = value[index]
 
         elif isinstance(data, HeteroData) and isinstance(value, Tensor):
-            store[key] = value[index]
+            out_store[key] = value[index]
 
     return store
 
 
-def filter_edge_store_(store: EdgeStorage, row: Tensor, col: Tensor,
-                       index: Tensor, perm: OptTensor = None) -> EdgeStorage:
+def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
+                       col: Tensor, index: Tensor,
+                       perm: OptTensor = None) -> EdgeStorage:
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     data = store._parent()
 
     for key, value in store.items():
         if key == 'edge_index':
-            store.edge_index = torch.stack([row, col], dim=0)
+            out_store.edge_index = torch.stack([row, col], dim=0)
 
         elif key == 'adj_t':
             # NOTE: We expect `(row, col)` to be sorted by `col` (CSC layout).
             edge_attr = value.storage.value()
             edge_attr = None if edge_attr is None else edge_attr[index]
             sparse_sizes = store.size()[::-1]
-            store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
-                                       sparse_sizes=sparse_sizes,
-                                       is_sorted=True)
+            out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
+                                           sparse_sizes=sparse_sizes,
+                                           is_sorted=True)
 
         elif isinstance(data, Data) and data.is_edge_attr(key):
-            store[key] = value[index] if perm is None else value[perm[index]]
+            if perm is None:
+                out_store[key] = value[index]
+            else:
+                out_store[key] = value[perm[index]]
 
         elif isinstance(data, HeteroData) and isinstance(value, Tensor):
-            store[key] = value[index] if perm is None else value[perm[index]]
+            if perm is None:
+                out_store[key] = value[index]
+            else:
+                out_store[key] = value[perm[index]]
 
     return store
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
                 edge: Tensor, perm: OptTensor = None) -> Data:
-    # Filters a homogeneous data object to only hold nodes in `node` and edges
-    # in `edge`:
-    data = copy.copy(data)
-
-    filter_node_store_(data._store, node)
-    filter_edge_store_(data._store, row, col, edge, perm)
-
-    return data
+    # Filters a data object to only hold nodes in `node` and edges in `edge`:
+    out = copy.copy(data)
+    filter_node_store_(data._store, out._store, node)
+    filter_edge_store_(data._store, out._store, row, col, edge, perm)
+    return out
 
 
 def filter_hetero_data(
@@ -123,15 +128,16 @@ def filter_hetero_data(
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
-    data = copy.copy(data)
+    out = copy.copy(data)
 
-    for store in data.node_stores:
-        node_type = store._key
-        filter_node_store_(store, node_dict[node_type])
+    for node_type in data.node_types:
+        filter_node_store_(data[node_type], out[node_type],
+                           node_dict[node_type])
 
-    for store in data.edge_stores:
-        edge_type = edge_type_to_str(store._key)
-        filter_edge_store_(store, row_dict[edge_type], col_dict[edge_type],
-                           edge_dict[edge_type], perm_dict[edge_type])
+    for edge_type in data.edge_types:
+        edge_type_str = edge_type_to_str(edge_type)
+        filter_edge_store_(data[edge_type], out[edge_type],
+                           row_dict[edge_type_str], col_dict[edge_type_str],
+                           edge_dict[edge_type_str], perm_dict[edge_type_str])
 
-    return data
+    return out
