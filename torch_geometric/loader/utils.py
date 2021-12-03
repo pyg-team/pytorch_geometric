@@ -14,11 +14,7 @@ from torch_geometric.data.storage import NodeStorage, EdgeStorage
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     # Since C++ cannot take dictionaries with tuples as key as input, edge type
     # triplets need to be converted into single strings.
-
-    if isinstance(edge_type, str):
-        return edge_type
-
-    return '__'.join(edge_type)
+    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
 def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:

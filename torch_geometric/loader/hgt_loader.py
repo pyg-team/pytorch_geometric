@@ -88,9 +88,6 @@ class HGTLoader(torch.utils.data.DataLoader):
         transform: Callable = None,
         **kwargs,
     ):
-        if kwargs.get('num_workers', 0) > 0:
-            torch.multiprocessing.set_sharing_strategy('file_system')
-
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
