@@ -12,9 +12,9 @@ from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
 class MovieLens(InMemoryDataset):
     r"""A heterogeneous rating dataset, assembled by GroupLens Research from
     the `MovieLens web site <https://movielens.org>`_, consisting of nodes of
-    type :obj:`"movie"` and :obj:`"user"`. User ratings for movies are
-    available as ground truth labels for the edges  between the users and
-    the movies ('user', 'rates', 'movie').
+    type :obj:`"movie"` and :obj:`"user"`.
+    User ratings for movies are available as ground truth labels for the edges
+    between the users and the movies :obj:`("user", "rates", "movie")`.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -83,7 +83,7 @@ class MovieLens(InMemoryDataset):
         dst = [movie_mapping[idx] for idx in df['movieId']]
         edge_index = torch.tensor([src, dst])
 
-        rating = torch.from_numpy(df['rating'].values).to(torch.float)
+        rating = torch.from_numpy(df['rating'].values).to(torch.long)
         data['user', 'rates', 'movie'].edge_index = edge_index
         data['user', 'rates', 'movie'].edge_label = rating
 
