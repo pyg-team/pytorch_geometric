@@ -78,7 +78,8 @@ class LightningDataset(LightningDataModule):
         :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
         :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
         of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported:
+        latest/guides/speed.html>`__ are supported in order to correctly
+        share data across all devices/processes:
 
         .. code-block::
 
@@ -159,7 +160,8 @@ class LightningNodeData(LightningDataModule):
         :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
         :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
         of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported:
+        latest/guides/speed.html>`__ are supported in order to correctly
+        share data across all devices/processes:
 
         .. code-block::
 
