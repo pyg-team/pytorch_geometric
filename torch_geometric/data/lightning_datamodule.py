@@ -302,6 +302,9 @@ class LightningNodeData(LightningDataModule):
         return f'{self.__class__.__name__}({kwargs})'
 
 
+###############################################################################
+
+
 def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
     attr_name: Optional[str] = None
     if f'{split}_mask' in data:
