@@ -113,8 +113,8 @@ class FiLMConv(MessagePassing):
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
-            out += self.propagate(edge_index, x=self.lins[0](x[0]), beta=beta,
-                                  gamma=gamma, size=None)
+            out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
+                                       beta=beta, gamma=gamma, size=None)
         else:
             for i, (lin, film) in enumerate(zip(self.lins, self.films)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
@@ -122,14 +122,14 @@ class FiLMConv(MessagePassing):
                     edge_type = edge_index.storage.value()
                     assert edge_type is not None
                     mask = edge_type == i
-                    out += self.propagate(
+                    out = out + self.propagate(
                         masked_select_nnz(edge_index, mask, layout='coo'),
                         x=lin(x[0]), beta=beta, gamma=gamma, size=None)
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
-                    out += self.propagate(edge_index[:, mask], x=lin(x[0]),
-                                          beta=beta, gamma=gamma, size=None)
+                    out = out + self.propagate(edge_index[:, mask], x=lin(
+                        x[0]), beta=beta, gamma=gamma, size=None)
 
         return out
 
