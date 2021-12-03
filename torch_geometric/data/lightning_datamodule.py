@@ -85,6 +85,7 @@ class LightningDataset(LightningDataModule):
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer.fit(model, datamodule)
 
     Args:
         train_dataset: (Dataset) The training dataset.
@@ -167,6 +168,7 @@ class LightningNodeData(LightningDataModule):
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer.fit(model, datamodule)
 
     Args:
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
