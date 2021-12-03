@@ -50,6 +50,8 @@ class ToUndirected(BaseTransform):
                 inv_store = data[dst, f'rev_{rel}', src]
                 inv_store.edge_index = rev_edge_index
                 for key, value in store.items():
+                    if key == 'edge_index':
+                        continue
                     if isinstance(value, Tensor) and value.size(0) == nnz:
                         inv_store[key] = value
 
