@@ -224,6 +224,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         # Save for PyTorch Lightning:
         self.data = data
         self.num_neighbors = num_neighbors
+        self.input_nodes = input_nodes
 
         if isinstance(data, (Data, HeteroData)):
             sampler = NeighborSampler(
