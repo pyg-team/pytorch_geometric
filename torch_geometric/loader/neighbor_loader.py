@@ -225,6 +225,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self.data = data
         self.num_neighbors = num_neighbors
         self.input_nodes = input_nodes
+        self.replace = replace
+        self.directed = directed
+        self.transform = transform
 
         if isinstance(data, (Data, HeteroData)):
             sampler = NeighborSampler(
