@@ -261,6 +261,7 @@ class LightningNodeData(LightningDataModule):
         self.input_test_nodes = input_test_nodes
 
     def prepare_data(self):
+        """"""
         if self.loader == 'full':
             if self.trainer.num_processes != 1 or self.trainer.num_gpus != 1:
                 raise ValueError(f"'{self.__class__.__name__}' with loader="
