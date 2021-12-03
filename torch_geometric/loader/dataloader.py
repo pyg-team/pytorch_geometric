@@ -31,9 +31,12 @@ class Collater:
         elif isinstance(elem, tuple) and hasattr(elem, '_fields'):
             return type(elem)(*(self(s) for s in zip(*batch)))
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
-            return [self.collate(s) for s in zip(*batch)]
+            return [self(s) for s in zip(*batch)]
 
         raise TypeError(f'DataLoader found invalid type: {type(elem)}')
+
+    def collate(self, batch):  # Deprecated...
+        return self(batch)
 
 
 class DataLoader(torch.utils.data.DataLoader):
