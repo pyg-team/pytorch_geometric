@@ -130,31 +130,18 @@ class Net(torch.nn.Module):
         )
 
         # backbone layers
-        self.transformers_up = torch.nn.ModuleList()
-        self.transformers_down = torch.nn.ModuleList()
-        self.transition_up = torch.nn.ModuleList()
-        self.transition_down = torch.nn.ModuleList()
-
-        for i in range(0, len(dim_model) - 1):
+        self.encoders = torch.nn.ModuleList()
+        n = len(dim_model) - 1
+        for i in range(0, n):
 
             # Add Transition Down block followed by a Point Transformer block
-            self.transition_down.append(
+            self.encoders.append(Seq(
                 TransitionDown(in_channels=dim_model[i],
-                               out_channels=dim_model[i + 1], k=self.k))
-
-            self.transformers_down.append(
+                               out_channels=dim_model[i + 1], k=self.k),
                 TransformerBlock(in_channels=dim_model[i + 1],
                                  out_channels=dim_model[i + 1]))
-
-            # Add Transition Up block followed by Point Transformer block
-            self.transition_up.append(
-                TransitionUp(in_channels=dim_model[i + 1],
-                             out_channels=dim_model[i]))
-
-            self.transformers_up.append(
-                TransformerBlock(in_channels=dim_model[i],
-                                 out_channels=dim_model[i]))
-
+            )
+        
         # summit layers
         self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
 
@@ -162,6 +149,16 @@ class Net(torch.nn.Module):
             in_channels=dim_model[-1],
             out_channels=dim_model[-1],
         )
+        
+        self.decoders = torch.nn.ModuleList()
+        for i in range(0, n):
+            # Add Transition Up block followed by Point Transformer block
+            self.decoders.append(Seq(
+                TransitionUp(in_channels=dim_model[n - i],
+                              out_channels=dim_model[n - i -1]),
+                TransformerBlock(in_channels=dim_model[n - i -1],
+                                  out_channels=dim_model[n - i -1]))
+            )
 
         # class score computation
         self.mlp_output = Seq(Lin(dim_model[0], 64), ReLU(), Lin(64, 64),
@@ -188,10 +185,10 @@ class Net(torch.nn.Module):
         out_batch.append(batch)
 
         # backbone down : #reduce cardinality and augment dimensionnality
-        for i in range(len(self.transformers_down)):
-            x, pos, batch = self.transition_down[i](x, pos, batch=batch)
+        for i in range(len(self.encoders)):
+            x, pos, batch = self.encoders[i][0](x, pos, batch=batch)
             edge_index = knn_graph(pos, k=self.k, batch=batch)
-            x = self.transformers_down[i](x, pos, edge_index)
+            x = self.encoders[i][1](x, pos, edge_index)
 
             out_x.append(x)
             out_pos.append(pos)
@@ -203,9 +200,9 @@ class Net(torch.nn.Module):
         x = self.transformer_summit(x, pos, edge_index)
 
         # backbone up : augment cardinality and reduce dimensionnality
-        n = len(self.transformers_down)
+        n = len(self.encoders)
         for i in range(n):
-            x = self.transition_up[-i - 1](x=out_x[-i - 2], x_sub=x,
+            x = self.decoders[i][0](x=out_x[-i - 2], x_sub=x,
                                            pos=out_pos[-i - 2],
                                            pos_sub=out_pos[-i - 1],
                                            batch_sub=out_batch[-i - 1],
@@ -213,7 +210,7 @@ class Net(torch.nn.Module):
 
             edge_index = knn_graph(out_pos[-i - 2], k=self.k,
                                    batch=out_batch[-i - 2])
-            x = self.transformers_up[-i - 1](x, out_pos[-i - 2], edge_index)
+            x = self.decoders[i][1](x, out_pos[-i - 2], edge_index)
 
         # Class score
         out = self.mlp_output(x)
