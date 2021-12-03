@@ -58,13 +58,16 @@ def to_hetero_csc(
 
 def filter_node_store_(store: NodeStorage, index: Tensor) -> NodeStorage:
     # Filters a node storage object to only hold the nodes in `index`:
-    num_nodes = store.num_nodes
+    data = store._parent()
 
     for key, value in store.items():
         if key == 'num_nodes':
             store.num_nodes = index.numel()
 
-        elif isinstance(value, Tensor) and value.size(0) == num_nodes:
+        elif isinstance(data, Data) and data.is_node_attr(key):
+            store[key] = value[index]
+
+        elif isinstance(data, HeteroData) and isinstance(value, Tensor):
             store[key] = value[index]
 
     return store
@@ -74,7 +77,7 @@ def filter_edge_store_(store: EdgeStorage, row: Tensor, col: Tensor,
                        index: Tensor, perm: OptTensor = None) -> EdgeStorage:
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
-    num_edges = store.num_edges
+    data = store._parent()
 
     for key, value in store.items():
         if key == 'edge_index':
@@ -89,7 +92,10 @@ def filter_edge_store_(store: EdgeStorage, row: Tensor, col: Tensor,
                                        sparse_sizes=sparse_sizes,
                                        is_sorted=True)
 
-        elif isinstance(value, Tensor) and value.size(0) == num_edges:
+        elif isinstance(data, Data) and data.is_edge_attr(key):
+            store[key] = value[index] if perm is None else value[perm[index]]
+
+        elif isinstance(data, HeteroData) and isinstance(value, Tensor):
             store[key] = value[index] if perm is None else value[perm[index]]
 
     return store
