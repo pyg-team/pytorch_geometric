@@ -1,12 +1,16 @@
-from typing import Optional, Union, Tuple
+from typing import Optional, Union
 
 import warnings
 
 import torch
 
-from torch_geometric.typing import OptTensor, NodeType
+from torch_geometric.typing import InputNodes
 from torch_geometric.data import Data, HeteroData, Dataset
-from torch_geometric.loader import DataLoader, NeighborLoader
+
+from torch_geometric.loader.dataloader import DataLoader
+from torch_geometric.loader.neighbor_loader import (NeighborSampler,
+                                                    NeighborLoader,
+                                                    get_input_node_type)
 
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
@@ -140,9 +144,6 @@ class LightningDataset(LightningDataModule):
         return f'{self.__class__.__name__}({kwargs})'
 
 
-InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
-
-
 class LightningNodeData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
@@ -242,10 +243,17 @@ class LightningNodeData(LightningDataModule):
             self.kwargs['pin_memory'] = False
 
         self.data = data
-        if loader != 'full':  # TODO
-            # self.data = self.data._csc()
-            pass
         self.loader = loader
+
+        if loader == 'neighbor':
+            self.sampler = NeighborSampler(
+                data=data,
+                num_neighbors=kwargs.get('num_neighbors', None),
+                replace=kwargs.get('replace', False),
+                directed=kwargs.get('directed', True),
+                transform=kwargs.get('transform', None),
+                input_node_type=get_input_node_type(input_train_nodes),
+            )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
@@ -266,8 +274,9 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
-            warnings.filterwarnings('ignore', '.*turn this off for val/test.*')
-            return NeighborLoader(self.data, input_nodes=input_nodes,
+            print("DRIN")
+            warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
+            return NeighborLoader(self.sampler, input_nodes=input_nodes,
                                   shuffle=True, **self.kwargs)
 
         raise NotImplementedError

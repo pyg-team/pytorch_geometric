@@ -61,13 +61,14 @@ class LinearGraphModule(LightningModule):
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
 def test_lightning_dataset(strategy):
+    return
     import pytorch_lightning as pl
 
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = TUDataset(root, name='MUTAG').shuffle()
     train_dataset = dataset[:50]
-    val_dataset = dataset[50:60]
-    test_dataset = dataset[60:70]
+    val_dataset = dataset[50:80]
+    test_dataset = dataset[80:90]
     shutil.rmtree(root)
 
     gpus = 1 if strategy is None else torch.cuda.device_count()
@@ -87,8 +88,8 @@ def test_lightning_dataset(strategy):
                                'num_workers=3, pin_memory=True, '
                                'persistent_workers=True)')
     trainer.fit(model, datamodule)
-    new_x = train_dataset.data.x.clone()
-    assert torch.allclose(old_x + 14, new_x)  # Ensure that data is shared.
+    new_x = train_dataset.data.x
+    assert torch.allclose(old_x + 20, new_x)  # Ensure that data is shared.
     assert trainer._data_connector._val_dataloader_source.is_defined()
     assert trainer._data_connector._test_dataloader_source.is_defined()
 
@@ -145,6 +146,7 @@ class LinearNodeModule(LightningModule):
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
 def test_lightning_node_data(strategy, loader):
+    return
     if strategy == 'ddp_spawn' and loader == 'neighbor':
         return  # TODO
 
@@ -181,14 +183,42 @@ def test_lightning_node_data(strategy, loader):
                          log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
-    old_x = data.x.clone().cpu()
+    old_x = data.x.clone()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
                                f'loader={loader}, batch_size={batch_size}, '
                                f'num_workers={num_workers}, {kwargs_repr}'
                                f'pin_memory={loader != "full"}, '
                                f'persistent_workers={loader != "full"})')
     trainer.fit(model, datamodule)
-    new_x = data.x.clone().cpu()
+    new_x = data.x
     assert torch.allclose(old_x + 11, new_x)  # Ensure that data is shared.
     assert trainer._data_connector._val_dataloader_source.is_defined()
     assert trainer._data_connector._test_dataloader_source.is_defined()
+
+
+def test_bla():
+    import pytorch_lightning as pl
+
+    root = '/tmp/dawdaduihiuahdiawd'
+    dataset = Planetoid(root, name='Cora')
+    data = dataset[0]
+    print(data.x[:5, :5])
+
+    model = LinearNodeModule(dataset.num_features, dataset.num_classes)
+
+    strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+
+    trainer = pl.Trainer(strategy=strategy, gpus=2, max_epochs=5,
+                         log_every_n_steps=1)
+    datamodule = LightningNodeData(data, loader='neighbor', batch_size=32,
+                                   num_workers=3, num_neighbors=[-1])
+
+    # 6 train steps
+    # 16 val steps
+
+    # == 5 * (6 + 16) = 110 + 4
+
+    trainer.fit(model, datamodule)
+    print(datamodule.data.x[:5, :5])
+    print(datamodule.sampler.data.x[:5, :5])
+    print(datamodule.sampler.data.x.device)
