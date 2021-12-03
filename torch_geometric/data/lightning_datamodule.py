@@ -274,7 +274,6 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
-            print("DRIN")
             warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
             return NeighborLoader(self.sampler, input_nodes=input_nodes,
                                   shuffle=True, **self.kwargs)

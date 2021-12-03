@@ -83,13 +83,14 @@ def test_lightning_dataset(strategy):
                                   batch_size=5, num_workers=3)
     old_x = train_dataset.data.x.clone()
     assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
-                               'val_dataset=MUTAG(10), '
+                               'val_dataset=MUTAG(30), '
                                'test_dataset=MUTAG(10), batch_size=5, '
                                'num_workers=3, pin_memory=True, '
                                'persistent_workers=True)')
     trainer.fit(model, datamodule)
+    offset = 10 + 6 + 2 * gpus  # `train_steps` + `val_steps` + `sanity`
     new_x = train_dataset.data.x
-    assert torch.allclose(old_x + 20, new_x)  # Ensure that data is shared.
+    assert torch.allclose(old_x + offset, new_x)  # Ensure that data is shared.
     assert trainer._data_connector._val_dataloader_source.is_defined()
     assert trainer._data_connector._test_dataloader_source.is_defined()
 
@@ -194,31 +195,3 @@ def test_lightning_node_data(strategy, loader):
     assert torch.allclose(old_x + 11, new_x)  # Ensure that data is shared.
     assert trainer._data_connector._val_dataloader_source.is_defined()
     assert trainer._data_connector._test_dataloader_source.is_defined()
-
-
-def test_bla():
-    import pytorch_lightning as pl
-
-    root = '/tmp/dawdaduihiuahdiawd'
-    dataset = Planetoid(root, name='Cora')
-    data = dataset[0]
-    print(data.x[:5, :5])
-
-    model = LinearNodeModule(dataset.num_features, dataset.num_classes)
-
-    strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-
-    trainer = pl.Trainer(strategy=strategy, gpus=2, max_epochs=5,
-                         log_every_n_steps=1)
-    datamodule = LightningNodeData(data, loader='neighbor', batch_size=32,
-                                   num_workers=3, num_neighbors=[-1])
-
-    # 6 train steps
-    # 16 val steps
-
-    # == 5 * (6 + 16) = 110 + 4
-
-    trainer.fit(model, datamodule)
-    print(datamodule.data.x[:5, :5])
-    print(datamodule.sampler.data.x[:5, :5])
-    print(datamodule.sampler.data.x.device)

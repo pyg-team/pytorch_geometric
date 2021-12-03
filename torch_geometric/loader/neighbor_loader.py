@@ -216,9 +216,6 @@ class NeighborLoader(torch.utils.data.DataLoader):
         transform: Callable = None,
         **kwargs,
     ):
-        if kwargs.get('num_workers', 0) > 0:
-            torch.multiprocessing.set_sharing_strategy('file_system')
-
         if 'dataset' in kwargs:
             del kwargs['dataset']
         if 'collate_fn' in kwargs:
