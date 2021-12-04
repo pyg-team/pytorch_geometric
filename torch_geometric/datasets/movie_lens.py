@@ -49,7 +49,7 @@ class MovieLens(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return f'data_{self.model_name}.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)

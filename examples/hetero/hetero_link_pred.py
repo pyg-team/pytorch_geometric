@@ -10,22 +10,14 @@ from torch_geometric.datasets import MovieLens
 from torch_geometric.nn import SAGEConv, to_hetero
 
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    '--feature_extraction_model', type=str, default='all-MiniLM-L6-v2',
-    help=('Model used to transform movie titles to node features. This should '
-          'be one of the models available in Huggingface SentenceTransformer '
-          '(https://huggingface.co/sentence-transformers)'))
-parser.add_argument(
-    '--disjoint_train_ratio', type=float, default=0.0,
-    help=('Proportion of training edges used for supervision. '
-          'The remainder is disjoint and used for message passing.'
-          'This option can be used if target leakage is a concern.'))
+parser.add_argument('--use_weighted_loss', action='store_true',
+                    help='Whether to use weighted MSE loss.')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
-dataset = MovieLens(path, model_name=args.feature_extraction_model)
+dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 
 # Add user node features for message passing:
@@ -40,11 +32,23 @@ del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 train_data, val_data, test_data = T.RandomLinkSplit(
     num_val=0.1,
     num_test=0.1,
-    disjoint_train_ratio=args.disjoint_train_ratio,
     neg_sampling_ratio=0.0,
     edge_types=[('user', 'rates', 'movie')],
     rev_edge_types=[('movie', 'rev_rates', 'user')],
 )(data)
+
+# We have an unbalanced dataset with many labels for rating 3 and 4, and very
+# few for 0 and 1. Therefore we use a weighted MSE loss.
+if args.use_weighted_loss:
+    weight = torch.bincount(train_data['user', 'movie'].edge_label)
+    weight = weight.max() / weight
+else:
+    weight = None
+
+
+def weighted_mse_loss(pred, target, weight=None):
+    weight = 1. if weight is None else weight[target].to(pred.dtype)
+    return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
 
 
 class GNNEncoder(torch.nn.Module):
@@ -99,9 +103,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(train_data.x_dict, train_data.edge_index_dict,
-                train_data['user', 'movie'].edge_label_index)
-    loss = F.mse_loss(out, train_data['user', 'movie'].edge_label.float())
+    pred = model(train_data.x_dict, train_data.edge_index_dict,
+                 train_data['user', 'movie'].edge_label_index)
+    target = train_data['user', 'movie'].edge_label
+    loss = weighted_mse_loss(pred, target, weight)
     loss.backward()
     optimizer.step()
     return float(loss)
@@ -110,9 +115,11 @@ def train():
 @torch.no_grad()
 def test(data):
     model.eval()
-    out = model(data.x_dict, data.edge_index_dict,
-                data['user', 'movie'].edge_label_index)
-    rmse = F.mse_loss(out, data['user', 'movie'].edge_label.float()).sqrt()
+    pred = model(data.x_dict, data.edge_index_dict,
+                 data['user', 'movie'].edge_label_index)
+    pred = pred.clamp(min=0, max=5)
+    target = data['user', 'movie'].edge_label.float()
+    rmse = F.mse_loss(pred, target).sqrt()
     return float(rmse)
 
 
