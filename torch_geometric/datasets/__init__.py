@@ -50,6 +50,7 @@ from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
+from .movie_lens import MovieLens
 from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
@@ -126,6 +127,7 @@ __all__ = [
     'Actor',
     'OGB_MAG',
     'DBLP',
+    'MovieLens',
     'IMDB',
     'LastFM',
     'HGBDataset',
