@@ -320,7 +320,6 @@ class GDC(BaseTransform):
 
         Args:
             matrix (Tensor): Matrix to sparsify.
-            num_nodes (int): Number of nodes.
             method (str): Method of sparsification. Options:
 
                 1. :obj:`"threshold"`: Remove all edges with weights smaller
@@ -357,24 +356,23 @@ class GDC(BaseTransform):
             edge_weight = matrix.flatten()[edge_index_flat]
 
         elif method == 'topk':
-            assert kwargs['dim'] in [0, 1]
-            sort_idx = torch.argsort(matrix, dim=kwargs['dim'],
-                                     descending=True)
-            if kwargs['dim'] == 0:
-                top_idx = sort_idx[:kwargs['k']]
-                edge_weight = torch.gather(matrix, dim=kwargs['dim'],
+            k, dim = min(N, kwargs['k']), kwargs['dim']
+            assert dim in [0, 1]
+            sort_idx = torch.argsort(matrix, dim=dim, descending=True)
+            if dim == 0:
+                top_idx = sort_idx[:k]
+                edge_weight = torch.gather(matrix, dim=dim,
                                            index=top_idx).flatten()
 
-                row_idx = torch.arange(0, N, device=matrix.device).repeat(
-                    kwargs['k'])
+                row_idx = torch.arange(0, N, device=matrix.device).repeat(k)
                 edge_index = torch.stack([top_idx.flatten(), row_idx], dim=0)
             else:
-                top_idx = sort_idx[:, :kwargs['k']]
-                edge_weight = torch.gather(matrix, dim=kwargs['dim'],
+                top_idx = sort_idx[:, :k]
+                edge_weight = torch.gather(matrix, dim=dim,
                                            index=top_idx).flatten()
 
                 col_idx = torch.arange(
-                    0, N, device=matrix.device).repeat_interleave(kwargs['k'])
+                    0, N, device=matrix.device).repeat_interleave(k)
                 edge_index = torch.stack([col_idx, top_idx.flatten()], dim=0)
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
