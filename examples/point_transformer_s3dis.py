@@ -25,9 +25,19 @@ class TransformerBlock(torch.nn.Module):
         self.lin_in = Lin(in_channels, in_channels)
         self.lin_out = Lin(out_channels, out_channels)
 
-        self.pos_nn = MLP([3, 64, out_channels], batch_norm=False)
+        self.pos_nn = Seq(
+            MLP([3, 3]), 
+            Lin(3, out_channels)
+        )
 
-        self.attn_nn = MLP([out_channels, 64, out_channels], batch_norm=False)
+        self.attn_nn = Seq(
+            BN(out_channels),
+            ReLU(),
+            MLP([out_channels, out_channels // 8]),
+            Lin(out_channels // 8, out_channels) 
+            # NB : last should be // 8 according to original code, but custom
+            # implementation makes it impossible at the moment
+        )
 
         self.transformer = PointTransformerConv(
             in_channels,
@@ -35,11 +45,17 @@ class TransformerBlock(torch.nn.Module):
             pos_nn=self.pos_nn,
             attn_nn=self.attn_nn
         )
+        
+        self.bn1 = BN(in_channels)
+        self.bn2 = BN(in_channels)
+        self.bn3 = BN(in_channels)
 
     def forward(self, x, pos, edge_index):
-        x = self.lin_in(x).relu()
-        x = self.transformer(x, pos, edge_index)
-        x = self.lin_out(x).relu()
+        x_skip = x.clone()
+        x = self.bn1(self.lin_in(x)).relu()
+        x = self.bn2(self.transformer(x, pos, edge_index)).relu()
+        x = self.bn3(self.lin_out(x))
+        x = (x + x_skip).relu()
         return x
 
 
@@ -112,6 +128,16 @@ class TransitionUp(torch.nn.Module):
 
         return x
 
+class TransitionSummit(torch.nn.Module):
+    def __init__(self, in_channels):
+        super().__init__()
+        self.mlp_sub = Seq(Lin(in_channels, in_channels), ReLU())
+        self.mlp = MLP([2*in_channels, in_channels])
+
+    def forward(self, x):
+        #import pdb; pdb.set_trace()
+        x = self.mlp(torch.cat((x, self.mlp_sub(x)),1))
+        return x
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
@@ -128,6 +154,8 @@ class Net(torch.nn.Module):
             in_channels=dim_model[0],
             out_channels=dim_model[0],
         )
+        
+        blocks = [2,3,4,6,3]
 
         # backbone layers
         self.encoders = torch.nn.ModuleList()
@@ -138,17 +166,18 @@ class Net(torch.nn.Module):
             self.encoders.append(Seq(
                 TransitionDown(in_channels=dim_model[i],
                                out_channels=dim_model[i + 1], k=self.k),
-                TransformerBlock(in_channels=dim_model[i + 1],
-                                 out_channels=dim_model[i + 1]))
+                *[TransformerBlock(in_channels=dim_model[i + 1],
+                                 out_channels=dim_model[i + 1]) for k in range(blocks[1:][i])])
             )
         
         # summit layers
-        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
-
-        self.transformer_summit = TransformerBlock(
+        #self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
+        self.mlp_summit = TransitionSummit(dim_model[-1])
+        
+        self.transformer_summit = Seq(*[TransformerBlock(
             in_channels=dim_model[-1],
             out_channels=dim_model[-1],
-        )
+        ) for i in range(2)])
         
         self.decoders = torch.nn.ModuleList()
         for i in range(0, n):
@@ -156,14 +185,14 @@ class Net(torch.nn.Module):
             self.decoders.append(Seq(
                 TransitionUp(in_channels=dim_model[n - i],
                               out_channels=dim_model[n - i -1]),
-                TransformerBlock(in_channels=dim_model[n - i -1],
-                                  out_channels=dim_model[n - i -1]))
+                *[TransformerBlock(in_channels=dim_model[n - i -1],
+                                  out_channels=dim_model[n - i -1]) for k in range(2)])
             )
 
         # class score computation
-        self.mlp_output = Seq(Lin(dim_model[0], 64), ReLU(), Lin(64, 64),
-                              ReLU(), Lin(64, out_channels))
-
+        self.mlp_output = Seq( MLP([dim_model[0], dim_model[0]]),
+                              Lin(dim_model[0], out_channels))
+            
     def forward(self, x, pos, batch=None):
 
         # add dummy features in case there is none
@@ -186,9 +215,11 @@ class Net(torch.nn.Module):
 
         # backbone down : #reduce cardinality and augment dimensionnality
         for i in range(len(self.encoders)):
+            
             x, pos, batch = self.encoders[i][0](x, pos, batch=batch)
             edge_index = knn_graph(pos, k=self.k, batch=batch)
-            x = self.encoders[i][1](x, pos, edge_index)
+            for layer in self.encoders[i][1:]:
+                x = layer(x, pos, edge_index)
 
             out_x.append(x)
             out_pos.append(pos)
@@ -197,7 +228,9 @@ class Net(torch.nn.Module):
         # summit
         x = self.mlp_summit(x)
         edge_index = knn_graph(pos, k=self.k, batch=batch)
-        x = self.transformer_summit(x, pos, edge_index)
+        for layer in self.transformer_summit:
+            x = layer(x, pos, edge_index)
+            
 
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.encoders)
@@ -210,7 +243,8 @@ class Net(torch.nn.Module):
 
             edge_index = knn_graph(out_pos[-i - 2], k=self.k,
                                    batch=out_batch[-i - 2])
-            x = self.decoders[i][1](x, out_pos[-i - 2], edge_index)
+            for layer in self.decoders[i][1:]:
+                x = layer(x, out_pos[-i - 2], edge_index)
 
         # Class score
         out = self.mlp_output(x)
@@ -294,8 +328,10 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net(6, train_dataset.num_classes, dim_model=[
         32, 64, 128, 256, 512], k=16).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.1)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.1)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.5, momentum=0.9, weight_decay=0.0001)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60,80], gamma=0.1)
     
     loss_history = []
     test_iou_history = []
