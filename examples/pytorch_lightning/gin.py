@@ -1,27 +1,20 @@
-from typing import Optional
-
 import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU, Dropout
-from torch_sparse import SparseTensor
-from torch_scatter import segment_csr
 from torchmetrics import Accuracy
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 import pytorch_lightning as pl
 
 import torch_geometric.transforms as T
-from torch_geometric.nn import GIN, global_add_pool, MLP
+from torch_geometric.nn import global_add_pool
 from torch_geometric.data import LightningDataset
 from torch_geometric.nn import GINConv
 from torch_geometric.data import Data
 from torch_geometric import seed_everything
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import TUDataset
 
 
-class Model(LightningModule):
+class Model(pl.LightningModule):
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):
@@ -86,8 +79,6 @@ def main():
 
     transform = T.OneHotDegree(135)
     dataset = TUDataset('data/TU', name='IMDB-BINARY', pre_transform=transform)
-    print(dataset)
-    print(dataset.num_node_features)
 
     dataset = dataset.shuffle()
     test_dataset = dataset[:len(dataset) // 10]
@@ -101,7 +92,8 @@ def main():
 
     gpus = torch.cuda.device_count()
     strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-    checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor='val_acc',
+                                                       save_top_k=1)
     trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=20,
                          callbacks=[checkpoint_callback])
 
