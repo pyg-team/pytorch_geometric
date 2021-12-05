@@ -1,3 +1,5 @@
+import os.path as osp
+
 import torch
 from torch import Tensor
 import torch.nn.functional as F
@@ -80,8 +82,8 @@ class Model(pl.LightningModule):
 def main():
     seed_everything(42)
 
-    transform = T.OneHotDegree(135)
-    dataset = TUDataset('data/TU', name='IMDB-BINARY', pre_transform=transform)
+    root = osp.join('data', 'TUDataset')
+    dataset = TUDataset(root, 'IMDB-BINARY', pre_transform=T.OneHotDegree(135))
 
     dataset = dataset.shuffle()
     test_dataset = dataset[:len(dataset) // 10]
@@ -95,7 +97,7 @@ def main():
 
     gpus = torch.cuda.device_count()
     strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-    trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=20,
+    trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=5,
                          log_every_n_steps=5)
 
     trainer.fit(model, datamodule)
