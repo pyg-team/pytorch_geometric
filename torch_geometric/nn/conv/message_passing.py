@@ -432,7 +432,7 @@ class MessagePassing(torch.nn.Module):
         The output of this functition should have the same shape as the
         :obj:`edge_index` provided to :meth:`propagate_edges`.
         """
-        return ( x_i + x_j ) / 2
+        return (x_i + x_j) / 2
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
@@ -521,8 +521,8 @@ class MessagePassing(torch.nn.Module):
         hook: Callable
     ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
-        The hook will be called every time before :meth:`edges_propagate` is 
-        invoked. See :meth:`register_propagate_forward_pre_hook` for more 
+        The hook will be called every time before :meth:`edges_propagate` is
+        invoked. See :meth:`register_propagate_forward_pre_hook` for more
         information.
         """
         handle = RemovableHandle(self._edge_update_forward_pre_hooks)
@@ -530,11 +530,11 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     def register_edge_updates_forward_hook(
-        self, 
+        self,
         hook: Callable
     ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
-        The hook will be called every time after :meth:`edges_propagate` has 
+        The hook will be called every time after :meth:`edges_propagate` has
         computed an output.
         See :meth:`register_propagate_forward_hook` for more information.
         """

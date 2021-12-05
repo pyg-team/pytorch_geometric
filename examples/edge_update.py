@@ -20,7 +20,7 @@ class EdgeMessagePassingExample(MessagePassing):
 
     def forward(self, data: Data):
         x = self.propagate(data.edge_index, edge_attr=data.edge_attr, x=data.x)
-        edge_attr = self.edge_update(data.edge_index, edge_attr=data.edge_attr, 
+        edge_attr = self.edge_update(data.edge_index, edge_attr=data.edge_attr,
                                      x=data.x)
         return x, edge_attr
 
