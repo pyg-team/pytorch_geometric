@@ -368,7 +368,8 @@ class MessagePassing(torch.nn.Module):
                 See :meth:`propagate` for more information.
                 matrix.
                 See :meth:`propagate` for more information.
-            **kwargs: Any additional data which is needed to update edges featres.
+            **kwargs: Any additional data which is needed to update edges
+            feautres.
         """
         decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
         for hook in self._edge_update_forward_pre_hooks.values():
@@ -393,7 +394,7 @@ class MessagePassing(torch.nn.Module):
                     kwargs[arg] = decomp_kwargs[arg][i]
 
             coll_dict = self.__collect__(self.__edge_user_args__, edge_index,
-                                            size, kwargs)
+                                         size, kwargs)
             msg_kwargs = self.inspector.distribute('edge_message', coll_dict)
             out = self.edge_message(**msg_kwargs)
 
@@ -427,11 +428,11 @@ class MessagePassing(torch.nn.Module):
         This function can use as argument inputs to :meth:`propagate_edges`,
         Furthermore, tensors passed to :meth:`propagate` can be mapped to the
         respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
-        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`. 
-        The output of this functition should have the same shape as the 
-        :obj:`edge_index` provided to :meth:`propagate_edges`.     
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        The output of this functition should have the same shape as the
+        :obj:`edge_index` provided to :meth:`propagate_edges`.
         """
-        return (x_i + x_j)/2
+        return ( x_i + x_j ) / 2
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
@@ -515,20 +516,26 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_hooks[handle.id] = hook
         return handle
 
-    def register_edge_updates_forward_pre_hook(self,
-                                          hook: Callable) -> RemovableHandle:
+    def register_edge_updates_forward_pre_hook(
+        self,
+        hook: Callable
+    ) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
-        The hook will be called every time before :meth:`edges_propagate` is invoked.
-        See :meth:`register_propagate_forward_pre_hook` for more information.
+        The hook will be called every time before :meth:`edges_propagate` is 
+        invoked. See :meth:`register_propagate_forward_pre_hook` for more 
+        information.
         """
         handle = RemovableHandle(self._edge_update_forward_pre_hooks)
         self._edge_update_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_edge_updates_forward_hook(self, hook: Callable) -> RemovableHandle:
+    def register_edge_updates_forward_hook(
+        self, 
+        hook: Callable
+    ) -> RemovableHandle:
         r"""Registers a forward hook on the module.
-        The hook will be called every time after :meth:`edges_propagate` has computed
-        an output.
+        The hook will be called every time after :meth:`edges_propagate` has 
+        computed an output.
         See :meth:`register_propagate_forward_hook` for more information.
         """
         handle = RemovableHandle(self._edge_update_forward_hooks)

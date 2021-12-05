@@ -15,11 +15,13 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
 
+
 class EdgeMessagePassingExample(MessagePassing):
 
     def forward(self, data: Data):
         x = self.propagate(data.edge_index, edge_attr=data.edge_attr, x=data.x)
-        edge_attr = self.edge_update(data.edge_index, edge_attr=data.edge_attr, x=data.x)
+        edge_attr = self.edge_update(data.edge_index, edge_attr=data.edge_attr, 
+                                     x=data.x)
         return x, edge_attr
 
     def edge_message(self, edge_attr, x_i, x_j):
@@ -27,6 +29,7 @@ class EdgeMessagePassingExample(MessagePassing):
 
     def message(self, edge_attr, x_i, x_j):
         return x_i
+
 
 model = EdgeMessagePassingExample()
 print(model.forward(data))
