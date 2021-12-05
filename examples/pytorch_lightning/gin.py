@@ -95,13 +95,11 @@ def main():
 
     gpus = torch.cuda.device_count()
     strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor='val_acc',
-                                                       save_top_k=1)
     trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=20,
-                         log_every_n_steps=5, callbacks=[checkpoint_callback])
+                         log_every_n_steps=5)
 
     trainer.fit(model, datamodule)
-    trainer.test()
+    trainer.test(ckpt_path='best', datamodule=datamodule)
 
 
 if __name__ == '__main__':
