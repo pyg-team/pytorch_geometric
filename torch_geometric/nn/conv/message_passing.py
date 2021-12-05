@@ -101,7 +101,9 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.update, pop_first=True)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'aggregate', 'update', 'edge_message']).difference(self.special_args)
+            ['message', 'aggregate', 'update']).difference(self.special_args)
+        self.__edge_user_args__ = self.inspector.keys(
+            ['edge_message']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
 
@@ -356,7 +358,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def edge_update(self, edge_index: Adj, size: Size = None, **kwargs):
+    def edge_update(self, edge_index: Adj, **kwargs):
         r"""The call to generate edge updates from messages.
 
         Args:
@@ -364,18 +366,17 @@ class MessagePassing(torch.nn.Module):
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
                 graph connectivity/message passing flow.
                 See :meth:`propagate` for more information.
-            size (tuple, optional): The size :obj:`(N, M)` of the assignment
                 matrix.
                 See :meth:`propagate` for more information.
             **kwargs: Any additional data which is needed to update edges featres.
         """
         decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
         for hook in self._edge_update_forward_pre_hooks.values():
-            res = hook(self, (edge_index, size, kwargs))
+            res = hook(self, (edge_index, kwargs))
             if res is not None:
-                edge_index, size, kwargs = res
+                edge_index, kwargs = res
 
-        size = self.__check_input__(edge_index, size)
+        size = self.__check_input__(edge_index, size=None)
 
         if decomposed_layers > 1:
             user_args = self.__user_args__
@@ -391,7 +392,7 @@ class MessagePassing(torch.nn.Module):
                 for arg in decomp_args:
                     kwargs[arg] = decomp_kwargs[arg][i]
 
-            coll_dict = self.__collect__(self.__user_args__, edge_index,
+            coll_dict = self.__collect__(self.__edge_user_args__, edge_index,
                                             size, kwargs)
             msg_kwargs = self.inspector.distribute('edge_message', coll_dict)
             out = self.edge_message(**msg_kwargs)
@@ -403,7 +404,7 @@ class MessagePassing(torch.nn.Module):
             out = torch.cat(decomp_out, dim=-1)
 
         for hook in self._edge_update_forward_hooks.values():
-            res = hook(self, (edge_index, size, kwargs), out)
+            res = hook(self, (edge_index, kwargs), out)
             if res is not None:
                 out = res
 
