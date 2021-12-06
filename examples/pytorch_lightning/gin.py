@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
 
 import pytorch_lightning as pl
@@ -10,7 +9,7 @@ from torchmetrics import Accuracy
 import torch_geometric.transforms as T
 from torch_geometric import seed_everything
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import Data, LightningDataset
+from torch_geometric.data import LightningDataset
 from torch_geometric.nn import GIN, global_add_pool, MLP
 
 
@@ -19,8 +18,6 @@ class Model(pl.LightningModule):
                  hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):
         super().__init__()
-        self.save_hyperparameters()
-
         self.gnn = GIN(in_channels, hidden_channels, num_layers,
                        dropout=dropout, jk='cat')
 
@@ -31,31 +28,31 @@ class Model(pl.LightningModule):
         self.val_acc = Accuracy()
         self.test_acc = Accuracy()
 
-    def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor) -> Tensor:
+    def forward(self, x, edge_index, batch):
         x = self.gnn(x, edge_index)
         x = global_add_pool(x, batch)
         x = self.classifier(x)
         return x
 
-    def training_step(self, data: Data, batch_idx: int):
+    def training_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index, data.batch)
         loss = F.cross_entropy(y_hat, data.y)
         self.train_acc(y_hat.softmax(dim=-1), data.y)
         self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=data.y.size(0))
+                 on_epoch=True, batch_size=y_hat.size(0))
         return loss
 
-    def validation_step(self, data: Data, batch_idx: int):
+    def validation_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index, data.batch)
         self.val_acc(y_hat.softmax(dim=-1), data.y)
         self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=data.y.size(0))
+                 on_epoch=True, batch_size=y_hat.size(0))
 
-    def test_step(self, data: Data, batch_idx: int):
+    def test_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index, data.batch)
         self.test_acc(y_hat.softmax(dim=-1), data.y)
         self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=data.y.size(0))
+                 on_epoch=True, batch_size=y_hat.size(0))
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -73,7 +70,7 @@ def main():
     train_dataset = dataset[2 * len(dataset) // 10:]
 
     datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                  batch_size=64, num_workers=1)
+                                  batch_size=64, num_workers=4)
 
     model = Model(dataset.num_node_features, dataset.num_classes)
 
