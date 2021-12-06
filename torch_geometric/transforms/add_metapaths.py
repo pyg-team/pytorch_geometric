@@ -74,7 +74,7 @@ class AddMetaPaths(BaseTransform):
             by a list of lists of
             :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
         drop_orig_edges (bool, optional): If set to :obj:`True`, existing edge
-            types will be dropped.(default: :obj:`False`)
+            types will be dropped. (default: :obj:`False`)
         keep_same_node_type (bool, optional): If set to :obj:`True`, existing
             edge types between the same node type are not dropped even in case
             :obj:`drop_orig_edges` is set to :obj:`True`.
