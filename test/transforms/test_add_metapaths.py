@@ -27,15 +27,24 @@ def test_add_metapaths():
     meta2 = AddMetaPaths(metapaths, drop_orig_edges=True)(dblp.clone())
     meta3 = AddMetaPaths(metapaths, drop_orig_edges=True,
                          keep_same_node_type=True)(dblp.clone())
+    meta4 = AddMetaPaths(metapaths, drop_orig_edges=True,
+                         keep_same_node_type=True,
+                         drop_unconnected_nodes=True)(dblp.clone())
 
     assert meta1['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
     assert meta2['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
     assert meta3['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
+    assert meta4['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
 
     assert all([i in meta1.edge_types for i in orig_edge_type])
     assert meta2.edge_types == [('paper', 'metapath_0', 'paper')]
     assert meta3.edge_types == [('paper', 'cites', 'paper'),
                                 ('paper', 'metapath_0', 'paper')]
+    assert meta4.edge_types == [('paper', 'cites', 'paper'),
+                                ('paper', 'metapath_0', 'paper')]
+
+    assert meta3.node_types == ['paper', 'author', 'conference']
+    assert meta4.node_types == ['paper']
 
     # Test 4-hop metapath:
     metapaths = [[('author', 'paper'), ('paper', 'conference')],

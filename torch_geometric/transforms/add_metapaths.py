@@ -1,3 +1,4 @@
+
 from typing import List
 
 import torch
@@ -78,10 +79,13 @@ class AddMetaPaths(BaseTransform):
             edge types between the same node type are not dropped even in case
             :obj:`drop_orig_edges` is set to :obj:`True`.
             (default: :obj:`False`)
+        drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
+            node types not connected by any edge type. (default: :obj:`False`)
     """
     def __init__(self, metapaths: List[List[EdgeType]],
                  drop_orig_edges: bool = False,
-                 keep_same_node_type: bool = False):
+                 keep_same_node_type: bool = False,
+                 drop_unconnected_nodes: bool = False):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -92,6 +96,7 @@ class AddMetaPaths(BaseTransform):
         self.metapaths = metapaths
         self.drop_orig_edges = drop_orig_edges
         self.keep_same_node_type = keep_same_node_type
+        self.drop_unconnected_nodes = drop_unconnected_nodes
 
     def __call__(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
@@ -124,5 +129,17 @@ class AddMetaPaths(BaseTransform):
                     continue
                 else:
                     del data[i]
+
+        # remove nodes not connected by any edge type.
+        if self.drop_unconnected_nodes:
+            new_edge_types = data.edge_types
+            node_types = data.node_types
+            connected_nodes = set()
+            for i in new_edge_types:
+                connected_nodes.add(i[0])
+                connected_nodes.add(i[-1])
+            for node in node_types:
+                if node not in connected_nodes:
+                    del data[node]
 
         return data
