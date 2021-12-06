@@ -19,7 +19,7 @@ jks = ['last', 'cat', 'max', 'lstm']
 def test_gcn(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    out_channels = (16 if jk != 'cat' else 32) if out_dim is None else out_dim
+    out_channels = 16 if out_dim is None else out_dim
 
     model = GCN(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
@@ -32,7 +32,7 @@ def test_gcn(out_dim, dropout, act, norm, jk):
 def test_graph_sage(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    out_channels = (16 if jk != 'cat' else 32) if out_dim is None else out_dim
+    out_channels = 16 if out_dim is None else out_dim
 
     model = GraphSAGE(8, 16, num_layers=2, out_channels=out_dim,
                       dropout=dropout, act=act, norm=norm, jk=jk)
@@ -45,7 +45,7 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
 def test_gin(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    out_channels = (16 if jk != 'cat' else 32) if out_dim is None else out_dim
+    out_channels = 16 if out_dim is None else out_dim
 
     model = GIN(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
@@ -58,7 +58,7 @@ def test_gin(out_dim, dropout, act, norm, jk):
 def test_gat(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    out_channels = (16 if jk != 'cat' else 32) if out_dim is None else out_dim
+    out_channels = 16 if out_dim is None else out_dim
 
     model = GAT(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
@@ -77,7 +77,7 @@ def test_pna(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     deg = torch.tensor([0, 2, 1])
-    out_channels = (16 if jk != 'cat' else 32) if out_dim is None else out_dim
+    out_channels = 16 if out_dim is None else out_dim
     aggregators = ['mean', 'min', 'max', 'std', 'var', 'sum']
     scalers = [
         'identity', 'amplification', 'attenuation', 'linear', 'inverse_linear'
