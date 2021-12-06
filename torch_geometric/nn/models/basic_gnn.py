@@ -80,10 +80,10 @@ class BasicGNN(torch.nn.Module):
             elif self.jk_mode in {'max', 'lstm'}:
                 self.lin = Linear(hidden_channels, out_channels)
         else:
+            self.out_channels = hidden_channels
             if self.jk_mode == 'cat':
-                self.out_channels = num_layers * hidden_channels
-            else:
-                self.out_channels = hidden_channels
+                self.lin = Linear(num_layers * hidden_channels,
+                                  hidden_channels)
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -206,7 +206,7 @@ class GIN(BasicGNN):
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
-        mlp = MLP([in_channels, out_channels, out_channels])
+        mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
         return GINConv(mlp, **kwargs)
 
 

@@ -3,17 +3,15 @@ import os.path as osp
 import torch
 from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU, Dropout
-from torchmetrics import Accuracy
+
 import pytorch_lightning as pl
+from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
-from torch_geometric.nn import global_add_pool
-from torch_geometric.data import LightningDataset
-from torch_geometric.nn import GINConv
-from torch_geometric.data import Data
 from torch_geometric import seed_everything
 from torch_geometric.datasets import TUDataset
+from torch_geometric.data import Data, LightningDataset
+from torch_geometric.nn import GIN, global_add_pool, MLP
 
 
 class Model(pl.LightningModule):
@@ -23,37 +21,21 @@ class Model(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
-        self.convs = ModuleList()
-        for _ in range(num_layers):
-            mlp = Sequential(
-                Linear(in_channels, 2 * hidden_channels),
-                BatchNorm1d(2 * hidden_channels),
-                ReLU(inplace=True),
-                Linear(2 * hidden_channels, hidden_channels),
-                BatchNorm1d(hidden_channels),
-                ReLU(inplace=True),
-            )
-            conv = GINConv(mlp, train_eps=True)
-            self.convs.append(conv)
-            in_channels = hidden_channels
+        self.gnn = GIN(in_channels, hidden_channels, num_layers,
+                       dropout=dropout, jk='cat')
 
-        self.classifier = Sequential(
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(inplace=True),
-            Dropout(p=dropout),
-            Linear(hidden_channels, out_channels),
-        )
+        self.classifier = MLP([hidden_channels, hidden_channels, out_channels],
+                              batch_norm=True, dropout=dropout)
 
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()
         self.test_acc = Accuracy()
 
     def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor) -> Tensor:
-        for conv in self.convs:
-            x = conv(x, edge_index)
+        x = self.gnn(x, edge_index)
         x = global_add_pool(x, batch)
-        return self.classifier(x)
+        x = self.classifier(x)
+        return x
 
     def training_step(self, data: Data, batch_idx: int):
         y_hat = self(data.x, data.edge_index, data.batch)
@@ -97,8 +79,9 @@ def main():
 
     gpus = torch.cuda.device_count()
     strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-    trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=5,
-                         log_every_n_steps=5)
+    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1)
+    trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=50,
+                         log_every_n_steps=5, callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)
