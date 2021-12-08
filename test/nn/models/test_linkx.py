@@ -16,7 +16,7 @@ def test_linkx(num_edge_layers):
 
     model = LINKX(num_nodes=4, in_channels=16, hidden_channels=32,
                   out_channels=8, num_layers=2,
-                  num_edge_layers=num_edge_layers, dropout=0.)
+                  num_edge_layers=num_edge_layers)
     assert str(model) == 'LINKX(num_nodes=4, in_channels=16, out_channels=8)'
 
     out = model(x, edge_index)

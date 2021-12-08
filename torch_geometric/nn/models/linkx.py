@@ -62,8 +62,8 @@ class LINKX(torch.nn.Module):
         \mathbf{H}_{\mathbf{X}} &= \textrm{MLP}_{\mathbf{X}}(\mathbf{X}) \\
 
         \mathbf{Y} &= \textrm{MLP}_{f} \left( \sigma \left( \mathbf{W}
-        [\mathbf{H}_{\mathbf{A}}, \mathbf{H}_{\mathbf{X}} +
-        \mathbf{H}_{\mathbf{A}} + \mathbf{H}_{\mathbf{X}}] \right) \right)
+        [\mathbf{H}_{\mathbf{A}}, \mathbf{H}_{\mathbf{X}}] +
+        \mathbf{H}_{\mathbf{A}} + \mathbf{H}_{\mathbf{X}} \right) \right)
 
     Args:
         num_nodes (int): The number of nodes in the graph.
@@ -81,7 +81,7 @@ class LINKX(torch.nn.Module):
     """
     def __init__(self, num_nodes: int, in_channels: int, hidden_channels: int,
                  out_channels: int, num_layers: int, num_edge_layers: int = 1,
-                 num_node_layers: int = 1, dropout: float = 0.5):
+                 num_node_layers: int = 1, dropout: float = 0.):
         super().__init__()
 
         self.num_nodes = num_nodes
