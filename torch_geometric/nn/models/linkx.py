@@ -65,6 +65,11 @@ class LINKX(torch.nn.Module):
         [\mathbf{H}_{\mathbf{A}}, \mathbf{H}_{\mathbf{X}}] +
         \mathbf{H}_{\mathbf{A}} + \mathbf{H}_{\mathbf{X}} \right) \right)
 
+    .. note::
+
+        For an example of using LINKX, see `examples/linkx.py <https://
+        github.com/pyg-team/pytorch_geometric/blob/master/examples/linkx.py>`_.
+
     Args:
         num_nodes (int): The number of nodes in the graph.
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
