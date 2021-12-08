@@ -17,6 +17,7 @@ from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
+from .linkx import LINKX
 
 __all__ = [
     'MLP',
@@ -46,6 +47,7 @@ __all__ = [
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
+    'LINKX',
 ]
 
 classes = __all__

@@ -3,7 +3,9 @@ from typing import List
 import torch
 from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Linear, BatchNorm1d, Identity
+from torch.nn import BatchNorm1d, Identity
+
+from torch_geometric.nn.dense.linear import Linear
 
 
 class MLP(torch.nn.Module):
@@ -11,9 +13,8 @@ class MLP(torch.nn.Module):
 
     Args:
         channel_list (List[int]): List of input, intermediate and output
-            channels.
-            :obj:`len(channel_list) - 1` denotes the number of layers of the
-            MLP.
+            channels. :obj:`len(channel_list) - 1` denotes the number of layers
+            of the MLP.
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
         batch_norm (bool, optional): If set to :obj:`False`, will not make use
@@ -48,15 +49,15 @@ class MLP(torch.nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
-        for lin, norm in zip(self.lins[:-1], self.norms):
-            x = lin.forward(x)
+        x = self.lins[0](x)
+        for lin, norm in zip(self.lins[1:], self.norms):
             if self.relu_first:
                 x = x.relu_()
             x = norm(x)
             if not self.relu_first:
                 x = x.relu_()
             x = F.dropout(x, p=self.dropout, training=self.training)
-        x = self.lins[-1](x)
+            x = lin.forward(x)
         return x
 
     def __repr__(self) -> str:
