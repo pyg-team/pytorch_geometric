@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 
 
 class GCNConvWithDropout(torch.nn.Module):
-    """
+    r"""
     A GCNConv followed by a Dropout.
     """
     def __init__(self, in_feats, out_feats, dropout=0.3, normalize=True,
@@ -27,7 +27,7 @@ class GCNConvWithDropout(torch.nn.Module):
 
 
 class Discriminator(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     A discriminator used to let the network to discrimate
@@ -51,7 +51,7 @@ class Discriminator(torch.nn.Module):
     def forward(self, h_x: Tensor, h_pos: Tensor, h_neg: Tensor,
                 bias_pos: Optional[Tensor] = None,
                 bias_neg: Optional[Tensor] = None):
-        """
+        r"""
         Parameters
         ----------
         h_x : torch.Tensor
@@ -87,7 +87,7 @@ class Discriminator(torch.nn.Module):
 
 
 class DenseLayer(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     Dense layer with a linear layer and an activation function
@@ -114,7 +114,7 @@ class DenseLayer(torch.nn.Module):
 
 
 class IndexSelect(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     The index selection layer used by VIPool
@@ -144,7 +144,7 @@ class IndexSelect(torch.nn.Module):
     def forward(self, graph: Batch, h_pos: Tensor, h_neg: Tensor,
                 bias_pos: Optional[Tensor] = None,
                 bias_neg: Optional[Tensor] = None):
-        """
+        r"""
         Description
         -----------
         Perform index selection
@@ -190,7 +190,7 @@ class IndexSelect(torch.nn.Module):
 
 
 class GraphPool(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     The pooling module for graph
@@ -212,7 +212,7 @@ class GraphPool(torch.nn.Module):
     def forward(self, graph: Batch, feat: Tensor, select_idx: Tensor,
                 non_select_idx: Optional[Tensor] = None,
                 scores: Optional[Tensor] = None, pool_graph=False):
-        """
+        r"""
         Description
         -----------
         Perform graph pooling.
@@ -258,7 +258,7 @@ class GraphPool(torch.nn.Module):
 
 
 class GraphUnpool(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     The unpooling module for graph
@@ -273,7 +273,7 @@ class GraphUnpool(torch.nn.Module):
         self.up_sample_gcn = GCNConvWithDropout(hidden_dim, hidden_dim)
 
     def forward(self, graph: Batch, feat: Tensor, select_idx: Tensor):
-        """
+        r"""
         Description
         -----------
         Perform graph unpooling
@@ -297,7 +297,7 @@ class GraphUnpool(torch.nn.Module):
 
 
 class GraphCrossModule(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     The Graph Cross Module used by Graph Cross Networks.
@@ -419,10 +419,12 @@ class GraphCrossModule(torch.nn.Module):
             feat_s32_fu = self.unpool_s32_1(graph_scale2, feat_scale3,
                                             select_idx_s2)
 
-            feat_scale1 = feat_scale1 + self.cross_weight * feat_s21_fu + res_s1_0
+            feat_scale1 = feat_scale1 + \
+                self.cross_weight * feat_s21_fu + res_s1_0
             feat_scale2 = feat_scale2 + self.cross_weight * (
                 feat_s12_fu + feat_s32_fu) / 2 + res_s2_0
-            feat_scale3 = feat_scale3 + self.cross_weight * feat_s23_fu + res_s3_0
+            feat_scale3 = feat_scale3 + \
+                self.cross_weight * feat_s23_fu + res_s3_0
 
         # layer-2
         feat_scale1 = F.relu(
@@ -473,7 +475,7 @@ class GraphCrossModule(torch.nn.Module):
 
 
 class GraphCrossNet(torch.nn.Module):
-    """
+    r"""
     Description
     -----------
     The Graph Cross Network.

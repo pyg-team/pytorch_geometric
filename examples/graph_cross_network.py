@@ -215,8 +215,10 @@ if __name__ == "__main__":
     num_training = int(len(dataset) * 0.9)
     num_test = len(dataset) - num_training
     train_set, test_set = random_split(dataset, [num_training, num_test])
-    train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=1)
-    test_loader = DataLoader(test_set, batch_size=args.batch_size, num_workers=1)
+    train_loader = DataLoader(train_set, batch_size=args.batch_size,
+                              num_workers=1, shuffle=True)
+    test_loader = DataLoader(test_set, batch_size=args.batch_size,
+                             num_workers=1)
 
     # Create model
     args.in_dim, args.out_dim = dataset.statistics()
