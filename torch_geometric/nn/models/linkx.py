@@ -15,6 +15,9 @@ from torch_geometric.nn.conv import MessagePassing
 class SparseLinear(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True):
         super().__init__(aggr='add')
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -49,6 +52,33 @@ class SparseLinear(MessagePassing):
 
 
 class LINKX(torch.nn.Module):
+    r"""The LINKX model from the `"Large Scale Learning on Non-Homophilous
+    Graphs: New Benchmarks and Strong Simple Methods"
+    <https://arxiv.org/abs/2110.14446>`_ paper
+
+    .. math::
+        \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A}) \\
+
+        \mathbf{H}_{\mathbf{X}} &= \textrm{MLP}_{\mathbf{X}}(\mathbf{X}) \\
+
+        \mathbf{Y} &= \textrm{MLP}_{f} \left( \sigma \left( \mathbf{W}
+        [\mathbf{H}_{\mathbf{A}}, \mathbf{H}_{\mathbf{X}} +
+        \mathbf{H}_{\mathbf{A}} + \mathbf{H}_{\mathbf{X}}] \right) \right)
+
+    Args:
+        num_nodes (int): The number of nodes in the graph.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
+        hidden_channels (int): Size of each hidden sample.
+        out_channels (int): Size of each output sample.
+        num_layers (int): Number of layers of :math:`\textrm{MLP}_{f}`.
+        num_edge_layers (int): Number of layers of
+            :math:`\textrm{MLP}_{\mathbf{A}}`. (default: :obj:`1`)
+        num_node_layers (int): Number of layers of
+            :math:`\textrm{MLP}_{\mathbf{X}}`. (default: :obj:`1`)
+        dropout (float, optional): Dropout probability of each hidden
+            embedding. (default: :obj:`0.`)
+    """
     def __init__(self, num_nodes: int, in_channels: int, hidden_channels: int,
                  out_channels: int, num_layers: int, num_edge_layers: int = 1,
                  num_node_layers: int = 1, dropout: float = 0.5):
@@ -89,22 +119,20 @@ class LINKX(torch.nn.Module):
     def forward(self, x: OptTensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""
-        h1 = self.edge_lin(edge_index, edge_weight)
+        out = self.edge_lin(edge_index, edge_weight)
         if self.num_edge_layers > 1:
-            h1 = h1.relu_()
-            h1 = self.edge_norm(h1)
-            self.edge_mlp(h1)
+            out = out.relu_()
+            out = self.edge_norm(out)
+            out = self.edge_mlp(out)
 
-        if x is None:
-            return h1
+        out += self.cat_lin1(out)
 
-        h2 = self.node_mlp(x)
-        out = self.cat_lin1(h1)
-        out += self.cat_lin2(h2)
-        out += h1
-        out += h2
-        out = out.relu_()
-        return self.final_mlp(out)
+        if x is not None:
+            x = self.node_mlp(x)
+            out += x
+            out += self.cat_lin2(x)
+
+        return self.final_mlp(out.relu_())
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_nodes={self.num_nodes}, '
