@@ -122,7 +122,8 @@ class Linear(torch.nn.Module):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
-        destination[prefix + 'bias'] = self.bias.detach()
+        if self.bias is not None:
+            destination[prefix + 'bias'] = self.bias.detach()
 
     def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
                         missing_keys, unexpected_keys, error_msgs):
