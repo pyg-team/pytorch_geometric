@@ -96,7 +96,7 @@ def test_hetero_linear():
     x = torch.randn((3, 16))
     node_type = torch.tensor([0, 1, 2])
 
-    lin = HeteroLinear(in_channels=16, out_channels=32, num_node_types=3)
+    lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
     assert str(lin) == 'HeteroLinear(16, 32, bias=True)'
 
     out = lin(x, node_type)

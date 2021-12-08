@@ -150,13 +150,13 @@ class Linear(torch.nn.Module):
 
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
-    to node types
+    to types
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
         \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
 
-    for node type :math:`\kappa`.
+    for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
@@ -164,12 +164,12 @@ class HeteroLinear(torch.nn.Module):
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
         out_channels (int): Size of each output sample.
-        num_node_types (int): The number of node types.
+        num_types (int): The number of types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 num_node_types: int, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, num_types: int,
+                 **kwargs):
         super().__init__()
 
         self.in_channels = in_channels
@@ -177,7 +177,7 @@ class HeteroLinear(torch.nn.Module):
 
         self.lins = torch.nn.ModuleList([
             Linear(in_channels, out_channels, **kwargs)
-            for _ in range(num_node_types)
+            for _ in range(num_types)
         ])
 
         self.reset_parameters()
@@ -186,11 +186,11 @@ class HeteroLinear(torch.nn.Module):
         for lin in self.lins:
             lin.reset_parameters()
 
-    def forward(self, x: Tensor, node_type: Tensor) -> Tensor:
+    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         """"""
         out = x.new_empty(x.size(0), self.out_channels)
         for i, lin in enumerate(self.lins):
-            mask = node_type == i
+            mask = type_vec == i
             out[mask] = lin(x[mask])
         return out
 
