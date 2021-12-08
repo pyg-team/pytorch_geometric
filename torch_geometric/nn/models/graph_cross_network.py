@@ -475,10 +475,10 @@ class GraphCrossModule(torch.nn.Module):
 
 
 class GraphCrossNet(torch.nn.Module):
-    r"""
-    Description
-    -----------
-    The Graph Cross Network.
+    r""" Graph Cross Network from the paper `"Graph
+    Cross Networks with Vertex Infomax Pooling"
+    <https://arxiv.org/abs/2010.01804>`
+    published at NeurIPS 2020.
 
     Parameters
     ----------
