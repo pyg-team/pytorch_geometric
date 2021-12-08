@@ -125,7 +125,7 @@ class LINKX(torch.nn.Module):
             out = self.edge_norm(out)
             out = self.edge_mlp(out)
 
-        out += self.cat_lin1(out)
+        out = out + self.cat_lin1(out)
 
         if x is not None:
             x = self.node_mlp(x)
