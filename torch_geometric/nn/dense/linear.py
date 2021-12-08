@@ -4,6 +4,7 @@ import copy
 import math
 
 import torch
+from torch import nn
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
@@ -49,7 +50,7 @@ class Linear(torch.nn.Module):
         if in_channels > 0:
             self.weight = Parameter(torch.Tensor(out_channels, in_channels))
         else:
-            self.weight = torch.nn.parameter.UninitializedParameter()
+            self.weight = nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
@@ -57,6 +58,9 @@ class Linear(torch.nn.Module):
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
+
+        self._load_hook = self._register_load_state_dict_pre_hook(
+            self._lazy_load_hook)
 
         self.reset_parameters()
 
@@ -71,32 +75,34 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
-        if self.in_channels > 0:
-            if self.weight_initializer == 'glorot':
-                inits.glorot(self.weight)
-            elif self.weight_initializer == 'uniform':
-                bound = 1.0 / math.sqrt(self.weight.size(-1))
-                torch.nn.init.uniform_(self.weight.data, -bound, bound)
-            elif self.weight_initializer == 'kaiming_uniform':
-                inits.kaiming_uniform(self.weight, fan=self.in_channels,
-                                      a=math.sqrt(5))
-            elif self.weight_initializer is None:
-                inits.kaiming_uniform(self.weight, fan=self.in_channels,
-                                      a=math.sqrt(5))
-            else:
-                raise RuntimeError(
-                    f"Linear layer weight initializer "
-                    f"'{self.weight_initializer}' is not supported")
+        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+            pass
+        elif self.weight_initializer == 'glorot':
+            inits.glorot(self.weight)
+        elif self.weight_initializer == 'uniform':
+            bound = 1.0 / math.sqrt(self.weight.size(-1))
+            torch.nn.init.uniform_(self.weight.data, -bound, bound)
+        elif self.weight_initializer == 'kaiming_uniform':
+            inits.kaiming_uniform(self.weight, fan=self.in_channels,
+                                  a=math.sqrt(5))
+        elif self.weight_initializer is None:
+            inits.kaiming_uniform(self.weight, fan=self.in_channels,
+                                  a=math.sqrt(5))
+        else:
+            raise RuntimeError(f"Linear layer weight initializer "
+                               f"'{self.weight_initializer}' is not supported")
 
-        if self.in_channels > 0 and self.bias is not None:
-            if self.bias_initializer == 'zeros':
-                inits.zeros(self.bias)
-            elif self.bias_initializer is None:
-                inits.uniform(self.in_channels, self.bias)
-            else:
-                raise RuntimeError(
-                    f"Linear layer bias initializer "
-                    f"'{self.bias_initializer}' is not supported")
+        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+            pass
+        elif self.bias is None:
+            pass
+        elif self.bias_initializer == 'zeros':
+            inits.zeros(self.bias)
+        elif self.bias_initializer is None:
+            inits.uniform(self.in_channels, self.bias)
+        else:
+            raise RuntimeError(f"Linear layer bias initializer "
+                               f"'{self.bias_initializer}' is not supported")
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
@@ -104,12 +110,38 @@ class Linear(torch.nn.Module):
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
-        if isinstance(self.weight, torch.nn.parameter.UninitializedParameter):
+        if isinstance(self.weight, nn.parameter.UninitializedParameter):
             self.in_channels = input[0].size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             self.reset_parameters()
-        module._hook.remove()
-        delattr(module, '_hook')
+        self._hook.remove()
+        delattr(self, '_hook')
+
+    def _save_to_state_dict(self, destination, prefix, keep_vars):
+        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+            destination[prefix + 'weight'] = self.weight
+        else:
+            destination[prefix + 'weight'] = self.weight.detach()
+        if self.bias is not None:
+            destination[prefix + 'bias'] = self.bias.detach()
+
+    def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
+                        missing_keys, unexpected_keys, error_msgs):
+
+        weight = state_dict[prefix + 'weight']
+        if isinstance(weight, nn.parameter.UninitializedParameter):
+            self.in_channels = -1
+            self.weight = nn.parameter.UninitializedParameter()
+            if not hasattr(self, '_hook'):
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
+
+        elif isinstance(self.weight, nn.parameter.UninitializedParameter):
+            self.in_channels = weight.size(-1)
+            self.weight.materialize((self.out_channels, self.in_channels))
+            if hasattr(self, '_hook'):
+                self._hook.remove()
+                delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
