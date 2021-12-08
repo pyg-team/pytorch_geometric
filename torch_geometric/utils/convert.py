@@ -132,7 +132,13 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
     G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
-    edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
+
+    if isinstance(G, (nx.MultiGraph, nx.MultiDiGraph)):
+        edges = list(G.edges(keys=False))
+    else:
+        edges = list(G.edges)
+
+    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
 
     data = defaultdict(list)
 
