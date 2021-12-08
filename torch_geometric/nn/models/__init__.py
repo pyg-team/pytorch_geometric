@@ -18,6 +18,7 @@ from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .graph_cross_network import GraphCrossNet
+from .linkx import LINKX
 
 __all__ = [
     'MLP',
@@ -48,6 +49,7 @@ __all__ = [
     'AttentiveFP',
     'RECT_L',
     'GraphCrossNet',
+    'LINKX',
 ]
 
 classes = __all__
