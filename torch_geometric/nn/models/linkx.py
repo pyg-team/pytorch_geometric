@@ -57,9 +57,9 @@ class LINKX(torch.nn.Module):
     <https://arxiv.org/abs/2110.14446>`_ paper
 
     .. math::
-        \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A}) \\
+        \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A})
 
-        \mathbf{H}_{\mathbf{X}} &= \textrm{MLP}_{\mathbf{X}}(\mathbf{X}) \\
+        \mathbf{H}_{\mathbf{X}} &= \textrm{MLP}_{\mathbf{X}}(\mathbf{X})
 
         \mathbf{Y} &= \textrm{MLP}_{f} \left( \sigma \left( \mathbf{W}
         [\mathbf{H}_{\mathbf{A}}, \mathbf{H}_{\mathbf{X}}] +
