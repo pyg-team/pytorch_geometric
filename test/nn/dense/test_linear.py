@@ -1,3 +1,4 @@
+import os
 import copy
 import pytest
 from itertools import product
@@ -27,6 +28,24 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
+
+
+@pytest.mark.parametrize('dim1,dim2', product([-1, 16], [-1, 16]))
+def test_load_lazy_linear(dim1, dim2):
+    lin1 = Linear(dim1, 32)
+    lin2 = Linear(dim1, 32)
+    lin2.load_state_dict(lin1.state_dict())
+
+    if dim1 != -1:
+        assert torch.allclose(lin1.weight, lin2.weight)
+        assert torch.allclose(lin1.bias, lin2.bias)
+        assert not hasattr(lin1, '_hook')
+        assert not hasattr(lin2, '_hook')
+    else:
+        assert isinstance(lin1.weight, UninitializedParameter)
+        assert isinstance(lin2.weight, UninitializedParameter)
+        assert hasattr(lin1, '_hook')
+        assert hasattr(lin2, '_hook')
 
 
 @pytest.mark.parametrize('lazy', [True, False])
