@@ -489,6 +489,21 @@ def makedirs_rm_exist(dir):
     os.makedirs(dir, exist_ok=True)
 
 
+def get_fname(fname):
+    r"""
+    Extract filename from file name path
+
+    Args:
+        fname (string): Filename for the yaml format configuration file
+    """
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
+    return fname
+
+
 def set_run_dir(out_dir, fname):
     r"""
     Create the directory for each random seed experiment run
@@ -498,11 +513,7 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-    fname = fname.split('/')[-1]
-    if fname.endswith('.yaml'):
-        fname = fname[:-5]
-    elif fname.endswith('.yml'):
-        fname = fname[:-4]
+    fname = get_fname(fname)
     cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
@@ -521,11 +532,7 @@ def set_agg_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-    fname = fname.split('/')[-1]
-    if fname.endswith('.yaml'):
-        fname = fname[:-5]
-    elif fname.endswith('.yml'):
-        fname = fname[:-4]
+    fname = get_fname(fname)
     return os.path.join(out_dir, fname)
 
 
