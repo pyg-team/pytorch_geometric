@@ -238,7 +238,7 @@ class GATConv(MessagePassing):
         if self.bias is not None:
             out += self.bias
 
-        if isinstance(return_attention_weights, bool):
+        if isinstance(return_attention_weights, bool) and return_attention_weights:
             if isinstance(edge_index, Tensor):
                 return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
