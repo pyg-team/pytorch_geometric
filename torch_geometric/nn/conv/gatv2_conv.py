@@ -85,16 +85,16 @@ class GATv2Conv(MessagePassing):
             if share_weights:
                 self.lin_r = self.lin_l
             else:
-                self.lin_r = Linear(in_channels, heads * out_channels, bias=bias,
-                                    weight_initializer='glorot')
+                self.lin_r = Linear(in_channels, heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
         else:
-            self.lin_l = Linear(in_channels[0], heads * out_channels, bias=bias,
-                                weight_initializer='glorot')
+            self.lin_l = Linear(in_channels[0], heads * out_channels,
+                                bias=bias, weight_initializer='glorot')
             if share_weights:
                 self.lin_r = self.lin_l
             else:
-                self.lin_r = Linear(in_channels[1], heads * out_channels, bias=bias,
-                                    weight_initializer='glorot')
+                self.lin_r = Linear(in_channels[1], heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
 
         self.att = Parameter(torch.Tensor(1, heads, out_channels))
 
