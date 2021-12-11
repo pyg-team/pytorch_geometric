@@ -44,6 +44,7 @@ def eval_epoch(logger, loader, model):
         time_start = time.time()
 
 
+@register_train('example')
 def train_example(loggers, loaders, model, optimizer, scheduler):
     start_epoch = 0
     if cfg.train.auto_resume:
@@ -69,6 +70,3 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
         clean_ckpt()
 
     logging.info('Task done, results saved in %s', cfg.run_dir)
-
-
-register_train('example', train_example)

@@ -7,11 +7,11 @@ import torch.nn as nn
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.layer import new_layer_config, MLP
-import torch_geometric.graphgym.models.pooling  # noqa, register module
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.register import register_head
 
 
+@register_head('node')
 class GNNNodeHead(nn.Module):
     """
     GNN prediction head for node prediction tasks.
@@ -37,6 +37,8 @@ class GNNNodeHead(nn.Module):
         return pred, label
 
 
+@register_head('edge')
+@register_head('link_pred')
 class GNNEdgeHead(nn.Module):
     """
     GNN prediction head for edge/link prediction tasks.
@@ -87,6 +89,7 @@ class GNNEdgeHead(nn.Module):
         return pred, label
 
 
+@register_head('graph')
 class GNNGraphHead(nn.Module):
     """
     GNN prediction head for graph prediction tasks.
@@ -113,14 +116,3 @@ class GNNGraphHead(nn.Module):
         batch.graph_feature = graph_emb
         pred, label = self._apply_index(batch)
         return pred, label
-
-
-# Head models for external interface
-head_dict = {
-    'node': GNNNodeHead,
-    'edge': GNNEdgeHead,
-    'link_pred': GNNEdgeHead,
-    'graph': GNNGraphHead
-}
-
-register.head_dict = {**register.head_dict, **head_dict}

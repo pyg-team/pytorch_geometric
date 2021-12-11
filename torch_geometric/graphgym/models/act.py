@@ -1,15 +1,12 @@
 import torch.nn as nn
+
 from torch_geometric.graphgym.config import cfg
-import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.register import register_act
 
-act_dict = {
-    'relu': nn.ReLU(inplace=cfg.mem.inplace),
-    'selu': nn.SELU(inplace=cfg.mem.inplace),
-    'prelu': nn.PReLU(),
-    'elu': nn.ELU(inplace=cfg.mem.inplace),
-    'lrelu_01': nn.LeakyReLU(negative_slope=0.1, inplace=cfg.mem.inplace),
-    'lrelu_025': nn.LeakyReLU(negative_slope=0.25, inplace=cfg.mem.inplace),
-    'lrelu_05': nn.LeakyReLU(negative_slope=0.5, inplace=cfg.mem.inplace),
-}
-
-register.act_dict = {**register.act_dict, **act_dict}
+register_act('relu', nn.ReLU(inplace=cfg.mem.inplace))
+register_act('selu', nn.SELU(inplace=cfg.mem.inplace))
+register_act('prelu', nn.PReLU())
+register_act('elu', nn.ELU(inplace=cfg.mem.inplace))
+register_act('lrelu_01', nn.LeakyReLU(0.1, inplace=cfg.mem.inplace))
+register_act('lrelu_025', nn.LeakyReLU(0.25, inplace=cfg.mem.inplace))
+register_act('lrelu_05', nn.LeakyReLU(0.5, inplace=cfg.mem.inplace))
