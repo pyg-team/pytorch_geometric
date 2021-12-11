@@ -3,15 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torch_geometric.graphgym.config import cfg
-import torch_geometric.graphgym.models.head
 from torch_geometric.graphgym.models.layer import (new_layer_config,
                                                    GeneralLayer,
                                                    GeneralMultiLayer,
                                                    BatchNorm1dNode)
 from torch_geometric.graphgym.init import init_weights
-
-import torch_geometric.graphgym.models.encoder  # noqa, register module
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.register import register_stage
 
 
 def GNNLayer(dim_in, dim_out, has_act=True):
@@ -46,6 +44,9 @@ def GNNPreMP(dim_in, dim_out, num_layers):
                                       has_act=False, has_bias=False, cfg=cfg))
 
 
+@register_stage('stack')
+@register_stage('skipsum')
+@register_stage('skipconcat')
 class GNNStackStage(nn.Module):
     """
     Simple Stage that stack GNN layers
@@ -79,15 +80,6 @@ class GNNStackStage(nn.Module):
         if cfg.gnn.l2norm:
             batch.x = F.normalize(batch.x, p=2, dim=-1)
         return batch
-
-
-stage_dict = {
-    'stack': GNNStackStage,
-    'skipsum': GNNStackStage,
-    'skipconcat': GNNStackStage,
-}
-
-register.stage_dict = {**register.stage_dict, **stage_dict}
 
 
 class FeatureEncoder(nn.Module):
