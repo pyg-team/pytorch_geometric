@@ -1,6 +1,5 @@
 from typing import Union, Optional
 
-from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
@@ -41,11 +40,12 @@ class ToSparseTensor(BaseTransform):
             if 'edge_index' not in store:
                 continue
 
-            nnz = store.edge_index.size(1)
-
             keys, values = [], []
             for key, value in store.items():
-                if isinstance(value, Tensor) and value.size(0) == nnz:
+                if key == 'edge_index':
+                    continue
+
+                if store.is_edge_attr(key):
                     keys.append(key)
                     values.append(value)
 

@@ -61,8 +61,7 @@ class ToUndirected(BaseTransform):
                     if key == 'edge_index':
                         continue
 
-                    if isinstance(value, Tensor) and (isinstance(
-                            data, HeteroData) or data.is_edge_attr(key)):
+                    if store.is_edge_attr(key):
                         keys.append(key)
                         values.append(value)
 
