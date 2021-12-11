@@ -116,8 +116,6 @@ class GATv2Conv(MessagePassing):
         self.fill_value = fill_value
         self.share_weights = share_weights
 
-        self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
-                            weight_initializer='glorot')
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
                                 weight_initializer='glorot')
