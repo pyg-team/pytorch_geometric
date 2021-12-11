@@ -13,6 +13,7 @@ from torch_geometric.graphgym.register import register_layer
 
 # Example 1: Directly define a GraphGym format Conv
 # take 'batch' as input and 'batch' as output
+@register_layer('exampleconv1')
 class ExampleConv1(MessagePassing):
     r"""Example GNN layer
 
@@ -52,10 +53,6 @@ class ExampleConv1(MessagePassing):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
         return aggr_out
-
-
-# Remember to register your layer!
-register_layer('exampleconv1', ExampleConv1)
 
 
 # Example 2: First define a PyG format Conv layer
@@ -98,6 +95,7 @@ class ExampleConv2Layer(MessagePassing):
         return aggr_out
 
 
+@register_layer('exampleconv2')
 class ExampleConv2(nn.Module):
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super().__init__()
@@ -106,7 +104,3 @@ class ExampleConv2(nn.Module):
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
         return batch
-
-
-# Remember to register your layer!
-register_layer('exampleconv2', ExampleConv2)
