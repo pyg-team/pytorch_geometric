@@ -20,4 +20,3 @@ def test_light_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out11.tolist()
     assert jit(x1, edge_index, size=(4, 4)).tolist() == out11.tolist()
-    

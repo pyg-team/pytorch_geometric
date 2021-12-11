@@ -21,7 +21,7 @@ class LGConv(MessagePassing):
             (default: :obj:`"add"`)
         normalize (bool, optional): If set to :obj:`True`, output features
             will be normalized using the symmetric normalization term:
-            :math:`\frac{1}{\sqrt{|\mathcal{N}_i|}\sqrt{|\mathcal{N}_j|}}`.
+            :math:`\frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}`.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
