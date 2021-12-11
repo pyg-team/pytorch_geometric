@@ -1,6 +1,7 @@
-import torch_geometric.nn as nn
+from torch_geometric.nn import (global_add_pool, global_mean_pool,
+                                global_max_pool)
 from torch_geometric.graphgym.register import register_pooling
 
-register_pooling('add', nn.global_add_pool)
-register_pooling('mean', nn.global_mean_pool)
-register_pooling('max', nn.global_max_pool)
+register_pooling('add', global_add_pool)
+register_pooling('mean', global_mean_pool)
+register_pooling('max', global_max_pool)
