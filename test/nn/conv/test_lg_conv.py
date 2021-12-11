@@ -12,6 +12,5 @@ def test_light_conv():
     conv = LGConv()
     assert conv.__repr__() == 'LGConv()'
     out11 = conv(x1, edge_index)
-    assert out11.size() == (4, 32)
+    assert out11.size() == (4, 8)
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out11.tolist()
-    assert conv(x1, adj1.t()).tolist() == out11.tolist()
