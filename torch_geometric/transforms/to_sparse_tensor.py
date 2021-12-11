@@ -43,6 +43,9 @@ class ToSparseTensor(BaseTransform):
 
             keys, values = [], []
             for key, value in store.items():
+                if key == 'edge_index':
+                    continue
+
                 if store.is_edge_attr(key):
                     keys.append(key)
                     values.append(value)

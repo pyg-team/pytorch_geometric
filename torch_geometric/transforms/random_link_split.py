@@ -230,6 +230,7 @@ class RandomLinkSplit(BaseTransform):
         for key, value in store.items():
             if key == 'edge_index':
                 continue
+
             if store.is_edge_attr(key):
                 value = value[index]
                 if is_undirected:

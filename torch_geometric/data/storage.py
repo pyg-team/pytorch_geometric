@@ -286,7 +286,7 @@ class NodeStorage(BaseStorage):
 
     def is_node_attr(self, key: str) -> bool:
         value = self[key]
-        cat_dim = self.parent().__cat_dim__(key, value, self)
+        cat_dim = self._parent().__cat_dim__(key, value, self)
         if not isinstance(value, Tensor):
             return False
         if value.size(cat_dim) != self.num_nodes:
@@ -370,7 +370,7 @@ class EdgeStorage(BaseStorage):
 
     def is_edge_attr(self, key: str) -> bool:
         value = self[key]
-        cat_dim = self.parent().__cat_dim__(key, value, self)
+        cat_dim = self._parent().__cat_dim__(key, value, self)
         if not isinstance(value, Tensor):
             return False
         if value.size(cat_dim) != self.num_edges:
@@ -446,7 +446,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
 
     def is_node_attr(self, key: str) -> bool:
         value = self[key]
-        cat_dim = self.parent().__cat_dim__(key, value, self)
+        cat_dim = self._parent().__cat_dim__(key, value, self)
 
         num_nodes, num_edges = self.num_nodes, self.num_edges
         if not isinstance(value, Tensor):
@@ -459,7 +459,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
 
     def is_edge_attr(self, key: str) -> bool:
         value = self[key]
-        cat_dim = self.parent().__cat_dim__(key, value, self)
+        cat_dim = self._parent().__cat_dim__(key, value, self)
 
         num_nodes, num_edges = self.num_nodes, self.num_edges
         if not isinstance(value, Tensor):
