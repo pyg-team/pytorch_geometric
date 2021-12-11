@@ -53,8 +53,10 @@ class GATv2Conv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -90,7 +92,7 @@ class GATv2Conv(MessagePassing):
 
     def __init__(
         self,
-        in_channels: int,
+        in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
         heads: int = 1,
         concat: bool = True,
@@ -103,7 +105,7 @@ class GATv2Conv(MessagePassing):
         share_weights: bool = False,
         **kwargs,
     ):
-        super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
