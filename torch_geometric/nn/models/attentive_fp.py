@@ -1,58 +1,72 @@
-from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
+from typing import Optional, Union
 
 import torch
-from torch import Tensor
+import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import Linear, Parameter, GRUCell
-
+from torch import Tensor
+from torch.nn import Dropout, GRUCell, Linear
+from torch_geometric.nn import MessagePassing, global_add_pool
+from torch_geometric.nn.inits import glorot
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils import softmax
-from torch_geometric.nn import GATConv, MessagePassing, global_add_pool
 
-from ..inits import glorot, zeros
+
+class GATConv(MessagePassing):
+    def __init__(self, in_channels: int, out_channels: int, dropout: float = 0.0,
+                 negative_slope: float = 0.01):
+        super(GATConv, self).__init__(aggr='add', node_dim=0)
+        self.dropout = Dropout(p=dropout)
+        self.align = Linear(2 * in_channels, 1)
+        self.attend = Linear(in_channels, out_channels)
+        self.leaky_relu = nn.LeakyReLU(negative_slope=negative_slope)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        glorot(self.align.weight)
+        glorot(self.attend.weight)
+
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj) -> Tensor:
+        out = self.propagate(edge_index, x=x)
+        return F.elu(out)
+
+    def message(self, x_j: Tensor, x_i: Tensor, index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
+        align_score = F.leaky_relu(self.align(
+            self.dropout(torch.cat([x_i, x_j], dim=-1))))
+        attention_weight = softmax(align_score, index, ptr, size_i)
+        neighbor_feature = self.attend(self.dropout(x_j))
+        return neighbor_feature * attention_weight
 
 
 class GATEConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  dropout: float = 0.0):
-        super().__init__(aggr='add', node_dim=0)
-
-        self.dropout = dropout
-
-        self.att_l = Parameter(torch.Tensor(1, out_channels))
-        self.att_r = Parameter(torch.Tensor(1, in_channels))
-
-        self.lin1 = Linear(in_channels + edge_dim, out_channels, False)
-        self.lin2 = Linear(out_channels, out_channels, False)
-
-        self.bias = Parameter(torch.Tensor(out_channels))
-
+        super(GATEConv, self).__init__(aggr='add', node_dim=0)
+        self.dropout = Dropout(p=dropout)
+        self.align = Linear(2 * out_channels, 1)
+        self.attend = Linear(out_channels, out_channels)
+        self.neighbor_linear = Linear(in_channels + edge_dim, out_channels)
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.att_l)
-        glorot(self.att_r)
-        glorot(self.lin1.weight)
-        glorot(self.lin2.weight)
-        zeros(self.bias)
+        glorot(self.align.weight)
+        glorot(self.attend.weight)
+        glorot(self.neighbor_linear.weight)
 
     def forward(self, x: Tensor, edge_index: Adj, edge_attr: Tensor) -> Tensor:
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
-        out += self.bias
-        return out
+        return F.elu(out)
 
     def message(self, x_j: Tensor, x_i: Tensor, edge_attr: Tensor,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
-
-        x_j = F.leaky_relu_(self.lin1(torch.cat([x_j, edge_attr], dim=-1)))
-        alpha_j = (x_j * self.att_l).sum(dim=-1)
-        alpha_i = (x_i * self.att_r).sum(dim=-1)
-        alpha = alpha_j + alpha_i
-        alpha = F.leaky_relu_(alpha)
-        alpha = softmax(alpha, index, ptr, size_i)
-        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return self.lin2(x_j) * alpha.unsqueeze(-1)
+        x_j = self.neighbor_linear(torch.cat([x_j, edge_attr], dim=-1))
+        x_j = F.leaky_relu(x_j)
+        align_score = F.leaky_relu(self.align(
+            self.dropout(torch.cat([x_i, x_j], dim=-1))))
+        attention_weight = softmax(align_score, index, ptr, size_i)
+        neighbor_feature = self.attend(self.dropout(x_j))
+        return neighbor_feature * attention_weight
 
 
 class AttentiveFP(torch.nn.Module):
@@ -73,30 +87,30 @@ class AttentiveFP(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
 
     """
+
     def __init__(self, in_channels: int, hidden_channels: int,
                  out_channels: int, edge_dim: int, num_layers: int,
                  num_timesteps: int, dropout: float = 0.0):
-        super().__init__()
+        super(AttentiveFP, self).__init__()
 
         self.num_layers = num_layers
         self.num_timesteps = num_timesteps
-        self.dropout = dropout
+        self.dropout = Dropout(p=dropout)
 
         self.lin1 = Linear(in_channels, hidden_channels)
 
-        conv = GATEConv(hidden_channels, hidden_channels, edge_dim, dropout)
+        conv = GATEConv(in_channels, hidden_channels, edge_dim, dropout)
         gru = GRUCell(hidden_channels, hidden_channels)
         self.atom_convs = torch.nn.ModuleList([conv])
         self.atom_grus = torch.nn.ModuleList([gru])
         for _ in range(num_layers - 1):
             conv = GATConv(hidden_channels, hidden_channels, dropout=dropout,
-                           add_self_loops=False, negative_slope=0.01)
+                           negative_slope=0.01)
             self.atom_convs.append(conv)
             self.atom_grus.append(GRUCell(hidden_channels, hidden_channels))
 
         self.mol_conv = GATConv(hidden_channels, hidden_channels,
-                                dropout=dropout, add_self_loops=False,
-                                negative_slope=0.01)
+                                dropout=dropout, negative_slope=0.01)
         self.mol_gru = GRUCell(hidden_channels, hidden_channels)
 
         self.lin2 = Linear(hidden_channels, out_channels)
@@ -112,18 +126,18 @@ class AttentiveFP(torch.nn.Module):
         self.mol_gru.reset_parameters()
         self.lin2.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, raw, edge_index, edge_attr, batch):
         """"""
         # Atom Embedding:
-        x = F.leaky_relu_(self.lin1(x))
+        x = F.leaky_relu_(self.lin1(raw))
 
-        h = F.elu_(self.atom_convs[0](x, edge_index, edge_attr))
-        h = F.dropout(h, p=self.dropout, training=self.training)
+        h = self.atom_convs[0]((raw, x), edge_index, edge_attr)
+        h = self.dropout(h)
         x = self.atom_grus[0](h, x).relu_()
 
         for conv, gru in zip(self.atom_convs[1:], self.atom_grus[1:]):
-            h = F.elu_(conv(x, edge_index))
-            h = F.dropout(h, p=self.dropout, training=self.training)
+            h = conv(x, edge_index)
+            h = self.dropout(h)
             x = gru(h, x).relu_()
 
         # Molecule Embedding:
@@ -131,11 +145,10 @@ class AttentiveFP(torch.nn.Module):
         edge_index = torch.stack([row, batch], dim=0)
 
         out = global_add_pool(x, batch).relu_()
-        for t in range(self.num_timesteps):
-            h = F.elu_(self.mol_conv((x, out), edge_index))
-            h = F.dropout(h, p=self.dropout, training=self.training)
+        for _ in range(self.num_timesteps):
+            h = self.mol_conv((x, out), edge_index)
             out = self.mol_gru(h, out).relu_()
 
         # Predictor:
-        out = F.dropout(out, p=self.dropout, training=self.training)
-        return self.lin2(out)
+        out = self.lin2(self.dropout(out))
+        return out
