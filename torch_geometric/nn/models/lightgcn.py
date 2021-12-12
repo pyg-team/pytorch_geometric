@@ -1,9 +1,8 @@
-from typing import List
 import torch
 from torch import nn, Tensor
 from torch_geometric.typing import Adj
 
-from torch_geometric.nn.conv import LightGCNConv
+from torch_geometric.nn.conv import LGConv
 
 
 class LightGCN(nn.Module):
@@ -40,14 +39,10 @@ class LightGCN(nn.Module):
         self.f = nn.Sigmoid()
 
         self.convs = nn.ModuleList()
-        self.convs.append(LightGCNConv(
-            self.embedding_size, self.embedding_size,
-            num_users=self.num_users, num_items=self.num_items, **kwargs))
+        self.convs.append(LGConv(**kwargs))
 
         for _ in range(1, self.num_layers):
-            self.convs.append(LightGCNConv(
-                self.embedding_size, self.embedding_size,
-                num_users=self.num_users, num_items=self.num_items, **kwargs))
+            self.convs.append(LGConv(**kwargs))
 
         self.device = None
         if device is not None:
@@ -58,23 +53,14 @@ class LightGCN(nn.Module):
         for conv in self.convs:
             conv.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
-        """ """
-        xs: List[Tensor] = []
-
-        for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index, *args, **kwargs)
-            if self.device is not None:
-                x = x.to(self.device)
-            xs.append(x)
-        xs = torch.stack(xs)
-
-        self.alpha = 1 / (1 + self.num_layers) * torch.ones(xs.shape)
-        if self.device is not None:
-            self.alpha = self.alpha.to(self.device)
-            xs = xs.to(self.device)
-        x = (xs * self.alpha).sum(dim=0)  # Sum along K layers.
-        return x
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        """"""
+        alpha = 1 / (1 + self.num_layers)
+        out = alpha * x
+        for conv in self.convs:
+            x = conv(x, edge_index)
+            out = out + alpha * x
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
