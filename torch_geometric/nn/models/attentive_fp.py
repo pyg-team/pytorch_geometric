@@ -12,8 +12,8 @@ from torch_geometric.utils import softmax
 
 
 class GATConv(MessagePassing):
-    def __init__(self, in_channels: int, out_channels: int, dropout: float = 0.0,
-                 negative_slope: float = 0.01):
+    def __init__(self, in_channels: int, out_channels: int,
+                 dropout: float = 0.0, negative_slope: float = 0.01):
         super(GATConv, self).__init__(aggr='add', node_dim=0)
         self.dropout = Dropout(p=dropout)
         self.align = Linear(2 * in_channels, 1)
@@ -25,7 +25,8 @@ class GATConv(MessagePassing):
         glorot(self.align.weight)
         glorot(self.attend.weight)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj) -> Tensor:
+    def forward(self, x: Union[Tensor, OptPairTensor],
+                edge_index: Adj) -> Tensor:
         out = self.propagate(edge_index, x=x)
         return F.elu(out)
 
