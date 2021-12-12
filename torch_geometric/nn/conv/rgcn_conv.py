@@ -272,7 +272,8 @@ class FastRGCNConv(RGCNConv):
 
         return out
 
-    def message(self, x_j: Tensor, edge_type: Tensor, edge_index_j: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_type: Tensor,
+                edge_index_j: Tensor) -> Tensor:
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
             weight = (self.comp @ weight.view(self.num_bases, -1)).view(
