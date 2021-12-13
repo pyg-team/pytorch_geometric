@@ -196,11 +196,11 @@ class LightGCN(torch.nn.Module):
         return self.loss_fn(preds, edge_label)
 
     def get_embeddings(self, edge_index: Adj,
-        indices: LongTensor = None) -> Tensor:
+                       indices: LongTensor = None) -> Tensor:
         """"""
         if indices is None:
             return self._propagate_embeddings(edge_index)
-        
+
         return self._propagate_embeddings(edge_index)[indices]
 
     def _propagate_embeddings(self, edge_index: Adj) -> Tensor:
