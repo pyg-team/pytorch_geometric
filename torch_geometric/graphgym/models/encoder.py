@@ -1,8 +1,10 @@
 import torch
 
-import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.register import (register_node_encoder,
+                                               register_edge_encoder)
 
 
+@register_node_encoder('Integer')
 class IntegerFeatureEncoder(torch.nn.Module):
     """
     Provides an encoder for integer node features.
@@ -26,6 +28,7 @@ class IntegerFeatureEncoder(torch.nn.Module):
         return batch
 
 
+@register_node_encoder('Atom')
 class AtomEncoder(torch.nn.Module):
     """
     The atom Encoder used in OGB molecule dataset.
@@ -56,6 +59,7 @@ class AtomEncoder(torch.nn.Module):
         return batch
 
 
+@register_edge_encoder('Bond')
 class BondEncoder(torch.nn.Module):
     """
     The bond Encoder used in OGB molecule dataset.
@@ -84,18 +88,3 @@ class BondEncoder(torch.nn.Module):
 
         batch.edge_attr = bond_embedding
         return batch
-
-
-node_encoder_dict = {'Integer': IntegerFeatureEncoder, 'Atom': AtomEncoder}
-
-register.node_encoder_dict = {
-    **register.node_encoder_dict,
-    **node_encoder_dict
-}
-
-edge_encoder_dict = {'Bond': BondEncoder}
-
-register.edge_encoder_dict = {
-    **register.edge_encoder_dict,
-    **edge_encoder_dict
-}

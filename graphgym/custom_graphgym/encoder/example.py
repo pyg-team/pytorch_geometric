@@ -5,6 +5,7 @@ from torch_geometric.graphgym.register import (register_node_encoder,
 from ogb.utils.features import get_bond_feature_dims
 
 
+@register_node_encoder('example')
 class ExampleNodeEncoder(torch.nn.Module):
     """
         Provides an encoder for integer node features
@@ -25,9 +26,7 @@ class ExampleNodeEncoder(torch.nn.Module):
         return batch
 
 
-register_node_encoder('example', ExampleNodeEncoder)
-
-
+@register_edge_encoder('example')
 class ExampleEdgeEncoder(torch.nn.Module):
     def __init__(self, emb_dim):
         super().__init__()
@@ -48,6 +47,3 @@ class ExampleEdgeEncoder(torch.nn.Module):
 
         batch.edge_attr = bond_embedding
         return batch
-
-
-register_edge_encoder('example', ExampleEdgeEncoder)
