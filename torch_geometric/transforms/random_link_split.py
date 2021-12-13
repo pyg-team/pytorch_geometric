@@ -65,9 +65,9 @@ class RandomLinkSplit(BaseTransform):
             edges to the number of positive edges. (default: :obj:`1.0`)
         disjoint_train_ratio (int or float, optional): If set to a value
             greater than :obj:`0.0`, training edges will not be shared for
-            message passing and supervision. Instead, :disjoint_train_ratio`
-            edges are used as ground-truth labels for supervision during
-            training. (default: :obj:`0.0`)
+            message passing and supervision. Instead,
+            :obj:`disjoint_train_ratio` edges are used as ground-truth labels
+            for supervision during training. (default: :obj:`0.0`)
         edge_types (Tuple[EdgeType] or List[EdgeType], optional): The edge
             types used for performing edge-level splitting in case of
             operating on :class:`~torch_geometric.data.HeteroData` objects.
