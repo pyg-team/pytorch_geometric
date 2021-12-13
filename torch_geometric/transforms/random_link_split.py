@@ -230,12 +230,12 @@ class RandomLinkSplit(BaseTransform):
         for key, value in store.items():
             if key == 'edge_index':
                 continue
-            if isinstance(value, Tensor):
-                if store._key is not None or store._parent().is_edge_attr(key):
-                    value = value[index]
-                    if is_undirected:
-                        value = torch.cat([value, value], dim=0)
-                    store[key] = value
+
+            if store.is_edge_attr(key):
+                value = value[index]
+                if is_undirected:
+                    value = torch.cat([value, value], dim=0)
+                store[key] = value
 
         edge_index = store.edge_index[:, index]
         if is_undirected:

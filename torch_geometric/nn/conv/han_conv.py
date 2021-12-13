@@ -30,6 +30,12 @@ class HANConv(MessagePassing):
     `"Heterogenous Graph Attention Network"
     <https://arxiv.org/pdf/1903.07293.pdf>`_ paper.
 
+    .. note::
+
+        For an example of using HANConv, see `examples/hetero/han_imdb.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        hetero/han_imdb.py>`_.
+
     Args:
         in_channels (int or Dict[str, int]): Size of each input sample of every
             node type, or :obj:`-1` to derive the size from the first input(s)

@@ -438,32 +438,12 @@ class Data(BaseData):
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
         node-level attribute."""
-        value = self[key]
-        cat_dim = self.__cat_dim__(key, value, self._store)
-
-        num_nodes, num_edges = self.num_nodes, self.num_edges
-        if not isinstance(value, torch.Tensor):
-            return False
-        if value.size(cat_dim) != num_nodes:
-            return False
-        if num_nodes != num_edges:
-            return True
-        return 'edge' not in key
+        return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
         edge-level attribute."""
-        value = self[key]
-        cat_dim = self.__cat_dim__(key, value, self._store)
-
-        num_nodes, num_edges = self.num_nodes, self.num_edges
-        if not isinstance(value, torch.Tensor):
-            return False
-        if value.size(cat_dim) != num_edges:
-            return False
-        if num_nodes != num_edges:
-            return True
-        return 'edge' in key
+        return self._store.is_edge_attr(key)
 
     def subgraph(self, subset: Tensor):
         r"""Returns the induced subgraph given by the node indices
@@ -681,7 +661,7 @@ class Data(BaseData):
     @deprecated(details="use 'data.face.size(-1)' instead")
     def num_faces(self) -> Optional[int]:
         r"""Returns the number of faces in the mesh."""
-        if 'face' in self._store and isinstance(self.face, torch.Tensor):
+        if 'face' in self._store and isinstance(self.face, Tensor):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
@@ -691,9 +671,9 @@ class Data(BaseData):
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:
     pad = ' ' * indent
-    if isinstance(value, torch.Tensor) and value.dim() == 0:
+    if isinstance(value, Tensor) and value.dim() == 0:
         out = value.item()
-    elif isinstance(value, torch.Tensor):
+    elif isinstance(value, Tensor):
         out = str(list(value.size()))
     elif isinstance(value, np.ndarray):
         out = str(list(value.shape))

@@ -71,6 +71,7 @@ from .polblogs import PolBlogs
 from .email_eu_core import EmailEUCore
 from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
+from .linkx_dataset import LINKXDataset
 
 __all__ = [
     'KarateClub',
@@ -148,6 +149,7 @@ __all__ = [
     'EmailEUCore',
     'StochasticBlockModelDataset',
     'RandomPartitionGraphDataset',
+    'LINKXDataset',
 ]
 
 classes = __all__
