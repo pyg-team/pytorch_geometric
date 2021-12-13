@@ -22,14 +22,18 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 def test_init_hetero_data():
     data = HeteroData()
+    data['v1'].x = 1
     data['paper'].x = x_paper
     data['author'].x = x_author
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
     data = HeteroData(
+        v1={'x': 1},
         paper={'x': x_paper},
         author={'x': x_author},
         paper__paper={'edge_index': edge_index_paper_paper},
@@ -37,8 +41,13 @@ def test_init_hetero_data():
         author__paper={'edge_index': edge_index_author_paper},
     )
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
     data = HeteroData({
+        'v1': {
+            'x': 1
+        },
         'paper': {
             'x': x_paper
         },
@@ -56,6 +65,8 @@ def test_init_hetero_data():
         },
     })
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
 
 def test_hetero_data_functions():
