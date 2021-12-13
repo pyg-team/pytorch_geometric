@@ -1,8 +1,8 @@
 from torch_geometric.typing import Adj, Size
 
-from torch import Tensor
+from torch import Tensor, ones
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import add_self_loops, degree
+from torch_geometric.utils import degree
 
 
 class LGConv(MessagePassing):
@@ -26,18 +26,17 @@ class LGConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, aggr: str = "add", normalize: bool = True, **kwargs):
+    propagate_type = {'x': Tensor, 'norm': Tensor}
+
+    def __init__(self, aggr: str = 'add', normalize: bool = True, **kwargs):
         super().__init__(aggr=aggr, **kwargs)
         self.normalize = normalize
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                size: Size = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj, size: Size = None) -> Tensor:
         """"""
-        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
-
-        norm = None
+        norm = ones(x.size(0))
         if self.normalize:
-            row, col = edge_index
+            row, col = edge_index[0], edge_index[1]
             deg = degree(col, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
@@ -45,8 +44,5 @@ class LGConv(MessagePassing):
 
         return self.propagate(edge_index, x=x, norm=norm, size=size)
 
-    def message(self, x_j, norm: Tensor = None):
-        if norm is not None:
-            return norm.view(-1, 1) * x_j
-
-        return x_j
+    def message(self, x_j: Tensor, norm: Tensor) -> Tensor:
+        return norm.view(-1, 1) * x_j

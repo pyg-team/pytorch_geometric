@@ -68,20 +68,19 @@ class LightGCN(torch.nn.Module):
 
     def __init__(self, num_layers: int, num_nodes: int,
                  embedding_dim: int = 32, objective: str = 'ranking',
-                 weights: Tensor = None, lambda_reg: float = 1e-4,
-                 alpha: Tensor = None, **kwargs):
-        super().__init__()
+                 lambda_reg: float = 1e-4, alpha: Tensor = None, **kwargs):
+        super().__init__(**kwargs)
 
         assert (num_layers >= 1), 'Number of layers must be larger than 0.'
         assert (num_nodes >= 1), 'Number of nodes must be larger than 0.'
-        assert (embedding_dim >= 1), 'Embedding dimension must be larger \
-            than 0.'
-        assert (objective in LightGCN.objectives), f'Objective must be one of \
-            {LightGCN.objectives}'
+        assert (embedding_dim >= 1), 'Embedding dimension must be larger ' \
+            'than 0.'
+        assert (objective in LightGCN.objectives), 'Objective must be one ' \
+            f'of {LightGCN.objectives}'
 
         if alpha is not None:
-            assert (alpha.size() == (num_layers + 1)), 'Alpha must be of \
-                size (num_layers + 1).'
+            assert (alpha.size(0) == (num_layers + 1)), 'alpha must be of ' \
+                'size (num_layers + 1).'
         else:
             alpha = [1 / (num_layers + 1)] * (num_layers + 1)
 
@@ -146,8 +145,8 @@ class LightGCN(torch.nn.Module):
                 nodes to be predicted.
             prob (bool): Whether probabilities should be returned.
         """
-        assert (self.objective == LightGCN.objectives[1]), 'Prediction \
-            only works for "link_prediction" objective.'
+        assert (self.objective == LightGCN.objectives[1]), 'Prediction ' \
+            'only works for "link_prediction" objective.'
 
         predictions = self.forward(edge_index, edge_label_index)
         if prob:
@@ -169,31 +168,57 @@ class LightGCN(torch.nn.Module):
             topK (int, optional): Number of top recommendations to return
                 (default: 1).
         """
-        assert (self.objective == LightGCN.objectives[0]), 'Recommendations \
-            only work for "ranking" objective.'
+        assert (self.objective == LightGCN.objectives[0]), 'Recommendations ' \
+            'only work for "ranking" objective.'
 
         prop_embeddings = self._propagate_embeddings(edge_index)
         source_embeddings = prop_embeddings[source_indices]
         target_embeddings = prop_embeddings[target_indices]
 
         rankings = torch.mm(source_embeddings, target_embeddings.t())
-        top_indices = torch.topk(rankings, topK, dim=-1)
-        top_indices = top_indices.indices.flatten().long()
-        recs = target_indices[top_indices]
+        top_indices = torch.topk(rankings, topK, dim=-1).indices
+        index_matrix = target_indices.reshape((1, -1))
+        index_matrix = index_matrix.repeat(source_indices.size(0), 1)
 
-        return recs.reshape((topK, source_indices.size(0))).t()
+        return index_matrix.gather(-1, top_indices)
 
-    def loss(self, edge_label: Tensor, rankings: Tensor = None,
-             preds: Tensor = None) -> float:
-        """"""
-        assert (rankings is not None or preds is not None), \
-            'Either rankings or preds must be specified.'
+    def loss(self, preds: Tensor = None, edge_label: Tensor = None,
+             pos_ranks: Tensor = None, neg_ranks: Tensor = None
+             ) -> Tensor:
+        """Computes model loss based on objective.
 
-        if rankings is not None:
-            parameters = self.embeddings.weight
-            return self.loss_fn(rankings, edge_label, parameters)
+        Computes Bayesian Personalized Ranking (BPR) loss for ranking objective
+        and Binary Cross-Entropy (BCE) loss for link prediction objective.
 
-        return self.loss_fn(preds, edge_label)
+        .. note::
+
+            If objective is ranking, the i-th entry in the :obj:`pos_ranks`
+            vector and i-th entry in the :obj:`neg_ranks` entry must correspond
+            to positive and negative edges of the same entity (i.e. user).
+
+        Args:
+            preds (Tensor, optional): Predictions for link prediction objective
+                (default: :obj:`None`).
+            edge_label (Tensor, optional): Edge label for link prediction
+                objective (default: :obj:`None`).
+            pos_ranks (Tensor, optional): Positive edge rankings for ranking
+                objective (default: :obj:`None`).
+            neg_ranks (Tensor, optional): Negative edge rankings for ranking
+                objective (default: :obj:`None`).
+        """
+        if self.objective == LightGCN.objectives[0]:
+            assert (pos_ranks is not None and neg_ranks is not None), \
+                'For ranking objective, pos_ranks and neg_ranks must ' \
+                'be specified.'
+
+            return self.loss_fn(pos_ranks, neg_ranks, self.embeddings.weight)
+
+        else:
+            assert (preds is not None and edge_label is not None), \
+                'For link predictions objective, preds and edge_label must ' \
+                'be specified.'
+
+            return self.loss_fn(preds, edge_label.to(torch.float32))
 
     def get_embeddings(self, edge_index: Adj,
                        indices: LongTensor = None) -> Tensor:
