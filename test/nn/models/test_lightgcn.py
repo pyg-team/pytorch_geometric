@@ -32,5 +32,5 @@ def test_lightgcn():
     assert all_users_items.shape[0] == n_users + m_items
     assert all_users_items.shape[1] == emb_size
     assert str(lightGCN) ==\
-        f'LightGCN({n_users}, {m_items}, " +\
-            num_layers={num_layers})'
+        f'LightGCN({lightGCN.in_channels}, {lightGCN.out_channels}, ' +\
+        f'num_layers={num_layers})'
