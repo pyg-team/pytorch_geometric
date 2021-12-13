@@ -1,7 +1,7 @@
 from torch_geometric.typing import Adj
 
 import torch
-from torch import Tensor
+from torch import Tensor, LongTensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, Embedding, BCELoss
 from torch.nn.modules.loss import _Loss
@@ -12,7 +12,7 @@ from torch_geometric.nn.conv import LGConv
 class LightGCN(torch.nn.Module):
     r"""The LightGCN model from the `"LightGCN: Simplifying and Powering
     Graph Convolution Network for Recommendation"
-    <https://arxiv.org/abs/2002.02126>`_paper.
+    <https://arxiv.org/abs/2002.02126>`_ paper.
 
     LightGCN learns embeddings by linearly propagating them on the underlying
     graph, and uses the weighted sum of the embeddings learned at all layers as
@@ -21,31 +21,29 @@ class LightGCN(torch.nn.Module):
     .. math::
         \textbf{x}_i = \sum_{l=0}^{L} \alpha_l \textbf{x}^{l}_i
 
-    where :math:`\alpha_l` can be chosen to be any weights. The original paper
-    uniformly initializes :math:`\alpha_l` as
-    :math:`\frac{1}{\text{# layers } + 1}`.
-
     Each layer's embeddings are computed as:
 
     .. math::
         \mathbf{x}^{l+1}_i = \sum_{j \in \mathcal{N}(i)}
         \frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}\mathbf{x}^{l}_j
 
-    Two prediction heads are provided (:obj:`"ranking"` and
-    :obj:`"link_prediction"`). Ranking is performed by outputting the dot
+    Two prediction heads are provided: :obj:`"ranking"` and
+    :obj:`"link_prediction"`. Ranking is performed by outputting the dot
     product between the pair of embeddings chosen for evaluation. For link
-    prediction, the sigmoid of the ranking is computed to output binary
-    labels.
+    prediction, the sigmoid of the ranking is computed to output label
+    probabilities.
 
-    This implementation works not only on bipartite graphs but on any kind of
-    connected graph. It is important that all provided edges for evaluation
-    in the forward function (:obj:`edge_label_index`) are only edges of the
-    kind which need to be predicted (i.e. user-item edges, and not user-user or
-    item-item edges).
+    .. note::
+
+        This implementation works not only on bipartite graphs but on any
+        kind of connected graph. Embeddings are propagated according to the
+        graph connectivity specified by :obj:`edge_index` while rankings are
+        computed (on which the model is trained) only according to the edges
+        specified by :obj:`edge_label_index`.
 
     Args:
-        num_layers (int): The number of Light Graph Convolution :obj:`LGConv`
-        layers.
+        num_layers (int): The number of Light Graph Convolution
+            (:obj:`LGConv`) layers.
         num_nodes (int): The number of nodes in the graph.
         embedding_dim (int, optional): The dimensionality of the node
             embeddings (default: 32).
@@ -55,9 +53,6 @@ class LightGCN(torch.nn.Module):
             :obj:`"link_prediction"` passes the ranking result through a
             sigmoid layer (:obj:`"ranking"`, :obj:`"link_prediction"`)
             (default: :obj:`"ranking"`).
-        weights (Tensor, optional): Pre-computed embeddings or node features
-            which should be used to initialize the embedding layer. Overwrites
-            the :obj:`embedding_dim` argument (default: :obj:`None`).
         lambda_reg (int, optional): The :math:`L_2` regularization strength of
             the Bayesian Personalized Ranking (BPR) loss for the "ranking"
             objective (default: 1e-4).
@@ -85,23 +80,19 @@ class LightGCN(torch.nn.Module):
             {LightGCN.objectives}'
 
         if alpha is not None:
-            assert (alpha.size() == (num_layers + 1)), 'Alpha must be valid \
-                weights for each layer plus the initial layer summing to one.'
+            assert (alpha.size() == (num_layers + 1)), 'Alpha must be of \
+                size (num_layers + 1).'
         else:
-            alpha = torch.full((1, num_layers + 1), 1 / (num_layers + 1))[0]
+            alpha = [1 / (num_layers + 1)] * (num_layers + 1)
 
         self.num_layers = num_layers
         self.num_nodes = num_nodes
         self.embedding_dim = embedding_dim
+        self.embeddings = Embedding(num_nodes, embedding_dim)
         self.objective = objective
         self.lambda_reg = lambda_reg
         self.alpha = alpha
         self.convs = ModuleList()
-
-        if weights is not None:
-            self.embeddings = Embedding.from_pretrained(weights)
-        else:
-            self.embeddings = Embedding(num_nodes, embedding_dim)
 
         for _ in range(num_layers):
             self.convs.append(LGConv())
@@ -115,15 +106,25 @@ class LightGCN(torch.nn.Module):
         self.embeddings.reset_parameters()
 
     def forward(self, edge_index: Adj, edge_label_index: Tensor,
-                **kwargs) -> Tensor:
-        """"""
-        x = self.embeddings(self.__get_aranged_tensor(edge_index,
-                                                      self.num_nodes))
-        out = x * self.alpha[0]
+                weights: Tensor = None, **kwargs) -> Tensor:
+        """Computes rankings or link probabilities for pairs of nodes.
 
-        for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index)
-            out = torch.add(out, x * self.alpha[i + 1])
+        Args:
+            edge_index (Adj): Matrix specifying the start and end nodes
+                to be predicted.
+            edge_label_index (Tensor): Tensor of edges to get rankings
+                or probabilities for.
+            weights (Tensor, optional): Pre-computed embeddings or node
+                features which should be used to initialize the embedding
+                layer (default: :obj:`None`).
+        """
+        if weights is not None:
+            assert (weights.shape == self.embeddings.shape), \
+                'Pre-computed embeddings weights must match shape of \
+                embedding layer.'
+            self.embeddings.weight.data.copy_(weights)
+
+        out = self._propagate_embeddings(edge_index)
 
         nodes_fst = torch.index_select(out, 0, edge_label_index[0, :].long())
         nodes_sec = torch.index_select(out, 0, edge_label_index[1, :].long())
@@ -134,29 +135,53 @@ class LightGCN(torch.nn.Module):
 
         return out
 
-    def recommend(self, source_indices: Tensor, target_indices: Tensor,
-                  topK: int = 1):
-        """Generate :obj:`topK` recommendations for each node in
-           :obj:`source_mask`.
+    def predict(self, edge_index: Adj, edge_label_index: Adj,
+                prob: bool = False) -> Tensor:
+        """Predict links between nodes specified in :obj:`edge_label_index`.
 
         Args:
-            source_indices (Tensor): Nodes for which recommendations should
-                be generated (indices).
-            target_indices (Tensor): Nodes which represent the choices
+            edge_index (Adj): Matrix specifying the connectivity of the
+                graph.
+            edge_label_index (Adj): Matrix specifying the start and end
+                nodes to be predicted.
+            prob (bool): Whether probabilities should be returned.
+        """
+        assert (self.objective == LightGCN.objectives[1]), 'Prediction \
+            only works for "link_prediction" objective.'
+
+        predictions = self.forward(edge_index, edge_label_index)
+        if prob:
+            return predictions
+
+        return torch.round(predictions)
+
+    def recommend(self, edge_index: Adj, source_indices: LongTensor,
+                  target_indices: LongTensor, topK: int = 1) -> Tensor:
+        """Get :obj:`topK` recommendations for nodes in :obj:`source_indices`.
+
+        Args:
+            edge_index (Adj): Matrix specifying the connectivity of the
+                graph.
+            source_indices (LongTensor): Nodes for which recommendations
+                should be generated (indices).
+            target_indices (LongTensor): Nodes which represent the choices
                 (indices).
             topK (int, optional): Number of top recommendations to return
                 (default: 1).
         """
-        assert (self.objective == LightGCN.objectives[0]), \
-            'Recommendations only work for "ranking" objective. Call \
-             predict() instead.'
+        assert (self.objective == LightGCN.objectives[0]), 'Recommendations \
+            only work for "ranking" objective.'
 
-        source_embeddings = self.embeddings(source_indices)
-        target_embeddings = self.embeddings(target_indices)
+        prop_embeddings = self._propagate_embeddings(edge_index)
+        source_embeddings = prop_embeddings[source_indices]
+        target_embeddings = prop_embeddings[target_indices]
+
         rankings = torch.mm(source_embeddings, target_embeddings.t())
-        top_indices = torch.topk(rankings, topK, 1).indices.long()
-        recs = target_indices.repeat(source_indices.size(0), 1)[top_indices]
-        return recs
+        top_indices = torch.topk(rankings, topK, dim=-1)
+        top_indices = top_indices.indices.flatten().long()
+        recs = target_indices[top_indices]
+
+        return recs.reshape((topK, source_indices.size(0))).t()
 
     def loss(self, edge_label: Tensor, rankings: Tensor = None,
              preds: Tensor = None) -> float:
@@ -165,18 +190,28 @@ class LightGCN(torch.nn.Module):
             'Either rankings or preds must be specified.'
 
         if rankings is not None:
-            indices = self.__get_aranged_tensor(edge_label, self.num_nodes)
-            parameters = self.embeddings(indices)
+            parameters = self.embeddings.weight
             return self.loss_fn(rankings, edge_label, parameters)
 
         return self.loss_fn(preds, edge_label)
 
-    def __get_aranged_tensor(self, device_tensor: Tensor, size: int) -> Tensor:
-        if device_tensor.is_cuda:
-            device = device_tensor.get_device()
-            return torch.arange(size, device=f'cuda:{device}')
-        else:
-            return torch.arange(size)
+    def get_embeddings(self, edge_index: Adj,
+        indices: LongTensor = None) -> Tensor:
+        """"""
+        if indices is None:
+            return self._propagate_embeddings(edge_index)
+        
+        return self._propagate_embeddings(edge_index)[indices]
+
+    def _propagate_embeddings(self, edge_index: Adj) -> Tensor:
+        x = self.embeddings.weight
+        out = x * self.alpha[0]
+
+        for i in range(self.num_layers):
+            x = self.convs[i](x, edge_index)
+            out = torch.add(out, x * self.alpha[i + 1])
+
+        return out
 
     def __repr__(self):
         return (f'{self.__class__.__name__}('
@@ -200,57 +235,42 @@ class BPRLoss(_Loss):
         \sum_{j \not\in \mathcal{N}_u} \ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})
         + \lambda \vert\vert \textbf{x}^{(0)} \vert\vert^2
 
-    where :math:`lambda` controls the :math:`L_2` regularization strength.
+    where :math:`lambda` controls the :math:`L_2` regularization strength. We
+    compute the mean BPR loss for simplicity.
 
     Args:
         lambda_reg (float, optional): The :math:`L_2` regularization strength
             (default: 0).
     """
-    __constants__ = ['lambda']
+    __constants__ = ['lambda_reg']
     lambda_reg: float
 
     def __init__(self, lambda_reg: float = 0) -> None:
         super(BPRLoss, self).__init__(None, None, "sum")
         self.lambda_reg = lambda_reg
 
-    def forward(self, rankings: Tensor, link_labels: Tensor,
-                parameters: Tensor = None, approximate: bool = True) -> Tensor:
-        """
+    def forward(self, positives: Tensor, negatives: Tensor,
+                parameters: Tensor = None) -> Tensor:
+        """Compute the mean Bayesian Personalized Ranking (BPR) loss.
+
+        .. note::
+
+            The i-th entry in the :obj:`positives` vector and i-th entry
+            in the :obj:`negatives` entry should correspond to the same
+            entity (i.e. user), as the BPR is a personalized ranking loss.
 
         Args:
-            rankings (Tensor): The vector of all computed rankings.
-            link_labels (Tensor): The binary vector where ones correspond to
-                positive edges or neighbors, respectively, and zeros to
-                negative edges or non-neighbors.
+            positives (Tensor): The vector of positive-pair rankings.
+            negatives (Tensor): The vector of negative-pair rankings.
             parameters (Tensor, optional): The tensor of parameters which
                 should be used for :math:`L_2` regularization
                 (default: :obj:`None`).
-            approximate (bool, optional): Whether the loss should be computed
-                approximately, sampling one contrastive pair per positive
-                example. Setting approximate to :obj:`False` performs
-                one-to-all contrastive loss which will run out of RAM on
-                larger datasets (default: :obj:`True`).
         """
-        pos_pairs = torch.masked_select(rankings, link_labels > 0)
-        neg_pairs = torch.masked_select(rankings, link_labels < 1)
-
-        log_prob = 0
-
-        if approximate:
-            indices = torch.randint_like(pos_pairs, 0,
-                                         neg_pairs.size(0)).long()
-            neg_samples = neg_pairs[indices]
-            log_prob = F.logsigmoid(pos_pairs - neg_samples).mean()
-
-        else:
-            for pos_ranking in pos_pairs:
-                log_prob += F.logsigmoid(-neg_pairs + pos_ranking).mean()
-
-            log_prob /= pos_pairs.size(0)
-
+        n_pairs = positives.size(0)
+        log_prob = F.logsigmoid(positives - negatives).mean()
         regularization = 0
 
         if self.lambda_reg != 0:
-            regularization = self.lambda_reg * parameters.norm(p=2)
+            regularization = self.lambda_reg * parameters.norm(p=2).pow(2)
 
-        return -log_prob + regularization
+        return (-log_prob + regularization) / n_pairs
