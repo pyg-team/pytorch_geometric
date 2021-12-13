@@ -2,7 +2,7 @@ from torch_geometric.typing import Adj
 
 import torch
 from torch import Tensor
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.conv import MessagePassing
 
 
 class LGConv(MessagePassing):
