@@ -301,7 +301,7 @@ class HeteroData(BaseData):
                 args = edge_types[0]
                 return args
 
-        if len(args) == 2:
+        elif len(args) == 2:
             # Try to find the unique source/destination node tuple:
             edge_types = [
                 key for key in self.edge_types
