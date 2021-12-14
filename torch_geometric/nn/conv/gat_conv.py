@@ -94,8 +94,10 @@ class GATConv(MessagePassing):
         - Output: :math:`(|\mathcal{V}|, K*H_{out})` or
           :math:`(|\mathcal{V_t}|, K*H_{out})` if bipartite. If
           :math:`\text{return_attention_weights} = True` then
-          :math:`((|\mathcal{V}|, K*H_{out}), ((2, |\mathcal{E}|), (|\mathcal{V}|, |\mathcal{V}|)))`
-          or :math:`((|\mathcal{V_t}|, K*H_{out}), ((2, |\mathcal{E}|), (|\mathcal{V}|, |\mathcal{V}|)))`
+          :math:`((|\mathcal{V}|, K*H_{out}),
+          ((2, |\mathcal{E}|), (|\mathcal{V}|, |\mathcal{V}|)))`
+          or :math:`((|\mathcal{V_t}|, K*H_{out}), ((2, |\mathcal{E}|),
+          (|\mathcal{V}|, |\mathcal{V}|)))`
           if bipartite.
     """
     _alpha: OptTensor

@@ -58,8 +58,9 @@ class FAConv(MessagePassing):
         - Edge weights: :math:`(|\mathcal{E}|)`.
         - Return attention weights: boolean.
         - Output: :math:`(|\mathcal{V}|, H)` or
-          :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|), (|\mathcal{V}|, |\mathcal{V}|)))`,
-          if :math:`\text{return_attention_weights = True}`.
+          :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|),
+          (|\mathcal{V}|, |\mathcal{V}|)))`, if
+          :math:`\text{return_attention_weights = True}`.
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
