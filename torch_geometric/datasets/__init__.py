@@ -72,6 +72,7 @@ from .email_eu_core import EmailEUCore
 from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
+from .var_misuse import VarMisuse
 
 __all__ = [
     'KarateClub',
@@ -150,6 +151,7 @@ __all__ = [
     'StochasticBlockModelDataset',
     'RandomPartitionGraphDataset',
     'LINKXDataset',
+    'VarMisuse',
 ]
 
 classes = __all__
