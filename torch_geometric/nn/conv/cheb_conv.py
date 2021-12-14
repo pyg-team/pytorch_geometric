@@ -62,6 +62,15 @@ class ChebConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H_{in})`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Edge weights: :math:`(|\mathcal{E}|)`.
+        - Batch:  :math:`(|\mathcal{V_batch}|, H_{in})`
+        - Lambda max: scalar or :math:`(|\mathcal{G}|)` if mini-batch.
+        - Output: :math:`(|\mathcal{V}|, H_{out})`.
+
     """
     def __init__(self, in_channels: int, out_channels: int, K: int,
                  normalization: Optional[str] = 'sym', bias: bool = True,

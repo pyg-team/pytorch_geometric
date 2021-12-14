@@ -67,6 +67,11 @@ class EGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, X_{in})`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, X_{out}*H)`, where H is the number of attention heads.
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, OptTensor]]

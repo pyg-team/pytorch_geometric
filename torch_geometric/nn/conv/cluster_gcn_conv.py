@@ -32,6 +32,12 @@ class ClusterGCNConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H_{in})`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Size: :math:`(|\mathcal{V}|, |\mathcal{V}|)`.
+        - Output: :math:`(|\mathcal{V}|, H_{out})`.
     """
     def __init__(self, in_channels: int, out_channels: int,
                  diag_lambda: float = 0., add_self_loops: bool = True,

@@ -34,6 +34,11 @@ class AGNNConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H)`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, H)`.
     """
     def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
                  **kwargs):

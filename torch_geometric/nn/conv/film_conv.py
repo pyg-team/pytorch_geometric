@@ -52,6 +52,16 @@ class FiLMConv(MessagePassing):
             (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H_{in})` or
+          :math:`((|\mathcal{V_s}|, H_{s}), (|\mathcal{V_t}|, H_{t}))` if
+          bipartite, where :math:`H_{s} = \text{in_channels[0]}` and
+          :math:`H_{t} = \text{in_channels[1]}`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Edge types: :math:`(|\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, H_{out})` or
+          :math:`(|\mathcal{V_t}|, H_{out})` if bipartite.
     """
     def __init__(
             self,

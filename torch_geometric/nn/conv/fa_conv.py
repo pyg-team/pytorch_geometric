@@ -50,6 +50,16 @@ class FAConv(MessagePassing):
             the layer's :meth:`forward` method. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H)`.
+        - Initial node features: :math:`(|\mathcal{V}|, H)`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Edge weights: :math:`(|\mathcal{E}|)`.
+        - Return attention weights: boolean.
+        - Output: :math:`(|\mathcal{V}|, H)` or
+          :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|), (|\mathcal{V}|, |\mathcal{V}|)))`,
+          if :math:`\text{return_attention_weights = True}`.
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]

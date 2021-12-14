@@ -39,6 +39,13 @@ class FeaStConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H_{in})` or
+          :math:`((|\mathcal{V}|, H_{in}), (|\mathcal{V}|, H_{in}))` if
+          bipartite.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, H_{out})`.
     """
     def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):

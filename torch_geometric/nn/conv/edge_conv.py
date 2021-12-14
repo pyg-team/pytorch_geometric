@@ -34,6 +34,11 @@ class EdgeConv(MessagePassing):
             (default: :obj:`"max"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H)`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Output: depends on :math:`h_{\mathbf{\Theta}}`.
     """
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super().__init__(aggr=aggr, **kwargs)

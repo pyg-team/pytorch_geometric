@@ -45,6 +45,12 @@ class APPNP(MessagePassing):
             symmetric normalization. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H)`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Edge weights: :math:`(|\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, H)`.
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]

@@ -39,6 +39,18 @@ class CGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H)` or
+          :math:`((|\mathcal{V_s}|, H_{s}), (|\mathcal{V_t}|, H_{t}))` if
+          bipartite, where :math:`H_{s} = \text{channels[0]}` and
+          :math:`H_{t} = \text{channels[1]}`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Edge attributes: :math:`((|\mathcal{E}|, H_{\mathcal{E}}))`.
+        - Size: :math:`(|\mathcal{V}|, |\mathcal{V}|)` or
+          :math:`(|\mathcal{V_s}|, |\mathcal{V_t}|)` if bipartite.
+        - Output: :math:`(|\mathcal{V}|, H)` or
+          :math:`(|\mathcal{V_t}|, H)` if bipartite.
     """
     def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
                  aggr: str = 'add', batch_norm: bool = False,
