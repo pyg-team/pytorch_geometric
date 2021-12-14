@@ -29,7 +29,7 @@ class GatedGraphConv(MessagePassing):
     node :obj:`i` (default: :obj:`1`)
 
     Args:
-        out_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
         num_layers (int): The sequence length :math:`L`.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
@@ -38,6 +38,12 @@ class GatedGraphConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shape:
+        - Node features: :math:`(|\mathcal{V}|, H_{in})`.
+        - Edge index: :math:`(2, |\mathcal{E}|)`.
+        - Output: :math:`(|\mathcal{V}|, H_{out})`.
+
     """
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
                  bias: bool = True, **kwargs):
