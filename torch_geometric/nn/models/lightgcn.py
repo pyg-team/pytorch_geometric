@@ -37,9 +37,9 @@ class LightGCN(torch.nn.Module):
 
         This implementation works not only on bipartite graphs but on any
         kind of connected graph. Embeddings are propagated according to the
-        graph connectivity specified by :obj:`edge_index` while rankings are
-        computed (on which the model is trained) only according to the edges
-        specified by :obj:`edge_label_index`.
+        graph connectivity specified by :obj:`edge_index` while rankings or
+        probabilities are only computed (the forward pass) according to the
+        edges specified by :obj:`edge_label_index`.
 
     Args:
         num_layers (int): The number of Light Graph Convolution
@@ -104,19 +104,24 @@ class LightGCN(torch.nn.Module):
     def reset_parameters(self):
         self.embeddings.reset_parameters()
 
-    def forward(self, edge_index: Adj, edge_label_index: Tensor,
+    def forward(self, edge_index: Adj, edge_label_index: Adj = None,
                 weights: Tensor = None, **kwargs) -> Tensor:
         """Computes rankings or link probabilities for pairs of nodes.
 
         Args:
-            edge_index (Adj): Matrix specifying the start and end nodes
-                to be predicted.
-            edge_label_index (Tensor): Tensor of edges to get rankings
-                or probabilities for.
+            edge_index (Adj): Edge tensor specifying the connectivity of the
+                graph.
+            edge_label_index (Adj, optional): Edge tensor specifying the start
+                and end nodes for which to compute rankings or proabilities.
+                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
+                :obj:`edge_index` will be used (default: :obj:`None`).
             weights (Tensor, optional): Pre-computed embeddings or node
                 features which should be used to initialize the embedding
                 layer (default: :obj:`None`).
         """
+        if edge_label_index is None:
+            edge_label_index = edge_index
+
         if weights is not None:
             assert (weights.shape == self.embeddings.shape), \
                 'Pre-computed embeddings weights must match shape of \
@@ -134,19 +139,24 @@ class LightGCN(torch.nn.Module):
 
         return out
 
-    def predict(self, edge_index: Adj, edge_label_index: Adj,
+    def predict(self, edge_index: Adj, edge_label_index: Adj = None,
                 prob: bool = False) -> Tensor:
         """Predict links between nodes specified in :obj:`edge_label_index`.
 
         Args:
-            edge_index (Adj): Matrix specifying the connectivity of the
+            edge_index (Adj): Edge tensor specifying the connectivity of the
                 graph.
-            edge_label_index (Adj): Matrix specifying the start and end
-                nodes to be predicted.
+            edge_label_index (Adj, optional): Edge tensor specifying the start
+                and end nodes for which to compute rankings or proabilities.
+                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
+                :obj:`edge_index` will be used (default: :obj:`None`).
             prob (bool): Whether probabilities should be returned.
         """
         assert (self.objective == LightGCN.objectives[1]), 'Prediction ' \
             'only works for "link_prediction" objective.'
+
+        if edge_label_index is None:
+            edge_label_index = edge_index
 
         predictions = self.forward(edge_index, edge_label_index)
         if prob:
@@ -159,7 +169,7 @@ class LightGCN(torch.nn.Module):
         """Get :obj:`topK` recommendations for nodes in :obj:`source_indices`.
 
         Args:
-            edge_index (Adj): Matrix specifying the connectivity of the
+            edge_index (Adj): Edge tensor specifying the connectivity of the
                 graph.
             source_indices (LongTensor): Nodes for which recommendations
                 should be generated (indices).

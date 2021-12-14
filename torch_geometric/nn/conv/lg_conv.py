@@ -37,7 +37,7 @@ class LGConv(MessagePassing):
         norm = ones(x.size(0))
         if self.normalize:
             row, col = edge_index[0], edge_index[1]
-            deg = degree(col, x.size(0), dtype=x.dtype)
+            deg = degree(row, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
