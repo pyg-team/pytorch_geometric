@@ -139,9 +139,11 @@ class LightGCN(torch.nn.Module):
 
         return out
 
-    def predict(self, edge_index: Adj, edge_label_index: Adj = None,
-                prob: bool = False) -> Tensor:
+    def predict_link(self, edge_index: Adj, edge_label_index: Adj = None,
+                     prob: bool = False) -> Tensor:
         """Predict links between nodes specified in :obj:`edge_label_index`.
+
+        This prediction head works only for the "link_prediction" objective.
 
         Args:
             edge_index (Adj): Edge tensor specifying the connectivity of the
@@ -167,6 +169,8 @@ class LightGCN(torch.nn.Module):
     def recommend(self, edge_index: Adj, source_indices: LongTensor,
                   target_indices: LongTensor, topK: int = 1) -> Tensor:
         """Get :obj:`topK` recommendations for nodes in :obj:`source_indices`.
+
+        This prediction head works only for the "ranking" objective.
 
         Args:
             edge_index (Adj): Edge tensor specifying the connectivity of the
