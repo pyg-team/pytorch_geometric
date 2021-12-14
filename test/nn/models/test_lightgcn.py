@@ -69,5 +69,5 @@ def test_lightgcn_link_predictions(embedding_dim, lambda_reg, alpha):
     loss = lightGCN.loss(preds, edge_label)
     assert loss.dim() == 0
 
-    labels = lightGCN.predict(edge_index, edge_label_index)
+    labels = lightGCN.predict_link(edge_index, edge_label_index)
     assert labels.size(0) == 100
