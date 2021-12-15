@@ -51,16 +51,15 @@ class FAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-    Shape:
-        - Node features: :math:`(|\mathcal{V}|, H)`.
-        - Initial node features: :math:`(|\mathcal{V}|, H)`.
-        - Edge index: :math:`(2, |\mathcal{E}|)`.
-        - Edge weights: :math:`(|\mathcal{E}|)`.
-        - Return attention weights: boolean.
-        - Output: :math:`(|\mathcal{V}|, H)` or
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          initial node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)` or
           :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|),
-          (|\mathcal{V}|, |\mathcal{V}|)))`, if
-          :math:`\text{return_attention_weights = True}`.
+          (|\mathcal{E}|)))` if :obj:`return_attention_weights=True`
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]

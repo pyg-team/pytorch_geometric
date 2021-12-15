@@ -48,7 +48,7 @@ class CGConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)` or
-          :math:`(|\mathcal{V_t}|, F_{t})` if bipartite.
+          :math:`(|\mathcal{V_t}|, F_{t})` if bipartite
     """
     def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
                  aggr: str = 'add', batch_norm: bool = False,

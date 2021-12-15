@@ -63,21 +63,13 @@ class ChebConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-    Shape:
-        - Node features: :math:`(|\mathcal{V}|, H_{in})`.
-        - Edge index: :math:`(2, |\mathcal{E}|)`.
-        - Edge weights: :math:`(|\mathcal{E}|)`.
-        - Batch:  :math:`(|\mathcal{V_batch}|, H_{in})`
-        - Lambda max: scalar or :math:`(|\mathcal{G}|)` if mini-batch.
-        - Output: :math:`(|\mathcal{V}|, H_{out})`.
-
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
           batch vector :math:`(|\mathcal{V}|)` *(optional)*,
-          maximum lambda value :math:`(|\mathcal{G}|)` *(optional)*
+          maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
 
     """
