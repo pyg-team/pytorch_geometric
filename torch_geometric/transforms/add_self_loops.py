@@ -14,7 +14,7 @@ class AddSelfLoops(BaseTransform):
         attr: (str, optional): The name of the attribute of edge weights
             or multi-dimensional edge features to pass to
             :meth:`torch_geometric.utils.add_self_loops`.
-            (default: :obj:`edge_weight`)
+            (default: :obj:`"edge_weight"`)
         fill_value (float or Tensor or str, optional): The way to generate
             edge features of self-loops (in case :obj:`edge_attr != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
