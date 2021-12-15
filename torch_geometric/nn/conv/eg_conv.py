@@ -71,7 +71,7 @@ class EGConv(MessagePassing):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 

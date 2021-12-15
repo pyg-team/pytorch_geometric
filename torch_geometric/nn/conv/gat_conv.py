@@ -89,11 +89,9 @@ class GATConv(MessagePassing):
           if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
-        - **output:** node features :math:`(|\mathcal{V}|, F)` or
-          :math:`(|\mathcal{V_t}|, F_{t})` if bipartite
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
-          :math:`((|\mathcal{V}_t|, H * F_{out}) if bipartite. If
-          :obj:`return_attention_weights=True`, then
+          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          If :obj:`return_attention_weights=True`, then
           :math:`((|\mathcal{V}|, H * F_{out}),
           ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),

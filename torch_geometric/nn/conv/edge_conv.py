@@ -40,8 +40,9 @@ class EdgeConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V}|, F_{in}), (|\mathcal{V}|, F_{in}))`
           if bipartite,
-          edge indices :math:`(2, |\mathcal{E}|)`,
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super().__init__(aggr=aggr, **kwargs)

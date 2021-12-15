@@ -59,7 +59,7 @@ class FiLMConv(MessagePassing):
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
           if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`,
-          edge types: :math:`(|\mathcal{E}|)`
+          edge types :math:`(|\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """

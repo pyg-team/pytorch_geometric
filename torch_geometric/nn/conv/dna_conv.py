@@ -225,7 +225,7 @@ class DNAConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, L, F)` where :math:`L` is the
           number of layers,
-          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
