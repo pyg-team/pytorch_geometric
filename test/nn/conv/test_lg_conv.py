@@ -10,8 +10,7 @@ def test_lg_conv():
     assert conv.__repr__() == 'LGConv()'
     out = conv(x, edge_index)
     assert out.size() == (4, 8)
-    assert conv(x, edge_index, size=(4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, Tensor, Size) -> Tensor'
+    t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x, edge_index).tolist() == out.tolist()

@@ -1,8 +1,8 @@
-from torch_geometric.typing import Adj, Size
+from torch_geometric.typing import Adj
 
-from torch import Tensor, ones
+from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import degree
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
 class LGConv(MessagePassing):
@@ -20,8 +20,8 @@ class LGConv(MessagePassing):
         aggr (string, optional): The aggregation scheme to use.
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
-        normalize (bool, optional): If set to :obj:`False`, output features will not
-            will be normalized using the symmetric normalization term:
+        normalize (bool, optional): If set to :obj:`False`, output features
+            will not be normalized using the symmetric normalization term:
             :math:`\frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}`.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -35,15 +35,9 @@ class LGConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         """"""
-        norm = ones(x.size(0))
-        if self.normalize:
-            row, col = edge_index[0], edge_index[1]
-            deg = degree(row, x.size(0), dtype=x.dtype)
-            deg_inv_sqrt = deg.pow(-0.5)
-            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-            norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
-
-        return self.propagate(edge_index, x=x, norm=norm, size=size)
+        _, norm = gcn_norm(edge_index, num_nodes=x.size(0),
+                           add_self_loops=False)
+        return self.propagate(edge_index, x=x, norm=norm, size=None)
 
     def message(self, x_j: Tensor, norm: Tensor) -> Tensor:
         return norm.view(-1, 1) * x_j

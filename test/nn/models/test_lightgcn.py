@@ -18,8 +18,7 @@ def test_lightgcn_rankings(embedding_dim, lambda_reg, alpha):
     rec_indices = torch.arange(0, x.size(0))
 
     alpha_t = torch.FloatTensor(alpha)
-    lightGCN = LightGCN(3, x.size(0), embedding_dim, 'ranking', lambda_reg,
-                        alpha=alpha_t)
+    lightGCN = LightGCN(3, x.size(0), embedding_dim, 'ranking', alpha=alpha_t)
 
     assert lightGCN.__repr__() == 'LightGCN(num_layers=3, ' \
                                   f'num_nodes={x.size(0)}, ' \
@@ -29,12 +28,16 @@ def test_lightgcn_rankings(embedding_dim, lambda_reg, alpha):
     rankings = lightGCN(edge_index, edge_label_index)
     assert rankings.size(0) == 100
 
-    loss = lightGCN.loss(pos_ranks=rankings[:-1], neg_ranks=rankings[1:])
+    loss = lightGCN.recommendation_loss(rankings[:-1], rankings[1:],
+                                        lambda_reg)
     assert loss.dim() == 0
 
     embeddings = lightGCN.get_embeddings(edge_index)
     recommendations = lightGCN.recommend(edge_index, rec_indices[:200],
-                                         rec_indices[200:], topK=2)
+                                         topK=2,
+                                         target_indices=rec_indices[200:])
+    assert recommendations.size() == (200, 2)
+    recommendations = lightGCN.recommend(edge_index, rec_indices[:200], topK=2)
     assert recommendations.size() == (200, 2)
 
     first_indices = recommendations[:, 0]
@@ -46,9 +49,9 @@ def test_lightgcn_rankings(embedding_dim, lambda_reg, alpha):
     assert torch.sum(rec_mismatch).item() == 0
 
 
-@pytest.mark.parametrize('embedding_dim,lambda_reg,alpha',
-                         product(emb_dims, lambda_reg, alpha))
-def test_lightgcn_link_predictions(embedding_dim, lambda_reg, alpha):
+@pytest.mark.parametrize('embedding_dim,alpha',
+                         product(emb_dims, alpha))
+def test_lightgcn_link_predictions(embedding_dim, alpha):
     x = torch.randn(500, embedding_dim)
     edge_index = torch.randint(0, x.size(0), (2, 400))
     edge_label_index = torch.randint(0, x.size(0), (2, 100))
@@ -56,7 +59,7 @@ def test_lightgcn_link_predictions(embedding_dim, lambda_reg, alpha):
 
     alpha_t = torch.FloatTensor(alpha)
     lightGCN = LightGCN(3, x.size(0), embedding_dim, 'link_prediction',
-                        lambda_reg, alpha=alpha_t)
+                        alpha=alpha_t)
 
     assert lightGCN.__repr__() == 'LightGCN(num_layers=3, '\
                                   f'num_nodes={x.size(0)}, '\
@@ -66,7 +69,7 @@ def test_lightgcn_link_predictions(embedding_dim, lambda_reg, alpha):
     preds = lightGCN(edge_index, edge_label_index)
     assert preds.size(0) == 100
 
-    loss = lightGCN.loss(preds, edge_label)
+    loss = lightGCN.link_prediction_loss(preds, edge_label)
     assert loss.dim() == 0
 
     labels = lightGCN.predict_link(edge_index, edge_label_index)
