@@ -35,10 +35,11 @@ class AGNNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-    Shape:
-        - Node features: :math:`(|\mathcal{V}|, H)`.
-        - Edge index: :math:`(2, |\mathcal{E}|)`.
-        - Output: :math:`(|\mathcal{V}|, H)`.
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
     def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
                  **kwargs):

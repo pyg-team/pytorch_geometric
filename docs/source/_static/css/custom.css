@@ -125,7 +125,7 @@ h2,
   text-transform: uppercase;
   background: inherit;
   border: none;
-  padding: 6px 0;
+  margin-bottom: 6px !important;
 }
 
 .rst-content dl:not(.docutils) .property:first-child .pre {
@@ -193,4 +193,21 @@ table.colwidths-given tr th p {
 table.colwidths-given tr td:first-child p,
 table.colwidths-given tr th:first-child p {
   text-align: left;
+}
+
+dl.class dl.simple > dt {
+  text-transform: uppercase;
+  background: inherit !important;
+  color: inherit !important;
+  border: none !important;
+}
+
+html.writer-html5 .rst-content dl.field-list > dt,
+html.writer-html5 .rst-content dl.footnote > dt {
+  padding-left: 0;
+}
+
+html.writer-html5 .rst-content dl.field-list,
+html.writer-html5 .rst-content dl.footnote {
+  display: inherit;
 }
