@@ -39,10 +39,11 @@ class GatedGraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-    Shape:
-        - Node features: :math:`(|\mathcal{V}|, H_{in})`.
-        - Edge index: :math:`(2, |\mathcal{E}|)`.
-        - Output: :math:`(|\mathcal{V}|, H_{out})`.
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
 
     """
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',

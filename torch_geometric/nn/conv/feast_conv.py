@@ -45,7 +45,7 @@ class FeaStConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
           if bipartite,
-          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
