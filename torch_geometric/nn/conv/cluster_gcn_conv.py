@@ -1,4 +1,4 @@
-from torch_geometric.typing import Adj, Size, OptTensor
+from torch_geometric.typing import Adj, OptTensor
 
 from torch import Tensor
 from torch_sparse import SparseTensor, matmul, set_diag, sum as sparsesum
@@ -32,6 +32,12 @@ class ClusterGCNConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  diag_lambda: float = 0., add_self_loops: bool = True,
@@ -55,11 +61,11 @@ class ClusterGCNConv(MessagePassing):
         self.lin_out.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, size: Size = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         """"""
         edge_weight: OptTensor = None
         if isinstance(edge_index, Tensor):
-            num_nodes = size[1] if size is not None else x.size(self.node_dim)
+            num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)

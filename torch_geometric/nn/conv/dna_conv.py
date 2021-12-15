@@ -220,6 +220,13 @@ class DNAConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, L, F)` where :math:`L` is the
+          number of layers,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
