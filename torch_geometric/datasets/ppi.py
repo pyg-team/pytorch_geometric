@@ -36,7 +36,7 @@ class PPI(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://data.dgl.ai/dataset/ppi.zip'
+    url = 'https://www.dropbox.com/s/fzxpoxb1k8m9jrg/ppi.zip?dl=1'
 
     def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
@@ -95,8 +95,12 @@ class PPI(InMemoryDataset):
                 edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
                 edge_index = edge_index - edge_index.min()
                 edge_index, _ = remove_self_loops(edge_index)
+                edge_weight = torch.tensor(
+                    [data['weight'] for _, _, data in G_s.edges(data=True)], 
+                    dtype=torch.float)
 
-                data = Data(edge_index=edge_index, x=x[mask], y=y[mask])
+                data = Data(edge_index=edge_index, x=x[mask], y=y[mask], 
+                            edge_weight=edge_weight)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
