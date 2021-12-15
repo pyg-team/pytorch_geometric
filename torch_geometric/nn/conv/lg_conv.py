@@ -20,7 +20,7 @@ class LGConv(MessagePassing):
         aggr (string, optional): The aggregation scheme to use.
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
-        normalize (bool, optional): If set to :obj:`True`, output features
+        normalize (bool, optional): If set to :obj:`False`, output features will not
             will be normalized using the symmetric normalization term:
             :math:`\frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}`.
             (default: :obj:`True`)
@@ -33,7 +33,7 @@ class LGConv(MessagePassing):
         super().__init__(aggr=aggr, **kwargs)
         self.normalize = normalize
 
-    def forward(self, x: Tensor, edge_index: Adj, size: Size = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         """"""
         norm = ones(x.size(0))
         if self.normalize:

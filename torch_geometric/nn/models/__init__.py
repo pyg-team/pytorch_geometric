@@ -49,7 +49,7 @@ __all__ = [
     'AttentiveFP',
     'RECT_L',
     'LINKX',
-    'LightGCN'
+    'LightGCN',
 ]
 
 classes = __all__

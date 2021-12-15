@@ -42,7 +42,7 @@ class LightGCN(torch.nn.Module):
         edges specified by :obj:`edge_label_index`.
 
     Args:
-        num_layers (int): The number of Light Graph Convolution
+        num_layers (int): The number of :class:`~torch_geometric.nn.conv.LGConv` layers
             (:obj:`LGConv`) layers.
         num_nodes (int): The number of nodes in the graph.
         embedding_dim (int, optional): The dimensionality of the node
@@ -56,12 +56,12 @@ class LightGCN(torch.nn.Module):
         lambda_reg (int, optional): The :math:`L_2` regularization strength of
             the Bayesian Personalized Ranking (BPR) loss for the "ranking"
             objective (default: 1e-4).
-        alpha (float, optional): The vector specifying the layer weights in the
+        alpha (Tensor, optional): The vector specifying the layer weights in the
             final embeddings. If set to :obj:`None`, the original paper's
             uniform initialization of :obj:`(1 / num_layers + 1)` is used
             (default: :obj:`None`).
         **kwargs (optional): Additional arguments of the underlying
-            :class:`torch_geometric.nn.conv.MessagePassing` layers.
+            :class:`torch_geometric.nn.conv.LGConv` layers.
     """
 
     objectives = ['ranking', 'link_prediction']
@@ -69,7 +69,7 @@ class LightGCN(torch.nn.Module):
     def __init__(self, num_layers: int, num_nodes: int,
                  embedding_dim: int = 32, objective: str = 'ranking',
                  lambda_reg: float = 1e-4, alpha: Tensor = None, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__()
 
         assert (num_layers >= 1), 'Number of layers must be larger than 0.'
         assert (num_nodes >= 1), 'Number of nodes must be larger than 0.'
@@ -78,7 +78,7 @@ class LightGCN(torch.nn.Module):
         assert (objective in LightGCN.objectives), 'Objective must be one ' \
             f'of {LightGCN.objectives}'
 
-        if alpha is not None:
+        if isinstance(alpha, Tensor):
             assert (alpha.size(0) == (num_layers + 1)), 'alpha must be of ' \
                 'size (num_layers + 1).'
         else:
@@ -94,7 +94,7 @@ class LightGCN(torch.nn.Module):
         self.convs = ModuleList()
 
         for _ in range(num_layers):
-            self.convs.append(LGConv())
+            self.convs.append(LGConv(**kwargs))
 
         if objective == LightGCN.objectives[0]:
             self.loss_fn = BPRLoss(self.lambda_reg)
@@ -160,7 +160,7 @@ class LightGCN(torch.nn.Module):
         if edge_label_index is None:
             edge_label_index = edge_index
 
-        predictions = self.forward(edge_index, edge_label_index)
+        predictions = self(edge_index, edge_label_index)
         if prob:
             return predictions
 
@@ -248,7 +248,7 @@ class LightGCN(torch.nn.Module):
 
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index)
-            out = torch.add(out, x * self.alpha[i + 1])
+            out = out + x * self.alpha[i + 1])
 
         return out
 
