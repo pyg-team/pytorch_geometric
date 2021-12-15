@@ -166,7 +166,7 @@ class LightGCN(torch.nn.Module):
 
         prop_embeddings = self._propagate_embeddings(edge_index)
         source_embeddings = prop_embeddings[source_indices]
-        
+
         target_embeddings = prop_embeddings
         if isinstance(target_indices, LongTensor):
             target_embeddings = prop_embeddings[target_indices]
@@ -176,7 +176,7 @@ class LightGCN(torch.nn.Module):
 
         if not isinstance(target_indices, LongTensor):
             return top_indices
-            
+
         index_matrix = target_indices.reshape((1, -1))
         index_matrix = index_matrix.repeat(source_indices.size(0), 1)
 
