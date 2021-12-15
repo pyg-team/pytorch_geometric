@@ -1,5 +1,5 @@
 from typing import Union, Tuple
-from torch_geometric.typing import PairTensor, Adj, OptTensor, Size
+from torch_geometric.typing import PairTensor, Adj, OptTensor
 
 import torch
 from torch import Tensor
@@ -40,17 +40,15 @@ class CGConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-    Shape:
-        - Node features: :math:`(|\mathcal{V}|, H)` or
-          :math:`((|\mathcal{V_s}|, H_{s}), (|\mathcal{V_t}|, H_{t}))` if
-          bipartite, where :math:`H_{s} = \text{channels[0]}` and
-          :math:`H_{t} = \text{channels[1]}`.
-        - Edge index: :math:`(2, |\mathcal{E}|)`.
-        - Edge attributes: :math:`((|\mathcal{E}|, H_{\mathcal{E}}))`.
-        - Size: :math:`(|\mathcal{V}|, |\mathcal{V}|)` or
-          :math:`(|\mathcal{V_s}|, |\mathcal{V_t}|)` if bipartite.
-        - Output: :math:`(|\mathcal{V}|, H)` or
-          :math:`(|\mathcal{V_t}|, H)` if bipartite.
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)` or
+          :math:`(|\mathcal{V_t}|, F_{t})` if bipartite.
     """
     def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
                  aggr: str = 'add', batch_norm: bool = False,
@@ -79,13 +77,13 @@ class CGConv(MessagePassing):
             self.bn.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+                edge_attr: OptTensor = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
         out = out if self.bn is None else self.bn(out)
         out += x[1]
         return out

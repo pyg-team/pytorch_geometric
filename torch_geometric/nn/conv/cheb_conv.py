@@ -71,6 +71,15 @@ class ChebConv(MessagePassing):
         - Lambda max: scalar or :math:`(|\mathcal{G}|)` if mini-batch.
         - Output: :math:`(|\mathcal{V}|, H_{out})`.
 
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*,
+          maximum lambda value :math:`(|\mathcal{G}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+
     """
     def __init__(self, in_channels: int, out_channels: int, K: int,
                  normalization: Optional[str] = 'sym', bias: bool = True,
