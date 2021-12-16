@@ -6,71 +6,57 @@ from torch_geometric.nn.models import LightGCN
 
 emb_dims = [32, 64]
 lambda_reg = [0, 1e-4]
-alpha = [[0.25, 0.25, 0.25, 0.25], [0.4, 0.3, 0.2, 0.1]]
+alpha = [None, 0.25, torch.tensor([0.4, 0.3, 0.2])]
 
 
 @pytest.mark.parametrize('embedding_dim,lambda_reg,alpha',
                          product(emb_dims, lambda_reg, alpha))
-def test_lightgcn_rankings(embedding_dim, lambda_reg, alpha):
-    x = torch.randn(500, embedding_dim)
-    edge_index = torch.randint(0, x.size(0), (2, 400))
-    edge_label_index = torch.randint(0, x.size(0), (2, 100))
-    rec_indices = torch.arange(0, x.size(0))
+def test_lightgcn_ranking(embedding_dim, lambda_reg, alpha):
+    N = 500
+    edge_index = torch.randint(0, N, (2, 400), dtype=torch.int64)
+    edge_label_index = torch.randint(0, N, (2, 100), dtype=torch.int64)
 
-    alpha_t = torch.FloatTensor(alpha)
-    lightGCN = LightGCN(3, x.size(0), embedding_dim, 'ranking', alpha=alpha_t)
+    model = LightGCN(N, embedding_dim, num_layers=2, alpha=alpha)
+    assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
-    assert lightGCN.__repr__() == 'LightGCN(num_layers=3, ' \
-                                  f'num_nodes={x.size(0)}, ' \
-                                  f'embedding_dim={embedding_dim}, ' \
-                                  'objective="ranking")'
+    pred = model(edge_index, edge_label_index)
+    assert pred.size() == (100, )
 
-    rankings = lightGCN(edge_index, edge_label_index)
-    assert rankings.size(0) == 100
+    loss = model.recommendation_loss(pred[:50], pred[50:], lambda_reg)
+    assert loss.dim() == 0 and loss > 0
 
-    loss = lightGCN.recommendation_loss(rankings[:-1], rankings[1:],
-                                        lambda_reg)
-    assert loss.dim() == 0
+    out = model.recommend(edge_index, k=2)
+    assert out.size() == (500, 2)
+    assert out.min() >= 0 and out.max() < 500
 
-    embeddings = lightGCN.get_embeddings(edge_index)
-    recommendations = lightGCN.recommend(edge_index, rec_indices[:200],
-                                         topK=2,
-                                         target_indices=rec_indices[200:])
-    assert recommendations.size() == (200, 2)
-    recommendations = lightGCN.recommend(edge_index, rec_indices[:200], topK=2)
-    assert recommendations.size() == (200, 2)
+    src_index = torch.arange(0, 250)
+    dst_index = torch.arange(250, 500)
 
-    first_indices = recommendations[:, 0]
-    second_indices = recommendations[:, 1]
-
-    first_rec = torch.mm(embeddings, embeddings[first_indices].t())
-    second_rec = torch.mm(embeddings, embeddings[second_indices].t())
-    rec_mismatch = first_rec.diagonal() < second_rec.diagonal()
-    assert torch.sum(rec_mismatch).item() == 0
+    out = model.recommend(edge_index, src_index, dst_index, k=2)
+    assert out.size() == (250, 2)
+    assert out.min() >= 250 and out.max() < 500
 
 
-@pytest.mark.parametrize('embedding_dim,alpha',
-                         product(emb_dims, alpha))
-def test_lightgcn_link_predictions(embedding_dim, alpha):
-    x = torch.randn(500, embedding_dim)
-    edge_index = torch.randint(0, x.size(0), (2, 400))
-    edge_label_index = torch.randint(0, x.size(0), (2, 100))
-    edge_label = torch.randint_like(edge_label_index[0], 0, 2)
+@pytest.mark.parametrize('embedding_dim,alpha', product(emb_dims, alpha))
+def test_lightgcn_link_prediction(embedding_dim, alpha):
+    N = 500
+    edge_index = torch.randint(0, N, (2, 400), dtype=torch.int64)
+    edge_label_index = torch.randint(0, N, (2, 100), dtype=torch.int64)
+    edge_label = torch.randint(0, 2, (edge_label_index.size(1), ))
 
-    alpha_t = torch.FloatTensor(alpha)
-    lightGCN = LightGCN(3, x.size(0), embedding_dim, 'link_prediction',
-                        alpha=alpha_t)
+    model = LightGCN(N, embedding_dim, num_layers=2, alpha=alpha)
+    assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
-    assert lightGCN.__repr__() == 'LightGCN(num_layers=3, '\
-                                  f'num_nodes={x.size(0)}, '\
-                                  f'embedding_dim={embedding_dim}, '\
-                                  'objective="link_prediction")'
+    pred = model(edge_index, edge_label_index)
+    assert pred.size() == (100, )
 
-    preds = lightGCN(edge_index, edge_label_index)
-    assert preds.size(0) == 100
+    loss = model.link_pred_loss(pred, edge_label)
+    assert loss.dim() == 0 and loss > 0
 
-    loss = lightGCN.link_prediction_loss(preds, edge_label)
-    assert loss.dim() == 0
+    prob = model.predict_link(edge_index, edge_label_index, prob=True)
+    assert prob.size() == (100, )
+    assert prob.min() > 0 and prob.max() < 1
 
-    labels = lightGCN.predict_link(edge_index, edge_label_index)
-    assert labels.size(0) == 100
+    prob = model.predict_link(edge_index, edge_label_index, prob=False)
+    assert prob.size() == (100, )
+    assert ((prob == 0) | (prob == 1)).sum() == 100

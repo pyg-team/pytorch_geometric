@@ -1,10 +1,11 @@
-from torch_geometric.typing import Adj
+from typing import Optional, Union
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import Tensor, LongTensor
+from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import ModuleList, Embedding, BCELoss
 from torch.nn.modules.loss import _Loss
+from torch.nn import ModuleList, Embedding
 
 from torch_geometric.nn.conv import LGConv
 
@@ -16,225 +17,78 @@ class LightGCN(torch.nn.Module):
 
     LightGCN learns embeddings by linearly propagating them on the underlying
     graph, and uses the weighted sum of the embeddings learned at all layers as
-    the final embedding as follows:
+    the final embedding
 
     .. math::
-        \textbf{x}_i = \sum_{l=0}^{L} \alpha_l \textbf{x}^{l}_i
+        \textbf{x}_i = \sum_{l=0}^{L} \alpha_l \textbf{x}^{l}_i,
 
-    where each layer's embedding is computed as:
+    where each layer's embedding is computed as
 
     .. math::
         \mathbf{x}^{l+1}_i = \sum_{j \in \mathcal{N}(i)}
-        \frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}\mathbf{x}^{l}_j
+        \frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}\mathbf{x}^{l}_j.
 
-    Two prediction heads are provided: :obj:`"ranking"` and
-    :obj:`"link_prediction"`. Ranking is performed by outputting the dot
-    product between the pair of embeddings chosen for evaluation. For link
-    prediction, the sigmoid of the ranking is computed to output label
-    probabilities.
+    Two prediction heads and trainign objectives are provided:
+    link prediction (
+    :meth:`~torch_geometric.nn.models.LightGCN.link_pred_loss` and
+    :meth:`~torch_geometric.nn.models.LightGCN.predict_link`) and
+    recommendation (
+    :meth:`~torch_geometric.nn.models.LightGCN.recommendation_loss` and
+    :meth:`~torch_geometric.nn.models.LightGCN.recoomend`).
 
     .. note::
 
-        This implementation works not only on bipartite graphs but on any
-        kind of connected graph. Embeddings are propagated according to the
-        graph connectivity specified by :obj:`edge_index` while rankings or
-        probabilities are only computed (the forward pass) according to the
-        edges specified by :obj:`edge_label_index`.
+        Embeddings are propagated according to the graph connectivity specified
+        by :obj:`edge_index` while rankings or link probabilities are computed
+        according to the edges specified by :obj:`edge_label_index`.
 
     Args:
+        num_nodes (int): The number of nodes in the graph.
+        embedding_dim (int): The dimensionality of node embeddings.
         num_layers (int): The number of
             :class:`~torch_geometric.nn.conv.LGConv` layers.
-        num_nodes (int): The number of nodes in the graph.
-        embedding_dim (int, optional): The dimensionality of the node
-            embeddings (default: 32).
-        objective (str, optional): The objective of the model. The original
-            paper implements the :obj:`"ranking"` objective with a simple dot
-            product between embeddings as a prediction head. The option
-            :obj:`"link_prediction"` passes the ranking result through a
-            sigmoid layer (:obj:`"ranking"`, :obj:`"link_prediction"`)
-            (default: :obj:`"ranking"`).
-        alpha (Tensor, optional): The vector specifying the layer weights in
-            the final embeddings. If set to :obj:`None`, the original paper's
-            uniform initialization of :obj:`(1 / num_layers + 1)` is used
-            (default: :obj:`None`).
+        alpha (float or Tensor, optional): The scalar or vector specifying the
+            re-weighting coefficients for aggregating the final embedding.
+            If set to :obj:`None`, the uniform initialization of
+            :obj:`1 / (num_layers + 1)` is used. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
-            :class:`torch_geometric.nn.conv.LGConv` layers.
+            :class:`~torch_geometric.nn.conv.LGConv` layers.
     """
-
-    objectives = ['ranking', 'link_prediction']
-
-    def __init__(self, num_layers: int, num_nodes: int,
-                 embedding_dim: int = 32, objective: str = 'ranking',
-                 alpha: Tensor = None, **kwargs):
+    def __init__(
+        self,
+        num_nodes: int,
+        embedding_dim: int,
+        num_layers: int,
+        alpha: Optional[Union[float, Tensor]] = None,
+        **kwargs,
+    ):
         super().__init__()
-        assert (objective in LightGCN.objectives), 'Objective must be one ' \
-            f'of {LightGCN.objectives}'
 
-        if isinstance(alpha, Tensor):
-            assert (alpha.size(0) == (num_layers + 1)), 'alpha must be of ' \
-                'size (num_layers + 1).'
-        else:
-            alpha = Tensor([1 / (num_layers + 1)] * (num_layers + 1))
-            self.register_buffer('alpha', alpha)
-
-        self.num_layers = num_layers
         self.num_nodes = num_nodes
         self.embedding_dim = embedding_dim
-        self.embeddings = Embedding(num_nodes, embedding_dim)
-        self.objective = objective
-        self.alpha = alpha
-        self.convs = ModuleList()
+        self.num_layers = num_layers
 
-        for _ in range(num_layers):
-            self.convs.append(LGConv(**kwargs))
+        if alpha is None:
+            alpha = 1. / (num_layers + 1)
+
+        if isinstance(alpha, Tensor):
+            assert alpha.size(0) == num_layers + 1
+        else:
+            alpha = torch.tensor([alpha] * (num_layers + 1))
+        self.register_buffer('alpha', alpha)
+
+        self.embedding = Embedding(num_nodes, embedding_dim)
+        self.convs = ModuleList([LGConv(**kwargs) for _ in range(num_layers)])
+
+        self.reset_parameters()
 
     def reset_parameters(self):
-        self.embeddings.reset_parameters()
+        self.embedding.reset_parameters()
+        for conv in self.convs:
+            conv.reset_parameters()
 
-    def forward(self, edge_index: Adj, edge_label_index: Adj = None) -> Tensor:
-        """Computes rankings or link probabilities for pairs of nodes.
-
-        Args:
-            edge_index (Adj): Edge tensor specifying the connectivity of the
-                graph.
-            edge_label_index (Adj, optional): Edge tensor specifying the start
-                and end nodes for which to compute rankings or proabilities.
-                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
-                :obj:`edge_index` will be used (default: :obj:`None`).
-        """
-        if edge_label_index is None:
-            edge_label_index = edge_index
-
-        out = self._propagate_embeddings(edge_index)
-
-        out_src = out[edge_label_index[0]]
-        out_dst = out[edge_label_index[1]]
-        out = torch.sum(out_src * out_dst, dim=-1)
-
-        if self.objective == LightGCN.objectives[1]:
-            out = torch.sigmoid(out)
-
-        return out
-
-    def predict_link(self, edge_index: Adj, edge_label_index: Adj = None,
-                     prob: bool = False) -> Tensor:
-        """Predict links between nodes specified in :obj:`edge_label_index`.
-
-        This prediction head works only for the "link_prediction" objective.
-
-        Args:
-            edge_index (Adj): Edge tensor specifying the connectivity of the
-                graph.
-            edge_label_index (Adj, optional): Edge tensor specifying the start
-                and end nodes for which to compute rankings or proabilities.
-                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
-                :obj:`edge_index` will be used (default: :obj:`None`).
-            prob (bool): Whether probabilities should be returned.
-        """
-        assert (self.objective == LightGCN.objectives[1]), 'Prediction ' \
-            'only works for "link_prediction" objective.'
-
-        if edge_label_index is None:
-            edge_label_index = edge_index
-
-        predictions = self(edge_index, edge_label_index)
-        if prob:
-            return predictions
-
-        return torch.round(predictions)
-
-    def recommend(self, edge_index: Adj, source_indices: LongTensor,
-                  topK: int = 1, target_indices: LongTensor = None) -> Tensor:
-        """Get :obj:`topK` recommendations for nodes in :obj:`source_indices`.
-
-        This prediction head works only for the "ranking" objective.
-
-        Args:
-            edge_index (Adj): Edge tensor specifying the connectivity of the
-                graph.
-            source_indices (LongTensor): Nodes for which recommendations
-                should be generated (indices).
-            topK (int, optional): Number of top recommendations to return
-                (default: 1).
-            target_indices (LongTensor, optional): Nodes which represent the
-                possible recommendation choices. If set to :obj:`None`, all
-                nodes are possible recommendation choices (default:
-                :obj:`None`).
-        """
-        assert (self.objective == LightGCN.objectives[0]), 'Recommendations ' \
-            'only work for "ranking" objective.'
-
-        prop_embeddings = self._propagate_embeddings(edge_index)
-        source_embeddings = prop_embeddings[source_indices]
-
-        target_embeddings = prop_embeddings
-        if isinstance(target_indices, LongTensor):
-            target_embeddings = prop_embeddings[target_indices]
-
-        rankings = torch.mm(source_embeddings, target_embeddings.t())
-        top_indices = torch.topk(rankings, topK, dim=-1).indices
-
-        if not isinstance(target_indices, LongTensor):
-            return top_indices
-
-        index_matrix = target_indices.reshape((1, -1))
-        index_matrix = index_matrix.repeat(source_indices.size(0), 1)
-
-        return index_matrix.gather(-1, top_indices)
-
-    def link_prediction_loss(self, predictions: Tensor,
-                             edge_label: Tensor, **kwargs) -> Tensor:
-        """Computes model loss for the :obj:`"link_prediction"` objective.
-
-        Computes the Binary Cross-Entropy (BCE) loss for link prediction tasks.
-
-        Args:
-            preds (Tensor): Predictions for link prediction objective.
-            edge_label (Tensor): Edge label for link prediction.
-            **kwargs (optional): Additional arguments of the underlying
-                :class:`torch.nn.BCELoss` loss function.
-        """
-        loss_fn = BCELoss()
-        return loss_fn(predictions, edge_label.to(torch.float32), **kwargs)
-
-    def recommendation_loss(self, pos_edge_ranks: Tensor,
-                            neg_edge_ranks: Tensor, lambda_reg: float = 1e-4,
-                            **kwargs) -> Tensor:
-        """Computes model loss for the :obj:`"ranking"` objective.
-
-        Computes the Bayesian Personalized Ranking (BPR) loss ranking tasks.
-
-        .. note::
-
-            The i-th entry in the :obj:`pos_edge_ranks` vector and i-th entry
-            in the :obj:`neg_edge_ranks` entry must correspond to ranks of
-            positive and negative edges of the same entity (i.e. user).
-
-        Args:
-            pos_edge_ranks (Tensor): Positive edge rankings for ranking
-                objective (default: :obj:`None`).
-            neg_edge_ranks (Tensor): Negative edge rankings for ranking
-                objective (default: :obj:`None`).
-            lambda_reg (int, optional): The :math:`L_2` regularization strength
-                of the Bayesian Personalized Ranking (BPR) loss
-                (default: 1e-4).
-            **kwargs (optional): Additional arguments of the underlying
-                :class:`torch_geometric.nn.models.lightgcn.BPRLoss` loss
-                function.
-        """
-        loss_fn = BPRLoss(lambda_reg, **kwargs)
-        return loss_fn(pos_edge_ranks, neg_edge_ranks, self.embeddings.weight)
-
-    def get_embeddings(self, edge_index: Adj,
-                       indices: LongTensor = None) -> Tensor:
-        """"""
-        if indices is None:
-            return self._propagate_embeddings(edge_index)
-
-        return self._propagate_embeddings(edge_index)[indices]
-
-    def _propagate_embeddings(self, edge_index: Adj) -> Tensor:
-        x = self.embeddings.weight
+    def get_embedding(self, edge_index: Adj) -> Tensor:
+        x = self.embedding.weight
         out = x * self.alpha[0]
 
         for i in range(self.num_layers):
@@ -243,30 +97,126 @@ class LightGCN(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return (f'{self.__class__.__name__}('
-                f'num_layers={self.num_layers}, '
-                f'num_nodes={self.num_nodes}, '
-                f'embedding_dim={self.embedding_dim}, '
-                f'objective=\"{self.objective}\")')
+    def forward(self, edge_index: Adj,
+                edge_label_index: OptTensor = None) -> Tensor:
+        r"""Computes rankings for pairs of nodes.
+
+        Args:
+            edge_index (Tensor or SparseTensor): Edge tensor specifying the
+                connectivity of the graph.
+            edge_label_index (Tensor, optional): Edge tensor specifying the
+                node pairs for which to compute rankings or probabilities.
+                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
+                :obj:`edge_index` will be used instead. (default: :obj:`None`)
+        """
+        if edge_label_index is None:
+            edge_label_index = edge_index
+
+        out = self.get_embedding(edge_index)
+
+        out_src = out[edge_label_index[0]]
+        out_dst = out[edge_label_index[1]]
+        return (out_src * out_dst).sum(dim=-1)
+
+    def predict_link(self, edge_index: Adj, edge_label_index: OptTensor = None,
+                     prob: bool = False) -> Tensor:
+        r"""Predict links between nodes specified in :obj:`edge_label_index`.
+
+        Args:
+            prob (bool): Whether probabilities should be returned. (default:
+                :obj:`False`)
+        """
+        pred = self(edge_index, edge_label_index).sigmoid()
+        return pred if prob else pred.round()
+
+    def recommend(self, edge_index: Adj, src_index: OptTensor = None,
+                  dst_index: OptTensor = None, k: int = 1) -> Tensor:
+        r"""Get top-:math:`k` recommendations for nodes in :obj:`src_index`.
+
+        Args:
+             src_index (Tensor, optional): Node indices for which
+                recommendations should be generated.
+                If set to :obj:`None`, all nodes will be used.
+                (default: :obj:`None`)
+            dst_index (Tensor, optional): Node indices which represent the
+                possible recommendation choices.
+                If set to :obj:`None`, all nodes will be used.
+                (default: :obj:`None`)
+            k (int, optional): Number of recommendations. (default: :obj:`1`)
+        """
+        out_src = out_dst = self.get_embedding(edge_index)
+
+        if src_index is not None:
+            out_src = out_src[src_index]
+
+        if dst_index is not None:
+            out_dst = out_dst[dst_index]
+
+        pred = out_src @ out_dst.t()
+        top_index = pred.topk(k, dim=-1).indices
+
+        if dst_index is not None:  # Map local top-indices to original indices.
+            top_index = dst_index[top_index.view(-1)].view(*top_index.size())
+
+        return top_index
+
+    def link_pred_loss(self, pred: Tensor, edge_label: Tensor,
+                       **kwargs) -> Tensor:
+        r"""Computes the model loss for a link prediction objective via the
+        :class:`torch.nn.BCEWithLogitsLoss`.
+
+        Args:
+            pred (Tensor): The predictions.
+            edge_label (Tensor): The ground-truth edge labels.
+            **kwargs (optional): Additional arguments of the underlying
+                :class:`torch.nn.BCEWithLogitsLoss` loss function.
+        """
+        loss_fn = torch.nn.BCEWithLogitsLoss(**kwargs)
+        return loss_fn(pred, edge_label.to(pred.dtype))
+
+    def recommendation_loss(self, pos_edge_rank: Tensor, neg_edge_rank: Tensor,
+                            lambda_reg: float = 1e-4, **kwargs) -> Tensor:
+        r"""Computes the model loss for a ranking objective via the Bayesian
+        Personalized Ranking (BPR) loss.
+
+        .. note::
+
+            The i-th entry in the :obj:`pos_edge_rank` vector and i-th entry
+            in the :obj:`neg_edge_rank` entry must correspond to ranks of
+            positive and negative edges of the same entity (*e.g.*, user).
+
+        Args:
+            pos_edge_rank (Tensor): Positive edge rankings.
+            neg_edge_rank (Tensor): Negative edge rankings.
+            lambda_reg (int, optional): The :math:`L_2` regularization strength
+                of the Bayesian Personalized Ranking (BPR) loss.
+                (default: 1e-4)
+            **kwargs (optional): Additional arguments of the underlying
+                :class:`torch_geometric.nn.models.lightgcn.BPRLoss` loss
+                function.
+        """
+        loss_fn = BPRLoss(lambda_reg, **kwargs)
+        return loss_fn(pos_edge_rank, neg_edge_rank, self.embedding.weight)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.num_nodes}, '
+                f'{self.embedding_dim}, num_layers={self.num_layers})')
 
 
 class BPRLoss(_Loss):
-    r"""Bayesian Personalized Ranking (BPR) loss
+    r"""The Bayesian Personalized Ranking (BPR) loss.
 
-    The Bayesian Personalized Ranking (BPR) loss is a pairwise loss that
-    encourages the prediction of an observed entry to be higher than its
-    unobserved counterparts (see the paper `"LightGCN: Simplifying and Powering
-    Graph Convolution Network for Recommendation"
-    <https://arxiv.org/abs/2002.02126>`_).
+    The BPR loss is a pairwise loss that encourages the prediction of an
+    observed entry to be higher than its unobserved counterparts
+    (see `here <https://arxiv.org/abs/2002.02126>`__).
 
     .. math::
         L_{\text{BPR}} = - \sum_{u=1}^{M} \sum_{i \in \mathcal{N}_u}
         \sum_{j \not\in \mathcal{N}_u} \ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})
         + \lambda \vert\vert \textbf{x}^{(0)} \vert\vert^2
 
-    where :math:`lambda` controls the :math:`L_2` regularization strength. We
-    compute the mean BPR loss for simplicity.
+    where :math:`lambda` controls the :math:`L_2` regularization strength.
+    We compute the mean BPR loss for simplicity.
 
     Args:
         lambda_reg (float, optional): The :math:`L_2` regularization strength
@@ -278,18 +228,18 @@ class BPRLoss(_Loss):
     lambda_reg: float
 
     def __init__(self, lambda_reg: float = 0, **kwargs) -> None:
-        super(BPRLoss, self).__init__(None, None, "sum", **kwargs)
+        super().__init__(None, None, "sum", **kwargs)
         self.lambda_reg = lambda_reg
 
     def forward(self, positives: Tensor, negatives: Tensor,
                 parameters: Tensor = None) -> Tensor:
-        """Compute the mean Bayesian Personalized Ranking (BPR) loss.
+        r"""Compute the mean Bayesian Personalized Ranking (BPR) loss.
 
         .. note::
 
             The i-th entry in the :obj:`positives` vector and i-th entry
             in the :obj:`negatives` entry should correspond to the same
-            entity (i.e. user), as the BPR is a personalized ranking loss.
+            entity (*.e.g*, user), as the BPR is a personalized ranking loss.
 
         Args:
             positives (Tensor): The vector of positive-pair rankings.
