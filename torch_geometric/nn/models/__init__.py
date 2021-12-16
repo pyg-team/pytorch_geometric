@@ -18,6 +18,7 @@ from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .linkx import LINKX
+from .lightgcn import LightGCN
 
 __all__ = [
     'MLP',
@@ -48,6 +49,7 @@ __all__ = [
     'AttentiveFP',
     'RECT_L',
     'LINKX',
+    'LightGCN',
 ]
 
 classes = __all__
