@@ -18,10 +18,17 @@ class LGConv(MessagePassing):
 
     Args:
         normalize (bool, optional): If set to :obj:`False`, output features
-            will not be normalized using the symmetric normalization.
+            will not be normalized via symmetric normalization.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
     def __init__(self, normalize: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')

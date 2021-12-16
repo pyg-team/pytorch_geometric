@@ -15,26 +15,26 @@ class LightGCN(torch.nn.Module):
     Graph Convolution Network for Recommendation"
     <https://arxiv.org/abs/2002.02126>`_ paper.
 
-    LightGCN learns embeddings by linearly propagating them on the underlying
-    graph, and uses the weighted sum of the embeddings learned at all layers as
-    the final embedding
+    :class:`~torch_geometric.nn.models.LightGCN` learns embeddings by linearly
+    propagating them on the underlying graph, and uses the weighted sum of the
+    embeddings learned at all layers as the final embedding
 
     .. math::
-        \textbf{x}_i = \sum_{l=0}^{L} \alpha_l \textbf{x}^{l}_i,
+        \textbf{x}_i = \sum_{l=0}^{L} \alpha_l \textbf{x}^{(l)}_i,
 
     where each layer's embedding is computed as
 
     .. math::
-        \mathbf{x}^{l+1}_i = \sum_{j \in \mathcal{N}(i)}
-        \frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}\mathbf{x}^{l}_j.
+        \mathbf{x}^{(l+1)}_i = \sum_{j \in \mathcal{N}(i)}
+        \frac{1}{\sqrt{\deg(i)\deg(j)}}\mathbf{x}^{(l)}_j.
 
     Two prediction heads and trainign objectives are provided:
-    link prediction (
+    **link prediction** (via
     :meth:`~torch_geometric.nn.models.LightGCN.link_pred_loss` and
     :meth:`~torch_geometric.nn.models.LightGCN.predict_link`) and
-    recommendation (
+    **recommendation** (via
     :meth:`~torch_geometric.nn.models.LightGCN.recommendation_loss` and
-    :meth:`~torch_geometric.nn.models.LightGCN.recoomend`).
+    :meth:`~torch_geometric.nn.models.LightGCN.recommend`).
 
     .. note::
 
@@ -134,7 +134,7 @@ class LightGCN(torch.nn.Module):
         r"""Get top-:math:`k` recommendations for nodes in :obj:`src_index`.
 
         Args:
-             src_index (Tensor, optional): Node indices for which
+            src_index (Tensor, optional): Node indices for which
                 recommendations should be generated.
                 If set to :obj:`None`, all nodes will be used.
                 (default: :obj:`None`)
