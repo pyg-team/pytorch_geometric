@@ -95,7 +95,7 @@ class GATConv(MessagePassing):
           :math:`((|\mathcal{V}|, H * F_{out}),
           ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
-          (|\mathcal{E}|)))` if bipartite
+          (|\mathcal{E}|, H)))` if bipartite
     """
     _alpha: OptTensor
 
