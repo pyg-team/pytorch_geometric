@@ -251,6 +251,7 @@ def test_performance_of_loaders_on_gat_and_cora():
 
 
 def test_performance_of_loaders_on_graphsage_and_reddit():
+    return
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     root_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
