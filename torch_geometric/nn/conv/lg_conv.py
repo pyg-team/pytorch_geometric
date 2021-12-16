@@ -1,6 +1,8 @@
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, OptTensor
 
 from torch import Tensor
+from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
@@ -8,36 +10,44 @@ from torch_geometric.nn.conv.gcn_conv import gcn_norm
 class LGConv(MessagePassing):
     r"""The Light Graph Convolution (LGC) operator from the `"LightGCN:
     Simplifying and Powering Graph Convolution Network for Recommendation"
-    <https://arxiv.org/abs/2002.02126>`_ paper. It supports the additional
-    functionality of disabling normalization during neighborhood aggregation.
+    <https://arxiv.org/abs/2002.02126>`_ paper
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
-        \frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}
-        \mathbf{x}_j
+        \frac{e_{j,i}}{\sqrt{\deg(i)\deg(j)}} \mathbf{x}_j
 
     Args:
-        aggr (string, optional): The aggregation scheme to use.
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
-            (default: :obj:`"add"`)
         normalize (bool, optional): If set to :obj:`False`, output features
-            will not be normalized using the symmetric normalization term:
-            :math:`\frac{1}{\sqrt{\deg(i)}\sqrt{\deg(j)}}`.
+            will not be normalized using the symmetric normalization.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    propagate_type = {'x': Tensor, 'norm': Tensor}
-
-    def __init__(self, aggr: str = 'add', normalize: bool = True, **kwargs):
-        super().__init__(aggr=aggr, **kwargs)
+    def __init__(self, normalize: bool = True, **kwargs):
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(**kwargs)
         self.normalize = normalize
 
-    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
-        _, norm = gcn_norm(edge_index, num_nodes=x.size(0),
-                           add_self_loops=False)
-        return self.propagate(edge_index, x=x, norm=norm, size=None)
+    def reset_parameters(self):
+        pass
 
-    def message(self, x_j: Tensor, norm: Tensor) -> Tensor:
-        return norm.view(-1, 1) * x_j
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+        """"""
+        if self.normalize and isinstance(edge_index, Tensor):
+            out = gcn_norm(edge_index, edge_weight, x.size(self.node_dim),
+                           add_self_loops=False, dtype=x.dtype)
+            edge_index, edge_weight = out
+        elif self.normalize and isinstance(edge_index, SparseTensor):
+            edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
+                                  add_self_loops=False, dtype=x.dtype)
+
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                              size=None)
+
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return matmul(adj_t, x, reduce=self.aggr)
