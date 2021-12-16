@@ -264,33 +264,33 @@ def test_performance_of_loaders_on_graphsage_and_reddit():
 
     # Evaluate `NeighborSampler` ##############################################
 
-    kwargs = {
-        'edge_index': data.edge_index,
-        'sizes': [25, 10],
-        'batch_size': 1024,
-        'shuffle': True,
-        'num_workers': 6,
-        'persistent_workers': True,
-    }
+    # kwargs = {
+    #     'edge_index': data.edge_index,
+    #     'sizes': [25, 10],
+    #     'batch_size': 1024,
+    #     'shuffle': True,
+    #     'num_workers': 6,
+    #     'persistent_workers': True,
+    # }
 
-    train_loader = NeighborSampler(node_idx=data.train_mask, **kwargs)
-    val_loader = NeighborSampler(node_idx=data.val_mask, **kwargs)
-    test_loader = NeighborSampler(node_idx=data.test_mask, **kwargs)
+    # train_loader = NeighborSampler(node_idx=data.train_mask, **kwargs)
+    # val_loader = NeighborSampler(node_idx=data.val_mask, **kwargs)
+    # test_loader = NeighborSampler(node_idx=data.test_mask, **kwargs)
 
-    torch.manual_seed(1234)
-    model = GraphSAGE(dataset.num_features, dataset.num_classes).to(device)
-    optimizer = Adam(model.parameters(), lr=0.01)
-    t = time.perf_counter()
-    out = train_neighbor_sampler(model, data, train_loader, val_loader,
-                                 test_loader, optimizer, device)
-    print(time.perf_counter() - t)
-    print(out)
-    return
+    # torch.manual_seed(1234)
+    # model = GraphSAGE(dataset.num_features, dataset.num_classes).to(device)
+    # optimizer = Adam(model.parameters(), lr=0.01)
+    # t = time.perf_counter()
+    # out = train_neighbor_sampler(model, data, train_loader, val_loader,
+    #                              test_loader, optimizer, device)
+    # print(time.perf_counter() - t)
+    # print(out)
+    # return
 
     # Evaluate `NeighborLoader` ###############################################
 
     kwargs = {
-        'data': data.edge_index,
+        'data': data,
         'num_neighbors': [25, 10],
         'batch_size': 1024,
         'shuffle': True,
