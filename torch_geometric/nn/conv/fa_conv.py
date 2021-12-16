@@ -58,7 +58,7 @@ class FAConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)` or
-          :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|),
+          :math:`((|\mathcal{V}|, F), ((2, |\mathcal{E}|),
           (|\mathcal{E}|)))` if :obj:`return_attention_weights=True`
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
