@@ -9,7 +9,7 @@ from torch_geometric.nn.conv import MessagePassing
 
 try:
     from torch.fx import GraphModule, Graph, Node
-except (ImportError, ModuleNotFoundError):
+except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
