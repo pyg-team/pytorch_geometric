@@ -1,10 +1,9 @@
 ci:
   autoupdate_schedule: quarterly
-  skip: [pytest]
 
 repos:
 - repo: https://github.com/pre-commit/mirrors-yapf
-  rev: 0.31.0
+  rev: v0.31.0
   hooks:
   - id: yapf
     name: Format code
