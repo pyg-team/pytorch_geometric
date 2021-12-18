@@ -95,17 +95,17 @@ class MessagePassing(torch.nn.Module):
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
-        self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.inspect(self.edge_update)
+        self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
+        self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
-        self.__edge_user_args__ = self.inspector.keys(
-            ['edge_update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
+        self.__edge_user_args__ = self.inspector.keys(
+            ['edge_update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -519,28 +519,6 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_hooks[handle.id] = hook
         return handle
 
-    def register_edge_update_forward_pre_hook(
-            self, hook: Callable) -> RemovableHandle:
-        r"""Registers a forward pre-hook on the module.
-        The hook will be called every time before :meth:`edges_propagate` is
-        invoked. See :meth:`register_propagate_forward_pre_hook` for more
-        information.
-        """
-        handle = RemovableHandle(self._edge_update_forward_pre_hooks)
-        self._edge_update_forward_pre_hooks[handle.id] = hook
-        return handle
-
-    def register_edge_update_forward_hook(self,
-                                          hook: Callable) -> RemovableHandle:
-        r"""Registers a forward hook on the module.
-        The hook will be called every time after :meth:`edges_propagate` has
-        computed an output.
-        See :meth:`register_propagate_forward_hook` for more information.
-        """
-        handle = RemovableHandle(self._edge_update_forward_hooks)
-        self._edge_update_forward_hooks[handle.id] = hook
-        return handle
-
     def register_message_forward_pre_hook(self,
                                           hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
@@ -602,6 +580,28 @@ class MessagePassing(torch.nn.Module):
         """
         handle = RemovableHandle(self._message_and_aggregate_forward_hooks)
         self._message_and_aggregate_forward_hooks[handle.id] = hook
+        return handle
+
+    def register_edge_update_forward_pre_hook(
+            self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`edge_update` is
+        invoked. See :meth:`register_propagate_forward_pre_hook` for more
+        information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_pre_hooks)
+        self._edge_update_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_edge_update_forward_hook(self,
+                                          hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`edge_update` has
+        computed an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_hooks)
+        self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
     @torch.jit.unused

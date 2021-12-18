@@ -59,7 +59,7 @@ def test_my_conv():
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
-    assert conv(x1, adj.t(), None).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = True
