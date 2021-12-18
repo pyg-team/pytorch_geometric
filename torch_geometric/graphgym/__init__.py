@@ -18,7 +18,7 @@ from .register import (register_base, register_act, register_node_encoder,
                        register_config, register_loader, register_optimizer,
                        register_scheduler, register_loss, register_train)
 
-__all__ = [
+__all__ = classes = [
     'load_ckpt',
     'save_ckpt',
     'clean_ckpt',
@@ -55,6 +55,3 @@ __all__ = [
     'register_loss',
     'register_train',
 ]
-
-classes = __all__[:20]
-classes_reg = __all__[20:]

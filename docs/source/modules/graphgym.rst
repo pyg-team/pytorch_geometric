@@ -4,19 +4,19 @@ torch_geometric.graphgym
 .. contents:: Contents
     :local:
 
-Workflow Modules
-----------------
+Workflow and Register Modules
+-----------------------------
 
 .. currentmodule:: torch_geometric.graphgym
 .. autosummary::
    :nosignatures:
-    {% for cls in torch_geometric.graphgym.classes %}
+   {% for cls in torch_geometric.graphgym.classes %}
      {{ cls }}
-    {% endfor %}
+   {% endfor %}
 
 .. automodule:: torch_geometric.graphgym
-    :members:
-    :exclude-members:
+   :members:
+   :exclude-members:
 
 Model Modules
 -------------
@@ -31,21 +31,6 @@ Model Modules
 .. automodule:: torch_geometric.graphgym.models
     :members:
     :exclude-members: forward
-
-Register Modules
-----------------
-
-.. currentmodule:: torch_geometric.graphgym
-.. autosummary::
-   :nosignatures:
-    {% for cls in torch_geometric.graphgym.classes_reg %}
-      {{ cls }}
-    {% endfor %}
-
-   {% for cls in torch_geometric.graphgym.classes_reg %}
-.. autofunction:: {{ cls }}
-     :noindex:
-   {% endfor %}
 
 Utility Modules
 ---------------
