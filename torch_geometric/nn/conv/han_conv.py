@@ -102,10 +102,9 @@ class HANConv(MessagePassing):
         glorot(self.q)
 
     def forward(
-        self,
-        x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType, Adj]
-    ) -> Dict[NodeType, Optional[Tensor]]:
+        self, x_dict: Dict[NodeType, Tensor],
+        edge_index_dict: Dict[EdgeType,
+                              Adj]) -> Dict[NodeType, Optional[Tensor]]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
