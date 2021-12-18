@@ -34,12 +34,9 @@ class TransformerBlock(torch.nn.Module):
 
         self.attn_nn = MLP([out_channels, 64, out_channels], batch_norm=False)
 
-        self.transformer = PointTransformerConv(
-            in_channels,
-            out_channels,
-            pos_nn=self.pos_nn,
-            attn_nn=self.attn_nn
-        )
+        self.transformer = PointTransformerConv(in_channels, out_channels,
+                                                pos_nn=self.pos_nn,
+                                                attn_nn=self.attn_nn)
 
     def forward(self, x, pos, edge_index):
         x = self.lin_in(x).relu()
@@ -53,7 +50,6 @@ class TransitionDown(torch.nn.Module):
         Samples the input point cloud by a ratio percentage to reduce
         cardinality and uses an mlp to augment features dimensionnality
     '''
-
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
         super().__init__()
         self.k = k
@@ -68,17 +64,15 @@ class TransitionDown(torch.nn.Module):
         sub_batch = batch[id_clusters] if batch is not None else None
 
         # beware of self loop
-        id_k_neighbor = knn(pos, pos[id_clusters], k=self.k,
-                            batch_x=batch, batch_y=sub_batch)
+        id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
+                            batch_y=sub_batch)
 
         # transformation of features through a simple MLP
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]],
-                               id_k_neighbor[0],
-                               dim_size=id_clusters.size(0),
-                               dim=0)
+        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
+                               dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
         sub_pos, out = pos[id_clusters], x_out
@@ -87,11 +81,8 @@ class TransitionDown(torch.nn.Module):
 
 def MLP(channels, batch_norm=True):
     return Seq(*[
-        Seq(
-            Lin(channels[i - 1], channels[i]),
-            BN(channels[i]) if batch_norm else Identity(),
-            ReLU()
-        )
+        Seq(Lin(channels[i - 1], channels[i]),
+            BN(channels[i]) if batch_norm else Identity(), ReLU())
         for i in range(1, len(channels))
     ])
 
@@ -117,23 +108,15 @@ class Net(torch.nn.Module):
             # Add Transition Down block followed by a Transformer block
             self.transition_down.append(
                 TransitionDown(in_channels=dim_model[i],
-                               out_channels=dim_model[i + 1],
-                               k=self.k)
-            )
+                               out_channels=dim_model[i + 1], k=self.k))
 
             self.transformers_down.append(
                 TransformerBlock(in_channels=dim_model[i + 1],
-                                 out_channels=dim_model[i + 1])
-            )
+                                 out_channels=dim_model[i + 1]))
 
         # class score computation
-        self.mlp_output = Seq(
-            Lin(dim_model[-1], 64),
-            ReLU(),
-            Lin(64, 64),
-            ReLU(),
-            Lin(64, out_channels)
-        )
+        self.mlp_output = Seq(Lin(dim_model[-1], 64), ReLU(), Lin(64, 64),
+                              ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
 
@@ -192,11 +175,10 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(0, train_dataset.num_classes, dim_model=[
-                32, 64, 128, 256, 512], k=16).to(device)
+    model = Net(0, train_dataset.num_classes,
+                dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                                step_size=20,
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
                                                 gamma=0.5)
 
     for epoch in range(1, 201):
