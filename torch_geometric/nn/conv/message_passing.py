@@ -97,13 +97,13 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.inspect(self.edge_message)
+        self.inspector.inspect(self.edge_update)
         self.inspector.inspect(self.update, pop_first=True)
 
         self.__user_args__ = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
         self.__edge_user_args__ = self.inspector.keys(
-            ['edge_message']).difference(self.special_args)
+            ['edge_update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
 
@@ -118,14 +118,14 @@ class MessagePassing(torch.nn.Module):
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
         self._propagate_forward_hooks = OrderedDict()
-        self._edge_update_forward_pre_hooks = OrderedDict()
-        self._edge_update_forward_hooks = OrderedDict()
         self._message_forward_pre_hooks = OrderedDict()
         self._message_forward_hooks = OrderedDict()
         self._aggregate_forward_pre_hooks = OrderedDict()
         self._aggregate_forward_hooks = OrderedDict()
         self._message_and_aggregate_forward_pre_hooks = OrderedDict()
         self._message_and_aggregate_forward_hooks = OrderedDict()
+        self._edge_update_forward_pre_hooks = OrderedDict()
+        self._edge_update_forward_hooks = OrderedDict()
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -215,9 +215,12 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
             out['ptr'] = edge_index.storage.rowptr()
-            out['edge_weight'] = edge_index.storage.value()
-            out['edge_attr'] = edge_index.storage.value()
-            out['edge_type'] = edge_index.storage.value()
+            if out.get('edge_weight', None) is None:
+                out['edge_weight'] = edge_index.storage.value()
+            if out.get('edge_attr', None) is None:
+                out['edge_attr'] = edge_index.storage.value()
+            if out.get('edge_type', None) is None:
+                out['edge_type'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
         out['size'] = size
@@ -358,7 +361,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def edge_update(self, edge_index: Adj, **kwargs):
+    def edge_updater(self, edge_index: Adj, **kwargs):
         r"""The call to generate edge updates from messages.
 
         Args:
@@ -395,8 +398,8 @@ class MessagePassing(torch.nn.Module):
 
             coll_dict = self.__collect__(self.__edge_user_args__, edge_index,
                                          size, kwargs)
-            msg_kwargs = self.inspector.distribute('edge_message', coll_dict)
-            out = self.edge_message(**msg_kwargs)
+            msg_kwargs = self.inspector.distribute('edge_update', coll_dict)
+            out = self.edge_update(**msg_kwargs)
 
             if decomposed_layers > 1:
                 decomp_out.append(out)
@@ -423,7 +426,7 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    def edge_message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+    def edge_update(self) -> Tensor:
         r"""Constructs a messages for each edge in the graph.
         This function can use as argument inputs to :meth:`propagate_edges`,
         Furthermore, tensors passed to :meth:`propagate` can be mapped to the
@@ -432,7 +435,7 @@ class MessagePassing(torch.nn.Module):
         The output of this functition should have the same shape as the
         :obj:`edge_index` provided to :meth:`propagate_edges`.
         """
-        return (x_i + x_j) / 2
+        raise NotImplementedError
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
@@ -516,10 +519,8 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_hooks[handle.id] = hook
         return handle
 
-    def register_edge_updates_forward_pre_hook(
-        self,
-        hook: Callable
-    ) -> RemovableHandle:
+    def register_edge_update_forward_pre_hook(
+            self, hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`edges_propagate` is
         invoked. See :meth:`register_propagate_forward_pre_hook` for more
@@ -529,10 +530,8 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_edge_updates_forward_hook(
-        self,
-        hook: Callable
-    ) -> RemovableHandle:
+    def register_edge_update_forward_hook(self,
+                                          hook: Callable) -> RemovableHandle:
         r"""Registers a forward hook on the module.
         The hook will be called every time after :meth:`edges_propagate` has
         computed an output.

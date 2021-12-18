@@ -42,9 +42,6 @@ class MyConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def edge_message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
-        return x_i + x_j
-
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
@@ -59,18 +56,13 @@ def test_my_conv():
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = MyConv(8, 32)
-
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
-    assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert conv(x1, adj.t(), None).tolist() == out.tolist()
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = True
-
-    out_edge = conv.edge_update(edge_index, x=x1)
-    print(out_edge.shape)
-    assert out_edge.size() == (4, 8)
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
@@ -157,12 +149,39 @@ def test_copy():
     assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
 
+class MyEdgeConv(MessagePassing):
+    def __init__(self):
+        super().__init__(aggr='add')
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        edge_attr = self.edge_updater(edge_index, x=x)
+        return self.propagate(edge_index, edge_attr=edge_attr,
+                              size=(x.size(0), x.size(0)))
+
+    def edge_update(self, x_j: Tensor, x_i: Tensor) -> Tensor:
+        return x_j - x_i
+
+    def message(self, edge_attr: Tensor) -> Tensor:
+        return edge_attr
+
+
+def test_my_edge_conv():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyEdgeConv()
+    out = conv(x, edge_index)
+    assert out.size() == (4, 16)
+    assert conv(x, adj.t()).tolist() == out.tolist()
+
+
 num_pre_hook_calls = 0
 num_hook_calls = 0
 
 
 def test_message_passing_hooks():
-
     conv = MyConv(8, 32)
 
     x = torch.randn(4, 8)
@@ -203,11 +222,6 @@ def test_message_passing_hooks():
     handle8 = conv.register_message_and_aggregate_forward_hook(hook)
     assert len(conv._message_and_aggregate_forward_hooks) == 1
 
-    handle9 = conv.register_edge_updates_forward_pre_hook(pre_hook)
-    assert len(conv._edge_update_forward_pre_hooks) == 1
-    handle10 = conv.register_edge_updates_forward_hook(hook)
-    assert len(conv._edge_update_forward_hooks) == 1
-
     out1 = conv(x, edge_index, value)
     assert num_pre_hook_calls == 3
     assert num_hook_calls == 3
@@ -215,9 +229,6 @@ def test_message_passing_hooks():
     assert num_pre_hook_calls == 5
     assert num_hook_calls == 5
     assert torch.allclose(out1, out2)
-    _ = conv.edge_update(adj.t(), x=x)
-    assert num_pre_hook_calls == 6
-    assert num_hook_calls == 6
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -239,10 +250,25 @@ def test_message_passing_hooks():
     handle8.remove()
     assert len(conv._message_and_aggregate_forward_hooks) == 0
 
-    handle9.remove()
-    assert len(conv._edge_update_forward_pre_hooks) == 0
-    handle10.remove()
-    assert len(conv._edge_update_forward_hooks) == 0
+    conv = MyEdgeConv()
+
+    handle1 = conv.register_edge_update_forward_pre_hook(pre_hook)
+    assert len(conv._edge_update_forward_pre_hooks) == 1
+    handle2 = conv.register_edge_update_forward_hook(hook)
+    assert len(conv._edge_update_forward_hooks) == 1
+
+    out1 = conv(x, edge_index)
+    assert num_pre_hook_calls == 6
+    assert num_hook_calls == 6
+    out2 = conv(x, adj.t())
+    assert num_pre_hook_calls == 7
+    assert num_hook_calls == 7
+    assert torch.allclose(out1, out2)
+
+    handle1.remove()
+    assert len(conv._propagate_forward_pre_hooks) == 0
+    handle2.remove()
+    assert len(conv._propagate_forward_hooks) == 0
 
 
 def test_modified_message_passing_hook():
