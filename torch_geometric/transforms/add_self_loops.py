@@ -35,10 +35,8 @@ class AddSelfLoops(BaseTransform):
                 continue
 
             store.edge_index, edge_weight = add_self_loops(
-                store.edge_index,
-                getattr(store, self.attr, None),
-                fill_value=self.fill_value,
-                num_nodes=store.size(0))
+                store.edge_index, getattr(store, self.attr, None),
+                fill_value=self.fill_value, num_nodes=store.size(0))
 
             setattr(store, self.attr, edge_weight)
 
