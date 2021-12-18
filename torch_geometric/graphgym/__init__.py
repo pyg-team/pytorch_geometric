@@ -1,4 +1,4 @@
-from .contrib import *  # noqa, register contrib modules
+from .contrib import *  # noqa
 from .models import *  # noqa
 from .utils import *  # noqa
 from .checkpoint import load_ckpt, save_ckpt, clean_ckpt
@@ -14,7 +14,7 @@ from .optimizer import create_optimizer, create_scheduler
 from .register import (
     register_base,
     register_act,
-    register_node_encoder,  # noqa
+    register_node_encoder,
     register_edge_encoder,
     register_stage,
     register_head,
@@ -26,7 +26,8 @@ from .register import (
     register_optimizer,
     register_scheduler,
     register_loss,
-    register_train)
+    register_train,
+)
 from .train import train
 
 __all__ = [
@@ -50,11 +51,6 @@ __all__ = [
     'create_optimizer',
     'create_scheduler',
     'train',
-]
-
-classes = __all__
-
-classes_reg = [
     'register_base',
     'register_act',
     'register_node_encoder',
@@ -71,3 +67,6 @@ classes_reg = [
     'register_loss',
     'register_train',
 ]
+
+classes = __all__[:20]
+classes_reg = __all__[20:]
