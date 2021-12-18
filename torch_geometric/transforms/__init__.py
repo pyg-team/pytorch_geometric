@@ -95,7 +95,7 @@ __all__ = [
     'RemoveTrainingClasses',
     'RandomNodeSplit',
     'RandomLinkSplit',
-    'AddMetaPaths'
+    'AddMetaPaths',
 ]
 
 classes = __all__
