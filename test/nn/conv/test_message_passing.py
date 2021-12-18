@@ -166,15 +166,19 @@ class MyEdgeConv(MessagePassing):
 
 
 def test_my_edge_conv():
+
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
+    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='add')
+
     conv = MyEdgeConv()
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
-    assert conv(x, adj.t()).tolist() == out.tolist()
+    assert torch.allclose(out, expected)
+    assert torch.allclose(conv(x, adj.t()), out)
 
 
 num_pre_hook_calls = 0

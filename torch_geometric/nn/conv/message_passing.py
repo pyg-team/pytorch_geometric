@@ -373,7 +373,6 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.
         """
-        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
         for hook in self._edge_update_forward_pre_hooks.values():
             res = hook(self, (edge_index, kwargs))
             if res is not None:
@@ -381,30 +380,11 @@ class MessagePassing(torch.nn.Module):
 
         size = self.__check_input__(edge_index, size=None)
 
-        if decomposed_layers > 1:
-            user_args = self.__user_args__
-            decomp_args = {a[:-2] for a in user_args if a[-2:] == '_j'}
-            decomp_kwargs = {
-                a: kwargs[a].chunk(decomposed_layers, -1)
-                for a in decomp_args
-            }
-            decomp_out = []
+        coll_dict = self.__collect__(self.__edge_user_args__, edge_index, size,
+                                     kwargs)
 
-        for i in range(decomposed_layers):
-            if decomposed_layers > 1:
-                for arg in decomp_args:
-                    kwargs[arg] = decomp_kwargs[arg][i]
-
-            coll_dict = self.__collect__(self.__edge_user_args__, edge_index,
-                                         size, kwargs)
-            msg_kwargs = self.inspector.distribute('edge_update', coll_dict)
-            out = self.edge_update(**msg_kwargs)
-
-            if decomposed_layers > 1:
-                decomp_out.append(out)
-
-        if decomposed_layers > 1:
-            out = torch.cat(decomp_out, dim=-1)
+        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        out = self.edge_update(**edge_kwargs)
 
         for hook in self._edge_update_forward_hooks.values():
             res = hook(self, (edge_index, kwargs), out)
