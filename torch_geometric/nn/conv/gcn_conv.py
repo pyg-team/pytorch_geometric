@@ -13,11 +13,9 @@ from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
-
-
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, add_self_loops=True,
-             dtype=None,    improved=False):
+             dtype=None, improved=False):
     # type: (Tensor, OptTensor, Optional[int], bool, Optional[int], bool) -> PairTensor  # noqa
     pass
 
