@@ -362,17 +362,16 @@ class MessagePassing(torch.nn.Module):
         return out
 
     def edge_updater(self, edge_index: Adj, **kwargs):
-        r"""The call to generate edge updates from messages.
+        r"""The initial call to compute or update features for each edge in the
+        graph.
 
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
                 graph connectivity/message passing flow.
                 See :meth:`propagate` for more information.
-                matrix.
-                See :meth:`propagate` for more information.
-            **kwargs: Any additional data which is needed to update edges
-            feautres.
+            **kwargs: Any additional data which is needed to compute or update
+                features for each edge in the graph.
         """
         decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
         for hook in self._edge_update_forward_pre_hooks.values():
@@ -426,17 +425,6 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    def edge_update(self) -> Tensor:
-        r"""Constructs a messages for each edge in the graph.
-        This function can use as argument inputs to :meth:`propagate_edges`,
-        Furthermore, tensors passed to :meth:`propagate` can be mapped to the
-        respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
-        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
-        The output of this functition should have the same shape as the
-        :obj:`edge_index` provided to :meth:`propagate_edges`.
-        """
-        raise NotImplementedError
-
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
@@ -475,6 +463,16 @@ class MessagePassing(torch.nn.Module):
         which was initially passed to :meth:`propagate`.
         """
         return inputs
+
+    def edge_update(self) -> Tensor:
+        r"""Computes or updates features for each edge in the graph.
+        This function can take any argument as input which was initially passed
+        to :meth:`edge_updater`.
+        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
+        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
+        raise NotImplementedError
 
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
