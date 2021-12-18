@@ -39,11 +39,12 @@ Register Modules
 .. autosummary::
    :nosignatures:
     {% for cls in torch_geometric.graphgym.classes_reg %}
-     {{ cls }}
+      {{ cls }}
     {% endfor %}
 
    {% for cls in torch_geometric.graphgym.classes_reg %}
 .. autofunction:: {{ cls }}
+     :noindex:
    {% endfor %}
 
 Utility Modules
