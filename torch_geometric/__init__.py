@@ -8,6 +8,7 @@ import torch_geometric.utils
 import torch_geometric.profile
 
 from .seed import seed_everything
+from .home import get_home_dir, set_home_dir
 from .debug import is_debug_enabled, debug, set_debug
 
 
@@ -42,6 +43,8 @@ __version__ = '2.0.2'
 
 __all__ = [
     'seed_everything',
+    'get_home_dir',
+    'set_home_dir',
     'is_debug_enabled',
     'debug',
     'set_debug',
