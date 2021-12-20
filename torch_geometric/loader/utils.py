@@ -49,7 +49,7 @@ def to_csc(
         size = data.size()
         perm = (col * size[0]).add_(row).argsort()
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        return colptr.to(device), row[perm].to(device), perm
+        return colptr.to(device), row[perm].to(device), perm.to(device)
 
     raise AttributeError(
         "Data object does not contain attributes 'adj_t' or 'edge_index'")
@@ -82,6 +82,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
+            index = index.to(value.device)
             out_store[key] = index_select(value, index, dim=0)
 
     return store
@@ -94,12 +95,17 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
         if key == 'edge_index':
-            out_store.edge_index = torch.stack([row, col], dim=0)
+            edge_index = torch.stack([row, col], dim=0)
+            out_store.edge_index = edge_index.to(value.device)
 
         elif key == 'adj_t':
             # NOTE: We expect `(row, col)` to be sorted by `col` (CSC layout).
+            row = row.to(value.device())
+            col = col.to(value.device())
             edge_attr = value.storage.value()
-            edge_attr = None if edge_attr is None else edge_attr[index]
+            if edge_attr is not None:
+                index = index.to(edge_attr.device)
+                edge_attr = edge_attr[index]
             sparse_sizes = store.size()[::-1]
             out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
                                            sparse_sizes=sparse_sizes,
@@ -107,8 +113,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
         elif store.is_edge_attr(key):
             if perm is None:
+                index = index.to(value.device)
                 out_store[key] = index_select(value, index, dim=0)
             else:
+                perm = perm.to(value.device)
+                index = index.to(value.device)
                 out_store[key] = index_select(value, perm[index], dim=0)
 
     return store

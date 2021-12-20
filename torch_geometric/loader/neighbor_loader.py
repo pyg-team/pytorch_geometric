@@ -223,9 +223,9 @@ class NeighborLoader(BaseDataLoader):
         self.transform = transform
 
         if isinstance(data, (Data, HeteroData)):
-            self.input_node_type = get_input_node_type(input_nodes)
+            input_node_type = get_input_node_type(input_nodes)
             self.sampler = NeighborSampler(data, num_neighbors, replace,
-                                           directed, self.input_node_type)
+                                           directed, input_node_type)
         elif isinstance(data, NeighborSampler):
             # We also allow to pass in a `sampler` directly - this is useful
             # to re-use a given sampler across multiple loader instances:
@@ -248,7 +248,7 @@ class NeighborLoader(BaseDataLoader):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict, self.sampler.perm_dict)
-            data[self.input_node_type].batch_size = batch_size
+            data[self.sampler.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
 
