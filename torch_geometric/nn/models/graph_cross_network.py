@@ -327,7 +327,7 @@ class GraphCrossModule(torch.nn.Module):
                  out_dim: int, hidden_dim: int, cross_weight: float = 1.,
                  fuse_weight: float = 1., dist: int = 1,
                  num_cross_layers: int = 2):
-        super(GraphCrossModule, self).__init__()
+        super().__init__()
         if isinstance(pool_ratios, float):
             pool_ratios = (pool_ratios, pool_ratios)
         self.cross_weight = cross_weight
