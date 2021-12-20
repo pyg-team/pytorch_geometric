@@ -76,16 +76,12 @@ class GraphClassifier(torch.nn.Module):
     """
     def __init__(self, args):
         super().__init__()
-        self.gxn = GraphCrossNet(in_dim=args.in_dim,
-                                 out_dim=args.embed_dim,
-                                 edge_feat_dim=args.edge_feat_dim,
-                                 hidden_dim=args.hidden_dim,
-                                 pool_ratios=args.pool_ratios,
-                                 readout_nodes=args.readout_nodes,
-                                 conv1d_dims=args.conv1d_dims,
-                                 conv1d_kws=args.conv1d_kws,
-                                 cross_weight=args.cross_weight,
-                                 fuse_weight=args.fuse_weight)
+        self.gxn = GraphCrossNet(
+            in_dim=args.in_dim, out_dim=args.embed_dim,
+            edge_feat_dim=args.edge_feat_dim, hidden_dim=args.hidden_dim,
+            pool_ratios=args.pool_ratios, readout_nodes=args.readout_nodes,
+            conv1d_dims=args.conv1d_dims, conv1d_kws=args.conv1d_kws,
+            cross_weight=args.cross_weight, fuse_weight=args.fuse_weight)
         self.lin1 = torch.nn.Linear(args.embed_dim, args.final_hidden_dim)
         self.lin2 = torch.nn.Linear(args.final_hidden_dim, args.out_dim)
         self.dropout = args.dropout
@@ -121,8 +117,8 @@ def compute_loss(cls_logits: Tensor, labels: Tensor, logits_s1: Tensor,
     return loss
 
 
-def train(model: torch.nn.Module, optimizer, trainloader,
-          device, curr_epoch, total_epochs):
+def train(model: torch.nn.Module, optimizer, trainloader, device, curr_epoch,
+          total_epochs):
     model.train()
 
     total_loss = 0.
@@ -172,11 +168,13 @@ if __name__ == "__main__":
                         help="Weight parameter for feature fusion")
     parser.add_argument("--num_cross_layers", type=int, default=2,
                         help="The number of graph corss layers")
-    parser.add_argument("--readout_nodes", type=int, default=30,
-                        help="Number of nodes for each graph after \
+    parser.add_argument(
+        "--readout_nodes", type=int, default=30,
+        help="Number of nodes for each graph after \
                             final graph pooling")
-    parser.add_argument("--conv1d_dims", nargs="+", type=int,
-                        help="Number of channels in conv operations \
+    parser.add_argument(
+        "--conv1d_dims", nargs="+", type=int,
+        help="Number of channels in conv operations \
                             in the end of graph cross net")
     parser.add_argument("--conv1d_kws", nargs="+", type=int,
                         help="Kernel sizes of conv1d operations")
@@ -184,13 +182,13 @@ if __name__ == "__main__":
                         help="Dropout rate")
     parser.add_argument("--embed_dim", type=int, default=1024,
                         help="Number of channels of graph embedding")
-    parser.add_argument("--final_hidden_dim", type=int, default=128,
-                        help="The number of hidden channels in final \
+    parser.add_argument(
+        "--final_hidden_dim", type=int, default=128,
+        help="The number of hidden channels in final \
                             dense layers")
     parser.add_argument("--batch_size", type=int, default=64,
                         help="Batch size")
-    parser.add_argument("--lr", type=float, default=1e-4,
-                        help="Learning rate")
+    parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
     parser.add_argument("--weight_decay", type=float, default=1e-3,
                         help="Weight decay rate")
     parser.add_argument("--epochs", type=int, default=200,
