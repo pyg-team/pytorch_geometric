@@ -1,6 +1,7 @@
-from typing import Union, Tuple, Dict
+from typing import Union, Tuple, Dict, Optional
 from torch_geometric.typing import OptTensor, EdgeType
 
+import math
 import copy
 
 import torch
@@ -9,6 +10,19 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import NodeStorage, EdgeStorage
+
+
+def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
+    out: Optional[Tensor] = None
+    if torch.utils.data.get_worker_info() is not None:
+        # If we are in a background process, we write directly into a shared
+        # memory tensor to avoid an extra copy:
+        size = list(value.size())
+        size[dim] = index.numel()
+        numel = math.prod(size)
+        storage = value.storage()._new_shared(numel)
+        out = value.new(storage).view(size)
+    return torch.index_select(value, 0, index, out=out)
 
 
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
@@ -64,7 +78,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            out_store[key] = value[index]
+            out_store[key] = index_select(value, index, dim=0)
 
     return store
 
@@ -89,9 +103,9 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
         elif store.is_edge_attr(key):
             if perm is None:
-                out_store[key] = value[index]
+                out_store[key] = index_select(value, index, dim=0)
             else:
-                out_store[key] = value[perm[index]]
+                out_store[key] = index_select(value, perm[index], dim=0)
 
     return store
 

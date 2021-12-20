@@ -90,7 +90,6 @@ class NeighborSampler:
                 self.replace,
                 self.directed,
             )
-
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict, self.perm_dict)
             data[self.input_node_type].batch_size = index.numel()
