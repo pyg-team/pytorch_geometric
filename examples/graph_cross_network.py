@@ -75,7 +75,7 @@ class GraphClassifier(torch.nn.Module):
     GXN + MLP
     """
     def __init__(self, args):
-        super(GraphClassifier, self).__init__()
+        super().__init__()
         self.gxn = GraphCrossNet(in_dim=args.in_dim,
                                  out_dim=args.embed_dim,
                                  edge_feat_dim=args.edge_feat_dim,
