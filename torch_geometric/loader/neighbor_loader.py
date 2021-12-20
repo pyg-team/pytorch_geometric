@@ -24,7 +24,7 @@ class NeighborSampler:
         directed: bool = True,
         input_node_type: Optional[str] = None,
     ):
-        self.data = data
+        self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
@@ -63,7 +63,7 @@ class NeighborSampler:
             index = torch.tensor(indices)
         assert index.dtype == torch.int64
 
-        if isinstance(self.data, Data):
+        if issubclass(self.data_cls, Data):
             sample_fn = torch.ops.torch_sparse.neighbor_sample
             node, row, col, edge = sample_fn(
                 self.colptr,
@@ -75,7 +75,7 @@ class NeighborSampler:
             )
             return node, row, col, edge, index.numel()
 
-        elif isinstance(self.data, HeteroData):
+        elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
             node_dict, row_dict, col_dict, edge_dict = sample_fn(
                 self.node_types,
@@ -222,29 +222,25 @@ class NeighborLoader(BaseDataLoader):
         self.directed = directed
         self.transform = transform
 
-        if isinstance(data, (Data, HeteroData)):
+        if '_sampler' not in kwargs:
             input_node_type = get_input_node_type(input_nodes)
-            self.sampler = NeighborSampler(data, num_neighbors, replace,
-                                           directed, input_node_type)
-        elif isinstance(data, NeighborSampler):
-            # We also allow to pass in a `sampler` directly - this is useful
-            # to re-use a given sampler across multiple loader instances:
-            self.sampler = data
+            self._sampler = NeighborSampler(data, num_neighbors, replace,
+                                            directed, input_node_type)
         else:
-            raise NotImplementedError
+            self._sampler = kwargs['_sampler']
+            del kwargs['_sampler']
 
-        return super().__init__(
-            get_input_node_indices(self.sampler.data, input_nodes),
-            collate_fn=self.sampler.__call__, **kwargs)
+        return super().__init__(get_input_node_indices(self.data, input_nodes),
+                                collate_fn=self._sampler.__call__, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        if isinstance(self.data, Data):
+        if isinstance(self.sampler.data, Data):
             node, row, col, edge, batch_size = out
-            data = filter_data(self.data, node, row, col, edge,
+            data = filter_data(self.sampler.data, node, row, col, edge,
                                self.sampler.perm)
             data.batch_size = batch_size
 
-        elif isinstance(self.data, HeteroData):
+        elif isinstance(self.sampler.data, HeteroData):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict, self.sampler.perm_dict)
