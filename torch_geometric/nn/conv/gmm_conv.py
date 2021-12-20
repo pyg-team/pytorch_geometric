@@ -1,5 +1,5 @@
 from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import torch
 from torch import Tensor
@@ -127,7 +127,7 @@ class GMMConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None):
+                edge_attr: OptTensor = None, size: Size = None):
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
@@ -136,10 +136,10 @@ class GMMConv(MessagePassing):
         if not self.separate_gaussians:
             out: OptPairTensor = (torch.matmul(x[0], self.g), x[1])
             out = self.propagate(edge_index, x=out, edge_attr=edge_attr,
-                                 size=None)
+                                 size=size)
         else:
             out = self.propagate(edge_index, x=x, edge_attr=edge_attr,
-                                 size=None)
+                                 size=size)
 
         x_r = x[1]
         if x_r is not None and self.root is not None:
