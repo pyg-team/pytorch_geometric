@@ -223,42 +223,32 @@ class NeighborLoader(BaseDataLoader):
         self.transform = transform
 
         if isinstance(data, (Data, HeteroData)):
-            sampler = NeighborSampler(
-                data,
-                num_neighbors,
-                replace,
-                directed,
-                get_input_node_type(input_nodes),
-            )
+            self.input_node_type = get_input_node_type(input_nodes)
+            self.sampler = NeighborSampler(data, num_neighbors, replace,
+                                           directed, self.input_node_type)
+        elif isinstance(data, NeighborSampler):
+            # We also allow to pass in a `sampler` directly - this is useful
+            # to re-use a given sampler across multiple loader instances:
+            self.sampler = data
         else:
-            # Assume that a `sampler` got passed - useful to re-use a given
-            # sampler across multiple loader instances:
-            sampler = data
+            raise NotImplementedError
 
         return super().__init__(
-            get_input_node_indices(sampler.data, input_nodes),
-            collate_fn=sampler, **kwargs)
+            get_input_node_indices(self.sampler.data, input_nodes),
+            collate_fn=self.sampler.__call__, **kwargs)
 
-    def transform_fn(self, out):
+    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
-            perm = self.collate_fn.perm
-            node = out[0].to(perm.device)
-            row = out[1].to(perm.device)
-            col = out[2].to(perm.device)
-            edge = out[3].to(perm.device)
-            batch_size = out[4]
-
-            data = filter_data(self.data, node, row, col, edge, perm)
+            node, row, col, edge, batch_size = out
+            data = filter_data(self.data, node, row, col, edge,
+                               self.sampler.perm)
             data.batch_size = batch_size
 
         elif isinstance(self.data, HeteroData):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
-            perm_dict = self.collate_fn.perm_dict
-            input_node_type = self.collate_fn.input_node_type
-
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict, perm_dict)
-            data[input_node_type].batch_size = batch_size
+                                      edge_dict, self.sampler.perm_dict)
+            data[self.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
 
