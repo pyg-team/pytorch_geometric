@@ -31,7 +31,10 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
-def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
+def to_csc(
+    data: Union[Data, EdgeStorage],
+    device: Optional[torch.device] = None,
+) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
     # `perm` vector that denotes the permutation of edges.
@@ -39,14 +42,14 @@ def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
     # `perm` can be of type `None`.
     if hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
-        return colptr, row, None
+        return colptr.to(device), row.to(device), None
 
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
         size = data.size()
         perm = (col * size[0]).add_(row).argsort()
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        return colptr, row[perm], perm
+        return colptr.to(device), row[perm].to(device), perm
 
     raise AttributeError(
         "Data object does not contain attributes 'adj_t' or 'edge_index'")
@@ -54,6 +57,7 @@ def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
 
 def to_hetero_csc(
     data: HeteroData,
+    device: Optional[torch.device] = None,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -65,7 +69,7 @@ def to_hetero_csc(
 
     for store in data.edge_stores:
         key = edge_type_to_str(store._key)
-        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store)
+        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store, device)
 
     return colptr_dict, row_dict, perm_dict
 
