@@ -1,5 +1,5 @@
 from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor
 
 import torch
 from torch import Tensor
@@ -59,6 +59,16 @@ class GMMConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, dim: int, kernel_size: int,
@@ -117,7 +127,7 @@ class GMMConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None):
+                edge_attr: OptTensor = None):
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
@@ -126,10 +136,10 @@ class GMMConv(MessagePassing):
         if not self.separate_gaussians:
             out: OptPairTensor = (torch.matmul(x[0], self.g), x[1])
             out = self.propagate(edge_index, x=out, edge_attr=edge_attr,
-                                 size=size)
+                                 size=None)
         else:
             out = self.propagate(edge_index, x=x, edge_attr=edge_attr,
-                                 size=size)
+                                 size=None)
 
         x_r = x[1]
         if x_r is not None and self.root is not None:

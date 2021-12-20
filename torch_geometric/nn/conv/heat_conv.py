@@ -47,6 +47,15 @@ class HEATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          node types :math:`(|\mathcal{V}|)`,
+          edge types :math:`(|\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_node_types: int, num_edge_types: int,
