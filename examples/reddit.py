@@ -24,6 +24,7 @@ train_loader = NeighborLoader(data, input_nodes=data.train_mask,
 
 subgraph_loader = NeighborLoader(copy.copy(data), input_nodes=None,
                                  num_neighbors=[-1], shuffle=False, **kwargs)
+
 # No need to maintain these features during evaluation:
 del subgraph_loader.data.x, subgraph_loader.data.y
 # Add global node index information.
