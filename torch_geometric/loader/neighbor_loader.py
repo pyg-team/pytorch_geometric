@@ -230,7 +230,6 @@ class NeighborLoader(BaseDataLoader):
         self.neighbor_sampler = neighbor_sampler
 
         if neighbor_sampler is None:
-            print("INIT A NEW FUKCING SAMPLER?")
             input_node_type = get_input_node_type(input_nodes)
             self.neighbor_sampler = NeighborSampler(data, num_neighbors,
                                                     replace, directed,

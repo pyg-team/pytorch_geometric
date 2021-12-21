@@ -59,11 +59,8 @@ class Model(pl.LightningModule):
 def main():
     seed_everything(42)
 
-    # dataset = Reddit(osp.join('data', 'Reddit'))
-    dataset = Reddit('/data/datasets/Reddit')
-    data = dataset[0]  #.to('cuda:0', 'x', 'y')
-
-    data = data.share_memory_()
+    dataset = Reddit(osp.join('data', 'Reddit'))
+    data = dataset[0]
 
     datamodule = LightningNodeData(data, data.train_mask, data.val_mask,
                                    data.test_mask, loader='neighbor',
