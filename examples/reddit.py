@@ -12,7 +12,6 @@ from torch_geometric.loader import NeighborLoader
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
-path = '/data/datasets/Reddit'  # TODO
 dataset = Reddit(path)
 
 # Already send node features/labels to GPU for faster access during sampling:
