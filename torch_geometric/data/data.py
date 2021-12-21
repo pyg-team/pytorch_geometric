@@ -265,8 +265,8 @@ class BaseData(object):
 
     @property
     def is_cuda(self) -> bool:
-        r"""Is :obj:`True` if any :class:`torch.Tensor` is stored on the GPU,
-        :obj:`False` otherwise."""
+        r"""Returns :obj:`True` if any :class:`torch.Tensor` attribute is
+        stored on the GPU, :obj:`False` otherwise."""
         for store in self.stores:
             for value in store.values():
                 if isinstance(value, Tensor) and value.is_cuda:
