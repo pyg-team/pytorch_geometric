@@ -15,10 +15,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
 args = parser.parse_args()
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
 transform = T.ToUndirected(merge=True)
 dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
-data = dataset[0]
+
+# Already send node features/labels to GPU for faster access during sampling:
+data = dataset[0].to(device, 'x', 'y')
 
 train_input_nodes = ('paper', data['paper'].train_mask)
 val_input_nodes = ('paper', data['paper'].val_mask)
@@ -35,8 +39,6 @@ else:
     val_loader = HGTLoader(data, num_samples=[1024] * 4,
                            input_nodes=val_input_nodes, **kwargs)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 model = Sequential('x, edge_index', [
     (SAGEConv((-1, -1), 64), 'x, edge_index -> x'),
     ReLU(inplace=True),
@@ -51,7 +53,7 @@ model = to_hetero(model, data.metadata(), aggr='sum').to(device)
 def init_params():
     # Initialize lazy parameters via forwarding a single batch to the model:
     batch = next(iter(train_loader))
-    batch = batch.to(device)
+    batch = batch.to(device, 'edge_index')
     model(batch.x_dict, batch.edge_index_dict)
 
 
@@ -61,7 +63,7 @@ def train():
     total_examples = total_loss = 0
     for batch in tqdm(train_loader):
         optimizer.zero_grad()
-        batch = batch.to(device)
+        batch = batch.to(device, 'edge_index')
         batch_size = batch['paper'].batch_size
         out = model(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
         loss = F.cross_entropy(out, batch['paper'].y[:batch_size])
@@ -80,7 +82,7 @@ def test(loader):
 
     total_examples = total_correct = 0
     for batch in tqdm(loader):
-        batch = batch.to(device)
+        batch = batch.to(device, 'edge_index')
         batch_size = batch['paper'].batch_size
         out = model(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
         pred = out.argmax(dim=-1)
