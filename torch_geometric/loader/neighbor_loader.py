@@ -24,6 +24,7 @@ class NeighborSampler:
         directed: bool = True,
         input_node_type: Optional[str] = None,
     ):
+        self.data = data  # TODO
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
         self.replace = replace
@@ -73,7 +74,11 @@ class NeighborSampler:
                 self.replace,
                 self.directed,
             )
+
             return node, row, col, edge, index.numel()
+            data = filter_data(self.data, node, row, col, edge, self.perm)
+            data.batch_size = index.numel()
+            return data
 
         elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
@@ -207,6 +212,7 @@ class NeighborLoader(BaseDataLoader):
         replace: bool = False,
         directed: bool = True,
         transform: Callable = None,
+        neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
         if 'dataset' in kwargs:
@@ -221,30 +227,31 @@ class NeighborLoader(BaseDataLoader):
         self.replace = replace
         self.directed = directed
         self.transform = transform
+        self.neighbor_sampler = neighbor_sampler
 
-        if '_sampler' not in kwargs:
+        if neighbor_sampler is None:
+            print("INIT A NEW FUKCING SAMPLER?")
             input_node_type = get_input_node_type(input_nodes)
-            self._sampler = NeighborSampler(data, num_neighbors, replace,
-                                            directed, input_node_type)
-        else:
-            self._sampler = kwargs['_sampler']
-            del kwargs['_sampler']
+            self.neighbor_sampler = NeighborSampler(data, num_neighbors,
+                                                    replace, directed,
+                                                    input_node_type)
 
         return super().__init__(get_input_node_indices(self.data, input_nodes),
-                                collate_fn=self._sampler, **kwargs)
+                                collate_fn=self.neighbor_sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
             data = filter_data(self.data, node, row, col, edge,
-                               self._sampler.perm)
+                               self.neighbor_sampler.perm)
             data.batch_size = batch_size
 
         elif isinstance(self.data, HeteroData):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict, self._sampler.perm_dict)
-            data[self._sampler.input_node_type].batch_size = batch_size
+                                      edge_dict,
+                                      self.neighbor_sampler.perm_dict)
+            data[self.neighbor_sampler.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
 

@@ -9,6 +9,7 @@ class DataLoaderIterator(object):
         self.transform_fn = transform_fn
 
     def __iter__(self) -> 'DataLoaderIterator':
+        # print("ITER")
         return self
 
     def _reset(self, loader: Any, first_iter: bool = False):
@@ -18,7 +19,12 @@ class DataLoaderIterator(object):
         return len(self.iterator)
 
     def __next__(self) -> Any:
-        return self.transform_fn(next(self.iterator))
+        # print("NEXT")
+        # import time
+        # t = time.perf_counter()
+        out = self.transform_fn(next(self.iterator))
+        # print(time.perf_counter() - t)
+        return out
 
 
 class BaseDataLoader(DataLoader):
@@ -28,6 +34,6 @@ class BaseDataLoader(DataLoader):
     """
     def _get_iterator(self) -> Iterator:
         iterator = super()._get_iterator()
-        if self.transform_fn is not None:
+        if hasattr(self, 'transform_fn'):
             iterator = DataLoaderIterator(iterator, self.transform_fn)
         return iterator
