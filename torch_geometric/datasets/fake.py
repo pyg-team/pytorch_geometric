@@ -27,7 +27,7 @@ class FakeDataset(InMemoryDataset):
         num_classes (int, optional): The number of classes in the dataset.
             (default: :obj:`10`)
         task (str, optional): Whether to return node-level or graph-level
-            labels (obj:`"node"`, :obj:`"graph"`, :obj:`"auto"`).
+            labels (:obj:`"node"`, :obj:`"graph"`, :obj:`"auto"`).
             If set to :obj:`"auto"`, will return graph-level labels if
             :obj:`num_graphs > 1`, and node-level labels other-wise.
             (default: :obj:`"auto"`)
@@ -115,7 +115,7 @@ class FakeHeteroDataset(InMemoryDataset):
         num_classes (int, optional): The number of classes in the dataset.
             (default: :obj:`10`)
         task (str, optional): Whether to return node-level or graph-level
-            labels (obj:`"node"`, :obj:`"graph"`, :obj:`"auto"`).
+            labels (:obj:`"node"`, :obj:`"graph"`, :obj:`"auto"`).
             If set to :obj:`"auto"`, will return graph-level labels if
             :obj:`num_graphs > 1`, and node-level labels other-wise.
             (default: :obj:`"auto"`)
