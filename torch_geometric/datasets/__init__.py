@@ -2,6 +2,7 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
+from .fake import FakeDataset, FakeHeteroDataset
 from .nell import NELL
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
@@ -78,6 +79,8 @@ __all__ = [
     'TUDataset',
     'GNNBenchmarkDataset',
     'Planetoid',
+    'FakeDataset',
+    'FakeHeteroDataset',
     'NELL',
     'CitationFull',
     'CoraFull',
