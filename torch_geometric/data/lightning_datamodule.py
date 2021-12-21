@@ -250,12 +250,11 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
-            self.sampler = NeighborSampler(
+            self.neighbor_sampler = NeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
                 directed=kwargs.get('directed', True),
-                transform=kwargs.get('transform', None),
                 input_node_type=get_input_node_type(input_train_nodes),
             )
         self.input_train_nodes = input_train_nodes
@@ -280,7 +279,8 @@ class LightningNodeData(LightningDataModule):
 
         if self.loader == 'neighbor':
             warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
-            return NeighborLoader(self.sampler, input_nodes=input_nodes,
+            return NeighborLoader(self.data, input_nodes=input_nodes,
+                                  neighbor_sampler=self.neighbor_sampler,
                                   shuffle=True, **self.kwargs)
 
         raise NotImplementedError

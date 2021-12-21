@@ -8,6 +8,7 @@ import torch_geometric.utils
 import torch_geometric.profile
 
 from .seed import seed_everything
+from .home import get_home_dir, set_home_dir
 from .debug import is_debug_enabled, debug, set_debug
 
 
@@ -38,10 +39,12 @@ datasets = LazyLoader('datasets', globals(), 'torch_geometric.datasets')
 nn = LazyLoader('nn', globals(), 'torch_geometric.nn')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
 __all__ = [
     'seed_everything',
+    'get_home_dir',
+    'set_home_dir',
     'is_debug_enabled',
     'debug',
     'set_debug',

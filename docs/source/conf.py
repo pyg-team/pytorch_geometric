@@ -32,7 +32,12 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE
 autodoc_member_order = 'bysource'
-intersphinx_mapping = {'python': ('https://docs.python.org/', None)}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
+    'torch': ('https://pytorch.org/docs/master', None),
+}
 
 html_theme_options = {
     'collapse_navigation': False,

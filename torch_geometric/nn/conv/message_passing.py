@@ -98,11 +98,14 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
+        self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
+        self.__edge_user_args__ = self.inspector.keys(
+            ['edge_update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -121,6 +124,8 @@ class MessagePassing(torch.nn.Module):
         self._aggregate_forward_hooks = OrderedDict()
         self._message_and_aggregate_forward_pre_hooks = OrderedDict()
         self._message_and_aggregate_forward_hooks = OrderedDict()
+        self._edge_update_forward_pre_hooks = OrderedDict()
+        self._edge_update_forward_hooks = OrderedDict()
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -210,9 +215,12 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
             out['ptr'] = edge_index.storage.rowptr()
-            out['edge_weight'] = edge_index.storage.value()
-            out['edge_attr'] = edge_index.storage.value()
-            out['edge_type'] = edge_index.storage.value()
+            if out.get('edge_weight', None) is None:
+                out['edge_weight'] = edge_index.storage.value()
+            if out.get('edge_attr', None) is None:
+                out['edge_attr'] = edge_index.storage.value()
+            if out.get('edge_type', None) is None:
+                out['edge_type'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
         out['size'] = size
@@ -353,6 +361,38 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
+    def edge_updater(self, edge_index: Adj, **kwargs):
+        r"""The initial call to compute or update features for each edge in the
+        graph.
+
+        Args:
+            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` that defines the underlying
+                graph connectivity/message passing flow.
+                See :meth:`propagate` for more information.
+            **kwargs: Any additional data which is needed to compute or update
+                features for each edge in the graph.
+        """
+        for hook in self._edge_update_forward_pre_hooks.values():
+            res = hook(self, (edge_index, kwargs))
+            if res is not None:
+                edge_index, kwargs = res
+
+        size = self.__check_input__(edge_index, size=None)
+
+        coll_dict = self.__collect__(self.__edge_user_args__, edge_index, size,
+                                     kwargs)
+
+        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        out = self.edge_update(**edge_kwargs)
+
+        for hook in self._edge_update_forward_hooks.values():
+            res = hook(self, (edge_index, kwargs), out)
+            if res is not None:
+                out = res
+
+        return out
+
     def message(self, x_j: Tensor) -> Tensor:
         r"""Constructs messages from node :math:`j` to node :math:`i`
         in analogy to :math:`\phi_{\mathbf{\Theta}}` for each edge in
@@ -403,6 +443,16 @@ class MessagePassing(torch.nn.Module):
         which was initially passed to :meth:`propagate`.
         """
         return inputs
+
+    def edge_update(self) -> Tensor:
+        r"""Computes or updates features for each edge in the graph.
+        This function can take any argument as input which was initially passed
+        to :meth:`edge_updater`.
+        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
+        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
+        raise NotImplementedError
 
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
@@ -508,6 +558,28 @@ class MessagePassing(torch.nn.Module):
         """
         handle = RemovableHandle(self._message_and_aggregate_forward_hooks)
         self._message_and_aggregate_forward_hooks[handle.id] = hook
+        return handle
+
+    def register_edge_update_forward_pre_hook(
+            self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`edge_update` is
+        invoked. See :meth:`register_propagate_forward_pre_hook` for more
+        information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_pre_hooks)
+        self._edge_update_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_edge_update_forward_hook(self,
+                                          hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`edge_update` has
+        computed an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_hooks)
+        self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
     @torch.jit.unused

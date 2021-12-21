@@ -149,6 +149,38 @@ def test_copy():
     assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
 
+class MyEdgeConv(MessagePassing):
+    def __init__(self):
+        super().__init__(aggr='add')
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        edge_attr = self.edge_updater(edge_index, x=x)
+        return self.propagate(edge_index, edge_attr=edge_attr,
+                              size=(x.size(0), x.size(0)))
+
+    def edge_update(self, x_j: Tensor, x_i: Tensor) -> Tensor:
+        return x_j - x_i
+
+    def message(self, edge_attr: Tensor) -> Tensor:
+        return edge_attr
+
+
+def test_my_edge_conv():
+
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='add')
+
+    conv = MyEdgeConv()
+    out = conv(x, edge_index)
+    assert out.size() == (4, 16)
+    assert torch.allclose(out, expected)
+    assert torch.allclose(conv(x, adj.t()), out)
+
+
 num_pre_hook_calls = 0
 num_hook_calls = 0
 
@@ -221,6 +253,26 @@ def test_message_passing_hooks():
     assert len(conv._message_and_aggregate_forward_pre_hooks) == 0
     handle8.remove()
     assert len(conv._message_and_aggregate_forward_hooks) == 0
+
+    conv = MyEdgeConv()
+
+    handle1 = conv.register_edge_update_forward_pre_hook(pre_hook)
+    assert len(conv._edge_update_forward_pre_hooks) == 1
+    handle2 = conv.register_edge_update_forward_hook(hook)
+    assert len(conv._edge_update_forward_hooks) == 1
+
+    out1 = conv(x, edge_index)
+    assert num_pre_hook_calls == 6
+    assert num_hook_calls == 6
+    out2 = conv(x, adj.t())
+    assert num_pre_hook_calls == 7
+    assert num_hook_calls == 7
+    assert torch.allclose(out1, out2)
+
+    handle1.remove()
+    assert len(conv._propagate_forward_pre_hooks) == 0
+    handle2.remove()
+    assert len(conv._propagate_forward_hooks) == 0
 
 
 def test_modified_message_passing_hook():

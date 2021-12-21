@@ -263,6 +263,16 @@ class BaseData(object):
         either for all attributes or only the ones given in :obj:`*args`."""
         return self.apply_(lambda x: x.record_stream(stream), *args)
 
+    @property
+    def is_cuda(self) -> bool:
+        r"""Returns :obj:`True` if any :class:`torch.Tensor` attribute is
+        stored on the GPU, :obj:`False` otherwise."""
+        for store in self.stores:
+            for value in store.values():
+                if isinstance(value, Tensor) and value.is_cuda:
+                    return True
+        return False
+
     # Deprecated functions ####################################################
 
     @deprecated(details="use 'has_isolated_nodes' instead")
