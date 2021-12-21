@@ -21,7 +21,7 @@ class KarateClub(InMemoryDataset):
             (default: :obj:`None`)
     """
     def __init__(self, transform=None):
-        super().__init__('.', transform, None, None)
+        super().__init__('.', transform)
 
         import networkx as nx
 
