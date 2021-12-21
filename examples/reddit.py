@@ -1,3 +1,4 @@
+import copy
 import os.path as osp
 from tqdm import tqdm
 
@@ -13,27 +14,21 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 path = '/data/datasets/Reddit'  # TODO
 dataset = Reddit(path)
+
+# Already send node features/labels to GPU for faster access during sampling:
 data = dataset[0].to(device, 'x', 'y')
-data.n_id = torch.arange(data.num_nodes, device=device)
 
-for key, value in data.items():
-    print(key, value.device)
-
-kwargs = {'batch_size': 1024, 'num_workers': 8, 'persistent_workers': True}
+kwargs = {'batch_size': 1024, 'num_workers': 6, 'persistent_workers': True}
 train_loader = NeighborLoader(data, input_nodes=data.train_mask,
                               num_neighbors=[25, 10], shuffle=True, **kwargs)
 
-print('---------------')
-for batch in tqdm(train_loader):
-    pass
-for batch in tqdm(train_loader):
-    pass
-for batch in tqdm(train_loader):
-    pass
-
-raise NotImplementedError
-subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                 shuffle=False, **kwargs)
+subgraph_loader = NeighborLoader(copy.copy(data), input_nodes=None,
+                                 num_neighbors=[-1], shuffle=False, **kwargs)
+# No need to maintain these features during evaluation:
+del subgraph_loader.data.x, subgraph_loader.data.y
+# Add global node index information.
+subgraph_loader.data.num_nodes = data.num_nodes
+subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
 
 class SAGE(torch.nn.Module):
@@ -52,18 +47,18 @@ class SAGE(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, subgraph_loader):
+    def inference(self, x_all, subgraph_loader):
         pbar = tqdm(total=len(subgraph_loader.dataset) * len(self.convs))
         pbar.set_description('Evaluating')
 
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
         # immediately computing the final representations of each batch:
-        x_all = subgraph_loader.data.x
         for i, conv in enumerate(self.convs):
             xs = []
             for batch in subgraph_loader:
-                x = conv(x_all[batch.n_id].to(device), batch.edge_index)
+                x = x_all[batch.n_id.to(x_all.device)].to(device)
+                x = conv(x, batch.edge_index.to(device))
                 if i < len(self.convs) - 1:
                     x = x.relu_()
                 xs.append(x[:batch.batch_size].cpu())
@@ -87,7 +82,7 @@ def train(epoch):
     for batch in train_loader:
         optimizer.zero_grad()
         y = batch.y[:batch.batch_size]
-        y_hat = model(batch.x, batch.edge_index)[:batch.batch_size]
+        y_hat = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
         loss = F.cross_entropy(y_hat, y)
         loss.backward()
         optimizer.step()
@@ -104,11 +99,12 @@ def train(epoch):
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model.inference(subgraph_loader).argmax(dim=-1).to(device)
+    y_hat = model.inference(data.x, subgraph_loader).argmax(dim=-1)
+    y = data.y.to(y_hat.device)
 
     accs = []
     for mask in [data.train_mask, data.val_mask, data.test_mask]:
-        accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
+        accs.append(int((y_hat[mask] == y[mask]).sum()) / int(mask.sum()))
     return accs
 
 
