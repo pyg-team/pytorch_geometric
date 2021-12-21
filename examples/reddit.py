@@ -13,13 +13,25 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 path = '/data/datasets/Reddit'  # TODO
 dataset = Reddit(path)
-data = dataset[0].to(device)
-
+data = dataset[0].to(device, 'x', 'y')
 data.n_id = torch.arange(data.num_nodes, device=device)
+
+for key, value in data.items():
+    print(key, value.device)
 
 kwargs = {'batch_size': 1024, 'num_workers': 8, 'persistent_workers': True}
 train_loader = NeighborLoader(data, input_nodes=data.train_mask,
                               num_neighbors=[25, 10], shuffle=True, **kwargs)
+
+print('---------------')
+for batch in tqdm(train_loader):
+    pass
+for batch in tqdm(train_loader):
+    pass
+for batch in tqdm(train_loader):
+    pass
+
+raise NotImplementedError
 subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
                                  shuffle=False, **kwargs)
 

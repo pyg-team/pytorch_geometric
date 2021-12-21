@@ -231,20 +231,20 @@ class NeighborLoader(BaseDataLoader):
             del kwargs['_sampler']
 
         return super().__init__(get_input_node_indices(self.data, input_nodes),
-                                collate_fn=self._sampler.__call__, **kwargs)
+                                collate_fn=self._sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        if isinstance(self.sampler.data, Data):
+        if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
-            data = filter_data(self.sampler.data, node, row, col, edge,
-                               self.sampler.perm)
+            data = filter_data(self.data, node, row, col, edge,
+                               self._sampler.perm)
             data.batch_size = batch_size
 
-        elif isinstance(self.sampler.data, HeteroData):
+        elif isinstance(self.data, HeteroData):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict, self.sampler.perm_dict)
-            data[self.sampler.input_node_type].batch_size = batch_size
+                                      edge_dict, self._sampler.perm_dict)
+            data[self._sampler.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
 
