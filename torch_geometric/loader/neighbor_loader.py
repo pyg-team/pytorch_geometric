@@ -24,7 +24,6 @@ class NeighborSampler:
         directed: bool = True,
         input_node_type: Optional[str] = None,
     ):
-        self.data = data  # TODO
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
         self.replace = replace
@@ -74,11 +73,7 @@ class NeighborSampler:
                 self.replace,
                 self.directed,
             )
-
             return node, row, col, edge, index.numel()
-            data = filter_data(self.data, node, row, col, edge, self.perm)
-            data.batch_size = index.numel()
-            return data
 
         elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
