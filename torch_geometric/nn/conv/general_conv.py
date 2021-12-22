@@ -115,7 +115,8 @@ class GeneralConv(MessagePassing):
 
     def reset_parameters(self):
         self.lin_msg.reset_parameters()
-        self.lin_self.reset_parameters()
+        if hasattr(self.lin_self, 'reset_parameters'):
+            self.lin_self.reset_parameters()
         if self.in_edge_channels is not None:
             self.lin_edge.reset_parameters()
         if self.attention and self.attention_type == 'additive':
