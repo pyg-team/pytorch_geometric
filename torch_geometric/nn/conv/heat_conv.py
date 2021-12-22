@@ -1,5 +1,5 @@
 from typing import Optional
-from torch_geometric.typing import Adj, Size, OptTensor
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
@@ -89,8 +89,7 @@ class HEATConv(MessagePassing):
         self.lin.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
-                edge_type: Tensor, edge_attr: OptTensor = None,
-                size: Size = None) -> Tensor:
+                edge_type: Tensor, edge_attr: OptTensor = None) -> Tensor:
         """"""
         x = self.hetero_lin(x, node_type)
 
@@ -99,7 +98,7 @@ class HEATConv(MessagePassing):
 
         # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
-                             edge_attr=edge_attr, size=size)
+                             edge_attr=edge_attr, size=None)
 
         if self.concat:
             if self.root_weight:

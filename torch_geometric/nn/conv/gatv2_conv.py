@@ -1,5 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import (Adj, Size, OptTensor, PairTensor)
+from torch_geometric.typing import (Adj, OptTensor, PairTensor)
 
 import torch
 from torch import Tensor
@@ -163,12 +163,12 @@ class GATv2Conv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None,
+                edge_attr: OptTensor = None,
                 return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -202,8 +202,6 @@ class GATv2Conv(MessagePassing):
                 num_nodes = x_l.size(0)
                 if x_r is not None:
                     num_nodes = min(num_nodes, x_r.size(0))
-                if size is not None:
-                    num_nodes = min(size[0], size[1])
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
@@ -220,7 +218,7 @@ class GATv2Conv(MessagePassing):
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
-                             size=size)
+                             size=None)
 
         alpha = self._alpha
         self._alpha = None
