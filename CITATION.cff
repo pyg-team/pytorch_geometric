@@ -8,6 +8,5 @@ authors:
 - family-names: "Lenssen"
   given-names: "Jan Eric"
 date-released: 2019-05-06
-version: 2.0.3
 license: MIT
 url: "https://github.com/pyg-team/pytorch_geometric"
