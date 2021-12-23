@@ -59,7 +59,7 @@ Run the entire test suite with
 pytest
 ```
 
-or run individual test files, like `pytest test/utils/test_convert.py`, for individual test suites.
+or test individual files via, *e.g.*, `pytest test/utils/test_convert.py`.
 
 ## Continuous Integration
 
