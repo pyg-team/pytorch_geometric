@@ -62,7 +62,7 @@ jobs:
         run: |
           pytest --cov --cov-report=xml
 
-      - name: Upload coverage report to codecov
+      - name: Upload coverage
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
