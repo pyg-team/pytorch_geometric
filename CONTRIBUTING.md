@@ -15,38 +15,37 @@ To develop PyG on your machine, here are some tips:
 
 1. Uninstall all existing PyG installations:
 
-```
-pip uninstall torch-geometric
-pip uninstall torch-geometric  # run this command twice
-```
+    ```
+    pip uninstall torch-geometric
+    pip uninstall torch-geometric  # run this command twice
+    ```
 
 2. Clone a copy of PyG from source:
 
-```
-git clone https://github.com/pyg-team/pytorch_geometric
-cd pytorch_geometric
-```
+    ```
+    git clone https://github.com/pyg-team/pytorch_geometric
+    cd pytorch_geometric
+    ```
 
 3. If you already cloned PyG from source, update it:
 
-```
-git pull
-```
+    ```
+    git pull
+    ```
 
 4. Install PyG in editable mode:
 
-```
-pip install -e .[test]
-```
+    ```
+    pip install -e .[test]
+    ```
 
-This mode will symlink the Python files from the current local source tree into the Python install.
-Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
+    This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
 
 5. Ensure that you have a working PyG installation by running the entire test suite with
 
-```
-pytest
-```
+    ```
+    pytest
+    ```
 
 In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
 
@@ -69,17 +68,17 @@ Everytime you send a Pull Request, your commit will be built and checked against
 
 1. Ensure that your code is formatted correctly by testing against the styleguide of [`flake8`](https://github.com/PyCQA/flake8)://github.com/PyCQA/pycodestyle):
 
-```
-flake8 .
-```
+    ```
+    flake8 .
+    ```
 
 If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
 2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
 
-```
-pytest --cov
-```
+    ```
+    pytest --cov
+    ```
 
 ## Building Documentation
 
