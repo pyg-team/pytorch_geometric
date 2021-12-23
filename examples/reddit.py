@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 import copy
 import os.path as osp
 from tqdm import tqdm
+=======
+from pathlib import Path
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 
 import torch
 import torch.nn.functional as F
@@ -11,7 +15,7 @@ from torch_geometric.loader import NeighborLoader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Reddit')
 dataset = Reddit(path)
 
 # Already send node features/labels to GPU for faster access during sampling:

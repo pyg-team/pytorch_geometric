@@ -1,7 +1,8 @@
 from typing import Optional, Callable, List
 
 import shutil
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 from torch_geometric.data import InMemoryDataset, extract_zip
@@ -69,8 +70,8 @@ class FAUST(InMemoryDataset):
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
 
-        path = osp.join(self.raw_dir, 'MPI-FAUST', 'training', 'registrations')
-        path = osp.join(path, 'tr_reg_{0:03d}.ply')
+        path = Path.joinpath(Path(self.raw_dir), 'MPI-FAUST', 'training', 'registrations')
+        path = Path.joinpath(path, 'tr_reg_{0:03d}.ply')
         data_list = []
         for i in range(100):
             data = read_ply(path.format(i))
@@ -84,4 +85,4 @@ class FAUST(InMemoryDataset):
         torch.save(self.collate(data_list[:80]), self.processed_paths[0])
         torch.save(self.collate(data_list[80:]), self.processed_paths[1])
 
-        shutil.rmtree(osp.join(self.raw_dir, 'MPI-FAUST'))
+        shutil.rmtree(Path.joinpath(Path(self.raw_dir), 'MPI-FAUST'))

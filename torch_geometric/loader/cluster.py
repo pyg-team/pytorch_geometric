@@ -1,6 +1,6 @@
 import sys
 import copy
-import os.path as osp
+from pathlib import Path
 from typing import Optional
 
 import torch
@@ -35,8 +35,9 @@ class ClusterData(torch.utils.data.Dataset):
 
         recursive_str = '_recursive' if recursive else ''
         filename = f'partition_{num_parts}{recursive_str}.pt'
-        path = osp.join(save_dir or '', filename)
-        if save_dir is not None and osp.exists(path):
+        p = save_dir or ''
+        path = Path.joinpath(Path(p), filename)
+        if save_dir is not None and path.exists():
             adj, partptr, perm = torch.load(path)
         else:
             if log:  # pragma: no cover

@@ -1,7 +1,6 @@
 from typing import Optional, Callable, List, Dict, Tuple
 
-import os
-import os.path as osp
+from pathlib import Path
 import shutil
 
 import torch
@@ -55,16 +54,16 @@ class DBP15K(InMemoryDataset):
     def download(self):
         from google_drive_downloader import GoogleDriveDownloader as gdd
 
-        path = osp.join(self.root, 'raw.zip')
+        path = Path.joinpath(Path(self.root), 'raw.zip')
         gdd.download_file_from_google_drive(self.file_id, path)
         extract_zip(path, self.root)
-        os.unlink(path)
+        Path(path).unlink()
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, 'DBP15K'), self.raw_dir)
+        Path.joinpath(Path(self.root), 'DBP15K').rename(Path(self.raw_dir))
 
     def process(self):
         embs = {}
-        with open(osp.join(self.raw_dir, 'sub.glove.300d'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'sub.glove.300d'), 'r') as f:
             for i, line in enumerate(f):
                 info = line.strip().split(' ')
                 if len(info) > 300:
@@ -72,20 +71,20 @@ class DBP15K(InMemoryDataset):
                 else:
                     embs['**UNK**'] = torch.tensor([float(x) for x in info])
 
-        g1_path = osp.join(self.raw_dir, self.pair, 'triples_1')
-        x1_path = osp.join(self.raw_dir, self.pair, 'id_features_1')
-        g2_path = osp.join(self.raw_dir, self.pair, 'triples_2')
-        x2_path = osp.join(self.raw_dir, self.pair, 'id_features_2')
+        g1_path = Path.joinpath(Path(self.raw_dir), self.pair, 'triples_1')
+        x1_path = Path.joinpath(Path(self.raw_dir), self.pair, 'id_features_1')
+        g2_path = Path.joinpath(Path(self.raw_dir), self.pair, 'triples_2')
+        x2_path = Path.joinpath(Path(self.raw_dir), self.pair, 'id_features_2')
 
         x1, edge_index1, rel1, assoc1 = self.process_graph(
             g1_path, x1_path, embs)
         x2, edge_index2, rel2, assoc2 = self.process_graph(
             g2_path, x2_path, embs)
 
-        train_path = osp.join(self.raw_dir, self.pair, 'train.examples.20')
+        train_path = Path.joinpath(Path(self.raw_dir), self.pair, 'train.examples.20')
         train_y = self.process_y(train_path, assoc1, assoc2)
 
-        test_path = osp.join(self.raw_dir, self.pair, 'test.examples.1000')
+        test_path = Path.joinpath(Path(self.raw_dir), self.pair, 'test.examples.1000')
         test_y = self.process_y(test_path, assoc1, assoc2)
 
         data = Data(x1=x1, edge_index1=edge_index1, rel1=rel1, x2=x2,

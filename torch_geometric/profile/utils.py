@@ -5,6 +5,7 @@ import gc
 import sys
 import random
 import os.path as osp
+from pathlib import Path
 import subprocess as sp
 from collections.abc import Sequence, Mapping
 
@@ -32,8 +33,10 @@ def get_model_size(model: torch.nn.Module) -> int:
     """
     path = f'{random.randrange(sys.maxsize)}.pt'
     torch.save(model.state_dict(), path)
-    model_size = osp.getsize(path)
-    os.remove(path)
+    model_size = Path(path).stat().st_size
+    Path(path).unlink()
+    # uncomment the below line when python is updated to 3.8
+    # Path(path).unlink(missing_ok = True)
     return model_size
 
 

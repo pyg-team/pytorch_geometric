@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -19,7 +19,7 @@ class HandleNodeAttention(object):
 
 
 transform = T.Compose([HandleNodeAttention(), T.OneHotDegree(max_degree=14)])
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TRIANGLES')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'TRIANGLES')
 dataset = TUDataset(path, name='TRIANGLES', use_node_attr=True,
                     transform=transform)
 

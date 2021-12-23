@@ -51,7 +51,7 @@ class MNISTSuperpixels(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         inputs = torch.load(self.raw_paths[0])

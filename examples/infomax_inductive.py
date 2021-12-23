@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn as nn
@@ -9,7 +9,7 @@ from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn import DeepGraphInfomax
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Reddit')
 dataset = Reddit(path)
 data = dataset[0]
 

@@ -1,5 +1,5 @@
 import argparse
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -17,7 +17,7 @@ parser.add_argument('--use_multi_aggregators', action='store_true',
                     help='Switch between EGC-S and EGC-M')
 args = parser.parse_args()
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OGB')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'OGB')
 dataset = OGBG('ogbg-molhiv', path, pre_transform=T.ToSparseTensor())
 evaluator = Evaluator('ogbg-molhiv')
 

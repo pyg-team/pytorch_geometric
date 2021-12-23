@@ -1,7 +1,8 @@
 from typing import Optional, Callable, List
 
 import json
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -47,37 +48,37 @@ class Flickr(InMemoryDataset):
     def download(self):
         from google_drive_downloader import GoogleDriveDownloader as gdd
 
-        path = osp.join(self.raw_dir, 'adj_full.npz')
+        path = Path.joinpath(Path(self.raw_dir), 'adj_full.npz')
         gdd.download_file_from_google_drive(self.adj_full_id, path)
 
-        path = osp.join(self.raw_dir, 'feats.npy')
+        path = Path.joinpath(Path(self.raw_dir), 'feats.npy')
         gdd.download_file_from_google_drive(self.feats_id, path)
 
-        path = osp.join(self.raw_dir, 'class_map.json')
+        path = Path.joinpath(Path(self.raw_dir), 'class_map.json')
         gdd.download_file_from_google_drive(self.class_map_id, path)
 
-        path = osp.join(self.raw_dir, 'role.json')
+        path = Path.joinpath(Path(self.raw_dir), 'role.json')
         gdd.download_file_from_google_drive(self.role_id, path)
 
     def process(self):
-        f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
+        f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        x = np.load(osp.join(self.raw_dir, 'feats.npy'))
+        x = np.load(Path.joinpath(Path(self.raw_dir), 'feats.npy'))
         x = torch.from_numpy(x).to(torch.float)
 
         ys = [-1] * x.size(0)
-        with open(osp.join(self.raw_dir, 'class_map.json')) as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'class_map.json')) as f:
             class_map = json.load(f)
             for key, item in class_map.items():
                 ys[int(key)] = item
         y = torch.tensor(ys)
 
-        with open(osp.join(self.raw_dir, 'role.json')) as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'role.json')) as f:
             role = json.load(f)
 
         train_mask = torch.zeros(x.size(0), dtype=torch.bool)

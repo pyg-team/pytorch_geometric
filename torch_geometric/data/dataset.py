@@ -5,7 +5,8 @@ import re
 import copy
 import warnings
 import numpy as np
-import os.path as osp
+from pathlib import Path
+# import os.path as osp
 from collections.abc import Sequence
 
 import torch.utils.data
@@ -73,7 +74,8 @@ class Dataset(torch.utils.data.Dataset):
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(osp.normpath(root))
+            root = Path.expanduser(Path(root).resolve())
+            # root = osp.expanduser(osp.normpath(root))
 
         self.root = root
         self.transform = transform
@@ -92,11 +94,13 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, 'raw')
+        return Path.joinpath(Path(self.root), 'raw')
+        # return osp.join(self.root, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, 'processed')
+        return Path.joinpath(Path(self.root), 'processed')
+        # return osp.join(self.root, 'processed')
 
     @property
     def num_node_features(self) -> int:
@@ -129,14 +133,15 @@ class Dataset(torch.utils.data.Dataset):
         r"""The absolute filepaths that must be present in order to skip
         downloading."""
         files = to_list(self.raw_file_names)
-        return [osp.join(self.raw_dir, f) for f in files]
+        return [Path.joinpath(Path(self.raw_dir), f) for f in files]
+        # return [osp.join(self.raw_dir, f) for f in files]
 
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         processing."""
         files = to_list(self.processed_file_names)
-        return [osp.join(self.processed_dir, f) for f in files]
+        return [Path.joinpath(Path(self.processed_dir), f) for f in files]
 
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
@@ -146,16 +151,16 @@ class Dataset(torch.utils.data.Dataset):
         self.download()
 
     def _process(self):
-        f = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
+        f = Path.joinpath(Path(self.processed_dir), 'pre_transform.pt')
+        if f.exists() and torch.load(f) != _repr(self.pre_transform):
             warnings.warn(
                 f"The `pre_transform` argument differs from the one used in "
                 f"the pre-processed version of this dataset. If you want to "
                 f"make use of another pre-processing technique, make sure to "
                 f"sure to delete '{self.processed_dir}' first")
 
-        f = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
+        f = Path.joinpath(Path(self.processed_dir), 'pre_filter.pt')
+        if f.exists() and torch.load(f) != _repr(self.pre_filter):
             warnings.warn(
                 "The `pre_filter` argument differs from the one used in the "
                 "pre-processed version of this dataset. If you want to make "
@@ -170,9 +175,9 @@ class Dataset(torch.utils.data.Dataset):
         makedirs(self.processed_dir)
         self.process()
 
-        path = osp.join(self.processed_dir, 'pre_transform.pt')
+        path = Path.joinpath(Path(self.processed_dir), 'pre_transform.pt')
         torch.save(_repr(self.pre_transform), path)
-        path = osp.join(self.processed_dir, 'pre_filter.pt')
+        path = Path.joinpath(Path(self.processed_dir), 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
         print('Done!', file=sys.stderr)
@@ -269,7 +274,7 @@ def to_list(value: Any) -> Sequence:
 def files_exist(files: List[str]) -> bool:
     # NOTE: We return `False` in case `files` is empty, leading to a
     # re-processing of files on every instantiation.
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([Path(f).exists() for f in files])
 
 
 def _repr(obj: Any) -> str:

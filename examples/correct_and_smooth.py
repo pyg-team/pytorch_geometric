@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
@@ -6,7 +6,7 @@ from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 import torch_geometric.transforms as T
 from torch_geometric.nn import MLP, CorrectAndSmooth
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OGB')
+root = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'OGB')
 dataset = PygNodePropPredDataset('ogbn-products', root,
                                  transform=T.ToSparseTensor())
 evaluator = Evaluator(name='ogbn-products')

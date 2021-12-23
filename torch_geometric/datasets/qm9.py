@@ -1,8 +1,7 @@
 from typing import Optional, Callable, List
 
 import sys
-import os
-import os.path as osp
+from pathlib import Path
 from tqdm import tqdm
 
 import torch
@@ -151,15 +150,15 @@ class QM9(InMemoryDataset):
             import rdkit  # noqa
             file_path = download_url(self.raw_url, self.raw_dir)
             extract_zip(file_path, self.raw_dir)
-            os.unlink(file_path)
+            Path(file_path).unlink()
 
             file_path = download_url(self.raw_url2, self.raw_dir)
-            os.rename(osp.join(self.raw_dir, '3195404'),
-                      osp.join(self.raw_dir, 'uncharacterized.txt'))
+            Path.joinpath(Path(self.raw_dir), '3195404').rename(
+                    Path.joinpath(Path(self.raw_dir), 'uncharacterized.txt'))
         except ImportError:
             path = download_url(self.processed_url, self.raw_dir)
             extract_zip(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         try:

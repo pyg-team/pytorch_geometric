@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import argparse
 import torch
@@ -8,7 +8,7 @@ from torch_geometric.loader import GraphSAINTRandomWalkSampler
 from torch_geometric.nn import GraphConv
 from torch_geometric.utils import degree
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]
 row, col = data.edge_index

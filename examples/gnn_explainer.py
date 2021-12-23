@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,9 +8,14 @@ import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GNNExplainer
 
 dataset = 'Cora'
+<<<<<<< HEAD
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 transform = T.Compose([T.GCNNorm(), T.NormalizeFeatures()])
 dataset = Planetoid(path, dataset, transform=transform)
+=======
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Planetoid')
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 data = dataset[0]
 
 

@@ -1,5 +1,5 @@
 import math
-import os.path as osp
+from pathlib import Path
 from itertools import chain
 
 import numpy as np
@@ -124,7 +124,7 @@ class SEALDataset(InMemoryDataset):
         return z.to(torch.long)
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
 
 train_dataset = SEALDataset(dataset, num_hops=2, split='train')

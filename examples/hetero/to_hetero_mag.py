@@ -1,5 +1,5 @@
 import argparse
-import os.path as osp
+from pathlib import Path
 from tqdm import tqdm
 
 import torch
@@ -15,9 +15,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
 args = parser.parse_args()
 
+<<<<<<< HEAD
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
+=======
+path = Path.joinpath(Path(__file__).resolve().parent, '../../data/OGB')
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 transform = T.ToUndirected(merge=True)
 dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
 

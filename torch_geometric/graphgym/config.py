@@ -1,5 +1,5 @@
 import logging
-import os
+from pathlib import Path
 from yacs.config import CfgNode as CN
 import shutil
 
@@ -463,8 +463,12 @@ def dump_cfg(cfg):
         cfg (CfgNode): Configuration node
 
     """
+<<<<<<< HEAD
     makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
+=======
+    cfg_file = Path.joinpath(Path(cfg.out_dir), cfg.cfg_dest)
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
@@ -484,9 +488,9 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if os.path.isdir(dir):
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
-    os.makedirs(dir, exist_ok=True)
+    Path.mkdir(dir, exist_ok=True)
 
 
 def get_fname(fname):
@@ -513,11 +517,18 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
+<<<<<<< HEAD
     fname = get_fname(fname)
     cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
+=======
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    cfg.run_dir = Path.joinpath(Path(out_dir), fname, str(cfg.seed))
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
     # Make output directory
     if cfg.train.auto_resume:
-        os.makedirs(cfg.run_dir, exist_ok=True)
+        Path.mkdir(cfg.run_dir, exist_ok=True)
     else:
         makedirs_rm_exist(cfg.run_dir)
 
@@ -532,8 +543,15 @@ def set_agg_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
+<<<<<<< HEAD
     fname = get_fname(fname)
     return os.path.join(out_dir, fname)
+=======
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    return Path.joinpath(Path(out_dir), fname)
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 
 
 set_cfg(cfg)

@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import re
 
 import torch
@@ -119,11 +120,11 @@ class MoleculeNet(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self):
@@ -138,7 +139,7 @@ class MoleculeNet(InMemoryDataset):
         path = download_url(url, self.raw_dir)
         if self.names[self.name][1][-2:] == 'gz':
             extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         from rdkit import Chem

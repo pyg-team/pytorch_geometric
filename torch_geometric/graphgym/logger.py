@@ -1,5 +1,9 @@
 import torch
 import math
+<<<<<<< HEAD
+=======
+from pathlib import Path
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 import sys
 import logging
 
@@ -43,7 +47,11 @@ class Logger(object):
         self._time_total = 0  # won't be reset
 
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
+<<<<<<< HEAD
         makedirs(self.out_dir)
+=======
+        Path.mkdir(self.out_dir, exist_ok=True)
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         if cfg.tensorboard_each_run:
             from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)

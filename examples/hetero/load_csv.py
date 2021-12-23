@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import pandas as pd
@@ -8,10 +8,10 @@ from torch_geometric.data import HeteroData, download_url, extract_zip
 from torch_geometric.transforms import ToUndirected, RandomLinkSplit
 
 url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
-root = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
+root = Path.joinpath(Path(__file__).resolve().parent, '../../data/MovieLens')
 extract_zip(download_url(url, root), root)
-movie_path = osp.join(root, 'ml-latest-small', 'movies.csv')
-rating_path = osp.join(root, 'ml-latest-small', 'ratings.csv')
+movie_path = Path.joinpath(root, 'ml-latest-small', 'movies.csv')
+rating_path = Path.joinpath(root, 'ml-latest-small', 'ratings.csv')
 
 
 def load_node_csv(path, index_col, encoders=None, **kwargs):

@@ -1,7 +1,7 @@
 import os
-import os.path as osp
+
+from pathlib import Path
 import shutil
-import glob
 
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
@@ -72,14 +72,19 @@ class ModelNet(InMemoryDataset):
     def download(self):
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
+<<<<<<< HEAD
         os.unlink(path)
         folder = osp.join(self.root, f'ModelNet{self.name}')
+=======
+        Path(path).unlink()
+        folder = Path.joinpath(Path(self.root), 'ModelNet{}'.format(self.name))
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         shutil.rmtree(self.raw_dir)
-        os.rename(folder, self.raw_dir)
+        Path(folder).rename(Path(self.raw_dir))
 
         # Delete osx metadata generated during compression of ModelNet10
-        metadata_folder = osp.join(self.root, '__MACOSX')
-        if osp.exists(metadata_folder):
+        metadata_folder = Path.joinpath(Path(self.root), '__MACOSX')
+        if Path(metadata_folder).exists():
             shutil.rmtree(metadata_folder)
 
     def process(self):
@@ -87,13 +92,20 @@ class ModelNet(InMemoryDataset):
         torch.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset):
-        categories = glob.glob(osp.join(self.raw_dir, '*', ''))
+        categories = Path(self.raw_dir).rglob('*')
+        # categories = glob.glob(Path.joinpath(Path(self.raw_dir), '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
+<<<<<<< HEAD
             folder = osp.join(self.raw_dir, category, dataset)
             paths = glob.glob(f'{folder}/{category}_*.off')
+=======
+            folder = Path.joinpath(Path(self.raw_dir), category, dataset)
+            paths = Path(folder).rglob('{}_*.off'.format(category))
+            # paths = glob.glob('{}/{}_*.off'.format(folder, category))
+>>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             for path in paths:
                 data = read_off(path)
                 data.y = torch.tensor([target])

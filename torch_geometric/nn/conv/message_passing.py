@@ -4,7 +4,8 @@ from torch_geometric.typing import Adj, Size
 import os
 import re
 import inspect
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
@@ -636,8 +637,8 @@ class MessagePassing(torch.nn.Module):
             forward_types = []
             forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        root = os.path.dirname(osp.realpath(__file__))
-        with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
+        root = Path(__file__).resolve().parent
+        with open(Path.joinpath(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
         uid = uuid1().hex[:6]
