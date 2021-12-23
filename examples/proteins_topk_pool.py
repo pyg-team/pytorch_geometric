@@ -7,7 +7,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GraphConv, TopKPooling
 from torch_geometric.nn import global_mean_pool as gap, global_max_pool as gmp
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'PROTEINS')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS')
 dataset = dataset.shuffle()
 n = len(dataset) // 10

@@ -6,7 +6,7 @@ from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import DimeNet
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'QM9')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'QM9')
 dataset = QM9(path)
 
 # DimeNet uses the atomization energy for targets U0, U, H, and G.

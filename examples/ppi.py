@@ -7,7 +7,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GATConv
 from sklearn.metrics import f1_score
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'PPI')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PPI')
 train_dataset = PPI(path, split='train')
 val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')

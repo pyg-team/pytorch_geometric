@@ -10,7 +10,7 @@ from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import PNAConv, BatchNorm, global_add_pool
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'ZINC')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'ZINC')
 train_dataset = ZINC(path, subset=True, split='train')
 val_dataset = ZINC(path, subset=True, split='val')
 test_dataset = ZINC(path, subset=True, split='test')

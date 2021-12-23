@@ -16,7 +16,7 @@ from torch_cluster import knn_graph
 from torch_cluster import fps
 from torch_scatter import scatter_max
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
+path = osp.join(osp.dirname(osp.realpath(__file__)).parent, 'data','ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)

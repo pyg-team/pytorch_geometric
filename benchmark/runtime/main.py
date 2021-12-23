@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 from itertools import product
 
 import torch
@@ -10,11 +10,11 @@ from runtime.rgcn import RGCN
 from runtime.train import train_runtime
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
-Cora = Planetoid(osp.join(root, 'Cora'), 'Cora')
-CiteSeer = Planetoid(osp.join(root, 'CiteSeer'), 'CiteSeer')
-PubMed = Planetoid(osp.join(root, 'PubMed'), 'PubMed')
-MUTAG = Entities(osp.join(root, 'EntitiesMUTAG'), 'MUTAG')
+root = Path.joinpath(Path(__file__).resolve().parent.parent,'data')
+Cora = Planetoid(str(root.joinpath('Cora')), 'Cora')
+CiteSeer = Planetoid(str(root.joinpath('CiteSeer')), 'CiteSeer')
+PubMed = Planetoid(str(root.join('PubMed')), 'PubMed')
+MUTAG = Entities(str(root.joinpath('EntitiesMUTAG')), 'MUTAG')
 
 # One training run before we start tracking duration to warm up GPU.
 model = GCN(Cora.num_features, Cora.num_classes)

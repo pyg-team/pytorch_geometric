@@ -24,7 +24,7 @@ from torch_geometric.nn.models.tgn import (LastNeighborLoader, IdentityMessage,
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'JODIE')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0].to(device)
 

@@ -3,7 +3,7 @@ from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 import torch_geometric.transforms as T
 from torch_geometric.nn import LabelPropagation
 
-root = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'OGB')
+root = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'OGB')
 dataset = PygNodePropPredDataset(
     'ogbn-arxiv', root, transform=T.Compose([
         T.ToUndirected(),

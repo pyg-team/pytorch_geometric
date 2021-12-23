@@ -7,7 +7,7 @@ import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv, voxel_grid, max_pool, max_pool_x
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'MNIST')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
 test_dataset = MNISTSuperpixels(path, False, transform=transform)

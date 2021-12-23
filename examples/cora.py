@@ -11,7 +11,7 @@ transform = T.Compose([
     T.RandomNodeSplit(num_val=500, num_test=500),
     T.TargetIndegree(),
 ])
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
 

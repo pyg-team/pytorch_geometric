@@ -16,7 +16,7 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data',
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data',
                 'PROTEINS_dense')
 dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
                     pre_filter=MyFilter())

@@ -8,7 +8,7 @@ from torch_geometric.nn import GCNConv
 from torch.utils.tensorboard import SummaryWriter
 
 dataset = 'Cora'
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 

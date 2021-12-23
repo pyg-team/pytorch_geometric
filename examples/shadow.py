@@ -1,4 +1,5 @@
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +9,7 @@ from torch_geometric.datasets import Flickr
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.loader import ShaDowKHopSampler
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]
 

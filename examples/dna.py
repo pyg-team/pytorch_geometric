@@ -7,7 +7,7 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import DNAConv
 
 dataset = 'Cora'
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
 dataset = Planetoid(path, dataset)
 data = dataset[0]
 data.train_mask = data.val_mask = data.test_mask = None

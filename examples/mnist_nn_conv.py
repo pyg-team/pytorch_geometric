@@ -10,7 +10,7 @@ from torch_geometric.utils import normalized_cut
 from torch_geometric.nn import (NNConv, graclus, max_pool, max_pool_x,
                                 global_mean_pool)
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'MNIST')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
 test_dataset = MNISTSuperpixels(path, False, transform=transform)

@@ -5,7 +5,7 @@ from torch_geometric.datasets import BitcoinOTC
 from torch_geometric.nn import SignedGCN
 
 name = 'BitcoinOTC-1'
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', name)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', name)
 dataset = BitcoinOTC(path, edge_window_size=1)
 
 # Generate dataset.

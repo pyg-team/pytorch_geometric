@@ -8,7 +8,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', '..', 'data', 'TU')
+path = Path.joinpath(Path(__file__).resolve().parent.parent.parent, 'data', 'TU')
 dataset = TUDataset(path, name='IMDB-BINARY', transform=OneHotDegree(135))
 dataset = dataset.shuffle()
 test_dataset = dataset[:len(dataset) // 10]

@@ -47,7 +47,7 @@ class Complete(object):
         return data
 
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'QM9')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'QM9')
 transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
 dataset = QM9(path, transform=transform).shuffle()
 

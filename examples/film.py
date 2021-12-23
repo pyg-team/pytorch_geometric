@@ -8,7 +8,7 @@ from torch_geometric.nn import FiLMConv
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'PPI')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PPI')
 train_dataset = PPI(path, split='train')
 val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')

@@ -18,7 +18,7 @@ parser.add_argument('--model', type=str, default='GCN',
                     choices=['GCN', 'GAT', 'SAGE'])
 args = parser.parse_args()
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'UPFD')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'UPFD')
 train_dataset = UPFD(path, args.dataset, args.feature, 'train', ToUndirected())
 val_dataset = UPFD(path, args.dataset, args.feature, 'val', ToUndirected())
 test_dataset = UPFD(path, args.dataset, args.feature, 'test', ToUndirected())

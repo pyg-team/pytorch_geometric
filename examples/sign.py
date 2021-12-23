@@ -8,7 +8,7 @@ from torch_geometric.datasets import Flickr
 import torch_geometric.transforms as T
 
 K = 2
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Flickr')
 transform = T.Compose([T.NormalizeFeatures(), T.SIGN(K)])
 dataset = Flickr(path, transform=transform)
 data = dataset[0]

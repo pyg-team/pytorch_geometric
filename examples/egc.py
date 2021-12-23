@@ -17,7 +17,7 @@ parser.add_argument('--use_multi_aggregators', action='store_true',
                     help='Switch between EGC-S and EGC-M')
 args = parser.parse_args()
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'OGB')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'OGB')
 dataset = OGBG('ogbg-molhiv', path, pre_transform=T.ToSparseTensor())
 evaluator = Evaluator('ogbg-molhiv')
 

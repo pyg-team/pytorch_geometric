@@ -16,7 +16,7 @@ from torch.nn import Parameter
 from torch_geometric.nn import GAE, RGCNConv
 from torch_geometric.datasets import RelLinkPredDataset
 
-path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'RLPD')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'RLPD')
 dataset = RelLinkPredDataset(path, 'FB15k-237')
 data = dataset[0]
 
