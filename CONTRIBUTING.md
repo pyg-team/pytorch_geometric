@@ -15,38 +15,37 @@ To develop PyG on your machine, here are some tips:
 
 1. Uninstall all existing PyG installations:
 
-```
-pip uninstall torch-geometric
-pip uninstall torch-geometric  # run this command twice
-```
+    ```
+    pip uninstall torch-geometric
+    pip uninstall torch-geometric  # run this command twice
+    ```
 
 2. Clone a copy of PyG from source:
 
-```
-git clone https://github.com/pyg-team/pytorch_geometric
-cd pytorch_geometric
-```
+    ```
+    git clone https://github.com/pyg-team/pytorch_geometric
+    cd pytorch_geometric
+    ```
 
 3. If you already cloned PyG from source, update it:
 
-```
-git pull
-```
+    ```
+    git pull
+    ```
 
 4. Install PyG in editable mode:
 
-```
-python -m pip install -e .
-```
+    ```
+    pip install -e .[test]
+    ```
 
-This mode will symlink the Python files from the current local source tree into the Python install.
-Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
+    This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
 
 5. Ensure that you have a working PyG installation by running the entire test suite with
 
-```
-python -m pytest
-```
+    ```
+    pytest
+    ```
 
 In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
 
@@ -56,10 +55,10 @@ The PyG testing suite is located under `test/`.
 Run the entire test suite with
 
 ```
-python -m pytest
+pytest
 ```
 
-or run individual test files, like `python -m pytest --no-cov test/utils/test_convert.py`, for individual test suites.
+or test individual files via, *e.g.*, `pytest test/utils/test_convert.py`.
 
 ## Continuous Integration
 
@@ -67,20 +66,19 @@ PyG uses [GitHub Actions](https://github.com/pyg-team/pytorch_geometric/actions)
 
 Everytime you send a Pull Request, your commit will be built and checked against the PyG guidelines:
 
-1. Ensure that your code is formatted correctly by testing against the styleguides of [`flake8`](https://github.com/PyCQA/flake8) and [`pycodestyle`](https://github.com/PyCQA/pycodestyle):
+1. Ensure that your code is formatted correctly by testing against the styleguide of [`flake8`](https://github.com/PyCQA/flake8)://github.com/PyCQA/pycodestyle):
 
-```
-pycodestyle torch_geometric test examples
-flake8 torch_geometric test examples
-```
+    ```
+    flake8 .
+    ```
 
-If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
+    If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
 2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
 
-```
-python -m pytest
-```
+    ```
+    pytest --cov
+    ```
 
 ## Building Documentation
 
@@ -90,9 +88,9 @@ To build the documentation:
 2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
 3. Generate the documentation via:
 
-```
-cd docs
-make html
-```
+    ```
+    cd docs
+    make html
+    ```
 
 The documentation is now available to view by opening `docs/build/html/index.html`.
