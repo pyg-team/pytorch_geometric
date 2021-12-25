@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Union, Any
 
 import os
 import glob
@@ -64,7 +64,7 @@ def get_ckpt_dir() -> str:
     return osp.join(cfg.run_dir, 'ckpt')
 
 
-def get_ckpt_path(name: str) -> str:
+def get_ckpt_path(name: Union[int, str]) -> str:
     return osp.join(get_ckpt_dir(), f'{name}.ckpt')
 
 
