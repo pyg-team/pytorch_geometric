@@ -53,7 +53,7 @@ def save_ckpt(
 
 def clean_ckpt():
     r"""Removes all but the last model checkpoint."""
-    for epoch in get_ckpt_epochs[:-1]:
+    for epoch in get_ckpt_epochs()[:-1]:
         os.remove(get_ckpt_path(epoch))
 
 
