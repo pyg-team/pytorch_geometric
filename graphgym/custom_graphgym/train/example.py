@@ -48,7 +48,8 @@ def eval_epoch(logger, loader, model):
 def train_example(loggers, loaders, model, optimizer, scheduler):
     start_epoch = 0
     if cfg.train.auto_resume:
-        start_epoch = load_ckpt(model, optimizer, scheduler)
+        start_epoch = load_ckpt(model, optimizer, scheduler,
+                                cfg.train.epoch_resume)
     if start_epoch == cfg.optim.max_epoch:
         logging.info('Checkpoint found, Task already done')
     else:
