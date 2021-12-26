@@ -154,7 +154,10 @@ class MyEdgeConv(MessagePassing):
         super().__init__(aggr='add')
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        # edge_updater_types: (x: Tensor)
         edge_attr = self.edge_updater(edge_index, x=x)
+
+        # propagate_type: (edge_attr: Tensor)
         return self.propagate(edge_index, edge_attr=edge_attr,
                               size=(x.size(0), x.size(0)))
 
@@ -163,6 +166,9 @@ class MyEdgeConv(MessagePassing):
 
     def message(self, edge_attr: Tensor) -> Tensor:
         return edge_attr
+
+    def update(self, inputs: Tensor) -> Tensor:
+        return inputs
 
 
 def test_my_edge_conv():
@@ -179,6 +185,12 @@ def test_my_edge_conv():
     assert out.size() == (4, 16)
     assert torch.allclose(out, expected)
     assert torch.allclose(conv(x, adj.t()), out)
+
+    jit = torch.jit.script(conv.jittable())
+    out2 = jit(x, edge_index)
+    assert out.size() == (4, 16)
+    assert torch.allclose(out2, expected)
+    assert torch.allclose(jit(x, adj.t()), out2)
 
 
 num_pre_hook_calls = 0
