@@ -624,7 +624,8 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)', source)
+                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
+                                  source)
                 if match is None:
                     raise TypeError(
                         'TorchScript support requires the definition of the types '
@@ -634,8 +635,8 @@ class MessagePassing(torch.nn.Module):
                         '# edge_updater_types: (arg1: type1, arg2: type2, ...)\n\n'
                         'inside the `MessagePassing` module.')
                 edge_updater_types = split_types_repr(match.group(1))
-                edge_updater_types = dict([re.split(r'\s*:\s*', t) for t in 
-                    edge_updater_types])
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in edge_updater_types])
         else:
             edge_updater_types = {'x': 'Tensor'}
 
@@ -653,10 +654,9 @@ class MessagePassing(torch.nn.Module):
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
 
-        # Parse `__collect__()` types to format `{arg:1, type1, ...}`, 
+        # Parse `__collect__()` types to format `{arg:1, type1, ...}`,
         # specific to the argument used for edge updates.
-        edge_collect_types = self.inspector.types(
-            ['edge_update'])
+        edge_collect_types = self.inspector.types(['edge_update'])
 
         # Collect `forward()` header, body and @overload types.
         forward_types = parse_types(self.forward)
