@@ -186,10 +186,6 @@ class BaseData(object):
         r"""Returns :obj:`True` if graph edges are directed."""
         return not self.is_undirected()
 
-    def clone(self):
-        r"""Performs a deep-copy of the data object."""
-        return copy.deepcopy(self)
-
     def apply_(self, func: Callable, *args: List[str]):
         r"""Applies the in-place function :obj:`func`, either to all attributes
         or only the ones given in :obj:`*args`."""
@@ -203,6 +199,11 @@ class BaseData(object):
         for store in self.stores:
             store.apply(func, *args)
         return self
+
+    def clone(self, *args: List[str]):
+        r"""Performs cloning of tensors, either for all attributes or only the
+        ones given in :obj:`*args`."""
+        return self.apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: List[str]):
         r"""Ensures a contiguous memory layout, either for all attributes or
