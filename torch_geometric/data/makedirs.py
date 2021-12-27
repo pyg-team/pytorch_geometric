@@ -4,7 +4,8 @@ from pathlib import Path
 import errno
 
 
-def makedirs(path):
+def makedirs(path: str):
+    r"""Recursive directory creation function."""
     try:
         Path.expanduser(Path(path).resolve()).mkdir(parents=True, exist_ok=True)
         # os.makedirs(osp.expanduser(osp.normpath(path)))
