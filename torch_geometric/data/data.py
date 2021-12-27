@@ -203,7 +203,7 @@ class BaseData(object):
     def clone(self, *args: List[str]):
         r"""Performs cloning of tensors, either for all attributes or only the
         ones given in :obj:`*args`."""
-        return self.apply(lambda x: x.clone(), *args)
+        return copy.copy(self).apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: List[str]):
         r"""Ensures a contiguous memory layout, either for all attributes or

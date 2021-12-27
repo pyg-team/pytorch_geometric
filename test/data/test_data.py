@@ -45,7 +45,8 @@ def test_data():
     data = data.coalesce()
     assert data.is_coalesced()
 
-    clone = copy.copy(data).clone()
+    clone = data.clone()
+    assert clone != data
     assert len(clone) == len(data)
     assert clone.x.data_ptr() != data.x.data_ptr()
     assert clone.x.tolist() == data.x.tolist()
