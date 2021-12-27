@@ -51,6 +51,15 @@ def save_ckpt(
     torch.save(ckpt, get_ckpt_path(epoch))
 
 
+def remove_ckpt(epoch: int = -1):
+    r"""Removes the model checkpoint at a given epoch."""
+    if epoch < 0:
+        epochs = get_ckpt_epochs()
+        epoch = epochs[epoch] if len(epochs) > 0 else 0
+
+    os.remove(get_ckpt_path(epoch))
+
+
 def clean_ckpt():
     r"""Removes all but the last model checkpoint."""
     for epoch in get_ckpt_epochs()[:-1]:
