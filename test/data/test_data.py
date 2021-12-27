@@ -45,10 +45,11 @@ def test_data():
     data = data.coalesce()
     assert data.is_coalesced()
 
-    clone = data.clone()
-    assert clone != data
+    clone = copy.copy(data).clone()
     assert len(clone) == len(data)
+    assert clone.x.data_ptr() != data.x.data_ptr()
     assert clone.x.tolist() == data.x.tolist()
+    assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
     # Test `data.to_heterogenous()`:
