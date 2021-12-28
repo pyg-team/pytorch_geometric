@@ -320,8 +320,8 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
             for _ in range(num_layers):
                 conv = HeteroConv({
                     ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
-                    ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels),
-                    ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels),
+                    ('author', 'writes', 'paper'): SAGEConv((-1, -1), hidden_channels),
+                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels),
                 }, aggr='sum')
                 self.convs.append(conv)
 
