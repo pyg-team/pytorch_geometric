@@ -317,9 +317,9 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
             self.convs = torch.nn.ModuleList()
             for _ in range(num_layers):
                 conv = HeteroConv({
-                    ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels)
-                    ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels)
-                    ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels)
+                    ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
+                    ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels),
+                    ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels),
                 }, aggr='sum')
                 self.convs.append(conv)
 
