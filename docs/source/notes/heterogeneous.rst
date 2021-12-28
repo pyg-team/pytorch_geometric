@@ -218,7 +218,9 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
     from torch_geometric.datasets import OGB_MAG
     from torch_geometric.nn import SAGEConv, to_hetero
 
-    data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())[0]
+
+    dataset = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())
+    data = dataset[0]
 
     class GNN(torch.nn.Module):
         def __init__(self, hidden_channels, out_channels):
