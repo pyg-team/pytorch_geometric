@@ -655,10 +655,9 @@ class MessagePassing(torch.nn.Module):
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
 
-        # Parse `__collect__()` types to format `{arg:1, type1, ...}`, 
+        # Parse `__collect__()` types to format `{arg:1, type1, ...}`,
         # specific to the argument used for edge updates.
-        edge_collect_types = self.inspector.types(
-            ['edge_update'])
+        edge_collect_types = self.inspector.types(['edge_update'])
 
         # Collect `forward()` header, body and @overload types.
         forward_types = parse_types(self.forward)
