@@ -9,6 +9,7 @@ import torch
 from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer
+from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
     from torch.fx import GraphModule, Graph, Node
@@ -132,6 +133,15 @@ class ToHeteroTransformer(Transformer):
         debug: bool = False,
     ):
         super().__init__(module, input_map, debug)
+
+        unused_node_types = get_unused_node_types(*metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behaviour.")
+
         self.metadata = metadata
         self.aggr = aggr
         assert len(metadata) == 2
