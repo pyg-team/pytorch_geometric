@@ -1,4 +1,5 @@
 import re
+import ast
 import inspect
 from collections import OrderedDict
 from typing import Dict, List, Any, Optional, Callable, Set
@@ -59,6 +60,26 @@ class Inspector(object):
                 data = param.default
             out[key] = data
         return out
+
+    def get_function_ast(self, func_name):
+        tree = ast.parse(inspect.getsource(self.base_class))
+        for func in tree.body[0].body:
+            if func.name == func_name:
+                return func
+        raise ValueError(f'Looking for func "{func_name}" inside of class '
+                         f'"{self.base_class}" but it was not found.')
+
+    def calls_internal(self, func_name, func_called):
+        func_ast = self.get_function_ast(func_name)
+        for stmt in ast.walk(func_ast):
+            if not isinstance(stmt, ast.Call):
+                continue
+            for call_stmt in ast.walk(stmt):
+                if isinstance(call_stmt, ast.Attribute):
+                    if isinstance(call_stmt.value, ast.Name):
+                        if call_stmt.value.id == 'self':
+                            if call_stmt.attr == func_called:
+                                return True
 
 
 def func_header_repr(func: Callable, keep_annotation: bool = True) -> str:
