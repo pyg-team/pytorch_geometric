@@ -29,7 +29,6 @@ def test_run_single_graphgym():
     cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.dataset_dir = '/tmp/dawdhaiudhaiuwdh'
     dump_cfg(cfg)
     set_printing()
 
