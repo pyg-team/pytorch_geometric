@@ -1,5 +1,5 @@
-from .mlp import MLP
-from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA
+from .basic_gnn import GCN, GraphSAGE, GIN, GINE, GAT, GATv2
+from .basic_pools import ASAPool, EdgePool, Graclus, SAGPool
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -16,17 +16,17 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
-from .rect import RECT_L
-from .linkx import LINKX
-from .lightgcn import LightGCN
 
 __all__ = [
-    'MLP',
+    'ASAPool',
+    'EdgePool',
     'GCN',
     'GraphSAGE',
     'GIN',
+    'GINE',
     'GAT',
-    'PNA',
+    'GATv2',
+    'Graclus'
     'JumpingKnowledge',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -35,6 +35,7 @@ __all__ = [
     'VGAE',
     'ARGA',
     'ARGVA',
+    'SAGPool',
     'SignedGCN',
     'RENet',
     'GraphUNet',
@@ -47,9 +48,6 @@ __all__ = [
     'LabelPropagation',
     'CorrectAndSmooth',
     'AttentiveFP',
-    'RECT_L',
-    'LINKX',
-    'LightGCN',
 ]
 
 classes = __all__
