@@ -10,7 +10,7 @@ from .loader import create_loader
 from .logger import set_printing, create_logger
 from .loss import compute_loss
 from .model_builder import create_model
-from .optimizer import create_optimizer, create_scheduler
+from .optim import create_optimizer, create_scheduler
 from .train import train
 from .register import (register_base, register_act, register_node_encoder,
                        register_edge_encoder, register_stage, register_head,
