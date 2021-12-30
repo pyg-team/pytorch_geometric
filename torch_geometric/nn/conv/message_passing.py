@@ -635,8 +635,8 @@ class MessagePassing(torch.nn.Module):
                         '# edge_updater_types: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
                 edge_updater_types = split_types_repr(match.group(1))
-                edge_updater_types = dict([re.split(r'\s*:\s*', t) for t in
-                                           edge_updater_types])
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in edge_updater_types])
         else:
             # dummy to be used
             edge_updater_types = {'x': 'Tensor'}

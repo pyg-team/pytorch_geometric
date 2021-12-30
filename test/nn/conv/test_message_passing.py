@@ -156,8 +156,7 @@ class MyEdgeConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         e = self.edge_updater(edge_index, x=x)
 
-        return self.propagate(edge_index, e=e,
-                              size=(x.size(0), x.size(0)))
+        return self.propagate(edge_index, e=e, size=(x.size(0), x.size(0)))
 
     def edge_update(self, x_j: Tensor, x_i: Tensor) -> Tensor:
         return x_j - x_i
