@@ -1,93 +1,73 @@
-from dataclasses import dataclass, field
+from typing import Optional, List, Iterator, Any
+from dataclasses import dataclass, field, asdict
 
-import torch.optim as optim
+from collections.abc import Iterable
+
+from torch.nn import Parameter
+from torch.optim import Optimizer, Adam, SGD
+from torch.optim.lr_scheduler import StepLR, MultiStepLR, CosineAnnealingLR
+
 import torch_geometric.graphgym.register as register
 
 
 @dataclass
 class OptimizerConfig:
-    # optimizer: sgd, adam
-    optimizer: str = 'adam'
-    # Base learning rate
+    optimizer: str = 'adam'  # ['sgd', 'adam']
     base_lr: float = 0.01
-    # L2 regularization
     weight_decay: float = 5e-4
-    # SGD momentum
-    momentum: float = 0.9
+    momentum: float = 0.9  # 'sgd' policy
 
 
-def create_optimizer(params, optimizer_config: OptimizerConfig):
-    r"""
-    Create optimizer for the model
+@register.register_optimizer('adam')
+def adam_optimizer(params: Iterator[Parameter], base_lr: float,
+                   weight_decay: float) -> Adam:
+    return Adam(params, lr=base_lr, weight_decay=weight_decay)
 
-    Args:
-        params: PyTorch model parameters
 
-    Returns: PyTorch optimizer
+@register.register_optimizer('sgd')
+def sgd_optimizer(params: Iterator[Parameter], base_lr: float, momentum: float,
+                  weight_decay: float) -> SGD:
+    return SGD(params, lr=base_lr, momentum=momentum,
+               weight_decay=weight_decay)
 
-    """
 
-    params = filter(lambda p: p.requires_grad, params)
-    # Try to load customized optimizer
-    for func in register.optimizer_dict.values():
-        optimizer = func(params, optimizer_config)
-        if optimizer is not None:
-            return optimizer
-    if optimizer_config.optimizer == 'adam':
-        optimizer = optim.Adam(params, lr=optimizer_config.base_lr,
-                               weight_decay=optimizer_config.weight_decay)
-    elif optimizer_config.optimizer == 'sgd':
-        optimizer = optim.SGD(params, lr=optimizer_config.base_lr,
-                              momentum=optimizer_config.momentum,
-                              weight_decay=optimizer_config.weight_decay)
-    else:
-        raise ValueError('Optimizer {} not supported'.format(
-            optimizer_config.optimizer))
-
-    return optimizer
+def create_optimizer(params: Iterator[Parameter], cfg: Any) -> Any:
+    r"""Creates a config-driven optimizer."""
+    func = register.optimizer_dict.get(cfg.optimizer, None)
+    if func is not None:
+        kwargs = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+        return func(filter(lambda p: p.requires_grad, params), **kwargs)
+    raise ValueError(f"Optimizer '{cfg.optimizer}' not supported")
 
 
 @dataclass
 class SchedulerConfig:
-    # scheduler: none, steps, cos
-    scheduler: str = 'cos'
-    # Steps for 'steps' policy (in epochs)
-    steps: list = field(default_factory=[30, 60, 90])
-    # Learning rate multiplier for 'steps' policy
-    lr_decay: float = 0.1
-    # Maximal number of epochs
+    scheduler: Optional[str] = 'cos'  # [None, 'steps', 'cos']
+    steps: List[int] = field(default_factory=[30, 60, 90])  # 'steps' policy
+    lr_decay: float = 0.1  # 'steps' policy
     max_epoch: int = 200
 
 
-def create_scheduler(optimizer, scheduler_config: SchedulerConfig):
-    r"""
-    Create learning rate scheduler for the optimizer
+@register.register_scheduler(None)
+def none_scheduler(optimizer: Optimizer, max_epoch: int) -> StepLR:
+    return StepLR(optimizer, step_size=max_epoch + 1)
 
-    Args:
-        optimizer: PyTorch optimizer
 
-    Returns: PyTorch scheduler
+@register.register_scheduler('step')
+def step_scheduler(optimizer: Optimizer, steps: List[int],
+                   lr_decay: float) -> MultiStepLR:
+    return MultiStepLR(optimizer, milestones=steps, gamma=lr_decay)
 
-    """
 
-    # Try to load customized scheduler
-    for func in register.scheduler_dict.values():
-        scheduler = func(optimizer, scheduler_config)
-        if scheduler is not None:
-            return scheduler
-    if scheduler_config.scheduler == 'none':
-        scheduler = optim.lr_scheduler.StepLR(
-            optimizer, step_size=scheduler_config.max_epoch + 1)
-    elif scheduler_config.scheduler == 'step':
-        scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=scheduler_config.steps,
-            gamma=scheduler_config.lr_decay)
-    elif scheduler_config.scheduler == 'cos':
-        scheduler = \
-            optim.lr_scheduler.CosineAnnealingLR(
-                optimizer,
-                T_max=scheduler_config.max_epoch)
-    else:
-        raise ValueError('Scheduler {} not supported'.format(
-            scheduler_config.scheduler))
-    return scheduler
+@register.register_scheduler('cos')
+def cos_scheduler(optimizer: Optimizer, max_epoch: int) -> CosineAnnealingLR:
+    return CosineAnnealingLR(optimizer, T_max=max_epoch)
+
+
+def create_scheduler(optimizer: Optimizer, cfg: Any) -> Any:
+    r"""Creates a config-driven learning rate scheduler."""
+    func = register.scheduler_dict.get(cfg.scheduler, None)
+    if func is not None:
+        kwargs = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+        return func(optimizer, **kwargs)
+    raise ValueError(f"Scheduler '{cfg.scheduler}' not supported")
