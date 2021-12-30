@@ -49,6 +49,7 @@ class SchedulerConfig:
 
 
 @register.register_scheduler(None)
+@register.register_scheduler('none')
 def none_scheduler(optimizer: Optimizer, max_epoch: int) -> StepLR:
     return StepLR(optimizer, step_size=max_epoch + 1)
 
