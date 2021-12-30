@@ -624,7 +624,7 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)', 
+                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
                                   source)
                 if match is None:
                     raise TypeError(
@@ -663,7 +663,7 @@ class MessagePassing(torch.nn.Module):
         forward_types = parse_types(self.forward)
         forward_types = [resolve_types(*types) for types in forward_types]
         forward_types = list(chain.from_iterable(forward_types))
-        
+
         keep_annotation = len(forward_types) < 2
         forward_header = func_header_repr(self.forward, keep_annotation)
         forward_body = func_body_repr(self.forward, keep_annotation)
