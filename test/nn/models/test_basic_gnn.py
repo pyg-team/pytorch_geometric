@@ -60,7 +60,7 @@ def test_gine(dropout, act, norm, jk):
     out_channels = 16 if jk != 'cat' else 32
 
     model = GINE(in_channels=8, hidden_channels=16, num_layers=2,
-                dropout=dropout, act=act, norm=norm, jk=jk)
+                 dropout=dropout, act=act, norm=norm, jk=jk)
     assert str(model) == f'GINE(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -91,11 +91,11 @@ def test_gatv2(dropout, act, norm, jk):
     out_channels = 16 if jk != 'cat' else 32
 
     model = GATv2(in_channels=8, hidden_channels=16, num_layers=2,
-                dropout=dropout, act=act, norm=norm, jk=jk)
+                  dropout=dropout, act=act, norm=norm, jk=jk)
     assert str(model) == f'GATv2(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
 
     model = GATv2(in_channels=8, hidden_channels=16, num_layers=2,
-                dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
+                  dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
     assert str(model) == f'GATv2(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)

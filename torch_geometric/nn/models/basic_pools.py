@@ -76,20 +76,20 @@ class BasicPoolGNN(torch.nn.Module):
         if self.jk is not None:
             self.jk.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, batch: Tensor, *args, **kwargs) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj, batch: Tensor, *args,
+                **kwargs) -> Tensor:
         xs: List[Tensor] = []
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, *args, **kwargs)
             if self.norms is not None:
                 x = self.norms[i](x)
             if self.act is not None:
-                x = self.act(x) 
+                x = self.act(x)
 
             xs += [self.global_pool(x, batch)]
             if i % 2 == 0 and i < len(self.convs) - 1:
                 pool = self.pools[i // 2]
-                x, edge_index, _, batch, = pool(x, edge_index,
-                                                     batch=batch)
+                x, edge_index, _, batch, = pool(x, edge_index, batch=batch)
 
             x = F.dropout(x, p=self.dropout, training=self.training)
 
@@ -131,9 +131,7 @@ class ASAPool(BasicPoolGNN):
                  dropout: float = 0.0,
                  act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 glob_pool: str = 'mean',
-                 ratio: float = 0.8,
-                 **kwargs):
+                 glob_pool: str = 'mean', ratio: float = 0.8, **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
                          act, norm, jk, glob_pool)
 
@@ -147,7 +145,9 @@ class ASAPool(BasicPoolGNN):
         lambda_module = Lambda(lambda_func)
 
         for _ in range(num_layers // 2):
-            self.pools.append(lambda_module(ASAPooling(hidden_channels, ratio, dropout=dropout)))
+            self.pools.append(
+                lambda_module(
+                    ASAPooling(hidden_channels, ratio, dropout=dropout)))
 
 
 class SAGPool(BasicPoolGNN):
@@ -181,9 +181,7 @@ class SAGPool(BasicPoolGNN):
                  dropout: float = 0.0,
                  act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 glob_pool: str = 'mean',
-                 ratio: float = 0.8,
-                 **kwargs):
+                 glob_pool: str = 'mean', ratio: float = 0.8, **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
                          act, norm, jk, glob_pool)
 
@@ -197,8 +195,8 @@ class SAGPool(BasicPoolGNN):
         lambda_module = Lambda(lambda_func)
 
         for _ in range(num_layers // 2):
-            self.pools.append(lambda_module(SAGPooling(hidden_channels,ratio)))
-
+            self.pools.append(lambda_module(SAGPooling(hidden_channels,
+                                                       ratio)))
 
 
 class EdgePool(BasicPoolGNN):
@@ -231,8 +229,7 @@ class EdgePool(BasicPoolGNN):
                  dropout: float = 0.0,
                  act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 glob_pool: str = 'mean',
-                 **kwargs):
+                 glob_pool: str = 'mean', **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
                          act, norm, jk, glob_pool)
 
@@ -247,7 +244,6 @@ class EdgePool(BasicPoolGNN):
 
         for _ in range(num_layers // 2):
             self.pools.append(lambda_module(EdgePooling(hidden_channels)))
-
 
 
 class Graclus(BasicPoolGNN):
@@ -279,8 +275,7 @@ class Graclus(BasicPoolGNN):
                  dropout: float = 0.0,
                  act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 glob_pool: str = 'mean',
-                 **kwargs):
+                 glob_pool: str = 'mean', **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
                          act, norm, jk, glob_pool)
 
@@ -291,6 +286,7 @@ class Graclus(BasicPoolGNN):
 
         for _ in range(num_layers // 2):
             self.pools.append(graclus_pool())
+
 
 class graclus_pool(torch.nn.Module):
     """Auxiliary block for Graclus"""
@@ -308,9 +304,11 @@ class graclus_pool(torch.nn.Module):
 
 class Lambda(torch.nn.Module):
     "An easy way to create a pytorch layer for a simple `func`."
+
     def __init__(self, func):
         "create a layer that simply calls `func` with `x`"
         super().__init__()
-        self.func=func
+        self.func = func
 
-    def forward(self, x): return self.func(x)
+    def forward(self, x):
+        return self.func(x)

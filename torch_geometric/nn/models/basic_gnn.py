@@ -315,4 +315,5 @@ class GATv2(BasicGNN):
         self.convs.append(
             GATv2Conv(in_channels, out_channels, dropout=dropout, **kwargs))
         for _ in range(1, num_layers):
-            self.convs.append(GATv2Conv(hidden_channels, out_channels, **kwargs))
+            self.convs.append(
+                GATv2Conv(hidden_channels, out_channels, **kwargs))
