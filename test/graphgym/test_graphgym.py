@@ -31,7 +31,6 @@ def test_run_single_graphgym():
     cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dump_cfg(cfg)
     set_printing()
-    return
 
     seed_everything(cfg.seed)
     auto_select_device()

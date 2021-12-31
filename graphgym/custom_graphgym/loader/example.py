@@ -1,8 +1,5 @@
 from torch_geometric.datasets import QM7b
 
-from torch_geometric.graphgym.register import register_loader
+from torch_geometric.graphgym.register import register_dataset
 
-
-@register_loader('qm7b')
-def qm7b_dataset(root_dir: str):
-    return QM7b(root_dir)
+register_dataset('qm7b', QM7b)
