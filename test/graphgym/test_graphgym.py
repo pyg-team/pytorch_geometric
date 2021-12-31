@@ -63,4 +63,4 @@ def test_run_single_graphgym():
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
 
     shutil.rmtree(cfg.out_dir)
-    # shutil.rmtree(cfg.dataset.dir)
+    shutil.rmtree(cfg.dataset.dir)

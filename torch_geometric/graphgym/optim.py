@@ -1,6 +1,7 @@
 from typing import Optional, List, Iterator, Any
 from dataclasses import dataclass, field, asdict
 
+import inspect
 from collections.abc import Iterable
 
 from torch.nn import Parameter
@@ -31,12 +32,26 @@ def sgd_optimizer(params: Iterator[Parameter], base_lr: float, momentum: float,
                weight_decay=weight_decay)
 
 
+def from_config(func):
+    arg_names = list(inspect.signature(func).parameters.keys())
+
+    def wrapper(*args, cfg: Any = None, **kwargs):
+        if cfg is not None:
+            cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+            for arg_name in arg_names[len(args):]:
+                if arg_name not in kwargs:
+                    kwargs[arg_name] = cfg[arg_name]
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 def create_optimizer(params: Iterator[Parameter], cfg: Any) -> Any:
     r"""Creates a config-driven optimizer."""
+    params = filter(lambda p: p.requires_grad, params)
     func = register.optimizer_dict.get(cfg.optimizer, None)
     if func is not None:
-        kwargs = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
-        return func(filter(lambda p: p.requires_grad, params), **kwargs)
+        return from_config(func)(params, cfg=cfg)
     raise ValueError(f"Optimizer '{cfg.optimizer}' not supported")
 
 
@@ -69,6 +84,5 @@ def create_scheduler(optimizer: Optimizer, cfg: Any) -> Any:
     r"""Creates a config-driven learning rate scheduler."""
     func = register.scheduler_dict.get(cfg.scheduler, None)
     if func is not None:
-        kwargs = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
-        return func(optimizer, **kwargs)
+        return from_config(func)(optimizer, cfg=cfg)
     raise ValueError(f"Scheduler '{cfg.scheduler}' not supported")
