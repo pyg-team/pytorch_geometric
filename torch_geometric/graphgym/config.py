@@ -547,16 +547,20 @@ set_cfg(cfg)
 
 
 def from_config(func):
-    params = inspect.signature(func).parameters
-    arg_names = list(params.keys())
-    defaults = [p.default != inspect.Parameter.empty for p in params.values()]
+    if inspect.isclass(func):
+        params = list(inspect.signature(func.__init__).parameters.values())[1:]
+    else:
+        params = list(inspect.signature(func).parameters.values())
+
+    arg_names = [p.name for p in params]
+    has_defaults = [p.default != inspect.Parameter.empty for p in params]
 
     @functools.wraps(func)
     def wrapper(*args, cfg: Any = None, **kwargs):
         if cfg is not None:
             cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
 
-            iterator = zip(arg_names[len(args):], defaults[len(args):])
+            iterator = zip(arg_names[len(args):], has_defaults[len(args):])
             for arg_name, has_default in iterator:
                 if arg_name in kwargs:
                     continue

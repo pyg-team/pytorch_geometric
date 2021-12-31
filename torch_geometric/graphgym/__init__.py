@@ -15,8 +15,9 @@ from .train import train
 from .register import (register_base, register_act, register_node_encoder,
                        register_edge_encoder, register_stage, register_head,
                        register_layer, register_pooling, register_network,
-                       register_config, register_loader, register_optimizer,
-                       register_scheduler, register_loss, register_train)
+                       register_config, register_dataset, register_loader,
+                       register_optimizer, register_scheduler, register_loss,
+                       register_train)
 
 __all__ = classes = [
     'load_ckpt',
@@ -50,6 +51,7 @@ __all__ = classes = [
     'register_pooling',
     'register_network',
     'register_config',
+    'register_dataset',
     'register_loader',
     'register_optimizer',
     'register_scheduler',
