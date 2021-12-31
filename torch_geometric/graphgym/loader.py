@@ -1,3 +1,5 @@
+from typing import Callable
+
 import torch
 from torch_geometric.loader import DataLoader
 
@@ -18,6 +20,16 @@ from torch_geometric.loader import ClusterLoader
 from torch_geometric.loader import RandomNodeSampler
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.utils import negative_sampling
+
+
+def planetoid_dataset(name: str) -> Callable:
+    return lambda root: Planetoid(root, name)
+
+
+register.register_dataset('Cora', planetoid_dataset('Cora'))
+register.register_dataset('CiteSeer', planetoid_dataset('CiteSeer'))
+register.register_dataset('PubMed', planetoid_dataset('PubMed'))
+register.register_dataset('PPI', PPI)
 
 
 def load_pyg(name, dataset_dir):

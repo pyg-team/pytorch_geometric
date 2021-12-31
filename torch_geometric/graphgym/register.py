@@ -9,6 +9,7 @@ layer_dict: Dict[str, Any] = {}
 pooling_dict: Dict[str, Any] = {}
 network_dict: Dict[str, Any] = {}
 config_dict: Dict[str, Any] = {}
+dataset_dict: Dict[str, Any] = {}
 loader_dict: Dict[str, Any] = {}
 optimizer_dict: Dict[str, Any] = {}
 scheduler_dict: Dict[str, Any] = {}
@@ -84,6 +85,11 @@ def register_network(key: str, module: Any = None):
 def register_config(key: str, module: Any = None):
     r"""Registers a configuration group in GraphGym."""
     return register_base(config_dict, key, module)
+
+
+def register_dataset(key: str, module: Any = None):
+    r"""Registers a dataset in GraphGym."""
+    return register_base(dataset_dict, key, module)
 
 
 def register_loader(key: str, module: Any = None):
