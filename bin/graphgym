@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse
+
+# from torch_geometric import seed_everything
+
+from torch_geometric.graphgym import cfg, load_cfg, dump_cfg
+
+# from torch_geometric.graphgym.config import (cfg, dump_cfg, set_run_dir,
+#                                              set_agg_dir, load_cfg)
+# from torch_geometric.graphgym.loader import create_loader
+# from torch_geometric.graphgym.logger import set_printing, create_logger
+# from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
+# from torch_geometric.graphgym.model_builder import create_model
+# from torch_geometric.graphgym.train import train
+# from torch_geometric.graphgym.utils.agg_runs import agg_runs
+# from torch_geometric.graphgym.utils.comp_budget import params_count
+# from torch_geometric.graphgym.utils.device import auto_select_device
+# from torch_geometric.graphgym.register import train_dict
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='GraphGym Experiment Manager')
+
+    parser.add_argument('--cfg', dest='cfg_file', type=str, required=True,
+                        help='path to configuration file')
+    parser.add_argument('--repeat', type=int, default=1,
+                        help='number of repeating jobs')
+    parser.add_argument('opts', default=None, nargs=argparse.REMAINDER,
+                        help='remaining options (see graphgym/config.py)')
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    load_cfg(cfg, args)
+    dump_cfg(cfg)
+
+    for i in range(args.repeat):
+    #     set_run_dir(cfg.out_dir, args.cfg_file)
+    #     set_printing()
+    #     cfg.seed = cfg.seed + 1
+    #     seed_everything(cfg.seed)
+    #     auto_select_device()
+
+    #     loaders = create_loader()
+    #     loggers = create_logger()
+    #     model = create_model()
+    #     optimizer = create_optimizer(model.parameters(), cfg.optim)
+    #     scheduler = create_scheduler(optimizer, cfg.optim)
+
+    #     train(loggers, loaders, model, optimizer, scheduler)
+
+    # agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)

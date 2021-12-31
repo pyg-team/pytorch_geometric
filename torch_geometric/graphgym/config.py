@@ -39,10 +39,10 @@ def set_cfg(cfg):
     cfg.device = 'auto'
 
     # Output directory
-    cfg.out_dir = 'results'
+    cfg.out_dir = './results'
 
     # Config name (in out_dir)
-    cfg.cfg_dest = 'config.yaml'
+    cfg.cfg_dest = 'config.yml'
 
     # Random seed
     cfg.seed = 0
@@ -108,7 +108,7 @@ def set_cfg(cfg):
 
     # Dir to load the dataset. If the dataset is downloaded, this is the
     # cache dir
-    cfg.dataset.dir = './datasets'
+    cfg.dataset.dir = './data'
 
     # Task: node, edge, graph, link_pred
     cfg.dataset.task = 'node'
