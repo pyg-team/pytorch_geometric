@@ -18,4 +18,4 @@ class SWISH(nn.Module):
 
 
 register_act('swish', SWISH(inplace=cfg.mem.inplace))
-register_act('lrelu_03', nn.LeakyReLU(inplace=cfg.mem.inplace))
+register_act('lrelu_03', nn.LeakyReLU(0.3, inplace=cfg.mem.inplace))

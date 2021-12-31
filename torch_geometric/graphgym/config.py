@@ -4,6 +4,7 @@ import os
 import shutil
 import inspect
 import logging
+import functools
 from dataclasses import asdict
 from collections.abc import Iterable
 
@@ -550,6 +551,7 @@ def from_config(func):
     arg_names = list(params.keys())
     defaults = [p.default != inspect.Parameter.empty for p in params.values()]
 
+    @functools.wraps(func)
     def wrapper(*args, cfg: Any = None, **kwargs):
         if cfg is not None:
             cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
