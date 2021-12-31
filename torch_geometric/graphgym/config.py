@@ -1,7 +1,14 @@
-import logging
+from typing import Any
+
 import os
-from yacs.config import CfgNode as CN
 import shutil
+import inspect
+import logging
+import functools
+from dataclasses import asdict
+from collections.abc import Iterable
+
+from yacs.config import CfgNode as CN
 
 from torch_geometric.data.makedirs import makedirs
 import torch_geometric.graphgym.register as register
@@ -537,3 +544,26 @@ def set_agg_dir(out_dir, fname):
 
 
 set_cfg(cfg)
+
+
+def from_config(func):
+    params = inspect.signature(func).parameters
+    arg_names = list(params.keys())
+    defaults = [p.default != inspect.Parameter.empty for p in params.values()]
+
+    @functools.wraps(func)
+    def wrapper(*args, cfg: Any = None, **kwargs):
+        if cfg is not None:
+            cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+
+            iterator = zip(arg_names[len(args):], defaults[len(args):])
+            for arg_name, has_default in iterator:
+                if arg_name in kwargs:
+                    continue
+                elif arg_name in cfg:
+                    kwargs[arg_name] = cfg[arg_name]
+                elif not has_default:
+                    raise ValueError(f"'cfg.{arg_name}' undefined")
+        return func(*args, **kwargs)
+
+    return wrapper

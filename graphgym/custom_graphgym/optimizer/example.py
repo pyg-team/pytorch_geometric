@@ -1,21 +1,19 @@
-import torch.optim as optim
+from typing import Iterator
 
-from torch_geometric.graphgym.register import (register_optimizer,
-                                               register_scheduler)
+from torch.nn import Parameter
+from torch.optim import Optimizer, Adagrad
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from torch_geometric.graphgym.optimizer import OptimizerConfig, SchedulerConfig
-
-
-@register_optimizer('adagrad')
-def optimizer_example(params, optimizer_config: OptimizerConfig):
-    if optimizer_config.optimizer == 'adagrad':
-        optimizer = optim.Adagrad(params, lr=optimizer_config.base_lr,
-                                  weight_decay=optimizer_config.weight_decay)
-        return optimizer
+import torch_geometric.graphgym.register as register
 
 
-@register_scheduler('reduce')
-def scheduler_example(optimizer, scheduler_config: SchedulerConfig):
-    if scheduler_config.scheduler == 'reduce':
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
-        return scheduler
+@register.register_optimizer('adagrad')
+def adagrad_optimizer(params: Iterator[Parameter], base_lr: float,
+                      weight_decay: float) -> Adagrad:
+    return Adagrad(params, lr=base_lr, weight_decay=weight_decay)
+
+
+@register.register_scheduler('pleateau')
+def plateau_scheduler(optimizer: Optimizer, patience: int,
+                      lr_decay: float) -> ReduceLROnPlateau:
+    return ReduceLROnPlateau(optimizer, patience=patience, factor=lr_decay)

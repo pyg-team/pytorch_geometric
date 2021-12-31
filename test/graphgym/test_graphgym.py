@@ -17,10 +17,7 @@ from torch_geometric.graphgym.config import (cfg, dump_cfg, set_run_dir,
                                              set_agg_dir, load_cfg)
 from torch_geometric.graphgym.utils import (agg_runs, params_count,
                                             auto_select_device)
-from torch_geometric.graphgym.optimizer import (create_optimizer,
-                                                create_scheduler,
-                                                OptimizerConfig,
-                                                SchedulerConfig)
+from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 
 
 def test_run_single_graphgym():
@@ -52,18 +49,10 @@ def test_run_single_graphgym():
     assert isinstance(model.post_mp, GNNNodeHead)
     assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
 
-    optimizer_config = OptimizerConfig(optimizer=cfg.optim.optimizer,
-                                       base_lr=cfg.optim.base_lr,
-                                       weight_decay=cfg.optim.weight_decay,
-                                       momentum=cfg.optim.momentum)
-    optimizer = create_optimizer(model.parameters(), optimizer_config)
+    optimizer = create_optimizer(model.parameters(), cfg.optim)
     assert isinstance(optimizer, torch.optim.Adam)
 
-    scheduler_config = SchedulerConfig(scheduler=cfg.optim.scheduler,
-                                       steps=cfg.optim.steps,
-                                       lr_decay=cfg.optim.lr_decay,
-                                       max_epoch=cfg.optim.max_epoch)
-    scheduler = create_scheduler(optimizer, scheduler_config)
+    scheduler = create_scheduler(optimizer, cfg.optim)
     assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)
