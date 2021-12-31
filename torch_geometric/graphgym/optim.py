@@ -1,14 +1,13 @@
 from typing import Optional, List, Iterator, Any
-from dataclasses import dataclass, field, asdict
 
-import inspect
-from collections.abc import Iterable
+from dataclasses import dataclass, field
 
 from torch.nn import Parameter
 from torch.optim import Optimizer, Adam, SGD
 from torch.optim.lr_scheduler import StepLR, MultiStepLR, CosineAnnealingLR
 
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.config import from_config
 
 
 @dataclass
@@ -30,20 +29,6 @@ def sgd_optimizer(params: Iterator[Parameter], base_lr: float, momentum: float,
                   weight_decay: float) -> SGD:
     return SGD(params, lr=base_lr, momentum=momentum,
                weight_decay=weight_decay)
-
-
-def from_config(func):
-    arg_names = list(inspect.signature(func).parameters.keys())
-
-    def wrapper(*args, cfg: Any = None, **kwargs):
-        if cfg is not None:
-            cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
-            for arg_name in arg_names[len(args):]:
-                if arg_name not in kwargs:
-                    kwargs[arg_name] = cfg[arg_name]
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def create_optimizer(params: Iterator[Parameter], cfg: Any) -> Any:
