@@ -38,7 +38,7 @@ if __name__ == '__main__':
         loaders = create_loader()
         loggers = create_logger()
         model = create_model()
-        optimizer = create_optimizer(model.parameters(), cfg.optiom)
+        optimizer = create_optimizer(model.parameters(), cfg.optim)
         scheduler = create_scheduler(optimizer, cfg.optim)
         # Print model info
         logging.info(model)
