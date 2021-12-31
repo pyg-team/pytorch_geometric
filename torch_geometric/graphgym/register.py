@@ -34,11 +34,11 @@ def register_base(mapping: Dict[str, Any], key: str,
         return
 
     # Other-wise, use it as a decorator:
-    def wrapper(module):
+    def bounded_register(module):
         register_base(mapping, key, module)
         return module
 
-    return wrapper
+    return bounded_register
 
 
 def register_act(key: str, module: Any = None):
