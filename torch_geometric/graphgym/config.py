@@ -39,10 +39,10 @@ def set_cfg(cfg):
     cfg.device = 'auto'
 
     # Output directory
-    cfg.out_dir = 'results'
+    cfg.out_dir = './results'
 
     # Config name (in out_dir)
-    cfg.cfg_dest = 'config.yaml'
+    cfg.cfg_dest = 'config.yml'
 
     # Random seed
     cfg.seed = 0

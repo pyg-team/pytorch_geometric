@@ -12,6 +12,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--mark_done', action='store_true',
                         help='mark yaml as done after a job has finished')
     parser.add_argument('opts', default=None, nargs=argparse.REMAINDER,
-                        help='see graphgym/config.py for remaining options')
+                        help='remaining options (see graphgym/config.py)')
 
     return parser.parse_args()

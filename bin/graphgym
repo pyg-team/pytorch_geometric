@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--repeat', type=int, default=1,
                         help='number of repeating jobs')
     parser.add_argument('opts', default=None, nargs=argparse.REMAINDER,
-                        help='see graphgym/config.py for remaining options')
+                        help='remaining options (see graphgym/config.py)')
 
     return parser.parse_args()
 
@@ -37,9 +37,7 @@ if __name__ == '__main__':
     load_cfg(cfg, args)
     dump_cfg(cfg)
 
-    # return
-
-    # for i in range(args.repeat):
+    for i in range(args.repeat):
     #     set_run_dir(cfg.out_dir, args.cfg_file)
     #     set_printing()
     #     cfg.seed = cfg.seed + 1
