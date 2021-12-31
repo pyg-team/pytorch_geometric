@@ -38,6 +38,7 @@ setup(
     python_requires='>=3.6',
     install_requires=install_requires,
     extras_require={'test': tests_require},
+    scripts=["bin/graphgym"],
     packages=find_packages(),
     include_package_data=True,
 )
