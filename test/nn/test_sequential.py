@@ -21,6 +21,7 @@ def test_sequential():
     ])
     model.reset_parameters()
 
+    assert len(model) == 5
     assert str(model) == (
         'Sequential(\n'
         '  (0): GCNConv(16, 64)\n'
@@ -29,6 +30,12 @@ def test_sequential():
         '  (3): ReLU(inplace=True)\n'
         '  (4): Linear(in_features=64, out_features=7, bias=True)\n'
         ')')
+
+    assert isinstance(model[0], GCNConv)
+    assert isinstance(model[1], ReLU)
+    assert isinstance(model[2], GCNConv)
+    assert isinstance(model[3], ReLU)
+    assert isinstance(model[4], Linear)
 
     out = model(x, edge_index)
     assert out.size() == (4, 7)
