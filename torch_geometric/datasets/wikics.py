@@ -51,7 +51,8 @@ class WikiCS(InMemoryDataset):
         y = torch.tensor(data['labels'], dtype=torch.long)
 
         if self.directed:
-            edges = [[(i, j) for j in js] for i, js in enumerate(data['links'])]
+            edges = [[(i, j) for j in js]
+                     for i, js in enumerate(data['links'])]
             edges = list(chain(*edges))
         else:
             edges = [[(i, j) for j in js] + [(j, i) for j in js]
