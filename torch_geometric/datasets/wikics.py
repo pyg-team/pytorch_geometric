@@ -25,9 +25,11 @@ class WikiCS(InMemoryDataset):
 
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(self, root, transform=None, pre_transform=None,
+                 directed=False):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
+        self.directed = directed
 
     @property
     def raw_file_names(self):
@@ -48,8 +50,13 @@ class WikiCS(InMemoryDataset):
         x = torch.tensor(data['features'], dtype=torch.float)
         y = torch.tensor(data['labels'], dtype=torch.long)
 
-        edges = [[(i, j) for j in js] for i, js in enumerate(data['links'])]
-        edges = list(chain(*edges))
+        if self.directed:
+            edges = [[(i, j) for j in js] for i, js in enumerate(data['links'])]
+            edges = list(chain(*edges))
+        else:
+            edges = [[(i, j) for j in js] + [(j, i) for j in js]
+                     for i, js in enumerate(data['links'])]
+            edges = list(set(chain(*edges)))
         edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
 
         train_mask = torch.tensor(data['train_masks'], dtype=torch.bool)
