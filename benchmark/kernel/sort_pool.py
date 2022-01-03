@@ -5,6 +5,7 @@ from torch_geometric.nn import SAGEConv, global_sort_pool
 
 
 class SortPool(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.k = 30

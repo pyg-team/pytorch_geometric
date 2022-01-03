@@ -17,6 +17,7 @@ class InnerProductDecoder(torch.nn.Module):
 
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
     space produced by the encoder."""
+
     def forward(self, z, edge_index, sigmoid=True):
         r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
@@ -56,6 +57,7 @@ class GAE(torch.nn.Module):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder, decoder=None):
         super().__init__()
         self.encoder = encoder
@@ -142,6 +144,7 @@ class VGAE(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder, decoder=None):
         super().__init__(encoder, decoder)
 
@@ -191,6 +194,7 @@ class ARGA(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder, discriminator, decoder=None):
         super().__init__(encoder, decoder)
         self.discriminator = discriminator
@@ -238,6 +242,7 @@ class ARGVA(ARGA):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
+
     def __init__(self, encoder, discriminator, decoder=None):
         super().__init__(encoder, discriminator, decoder)
         self.VGAE = VGAE(encoder, decoder)

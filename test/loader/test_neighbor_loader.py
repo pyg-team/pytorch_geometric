@@ -198,6 +198,7 @@ def test_homogeneous_neighbor_loader_on_cora(directed):
         assert batch.num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
+
         def __init__(self, in_channels, hidden_channels, out_channels):
             super().__init__()
             self.conv1 = GraphConv(in_channels, hidden_channels)
@@ -251,6 +252,7 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
         assert hetero_batch['paper', 'paper'].num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
+
         def __init__(self, in_channels, hidden_channels, out_channels):
             super().__init__()
             self.conv1 = GraphConv(in_channels, hidden_channels)

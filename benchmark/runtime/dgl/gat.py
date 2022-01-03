@@ -7,6 +7,7 @@ from dgl.nn.pytorch import EdgeSoftmax
 
 
 class GATConv(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels, heads=1,
                  negative_slope=0.2, dropout=0):
         super().__init__()
@@ -52,6 +53,7 @@ class GATConv(torch.nn.Module):
 
 
 class GAT(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g
@@ -67,6 +69,7 @@ class GAT(torch.nn.Module):
 
 
 class GATSPMVConv(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels, heads=1,
                  negative_slope=0.2, dropout=0):
         super().__init__()
@@ -115,6 +118,7 @@ class GATSPMVConv(torch.nn.Module):
 
 
 class GATSPMV(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g

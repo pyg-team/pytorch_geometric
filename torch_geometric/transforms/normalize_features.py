@@ -11,6 +11,7 @@ class NormalizeFeatures(BaseTransform):
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)
     """
+
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 

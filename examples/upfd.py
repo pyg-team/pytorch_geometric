@@ -29,6 +29,7 @@ test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, model, in_channels, hidden_channels, out_channels,
                  concat=False):
         super().__init__()

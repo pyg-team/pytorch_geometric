@@ -46,6 +46,7 @@ class MetaPath2Vec(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         edge_index_dict: Dict[EdgeType, Tensor],

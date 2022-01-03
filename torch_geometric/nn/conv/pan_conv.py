@@ -35,6 +35,7 @@ class PANConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, in_channels: int, out_channels: int, filter_size: int,
                  **kwargs):
 

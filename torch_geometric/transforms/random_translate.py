@@ -18,6 +18,7 @@ class RandomTranslate(BaseTransform):
             If :obj:`translate` is a number instead of a sequence, the same
             range is used for each dimension.
     """
+
     def __init__(self, translate):
         self.translate = translate
 

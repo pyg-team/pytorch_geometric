@@ -11,6 +11,7 @@ from torch_geometric.utils import to_dense_batch
 
 
 class MAB(torch.nn.Module):
+
     def __init__(self, dim_Q: int, dim_K: int, dim_V: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -89,6 +90,7 @@ class MAB(torch.nn.Module):
 
 
 class SAB(torch.nn.Module):
+
     def __init__(self, in_channels: int, out_channels: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -108,6 +110,7 @@ class SAB(torch.nn.Module):
 
 
 class PMA(torch.nn.Module):
+
     def __init__(self, channels: int, num_heads: int, num_seeds: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -169,6 +172,7 @@ class GraphMultisetTransformer(torch.nn.Module):
         layer_norm (bool, optional): If set to :obj:`True`, will make use of
             layer normalization. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         in_channels: int,

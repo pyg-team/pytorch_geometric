@@ -38,6 +38,7 @@ class Linear(torch.nn.Module):
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
     """
+
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
                  weight_initializer: Optional[str] = None,
                  bias_initializer: Optional[str] = None):
@@ -168,6 +169,7 @@ class HeteroLinear(torch.nn.Module):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
+
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
                  **kwargs):
         super().__init__()

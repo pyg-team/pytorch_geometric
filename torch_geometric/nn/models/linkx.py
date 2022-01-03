@@ -13,6 +13,7 @@ from torch_geometric.nn.conv import MessagePassing
 
 
 class SparseLinear(MessagePassing):
+
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True):
         super().__init__(aggr='add')
         self.in_channels = in_channels
@@ -84,6 +85,7 @@ class LINKX(torch.nn.Module):
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
     """
+
     def __init__(self, num_nodes: int, in_channels: int, hidden_channels: int,
                  out_channels: int, num_layers: int, num_edge_layers: int = 1,
                  num_node_layers: int = 1, dropout: float = 0.):

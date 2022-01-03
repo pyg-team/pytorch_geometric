@@ -427,6 +427,7 @@ class HeteroData(BaseData):
                 :class:`~torch_geometric.data.Data` object.
                 (default: :obj:`True`)
         """
+
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
             sizes_dict = defaultdict(list)
             for store in stores:

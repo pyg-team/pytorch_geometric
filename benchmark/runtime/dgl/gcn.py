@@ -6,6 +6,7 @@ import dgl.function as fn
 
 
 class GCNConv(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g
@@ -32,6 +33,7 @@ class GCNConv(torch.nn.Module):
 
 
 class GCN(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(g, in_channels, 16)
@@ -45,6 +47,7 @@ class GCN(torch.nn.Module):
 
 
 class GCNSPMVConv(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g
@@ -67,6 +70,7 @@ class GCNSPMVConv(torch.nn.Module):
 
 
 class GCNSPMV(torch.nn.Module):
+
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNSPMVConv(g, in_channels, 16)

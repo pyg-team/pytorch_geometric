@@ -22,6 +22,7 @@ test_loader = ShaDowKHopSampler(data, depth=2, num_neighbors=5,
 
 
 class GNN(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = SAGEConv(in_channels, hidden_channels)

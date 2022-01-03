@@ -36,6 +36,7 @@ class InstanceNorm(_InstanceNorm):
             uses instance statistics in both training and eval modes.
             (default: :obj:`False`)
     """
+
     def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=False,
                  track_running_stats=False):
         super().__init__(in_channels, eps, momentum, affine,

@@ -3,6 +3,7 @@ from torch_geometric.data import Data, InMemoryDataset, Dataset
 
 
 class MyData(Data):
+
     def __init__(self, x=None, edge_index=None, arg=None):
         super().__init__(x=x, edge_index=edge_index, arg=arg)
 
@@ -11,6 +12,7 @@ class MyData(Data):
 
 
 class MyInMemoryDataset(InMemoryDataset):
+
     def __init__(self):
         super().__init__('/tmp/MyInMemoryDataset')
 
@@ -29,6 +31,7 @@ class MyInMemoryDataset(InMemoryDataset):
 
 
 class MyDataset(Dataset):
+
     def __init__(self):
         super().__init__('/tmp/MyDataset')
 

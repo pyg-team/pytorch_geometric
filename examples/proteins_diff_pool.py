@@ -12,6 +12,7 @@ max_nodes = 150
 
 
 class MyFilter(object):
+
     def __call__(self, data):
         return data.num_nodes <= max_nodes
 
@@ -31,6 +32,7 @@ train_loader = DenseDataLoader(train_dataset, batch_size=20)
 
 
 class GNN(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels,
                  normalize=False, lin=True):
         super().__init__()
@@ -73,6 +75,7 @@ class GNN(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
 

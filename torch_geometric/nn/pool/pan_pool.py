@@ -38,6 +38,7 @@ class PANPooling(torch.nn.Module):
         nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.tanh`)
     """
+
     def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1.0,
                  nonlinearity=torch.tanh):
         super().__init__()

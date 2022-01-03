@@ -20,6 +20,7 @@ class KarateClub(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
+
     def __init__(self, transform=None):
         super().__init__('.', transform)
 

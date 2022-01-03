@@ -28,6 +28,7 @@ class PairNorm(torch.nn.Module):
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
     """
+
     def __init__(self, scale: float = 1., scale_individually: bool = False,
                  eps: float = 1e-5):
         super().__init__()

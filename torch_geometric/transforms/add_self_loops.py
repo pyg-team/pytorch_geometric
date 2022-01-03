@@ -24,6 +24,7 @@ class AddSelfLoops(BaseTransform):
             according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`1.`)
     """
+
     def __init__(self, attr: Optional[str] = 'edge_weight',
                  fill_value: Union[float, Tensor, str] = None):
         self.attr = attr

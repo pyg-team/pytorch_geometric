@@ -4,6 +4,7 @@ from torch_geometric.nn import MessagePassing, GCNConv, ChebConv
 
 
 class MyConv(MessagePassing):
+
     def forward(self, x, edge_index):
         return self.propagate(edge_index, x=x)
 

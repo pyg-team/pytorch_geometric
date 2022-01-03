@@ -59,6 +59,7 @@ class PPFConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, local_nn: Optional[Callable] = None,
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):

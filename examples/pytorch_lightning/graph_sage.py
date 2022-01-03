@@ -14,6 +14,7 @@ from torch_geometric.data import LightningNodeData
 
 
 class Model(pl.LightningModule):
+
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 256, num_layers: int = 2,
                  dropout: float = 0.5):

@@ -9,6 +9,7 @@ from torch_geometric.nn import MLP, PointConv, fps, radius, global_max_pool
 
 
 class SAModule(torch.nn.Module):
+
     def __init__(self, ratio, r, nn):
         super().__init__()
         self.ratio = ratio
@@ -27,6 +28,7 @@ class SAModule(torch.nn.Module):
 
 
 class GlobalSAModule(torch.nn.Module):
+
     def __init__(self, nn):
         super().__init__()
         self.nn = nn
@@ -40,6 +42,7 @@ class GlobalSAModule(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
 

@@ -17,6 +17,7 @@ class WLConv(torch.nn.Module):
         \mathbf{x}^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
         \mathbf{x}_j \colon j \in \mathcal{N}(i) \} \right)
     """
+
     def __init__(self):
         super().__init__()
         self.hashmap = {}

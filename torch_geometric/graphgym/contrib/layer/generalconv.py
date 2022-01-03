@@ -12,6 +12,7 @@ from torch_geometric.graphgym.config import cfg
 class GeneralConvLayer(MessagePassing):
     r"""General GNN layer
     """
+
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
@@ -118,6 +119,7 @@ class GeneralConvLayer(MessagePassing):
 class GeneralEdgeConvLayer(MessagePassing):
     r"""General GNN layer, with edge features
     """
+
     def __init__(self, in_channels, out_channels, edge_dim, improved=False,
                  cached=False, bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)

@@ -62,6 +62,7 @@ class GDC(BaseTransform):
 
     :rtype: :class:`torch_geometric.data.Data`
     """
+
     def __init__(self, self_loop_weight=1, normalization_in='sym',
                  normalization_out='col',
                  diffusion_kwargs=dict(method='ppr', alpha=0.15),

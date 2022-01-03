@@ -13,6 +13,7 @@ from torch_geometric.nn import MessagePassing
 
 
 class MyConv(MessagePassing):
+
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int):
         super().__init__(aggr='add')
@@ -150,6 +151,7 @@ def test_copy():
 
 
 class MyEdgeConv(MessagePassing):
+
     def __init__(self):
         super().__init__(aggr='add')
 
@@ -298,6 +300,7 @@ def test_modified_message_passing_hook():
 
 
 class MyDefaultArgConv(MessagePassing):
+
     def __init__(self):
         super().__init__(aggr='mean')
 
@@ -325,6 +328,7 @@ def test_my_default_arg_conv():
 
 
 class MyMultipleOutputConv(MessagePassing):
+
     def __init__(self):
         super().__init__()
 

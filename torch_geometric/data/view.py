@@ -4,6 +4,7 @@ from collections.abc import Mapping
 
 
 class MappingView(object):
+
     def __init__(self, mapping: Mapping, *args: List[str]):
         self._mapping = mapping
         self._args = args
@@ -25,17 +26,20 @@ class MappingView(object):
 
 
 class KeysView(MappingView):
+
     def __iter__(self) -> Iterable:
         yield from self._keys()
 
 
 class ValuesView(MappingView):
+
     def __iter__(self) -> Iterable:
         for key in self._keys():
             yield self._mapping[key]
 
 
 class ItemsView(MappingView):
+
     def __iter__(self):
         for key in self._keys():
             yield (key, self._mapping[key])

@@ -33,6 +33,7 @@ class LEConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')

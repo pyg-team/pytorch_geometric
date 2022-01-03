@@ -4,6 +4,7 @@ from torch.utils.data.dataloader import DataLoader, _BaseDataLoaderIter
 
 
 class DataLoaderIterator(object):
+
     def __init__(self, iterator: _BaseDataLoaderIter, transform_fn: Callable):
         self.iterator = iterator
         self.transform_fn = transform_fn
@@ -26,6 +27,7 @@ class BaseDataLoader(DataLoader):
     custom :meth:`self.transform_fn` function to allow transformation of a
     returned mini-batch directly inside the main process.
     """
+
     def _get_iterator(self) -> Iterator:
         iterator = super()._get_iterator()
         if hasattr(self, 'transform_fn'):

@@ -35,6 +35,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size` or
             :obj:`num_workers`.
     """
+
     def __init__(self, data: Data, depth: int, num_neighbors: int,
                  node_idx: Optional[Tensor] = None, replace: bool = False,
                  **kwargs):

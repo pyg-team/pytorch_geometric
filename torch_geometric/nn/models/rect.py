@@ -30,6 +30,7 @@ class RECT_L(torch.nn.Module):
         dropout (float, optional): The dropout probability.
             (default: :obj:`0.0`)
     """
+
     def __init__(self, in_channels: int, hidden_channels: int,
                  normalize: bool = True, dropout: float = 0.0):
         super().__init__()

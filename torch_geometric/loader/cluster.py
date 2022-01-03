@@ -26,6 +26,7 @@ class ClusterData(torch.utils.data.Dataset):
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
     """
+
     def __init__(self, data, num_parts: int, recursive: bool = False,
                  save_dir: Optional[str] = None, log: bool = True):
 
@@ -132,6 +133,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(self, cluster_data, **kwargs):
         self.cluster_data = cluster_data
 

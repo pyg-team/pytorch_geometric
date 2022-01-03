@@ -54,6 +54,7 @@ class LightGCN(torch.nn.Module):
         **kwargs (optional): Additional arguments of the underlying
             :class:`~torch_geometric.nn.conv.LGConv` layers.
     """
+
     def __init__(
         self,
         num_nodes: int,

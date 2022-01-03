@@ -38,6 +38,7 @@ class FakeDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         num_graphs: int = 1,
@@ -124,6 +125,7 @@ class FakeHeteroDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         num_graphs: int = 1,

@@ -7,6 +7,7 @@ from torch_geometric.transforms import BaseTransform
 
 class TwoHop(BaseTransform):
     r"""Adds the two hop edges to the edge indices."""
+
     def __call__(self, data):
         edge_index, edge_attr = data.edge_index, data.edge_attr
         N = data.num_nodes

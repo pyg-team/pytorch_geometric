@@ -18,6 +18,7 @@ args = parser.parse_args()
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, num_classes):
         super().__init__()
 

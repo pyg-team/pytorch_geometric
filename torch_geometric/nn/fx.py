@@ -64,6 +64,7 @@ class Transformer(object):
         debug: (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         module: Module,
@@ -195,6 +196,7 @@ class Transformer(object):
         return self._state[node.name] == 'edge'
 
     def has_edge_level_arg(self, node: Node) -> bool:
+
         def _recurse(value: Any) -> bool:
             if isinstance(value, Node):
                 return self.is_edge_level(value)
@@ -221,6 +223,7 @@ class Transformer(object):
         return None
 
     def replace_all_uses_with(self, to_replace: Node, replace_with: Node):
+
         def maybe_replace_node(n: Node) -> Node:
             return replace_with if n == to_replace else n
 
@@ -234,7 +237,9 @@ class Transformer(object):
 def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
+
     class Tracer(torch.fx.Tracer):
+
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
             # We don't want to trace inside `MessagePassing` and lazy `Linear`
             # modules, so we mark them as leaf modules.

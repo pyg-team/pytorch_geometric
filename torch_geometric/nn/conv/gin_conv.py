@@ -38,6 +38,7 @@ class GINConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
@@ -110,6 +111,7 @@ class GINEConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  edge_dim: Optional[int] = None, **kwargs):
         kwargs.setdefault('aggr', 'add')

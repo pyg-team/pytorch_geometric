@@ -28,6 +28,7 @@ class Set2Set(torch.nn.Module):
             a stacked LSTM, with the second LSTM taking in outputs of the first
             LSTM and computing the final results. (default: :obj:`1`)
     """
+
     def __init__(self, in_channels, processing_steps, num_layers=1):
         super().__init__()
 

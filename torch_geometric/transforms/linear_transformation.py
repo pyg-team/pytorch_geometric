@@ -14,6 +14,7 @@ class LinearTransformation(BaseTransform):
         matrix (Tensor): tensor with shape :obj:`[D, D]` where :obj:`D`
             corresponds to the dimensionality of node positions.
     """
+
     def __init__(self, matrix: Tensor):
         assert matrix.dim() == 2, (
             'Transformation matrix should be two-dimensional.')

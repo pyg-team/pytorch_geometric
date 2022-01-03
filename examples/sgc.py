@@ -12,6 +12,7 @@ data = dataset[0]
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = SGConv(dataset.num_features, dataset.num_classes, K=2,

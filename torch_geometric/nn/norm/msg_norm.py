@@ -20,6 +20,7 @@ class MessageNorm(torch.nn.Module):
             scaling factor :math:`s` of message normalization.
             (default: :obj:`False`)
     """
+
     def __init__(self, learn_scale: bool = False):
         super().__init__()
 

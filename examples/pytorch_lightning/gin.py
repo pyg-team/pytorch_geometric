@@ -14,6 +14,7 @@ from torch_geometric.nn import GIN, global_add_pool, MLP
 
 
 class Model(pl.LightningModule):
+
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):

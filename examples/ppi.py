@@ -17,6 +17,7 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = GATConv(train_dataset.num_features, 256, heads=4)

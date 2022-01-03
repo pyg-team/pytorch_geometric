@@ -29,6 +29,7 @@ class GlobalAttention(torch.nn.Module):
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
+
     def __init__(self, gate_nn, nn=None):
         super().__init__()
         self.gate_nn = gate_nn

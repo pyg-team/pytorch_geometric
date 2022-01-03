@@ -24,6 +24,7 @@ class FixedPoints(BaseTransform):
             In case :obj:`allow_duplicates` is :obj:`True`, the number of
             duplicated points are kept to a minimum. (default: :obj:`False`)
     """
+
     def __init__(self, num, replace=True, allow_duplicates=False):
         self.num = num
         self.replace = replace

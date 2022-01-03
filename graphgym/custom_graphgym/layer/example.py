@@ -18,6 +18,7 @@ class ExampleConv1(MessagePassing):
     r"""Example GNN layer
 
     """
+
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
@@ -61,6 +62,7 @@ class ExampleConv2Layer(MessagePassing):
     r"""Example GNN layer
 
     """
+
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
@@ -97,6 +99,7 @@ class ExampleConv2Layer(MessagePassing):
 
 @register_layer('exampleconv2')
 class ExampleConv2(nn.Module):
+
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super().__init__()
         self.model = ExampleConv2Layer(dim_in, dim_out, bias=bias)

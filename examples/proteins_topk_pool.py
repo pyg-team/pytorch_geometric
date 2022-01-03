@@ -18,6 +18,7 @@ train_loader = DataLoader(train_dataset, batch_size=60)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
 

@@ -13,6 +13,7 @@ from torch_geometric.loader import NeighborSampler
 
 
 class SAGE(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels,
                  num_layers=2):
         super().__init__()

@@ -84,6 +84,7 @@ class RGCNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -239,6 +240,7 @@ class RGCNConv(MessagePassing):
 
 class FastRGCNConv(RGCNConv):
     r"""See :class:`RGCNConv`."""
+
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
                 edge_index: Adj, edge_type: OptTensor = None):
         """"""

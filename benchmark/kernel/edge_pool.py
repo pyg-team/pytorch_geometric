@@ -6,6 +6,7 @@ from torch_geometric.nn import (GraphConv, EdgePooling, global_mean_pool,
 
 
 class EdgePool(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')

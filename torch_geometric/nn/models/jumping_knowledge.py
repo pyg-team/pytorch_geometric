@@ -36,6 +36,7 @@ class JumpingKnowledge(torch.nn.Module):
         num_layers (int, optional): The number of layers to aggregate. Needs to
             be only set for LSTM-style aggregation. (default: :obj:`None`)
     """
+
     def __init__(self, mode, channels=None, num_layers=None):
         super().__init__()
         self.mode = mode.lower()

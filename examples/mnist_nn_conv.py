@@ -26,6 +26,7 @@ def normalized_cut_2d(edge_index, pos):
 
 
 class Net(nn.Module):
+
     def __init__(self):
         super().__init__()
         nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(),
