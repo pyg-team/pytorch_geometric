@@ -32,7 +32,7 @@ def is_undirected(
     edge_attr = [] if edge_attr is None else edge_attr
     edge_attr = [edge_attr] if isinstance(edge_attr, Tensor) else edge_attr
 
-    edge_index1, edge_attr1 = coalesce(
+    edge_index1, edge_attr1 = sort_edge_index(
         edge_index,
         edge_attr,
         num_nodes=num_nodes,
