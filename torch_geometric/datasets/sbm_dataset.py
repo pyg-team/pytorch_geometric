@@ -25,8 +25,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
-        is_undirected (bool): Whether the graph to generate is undirected.
-            (default: :obj:`True`)
+        is_undirected (bool, optional): Whether the graph to generate is
+            undirected. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
@@ -132,8 +132,8 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
         num_channels (int, optional): The number of node features. If given
             as :obj:`None`, node features are not generated.
             (default: :obj:`None`)
-        is_undirected (bool): Whether the graph to generate is undirected.
-            (default: :obj:`True`)
+        is_undirected (bool, optional): Whether the graph to generate is
+            undirected. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before

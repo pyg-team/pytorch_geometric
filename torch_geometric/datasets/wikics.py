@@ -1,7 +1,12 @@
+from typing import Optional, Callable
+
 import json
+import warnings
 from itertools import chain
 
 import torch
+
+from torch_geometric.utils import to_undirected
 from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
@@ -21,20 +26,31 @@ class WikiCS(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        is_undirected (bool, optional): Whether the graph is undirected.
+            (default: :obj:`True`)
     """
 
     url = 'https://github.com/pmernyei/wiki-cs-dataset/raw/master/dataset'
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 is_undirected: Optional[bool] = None):
+        if is_undirected is None:
+            warnings.warn(
+                f"The {self.__class__.__name__} dataset now returns an "
+                f"undirected graph by default. Please explicitly specify "
+                f"'is_undirected=False' to restore the old behaviour.")
+            is_undirected = True
+        self.is_undirected = is_undirected
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
-        return ['data.json']
+    def raw_file_names(self) -> str:
+        return 'data.json'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -51,6 +67,8 @@ class WikiCS(InMemoryDataset):
         edges = [[(i, j) for j in js] for i, js in enumerate(data['links'])]
         edges = list(chain(*edges))
         edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+        if self.is_undirected:
+            edge_index = to_undirected(edge_index, num_nodes=x.size(0))
 
         train_mask = torch.tensor(data['train_masks'], dtype=torch.bool)
         train_mask = train_mask.t().contiguous()
