@@ -52,8 +52,9 @@ jobs:
           pip install numba
           pip install tabulate
           pip install matplotlib
-          pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+          pip install --verbose git+https://github.com/the-virtual-brain/tvb-geodesic.git
           pip install pytorch-memlab
+          pip install --upgrade "numpy<1.21"
 
       - name: Install main package
         run: |
