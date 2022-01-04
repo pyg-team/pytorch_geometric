@@ -13,7 +13,7 @@ except ImportError:
     with_gdist = False
 
 
-@pytest.mark.skipif(not with_gdist, reason="noo 'gdist' package")
+@pytest.mark.skipif(not with_gdist, reason="no 'gdist' package")
 def test_geodesic_distance():
     pos = torch.Tensor([[0, 0, 0], [2, 0, 0], [0, 2, 0], [2, 2, 0]])
     face = torch.tensor([[0, 1, 3], [0, 2, 3]]).t()
