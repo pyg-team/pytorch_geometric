@@ -31,8 +31,8 @@ class FakeDataset(InMemoryDataset):
             If set to :obj:`"auto"`, will return graph-level labels if
             :obj:`num_graphs > 1`, and node-level labels other-wise.
             (default: :obj:`"auto"`)
-        is_undirected (bool): Whether the graphs to generate are undirected.
-            (default: :obj:`True`)
+        is_undirected (bool, optional): Whether the graphs to generate are
+            undirected. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
