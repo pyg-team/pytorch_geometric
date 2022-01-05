@@ -1,4 +1,4 @@
-from typing import Optional, Callable
+from typing import Optional, List, Callable
 
 import json
 import warnings
@@ -46,12 +46,12 @@ class WikiCS(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> str:
-        return 'data.json'
+    def raw_file_names(self) -> List[str]:
+        return ['data.json']
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return 'data_undirected.pt' if self.is_undirected else 'data.pt'
 
     def download(self):
         for name in self.raw_file_names:
