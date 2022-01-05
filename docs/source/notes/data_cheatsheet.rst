@@ -13,11 +13,11 @@ Dataset Cheatsheet
       - task
       - hetero
 {% for cls in torch_geometric.datasets.classes %}
-    * - :class:`~torch_geometric.datasets.{{ cls }}` (`Paper <http://dawdawd.com>`__)
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
+    * - :class:`~torch_geometric.datasets.{{ cls }}` (`Paper <http://foo.com>`__)
+      -
+      -
+      -
+      -
+      -
+      -
 {% endfor %}
