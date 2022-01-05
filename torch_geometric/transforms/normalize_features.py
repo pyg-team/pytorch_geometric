@@ -17,7 +17,9 @@ class NormalizeFeatures(BaseTransform):
     def __call__(self, data: Union[Data, HeteroData]):
         for store in data.stores:
             for key, value in store.items(*self.attrs):
-                store[key] = value / value.sum(dim=-1, keepdim=True).clamp_(1.)
+                value = value - value.min()
+                value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.))
+                store[key] = value
         return data
 
     def __repr__(self) -> str:
