@@ -40,7 +40,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'test': tests_require,
-        'dev': dev_requires
+        'dev': dev_requires,
     },
     packages=find_packages(),
     include_package_data=True,
