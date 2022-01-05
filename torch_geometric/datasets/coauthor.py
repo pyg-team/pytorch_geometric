@@ -28,6 +28,26 @@ class Coauthor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - CS
+          - 18,333
+          - 163,788
+          - 6805
+          - 15
+        * - Physics
+          - 34,493
+          - 495,924
+          - 8415
+          - 5
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
