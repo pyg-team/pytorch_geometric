@@ -74,6 +74,8 @@ from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 
+import torch_geometric.datasets.utils  # noqa
+
 __all__ = [
     'KarateClub',
     'TUDataset',

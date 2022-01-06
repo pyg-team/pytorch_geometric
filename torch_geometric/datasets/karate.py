@@ -20,18 +20,19 @@ class KarateClub(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
 
-    .. list-table::
-        :widths: 10 10 10 10
-        :header-rows: 1
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
 
-        * - #nodes
-          - #edges
-          - #features
-          - #classes
-        * - 34
-          - 156
-          - 34
-          - 4
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 34
+              - 156
+              - 34
+              - 4
     """
     def __init__(self, transform=None):
         super().__init__('.', transform)
