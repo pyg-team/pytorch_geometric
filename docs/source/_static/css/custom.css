@@ -195,7 +195,7 @@ table.colwidths-given tr th:first-child p {
   text-align: left;
 }
 
-dl.class dl.simple > dt {
+dl:not(.py) > dt {
   text-transform: uppercase;
   background: inherit !important;
   color: inherit !important;
