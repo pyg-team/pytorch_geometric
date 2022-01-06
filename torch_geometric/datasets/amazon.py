@@ -29,25 +29,26 @@ class Amazon(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    .. list-table::
-        :widths: 10 10 10 10 10
-        :header-rows: 1
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
 
-        * - Name
-          - #nodes
-          - #edges
-          - #features
-          - #classes
-        * - Computers
-          - 13,752
-          - 491,722
-          - 767
-          - 10
-        * - Photo
-          - 7,650
-          - 238,162
-          - 745
-          - 8
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - Computers
+              - 13,752
+              - 491,722
+              - 767
+              - 10
+            * - Photo
+              - 7,650
+              - 238,162
+              - 745
+              - 8
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'

@@ -71,18 +71,19 @@ class CoraFull(CitationFull):
     r"""Alias for :class:`torch_geometric.datasets.CitationFull` with
     :obj:`name="cora"`.
 
-    .. list-table::
-        :widths: 10 10 10 10
-        :header-rows: 1
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
 
-        * - #nodes
-          - #edges
-          - #features
-          - #classes
-        * - 19,793
-          - 126,842
-          - 8710
-          - 70
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 19,793
+              - 126,842
+              - 8,710
+              - 70
     """
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
