@@ -42,7 +42,7 @@ from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
-from .particle import TrackMLParticleTrackingDataset
+# from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
 from .wikics import WikiCS
@@ -123,7 +123,7 @@ __all__ = [
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
-    'TrackMLParticleTrackingDataset',
+    # 'TrackMLParticleTrackingDataset',
     'AMiner',
     'WordNet18',
     'WordNet18RR',
