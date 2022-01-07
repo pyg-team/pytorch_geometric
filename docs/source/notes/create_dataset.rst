@@ -166,3 +166,28 @@ Frequently Asked Questions
 
         data_list = [Data(...), ..., Data(...)]
         loader = DataLoader(data_list, batch_size=32)
+
+Check your understanding
+--------------------------
+
+#. **Try writting a ** :class:`torch_geometric.data.InMemoryDataset`** from a ** `List` **of** :obj:`torch_geometric.data.Data` objects.
+
+    .. code-block:: python
+
+        class MyDataset(InMemoryDataset):
+        def __init__(self, root, data_list, transform=None):
+            self.data_list = data_list
+            super().__init__(root, transform)
+            self.data, self.slices = torch.load(self.processed_paths[0])
+
+        @property
+        def processed_file_names(self):
+            return 'data.pt'
+
+        def process(self):
+            torch.save(self.collate(self.data_list), self.processed_paths[0])
+
+    Where do we get `self.processed_paths[0]` in the above codedefined?
+
+    The `self.processed_paths[0]` is the path to the file where the processed data is saved.
+    This is the path to the file where the processed data is saved.

@@ -413,3 +413,18 @@ Finally, we can evaluate our model on the test nodes:
 This is all it takes to implement your first graph neural network.
 The easiest way to learn more about Graph Neural Networks is to study the examples in the :obj:`examples/` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!
+
+
+Check your understanding
+------------------------
+
+Try the following
+
+- Load a dataset and randomly split it.
+- If there is a line that says
+.. code-block:: python
+    batch
+    >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
+
+
+what does each number mean?
