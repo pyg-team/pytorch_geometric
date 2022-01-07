@@ -1,10 +1,15 @@
+from typing import NamedTuple, Dict, Any, List
+
 import copy
 
 import torch
 import numpy as np
 
+from torch_geometric.data.data import BaseData
+from torch_geometric.data.storage import EdgeStorage, NodeStorage, BaseStorage, GlobalStorage
 
-class TemporalData(object):
+
+class TemporalData(BaseData):
     def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
         self.src = src
         self.dst = dst
@@ -12,13 +17,14 @@ class TemporalData(object):
         self.msg = msg
         self.y = y
 
-        for key, item in kwargs.items():
-            self[key] = item
+        super().__init__()
+        self.__dict__['_store'] = GlobalStorage(_parent=self)
 
-    def __getitem__(self, idx):
-        if isinstance(idx, str):
-            return getattr(self, idx, None)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
+    @staticmethod
+    def __prepare_non_str_idx(idx):
         if isinstance(idx, int):
             idx = torch.tensor([idx])
         if isinstance(idx, (list, tuple)):
@@ -33,20 +39,91 @@ class TemporalData(object):
                 f'Only strings, integers, slices (`:`), list, tuples, and '
                 f'long or bool tensors are valid indices (got '
                 f'{type(idx).__name__}).')
+        return idx
 
-        data = copy.copy(self)
+    def __getitem__(self, idx):
+        if isinstance(idx, str):
+            return self._store[idx]
+
+        prepared_idx = self.__prepare_non_str_idx(idx)
+
+        data = copy.copy(self._store)
         for key, item in data:
             if item.shape[0] == self.num_events:
-                data[key] = item[idx]
+                data[key] = item[prepared_idx]
         return data
 
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
-        setattr(self, key, value)
+        self._store[key] = value
+
+    def __delitem__(self, idx):
+        if isinstance(idx, str) and idx in self._store:
+            del self._store[idx]
+
+        prepared_idx = self.__prepare_non_str_idx(idx)
+
+        for key, item in self._store:
+            if item.shape[0] == self.num_events:
+                del item[prepared_idx]
+
+    def __getattr__(self, key: str) -> Any:
+        if '_store' not in self.__dict__:
+            raise RuntimeError(
+                "The 'data' object was created by an older version of PyG. "
+                "If this error occurred while loading an already existing "
+                "dataset, remove the 'processed/' directory in the dataset's "
+                "root folder and try again.")
+        return getattr(self._store, key)
+
+    def __setattr__(self, key: str, value: Any):
+        setattr(self._store, key, value)
+
+    def __delattr__(self, key: str):
+        delattr(self._store, key)
+
+    def __copy__(self):
+        out = self.__class__.__new__(self.__class__)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out.__dict__['_store'] = copy.copy(self._store)
+        out._store._parent = out
+        return out
+
+    def __deepcopy__(self, memo):
+        out = self.__class__.__new__(self.__class__)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = copy.deepcopy(value, memo)
+        out._store._parent = out
+        return out
+
+    def stores_as(self, data: 'TemporalData'):
+        return self
+
+    @property
+    def stores(self) -> List[BaseStorage]:
+        return [self._store]
+
+    @property
+    def node_stores(self) -> List[NodeStorage]:
+        return [self._store]
+
+    @property
+    def edge_stores(self) -> List[EdgeStorage]:
+        return [self._store]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return self._store.to_dict()
+
+    def to_namedtuple(self) -> NamedTuple:
+        return self._store.to_namedtuple()
+
+    def debug(self):
+        pass # TODO
 
     @property
     def keys(self):
-        return [key for key in self.__dict__.keys() if self[key] is not None]
+        return [key for key in self._store.keys() if self[key] is not None]
 
     def __len__(self):
         return len(self.keys)
