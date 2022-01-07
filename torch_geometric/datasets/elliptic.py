@@ -37,12 +37,10 @@ class EllipticBitcoinDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
     def __init__(self, root, transform=None, pre_transform=None):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(
-            osp.join(self.processed_dir, self.processed_paths[0])
-        )
+            osp.join(self.processed_dir, self.processed_paths[0]))
 
     @property
     def raw_dir(self) -> str:
@@ -104,9 +102,8 @@ class EllipticBitcoinDataset(InMemoryDataset):
         df_classes["class"] = df_classes["class"]\
             .map({"unknown": 2, "1": 1, "2": 0})
         # merging dataframes
-        df_merge = df_features.merge(
-            df_classes, how="left", right_on="txId", left_on="txId"
-        )
+        df_merge = df_features.merge(df_classes, how="left", right_on="txId",
+                                     left_on="txId")
         df_merge = df_merge.sort_values("Time step").reset_index(drop=True)
 
         # training index edges mapping
@@ -144,11 +141,9 @@ class EllipticBitcoinDataset(InMemoryDataset):
 
         df_class_feature_selected_train_test = df_merge.copy()
         X_features = df_class_feature_selected_train_test.drop(
-            columns=["txId", "Time step", "class"]
-        )
-        X_features = torch.tensor(
-            np.array(X_features.values, dtype=np.double), dtype=torch.double
-        )
+            columns=["txId", "Time step", "class"])
+        X_features = torch.tensor(np.array(X_features.values, dtype=np.double),
+                                  dtype=torch.double)
 
         y_label = df_class_feature_selected_train_test[["class"]]
         y_labels = y_label["class"].values
