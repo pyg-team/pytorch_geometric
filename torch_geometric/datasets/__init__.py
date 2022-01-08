@@ -73,6 +73,7 @@ from .email_eu_core import EmailEUCore
 from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
+from .elliptic import EllipticBitcoinDataset
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -155,6 +156,7 @@ __all__ = [
     'StochasticBlockModelDataset',
     'RandomPartitionGraphDataset',
     'LINKXDataset',
+    'EllipticBitcoinDataset',
 ]
 
 classes = __all__
