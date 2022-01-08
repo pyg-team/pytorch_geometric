@@ -58,6 +58,14 @@ class HypergraphConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          hyperedge indices :math:`(|\mathcal{V}|, |\mathcal{E}|)`,
+          hyperedge weights :math:`(|\mathcal{E}|)` *(optional)*
+          hyperedge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
                  concat=True, negative_slope=0.2, dropout=0, bias=True,

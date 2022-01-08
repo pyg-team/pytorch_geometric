@@ -39,6 +39,17 @@ class GravNetConv(MessagePassing):
             lies on the GPU. (default: :obj:`1`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*,
+          maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+
+
     """
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,

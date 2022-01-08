@@ -43,6 +43,17 @@ class PointNetConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          positions: :math:`(|\mathcal{V}|, 3) or :math:`((|\mathcal{V_s}|, 3)
+          , :math:`(|\mathcal{V_t}|, 3))` if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, local_nn: Optional[Callable] = None,
                  global_nn: Optional[Callable] = None,
