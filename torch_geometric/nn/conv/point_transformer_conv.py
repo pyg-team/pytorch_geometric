@@ -64,8 +64,8 @@ class PointTransformerConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
           if bipartite,
-          positions :math:`(|\mathcal{V}|, 3)` or :math:`((|\mathcal{V_s}|, 3)
-          , :math:`(|\mathcal{V_t}|, 3))` if bipartite,
+          positions :math:`(|\mathcal{V}|, 3)` or
+          :math:`((|\mathcal{V_s}|, 3), (|\mathcal{V_t}|, 3))` if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite

@@ -2,6 +2,7 @@ from typing import Optional
 from torch_geometric.typing import OptTensor
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.inits import zeros
@@ -125,8 +126,9 @@ class ChebConv(MessagePassing):
 
         return edge_index, edge_weight
 
-    def forward(self, x, edge_index, edge_weight: OptTensor = None,
-                batch: OptTensor = None, lambda_max: OptTensor = None):
+    def forward(self, x: Tensor, edge_index: Tensor,
+                edge_weight: OptTensor = None, batch: OptTensor = None,
+                lambda_max: OptTensor = None):
         """"""
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'

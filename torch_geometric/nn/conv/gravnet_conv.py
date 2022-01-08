@@ -42,9 +42,14 @@ class GravNetConv(MessagePassing):
 
     Shapes:
         - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})`,
-          batch vector :math:`(|\mathcal{V}|)` *(optional)*
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
+          if bipartite,
+          batch vector :math:`(|\mathcal{V}|)` or
+          :math:`((|\mathcal{V}_s|), (|\mathcal{V}_t|))` if bipartite
+          *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
 
 
     """
