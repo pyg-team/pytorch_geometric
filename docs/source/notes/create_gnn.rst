@@ -137,12 +137,12 @@ Imagine we had the following :obj:`~torch_geometric.data.Data` object:
 
 Answer the following questions on the previous code:
 
-- What does :meth:`.contiguous()` do to :obj:`~torch_geometric.data.Data.edge_index`?
+- What does :meth:`~torch_geometric.data.Data.contiguous()` do to :obj:`~torch_geometric.data.Data.edge_index`?
 - What are :obj:`row` and :obj:`col`?
 - What does :func:`degree` do?
-- Why do we use :func:`degree(col, x.size(0), dtype=x.dtype)` but not :func:`degree(row, x.size(0), dtype=x.dtype)`?
-- What do we do in :func:`deg_inv_sqrt[col]` and :func:`deg_inv_sqrt[row]`?
-- What do we do in :func:`deg_inv_sqrt[row] * deg_inv_sqrt[col]`?
+- Why do we use :func:`~torch_geometric.utils.degree(col, x.size(0), dtype=x.dtype)` but not :func:`~torch_geometric.utils.degree(row, x.size(0), dtype=x.dtype)`?
+- What do we do in :obj:`deg_inv_sqrt[col]` and :obj:`deg_inv_sqrt[row]`?
+- What do we do in :obj:`deg_inv_sqrt[row] * deg_inv_sqrt[col]`?
 - What would we do to reverse :func:`norm.view(-1, 1)`? Notice that this is not done in place.
 - What is :obj:`x_j` in the :meth:`message` function? If :obj:`self.lin` were the identity matrix, can you write it?
 - If you wanted to define an :meth:`update` function as a :obj:`torch.nn.Linear` layer, what would be the shape? Do it.
