@@ -120,33 +120,6 @@ Initializing and calling it is straightforward:
     conv = GCNConv(16, 32)
     x = conv(x, edge_index)
 
-** Check your understanding**
-
-Imagine we had the following :obj:`~torch_geometric.data.Data` object:
-
-.. code-block:: python
-
-    import torch
-    from torch_geometric.data import Data
-
-    edge_index = torch.tensor([[0, 1, 1, 2],
-                            [1, 0, 2, 1]], dtype=torch.long)
-    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
-
-    data = Data(x=x, edge_index=edge_index)
-
-Answer the following questions on the previous code:
-
-- What does :meth:`~torch_geometric.data.Data.contiguous()` do to :obj:`~torch_geometric.data.Data.edge_index`?
-- What are :obj:`row` and :obj:`col`?
-- What does :func:`degree` do?
-- Why do we use :func:`~torch_geometric.utils.degree(col, x.size(0), dtype=x.dtype)` but not :func:`~torch_geometric.utils.degree(row, x.size(0), dtype=x.dtype)`?
-- What do we do in :obj:`deg_inv_sqrt[col]` and :obj:`deg_inv_sqrt[row]`?
-- What do we do in :obj:`deg_inv_sqrt[row] * deg_inv_sqrt[col]`?
-- What would we do to reverse :func:`norm.view(-1, 1)`? Notice that this is not done in place.
-- What is :obj:`x_j` in the :meth:`message` function? If :obj:`self.lin` were the identity matrix, can you write it?
-- If you wanted to define an :meth:`update` function as a :obj:`torch.nn.Linear` layer, what would be the shape? Do it.
-
 Implementing the Edge Convolution
 ---------------------------------
 
@@ -212,12 +185,40 @@ This leaves us with a clean interface for initializing and calling this layer:
     conv = DynamicEdgeConv(3, 128, k=6)
     x = conv(x, batch)
 
+Exercises
+---------
 
-** Check your understanding**
+Imagine we are given the following :obj:`~torch_geometric.data.Data` object:
 
-Using the same :class:`~torch_geometric.data.Data` object above, answer the following questions on :class:`~torch_geometric.nn.conv.EdgeConv`:
+.. code-block:: python
 
-- If you try to execute
-- What is :obj:`x_i` and :obj:`x_j-x_i`?
-- What does :func:`torch.cat([x_i, x_j - x_i], dim=1)` do? Why :obj:`dim = 1`?
-- What would the inherited :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.message` function do if we had not overwritten it?
+    import torch
+    from torch_geometric.data import Data
+
+    edge_index = torch.tensor([[0, 1],
+                               [1, 0],
+                               [1, 2],
+                               [2, 1]], dtype=torch.long)
+    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
+
+    data = Data(x=x, edge_index=edge_index.t().contiguous())
+
+Try to answer the following questions related to :class:`~torch_geometric.nn.conv.GCNConv`:
+
+1. What information does :obj:`row` and :obj:`col` hold?
+
+2. What does :meth:`~torch_geometric.utils.degree` do?
+
+3. Why do we use :obj:`degree(col, ...)` rather than :obj:`degree(row, ...)`?
+
+4. What does :obj:`deg_inv_sqrt[col]` and :obj:`deg_inv_sqrt[row]` do?
+
+5. What information does :obj:`x_j` hold in the :meth:`~torch_geometric.nn.conv.MessagePassing.message` function? If :obj:`self.lin` denotes the identity function, what is the exact content of :obj:`x_j`?
+
+6. Add an :meth:`~torch_geometric.nn.conv.MessagePassing.update` function to :class:`~torch_geometric.nn.conv.GCNConv` that adds transformed central node features to the aggregated output.
+
+Try to answer the following questions related to :class:`~torch_geometric.nn.conv.EdgeConv`:
+
+1. What is :obj:`x_i` and :obj:`x_j - x_i`?
+
+2. What does :obj:`torch.cat([x_i, x_j - x_i], dim=1)` do? Why :obj:`dim = 1`?

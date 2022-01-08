@@ -167,14 +167,14 @@ Frequently Asked Questions
         data_list = [Data(...), ..., Data(...)]
         loader = DataLoader(data_list, batch_size=32)
 
-Check your understanding
---------------------------
+Exercises
+---------
 
-#. **Try writting a ** :class:`torch_geometric.data.InMemoryDataset`** from a ** `List` **of** :obj:`torch_geometric.data.Data` objects.
+Consider the following :class:`~torch_geometric.data.InMemoryDataset` constructed from a list of :obj:`~torch_geometric.data.Data` objects:
 
-    .. code-block:: python
+.. code-block:: python
 
-        class MyDataset(InMemoryDataset):
+    class MyDataset(InMemoryDataset):
         def __init__(self, root, data_list, transform=None):
             self.data_list = data_list
             super().__init__(root, transform)
@@ -187,7 +187,6 @@ Check your understanding
         def process(self):
             torch.save(self.collate(self.data_list), self.processed_paths[0])
 
-    Where do we get `self.processed_paths[0]` in the above codedefined?
+1. What is the output of :obj:`self.processed_paths[0]`?
 
-    The `self.processed_paths[0]` is the path to the file where the processed data is saved.
-    This is the path to the file where the processed data is saved.
+2. What does :meth:`~torch_geometric.data.InMemoryDataset.collate` do?
