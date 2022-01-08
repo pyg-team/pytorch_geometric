@@ -43,10 +43,7 @@ class GravNetConv(MessagePassing):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,
-          edge weights :math:`(|\mathcal{E}|)` *(optional)*,
-          batch vector :math:`(|\mathcal{V}|)` *(optional)*,
-          maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
 
 
