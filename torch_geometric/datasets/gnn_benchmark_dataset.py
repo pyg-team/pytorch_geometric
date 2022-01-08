@@ -79,7 +79,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
               - 5
               - 10
             * - TSP
-              - 1,0000
+              - 10,000
               - ~275.4
               - ~6,885.0
               - 2
