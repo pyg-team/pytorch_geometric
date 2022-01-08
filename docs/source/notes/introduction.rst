@@ -424,6 +424,7 @@ Try the following
 - If there is a line that says
 
 .. code-block:: python
+
     batch
     >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
