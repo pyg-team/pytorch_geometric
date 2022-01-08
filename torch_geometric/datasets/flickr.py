@@ -24,6 +24,20 @@ class Flickr(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 89,250
+              - 899,756
+              - 500
+              - 7
     """
 
     adj_full_id = '1crmsTbd1-2sEXsGwa2IKnIB7Zd3TmUsy'
