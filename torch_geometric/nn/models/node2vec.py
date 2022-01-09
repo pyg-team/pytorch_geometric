@@ -5,13 +5,15 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
+from ..epsilon import EPSILON
+
 try:
     import torch_cluster  # noqa
     random_walk = torch.ops.torch_cluster.random_walk
 except ImportError:
     random_walk = None
 
-EPS = 1e-15
+EPS = EPSILON()
 
 
 class Node2Vec(torch.nn.Module):

@@ -7,7 +7,9 @@ from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
 
-EPS = 1e-15
+from ..epsilon import EPSILON
+
+EPS = EPSILON()
 
 
 class MetaPath2Vec(torch.nn.Module):

@@ -2,8 +2,9 @@ import torch
 from torch.nn import Parameter
 
 from ..inits import reset, uniform
+from ..epsilon import EPSILON
 
-EPS = 1e-15
+EPS = EPSILON()
 
 
 class DeepGraphInfomax(torch.nn.Module):
