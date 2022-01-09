@@ -21,6 +21,7 @@ from .tree_decomposition import tree_decomposition
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
+from .convert import to_meshio, from_meshio
 from .convert import to_cugraph
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
@@ -64,6 +65,8 @@ __all__ = [
     'from_networkx',
     'to_trimesh',
     'from_trimesh',
+    'to_meshio',
+    'from_meshio',
     'to_cugraph',
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',

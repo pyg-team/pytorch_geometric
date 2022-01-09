@@ -46,6 +46,7 @@ jobs:
           pip install cython
           pip install scikit-image
           pip install trimesh
+          pip install meshio
           pip install pandas
           pip install h5py
           pip install numba

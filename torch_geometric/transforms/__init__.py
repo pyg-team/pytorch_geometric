@@ -28,6 +28,7 @@ from .remove_isolated_nodes import RemoveIsolatedNodes
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
+from .tetra_to_edge import TetraToEdge
 from .sample_points import SamplePoints
 from .fixed_points import FixedPoints
 from .to_dense import ToDense
@@ -78,6 +79,7 @@ __all__ = [
     'KNNGraph',
     'RadiusGraph',
     'FaceToEdge',
+    'TetraToEdge',
     'SamplePoints',
     'FixedPoints',
     'ToDense',
