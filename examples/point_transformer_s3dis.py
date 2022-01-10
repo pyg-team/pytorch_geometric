@@ -13,7 +13,6 @@ from torch_geometric.nn.unpool import knn_interpolate
 from torch_geometric.nn.pool import knn
 from torch_geometric.nn.conv import PointTransformerConv
 
-
 from torch_cluster import knn_graph
 from torch_cluster import fps
 from torch_scatter import scatter_max
@@ -25,27 +24,19 @@ class TransformerBlock(torch.nn.Module):
         self.lin_in = Lin(in_channels, in_channels, bias=False)
         self.lin_out = Lin(out_channels, out_channels, bias=False)
 
-        self.pos_nn = Seq(
-            MLP([3, 3]), 
-            Lin(3, out_channels)
-        )
+        self.pos_nn = Seq(MLP([3, 3]), Lin(3, out_channels))
 
         self.attn_nn = Seq(
-            BN(out_channels),
-            ReLU(),
-            MLP([out_channels, out_channels // 8]),
-            Lin(out_channels // 8, out_channels) 
+            BN(out_channels), ReLU(), MLP([out_channels, out_channels // 8]),
+            Lin(out_channels // 8, out_channels)
             # NB : last should be // 8 according to original code, but custom
             # implementation makes it impossible at the moment
         )
 
-        self.transformer = PointTransformerConv(
-            in_channels,
-            out_channels,
-            pos_nn=self.pos_nn,
-            attn_nn=self.attn_nn
-        )
-        
+        self.transformer = PointTransformerConv(in_channels, out_channels,
+                                                pos_nn=self.pos_nn,
+                                                attn_nn=self.attn_nn)
+
         self.bn1 = BN(in_channels)
         self.bn2 = BN(in_channels)
         self.bn3 = BN(in_channels)
@@ -64,12 +55,11 @@ class TransitionDown(torch.nn.Module):
         Samples the input point cloud by a ratio percentage to reduce
         cardinality and uses an mlp to augment features dimensionnality
     '''
-
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
         super().__init__()
         self.k = k
         self.ratio = ratio
-        self.mlp = MLP([3+in_channels, out_channels], bias=False)
+        self.mlp = MLP([3 + in_channels, out_channels], bias=False)
 
     def forward(self, x, pos, batch):
         # FPS sampling
@@ -79,17 +69,15 @@ class TransitionDown(torch.nn.Module):
         sub_batch = batch[id_clusters] if batch is not None else None
 
         # beware of self loop
-        id_k_neighbor = knn(pos, pos[id_clusters], k=self.k,
-                            batch_x=batch, batch_y=sub_batch)
+        id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
+                            batch_y=sub_batch)
 
         # transformation of features through a simple MLP
-        x = self.mlp(torch.cat([pos,x], axis=1))
+        x = self.mlp(torch.cat([pos, x], axis=1))
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]],
-                               id_k_neighbor[0],
-                               dim_size=id_clusters.size(0),
-                               dim=0)
+        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
+                               dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
         sub_pos, out = pos[id_clusters], x_out
@@ -98,13 +86,11 @@ class TransitionDown(torch.nn.Module):
 
 def MLP(channels, batch_norm=True, bias=True):
     return Seq(*[
-        Seq(
-            Lin(channels[i - 1], channels[i], bias=bias),
-            BN(channels[i]) if batch_norm else Identity(),
-            ReLU()
-        )
+        Seq(Lin(channels[i - 1], channels[i], bias=bias),
+            BN(channels[i]) if batch_norm else Identity(), ReLU())
         for i in range(1, len(channels))
     ])
+
 
 class TransitionUp(torch.nn.Module):
     '''
@@ -128,16 +114,18 @@ class TransitionUp(torch.nn.Module):
 
         return x
 
+
 class TransitionSummit(torch.nn.Module):
     def __init__(self, in_channels):
         super().__init__()
         self.mlp_sub = Seq(Lin(in_channels, in_channels), ReLU())
-        self.mlp = MLP([2*in_channels, in_channels])
+        self.mlp = MLP([2 * in_channels, in_channels])
 
     def forward(self, x):
         #import pdb; pdb.set_trace()
-        x = self.mlp(torch.cat((x, self.mlp_sub(x)),1))
+        x = self.mlp(torch.cat((x, self.mlp_sub(x)), 1))
         return x
+
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
@@ -154,8 +142,8 @@ class Net(torch.nn.Module):
             in_channels=dim_model[0],
             out_channels=dim_model[0],
         )
-        
-        blocks = [1,2,3,5,2]
+
+        blocks = [1, 2, 3, 5, 2]
 
         # backbone layers
         self.encoders = torch.nn.ModuleList()
@@ -163,40 +151,47 @@ class Net(torch.nn.Module):
         for i in range(0, n):
 
             # Add Transition Down block followed by a Point Transformer block
-            self.encoders.append(Seq(
-                TransitionDown(in_channels=dim_model[i],
-                               out_channels=dim_model[i + 1], k=self.k),
-                *[TransformerBlock(in_channels=dim_model[i + 1],
-                                 out_channels=dim_model[i + 1]) for k in range(blocks[1:][i])])
-            )
-        
+            self.encoders.append(
+                Seq(
+                    TransitionDown(in_channels=dim_model[i],
+                                   out_channels=dim_model[i + 1], k=self.k),
+                    *[
+                        TransformerBlock(in_channels=dim_model[i + 1],
+                                         out_channels=dim_model[i + 1])
+                        for k in range(blocks[1:][i])
+                    ]))
+
         # summit layers
         #self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
         self.mlp_summit = TransitionSummit(dim_model[-1])
-        
-        self.transformer_summit = Seq(*[TransformerBlock(
-            in_channels=dim_model[-1],
-            out_channels=dim_model[-1],
-        ) for i in range(1)])
-        
+
+        self.transformer_summit = Seq(*[
+            TransformerBlock(
+                in_channels=dim_model[-1],
+                out_channels=dim_model[-1],
+            ) for i in range(1)
+        ])
+
         self.decoders = torch.nn.ModuleList()
         for i in range(0, n):
             # Add Transition Up block followed by Point Transformer block
-            self.decoders.append(Seq(
-                TransitionUp(in_channels=dim_model[n - i],
-                              out_channels=dim_model[n - i -1]),
-                *[TransformerBlock(in_channels=dim_model[n - i -1],
-                                  out_channels=dim_model[n - i -1]) for k in range(1)])
-            )
+            self.decoders.append(
+                Seq(
+                    TransitionUp(in_channels=dim_model[n - i],
+                                 out_channels=dim_model[n - i - 1]),
+                    *[
+                        TransformerBlock(in_channels=dim_model[n - i - 1],
+                                         out_channels=dim_model[n - i - 1])
+                        for k in range(1)
+                    ]))
 
         # class score computation
-        self.mlp_output = Seq( MLP([dim_model[0], dim_model[0]]),
+        self.mlp_output = Seq(MLP([dim_model[0], dim_model[0]]),
                               Lin(dim_model[0], out_channels))
-            
+
     def forward(self, x, pos, batch=None):
         # add dummy features in case there is none
         x = pos if x is None else torch.cat((pos, x), 1)
-
 
         out_x = []
         out_pos = []
@@ -216,7 +211,7 @@ class Net(torch.nn.Module):
 
         # backbone down : #reduce cardinality and augment dimensionnality
         for i in range(len(self.encoders)):
-            
+
             x, pos, batch = self.encoders[i][0](x, pos, batch=batch)
             edge_index = knn_graph(pos, k=self.k, batch=batch)
             for layer in self.encoders[i][1:]:
@@ -232,16 +227,15 @@ class Net(torch.nn.Module):
         edge_index = knn_graph(pos, k=self.k, batch=batch)
         for layer in self.transformer_summit:
             x = layer(x, pos, edge_index)
-            
 
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.encoders)
         for i in range(n):
             x = self.decoders[i][0](x=out_x[-i - 2], x_sub=x,
-                                           pos=out_pos[-i - 2],
-                                           pos_sub=out_pos[-i - 1],
-                                           batch_sub=out_batch[-i - 1],
-                                           batch=out_batch[-i - 2])
+                                    pos=out_pos[-i - 2],
+                                    pos_sub=out_pos[-i - 1],
+                                    batch_sub=out_batch[-i - 1],
+                                    batch=out_batch[-i - 2])
 
             edge_index = edges_index[-i - 2]
 
@@ -280,32 +274,34 @@ def train():
 def test(loader):
     model.eval()
 
-    preds = []  #to compute IoU on the full dataset instead of a per-batch basis
-    labels = [] # we will stack the predictions and labels
-    for i,data in enumerate(loader):
+    preds = [
+    ]  #to compute IoU on the full dataset instead of a per-batch basis
+    labels = []  # we will stack the predictions and labels
+    for i, data in enumerate(loader):
         data = data.to(device)
         pred = model(data.x, data.pos, data.batch).argmax(dim=1)
         preds.append(pred)
         labels.append(data.y)
 
-
     preds_tensor = torch.hstack(preds).type(torch.LongTensor).cpu()
     labels_tensor = torch.hstack(labels).type(torch.LongTensor).cpu()
-    
+
     i, u = torch.zeros((13)), torch.zeros((13))
     # intersection_and_union does one-hot encoding, making the full labels
     # matrix too large to fit all at once so we do it in two times
-    
-    i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000], 13)#, data.batch)
+
+    i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000],
+                           13)  #, data.batch)
     i += i_sub
     u += u_sub
-    
-    i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:], 13)#, data.batch)
+
+    i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:],
+                           13)  #, data.batch)
     i += i_sub
     u += u_sub
-    
+
     iou = i / u
-    iou = iou[ torch.isnan(iou) == False].mean()
+    iou = iou[torch.isnan(iou) == False].mean()
     # Compute mean IoU.
     return iou
 
@@ -319,22 +315,23 @@ if __name__ == '__main__':
         T.RandomRotate(15, axis=1),
         T.RandomRotate(15, axis=2),
     ])
-    pre_transform = None#T.Compose([])#T.NormalizeScale()
+    pre_transform = None  #T.Compose([])#T.NormalizeScale()
     train_dataset = S3DIS(path, test_area=5, train=True, transform=transform,
-                             pre_transform=pre_transform)
+                          pre_transform=pre_transform)
     test_dataset = S3DIS(path, test_area=5, train=False,
-                            pre_transform=pre_transform)
+                         pre_transform=pre_transform)
     train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
     print('done')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(6 + 3, train_dataset.num_classes, dim_model=[
-        32, 64, 128, 256, 512], k=16).to(device)
+    model = Net(6 + 3, train_dataset.num_classes,
+                dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
+                                                gamma=0.1)
     #ptimizer = torch.optim.SGD(model.parameters(), lr=0.5, momentum=0.9, weight_decay=0.0001)
     #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60,80], gamma=0.1)
-    
+
     loss_history = []
     test_iou_history = []
     for epoch in range(1, 100):
@@ -343,9 +340,3 @@ if __name__ == '__main__':
         test_iou_history.append(iou)
         print('Epoch: {:02d}, Test IoU: {:.4f}'.format(epoch, iou))
         scheduler.step()
-    
-    
-    
-    
-    
-    

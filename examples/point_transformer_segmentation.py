@@ -193,7 +193,8 @@ def test(loader):
 
 if __name__ == '__main__':
     category = 'Airplane'  # Pass in `None` to train on all categories.
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                    'ShapeNet')
     transform = T.Compose([
         T.RandomTranslate(0.01),
         T.RandomRotate(15, axis=0),
@@ -201,18 +202,19 @@ if __name__ == '__main__':
         T.RandomRotate(15, axis=2),
     ])
     pre_transform = T.NormalizeScale()
-    train_dataset = ShapeNet(path, category, split='trainval', transform=transform,
-                             pre_transform=pre_transform)
+    train_dataset = ShapeNet(path, category, split='trainval',
+                             transform=transform, pre_transform=pre_transform)
     test_dataset = ShapeNet(path, category, split='test',
                             pre_transform=pre_transform)
     train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
-    
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(3, train_dataset.num_classes, dim_model=[32, 64, 128, 256, 512],
-                k=16).to(device)
+    model = Net(3, train_dataset.num_classes,
+                dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
+                                                gamma=0.5)
 
     for epoch in range(1, 100):
         train()
