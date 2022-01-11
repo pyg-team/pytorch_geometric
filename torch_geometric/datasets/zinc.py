@@ -20,10 +20,10 @@ class ZINC(InMemoryDataset):
     the water-octanol partition coefficient, SAS is the synthetic
     accessibility score, and cycles denotes the number of cycles with more
     than six atoms. Penalized logP is a score commonly used for training
-    molecular generation models, e.g. `"Junction Tree Variational Autoencoder 
-    for Molecular Graph Generation" 
+    molecular generation models, e.g. `"Junction Tree Variational Autoencoder
+    for Molecular Graph Generation"
     <https://proceedings.mlr.press/v80/jin18a.html>`,
-    `"Grammar Variational Autoencoder" 
+    `"Grammar Variational Autoencoder"
     <https://proceedings.mlr.press/v70/kusner17a.html>`.
 
     Args:
