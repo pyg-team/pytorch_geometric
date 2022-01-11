@@ -15,8 +15,13 @@ class ZINC(InMemoryDataset):
     `"Automatic Chemical Design Using a Data-Driven Continuous Representation
     of Molecules" <https://arxiv.org/abs/1610.02415>`_ paper, containing about
     250,000 molecular graphs with up to 38 heavy atoms.
-    The task is to regress a synthetic computed property dubbed as the
-    constrained solubility.
+    The task is to regress the penalized logP (also called constrained solubility
+    in some works), given by y = logP - SAS - cycles, where logP is the
+    water-octanol partition coefficient, SAS is the synthetic accessibility
+    score, and cycles denotes the number of cycles with more than six atoms.
+    Penalized logP is a score commonly used for training molecular generation models,
+    e.g. `"Junction Tree Variational Autoencoder for Molecular Graph Generation" <https://proceedings.mlr.press/v80/jin18a.html>`,
+    `"Grammar Variational Autoencoder" <https://proceedings.mlr.press/v70/kusner17a.html>`.
 
     Args:
         root (string): Root directory where the dataset should be saved.
