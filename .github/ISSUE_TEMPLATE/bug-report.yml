@@ -46,7 +46,7 @@ body:
   attributes:
     label: Environment
     description: |
-      Please provide as much information as possible about your environment, such as the PyG version (`print(torch_geometric.__version__)`), the PyTorch version (`print(torch.__version__)`), OS (*e.g.*, Linux), Python version (*e.g.*, `3.9`):
+      Please provide as much information as possible about your environment, such as your PyG (`print(torch_geometric.__version__)`) and PyTorch version (`print(torch.__version__)`), your OS (*e.g.*, Linux), and your Python version (*e.g.*, `3.9`):
     value: |
       * PyG version:
       * PyTorch version:
