@@ -49,7 +49,7 @@ jobs:
           pip install pandas
           pip install h5py
           pip install numba
-          pip install --upgrade numpy
+          pip install --upgrade numpy  # Reset to latest `numpy`.
           pip install tabulate
           pip install matplotlib
           pip install --verbose git+https://github.com/the-virtual-brain/tvb-geodesic.git
