@@ -32,7 +32,6 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}+cpu
         run: |
-          pip install "numpy<=1.21"
           pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
       - name: Install internal dependencies
@@ -50,9 +49,10 @@ jobs:
           pip install pandas
           pip install h5py
           pip install numba
+          pip install --upgrade numpy
           pip install tabulate
           pip install matplotlib
-          pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+          pip install --verbose git+https://github.com/the-virtual-brain/tvb-geodesic.git
           pip install pytorch-memlab
 
       - name: Install main package
