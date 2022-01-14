@@ -5,7 +5,7 @@ labels: bug
 body:
 - type: markdown
   attributes:
-    value: |
+    value: >
       #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the existing and past issues](https://github.com/pyg-team/pytorch_geometric/issues).
       #
 - type: textarea
@@ -21,7 +21,7 @@ body:
       import torch
       from torch_geometric.utils import to_undirected
 
-      # A succinct reproducing example trimmed down to the essential parts:
+      # A minimal reproducing example trimmed down to the essential parts:
       edge_index = torch.tensor([[0, 1, 2], [1, 2, 3]])
       edge_index = to_undirected(edge_index, num_nodes=1)
       assert edge_index.size(1) == 6  # We expect that the number of edges is doubled.
