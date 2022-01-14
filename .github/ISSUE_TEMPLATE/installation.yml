@@ -6,15 +6,15 @@ body:
 - type: markdown
   attributes:
     value: >
-      #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the existing and past issues](https://github.com/pyg-team/pytorch_geometric/issues).
+      #### Before submitting an installation problem, please make sure the issue hasn't been already reported by searching through [the existing and past issues](https://github.com/pyg-team/pytorch_geometric/issues).
       #
 - type: textarea
   attributes:
-    label: 😵 Describe the installation error
+    label: 😵 Describe the installation problem
     description: |
-      Please provide a clear and concise description of the installation error. If you have installation log files, please prvoide them here as well. It may be relevant to wrap the log in ```` ```triple quotes blocks``` ````.
+      Please provide a clear and concise description of the installation problem. If you have installation log files, please prvoide them here as well. It may be relevant to wrap the log files in ```` ```triple quotes blocks``` ````.
     placeholder: |
-      A clear and concise description of the installation error.
+      A clear and concise description of the installation problem.
   validations:
     required: true
 - type: textarea
