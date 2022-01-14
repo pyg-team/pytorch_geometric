@@ -51,8 +51,7 @@ jobs:
           pip install numba
           pip install tabulate
           pip install matplotlib
-          # TODO: wait on numba==0.55
-          # pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+          pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
           pip install pytorch-memlab
 
       - name: Install main package
