@@ -1,5 +1,5 @@
 name: "\U0001F41B Bug Report"
-about: "Submit a report to help us reproduce and fix the bug"
+description: "Submit a report to help us reproduce and fix the bug"
 labels: bug
 
 body:
