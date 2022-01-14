@@ -1,11 +1,11 @@
-name: "\U0001F41B Bug Report"
+name: "🐛 Bug Report"
 description: "Submit a report to help us reproduce and fix the bug"
 labels: bug
 
 body:
 - type: markdown
   attributes:
-    value: >
+    value: |
       #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the existing and past issues](https://github.com/pyg-team/pytorch_geometric/issues).
       #
 - type: textarea
