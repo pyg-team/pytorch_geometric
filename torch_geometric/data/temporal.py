@@ -11,14 +11,14 @@ from torch_geometric.data.storage import EdgeStorage, NodeStorage, BaseStorage, 
 
 class TemporalData(BaseData):
     def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
+        super().__init__()
+        self.__dict__['_store'] = GlobalStorage(_parent=self)
+
         self.src = src
         self.dst = dst
         self.t = t
         self.msg = msg
         self.y = y
-
-        super().__init__()
-        self.__dict__['_store'] = GlobalStorage(_parent=self)
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -47,7 +47,7 @@ class TemporalData(BaseData):
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        data = copy.copy(self._store)
+        data = copy.copy(self)
         for key, item in data:
             if item.shape[0] == self.num_events:
                 data[key] = item[prepared_idx]
@@ -123,7 +123,7 @@ class TemporalData(BaseData):
 
     @property
     def keys(self):
-        return [key for key in self._store.keys() if self[key] is not None]
+        return [key for key in self._store.keys() if self._store[key] is not None]
 
     def __len__(self):
         return len(self.keys)
