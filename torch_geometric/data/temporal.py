@@ -63,7 +63,7 @@ class TemporalData(BaseData):
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        for key, item in self._store:
+        for key, item in data:
             if item.shape[0] == self.num_events:
                 del item[prepared_idx]
 
