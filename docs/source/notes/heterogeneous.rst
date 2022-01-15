@@ -8,7 +8,7 @@ For example, most graphs in the area of recommendation, such as social graphs, a
 This tutorial introduces how heterogeneous graphs are mapped to PyG and how they can be used as input to Graph Neural Network models.
 
 Heterogeneous graphs come with different types of information attached to nodes and edges.
-Thus, a single node or edge feature tensor can not hold all node or edge features of the whole graph, due to differences in type and dimensionality.
+Thus, a single node or edge feature tensor cannot hold all node or edge features of the whole graph, due to differences in type and dimensionality.
 Instead, a set of types need to be specified for nodes and edges, respectively, each having its own data tensors.
 As a consequence of the different data structure, the message passing formulation changes accordingly, allowing the computation of message and update function conditioned on node or edge type.
 
@@ -218,7 +218,9 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
     from torch_geometric.datasets import OGB_MAG
     from torch_geometric.nn import SAGEConv, to_hetero
 
-    data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())[0]
+
+    dataset = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())
+    data = dataset[0]
 
     class GNN(torch.nn.Module):
         def __init__(self, hidden_channels, out_channels):
@@ -317,9 +319,9 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
             self.convs = torch.nn.ModuleList()
             for _ in range(num_layers):
                 conv = HeteroConv({
-                    ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels)
-                    ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels)
-                    ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels)
+                    ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
+                    ('author', 'writes', 'paper'): SAGEConv((-1, -1), hidden_channels),
+                    ('paper', 'rev_writes', 'author'): GATConv((-1, -1), hidden_channels),
                 }, aggr='sum')
                 self.convs.append(conv)
 

@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 from torch_geometric.typing import NodeType, EdgeType, Adj
 
+import warnings
 from collections import defaultdict
 
 from torch import Tensor
@@ -45,6 +46,16 @@ class HeteroConv(Module):
     def __init__(self, convs: Dict[EdgeType, Module],
                  aggr: Optional[str] = "sum"):
         super().__init__()
+
+        src_node_types = set([key[0] for key in convs.keys()])
+        dst_node_types = set([key[-1] for key in convs.keys()])
+        if len(src_node_types - dst_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({src_node_types - dst_node_types}) "
+                f"whose representations do not get updated during message "
+                f"passing as they do not occur as destination type in any "
+                f"edge type. This may lead to unexpected behaviour.")
+
         self.convs = ModuleDict({'__'.join(k): v for k, v in convs.items()})
         self.aggr = aggr
 

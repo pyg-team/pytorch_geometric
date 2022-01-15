@@ -88,6 +88,7 @@ class TOSCA(InMemoryDataset):
             for path in paths:
                 pos = read_txt_array(f'{path}.vert')
                 face = read_txt_array(f'{path}.tri', dtype=torch.long)
+                face = face - face.min()  # Ensure zero-based index.
                 data = Data(pos=pos, face=face.t().contiguous())
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue

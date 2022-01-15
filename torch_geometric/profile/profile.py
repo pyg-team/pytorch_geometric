@@ -27,7 +27,7 @@ class StatsSummary(NamedTuple):
 
 def profileit():
     r"""A decorator to facilitate profiling a function, *e.g.*, obtaining
-    training runtime and memory statistics a specific model on a specific
+    training runtime and memory statistics of a specific model on a specific
     dataset.
     Returns a :obj:`Stats` object with the attributes :obj:`time`,
     :obj:`max_active_cuda`, :obj:`max_reserved_cuda`, :obj:`max_active_cuda`,
@@ -90,7 +90,7 @@ def profileit():
 
 def timeit():
     r"""A decorator to facilitate timing a function, *e.g.*, obtaining the
-    runtime time of a specific model on a specific dataset.
+    runtime of a specific model on a specific dataset.
 
     .. code-block:: python
 

@@ -166,3 +166,27 @@ Frequently Asked Questions
 
         data_list = [Data(...), ..., Data(...)]
         loader = DataLoader(data_list, batch_size=32)
+
+Exercises
+---------
+
+Consider the following :class:`~torch_geometric.data.InMemoryDataset` constructed from a list of :obj:`~torch_geometric.data.Data` objects:
+
+.. code-block:: python
+
+    class MyDataset(InMemoryDataset):
+        def __init__(self, root, data_list, transform=None):
+            self.data_list = data_list
+            super().__init__(root, transform)
+            self.data, self.slices = torch.load(self.processed_paths[0])
+
+        @property
+        def processed_file_names(self):
+            return 'data.pt'
+
+        def process(self):
+            torch.save(self.collate(self.data_list), self.processed_paths[0])
+
+1. What is the output of :obj:`self.processed_paths[0]`?
+
+2. What does :meth:`~torch_geometric.data.InMemoryDataset.collate` do?

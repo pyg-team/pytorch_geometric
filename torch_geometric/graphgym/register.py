@@ -9,6 +9,7 @@ layer_dict: Dict[str, Any] = {}
 pooling_dict: Dict[str, Any] = {}
 network_dict: Dict[str, Any] = {}
 config_dict: Dict[str, Any] = {}
+dataset_dict: Dict[str, Any] = {}
 loader_dict: Dict[str, Any] = {}
 optimizer_dict: Dict[str, Any] = {}
 scheduler_dict: Dict[str, Any] = {}
@@ -34,11 +35,11 @@ def register_base(mapping: Dict[str, Any], key: str,
         return
 
     # Other-wise, use it as a decorator:
-    def wrapper(module):
+    def bounded_register(module):
         register_base(mapping, key, module)
         return module
 
-    return wrapper
+    return bounded_register
 
 
 def register_act(key: str, module: Any = None):
@@ -84,6 +85,11 @@ def register_network(key: str, module: Any = None):
 def register_config(key: str, module: Any = None):
     r"""Registers a configuration group in GraphGym."""
     return register_base(config_dict, key, module)
+
+
+def register_dataset(key: str, module: Any = None):
+    r"""Registers a dataset in GraphGym."""
+    return register_base(dataset_dict, key, module)
 
 
 def register_loader(key: str, module: Any = None):

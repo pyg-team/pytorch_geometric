@@ -34,6 +34,22 @@ class PPI(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 20
+              - ~2,245.3
+              - ~61,318.4
+              - 50
+              - 121
     """
 
     url = 'https://data.dgl.ai/dataset/ppi.zip'

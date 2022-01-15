@@ -184,3 +184,41 @@ This leaves us with a clean interface for initializing and calling this layer:
 
     conv = DynamicEdgeConv(3, 128, k=6)
     x = conv(x, batch)
+
+Exercises
+---------
+
+Imagine we are given the following :obj:`~torch_geometric.data.Data` object:
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.data import Data
+
+    edge_index = torch.tensor([[0, 1],
+                               [1, 0],
+                               [1, 2],
+                               [2, 1]], dtype=torch.long)
+    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
+
+    data = Data(x=x, edge_index=edge_index.t().contiguous())
+
+Try to answer the following questions related to :class:`~torch_geometric.nn.conv.GCNConv`:
+
+1. What information does :obj:`row` and :obj:`col` hold?
+
+2. What does :meth:`~torch_geometric.utils.degree` do?
+
+3. Why do we use :obj:`degree(col, ...)` rather than :obj:`degree(row, ...)`?
+
+4. What does :obj:`deg_inv_sqrt[col]` and :obj:`deg_inv_sqrt[row]` do?
+
+5. What information does :obj:`x_j` hold in the :meth:`~torch_geometric.nn.conv.MessagePassing.message` function? If :obj:`self.lin` denotes the identity function, what is the exact content of :obj:`x_j`?
+
+6. Add an :meth:`~torch_geometric.nn.conv.MessagePassing.update` function to :class:`~torch_geometric.nn.conv.GCNConv` that adds transformed central node features to the aggregated output.
+
+Try to answer the following questions related to :class:`~torch_geometric.nn.conv.EdgeConv`:
+
+1. What is :obj:`x_i` and :obj:`x_j - x_i`?
+
+2. What does :obj:`torch.cat([x_i, x_j - x_i], dim=1)` do? Why :obj:`dim = 1`?

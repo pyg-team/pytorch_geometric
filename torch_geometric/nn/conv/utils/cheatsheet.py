@@ -5,8 +5,8 @@ import importlib
 
 def paper_title(cls: str) -> str:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
-    match = re.search('\".+?\"', inspect.getdoc(cls), flags=re.DOTALL)
-    return None if match is None else match.group().replace('\n', ' ')[1:-1]
+    match = re.search('`\".+?\"', inspect.getdoc(cls), flags=re.DOTALL)
+    return None if match is None else match.group().replace('\n', ' ')[2:-1]
 
 
 def paper_link(cls: str) -> str:

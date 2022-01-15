@@ -3,9 +3,9 @@
 If you are interested in contributing to PyG, your contributions will likely fall into one of the following two categories:
 
 1. You want to implement a new feature:
-    - In general, we accept any features as long as they fit the scope of this package. If you are unsure about this or need help on the design/implementation of your feature, post about it in an issue.
+   - In general, we accept any features as long as they fit the scope of this package. If you are unsure about this or need help on the design/implementation of your feature, post about it in an issue.
 2. You want to fix a bug:
-    - Feel free to send a Pull Request any time you encounter a bug. Please provide a clear and concise description of what the bug was. If you are unsure about if this is a bug at all or how to fix, post about it in an issue.
+   - Feel free to send a Pull Request any time you encounter a bug. Please provide a clear and concise description of what the bug was. If you are unsure about if this is a bug at all or how to fix, post about it in an issue.
 
 Once you finish implementing a feature or bug-fix, please send a Pull Request to https://github.com/pyg-team/pytorch_geometric.
 
@@ -15,51 +15,56 @@ To develop PyG on your machine, here are some tips:
 
 1. Uninstall all existing PyG installations:
 
-```
-pip uninstall torch-geometric
-pip uninstall torch-geometric  # run this command twice
-```
+   ```bash
+   pip uninstall torch-geometric
+   pip uninstall torch-geometric  # run this command twice
+   ```
 
 2. Clone a copy of PyG from source:
 
-```
-git clone https://github.com/pyg-team/pytorch_geometric
-cd pytorch_geometric
-```
+   ```bash
+   git clone https://github.com/pyg-team/pytorch_geometric
+   cd pytorch_geometric
+   ```
 
 3. If you already cloned PyG from source, update it:
 
-```
-git pull
-```
+   ```bash
+   git pull
+   ```
 
 4. Install PyG in editable mode:
 
-```
-python -m pip install -e .
-```
+   ```bash
+   pip install -e .[dev]
+   ```
 
-This mode will symlink the Python files from the current local source tree into the Python install.
-Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
+   This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
 
 5. Ensure that you have a working PyG installation by running the entire test suite with
 
-```
-python -m pytest
-```
+   ```bash
+   pytest
+   ```
 
-In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
+   In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
+
+6. Install pre-commit hooks:
+
+   ```bash
+    pre-commit install
+   ```
 
 ## Unit Testing
 
 The PyG testing suite is located under `test/`.
 Run the entire test suite with
 
-```
-python -m pytest
+```bash
+pytest
 ```
 
-or run individual test files, like `python -m pytest --no-cov test/utils/test_convert.py`, for individual test suites.
+or test individual files via, _e.g._, `pytest test/utils/test_convert.py`.
 
 ## Continuous Integration
 
@@ -67,20 +72,19 @@ PyG uses [GitHub Actions](https://github.com/pyg-team/pytorch_geometric/actions)
 
 Everytime you send a Pull Request, your commit will be built and checked against the PyG guidelines:
 
-1. Ensure that your code is formatted correctly by testing against the styleguides of [`flake8`](https://github.com/PyCQA/flake8) and [`pycodestyle`](https://github.com/PyCQA/pycodestyle):
+1. Ensure that your code is formatted correctly by testing against the styleguide of [`flake8`](https://github.com/PyCQA/flake8)://github.com/PyCQA/pycodestyle):
 
-```
-pycodestyle torch_geometric test examples
-flake8 torch_geometric test examples
-```
+   ```bash
+   flake8 .
+   ```
 
-If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
+   If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
 2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
 
-```
-python -m pytest
-```
+   ```bash
+   pytest --cov
+   ```
 
 ## Building Documentation
 
@@ -90,9 +94,9 @@ To build the documentation:
 2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
 3. Generate the documentation via:
 
-```
-cd docs
-make html
-```
+   ```bash
+   cd docs
+   make html
+   ```
 
 The documentation is now available to view by opening `docs/build/html/index.html`.

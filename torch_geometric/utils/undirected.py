@@ -2,7 +2,8 @@ from typing import Optional, Union, Tuple, List
 
 import torch
 from torch import Tensor
-from torch_geometric.utils.coalesce import coalesce
+
+from torch_geometric.utils import sort_edge_index, coalesce
 
 from .num_nodes import maybe_num_nodes
 
@@ -26,16 +27,23 @@ def is_undirected(
 
     :rtype: bool
     """
-
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     edge_attr = [] if edge_attr is None else edge_attr
     edge_attr = [edge_attr] if isinstance(edge_attr, Tensor) else edge_attr
 
-    edge_index1, edge_attr1 = coalesce(edge_index, edge_attr,
-                                       num_nodes=num_nodes, sort_by_row=True)
-    edge_index2, edge_attr2 = coalesce(edge_index1, edge_attr1,
-                                       num_nodes=num_nodes, sort_by_row=False)
+    edge_index1, edge_attr1 = sort_edge_index(
+        edge_index,
+        edge_attr,
+        num_nodes=num_nodes,
+        sort_by_row=True,
+    )
+    edge_index2, edge_attr2 = sort_edge_index(
+        edge_index1,
+        edge_attr1,
+        num_nodes=num_nodes,
+        sort_by_row=False,
+    )
 
     return (bool(torch.all(edge_index1[0] == edge_index2[1]))
             and bool(torch.all(edge_index1[1] == edge_index2[0])) and all([

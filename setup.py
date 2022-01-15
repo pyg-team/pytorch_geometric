@@ -19,6 +19,7 @@ install_requires = [
     'PyYAML',
 ]
 tests_require = ['pytest', 'pytest-cov', 'mock']
+dev_requires = tests_require + ['pre-commit']
 
 setup(
     name='torch_geometric',
@@ -37,7 +38,10 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=install_requires,
-    extras_require={'test': tests_require},
+    extras_require={
+        'test': tests_require,
+        'dev': dev_requires,
+    },
     packages=find_packages(),
     include_package_data=True,
 )
