@@ -444,7 +444,7 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
-    def edge_update(self, x_j: Tensor) -> Tensor:
+    def edge_update(self) -> Tensor:
         r"""Computes or updates features for each edge in the graph.
         This function can take any argument as input which was initially passed
         to :meth:`edge_updater`.
@@ -614,10 +614,7 @@ class MessagePassing(torch.nn.Module):
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
         # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
-        # First test whether forward uses `edge_updater`
-        # TODO: Replace with AST search to see if the function is used
-        edge_updater_used = re.search(r'.*edge_updater.*', source)
-        if edge_updater_used:
+        if 'edge_update' in self.__class__.__dict__.keys():
             if hasattr(self, 'edge_updater_type'):
                 edge_updater_types = {
                     k: sanitize(str(v))
@@ -638,8 +635,7 @@ class MessagePassing(torch.nn.Module):
                 edge_updater_types = dict(
                     [re.split(r'\s*:\s*', t) for t in edge_updater_types])
         else:
-            # dummy to be used
-            edge_updater_types = {'x': 'Tensor'}
+            edge_updater_types = {}
 
         type_hints = get_type_hints(self.__class__.update)
         prop_return_type = type_hints.get('return', 'Tensor')

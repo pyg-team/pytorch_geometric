@@ -15,21 +15,24 @@ class Propagate_{{uid}}(NamedTuple):
     {{k}}: {{v}}
 {%- endfor %}
 
+{% if edge_updater_types|length > 0 %}
 class EdgeUpdater_{{uid}}(NamedTuple):
 {%- for k, v in edge_updater_types.items() %}
     {{k}}: {{v}}
 {%- endfor %}
+{% endif %}
 
 class Collect_{{uid}}(NamedTuple):
 {%- for k, v in collect_types.items() %}
     {{k}}: {{v}}
 {%- endfor %}
 
+{% if edge_updater_types|length > 0 %}
 class EdgeUpdater_Collect_{{uid}}(NamedTuple):
 {%- for k, v in edge_collect_types.items() %}
     {{k}}: {{v}}
 {%- endfor %}
-
+{% endif %}
 
 class {{cls_name}}({{parent_cls_name}}):
 
@@ -126,6 +129,7 @@ class {{cls_name}}({{parent_cls_name}}):
 
         return Collect_{{uid}}({% for k in collect_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
+{% if edge_updater_types|length > 0 %}
     @torch.jit._overload_method
     def __collect_edge__(self, edge_def, size, kwargs):
         # type: (Tensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
@@ -135,7 +139,6 @@ class {{cls_name}}({{parent_cls_name}}):
     def __collect_edge__(self, edge_def, size, kwargs):
         # type: (SparseTensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
         pass
-
 
     def __collect_edge__(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
@@ -197,6 +200,8 @@ class {{cls_name}}({{parent_cls_name}}):
         return EdgeUpdater_Collect_{{uid}}({% for k in edge_collect_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
 
+{% endif %}
+
 
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
@@ -223,21 +228,26 @@ class {{cls_name}}({{parent_cls_name}}):
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
 
+{% if edge_updater_types|length > 0 %}
     @torch.jit._overload_method
-    def edge_updater(self, edge_index, {{ edge_updater_types.keys()|join(', ') }}):
-        # type: (Tensor, {{ edge_updater_types.values()|join(', ') }}) -> {{ edge_updater_return_type }}
+    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
+        # type: (Tensor{% for v in edge_updater_types.values() %}, {{v}} {% endfor %}) -> {{ edge_updater_return_type }}
         pass
 
     @torch.jit._overload_method
-    def edge_updater(self, edge_index, {{ edge_updater_types.keys()|join(', ') }}):
-        # type: (SparseTensor, {{ edge_updater_types.values()|join(', ') }}) -> {{ edge_updater_return_type }}
+    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
+        # type: (SparseTensor{% for v in edge_updater_types.values() %}, {{v}} {% endfor %}) -> {{ edge_updater_return_type }}
         pass
 
-    def edge_updater(self, edge_index, {{ edge_updater_types.keys()|join(', ') }}):
+    def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
         the_size = self.__check_input__(edge_index, size=None)
         in_kwargs = EdgeUpdater_{{uid}}({% for k in edge_updater_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
         kwargs = self.__collect_edge__(edge_index, the_size, in_kwargs)
         return self.edge_update({% for k in edge_update_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
+{% else %}
+    def edge_updater(self):
+        pass
+{% endif %}
 
 {%- for (arg_types, return_type_repr) in forward_types %}
 
