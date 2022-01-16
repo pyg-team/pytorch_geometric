@@ -6,18 +6,19 @@ import torch
 import numpy as np
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.storage import EdgeStorage, NodeStorage, BaseStorage, GlobalStorage
+from torch_geometric.data.storage import (BaseStorage, NodeStorage,
+                                          EdgeStorage, GlobalStorage)
 from torch_sparse import SparseTensor
 
 
 class TemporalData(BaseData):
-    r"""A data object composed by a stream of events describing a temporal 
+    r"""A data object composed by a stream of events describing a temporal
     graph. The temporalData object can hold a list of events (that can be
     understood as temporal edges in a graph) with structured messages.
     An event is composed by a source node, a destination node, a timestamp
-    and a message. Any Continuous-time dynamic graphs (CTDG) can be 
+    and a message. Any Continuous-time dynamic graphs (CTDG) can be
     represented with these 4 values.
-    In general, :class:`~torch_geometric.data.TemporalData` tries to mimic 
+    In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
     the behaviour of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
@@ -28,10 +29,10 @@ class TemporalData(BaseData):
         from torch_geometric.data import TemporalData
 
         events = TemporalData(
-            src=Tensor([1,2,3,4]), 
-            dst=Tensor([2,3,4,5]), 
-            t=Tensor([1000,1010,1100,2000]), 
-            msg=Tensor([1,1,0,0]), 
+            src=Tensor([1,2,3,4]),
+            dst=Tensor([2,3,4,5]),
+            t=Tensor([1000,1010,1100,2000]),
+            msg=Tensor([1,1,0,0]),
             y=Tensor([1,1,0,0])
         )
 
@@ -48,20 +49,20 @@ class TemporalData(BaseData):
         events = events.to('cuda:0', non_blocking=True)
 
     Args:
-        src (Tensor, optional): A list of source nodes for the events with 
+        src (Tensor, optional): A list of source nodes for the events with
             shape :obj:`[num_events]`. (default: :obj:`None`)
-        dst (Tensor, optional): A list of destination nodes for the events 
+        dst (Tensor, optional): A list of destination nodes for the events
             with shape :obj:`[num_events]`. (default: :obj:`None`)
-        t (Tensor, optional): The timestamps for each event with shape 
+        t (Tensor, optional): The timestamps for each event with shape
             :obj:`[num_events]`. (default: :obj:`None`)
-        msg (Tensor, optional): Messages feature matrix with shape 
+        msg (Tensor, optional): Messages feature matrix with shape
             :obj:`[num_events, num_msg_features]`. (default: :obj:`None`)
-        y (Tensor, optional): event-level ground-truth labels with 
+        y (Tensor, optional): event-level ground-truth labels with
             shape :obj:`[num_events]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
 
     .. note::
-        The shape of `src`, `dst`, `t`, `y` and the first dimension of `msg` 
+        The shape of `src`, `dst`, `t`, `y` and the first dimension of `msg`
         should be the same (`num_events`).
     """
 
@@ -118,7 +119,7 @@ class TemporalData(BaseData):
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        for key, item in data:
+        for key, item in self:
             if item.shape[0] == self.num_events:
                 del item[prepared_idx]
 
@@ -208,7 +209,7 @@ class TemporalData(BaseData):
         r"""Returns the number of events loaded.
 
         .. note::
-            The number of events in a TemporalData can be greater or less than 
+            The number of events in a TemporalData can be greater or less than
             the number of nodes, depending on the dataset. In a Temporal Graph
             dataset, each row is an event. Thus, they can be understood as
             edges in a Temporal Graph.
