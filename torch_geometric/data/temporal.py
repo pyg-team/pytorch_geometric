@@ -7,6 +7,7 @@ import numpy as np
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import EdgeStorage, NodeStorage, BaseStorage, GlobalStorage
+from torch_sparse import SparseTensor
 
 
 class TemporalData(BaseData):
@@ -122,6 +123,10 @@ class TemporalData(BaseData):
         pass # TODO
 
     @property
+    def batch(self) -> Any:
+        return self['batch'] if 'batch' in self._store else None
+
+    @property
     def keys(self):
         return [key for key in self._store.keys() if self._store[key] is not None]
 
@@ -180,15 +185,21 @@ class TemporalData(BaseData):
 
         return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
 
-    def seq_batches(self, batch_size):
-        for start in range(0, self.num_events, batch_size):
-            yield self[start:start + batch_size]
+    def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
+        if isinstance(value, SparseTensor) and 'adj' in key:
+            return (0, 1)
+        elif key in ['src', 'dst']:
+            return -1
+        else:
+            return 0
 
-    def __cat_dim__(self, key, value, *args, **kwargs):
-        return 0
-
-    def __inc__(self, key, value, *args, **kwargs):
-        return 0
+    def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif key in ['src', 'dst']:
+            return self.num_nodes
+        else:
+            return 0
 
     def __repr__(self):
         cls = str(self.__class__.__name__)
