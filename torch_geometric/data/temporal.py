@@ -64,7 +64,6 @@ class TemporalData(BaseData):
         The shape of `src`, `dst`, `t`, `y` and the first dimension of `msg` 
         should be the same (`num_events`).
     """
-
     def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
         super().__init__()
         self.__dict__['_store'] = GlobalStorage(_parent=self)
@@ -174,7 +173,7 @@ class TemporalData(BaseData):
         return self._store.to_namedtuple()
 
     def debug(self):
-        pass # TODO
+        pass  # TODO
 
     @property
     def batch(self) -> Any:
@@ -182,7 +181,9 @@ class TemporalData(BaseData):
 
     @property
     def keys(self):
-        return [key for key in self._store.keys() if self._store[key] is not None]
+        return [
+            key for key in self._store.keys() if self._store[key] is not None
+        ]
 
     def __len__(self):
         return len(self.keys)
