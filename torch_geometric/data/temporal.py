@@ -13,8 +13,9 @@ from torch_sparse import SparseTensor
 
 class TemporalData(BaseData):
     r"""A data object composed by a stream of events describing a temporal
-    graph. The :class:`~torch_geometric.data.TemporalData` object can hold a list of events (that can be
-    understood as temporal edges in a graph) with structured messages.
+    graph. The :class:`~torch_geometric.data.TemporalData` object can hold 
+    a list of events (that can be understood as temporal edges in a graph) 
+    with structured messages.
     An event is composed by a source node, a destination node, a timestamp
     and a message. Any Continuous-Time Dynamic Graph (CTDG) can be
     represented with these 4 values.
@@ -32,9 +33,17 @@ class TemporalData(BaseData):
             src=Tensor([1,2,3,4]),
             dst=Tensor([2,3,4,5]),
             t=Tensor([1000,1010,1100,2000]),
-            msg=Tensor([1,1,0,0]),
-            y=Tensor([1,1,0,0])
+            msg=Tensor([1,1,0,0])
         )
+
+        # Add additional arguments to `events`:
+        events.y = Tensor([1,1,0,0])
+
+        # It is also possible to set additional arguments in the constructor
+        events = TemporalData(
+            ...,
+            y=Tensor([1,1,0,0])
+        )        
 
         # Custom method to get the number of events:
         events.num_events
@@ -57,15 +66,13 @@ class TemporalData(BaseData):
             :obj:`[num_events]`. (default: :obj:`None`)
         msg (Tensor, optional): Messages feature matrix with shape
             :obj:`[num_events, num_msg_features]`. (default: :obj:`None`)
-        y (Tensor, optional): event-level ground-truth labels with
-            shape :obj:`[num_events]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
 
     .. note::
-        The shape of `src`, `dst`, `t`, `y` and the first dimension of `msg`
+        The shape of `src`, `dst`, `t` and the first dimension of `msg`
         should be the same (`num_events`).
     """
-    def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
+    def __init__(self, src=None, dst=None, t=None, msg=None, **kwargs):
         super().__init__()
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -73,7 +80,6 @@ class TemporalData(BaseData):
         self.dst = dst
         self.t = t
         self.msg = msg
-        self.y = y
 
         for key, value in kwargs.items():
             setattr(self, key, value)
