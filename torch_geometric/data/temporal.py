@@ -16,7 +16,7 @@ class TemporalData(BaseData):
     graph. The :class:`~torch_geometric.data.TemporalData` object can hold a list of events (that can be
     understood as temporal edges in a graph) with structured messages.
     An event is composed by a source node, a destination node, a timestamp
-    and a message. Any Continuous-time dynamic graphs (CTDG) can be
+    and a message. Any Continuous-Time Dynamic Graph (CTDG) can be
     represented with these 4 values.
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
     the behaviour of a regular Python dictionary.
