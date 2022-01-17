@@ -13,7 +13,7 @@ from torch_sparse import SparseTensor
 
 class TemporalData(BaseData):
     r"""A data object composed by a stream of events describing a temporal
-    graph. The temporalData object can hold a list of events (that can be
+    graph. The :class:`~torch_geometric.data.TemporalData` object can hold a list of events (that can be
     understood as temporal edges in a graph) with structured messages.
     An event is composed by a source node, a destination node, a timestamp
     and a message. Any Continuous-time dynamic graphs (CTDG) can be
