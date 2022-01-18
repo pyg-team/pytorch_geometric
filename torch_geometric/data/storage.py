@@ -461,13 +461,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
-        num_nodes, num_edges = self.num_nodes, self.num_edges
+        num_edges = self.num_edges
         if not isinstance(value, Tensor):
             return False
         if value.size(cat_dim) != num_edges:
             return False
-        if num_nodes != num_edges:
-            return True
         return 'edge' in key
 
 
