@@ -1,24 +1,26 @@
-from typing import NamedTuple, Dict, Any, List
+from typing import Tuple, NamedTuple, Dict, Any, List, Optional, Union
 
 import copy
 
 import torch
 import numpy as np
+from torch import Tensor
 
-from torch_geometric.data.data import BaseData
+from torch_geometric.data.data import BaseData, size_repr
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
                                           EdgeStorage, GlobalStorage)
-from torch_sparse import SparseTensor
 
 
 class TemporalData(BaseData):
     r"""A data object composed by a stream of events describing a temporal
-    graph. The :class:`~torch_geometric.data.TemporalData` object can hold
-    a list of events (that can be understood as temporal edges in a graph)
-    with structured messages.
+    graph.
+    The :class:`~torch_geometric.data.TemporalData` object can hold a list of
+    events (that can be understood as temporal edges in a graph) with
+    structured messages.
     An event is composed by a source node, a destination node, a timestamp
-    and a message. Any Continuous-Time Dynamic Graph (CTDG) can be
-    represented with these 4 values.
+    and a message. Any *Continuous-Time Dynamic Graph* (CTDG) can be
+    represented with these four values.
+
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
     the behaviour of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
@@ -45,7 +47,7 @@ class TemporalData(BaseData):
             y=Tensor([1,1,0,0])
         )
 
-        # Custom method to get the number of events:
+        # Get the number of events:
         events.num_events
         >>> 4
 
@@ -69,10 +71,17 @@ class TemporalData(BaseData):
         **kwargs (optional): Additional attributes.
 
     .. note::
-        The shape of `src`, `dst`, `t` and the first dimension of `msg`
-        should be the same (`num_events`).
+        The shape of :obj:`src`, :obj:`dst`, :obj:`t` and the first dimension
+        of :obj`msg` should be the same (:obj:`num_events`).
     """
-    def __init__(self, src=None, dst=None, t=None, msg=None, **kwargs):
+    def __init__(
+        self,
+        src: Optional[Tensor] = None,
+        dst: Optional[Tensor] = None,
+        t: Optional[Tensor] = None,
+        msg: Optional[Tensor] = None,
+        **kwargs,
+    ):
         super().__init__()
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -183,89 +192,35 @@ class TemporalData(BaseData):
         pass  # TODO
 
     @property
-    def batch(self) -> Any:
-        return self['batch'] if 'batch' in self._store else None
-
-    @property
-    def keys(self):
-        return [
-            key for key in self._store.keys() if self._store[key] is not None
-        ]
-
-    def __len__(self):
-        return len(self.keys)
-
-    def __contains__(self, key):
-        return key in self.keys
-
-    def __iter__(self):
-        for key in sorted(self.keys):
-            yield key, self[key]
-
-    def __call__(self, *keys):
-        for key in sorted(self.keys) if not keys else keys:
-            if key in self:
-                yield key, self[key]
-
-    @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
+        r"""Returns the number of nodes in the graph."""
         return max(int(self.src.max()), int(self.dst.max())) + 1
 
     @property
-    def num_events(self):
+    def num_events(self) -> int:
         r"""Returns the number of events loaded.
 
         .. note::
-            The number of events in a TemporalData can be greater or less than
-            the number of nodes, depending on the dataset. In a Temporal Graph
-            dataset, each row is an event. Thus, they can be understood as
-            edges in a Temporal Graph.
+            In a :class:`~torch_geometric.data.TemporalData`, each row denotes
+            an event.
+            Thus, they can be also understood as edges.
         """
         return self.src.size(0)
 
-    def __apply__(self, item, func):
-        if torch.is_tensor(item):
-            return func(item)
-        elif isinstance(item, (tuple, list)):
-            return [self.__apply__(v, func) for v in item]
-        elif isinstance(item, dict):
-            return {k: self.__apply__(v, func) for k, v in item.items()}
-        else:
-            return item
+    @property
+    def num_edges(self) -> int:
+        r"""Alias for :meth:`~torch_geometric.data.TemporalData.num_events`."""
+        return self.num_events
 
-    def apply(self, func, *keys):
-        r"""Applies the function :obj:`func` to all tensor attributes
-        :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to
-        all present attributes.
-        """
-        for key, item in self(*keys):
-            self[key] = self.__apply__(item, func)
-        return self
-
-    def to(self, device, *keys, **kwargs):
-        return self.apply(lambda x: x.to(device, **kwargs), *keys)
-
-    def train_val_test_split(self, val_ratio=0.15, test_ratio=0.15):
-        val_time, test_time = np.quantile(
-            self.t.cpu().numpy(),
-            [1. - val_ratio - test_ratio, 1. - test_ratio])
-
-        val_idx = int((self.t <= val_time).sum())
-        test_idx = int((self.t <= test_time).sum())
-
-        return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
-
-    def seq_batches(self, batch_size):
-        for start in range(0, self.num_events, batch_size):
-            yield self[start:start + batch_size]
+    def size(
+        self, dim: Optional[int] = None
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
+        r"""Returns the size of the adjacency matrix induced by the graph."""
+        size = (int(self.src.max()), int(self.dst.max()))
+        return size if dim is None else size[dim]
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
-            return (0, 1)
-        elif key in ['src', 'dst']:
-            return -1
-        else:
-            return 0
+        return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'batch' in key:
@@ -275,7 +230,41 @@ class TemporalData(BaseData):
         else:
             return 0
 
-    def __repr__(self):
-        cls = str(self.__class__.__name__)
-        shapes = ', '.join([f'{k}={list(v.shape)}' for k, v in self])
-        return f'{cls}({shapes})'
+    def __repr__(self) -> str:
+        cls = self.__class__.__name__
+        info = ', '.join([size_repr(k, v) for k, v in self._store.items()])
+        return f'{cls}({info})'
+
+    ###########################################################################
+
+    def train_val_test_split(self, val_ratio: float = 0.15,
+                             test_ratio: float = 0.15):
+        val_time, test_time = np.quantile(
+            self.t.cpu().numpy(),
+            [1. - val_ratio - test_ratio, 1. - test_ratio])
+
+        val_idx = int((self.t <= val_time).sum())
+        test_idx = int((self.t <= test_time).sum())
+
+        return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
+
+    def seq_batches(self, batch_size: int):
+        for start in range(0, self.num_events, batch_size):
+            yield self[start:start + batch_size]
+
+    ###########################################################################
+
+    def coalesce(self):
+        raise NotImplementedError
+
+    def has_isolated_nodes(self) -> bool:
+        raise NotImplementedError
+
+    def has_self_loops(self) -> bool:
+        raise NotImplementedError
+
+    def is_undirected(self) -> bool:
+        raise NotImplementedError
+
+    def is_directed(self) -> bool:
+        raise NotImplementedError
