@@ -2,6 +2,8 @@ import torch
 from torch_scatter import scatter_add
 from torch_geometric.utils import softmax
 
+from typing import Optional
+
 
 class Set2Set(torch.nn.Module):
     r"""The global pooling operator based on iterative content-based attention
@@ -28,7 +30,8 @@ class Set2Set(torch.nn.Module):
             a stacked LSTM, with the second LSTM taking in outputs of the first
             LSTM and computing the final results. (default: :obj:`1`)
     """
-    def __init__(self, in_channels, processing_steps, num_layers=1):
+    def __init__(self, in_channels: int, processing_steps: int,
+                 num_layers: Optional[int] = 1):
         super().__init__()
 
         self.in_channels = in_channels
@@ -44,7 +47,7 @@ class Set2Set(torch.nn.Module):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x, batch):
+    def forward(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         """"""
         batch_size = batch.max().item() + 1
 
