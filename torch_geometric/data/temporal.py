@@ -1,4 +1,5 @@
-from typing import Tuple, NamedTuple, Dict, Any, List, Optional, Union
+from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
+                    NamedTuple)
 
 import copy
 
@@ -111,7 +112,7 @@ class TemporalData(BaseData):
                 f'{type(idx).__name__}).')
         return idx
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: Any) -> Any:
         if isinstance(idx, str):
             return self._store[idx]
 
@@ -119,7 +120,7 @@ class TemporalData(BaseData):
 
         data = copy.copy(self)
         for key, item in data:
-            if item.shape[0] == self.num_events:
+            if item.size(0) == self.num_events:
                 data[key] = item[prepared_idx]
         return data
 
@@ -151,6 +152,14 @@ class TemporalData(BaseData):
 
     def __delattr__(self, key: str):
         delattr(self._store, key)
+
+    def __iter__(self) -> Iterable:
+        for key, value in self._store.items():
+            yield key, value
+
+    def __call__(self, *args: List[str]) -> Iterable:
+        for key, value in self._store.items(*args):
+            yield key, value
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
