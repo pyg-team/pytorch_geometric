@@ -14,7 +14,7 @@ class GeneralConvLayer(MessagePassing):
     """
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
-        super(GeneralConvLayer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
+        super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -118,9 +118,9 @@ class GeneralConvLayer(MessagePassing):
 class GeneralEdgeConvLayer(MessagePassing):
     r"""General GNN layer, with edge features
     """
-    def __init__(self, in_channels, out_channels, edge_dim,
-                 improved=False, cached=False, bias=True, **kwargs):
-        super(GeneralEdgeConvLayer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
+    def __init__(self, in_channels, out_channels, edge_dim, improved=False,
+                 cached=False, bias=True, **kwargs):
+        super().__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -130,8 +130,8 @@ class GeneralEdgeConvLayer(MessagePassing):
         self.msg_direction = cfg.gnn.msg_direction
 
         if self.msg_direction == 'single':
-            self.linear_msg = nn.Linear(in_channels + edge_dim,
-                                        out_channels, bias=False)
+            self.linear_msg = nn.Linear(in_channels + edge_dim, out_channels,
+                                        bias=False)
         else:
             self.linear_msg = nn.Linear(in_channels * 2 + edge_dim,
                                         out_channels, bias=False)

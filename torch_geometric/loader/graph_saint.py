@@ -70,9 +70,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
         self.data = data
 
-        super(GraphSAINTSampler,
-              self).__init__(self, batch_size=1, collate_fn=self.__collate__,
-                             **kwargs)
+        super().__init__(self, batch_size=1, collate_fn=self.__collate__,
+                         **kwargs)
 
         if self.sample_coverage > 0:
             path = osp.join(save_dir or '', self.__filename__)
@@ -206,9 +205,8 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
                  num_steps: int = 1, sample_coverage: int = 0,
                  save_dir: Optional[str] = None, log: bool = True, **kwargs):
         self.walk_length = walk_length
-        super(GraphSAINTRandomWalkSampler,
-              self).__init__(data, batch_size, num_steps, sample_coverage,
-                             save_dir, log, **kwargs)
+        super().__init__(data, batch_size, num_steps, sample_coverage,
+                         save_dir, log, **kwargs)
 
     @property
     def __filename__(self):

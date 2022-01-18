@@ -52,9 +52,7 @@ class ToDense(BaseTransform):
 
         return data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.num_nodes is None:
-            return '{}()'.format(self.__class__.__name__)
-        else:
-            return '{}(num_nodes={})'.format(self.__class__.__name__,
-                                             self.num_nodes)
+            return super().__repr__()
+        return f'{self.__class__.__name__}(num_nodes={self.num_nodes})'

@@ -36,7 +36,7 @@ class MLP(Sequential):
                 m.append(ReLU())
                 m.append(Dropout(dropout))
 
-        super(MLP, self).__init__(*m)
+        super().__init__(*m)
 
 
 class GENConv(MessagePassing):
@@ -97,7 +97,7 @@ class GENConv(MessagePassing):
                  num_layers: int = 2, eps: float = 1e-7, **kwargs):
 
         kwargs.setdefault('aggr', None)
-        super(GENConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -194,7 +194,6 @@ class GENConv(MessagePassing):
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, aggr={})'.format(self.__class__.__name__,
-                                            self.in_channels,
-                                            self.out_channels, self.aggr)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggr={self.aggr})')

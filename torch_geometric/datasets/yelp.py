@@ -22,6 +22,20 @@ class Yelp(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 716,847
+              - 13,954,819
+              - 300
+              - 100
     """
 
     adj_full_id = '1Juwx8HtDwSzmVIJ31ooVa1WljI4U5JnA'
@@ -30,7 +44,7 @@ class Yelp(InMemoryDataset):
     role_id = '1NI5pa5Chpd-52eSmLW60OnB3WS5ikxq_'
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(Yelp, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -92,6 +106,3 @@ class Yelp(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

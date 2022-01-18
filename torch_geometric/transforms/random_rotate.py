@@ -40,6 +40,6 @@ class RandomRotate(BaseTransform):
                 matrix = [[cos, sin, 0], [-sin, cos, 0], [0, 0, 1]]
         return LinearTransformation(torch.tensor(matrix))(data)
 
-    def __repr__(self):
-        return '{}({}, axis={})'.format(self.__class__.__name__, self.degrees,
-                                        self.axis)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.degrees}, '
+                f'axis={self.axis})')

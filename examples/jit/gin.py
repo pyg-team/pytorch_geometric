@@ -19,7 +19,7 @@ train_loader = DataLoader(train_dataset, batch_size=128)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.convs = torch.nn.ModuleList()
         self.batch_norms = torch.nn.ModuleList()

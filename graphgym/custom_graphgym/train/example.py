@@ -44,14 +44,16 @@ def eval_epoch(logger, loader, model):
         time_start = time.time()
 
 
+@register_train('example')
 def train_example(loggers, loaders, model, optimizer, scheduler):
     start_epoch = 0
     if cfg.train.auto_resume:
-        start_epoch = load_ckpt(model, optimizer, scheduler)
+        start_epoch = load_ckpt(model, optimizer, scheduler,
+                                cfg.train.epoch_resume)
     if start_epoch == cfg.optim.max_epoch:
         logging.info('Checkpoint found, Task already done')
     else:
-        logging.info('Start from epoch {}'.format(start_epoch))
+        logging.info('Start from epoch %s', start_epoch)
 
     num_splits = len(loggers)
     for cur_epoch in range(start_epoch, cfg.optim.max_epoch):
@@ -68,7 +70,4 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
     if cfg.train.ckpt_clean:
         clean_ckpt()
 
-    logging.info('Task done, results saved in {}'.format(cfg.run_dir))
-
-
-register_train('example', train_example)
+    logging.info('Task done, results saved in %s', cfg.run_dir)

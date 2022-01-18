@@ -1,6 +1,7 @@
+import multiprocessing as mp
+
 import torch
 import numpy as np
-import multiprocessing as mp
 
 
 def geodesic_distance(pos, face, src=None, dest=None, norm=True,

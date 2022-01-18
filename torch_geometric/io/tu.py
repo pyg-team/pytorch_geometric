@@ -17,7 +17,7 @@ names = [
 
 
 def read_tu_data(folder, prefix):
-    files = glob.glob(osp.join(folder, '{}_*.txt'.format(prefix)))
+    files = glob.glob(osp.join(folder, f'{prefix}_*.txt'))
     names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
@@ -68,7 +68,7 @@ def read_tu_data(folder, prefix):
 
 
 def read_file(folder, prefix, name, dtype=None):
-    path = osp.join(folder, '{}_{}.txt'.format(prefix, name))
+    path = osp.join(folder, f'{prefix}_{name}.txt')
     return read_txt_array(path, sep=',', dtype=dtype)
 
 

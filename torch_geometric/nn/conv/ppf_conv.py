@@ -63,7 +63,7 @@ class PPFConv(MessagePassing):
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'max')
-        super(PPFConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.local_nn = local_nn
         self.global_nn = global_nn
@@ -75,10 +75,13 @@ class PPFConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x: Union[OptTensor, PairOptTensor],
-                pos: Union[Tensor, PairTensor],
-                normal: Union[Tensor, PairTensor],
-                edge_index: Adj) -> Tensor:  # yapf: disable
+    def forward(
+        self,
+        x: Union[OptTensor, PairOptTensor],
+        pos: Union[Tensor, PairTensor],
+        normal: Union[Tensor, PairTensor],
+        edge_index: Adj,
+    ) -> Tensor:
         """"""
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
@@ -115,7 +118,6 @@ class PPFConv(MessagePassing):
             msg = self.local_nn(msg)
         return msg
 
-    def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
-                                                      self.local_nn,
-                                                      self.global_nn)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
+                f'global_nn={self.global_nn})')

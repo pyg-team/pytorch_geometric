@@ -38,8 +38,8 @@ class InstanceNorm(_InstanceNorm):
     """
     def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=False,
                  track_running_stats=False):
-        super(InstanceNorm, self).__init__(in_channels, eps, momentum, affine,
-                                           track_running_stats)
+        super().__init__(in_channels, eps, momentum, affine,
+                         track_running_stats)
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
@@ -62,7 +62,7 @@ class InstanceNorm(_InstanceNorm):
             mean = scatter(x, batch, dim=0, dim_size=batch_size,
                            reduce='add') / norm
 
-            x = x - mean[batch]
+            x = x - mean.index_select(0, batch)
 
             var = scatter(x * x, batch, dim=0, dim_size=batch_size,
                           reduce='add')
@@ -83,9 +83,9 @@ class InstanceNorm(_InstanceNorm):
             if self.running_var is not None:
                 var = self.running_var.view(1, -1).expand(batch_size, -1)
 
-            x = x - mean[batch]
+            x = x - mean.index_select(0, batch)
 
-        out = x / (var + self.eps).sqrt()[batch]
+        out = x / (var + self.eps).sqrt().index_select(0, batch)
 
         if self.weight is not None and self.bias is not None:
             out = out * self.weight.view(1, -1) + self.bias.view(1, -1)

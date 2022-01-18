@@ -42,6 +42,3 @@ class NormalizeRotation(BaseTransform):
             data.normal = F.normalize(torch.matmul(data.normal, v))
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

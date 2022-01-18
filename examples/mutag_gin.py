@@ -19,7 +19,7 @@ test_loader = DataLoader(test_dataset, batch_size=128)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, dim, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GINConv(
             Sequential(Linear(in_channels, dim), BatchNorm1d(dim), ReLU(),

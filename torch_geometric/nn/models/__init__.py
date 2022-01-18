@@ -1,3 +1,4 @@
+from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
@@ -16,8 +17,11 @@ from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
+from .linkx import LINKX
+from .lightgcn import LightGCN
 
 __all__ = [
+    'MLP',
     'GCN',
     'GraphSAGE',
     'GIN',
@@ -44,6 +48,8 @@ __all__ = [
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
+    'LINKX',
+    'LightGCN',
 ]
 
 classes = __all__

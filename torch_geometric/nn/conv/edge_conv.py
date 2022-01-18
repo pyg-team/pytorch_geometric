@@ -34,9 +34,18 @@ class EdgeConv(MessagePassing):
             (default: :obj:`"max"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V}|, F_{in}), (|\mathcal{V}|, F_{in}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
-        super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
 
@@ -53,8 +62,8 @@ class EdgeConv(MessagePassing):
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'
 
 
 class DynamicEdgeConv(MessagePassing):
@@ -79,8 +88,7 @@ class DynamicEdgeConv(MessagePassing):
     """
     def __init__(self, nn: Callable, k: int, aggr: str = 'max',
                  num_workers: int = 1, **kwargs):
-        super(DynamicEdgeConv,
-              self).__init__(aggr=aggr, flow='target_to_source', **kwargs)
+        super().__init__(aggr=aggr, flow='target_to_source', **kwargs)
 
         if knn is None:
             raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
@@ -118,6 +126,5 @@ class DynamicEdgeConv(MessagePassing):
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
-    def __repr__(self):
-        return '{}(nn={}, k={})'.format(self.__class__.__name__, self.nn,
-                                        self.k)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn}, k={self.k})'

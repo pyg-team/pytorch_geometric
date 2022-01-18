@@ -19,9 +19,23 @@ class KarateClub(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 34
+              - 156
+              - 34
+              - 4
     """
     def __init__(self, transform=None):
-        super(KarateClub, self).__init__('.', transform, None, None)
+        super().__init__('.', transform)
 
         import networkx as nx
 
@@ -49,6 +63,3 @@ class KarateClub(InMemoryDataset):
         data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask)
 
         self.data, self.slices = self.collate([data])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

@@ -74,7 +74,7 @@ class GDELT(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super(GDELT, self).process()
+        data_list = super().process()
         torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
         torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
         torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])

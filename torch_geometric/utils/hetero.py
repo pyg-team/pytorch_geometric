@@ -1,3 +1,6 @@
+from typing import List, Set
+from torch_geometric.typing import NodeType, EdgeType
+
 import torch
 
 from .num_nodes import maybe_num_nodes_dict
@@ -37,3 +40,9 @@ def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
 
     return (edge_index, edge_type, node_type, local_node_idx, local2global,
             key2int)
+
+
+def get_unused_node_types(node_types: List[NodeType],
+                          edge_types: List[EdgeType]) -> Set[NodeType]:
+    dst_node_types = set(edge_type[-1] for edge_type in edge_types)
+    return set(node_types) - set(dst_node_types)

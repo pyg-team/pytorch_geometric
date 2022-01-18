@@ -1,0 +1,32 @@
+name: "😵 Installation"
+description: "Report an installation problem"
+labels: installation
+
+body:
+- type: markdown
+  attributes:
+    value: >
+      #### Before submitting an installation problem, please make sure the issue hasn't been already reported by searching through [the existing and past issues](https://github.com/pyg-team/pytorch_geometric/issues).
+      #
+- type: textarea
+  attributes:
+    label: 😵 Describe the installation problem
+    description: |
+      Please provide a clear and concise description of the installation problem. If you have installation log files, please prvoide them here as well. It may be relevant to wrap the log files in ```` ```triple quotes blocks``` ````.
+    placeholder: |
+      A clear and concise description of the installation problem.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Environment
+    description: |
+      Please provide as much information as possible about your environment, such as your PyG (`print(torch_geometric.__version__)`) and PyTorch version (`print(torch.__version__)`), your OS (*e.g.*, Linux), and your Python version (*e.g.*, `3.9`):
+    value: |
+      * PyG version:
+      * PyTorch version:
+      * OS:
+      * Python version:
+      * CUDA/cuDNN version:
+      * How you installed PyTorch and PyG (`conda`, `pip`, source):
+      * Any other relevant information (*e.g.*, version of `torch-scatter`):

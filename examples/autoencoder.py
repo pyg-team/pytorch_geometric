@@ -105,4 +105,4 @@ def test(data):
 for epoch in range(1, args.epochs + 1):
     loss = train()
     auc, ap = test(test_data)
-    print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, auc, ap))
+    print(f'Epoch: {epoch:03d}, AUC: {auc:.4f}, AP: {ap:.4f}')

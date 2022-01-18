@@ -50,6 +50,13 @@ class ARMAConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_stacks: int = 1, num_layers: int = 1,
@@ -57,7 +64,7 @@ class ARMAConv(MessagePassing):
                  act: Optional[Callable] = ReLU(), dropout: float = 0.,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ARMAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -151,6 +158,6 @@ class ARMAConv(MessagePassing):
         delattr(module, '_hook')
 
     def __repr__(self) -> str:
-        return '{}({}, {}, num_stacks={}, num_layers={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.num_stacks, self.num_layers)
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_stacks={self.num_stacks}, '
+                f'num_layers={self.num_layers})')

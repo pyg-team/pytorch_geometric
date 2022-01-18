@@ -89,11 +89,9 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
 
     loss, acc, duration = tensor(val_losses), tensor(accs), tensor(durations)
 
-    print('Val Loss: {:.4f}, Test Accuracy: {:.3f} ± {:.3f}, Duration: {:.3f}'.
-          format(loss.mean().item(),
-                 acc.mean().item(),
-                 acc.std().item(),
-                 duration.mean().item()))
+    print(f'Val Loss: {float(loss.mean()):.4f}, '
+          f'Test Accuracy: {float(acc.mean()):.3f} ± {float(acc.std()):.3f}, '
+          f'Duration: {float(duration.mean()):.3f}')
 
 
 def train(model, optimizer, data):
@@ -113,12 +111,12 @@ def evaluate(model, data):
 
     outs = {}
     for key in ['train', 'val', 'test']:
-        mask = data['{}_mask'.format(key)]
+        mask = data[f'{key}_mask']
         loss = F.nll_loss(logits[mask], data.y[mask]).item()
         pred = logits[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
 
-        outs['{}_loss'.format(key)] = loss
-        outs['{}_acc'.format(key)] = acc
+        outs[f'{key}_loss'] = loss
+        outs[f'{key}_acc'] = acc
 
     return outs

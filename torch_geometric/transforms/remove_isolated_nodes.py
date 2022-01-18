@@ -23,6 +23,3 @@ class RemoveIsolatedNodes(BaseTransform):
                 data[key] = item[mask]
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

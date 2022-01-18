@@ -7,7 +7,7 @@ class DenseGraphConv(torch.nn.Module):
     """
     def __init__(self, in_channels, out_channels, aggr='add', bias=True):
         assert aggr in ['add', 'mean', 'max']
-        super(DenseGraphConv, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -60,6 +60,6 @@ class DenseGraphConv(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

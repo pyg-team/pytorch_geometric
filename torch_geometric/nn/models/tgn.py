@@ -35,7 +35,7 @@ class TGNMemory(torch.nn.Module):
     def __init__(self, num_nodes: int, raw_msg_dim: int, memory_dim: int,
                  time_dim: int, message_module: Callable,
                  aggregator_module: Callable):
-        super(TGNMemory, self).__init__()
+        super().__init__()
 
         self.num_nodes = num_nodes
         self.raw_msg_dim = raw_msg_dim
@@ -169,12 +169,12 @@ class TGNMemory(torch.nn.Module):
             self.__update_memory__(
                 torch.arange(self.num_nodes, device=self.memory.device))
             self.__reset_message_store__()
-        super(TGNMemory, self).train(mode)
+        super().train(mode)
 
 
 class IdentityMessage(torch.nn.Module):
     def __init__(self, raw_msg_dim: int, memory_dim: int, time_dim: int):
-        super(IdentityMessage, self).__init__()
+        super().__init__()
         self.out_channels = raw_msg_dim + 2 * memory_dim + time_dim
 
     def forward(self, z_src, z_dst, raw_msg, t_enc):
@@ -197,7 +197,7 @@ class MeanAggregator(torch.nn.Module):
 
 class TimeEncoder(torch.nn.Module):
     def __init__(self, out_channels):
-        super(TimeEncoder, self).__init__()
+        super().__init__()
         self.out_channels = out_channels
         self.lin = Linear(1, out_channels)
 

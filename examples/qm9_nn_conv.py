@@ -68,7 +68,7 @@ train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
         nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
@@ -137,5 +137,5 @@ for epoch in range(1, 301):
         test_error = test(test_loader)
         best_val_error = val_error
 
-    print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
-          'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
+    print(f'Epoch: {epoch:03d}, LR: {lr:7f}, Loss: {loss:.7f}, '
+          f'Val MAE: {val_error:.7f}, Test MAE: {test_error:.7f}')

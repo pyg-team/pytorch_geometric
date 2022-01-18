@@ -28,7 +28,7 @@ for data in train_dataset:
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.node_emb = Embedding(21, 75)
         self.edge_emb = Embedding(4, 50)

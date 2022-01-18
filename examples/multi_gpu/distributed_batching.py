@@ -19,7 +19,7 @@ from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
 class GIN(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels, num_layers=3,
                  dropout=0.5):
-        super(GIN, self).__init__()
+        super().__init__()
 
         self.dropout = dropout
 
@@ -59,7 +59,8 @@ def run(rank, world_size: int, dataset_name: str, root: str):
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
-    dataset = Dataset(dataset_name, root, pre_transform=T.ToSparseTensor())
+    dataset = Dataset(dataset_name, root,
+                      pre_transform=T.ToSparseTensor(attr='edge_attr'))
     split_idx = dataset.get_idx_split()
     evaluator = Evaluator(dataset_name)
 
@@ -133,7 +134,8 @@ if __name__ == '__main__':
     root = '../../data/OGB'
 
     # Download and process the dataset on main process.
-    Dataset(dataset_name, root, pre_transform=T.ToSparseTensor())
+    Dataset(dataset_name, root,
+            pre_transform=T.ToSparseTensor(attr='edge_attr'))
 
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')

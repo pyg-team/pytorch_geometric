@@ -9,10 +9,11 @@ import torch
 from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer
+from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
     from torch.fx import GraphModule, Graph, Node
-except (ImportError, ModuleNotFoundError):
+except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
@@ -132,6 +133,15 @@ class ToHeteroTransformer(Transformer):
         debug: bool = False,
     ):
         super().__init__(module, input_map, debug)
+
+        unused_node_types = get_unused_node_types(*metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behaviour.")
+
         self.metadata = metadata
         self.aggr = aggr
         assert len(metadata) == 2
@@ -297,8 +307,10 @@ class ToHeteroTransformer(Transformer):
             if isinstance(value, Node):
                 out = self.find_by_name(f'{value.name}__{key2str(key)}')
                 if out is None and isinstance(key, tuple):
-                    out = (self.find_by_name(f'{value.name}__{key[0]}'),
-                           self.find_by_name(f'{value.name}__{key[-1]}'))
+                    out = (
+                        self.find_by_name(f'{value.name}__{key2str(key[0])}'),
+                        self.find_by_name(f'{value.name}__{key2str(key[-1])}'),
+                    )
                 return out
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
@@ -315,4 +327,5 @@ class ToHeteroTransformer(Transformer):
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
-    return '__'.join(key) if isinstance(key, tuple) else key
+    key = '__'.join(key) if isinstance(key, tuple) else key
+    return key.replace(' ', '_')
