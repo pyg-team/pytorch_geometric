@@ -19,24 +19,24 @@ class OptimizerConfig:
 
 
 @register.register_optimizer('adam')
-def adam_optimizer(params: Iterator[Parameter], base_lr: float,
+def adam_optimizer(parameters: Iterator[Parameter], base_lr: float,
                    weight_decay: float) -> Adam:
-    return Adam(params, lr=base_lr, weight_decay=weight_decay)
+    return Adam(parameters, lr=base_lr, weight_decay=weight_decay)
 
 
 @register.register_optimizer('sgd')
-def sgd_optimizer(params: Iterator[Parameter], base_lr: float, momentum: float,
-                  weight_decay: float) -> SGD:
-    return SGD(params, lr=base_lr, momentum=momentum,
+def sgd_optimizer(parameters: Iterator[Parameter], base_lr: float,
+                  momentum: float, weight_decay: float) -> SGD:
+    return SGD(parameters, lr=base_lr, momentum=momentum,
                weight_decay=weight_decay)
 
 
-def create_optimizer(params: Iterator[Parameter], cfg: Any) -> Any:
+def create_optimizer(parameters: Iterator[Parameter], cfg: Any) -> Any:
     r"""Creates a config-driven optimizer."""
-    params = filter(lambda p: p.requires_grad, params)
+    parameters = filter(lambda p: p.requires_grad, parameters)
     func = register.optimizer_dict.get(cfg.optimizer, None)
     if func is not None:
-        return from_config(func)(params, cfg=cfg)
+        return from_config(func)(parameters, cfg=cfg)
     raise ValueError(f"Optimizer '{cfg.optimizer}' not supported")
 
 
