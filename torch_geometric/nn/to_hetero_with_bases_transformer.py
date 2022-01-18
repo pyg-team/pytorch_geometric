@@ -546,4 +546,5 @@ def split_output(
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
-    return '__'.join(key) if isinstance(key, tuple) else key
+    key = '__'.join(key) if isinstance(key, tuple) else key
+    return key.replace(' ', '_')
