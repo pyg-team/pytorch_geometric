@@ -37,10 +37,9 @@ def to_dataclass(cls: Any) -> Any:
         default = parameter.default
         if default != inspect.Parameter.empty:
             if isinstance(default, (list, dict)):
-                default = field(default_factory=lambda: default)
+                item = item + (field(default_factory=lambda: default), )
             else:
-                default = field(default=default)
-            item = item + (default, )
+                item = item + (default, )
         else:
             item = item + (field(default=MISSING), )
 
@@ -54,16 +53,10 @@ def to_dataclass(cls: Any) -> Any:
 
 def register(group: str, package: Any, exclude: List[str]):
     for name in set(package.__all__) - set(exclude):
-        node = to_dataclass(getattr(package, name))
-        try:
-            config_store.store(group=group, name=name, node=node)
-        except Exception as e:
-            print()
-            print('error', name)
-            print()
-            print(e)
-            print('-------------')
+        Config = to_dataclass(getattr(package, name))
+        config_store.store(group=group, name=name, node=Config)
 
 
 config_store = ConfigStore.instance()
-register(group='transform', package=transforms, exclude=['BaseTransform'])
+register(group='transform', package=transforms,
+         exclude=['BaseTransform', 'AddMetaPaths'])
