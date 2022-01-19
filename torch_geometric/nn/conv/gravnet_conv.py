@@ -83,6 +83,8 @@ class GravNetConv(MessagePassing):
     def forward(
             self, x: Union[Tensor, PairTensor],
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        # type: (Tensor, OptTensor) -> Tensor  # noqa
+        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
         """"""
 
         is_bipartite: bool = True
