@@ -1,6 +1,6 @@
 name: Building rusty1s Conda
 
-on: [workflow_dispatch]
+on: [workflow_dispatch]  # yamllint disable-line rule:truthy
 
 jobs:
 
