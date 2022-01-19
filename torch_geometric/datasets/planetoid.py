@@ -1,4 +1,4 @@
-from typing import Optional, Callable, List, Any
+from typing import Optional, Any, List
 
 import os.path as osp
 
