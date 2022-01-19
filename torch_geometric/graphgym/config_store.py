@@ -1,5 +1,4 @@
 from typing import List, Any, Union, Optional
-# from typing import get_origin, get_args
 
 import inspect
 from dataclasses import make_dataclass, field
