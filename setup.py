@@ -16,6 +16,7 @@ install_requires = [
     'jinja2',
     'pyparsing',
     'yacs',
+    'hydra-core',
     'PyYAML',
 ]
 tests_require = ['pytest', 'pytest-cov', 'mock']
