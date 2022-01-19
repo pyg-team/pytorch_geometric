@@ -80,8 +80,11 @@ class GravNetConv(MessagePassing):
         self.lin_out1.reset_parameters()
         self.lin_out2.reset_parameters()
 
-    def forward(self, x: Union[Tensor, PairTensor],
-                batch: Union[OptTensor, Optional[PairTensor]]) -> Tensor:
+    def forward(
+            self, x: Union[Tensor, PairTensor],
+            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        # type: (Tensor, OptTensor) -> Tensor  # noqa
+        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
         """"""
 
         is_bipartite: bool = True
