@@ -47,13 +47,17 @@ class Set2Set(torch.nn.Module):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor,
+                batch: Optional[torch.Tensor] = None) -> torch.Tensor:
         r"""
         Args:
-            x: The input node features.
-            batch: A one dimensional tensor which maps each node feature
+            x (torch.Tensor): The input node features.
+            batch (torch.Tensor, optional): A one dimensional tensor which maps each node feature
                 to its respective graph identifier.
         """
+        if batch is None:
+            batch = x.new_zeros(x.size(0), dtype=torch.int64)
+
         batch_size = batch.max().item() + 1
 
         h = (x.new_zeros((self.num_layers, batch_size, self.in_channels)),
