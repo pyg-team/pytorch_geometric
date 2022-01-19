@@ -29,6 +29,22 @@ class Set2Set(torch.nn.Module):
             :obj:`num_layers=2` would mean stacking two LSTMs together to form
             a stacked LSTM, with the second LSTM taking in outputs of the first
             LSTM and computing the final results. (default: :obj:`1`)
+
+    Shapes:
+        - **input**
+          node features  :math:`(N, F_{in})`,
+          batch :math:`(N)`
+        - **output**
+          set representation :math:`(1, 2 * F_{in})`
+
+        where:
+
+        .. math::
+            \begin{aligned}
+                N ={} & \text{Number of unique nodes
+             in the graph collection} \\
+                F_{in} ={} & \text{Number of features for a node}
+            \end{aligned}
     """
     def __init__(self, in_channels: int, processing_steps: int,
                  num_layers: Optional[int] = 1):
@@ -52,8 +68,8 @@ class Set2Set(torch.nn.Module):
         r"""
         Args:
             x (torch.Tensor): The input node features.
-            batch (torch.Tensor, optional): A one dimensional tensor which maps each node feature
-                to its respective graph identifier.
+            batch (torch.Tensor, optional): A one dimensional tensor which maps
+                each node feature to its respective graph identifier.
         """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.int64)
