@@ -1,19 +1,19 @@
 from typing import List, Any, Union, Optional
 
 import inspect
-from dataclasses import make_dataclass, field
+from dataclasses import dataclass, make_dataclass, field
 
 from omegaconf import MISSING
 from hydra.core.config_store import ConfigStore
 
-import torch_geometric.transforms as transforms
+import torch_geometric
 
 
 def to_dataclass(cls: Any) -> Any:
     r"""Converts a given class :obj:`cls` to a `dataclass` schema."""
     fields = []
-    for name, parameter in inspect.signature(cls).parameters.items():
-        if name in {'args', 'kwargs'}:
+    for name, parameter in inspect.signature(cls.__init__).parameters.items():
+        if name in {'self', 'args', 'kwargs'}:
             continue
 
         item = (name, )
@@ -50,12 +50,28 @@ def to_dataclass(cls: Any) -> Any:
     return make_dataclass(cls.__qualname__, fields=fields)
 
 
-def register(group: str, package: Any, exclude: List[str]):
+def register(group: str, package: Any, exclude: List[str] = []):
     for name in set(package.__all__) - set(exclude):
         Config = to_dataclass(getattr(package, name))
         config_store.store(group=group, name=name, node=Config)
 
 
 config_store = ConfigStore.instance()
-register(group='transform', package=transforms,
+
+
+@dataclass
+class Config:
+    dataset: Any = MISSING
+
+
+config_store.store(name='config', node=Config)
+
+# Register `torch_geometric.transforms.*`:
+register(group='transform', package=torch_geometric.transforms,
          exclude=['BaseTransform', 'AddMetaPaths'])
+
+Config = to_dataclass(getattr(torch_geometric.datasets, 'Planetoid'))
+config_store.store(group='dataset', name='Planetoid', node=Config)
+
+# Register `torch_geometric.transforms.*`:
+# register(group='dataset', package=torch_geometric.datasets)

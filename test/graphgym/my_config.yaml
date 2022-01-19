@@ -1,0 +1,6 @@
+defaults:
+  - dataset: Planetoid
+
+dataset:
+  root: data/Planetoid
+  name: Cora

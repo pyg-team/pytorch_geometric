@@ -1,5 +1,14 @@
-from torch_geometric.graphgym.config_store import config_store
+import hydra
+from torch_geometric.graphgym.config_store import config_store  # noqa
 
 
-def test_config_store():
-    pass
+@hydra.main(config_path='.', config_name='my_config')
+def main(cfg):
+    print(cfg)
+
+    dataset = hydra.utils.instantiate(cfg.dataset)
+    print(dataset)
+
+
+if __name__ == '__main__':
+    main()
