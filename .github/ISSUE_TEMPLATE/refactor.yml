@@ -3,17 +3,17 @@ description: "Suggest a code refactor or deprecation"
 labels: refactor
 
 body:
-- type: textarea
-  attributes:
-    label: 🛠 Proposed Refactor
-    description: |
-      A clear and concise description of the refactor proposal. Please outline the motivation for the proposal. If this is related to another GitHub issue, please link here too.
-  validations:
-    required: true
-- type: textarea
-  attributes:
-    label: Suggest a potential alternative/fix
-    description: |
-      Tell us how we could improve the code in this regard.
-  validations:
-    required: true
+  - type: textarea
+    attributes:
+      label: 🛠 Proposed Refactor
+      description: |
+        A clear and concise description of the refactor proposal. Please outline the motivation for the proposal. If this is related to another GitHub issue, please link here too.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Suggest a potential alternative/fix
+      description: |
+        Tell us how we could improve the code in this regard.
+    validations:
+      required: true

@@ -3,15 +3,15 @@ description: "Tell us about how we can improve our documentation"
 labels: documentation
 
 body:
-- type: textarea
-  attributes:
-    label: 📚 Describe the documentation issue
-    description: |
-      A clear and concise description of the issue.
-  validations:
-    required: true
-- type: textarea
-  attributes:
-    label: Suggest a potential alternative/fix
-    description: |
-      Tell us how we could improve the documentation in this regard.
+  - type: textarea
+    attributes:
+      label: 📚 Describe the documentation issue
+      description: |
+        A clear and concise description of the issue.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Suggest a potential alternative/fix
+      description: |
+        Tell us how we could improve the documentation in this regard.

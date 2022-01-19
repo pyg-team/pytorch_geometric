@@ -27,6 +27,44 @@ jobs:
         run: |
           flake8 .
 
+  pyroma:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install pyroma
+
+      - name: Check package metadata
+        run: |
+          pyroma --min=10 .
+
+  yamllint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install yamllint
+
+      - name: Run linting
+        run: |
+          yamllint .
+
   pylint:
     runs-on: ubuntu-latest
 
@@ -47,25 +85,6 @@ jobs:
         run: |
           pylint **/*.py
 
-  pyroma:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install pyroma
-
-      - name: Check package metadata
-        run: |
-          pyroma --min=10 .
-
   mypy:
     runs-on: ubuntu-latest
 
@@ -85,23 +104,3 @@ jobs:
         continue-on-error: true
         run: |
           mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric
-
-  yamllint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install yamllint
-
-      - name: Run linting
-        continue-on-error: true
-        run: |
-          yamllint .
