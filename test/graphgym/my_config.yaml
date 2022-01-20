@@ -4,3 +4,4 @@ defaults:
 dataset:
   root: data/Planetoid
   name: Cora
+  transform: AddSelfLoops
