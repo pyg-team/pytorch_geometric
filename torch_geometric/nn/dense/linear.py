@@ -174,6 +174,12 @@ class HeteroLinear(torch.nn.Module):
         num_types (int): The number of types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
+
+    Shapes:
+        - **input:**
+        features :math:`(*, F_{in})`
+        type vector :math:`(*)`
+        - **output:** node features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
                  **kwargs):
@@ -194,7 +200,11 @@ class HeteroLinear(torch.nn.Module):
             lin.reset_parameters()
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (Tensor): The input features.
+            type_vec (LongTensor): A vector that maps each entry to a type.
+        """
         out = x.new_empty(x.size(0), self.out_channels)
         for i, lin in enumerate(self.lins):
             mask = type_vec == i
