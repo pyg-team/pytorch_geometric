@@ -1,8 +1,10 @@
-import torch
-from torch_scatter import scatter_add
-from torch_geometric.utils import softmax
-
 from typing import Optional
+
+import torch
+from torch import Tensor
+from torch_scatter import scatter_add
+
+from torch_geometric.utils import softmax
 
 
 class Set2Set(torch.nn.Module):
@@ -31,20 +33,12 @@ class Set2Set(torch.nn.Module):
             LSTM and computing the final results. (default: :obj:`1`)
 
     Shapes:
-        - **input**
-          node features  :math:`(N, F_{in})`,
-          batch :math:`(N)`
-        - **output**
-          set representation :math:`(1, 2 * F_{in})`
-
-        where:
-
-        .. math::
-            \begin{aligned}
-                N ={} & \text{Number of unique nodes
-             in the graph collection} \\
-                F_{in} ={} & \text{Number of features for a node}
-            \end{aligned}
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
+        - **output:**
+          set features :math:`(|\mathcal{G}|, 2 * F)` where
+          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(self, in_channels: int, processing_steps: int,
                  num_layers: int = 1):
@@ -63,13 +57,12 @@ class Set2Set(torch.nn.Module):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: torch.Tensor,
-                batch: Optional[torch.Tensor] = None) -> torch.Tensor:
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
-            x (torch.Tensor): The input node features.
-            batch (torch.Tensor, optional): A one dimensional tensor which maps
-                each node feature to its respective graph identifier.
+            x (Tensor): The input node features.
+            batch (LongTensor, optional): A vector that maps each node to its
+                respective graph identifier. (default: :obj:`None`)
         """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.int64)
