@@ -177,9 +177,9 @@ class HeteroLinear(torch.nn.Module):
 
     Shapes:
         - **input:**
-        features :math:`(*, F_{in})`
+        features :math:`(*, F_{in})`,
         type vector :math:`(*)`
-        - **output:** node features :math:`(*, F_{out})`
+        - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
                  **kwargs):
