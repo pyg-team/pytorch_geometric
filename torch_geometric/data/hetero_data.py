@@ -111,11 +111,12 @@ class HeteroData(BaseData):
         # `data.*` => Link to the `_global_store`.
         # Using `data.*_dict` is the same as using `collect()` for collecting
         # nodes and edges features.
-        if bool(re.search('_dict$', key)):
-            out = self.collect(key[:-5])
-            if len(out) > 0:
-                return out
-        return getattr(self._global_store, key)
+        if hasattr(self._global_store, key):
+            return getattr(self._global_store, key)
+        elif bool(re.search('_dict$', key)):
+            return self.collect(key[:-5])
+        raise AttributeError(f"'{self.__class__.__name__}' has no "
+                             f"attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
         # NOTE: We aim to prevent duplicates in node or edge types.
