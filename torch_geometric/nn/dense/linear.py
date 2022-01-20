@@ -37,6 +37,10 @@ class Linear(torch.nn.Module):
             (:obj:`"zeros"` or :obj:`None`).
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
+
+    Shapes:
+        - **input:** features :math:`(*, F_{in})`
+        - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
                  weight_initializer: Optional[str] = None,
@@ -105,7 +109,10 @@ class Linear(torch.nn.Module):
                                f"'{self.bias_initializer}' is not supported")
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (Tensor): The features.
+        """
         return F.linear(x, self.weight, self.bias)
 
     @torch.no_grad()
