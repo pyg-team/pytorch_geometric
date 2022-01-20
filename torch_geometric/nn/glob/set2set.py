@@ -47,7 +47,7 @@ class Set2Set(torch.nn.Module):
             \end{aligned}
     """
     def __init__(self, in_channels: int, processing_steps: int,
-                 num_layers: Optional[int] = 1):
+                 num_layers: int = 1):
         super().__init__()
 
         self.in_channels = in_channels
