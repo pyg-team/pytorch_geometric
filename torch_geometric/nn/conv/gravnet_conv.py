@@ -100,7 +100,7 @@ class GravNetConv(MessagePassing):
         if isinstance(batch, Tensor):
             b = (batch, batch)
         elif isinstance(batch, tuple):
-            b = batch
+            b = (batch[0], batch[1])
 
         h_l: Tensor = self.lin_h(x[0])
 

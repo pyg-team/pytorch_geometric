@@ -118,7 +118,7 @@ class DynamicEdgeConv(MessagePassing):
         if isinstance(batch, Tensor):
             b = (batch, batch)
         elif isinstance(batch, tuple):
-            b = batch
+            b = (batch[0], batch[1])
 
         edge_index = knn(x[0], x[1], self.k, b[0], b[1]).flip([0])
 
