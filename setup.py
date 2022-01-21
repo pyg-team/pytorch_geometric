@@ -7,19 +7,20 @@ install_requires = [
     'numpy',
     'tqdm',
     'scipy',
-    'networkx',
-    'scikit-learn',
     'requests',
-    'pandas',
-    'rdflib',
     'googledrivedownloader',
     'jinja2',
     'pyparsing',
     'yacs',
-    'PyYAML',
 ]
 tests_require = ['pytest', 'pytest-cov', 'mock']
 dev_requires = tests_require + ['pre-commit']
+
+# networkx
+# 'scikit-learn',
+# 'pandas',
+# 'rdflib',
+# 'PyYAML',
 
 setup(
     name='torch_geometric',
