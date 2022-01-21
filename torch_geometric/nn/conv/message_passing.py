@@ -188,7 +188,6 @@ class MessagePassing(torch.nn.Module):
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
                 dim = j if arg[-2:] == '_j' else i
-                print('dim', dim)
                 data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
