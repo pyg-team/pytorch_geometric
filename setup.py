@@ -4,22 +4,37 @@ __version__ = '2.0.4'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
-    'numpy',
     'tqdm',
+    'yacs',
+    'numpy',
     'scipy',
-    'networkx',
-    'scikit-learn',
-    'requests',
     'pandas',
-    'rdflib',
-    'googledrivedownloader',
     'jinja2',
     'pyparsing',
-    'yacs',
-    'PyYAML',
+    'scikit-learn',
+    'googledrivedownloader',
 ]
-tests_require = ['pytest', 'pytest-cov', 'mock']
-dev_requires = tests_require + ['pre-commit']
+
+full_install_requires = [
+    'h5py',
+    'numba',
+    'rdflib',
+    'trimesh',
+    'networkx',
+    'tabulate',
+    'matplotlib',
+    'scikit-image',
+    'pytorch-memlab',
+]
+
+tests_require = [
+    'pytest',
+    'pytest-cov',
+]
+
+dev_requires = tests_require + [
+    'pre-commit',
+]
 
 setup(
     name='torch_geometric',
@@ -39,6 +54,7 @@ setup(
     python_requires='>=3.6',
     install_requires=install_requires,
     extras_require={
+        'full': full_install_requires,
         'test': tests_require,
         'dev': dev_requires,
     },
