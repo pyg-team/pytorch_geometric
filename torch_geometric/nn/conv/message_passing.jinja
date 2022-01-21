@@ -71,27 +71,15 @@ class {{cls_name}}({{parent_cls_name}}):
         if isinstance(data, (tuple, list)):
             assert len(data) == 2
 {%- if arg[-2:] == '_j' %}
-            if self.flow == 'source_to_target':
-                tmp = data[1]
-                if isinstance(tmp, Tensor):
-                    self.__set_size__(size, 1, tmp)
-                {{arg}} = data[0]
-            else:
-                tmp = data[0]
-                if isinstance(tmp, Tensor):
-                    self.__set_size__(size, 0, tmp)
-                {{arg}} = data[1]
+            tmp = data[1]
+            if isinstance(tmp, Tensor):
+                self.__set_size__(size, 1, tmp)
+            {{arg}} = data[0]
 {%- else %}
-            if self.flow == 'source_to_target':
-                tmp = data[0]
-                if isinstance(tmp, Tensor):
-                    self.__set_size__(size, 0, tmp)
-                {{arg}} = data[1]
-            else:
-                tmp = data[1]
-                if isinstance(tmp, Tensor):
-                    self.__set_size__(size, 1, tmp)
-                {{arg}} = data[0]
+            tmp = data[0]
+            if isinstance(tmp, Tensor):
+                self.__set_size__(size, 0, tmp)
+            {{arg}} = data[1]
 {%- endif %}
         else:
             {{arg}} = data
