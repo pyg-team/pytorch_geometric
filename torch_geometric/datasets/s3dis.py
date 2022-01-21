@@ -3,7 +3,8 @@ import os.path as osp
 import shutil
 
 import torch
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 
 

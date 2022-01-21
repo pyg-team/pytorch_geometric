@@ -2,13 +2,13 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import ShapeNet
+from pointnet2_classification import GlobalSAModule, SAModule
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
 from torch_geometric.utils import intersection_and_union as i_and_u
-
-from pointnet2_classification import SAModule, GlobalSAModule
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')

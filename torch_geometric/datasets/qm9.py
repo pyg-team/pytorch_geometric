@@ -1,15 +1,15 @@
-from typing import Optional, Callable, List
-
-import sys
 import os
 import os.path as osp
-from tqdm import tqdm
+import sys
+from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
-                                  Data)
+from tqdm import tqdm
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -180,10 +180,9 @@ class QM9(InMemoryDataset):
     def process(self):
         try:
             import rdkit
-            from rdkit import Chem
-            from rdkit.Chem.rdchem import HybridizationType
+            from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
-            from rdkit import RDLogger
+            from rdkit.Chem.rdchem import HybridizationType
             RDLogger.DisableLog('rdApp.*')
 
         except ImportError:

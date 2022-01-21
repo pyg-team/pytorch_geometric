@@ -1,9 +1,9 @@
-from typing import Optional, Union, Tuple, List
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import sort_edge_index, coalesce
+from torch_geometric.utils import coalesce, sort_edge_index
 
 from .num_nodes import maybe_num_nodes
 

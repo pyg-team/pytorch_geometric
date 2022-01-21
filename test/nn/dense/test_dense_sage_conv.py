@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.nn import SAGEConv, DenseSAGEConv
+
+from torch_geometric.nn import DenseSAGEConv, SAGEConv
 
 
 def test_dense_sage_conv():

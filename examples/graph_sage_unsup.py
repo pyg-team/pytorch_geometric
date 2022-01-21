@@ -3,13 +3,13 @@ import os.path as osp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_cluster import random_walk
 from sklearn.linear_model import LogisticRegression
+from torch_cluster import random_walk
 
 import torch_geometric.transforms as T
-from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborSampler as RawNeighborSampler
+from torch_geometric.nn import SAGEConv
 
 EPS = 1e-15
 

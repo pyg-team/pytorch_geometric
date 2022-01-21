@@ -1,10 +1,9 @@
-from typing import List, Type, Optional, Tuple
-
 import math
+from typing import List, Optional, Tuple, Type
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, LayerNorm
+from torch.nn import LayerNorm, Linear
 
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import to_dense_batch

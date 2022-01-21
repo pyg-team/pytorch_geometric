@@ -1,21 +1,20 @@
+import argparse
 from itertools import product
 
-import argparse
+from asap import ASAP
 from datasets import get_dataset
-from train_eval import cross_validation_with_val_set
-
-from gcn import GCN, GCNWithJK
-from graph_sage import GraphSAGE, GraphSAGEWithJK
-from gin import GIN0, GIN0WithJK, GIN, GINWithJK
-from graclus import Graclus
-from top_k import TopK
-from sag_pool import SAGPool
 from diff_pool import DiffPool
 from edge_pool import EdgePool
+from gcn import GCN, GCNWithJK
+from gin import GIN, GIN0, GIN0WithJK, GINWithJK
 from global_attention import GlobalAttentionNet
+from graclus import Graclus
+from graph_sage import GraphSAGE, GraphSAGEWithJK
+from sag_pool import SAGPool
 from set2set import Set2SetNet
 from sort_pool import SortPool
-from asap import ASAP
+from top_k import TopK
+from train_eval import cross_validation_with_val_set
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)

@@ -1,8 +1,8 @@
-import re
 import math
+import re
 
-import torch
 import numpy as np
+import torch
 
 from torch_geometric.transforms import BaseTransform
 

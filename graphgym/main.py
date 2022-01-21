@@ -1,22 +1,22 @@
-import os
-import torch
 import logging
+import os
 
 import custom_graphgym  # noqa, register custom modules
+import torch
 
+from torch_geometric import seed_everything
 from torch_geometric.graphgym.cmd_args import parse_args
-from torch_geometric.graphgym.config import (cfg, dump_cfg, set_run_dir,
-                                             set_agg_dir, load_cfg)
+from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
+                                             set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
-from torch_geometric.graphgym.logger import set_printing, create_logger
-from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
+from torch_geometric.graphgym.logger import create_logger, set_printing
 from torch_geometric.graphgym.model_builder import create_model
+from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
+from torch_geometric.graphgym.register import train_dict
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
-from torch_geometric.graphgym.register import train_dict
-from torch_geometric import seed_everything
 
 if __name__ == '__main__':
     # Load cmd line args

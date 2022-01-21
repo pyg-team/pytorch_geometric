@@ -7,3 +7,9 @@ repos:
     hooks:
       - id: yapf
         name: Format code
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: Sort imports

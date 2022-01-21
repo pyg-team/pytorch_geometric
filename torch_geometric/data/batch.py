@@ -1,16 +1,15 @@
-from typing import Optional, List, Union, Any
-
 import inspect
 from collections.abc import Sequence
+from typing import Any, List, Optional, Union
 
-import torch
 import numpy as np
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.collate import collate
-from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import IndexType
+from torch_geometric.data.separate import separate
 
 
 class DynamicInheritance(type):

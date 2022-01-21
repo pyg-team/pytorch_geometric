@@ -2,10 +2,12 @@ import time
 
 import torch
 import torch.nn.functional as F
+from sklearn.model_selection import StratifiedKFold
 from torch import tensor
 from torch.optim import Adam
-from sklearn.model_selection import StratifiedKFold
-from torch_geometric.loader import DataLoader, DenseDataLoader as DenseLoader
+
+from torch_geometric.loader import DataLoader
+from torch_geometric.loader import DenseDataLoader as DenseLoader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

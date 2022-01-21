@@ -1,15 +1,15 @@
-import sys
+import os.path as osp
 import random
 import shutil
-import os.path as osp
+import sys
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.utils import erdos_renyi_graph
-from torch_geometric.loader import NeighborSampler
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn.conv import SAGEConv, GATConv
+from torch_geometric.loader import NeighborSampler
+from torch_geometric.nn.conv import GATConv, SAGEConv
+from torch_geometric.utils import erdos_renyi_graph
 
 
 def test_neighbor_sampler():
