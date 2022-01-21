@@ -1,13 +1,13 @@
+import copy
 import inspect
 from dataclasses import dataclass, field, make_dataclass
-from typing import Any, List, Optional, Union, Dict, Tuple, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from hydra.core.config_store import ConfigStore
-import copy
 from omegaconf import MISSING
 
-import torch_geometric.transforms as transforms
 import torch_geometric.datasets as datasets
+import torch_geometric.transforms as transforms
 
 
 def map_annotation(annotation: Any, mapping: Dict[Any, Any]) -> Any:

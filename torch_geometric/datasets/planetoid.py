@@ -3,9 +3,9 @@ from typing import Any, List, Optional
 
 import torch
 
-from torch_geometric.transforms import BaseTransform
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
+from torch_geometric.transforms import BaseTransform
 
 
 class Planetoid(InMemoryDataset):
