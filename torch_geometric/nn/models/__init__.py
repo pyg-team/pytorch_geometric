@@ -1,24 +1,24 @@
-from .attentive_fp import AttentiveFP
-from .autoencoder import ARGA, ARGVA, GAE, VGAE, InnerProductDecoder
-from .basic_gnn import GAT, GCN, GIN, PNA, GraphSAGE
-from .correct_and_smooth import CorrectAndSmooth
+from .mlp import MLP
+from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA
+from .jumping_knowledge import JumpingKnowledge
+from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
-from .deepgcn import DeepGCNLayer
+from .autoencoder import InnerProductDecoder, GAE, VGAE, ARGA, ARGVA
+from .signed_gcn import SignedGCN
+from .re_net import RENet
+from .graph_unet import GraphUNet
+from .schnet import SchNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
-from .graph_unet import GraphUNet
-from .jumping_knowledge import JumpingKnowledge
-from .label_prop import LabelPropagation
-from .lightgcn import LightGCN
-from .linkx import LINKX
 from .metapath2vec import MetaPath2Vec
-from .mlp import MLP
-from .node2vec import Node2Vec
-from .re_net import RENet
-from .rect import RECT_L
-from .schnet import SchNet
-from .signed_gcn import SignedGCN
+from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
+from .label_prop import LabelPropagation
+from .correct_and_smooth import CorrectAndSmooth
+from .attentive_fp import AttentiveFP
+from .rect import RECT_L
+from .linkx import LINKX
+from .lightgcn import LightGCN
 
 __all__ = [
     'MLP',
