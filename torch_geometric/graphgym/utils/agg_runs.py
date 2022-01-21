@@ -1,11 +1,15 @@
-import os
-import numpy as np
 import logging
+import os
+
+import numpy as np
 
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.utils.io import dict_list_to_json, \
-    dict_list_to_tb, json_to_dict_list, makedirs_rm_exist, string_to_python, \
-    dict_to_json
+from torch_geometric.graphgym.utils.io import (dict_list_to_json,
+                                               dict_list_to_tb, dict_to_json,
+                                               json_to_dict_list,
+                                               makedirs_rm_exist,
+                                               string_to_python)
+
 try:
     from tensorboardX import SummaryWriter
 except ImportError:

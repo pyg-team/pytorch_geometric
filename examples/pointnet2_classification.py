@@ -2,10 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import ModelNet
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, PointConv, fps, radius, global_max_pool
+from torch_geometric.nn import MLP, PointConv, fps, global_max_pool, radius
 
 
 class SAModule(torch.nn.Module):

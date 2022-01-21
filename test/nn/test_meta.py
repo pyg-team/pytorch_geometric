@@ -2,8 +2,11 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_scatter import scatter_mean
+
 from torch_geometric.nn import MetaLayer
 
 count = 0

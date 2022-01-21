@@ -65,6 +65,25 @@ jobs:
         run: |
           yamllint .
 
+  isort:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install isort
+
+      - name: Run linting
+        run: |
+          isort --check-only .
+
   pylint:
     runs-on: ubuntu-latest
 

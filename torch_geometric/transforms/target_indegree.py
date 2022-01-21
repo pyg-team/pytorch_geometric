@@ -1,7 +1,7 @@
 import torch
 
-from torch_geometric.utils import degree
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import degree
 
 
 class TargetIndegree(BaseTransform):

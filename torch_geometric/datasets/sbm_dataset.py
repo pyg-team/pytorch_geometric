@@ -1,11 +1,10 @@
-from typing import Optional, Union, List, Callable
-
 import os
+from typing import Callable, List, Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import InMemoryDataset, Data
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.utils import stochastic_blockmodel_graph
 
 

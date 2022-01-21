@@ -1,6 +1,8 @@
 import datetime
 import doctest
+
 import sphinx_rtd_theme
+
 import torch_geometric
 
 extensions = [

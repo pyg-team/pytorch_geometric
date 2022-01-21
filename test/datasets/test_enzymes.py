@@ -1,12 +1,13 @@
-import sys
-import random
 import os.path as osp
+import random
 import shutil
+import sys
 
 import pytest
 import torch
+
 from torch_geometric.datasets import TUDataset
-from torch_geometric.loader import DataLoader, DenseDataLoader, DataListLoader
+from torch_geometric.loader import DataListLoader, DataLoader, DenseDataLoader
 from torch_geometric.transforms import ToDense
 
 

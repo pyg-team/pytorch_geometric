@@ -1,12 +1,12 @@
-from typing import Optional, Callable, List
-
-import os
 import json
+import os
 import os.path as osp
 from collections import defaultdict
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
+
+from torch_geometric.data import (HeteroData, InMemoryDataset, download_url,
                                   extract_zip)
 
 

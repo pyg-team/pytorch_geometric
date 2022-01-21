@@ -4,11 +4,12 @@ import shutil
 from itertools import chain
 from xml.dom import minidom
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_tar)
 
 
@@ -105,9 +106,9 @@ class PascalVOCKeypoints(InMemoryDataset):
         os.rename(path, osp.join(self.raw_dir, 'splits.npz'))
 
     def process(self):
-        from PIL import Image
-        import torchvision.transforms as T
         import torchvision.models as models
+        import torchvision.transforms as T
+        from PIL import Image
 
         splits = np.load(osp.join(self.raw_dir, 'splits.npz'),
                          allow_pickle=True)

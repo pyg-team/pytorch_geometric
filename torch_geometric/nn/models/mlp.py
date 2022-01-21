@@ -1,8 +1,8 @@
 from typing import List
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import BatchNorm1d, Identity
 
 from torch_geometric.nn.dense.linear import Linear

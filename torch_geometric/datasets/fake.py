@@ -1,13 +1,12 @@
-from typing import Optional, Callable
-
 import random
-from itertools import product
 from collections import defaultdict
+from itertools import product
+from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, Data, HeteroData
-from torch_geometric.utils import to_undirected, coalesce, remove_self_loops
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
 
 
 class FakeDataset(InMemoryDataset):

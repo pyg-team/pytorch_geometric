@@ -1,9 +1,10 @@
-from typing import Callable, Union, Optional
-from torch_geometric.typing import OptTensor, PairTensor, PairOptTensor, Adj
+from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
 
 from ..inits import reset
 

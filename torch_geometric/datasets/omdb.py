@@ -1,10 +1,10 @@
-from typing import Optional, Callable, List
-
 import os.path as osp
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
-from torch_geometric.data import InMemoryDataset, Data, extract_tar
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, extract_tar
 
 
 class OMDB(InMemoryDataset):

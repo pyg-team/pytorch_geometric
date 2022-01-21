@@ -1,12 +1,12 @@
 import torch
-from tqdm import tqdm
 import torch.nn.functional as F
-from torch.nn import Linear, LayerNorm, ReLU
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from torch.nn import LayerNorm, Linear, ReLU
 from torch_scatter import scatter
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
+from tqdm import tqdm
 
-from torch_geometric.nn import GENConv, DeepGCNLayer
 from torch_geometric.loader import RandomNodeSampler
+from torch_geometric.nn import DeepGCNLayer, GENConv
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../data')
 splitted_idx = dataset.get_idx_split()
