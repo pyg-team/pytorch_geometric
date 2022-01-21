@@ -3,8 +3,9 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_gz)
+from torch_geometric.data import (
+    Data, InMemoryDataset, download_url, extract_gz
+)
 
 
 class EmailEUCore(InMemoryDataset):

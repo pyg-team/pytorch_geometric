@@ -2,8 +2,9 @@ from typing import Any, List, NamedTuple, Tuple
 
 import torch
 
-from torch_geometric.profile.utils import (byte_to_megabyte,
-                                           get_gpu_memory_from_nvidia_smi)
+from torch_geometric.profile.utils import (
+    byte_to_megabyte, get_gpu_memory_from_nvidia_smi
+)
 
 
 class Stats(NamedTuple):

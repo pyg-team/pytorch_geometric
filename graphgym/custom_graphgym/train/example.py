@@ -3,8 +3,9 @@ import time
 
 import torch
 
-from torch_geometric.graphgym.checkpoint import (clean_ckpt, load_ckpt,
-                                                 save_ckpt)
+from torch_geometric.graphgym.checkpoint import (
+    clean_ckpt, load_ckpt, save_ckpt
+)
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.register import register_train

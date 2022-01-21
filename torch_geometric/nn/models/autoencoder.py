@@ -1,7 +1,8 @@
 import torch
 
-from torch_geometric.utils import (add_self_loops, negative_sampling,
-                                   remove_self_loops)
+from torch_geometric.utils import (
+    add_self_loops, negative_sampling, remove_self_loops
+)
 
 from ..inits import reset
 

@@ -2,8 +2,9 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import (EdgePooling, GraphConv, JumpingKnowledge,
-                                global_mean_pool)
+from torch_geometric.nn import (
+    EdgePooling, GraphConv, JumpingKnowledge, global_mean_pool
+)
 
 
 class EdgePool(torch.nn.Module):
