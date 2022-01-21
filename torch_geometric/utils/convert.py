@@ -92,7 +92,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
 
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
 
-        if to_undirected and v > u:
+        if to_undirected and u > v:
             continue
 
         if remove_self_loops and u == v:
