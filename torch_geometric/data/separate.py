@@ -1,6 +1,5 @@
-from typing import Any
-
 from collections.abc import Mapping, Sequence
+from typing import Any
 
 from torch import Tensor
 from torch_sparse import SparseTensor

@@ -1,17 +1,16 @@
-from typing import Optional, Callable, List
-from torch_geometric.typing import Adj
-
 import copy
+from typing import Callable, List, Optional
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import ModuleList, Linear, ReLU
+from torch import Tensor
+from torch.nn import Linear, ModuleList, ReLU
 
+from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
+                                     PNAConv, SAGEConv)
 from torch_geometric.nn.models import MLP
-from torch_geometric.nn.conv import (MessagePassing, GCNConv, SAGEConv,
-                                     GINConv, GATConv, PNAConv)
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
+from torch_geometric.typing import Adj
 
 
 class BasicGNN(torch.nn.Module):

@@ -1,10 +1,7 @@
-from .profile import profileit, timeit, get_stats_summary
-from .utils import count_parameters
-from .utils import get_model_size
-from .utils import get_data_size
-from .utils import get_cpu_memory_from_gc
-from .utils import get_gpu_memory_from_gc
-from .utils import get_gpu_memory_from_nvidia_smi
+from .profile import get_stats_summary, profileit, timeit
+from .utils import (count_parameters, get_cpu_memory_from_gc, get_data_size,
+                    get_gpu_memory_from_gc, get_gpu_memory_from_nvidia_smi,
+                    get_model_size)
 
 __all__ = [
     'profileit',

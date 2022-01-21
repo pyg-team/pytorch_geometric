@@ -1,9 +1,10 @@
 import os
 import os.path as osp
 
-import torch
 import numpy as np
+import torch
 from torch_sparse import coalesce
+
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_gz, extract_tar)
 from torch_geometric.data.makedirs import makedirs

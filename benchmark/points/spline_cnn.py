@@ -1,11 +1,12 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear as Lin
-from torch_geometric.nn import SplineConv, radius_graph, fps, global_mean_pool
-
 from points.datasets import get_dataset
 from points.train_eval import run
+from torch.nn import Linear as Lin
+
+from torch_geometric.nn import SplineConv, fps, global_mean_pool, radius_graph
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=200)

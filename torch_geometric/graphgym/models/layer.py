@@ -3,16 +3,15 @@ from dataclasses import dataclass, replace
 
 import torch
 import torch.nn as nn
-from torch_geometric.nn import Linear as Linear_pyg
 import torch.nn.functional as F
-import torch_geometric as pyg
 
+import torch_geometric as pyg
 import torch_geometric.graphgym.models.act
+import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.contrib.layer.generalconv import (
     GeneralConvLayer, GeneralEdgeConvLayer)
-
-import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.register import register_layer
+from torch_geometric.nn import Linear as Linear_pyg
 
 
 @dataclass

@@ -1,16 +1,15 @@
 import os.path as osp
 
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 from torch.nn import BatchNorm1d
-
-import pytorch_lightning as pl
 from torchmetrics import Accuracy
 
-from torch_geometric.nn import GraphSAGE
 from torch_geometric import seed_everything
-from torch_geometric.datasets import Reddit
 from torch_geometric.data import LightningNodeData
+from torch_geometric.datasets import Reddit
+from torch_geometric.nn import GraphSAGE
 
 
 class Model(pl.LightningModule):

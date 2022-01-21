@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch_geometric.nn as pyg_nn
 
-from torch_geometric.graphgym.config import cfg
 import torch_geometric.graphgym.models.head  # noqa, register module
 import torch_geometric.graphgym.register as register
+import torch_geometric.nn as pyg_nn
+from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.register import register_network
 
 

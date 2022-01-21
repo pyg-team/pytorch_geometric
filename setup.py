@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 __version__ = '2.0.4'
 URL = 'https://github.com/pyg-team/pytorch_geometric'

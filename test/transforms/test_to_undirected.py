@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import ToUndirected
+
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.transforms import ToUndirected
 
 
 def test_to_undirected():

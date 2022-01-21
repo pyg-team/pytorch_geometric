@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import DBLP
-from torch_geometric.nn import SAGEConv, HeteroConv, Linear
+from torch_geometric.nn import HeteroConv, Linear, SAGEConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
 path = '/data/datasets/DBLP'

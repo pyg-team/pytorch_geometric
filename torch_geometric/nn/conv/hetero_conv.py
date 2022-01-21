@@ -1,12 +1,12 @@
-from typing import Dict, Optional
-from torch_geometric.typing import NodeType, EdgeType, Adj
-
 import warnings
 from collections import defaultdict
+from typing import Dict, Optional
 
 from torch import Tensor
 from torch.nn import Module, ModuleDict
+
 from torch_geometric.nn.conv.hgt_conv import group
+from torch_geometric.typing import Adj, EdgeType, NodeType
 
 
 class HeteroConv(Module):

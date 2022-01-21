@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-from torch.nn import Linear, BatchNorm1d
+from torch.nn import BatchNorm1d, Linear
 
 
 class DiffGroupNorm(torch.nn.Module):

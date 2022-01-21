@@ -1,13 +1,11 @@
-import torch
-import scipy.sparse
 import networkx as nx
+import scipy.sparse
+import torch
 
 from torch_geometric.data import Data
-from torch_geometric.utils import (to_scipy_sparse_matrix,
-                                   from_scipy_sparse_matrix)
-from torch_geometric.utils import to_networkx, from_networkx
-from torch_geometric.utils import to_trimesh, from_trimesh
-from torch_geometric.utils import subgraph
+from torch_geometric.utils import (from_networkx, from_scipy_sparse_matrix,
+                                   from_trimesh, subgraph, to_networkx,
+                                   to_scipy_sparse_matrix, to_trimesh)
 
 
 def test_to_scipy_sparse_matrix():

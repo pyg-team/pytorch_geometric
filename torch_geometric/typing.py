@@ -1,4 +1,4 @@
-from typing import Tuple, Optional, Union, List
+from typing import List, Optional, Tuple, Union
 
 from torch import Tensor
 from torch_sparse import SparseTensor

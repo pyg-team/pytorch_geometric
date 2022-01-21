@@ -1,7 +1,7 @@
-import sys
-import ssl
-import urllib
 import os.path as osp
+import ssl
+import sys
+import urllib
 
 from .makedirs import makedirs
 

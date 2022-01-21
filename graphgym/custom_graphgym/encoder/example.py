@@ -1,8 +1,8 @@
 import torch
-from torch_geometric.graphgym.register import (register_node_encoder,
-                                               register_edge_encoder)
-
 from ogb.utils.features import get_bond_feature_dims
+
+from torch_geometric.graphgym.register import (register_edge_encoder,
+                                               register_node_encoder)
 
 
 @register_node_encoder('example')
