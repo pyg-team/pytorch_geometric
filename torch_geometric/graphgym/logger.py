@@ -7,9 +7,6 @@ from torch_geometric.graphgym.config import cfg
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, \
-    f1_score, roc_auc_score, mean_absolute_error, mean_squared_error
-
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 
 
@@ -97,6 +94,9 @@ class Logger(object):
 
     # task properties
     def classification_binary(self):
+        from sklearn.metrics import (accuracy_score, precision_score,
+                                     recall_score, f1_score, roc_auc_score)
+
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
         try:
@@ -112,11 +112,15 @@ class Logger(object):
         }
 
     def classification_multi(self):
+        from sklearn.metrics import accuracy_score
+
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
         return {'accuracy': round(accuracy_score(true, pred_int), cfg.round)}
 
     def regression(self):
+        from sklearn.metrics import mean_absolute_error, mean_squared_error
+
         true, pred = torch.cat(self._true), torch.cat(self._pred)
         return {
             'mae':
