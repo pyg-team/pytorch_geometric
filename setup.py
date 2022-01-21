@@ -11,7 +11,7 @@ install_requires = [
     'pandas',
     'jinja2',
     'pyparsing',
-    'sckit-learn',
+    'scikit-learn',
     'googledrivedownloader',
 ]
 
