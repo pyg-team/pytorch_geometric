@@ -14,11 +14,26 @@ install_requires = [
     'sckit-learn',
     'googledrivedownloader',
 ]
-tests_require = ['pytest', 'pytest-cov']
-dev_requires = tests_require + ['pre-commit']
-full_requires = [
-    'networkx', 'scikit-image', 'rdflib', 'trimesh', 'h5py', 'numba',
-    'tabulate', 'matplotlib', 'pytorch-memlab'
+
+full_install_requires = [
+    'networkx',
+    'scikit-image',
+    'rdflib',
+    'trimesh',
+    'h5py',
+    'numba',
+    'tabulate',
+    'matplotlib',
+    'pytorch-memlab',
+]
+
+tests_require = [
+    'pytest',
+    'pytest-cov',
+]
+
+dev_requires = tests_require + [
+    'pre-commit',
 ]
 
 setup(
@@ -39,9 +54,9 @@ setup(
     python_requires='>=3.6',
     install_requires=install_requires,
     extras_require={
+        'full': full_install_requires,
         'test': tests_require,
         'dev': dev_requires,
-        'full': full_requires,
     },
     packages=find_packages(),
     include_package_data=True,
