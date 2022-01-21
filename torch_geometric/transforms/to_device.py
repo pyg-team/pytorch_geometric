@@ -1,4 +1,4 @@
-from typing import Union, List, Optional
+from typing import List, Optional, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform

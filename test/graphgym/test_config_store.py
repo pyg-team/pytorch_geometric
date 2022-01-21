@@ -1,4 +1,5 @@
 import hydra
+
 from torch_geometric.graphgym.config_store import config_store  # noqa
 
 

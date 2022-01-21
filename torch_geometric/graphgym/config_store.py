@@ -1,10 +1,9 @@
-from typing import List, Any, Union, Optional
-
 import inspect
-from dataclasses import dataclass, make_dataclass, field
+from dataclasses import dataclass, field, make_dataclass
+from typing import Any, List, Optional, Union
 
-from omegaconf import MISSING
 from hydra.core.config_store import ConfigStore
+from omegaconf import MISSING
 
 import torch_geometric
 
