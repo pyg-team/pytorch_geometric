@@ -78,9 +78,12 @@ def test_to_networkx_undirected():
         assert G.nodes[1]['pos'] == [1, 1]
 
         if remove_self_loops:
-            assert nx.to_numpy_matrix(G).tolist() == [[0, 2], [2, 0]]
+            assert nx.to_numpy_matrix(G).tolist() == [[0, 1], [1, 0]]
         else:
-            assert nx.to_numpy_matrix(G).tolist() == [[3, 2], [2, 0]]
+            assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [1, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected=False)
+    assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [2, 0]]
 
 
 def test_from_networkx():
