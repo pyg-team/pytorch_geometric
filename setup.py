@@ -16,14 +16,14 @@ install_requires = [
 ]
 
 full_install_requires = [
-    'networkx',
-    'scikit-image',
-    'rdflib',
-    'trimesh',
     'h5py',
     'numba',
+    'rdflib',
+    'trimesh',
+    'networkx',
     'tabulate',
     'matplotlib',
+    'scikit-image',
     'pytorch-memlab',
 ]
 
