@@ -6,6 +6,7 @@ from torch_geometric.datasets import DBLP
 from torch_geometric.nn import SAGEConv, HeteroConv, Linear
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
+path = '/data/datasets/DBLP'
 dataset = DBLP(path)
 data = dataset[0]
 print(data)
