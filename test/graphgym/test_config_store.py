@@ -9,6 +9,8 @@ def main(cfg):
 
     dataset = hydra.utils.instantiate(cfg.dataset)
     print(dataset)
+    data = dataset[0]
+    print(data)
 
 
 if __name__ == '__main__':

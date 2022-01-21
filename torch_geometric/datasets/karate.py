@@ -1,7 +1,10 @@
+from typing import Any, Optional
+
 import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.transforms import BaseTransform
 
 
 class KarateClub(InMemoryDataset):
@@ -35,7 +38,7 @@ class KarateClub(InMemoryDataset):
               - 34
               - 4
     """
-    def __init__(self, transform=None):
+    def __init__(self, transform: Optional[BaseTransform] = None):
         super().__init__('.', transform)
 
         import networkx as nx

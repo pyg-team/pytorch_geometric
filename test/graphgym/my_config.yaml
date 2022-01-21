@@ -1,7 +1,6 @@
 defaults:
-  - dataset: Planetoid
+  - dataset: KarateClub
 
 dataset:
-  root: data/Planetoid
-  name: Cora
-  transform: AddSelfLoops
+  transform:
+    _target_: 'torch_geometric.transforms.AddSelfLoops'
