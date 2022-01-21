@@ -1,6 +1,7 @@
-import torch
 import numpy as np
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class KarateClub(InMemoryDataset):

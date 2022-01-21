@@ -1,13 +1,12 @@
-from typing import Optional, List, Callable
-
 import json
 import warnings
 from itertools import chain
+from typing import Callable, List, Optional
 
 import torch
 
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.utils import to_undirected
-from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
 class WikiCS(InMemoryDataset):

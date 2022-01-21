@@ -1,18 +1,18 @@
-import sys
+import os.path as osp
 import random
 import shutil
-import pytest
-import os.path as osp
+import sys
 
-import torch
 import numpy as np
+import pytest
+import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.datasets import Planetoid
-from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.utils import k_hop_subgraph
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):

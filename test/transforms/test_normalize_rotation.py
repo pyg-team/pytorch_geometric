@@ -1,8 +1,9 @@
 from math import sqrt
 
 import torch
-from torch_geometric.transforms import NormalizeRotation
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import NormalizeRotation
 
 
 def test_normalize_rotation():

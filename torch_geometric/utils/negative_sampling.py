@@ -1,11 +1,11 @@
-from typing import Optional, Union, Tuple
-
 import random
+from typing import Optional, Tuple, Union
 
-import torch
 import numpy as np
+import torch
 from torch import Tensor
-from torch_geometric.utils import degree, remove_self_loops, coalesce
+
+from torch_geometric.utils import coalesce, degree, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 

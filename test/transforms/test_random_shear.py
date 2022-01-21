@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import RandomShear
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import RandomShear
 
 
 def test_random_shear():

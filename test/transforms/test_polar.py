@@ -1,8 +1,9 @@
 from math import pi as PI
 
 import torch
-from torch_geometric.transforms import Polar
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import Polar
 
 
 def test_polar():

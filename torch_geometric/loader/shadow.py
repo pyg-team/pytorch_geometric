@@ -4,7 +4,8 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
-from torch_geometric.data import Data, Batch
+
+from torch_geometric.data import Batch, Data
 
 
 class ShaDowKHopSampler(torch.utils.data.DataLoader):

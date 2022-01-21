@@ -1,13 +1,11 @@
-import torch
-import scipy.sparse
 import networkx as nx
+import scipy.sparse
+import torch
 
 from torch_geometric.data import Data
-from torch_geometric.utils import (to_scipy_sparse_matrix,
-                                   from_scipy_sparse_matrix)
-from torch_geometric.utils import to_networkx, from_networkx
-from torch_geometric.utils import to_trimesh, from_trimesh
-from torch_geometric.utils import subgraph
+from torch_geometric.utils import (from_networkx, from_scipy_sparse_matrix,
+                                   from_trimesh, subgraph, to_networkx,
+                                   to_scipy_sparse_matrix, to_trimesh)
 
 
 def test_to_scipy_sparse_matrix():
@@ -78,9 +76,12 @@ def test_to_networkx_undirected():
         assert G.nodes[1]['pos'] == [1, 1]
 
         if remove_self_loops:
-            assert nx.to_numpy_matrix(G).tolist() == [[0, 2], [2, 0]]
+            assert nx.to_numpy_matrix(G).tolist() == [[0, 1], [1, 0]]
         else:
-            assert nx.to_numpy_matrix(G).tolist() == [[3, 2], [2, 0]]
+            assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [1, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected=False)
+    assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [2, 0]]
 
 
 def test_from_networkx():

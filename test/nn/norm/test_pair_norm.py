@@ -1,5 +1,6 @@
 import pytest
 import torch
+
 from torch_geometric.nn import PairNorm
 
 

@@ -1,15 +1,14 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
-
 import copy
 from collections.abc import Mapping
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.collate import collate
-from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import Dataset, IndexType
+from torch_geometric.data.separate import separate
 
 
 class InMemoryDataset(Dataset):

@@ -1,8 +1,8 @@
 import torch
 from torch.nn import Parameter
 
-from torch_geometric.nn.inits import zeros
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
 
 
 class DenseGCNConv(torch.nn.Module):

@@ -1,8 +1,8 @@
 import pytest
-
 import torch
+
+from torch_geometric.nn import DenseGraphConv, GraphConv
 from torch_geometric.utils import to_dense_adj
-from torch_geometric.nn import GraphConv, DenseGraphConv
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])

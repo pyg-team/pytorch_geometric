@@ -1,10 +1,9 @@
-from typing import Optional, List, Iterator, Any
-
 from dataclasses import dataclass, field
+from typing import Any, Iterator, List, Optional
 
 from torch.nn import Parameter
-from torch.optim import Optimizer, Adam, SGD
-from torch.optim.lr_scheduler import StepLR, MultiStepLR, CosineAnnealingLR
+from torch.optim import SGD, Adam, Optimizer
+from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR, StepLR
 
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import from_config

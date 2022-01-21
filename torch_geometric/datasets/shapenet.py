@@ -1,7 +1,7 @@
+import json
 import os
 import os.path as osp
 import shutil
-import json
 
 import torch
 

@@ -1,16 +1,17 @@
 import math
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
-from ..inits import uniform, kaiming_uniform
+from ..inits import kaiming_uniform, uniform
 
 
 class Linear(torch.nn.Module):

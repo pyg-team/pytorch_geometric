@@ -1,11 +1,12 @@
-import pytest
 from itertools import product
 
+import pytest
 import torch
 import torch.nn.functional as F
-from torch.nn import ReLU, BatchNorm1d
+from torch.nn import BatchNorm1d, ReLU
+
 from torch_geometric.nn import LayerNorm
-from torch_geometric.nn.models import GCN, GraphSAGE, GIN, GAT, PNA
+from torch_geometric.nn.models import GAT, GCN, GIN, PNA, GraphSAGE
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]

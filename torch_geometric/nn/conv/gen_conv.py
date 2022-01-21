@@ -1,17 +1,17 @@
-from typing import Optional, List, Union
-from torch_geometric.typing import OptPairTensor, Adj, Size, OptTensor
+from typing import List, Optional, Union
 
 import torch
-from torch import Tensor
-from torch.nn import Parameter
 import torch.nn.functional as F
-from torch.nn import Sequential, ReLU, Dropout
-from torch.nn import BatchNorm1d, LayerNorm, InstanceNorm1d
-from torch_sparse import SparseTensor
+from torch import Tensor
+from torch.nn import (BatchNorm1d, Dropout, InstanceNorm1d, LayerNorm,
+                      Parameter, ReLU, Sequential)
 from torch_scatter import scatter, scatter_softmax
+from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 from ..inits import reset
 

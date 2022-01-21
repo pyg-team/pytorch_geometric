@@ -1,12 +1,13 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import OptTensor, Adj
 
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 
 
 class FAConv(MessagePassing):

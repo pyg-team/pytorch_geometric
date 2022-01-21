@@ -1,10 +1,10 @@
+from typing import Optional, Union
+
 from torch import Tensor
 
-from typing import Union, Optional
-
-from torch_geometric.utils import add_self_loops
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import add_self_loops
 
 
 class AddSelfLoops(BaseTransform):

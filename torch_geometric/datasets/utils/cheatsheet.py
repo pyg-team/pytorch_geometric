@@ -1,8 +1,7 @@
-from typing import List, Optional, Any
-
-import re
-import inspect
 import importlib
+import inspect
+import re
+from typing import Any, List, Optional
 
 
 def paper_link(cls: str) -> str:

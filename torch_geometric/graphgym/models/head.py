@@ -5,9 +5,9 @@ They are constructed in the init function of the gnn.GNN.
 import torch
 import torch.nn as nn
 
-from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.layer import new_layer_config, MLP
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.models.layer import MLP, new_layer_config
 from torch_geometric.graphgym.register import register_head
 
 

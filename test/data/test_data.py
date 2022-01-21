@@ -1,9 +1,9 @@
 import copy
 
 import torch
-import torch_geometric
 import torch.multiprocessing as mp
 
+import torch_geometric
 from torch_geometric.data import Data
 
 
