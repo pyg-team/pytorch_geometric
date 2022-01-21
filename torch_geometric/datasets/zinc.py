@@ -6,8 +6,9 @@ import shutil
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data, InMemoryDataset, download_url, extract_zip
+)
 
 
 class ZINC(InMemoryDataset):

@@ -4,8 +4,9 @@ import re
 
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_gz)
+from torch_geometric.data import (
+    Data, InMemoryDataset, download_url, extract_gz
+)
 
 x_map = {
     'atomic_num':

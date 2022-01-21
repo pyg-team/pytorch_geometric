@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import torch
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
-from sklearn.metrics.cluster import (completeness_score, homogeneity_score,
-                                     v_measure_score)
+from sklearn.metrics.cluster import (
+    completeness_score, homogeneity_score, v_measure_score
+)
 from torch.nn import Linear
 
 import torch_geometric.transforms as T

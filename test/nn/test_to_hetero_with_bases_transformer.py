@@ -5,8 +5,9 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import (GINEConv, MessagePassing, RGCNConv, SAGEConv,
-                                to_hetero_with_bases)
+from torch_geometric.nn import (
+    GINEConv, MessagePassing, RGCNConv, SAGEConv, to_hetero_with_bases
+)
 
 
 class Net1(torch.nn.Module):

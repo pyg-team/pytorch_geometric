@@ -7,8 +7,9 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_tar)
+from torch_geometric.data import (
+    Data, InMemoryDataset, download_url, extract_tar
+)
 
 
 class Entities(InMemoryDataset):
