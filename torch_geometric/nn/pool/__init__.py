@@ -1,13 +1,13 @@
-from .asap import ASAPooling
-from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
-from .edge_pool import EdgePooling
+from .max_pool import max_pool, max_pool_x, max_pool_neighbor_x
+from .avg_pool import avg_pool, avg_pool_x, avg_pool_neighbor_x
 from .graclus import graclus
-from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
-from .mem_pool import MemPooling
-from .pan_pool import PANPooling
-from .sag_pool import SAGPooling
-from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
+from .topk_pool import TopKPooling
+from .sag_pool import SAGPooling
+from .edge_pool import EdgePooling
+from .asap import ASAPooling
+from .pan_pool import PANPooling
+from .mem_pool import MemPooling
 
 try:
     import torch_cluster
