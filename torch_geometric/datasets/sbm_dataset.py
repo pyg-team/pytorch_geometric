@@ -4,7 +4,6 @@ import os
 
 import torch
 from torch import Tensor
-from sklearn.datasets import make_classification
 
 from torch_geometric.data import InMemoryDataset, Data
 from torch_geometric.utils import stochastic_blockmodel_graph
@@ -86,6 +85,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
         return f'data_{self.num_channels}_{hash1}_{hash2}.pt'
 
     def process(self):
+        from sklearn.datasets import make_classification
+
         edge_index = stochastic_blockmodel_graph(
             self.block_sizes, self.edge_probs, directed=not self.is_undirected)
 

@@ -1,44 +1,37 @@
 from typing import Optional
 
-import mock
 import torch
 from torch import Tensor
 from torch.nn import Sequential as Seq, Linear as Lin, ReLU
 from torch_scatter import scatter_mean
 from torch_geometric.nn import MetaLayer
 
+count = 0
+
 
 def test_meta_layer():
-    assert MetaLayer().__repr__() == ('MetaLayer(\n'
-                                      '  edge_model=None,\n'
-                                      '  node_model=None,\n'
-                                      '  global_model=None\n'
-                                      ')')
+    assert str(MetaLayer()) == ('MetaLayer(\n'
+                                '  edge_model=None,\n'
+                                '  node_model=None,\n'
+                                '  global_model=None\n'
+                                ')')
 
-    edge_model = mock.MagicMock()
-    node_model = mock.MagicMock()
-    global_model = mock.MagicMock()
+    def dummy_model(*args):
+        global count
+        count += 1
+        return None
 
-    for em in (edge_model, None):
-        for nm in (node_model, None):
-            for gm in (global_model, None):
-                model = MetaLayer(em, nm, gm)
-                out = model(mock.MagicMock(), edge_index=("row", "col"),
-                            edge_attr="edge_attr", u="u",
-                            batch=mock.MagicMock())
+    x = torch.randn(20, 10)
+    edge_index = torch.randint(0, high=10, size=(2, 20), dtype=torch.long)
 
+    for edge_model in (dummy_model, None):
+        for node_model in (dummy_model, None):
+            for global_model in (dummy_model, None):
+                model = MetaLayer(edge_model, node_model, global_model)
+                out = model(x, edge_index)
                 assert isinstance(out, tuple) and len(out) == 3
 
-                if em is not None:
-                    em.assert_called_once()
-                if nm is not None:
-                    nm.assert_called_once()
-                if gm is not None:
-                    gm.assert_called_once()
-
-                edge_model.reset_mock()
-                node_model.reset_mock()
-                global_model.reset_mock()
+    assert count == 12
 
 
 def test_meta_layer_example():

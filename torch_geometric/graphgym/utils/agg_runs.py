@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import pandas as pd
 import logging
 
 from torch_geometric.graphgym.config import cfg
@@ -163,6 +162,7 @@ def agg_batch(dir, metric_best='auto'):
         validation performance. Options: auto, accuracy, auc.
 
     '''
+    import pandas as pd
     results = {'train': [], 'val': [], 'test': []}
     for run in os.listdir(dir):
         if run != 'agg':
