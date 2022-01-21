@@ -57,7 +57,7 @@ class GravNetConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,
                  num_workers: int = 1, **kwargs):
-        super().__init__(flow='target_to_source', **kwargs)
+        super().__init__(flow='source_to_target', **kwargs)
 
         if knn is None:
             raise ImportError('`GravNetConv` requires `torch-cluster`.')
@@ -92,24 +92,24 @@ class GravNetConv(MessagePassing):
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
             is_bipartite = False
-        assert x[0].dim() == 2, 'Static graphs not supported in `GravNetConv`.'
+
+        if x[0].dim() != 2:
+            raise ValueError("Static graphs not supported in 'GravNetConv'")
 
         b: PairOptTensor = (None, None)
         if isinstance(batch, Tensor):
             b = (batch, batch)
         elif isinstance(batch, tuple):
-            assert batch is not None
-            b = (batch[0], batch[1])
+            b = batch
 
         h_l: Tensor = self.lin_h(x[0])
 
         s_l: Tensor = self.lin_s(x[0])
         s_r: Tensor = self.lin_s(x[1]) if is_bipartite else s_l
 
-        edge_index = knn(s_l, s_r, self.k, b[0], b[1],
-                         num_workers=self.num_workers)
+        edge_index = knn(s_l, s_r, self.k, b[0], b[1]).flip([0])
 
-        edge_weight = (s_l[edge_index[1]] - s_r[edge_index[0]]).pow(2).sum(-1)
+        edge_weight = (s_l[edge_index[0]] - s_r[edge_index[1]]).pow(2).sum(-1)
         edge_weight = torch.exp(-10. * edge_weight)  # 10 gives a better spread
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)

@@ -89,3 +89,5 @@ def test_dynamic_edge_conv_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2)).tolist() == out21.tolist()
     assert jit((x1, x2), (batch1, batch2)).tolist() == out22.tolist()
+
+    torch.jit.script(conv.jittable())  # Test without explicit typing.
