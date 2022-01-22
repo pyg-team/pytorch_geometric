@@ -59,9 +59,8 @@ from .reddit import Reddit
 from .reddit2 import Reddit2
 from .rel_link_pred_dataset import RelLinkPredDataset
 from .s3dis import S3DIS
-from .sbm_dataset import (
-    RandomPartitionGraphDataset, StochasticBlockModelDataset
-)
+from .sbm_dataset import (RandomPartitionGraphDataset,
+                          StochasticBlockModelDataset)
 from .shapenet import ShapeNet
 from .shrec2016 import SHREC2016
 from .snap_dataset import SNAPDataset

@@ -1,8 +1,7 @@
 from .checkpoint import clean_ckpt, load_ckpt, remove_ckpt, save_ckpt
 from .cmd_args import parse_args
-from .config import (
-    cfg, dump_cfg, get_fname, load_cfg, set_agg_dir, set_cfg, set_run_dir
-)
+from .config import (cfg, dump_cfg, get_fname, load_cfg, set_agg_dir, set_cfg,
+                     set_run_dir)
 from .contrib import *  # noqa
 from .init import init_weights
 from .loader import create_loader
@@ -11,12 +10,12 @@ from .loss import compute_loss
 from .model_builder import create_model
 from .models import *  # noqa
 from .optim import create_optimizer, create_scheduler
-from .register import (
-    register_act, register_base, register_config, register_dataset,
-    register_edge_encoder, register_head, register_layer, register_loader,
-    register_loss, register_network, register_node_encoder, register_optimizer,
-    register_pooling, register_scheduler, register_stage, register_train
-)
+from .register import (register_act, register_base, register_config,
+                       register_dataset, register_edge_encoder, register_head,
+                       register_layer, register_loader, register_loss,
+                       register_network, register_node_encoder,
+                       register_optimizer, register_pooling,
+                       register_scheduler, register_stage, register_train)
 from .train import train
 from .utils import *  # noqa
 

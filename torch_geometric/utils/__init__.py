@@ -1,8 +1,7 @@
 from .coalesce import coalesce
-from .convert import (
-    from_networkx, from_scipy_sparse_matrix, from_trimesh, to_cugraph,
-    to_networkx, to_scipy_sparse_matrix, to_trimesh
-)
+from .convert import (from_networkx, from_scipy_sparse_matrix, from_trimesh,
+                      to_cugraph, to_networkx, to_scipy_sparse_matrix,
+                      to_trimesh)
 from .degree import degree
 from .dropout import dropout_adj
 from .geodesic import geodesic_distance
@@ -10,22 +9,18 @@ from .get_laplacian import get_laplacian
 from .grid import grid
 from .homophily import homophily
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
-from .loop import (
-    add_remaining_self_loops, add_self_loops, contains_self_loops,
-    remove_self_loops, segregate_self_loops
-)
-from .metric import (
-    accuracy, f1_score, false_negative, false_positive, intersection_and_union,
-    mean_iou, precision, recall, true_negative, true_positive
-)
-from .negative_sampling import (
-    batched_negative_sampling, negative_sampling, structured_negative_sampling,
-    structured_negative_sampling_feasible
-)
+from .loop import (add_remaining_self_loops, add_self_loops,
+                   contains_self_loops, remove_self_loops,
+                   segregate_self_loops)
+from .metric import (accuracy, f1_score, false_negative, false_positive,
+                     intersection_and_union, mean_iou, precision, recall,
+                     true_negative, true_positive)
+from .negative_sampling import (batched_negative_sampling, negative_sampling,
+                                structured_negative_sampling,
+                                structured_negative_sampling_feasible)
 from .normalized_cut import normalized_cut
-from .random import (
-    barabasi_albert_graph, erdos_renyi_graph, stochastic_blockmodel_graph
-)
+from .random import (barabasi_albert_graph, erdos_renyi_graph,
+                     stochastic_blockmodel_graph)
 from .softmax import softmax
 from .sort_edge_index import sort_edge_index
 from .sparse import dense_to_sparse

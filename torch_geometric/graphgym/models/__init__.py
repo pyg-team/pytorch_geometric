@@ -1,11 +1,10 @@
 from .encoder import AtomEncoder, BondEncoder, IntegerFeatureEncoder
 from .gnn import GNN, FeatureEncoder, GNNLayer, GNNPreMP, GNNStackStage
 from .head import GNNEdgeHead, GNNGraphHead, GNNNodeHead
-from .layer import (
-    MLP, BatchNorm1dEdge, BatchNorm1dNode, GATConv, GCNConv, GeneralConv,
-    GeneralEdgeConv, GeneralLayer, GeneralMultiLayer, GeneralSampleEdgeConv,
-    GINConv, Linear, SAGEConv, SplineConv
-)
+from .layer import (MLP, BatchNorm1dEdge, BatchNorm1dNode, GATConv, GCNConv,
+                    GeneralConv, GeneralEdgeConv, GeneralLayer,
+                    GeneralMultiLayer, GeneralSampleEdgeConv, GINConv, Linear,
+                    SAGEConv, SplineConv)
 from .pooling import global_add_pool, global_max_pool, global_mean_pool
 
 __all__ = [
