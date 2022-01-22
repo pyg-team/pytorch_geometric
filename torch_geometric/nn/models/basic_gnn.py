@@ -6,9 +6,8 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList, ReLU
 
-from torch_geometric.nn.conv import (
-    GATConv, GCNConv, GINConv, MessagePassing, PNAConv, SAGEConv
-)
+from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
+                                     PNAConv, SAGEConv)
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 from torch_geometric.typing import Adj

@@ -8,9 +8,8 @@ import torch.nn.functional as F
 from torch_scatter import scatter
 from tqdm import tqdm
 
-from torch_geometric.data import (
-    Data, InMemoryDataset, download_url, extract_zip
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414

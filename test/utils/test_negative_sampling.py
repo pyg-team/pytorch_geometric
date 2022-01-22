@@ -1,13 +1,13 @@
 import torch
 
-from torch_geometric.utils import (
-    batched_negative_sampling, contains_self_loops, is_undirected,
-    negative_sampling, structured_negative_sampling,
-    structured_negative_sampling_feasible, to_undirected
-)
-from torch_geometric.utils.negative_sampling import (
-    edge_index_to_vector, vector_to_edge_index
-)
+from torch_geometric.utils import (batched_negative_sampling,
+                                   contains_self_loops, is_undirected,
+                                   negative_sampling,
+                                   structured_negative_sampling,
+                                   structured_negative_sampling_feasible,
+                                   to_undirected)
+from torch_geometric.utils.negative_sampling import (edge_index_to_vector,
+                                                     vector_to_edge_index)
 
 
 def is_negative(edge_index, neg_edge_index, size, bipartite):

@@ -1,9 +1,9 @@
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.loader import (
-    GraphSAINTEdgeSampler, GraphSAINTNodeSampler, GraphSAINTRandomWalkSampler
-)
+from torch_geometric.loader import (GraphSAINTEdgeSampler,
+                                    GraphSAINTNodeSampler,
+                                    GraphSAINTRandomWalkSampler)
 
 
 def test_graph_saint():
