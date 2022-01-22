@@ -12,5 +12,6 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        args: [--multi-line=5, --skip=.gitignore, --skip=__init__.py]
+        args: [--multi-line=5]
+        exclude: /__init__\.py$
         name: Sort imports
