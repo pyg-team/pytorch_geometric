@@ -4,18 +4,17 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
-from torch_geometric.datasets import (
-    PPI, Amazon, Coauthor, KarateClub, MNISTSuperpixels, Planetoid, QM7b,
-    TUDataset
-)
+from torch_geometric.datasets import (PPI, Amazon, Coauthor, KarateClub,
+                                      MNISTSuperpixels, Planetoid, QM7b,
+                                      TUDataset)
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.transform import (
-    create_link_label, neg_sampling_transform
-)
-from torch_geometric.loader import (
-    ClusterLoader, DataLoader, GraphSAINTEdgeSampler, GraphSAINTNodeSampler,
-    GraphSAINTRandomWalkSampler, NeighborSampler, RandomNodeSampler
-)
+from torch_geometric.graphgym.models.transform import (create_link_label,
+                                                       neg_sampling_transform)
+from torch_geometric.loader import (ClusterLoader, DataLoader,
+                                    GraphSAINTEdgeSampler,
+                                    GraphSAINTNodeSampler,
+                                    GraphSAINTRandomWalkSampler,
+                                    NeighborSampler, RandomNodeSampler)
 from torch_geometric.utils import negative_sampling, to_undirected
 
 

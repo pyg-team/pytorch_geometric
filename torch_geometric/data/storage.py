@@ -3,9 +3,8 @@ import warnings
 import weakref
 from collections import namedtuple
 from collections.abc import Mapping, MutableMapping, Sequence
-from typing import (
-    Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Tuple, Union
-)
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
 import torch
 from torch import Tensor

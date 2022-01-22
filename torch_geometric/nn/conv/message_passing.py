@@ -20,9 +20,8 @@ from torch_geometric.typing import Adj, Size
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
-from .utils.typing import (
-    parse_types, resolve_types, sanitize, split_types_repr
-)
+from .utils.typing import (parse_types, resolve_types, sanitize,
+                           split_types_repr)
 
 
 class MessagePassing(torch.nn.Module):

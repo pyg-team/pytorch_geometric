@@ -2,9 +2,8 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import (
-    GraphConv, JumpingKnowledge, SAGPooling, global_mean_pool
-)
+from torch_geometric.nn import (GraphConv, JumpingKnowledge, SAGPooling,
+                                global_mean_pool)
 
 
 class SAGPool(torch.nn.Module):

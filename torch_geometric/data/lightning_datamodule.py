@@ -5,9 +5,9 @@ import torch
 
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.neighbor_loader import (
-    NeighborLoader, NeighborSampler, get_input_node_type
-)
+from torch_geometric.loader.neighbor_loader import (NeighborLoader,
+                                                    NeighborSampler,
+                                                    get_input_node_type)
 from torch_geometric.typing import InputNodes
 
 try:
@@ -48,9 +48,8 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
-        from pytorch_lightning.plugins import (
-            DDPSpawnPlugin, SingleDevicePlugin
-        )
+        from pytorch_lightning.plugins import (DDPSpawnPlugin,
+                                               SingleDevicePlugin)
         plugin = self.trainer.training_type_plugin
         if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
             raise NotImplementedError(
