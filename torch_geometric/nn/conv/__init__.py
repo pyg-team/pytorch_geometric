@@ -1,53 +1,53 @@
-from .message_passing import MessagePassing
-from .gcn_conv import GCNConv
+from .agnn_conv import AGNNConv
+from .appnp import APPNP
+from .arma_conv import ARMAConv
+from .cg_conv import CGConv
 from .cheb_conv import ChebConv
-from .sage_conv import SAGEConv
+from .cluster_gcn_conv import ClusterGCNConv
+from .dna_conv import DNAConv
+from .edge_conv import DynamicEdgeConv, EdgeConv
+from .eg_conv import EGConv
+from .fa_conv import FAConv
+from .feast_conv import FeaStConv
+from .film_conv import FiLMConv
+from .gat_conv import GATConv
+from .gated_graph_conv import GatedGraphConv
+from .gatv2_conv import GATv2Conv
+from .gcn2_conv import GCN2Conv
+from .gcn_conv import GCNConv
+from .gen_conv import GENConv
+from .general_conv import GeneralConv
+from .gin_conv import GINConv, GINEConv
+from .gmm_conv import GMMConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
-from .gated_graph_conv import GatedGraphConv
-from .res_gated_graph_conv import ResGatedGraphConv
-from .gat_conv import GATConv
-from .gatv2_conv import GATv2Conv
-from .transformer_conv import TransformerConv
-from .agnn_conv import AGNNConv
-from .tag_conv import TAGConv
-from .gin_conv import GINConv, GINEConv
-from .arma_conv import ARMAConv
-from .sg_conv import SGConv
-from .appnp import APPNP
-from .mf_conv import MFConv
-from .rgcn_conv import RGCNConv, FastRGCNConv
-from .signed_conv import SignedConv
-from .dna_conv import DNAConv
-from .point_conv import PointNetConv, PointConv
-from .gmm_conv import GMMConv
-from .spline_conv import SplineConv
-from .nn_conv import NNConv, ECConv
-from .cg_conv import CGConv
-from .edge_conv import EdgeConv, DynamicEdgeConv
-from .x_conv import XConv
-from .ppf_conv import PPFConv
-from .feast_conv import FeaStConv
-from .point_transformer_conv import PointTransformerConv
-from .hypergraph_conv import HypergraphConv
-from .le_conv import LEConv
-from .pna_conv import PNAConv
-from .cluster_gcn_conv import ClusterGCNConv
-from .gen_conv import GENConv
-from .gcn2_conv import GCN2Conv
-from .pan_conv import PANConv
-from .wl_conv import WLConv
-from .film_conv import FiLMConv
-from .supergat_conv import SuperGATConv
-from .fa_conv import FAConv
-from .eg_conv import EGConv
-from .pdn_conv import PDNConv
-from .general_conv import GeneralConv
-from .hgt_conv import HGTConv
+from .han_conv import HANConv
 from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
-from .han_conv import HANConv
+from .hgt_conv import HGTConv
+from .hypergraph_conv import HypergraphConv
+from .le_conv import LEConv
 from .lg_conv import LGConv
+from .message_passing import MessagePassing
+from .mf_conv import MFConv
+from .nn_conv import ECConv, NNConv
+from .pan_conv import PANConv
+from .pdn_conv import PDNConv
+from .pna_conv import PNAConv
+from .point_conv import PointConv, PointNetConv
+from .point_transformer_conv import PointTransformerConv
+from .ppf_conv import PPFConv
+from .res_gated_graph_conv import ResGatedGraphConv
+from .rgcn_conv import FastRGCNConv, RGCNConv
+from .sage_conv import SAGEConv
+from .sg_conv import SGConv
+from .signed_conv import SignedConv
+from .spline_conv import SplineConv
+from .supergat_conv import SuperGATConv
+from .tag_conv import TAGConv
+from .transformer_conv import TransformerConv
+from .wl_conv import WLConv
+from .x_conv import XConv
 
 __all__ = [
     'MessagePassing',
