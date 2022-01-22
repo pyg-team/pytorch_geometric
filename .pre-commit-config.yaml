@@ -8,14 +8,9 @@ repos:
       - id: yapf
         name: Format code
 
-  - repo: https://github.com/asottile/seed-isort-config
-    rev: v2.2.0
-    hooks:
-      - id: seed-isort-config
-
   - repo: https://github.com/pycqa/isort
     rev: 5.10.1
     hooks:
       - id: isort
-        args: [--multi_line_output=5, --skip=.gitignore,__init__.py]
+        args: [--multi_line_output, 4, --skip, .gitignore, --skip, __init__.py]
         name: Sort imports
