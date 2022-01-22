@@ -9,8 +9,7 @@ import torch_geometric as pyg
 import torch_geometric.graphgym.models.act
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.contrib.layer.generalconv import (
-    GeneralConvLayer, GeneralEdgeConvLayer
-)
+    GeneralConvLayer, GeneralEdgeConvLayer)
 from torch_geometric.graphgym.register import register_layer
 from torch_geometric.nn import Linear as Linear_pyg
 
