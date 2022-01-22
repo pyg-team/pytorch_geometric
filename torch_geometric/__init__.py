@@ -1,15 +1,15 @@
-from types import ModuleType
 from importlib import import_module
+from types import ModuleType
 
 import torch_geometric.data
 import torch_geometric.loader
+import torch_geometric.profile
 import torch_geometric.transforms
 import torch_geometric.utils
-import torch_geometric.profile
 
-from .seed import seed_everything
+from .debug import debug, is_debug_enabled, set_debug
 from .home import get_home_dir, set_home_dir
-from .debug import is_debug_enabled, debug, set_debug
+from .seed import seed_everything
 
 
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/
