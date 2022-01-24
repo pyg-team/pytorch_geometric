@@ -1,11 +1,10 @@
 import os.path as osp
-from typing import Any, List, Optional
+from typing import Callable, List, Optional
 
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
-from torch_geometric.transforms import BaseTransform
 
 
 class Planetoid(InMemoryDataset):
@@ -78,9 +77,8 @@ class Planetoid(InMemoryDataset):
 
     def __init__(self, root: str, name: str, split: str = "public",
                  num_train_per_class: int = 20, num_val: int = 500,
-                 num_test: int = 1000,
-                 transform: Optional[BaseTransform] = None,
-                 pre_transform: Optional[BaseTransform] = None):
+                 num_test: int = 1000, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name
 
         super().__init__(root, transform, pre_transform)
