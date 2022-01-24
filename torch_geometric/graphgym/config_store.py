@@ -1,7 +1,6 @@
-import copy
 import inspect
 from dataclasses import dataclass, field, make_dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Union
 
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
@@ -9,33 +8,24 @@ from omegaconf import MISSING
 import torch_geometric.datasets as datasets
 import torch_geometric.transforms as transforms
 
-
-def map_annotation(annotation: Any, mapping: Dict[Any, Any]) -> Any:
-    if annotation.__dict__.get('__origin__', None) == Union:
-        args = annotation.__dict__.get('__args__', [])
-        out = copy.copy(annotation)
-        out.__dict__['__args__'] = [map_annotation(a, mapping) for a in args]
-        return out
-    elif annotation in mapping:
-        return mapping[annotation]
-    return annotation
+EXCLUDE_ARG_NAMES = {'self', 'args', 'kwargs', 'pre_filter'}
 
 
-def to_dataclass(cls: Any, base: Optional[Any] = None, mapping=None) -> Any:
-    r"""Converts a given class :obj:`cls` to a `dataclass` schema."""
+def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
+    r"""Converts a given class :obj:`cls` to a :obj:`dataclass` schema."""
     fields = []
-    for name, parameter in inspect.signature(cls.__init__).parameters.items():
-        if name in {'self', 'args', 'kwargs'}:
+
+    for name, arg in inspect.signature(cls.__init__).parameters.items():
+        if name in EXCLUDE_ARG_NAMES:
+            continue
+        if base is not None and name in base.__dataclass_fields__.keys():
             continue
 
         item = (name, )
 
-        annotation = parameter.annotation
+        annotation = arg.annotation
         if annotation != inspect.Parameter.empty:
-            print('1', annotation)
-            if mapping is not None:
-                annotation = map_annotation(annotation, mapping)
-            # `Union` types are not supported (except `Optional`).
+            # `Union` types are not supported (except for `Optional`).
             # As such, we replace them with either `Any` or `Optional[Any]`.
             origin = annotation.__dict__.get('__origin__', None)
             args = annotation.__dict__.get('__args__', [])
@@ -43,18 +33,15 @@ def to_dataclass(cls: Any, base: Optional[Any] = None, mapping=None) -> Any:
                 annotation = Optional[Any]
             elif origin == Union and type(None) not in args:
                 annotation = Any
-            print('2', annotation)
-
-            item = item + (annotation, )
         else:
-            item = item + (Any, )
+            annotation = Optional[Any]
+        item = item + (annotation, )
 
-        default = parameter.default
-        if default != inspect.Parameter.empty:
-            if isinstance(default, (list, dict)):
-                item = item + (field(default_factory=lambda: default), )
+        if arg.default != inspect.Parameter.empty:
+            if isinstance(arg.default, (list, dict)):
+                item = item + (field(default_factory=lambda: arg.default), )
             else:
-                item = item + (default, )
+                item = item + (arg.default, )
         else:
             item = item + (field(default=MISSING), )
 
@@ -67,68 +54,42 @@ def to_dataclass(cls: Any, base: Optional[Any] = None, mapping=None) -> Any:
                           bases=() if base is None else (base, ))
 
 
-def register(group: str, package: Any, exclude: List[str] = []):
-    for name in set(package.__all__) - set(exclude):
-        Config = to_dataclass(getattr(package, name))
-        config_store.store(group=group, name=name, node=Config)
+cs = ConfigStore.instance()
 
 
-config_store = ConfigStore.instance()
+@dataclass  # Register `torch_geometric.transforms` ###########################
+class Transform:
+    _target_: str = MISSING
 
 
-@dataclass
+for cls_name in set(transforms.__all__) - set([
+        'BaseTransform',
+        'Compose',
+        'AddMetaPaths',  # TODO
+]):
+    cls = to_dataclass(getattr(transforms, cls_name), base=Transform)
+    # We use an explicit additional nesting level inside each config to allow
+    # for applying multiple transformations.
+    # https://hydra.cc/docs/patterns/select_multiple_configs_from_config_group
+    cs.store(group='transform', name=cls_name, node={cls_name: cls})
+
+
+@dataclass  # Register `torch_geometric.datasets` #############################
+class Dataset:
+    _target_: str = MISSING
+    transform: Dict[str, Transform] = field(default_factory=dict)
+    pre_transform: Dict[str, Transform] = field(default_factory=dict)
+
+
+for cls_name in set(datasets.__all__) - set([]):
+    print(cls_name)
+    cls = to_dataclass(getattr(datasets, cls_name), base=Dataset)
+    cs.store(group='dataset', name=cls_name, node=cls)
+
+
+@dataclass  # Register global schema ##########################################
 class Config:
-    dataset: Any = MISSING
+    dataset: Dataset = MISSING
 
 
-# Register base dataclasses:
-bases: Dict[str, Any] = {}
-Config = to_dataclass(getattr(transforms, 'BaseTransform'))
-print(Config)
-print(Config())
-bases['BaseTransform'] = Config
-
-mapping = {
-    Callable: Any,
-    transforms.BaseTransform: bases['BaseTransform'],
-}
-
-print(map_annotation(Optional[Callable], mapping))
-print(map_annotation(Optional[transforms.BaseTransform], mapping))
-print('-------------')
-
-config_store.store(name='config', node=Config)
-
-base = bases['BaseTransform']
-Config = to_dataclass(getattr(transforms, 'AddSelfLoops'), base=base,
-                      mapping=mapping)
-config_store.store(group='transform', name='AddSelfLoops', node=Config)
-print(Config)
-print(Config())
-print(Config.__bases__)
-
-# print(config_store.load('transform'))
-# print(config_store.repo['transform'])
-
-# print(config_store.repo)
-# print(config_store.repo.keys())
-# print(config_store.repo['transform'].keys())
-
-# config_node = config_store.load('transform/BaseTransform.yaml')
-# print(config_node)
-# print(config_node)
-
-# Register `torch_geometric.transforms.*`:
-# register(group='transform', package=torch_geometric.transforms,
-#          exclude=['BaseTransform', 'AddMetaPaths'])
-
-Config = to_dataclass(getattr(datasets, 'KarateClub'), mapping=mapping)
-config_store.store(group='dataset', name='KarateClub', node=Config)
-
-print(inspect.signature(Config))
-
-# Config = to_dataclass(getattr(torch_geometric.datasets, 'Planetoid'))
-# config_store.store(group='dataset', name='Planetoid', node=Config)
-
-# # Register `torch_geometric.transforms.*`:
-# # register(group='dataset', package=torch_geometric.datasets)
+cs.store(name='config', node=Config)

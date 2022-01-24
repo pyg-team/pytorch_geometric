@@ -1,6 +1,5 @@
 defaults:
   - dataset: KarateClub
-
-dataset:
-  transform:
-    _target_: 'torch_geometric.transforms.AddSelfLoops'
+  - transform@dataset.transform:
+      - NormalizeFeatures
+      # - AddSelfLoops
