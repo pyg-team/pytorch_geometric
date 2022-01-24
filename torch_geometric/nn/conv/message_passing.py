@@ -187,7 +187,7 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
-                dim = 0 if arg[-2:] == '_j' else 1
+                dim = j if arg[-2:] == '_j' else i
                 data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
@@ -198,8 +198,7 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, Tensor):
                     self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index,
-                                         j if arg[-2:] == '_j' else i)
+                    data = self.__lift__(data, edge_index, dim)
 
                 out[arg] = data
 

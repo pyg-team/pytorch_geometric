@@ -72,7 +72,7 @@ class HypergraphConv(MessagePassing):
                  concat=True, negative_slope=0.2, dropout=0, bias=True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super().__init__(node_dim=0, **kwargs)
+        super().__init__(flow='source_to_target', node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -158,12 +158,10 @@ class HypergraphConv(MessagePassing):
         B = 1.0 / B
         B[B == float("inf")] = 0
 
-        self.flow = 'source_to_target'
         out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha,
                              size=(num_nodes, num_edges))
-        self.flow = 'target_to_source'
-        out = self.propagate(hyperedge_index, x=out, norm=D, alpha=alpha,
-                             size=(num_edges, num_nodes))
+        out = self.propagate(hyperedge_index.flip([0]), x=out, norm=D,
+                             alpha=alpha, size=(num_edges, num_nodes))
 
         if self.concat is True:
             out = out.view(-1, self.heads * self.out_channels)
