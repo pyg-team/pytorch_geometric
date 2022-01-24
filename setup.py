@@ -28,12 +28,12 @@ full_install_requires = [
     'pytorch-memlab',
 ]
 
-tests_require = [
+test_requires = [
     'pytest',
     'pytest-cov',
 ]
 
-dev_requires = tests_require + [
+dev_requires = test_requires + [
     'pre-commit',
 ]
 
@@ -56,7 +56,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'full': full_install_requires,
-        'test': tests_require,
+        'test': test_requires,
         'dev': dev_requires,
     },
     packages=find_packages(),
