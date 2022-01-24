@@ -27,8 +27,8 @@ def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
         if annotation != inspect.Parameter.empty:
             # `Union` types are not supported (except for `Optional`).
             # As such, we replace them with either `Any` or `Optional[Any]`.
-            origin = annotation.__dict__.get('__origin__', None)
-            args = annotation.__dict__.get('__args__', [])
+            origin = getattr(annotation, '__origin__', None)
+            args = getattr(annotation, '__args__', [])
             if origin == Union and type(None) in args and len(args) > 2:
                 annotation = Optional[Any]
             elif origin == Union and type(None) not in args:
