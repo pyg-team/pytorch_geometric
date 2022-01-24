@@ -2,4 +2,4 @@ defaults:
   - dataset: KarateClub
   - transform@dataset.transform:
       - NormalizeFeatures
-      # - AddSelfLoops
+      - AddSelfLoops
