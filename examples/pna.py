@@ -23,8 +23,7 @@ test_loader = DataLoader(test_dataset, batch_size=128)
 max_degree = -1
 for data in train_dataset:
     d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
-    if d.max().item() > max_degree:
-        max_degree = d.max().item()
+    max_degree = max(max_degree, int(d.max()))
 
 # Compute the in-degree histogram tensor
 deg = torch.zeros(max_degree + 1, dtype=torch.long)
