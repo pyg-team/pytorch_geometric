@@ -82,7 +82,6 @@ class Dataset:
 
 
 for cls_name in set(datasets.__all__) - set([]):
-    print(cls_name)
     cls = to_dataclass(getattr(datasets, cls_name), base=Dataset)
     cs.store(group='dataset', name=cls_name, node=cls)
 
