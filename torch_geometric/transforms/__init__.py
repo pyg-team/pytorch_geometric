@@ -46,6 +46,7 @@ from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .add_metapaths import AddMetaPaths
+from .rooted_subgraphs import RootedSubgraphs
 
 __all__ = [
     'BaseTransform',
@@ -96,6 +97,7 @@ __all__ = [
     'RandomNodeSplit',
     'RandomLinkSplit',
     'AddMetaPaths',
+    'RootedSubgraphs',
 ]
 
 classes = __all__
