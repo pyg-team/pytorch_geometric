@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Callable, List, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
@@ -10,7 +10,7 @@ class Compose(BaseTransform):
     Args:
         transforms ([callable]): List of transforms to compose.
     """
-    def __init__(self, transforms: List[BaseTransform]):
+    def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
     def __call__(self, data: Union[Data, HeteroData]):
