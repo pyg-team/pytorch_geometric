@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 import torch
 from torch import Tensor
@@ -12,10 +12,10 @@ class LinearTransformation(BaseTransform):
     matrix computed offline.
 
     Args:
-        matrix (Tensor or List[float]): Tensor with shape :obj:`[D, D]` where
-            :obj:`D` corresponds to the dimensionality of node positions.
+        matrix (Tensor): Tensor with shape :obj:`[D, D]` where :obj:`D`
+            corresponds to the dimensionality of node positions.
     """
-    def __init__(self, matrix: Union[Tensor, List[float]]):
+    def __init__(self, matrix: Tensor):
         if not isinstance(matrix, Tensor):
             matrix = torch.tensor(matrix)
         assert matrix.dim() == 2, (

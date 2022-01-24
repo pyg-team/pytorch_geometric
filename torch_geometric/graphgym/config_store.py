@@ -65,6 +65,7 @@ class Transform:
 for cls_name in set(transforms.__all__) - set([
         'BaseTransform',
         'Compose',
+        'LinearTransformation',
         'AddMetaPaths',  # TODO
 ]):
     cls = to_dataclass(getattr(transforms, cls_name), base=Transform)
