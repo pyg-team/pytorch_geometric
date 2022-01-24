@@ -19,8 +19,14 @@ train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=128)
 test_loader = DataLoader(test_dataset, batch_size=128)
 
-# Compute in-degree histogram over training data.
-deg = torch.zeros(5, dtype=torch.long)
+# Compute the maximum in-degree in the training data.
+max_degree = -1
+for data in train_dataset:
+    d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
+    max_degree = max(max_degree, int(d.max()))
+
+# Compute the in-degree histogram tensor
+deg = torch.zeros(max_degree + 1, dtype=torch.long)
 for data in train_dataset:
     d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
     deg += torch.bincount(d, minlength=deg.numel())
