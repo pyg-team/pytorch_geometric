@@ -2,6 +2,7 @@ import inspect
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Dict, Optional, Union
 
+import torch
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 
@@ -46,6 +47,12 @@ def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
         item = (name, )
 
         annotation = arg.annotation
+        default = arg.default
+
+        if str(default) == "<required parameter>":
+            # Fix `torch.optim.SGD.lr = _RequiredParameter()`
+            default = inspect.Parameter.empty
+
         if annotation != inspect.Parameter.empty:
             # `Union` types are not supported (except for `Optional`).
             # As such, we replace them with either `Any` or `Optional[Any]`.
@@ -56,14 +63,17 @@ def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
             elif origin == Union and type(None) not in args:
                 annotation = Any
         else:
-            annotation = Optional[Any]
+            if default != inspect.Parameter.empty:
+                annotation = Optional[Any]
+            else:
+                annotation = Any
         item = item + (annotation, )
 
-        if arg.default != inspect.Parameter.empty:
-            if isinstance(arg.default, (list, dict)):
-                item = item + (field(default_factory=lambda: arg.default), )
+        if default != inspect.Parameter.empty:
+            if isinstance(default, (list, dict)):
+                item = item + (field(default_factory=lambda: default), )
             else:
-                item = item + (arg.default, )
+                item = item + (default, )
         else:
             item = item + (field(default=MISSING), )
 
@@ -107,6 +117,20 @@ class Dataset:
 for cls_name in set(datasets.__all__) - set([]):
     cls = to_dataclass(getattr(datasets, cls_name), base=Dataset)
     cs.store(group='dataset', name=cls_name, node=cls)
+
+
+@dataclass  # Register `torch.optim.Optimizer` ################################
+class Optimizer:
+    _target_: str = MISSING
+    params: Any = MISSING
+
+
+for cls_name in set([
+        key for key, cls in torch.optim.__dict__.items()
+        if inspect.isclass(cls) and issubclass(cls, torch.optim.Optimizer)
+]) - set(['Optimizer']):
+    cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer)
+    cs.store(group='optim', name=cls_name, node=cls)
 
 
 @dataclass  # Register global schema ##########################################
