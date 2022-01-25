@@ -10,7 +10,7 @@ from torch_geometric.nn.models import GAT, GCN, GIN, PNA, GraphSAGE
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
-acts = [None, torch.relu_, F.elu, ReLU()]
+acts = [None, 'leaky_relu', torch.relu_, F.elu, ReLU()]
 norms = [None, BatchNorm1d(16), LayerNorm(16)]
 jks = ['last', 'cat', 'max', 'lstm']
 
