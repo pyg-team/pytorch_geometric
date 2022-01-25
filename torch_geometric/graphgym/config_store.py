@@ -1,6 +1,6 @@
 import inspect
 from dataclasses import dataclass, field, make_dataclass
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from hydra.core.config_store import ConfigStore
@@ -9,10 +9,11 @@ from omegaconf import MISSING
 import torch_geometric.datasets as datasets
 import torch_geometric.transforms as transforms
 
-EXCLUDE_ARG_NAMES = {'self', 'args', 'kwargs', 'pre_filter'}
+EXCLUDE = {'self', 'args', 'kwargs'}
 
 
-def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
+def to_dataclass(cls: Any, base: Optional[Any] = None,
+                 exclude: Optional[List[str]] = None) -> Any:
     r"""Converts the input arguments of a given class :obj:`cls` to a
     :obj:`dataclass` schema, *e.g.*,
 
@@ -35,11 +36,15 @@ def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
         cls (Any): The class to generate a schema for.
         base: (Any, optional): The base class of the schema.
             (default: :obj:`None`)
+        exclude (List[str], optional): Arguments to exclude.
+            (default: :obj:`None`)
     """
     fields = []
 
     for name, arg in inspect.signature(cls.__init__).parameters.items():
-        if name in EXCLUDE_ARG_NAMES:
+        if name in EXCLUDE:
+            continue
+        if exclude is not None and name in exclude:
             continue
         if base is not None and name in base.__dataclass_fields__.keys():
             continue
@@ -115,22 +120,29 @@ class Dataset:
 
 
 for cls_name in set(datasets.__all__) - set([]):
-    cls = to_dataclass(getattr(datasets, cls_name), base=Dataset)
+    cls = to_dataclass(getattr(datasets, cls_name), base=Dataset,
+                       exclude=['pre_filter'])
     cs.store(group='dataset', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.Optimizer` ################################
 class Optimizer:
     _target_: str = MISSING
-    params: Any = MISSING
 
 
 for cls_name in set([
         key for key, cls in torch.optim.__dict__.items()
         if inspect.isclass(cls) and issubclass(cls, torch.optim.Optimizer)
 ]) - set(['Optimizer']):
-    cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer)
+    cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
+                       exclude=['params'])
     cs.store(group='optim', name=cls_name, node=cls)
+
+
+@dataclass  # Register `torch.optim.lr_scheduler` #############################
+class Scheduler:
+    _target_: str = MISSING
+    pass
 
 
 @dataclass  # Register global schema ##########################################
