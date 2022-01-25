@@ -142,7 +142,18 @@ for cls_name in set([
 @dataclass  # Register `torch.optim.lr_scheduler` #############################
 class Scheduler:
     _target_: str = MISSING
-    pass
+
+
+for cls_name in set([
+        key for key, cls in torch.optim.lr_scheduler.__dict__.items()
+        if inspect.isclass(cls)
+]) - set([
+        'Optimizer', '_LRScheduler', 'Counter', 'SequentialLR',
+        'ChainedScheduler'
+]):
+    cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
+                       base=Scheduler, exclude=['optimizer'])
+    cs.store(group='scheduler', name=cls_name, node=cls)
 
 
 @dataclass  # Register global schema ##########################################
