@@ -1,16 +1,22 @@
 import copy
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Linear, ModuleList, ReLU
+from torch.nn import Linear, ModuleList
 
 from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
                                      PNAConv, SAGEConv)
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 from torch_geometric.typing import Adj
+
+ACTS = {
+    'relu': torch.nn.ReLU(inplace=True),
+    'elu': torch.nn.ELU(inplace=True),
+    'leaky_relu': torch.nn.LeakyReLU(inplace=True),
+}
 
 
 class BasicGNN(torch.nn.Module):
@@ -24,8 +30,8 @@ class BasicGNN(torch.nn.Module):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -36,15 +42,15 @@ class BasicGNN(torch.nn.Module):
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
                  out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
+                 act: Union[str, Callable, None] = "relu",
+                 norm: Optional[torch.nn.Module] = None, jk: str = "last",
                  **kwargs):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
         self.dropout = dropout
-        self.act = act
+        self.act = ACTS[act] if isinstance(act, str) else act
         self.jk_mode = jk
         self.has_out_channels = out_channels is not None
 
@@ -137,8 +143,8 @@ class GCN(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -165,8 +171,8 @@ class GraphSAGE(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -222,8 +228,8 @@ class GAT(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -258,8 +264,8 @@ class PNA(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -271,3 +277,6 @@ class PNA(BasicGNN):
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return PNAConv(in_channels, out_channels, **kwargs)
+
+
+__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA']

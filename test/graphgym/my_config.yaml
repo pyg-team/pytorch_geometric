@@ -3,5 +3,12 @@ defaults:
   - transform@dataset.transform:
       - NormalizeFeatures
       - AddSelfLoops
+  - model: GCN
   - optim: Adam
   - scheduler: ReduceLROnPlateau
+
+model:
+  in_channels: 34
+  out_channels: 4
+  hidden_channels: 16
+  num_layers: 2

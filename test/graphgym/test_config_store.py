@@ -8,8 +8,9 @@ def test_config_store():
     with hydra.initialize(config_path='.'):
         cfg = hydra.compose(config_name='my_config')
 
-    assert len(cfg) == 3
+    assert len(cfg) == 4
     assert 'dataset' in cfg
+    assert 'model' in cfg
     assert 'optim' in cfg
     assert 'scheduler' in cfg
 
@@ -36,6 +37,18 @@ def test_config_store():
             'AddSelfLoops')
     assert cfg.dataset.transform.AddSelfLoops.attr == 'edge_weight'
     assert cfg.dataset.transform.AddSelfLoops.fill_value is None
+
+    # Check `cfg.model`:
+    assert len(cfg.model) == 9
+    assert cfg.model._target_.split('.')[-1] == 'GCN'
+    assert cfg.model.in_channels == 34
+    assert cfg.model.out_channels == 4
+    assert cfg.model.hidden_channels == 16
+    assert cfg.model.num_layers == 2
+    assert cfg.model.dropout == 0.0
+    assert cfg.model.act == 'relu'
+    assert cfg.model.norm is None
+    assert cfg.model.jk == 'last'
 
     # Check `cfg.optim`:
     assert len(cfg.optim) == 6
