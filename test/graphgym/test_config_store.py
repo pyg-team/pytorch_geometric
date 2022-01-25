@@ -8,9 +8,10 @@ def test_config_store():
     with hydra.initialize(config_path='.'):
         cfg = hydra.compose(config_name='my_config')
 
-    assert len(cfg) == 4
+    assert len(cfg) == 5
     assert 'dataset' in cfg
     assert 'model' in cfg
+    assert 'head' in cfg
     assert 'optim' in cfg
     assert 'scheduler' in cfg
 
@@ -49,6 +50,10 @@ def test_config_store():
     assert cfg.model.act == 'relu'
     assert cfg.model.norm is None
     assert cfg.model.jk == 'last'
+
+    # Check `cfg.head`:
+    assert len(cfg.head) == 1
+    assert cfg.head._target_.split('.')[-1] == 'IdentityNodeHead'
 
     # Check `cfg.optim`:
     assert len(cfg.optim) == 6

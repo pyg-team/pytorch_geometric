@@ -7,6 +7,7 @@ from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 
 import torch_geometric.datasets as datasets
+import torch_geometric.nn.head as heads
 import torch_geometric.nn.models.basic_gnn as models
 import torch_geometric.transforms as transforms
 from torch_geometric.typing import map_annotation
@@ -133,7 +134,7 @@ for cls_name in set(datasets.__all__) - set([]):
     config_store.store(group='dataset', name=cls_name, node=cls)
 
 
-@dataclass  # Register `torch_geometric.models` ###############################
+@dataclass  # Register `torch_geometric.nn.models` ############################
 class Model:
     _target_: str = MISSING
     in_channels: int = MISSING
@@ -143,6 +144,16 @@ class Model:
 for cls_name in set(models.__all__) - set([]):
     cls = to_dataclass(getattr(models, cls_name), base=Model, exclude=[])
     config_store.store(group='model', name=cls_name, node=cls)
+
+
+@dataclass  # Register `torch_geometric.nn.head` ##############################
+class Head:
+    _target_: str = MISSING
+
+
+for cls_name in set(heads.__all__) - set([]):
+    cls = to_dataclass(getattr(heads, cls_name), base=Head, exclude=[])
+    config_store.store(group='head', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.Optimizer` ################################
@@ -179,6 +190,8 @@ for cls_name in set([
 @dataclass  # Register global schema ##########################################
 class Config:
     dataset: Dataset = MISSING
+    model: Model = MISSING
+    head: Head = MISSING
     optim: Optimizer = MISSING
     scheduler: Optional[Scheduler] = None
 
