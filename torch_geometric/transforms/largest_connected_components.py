@@ -36,3 +36,4 @@ class LargestConnectedComponents(BaseTransform):
         data.num_nodes = int(subset.sum())
 
         return data
+        
