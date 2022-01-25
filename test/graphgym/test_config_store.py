@@ -8,12 +8,16 @@ def test_config_store():
     with hydra.initialize(config_path='.'):
         cfg = hydra.compose(config_name='my_config')
 
-    assert len(cfg) == 1
+    assert len(cfg) == 3
     assert 'dataset' in cfg
+    assert 'optim' in cfg
+    assert 'scheduler' in cfg
 
+    # Check `cfg.dataset`:
     assert len(cfg.dataset) == 3
     assert cfg.dataset._target_.split('.')[-1] == 'KarateClub'
 
+    # Check `cfg.dataset.transform`:
     assert isinstance(cfg.dataset.transform, DictConfig)
     assert len(cfg.dataset.transform) == 2
     assert 'NormalizeFeatures' in cfg.dataset.transform
@@ -32,3 +36,25 @@ def test_config_store():
             'AddSelfLoops')
     assert cfg.dataset.transform.AddSelfLoops.attr == 'edge_weight'
     assert cfg.dataset.transform.AddSelfLoops.fill_value is None
+
+    # Check `cfg.optim`:
+    assert len(cfg.optim) == 6
+    assert cfg.optim._target_.split('.')[-1] == 'Adam'
+    assert cfg.optim.lr == 0.001
+    assert cfg.optim.betas == [0.9, 0.999]
+    assert cfg.optim.eps == 1e-08
+    assert cfg.optim.weight_decay == 0
+    assert not cfg.optim.amsgrad
+
+    # Check `cfg.scheduler`:
+    assert len(cfg.scheduler) == 10
+    assert cfg.scheduler._target_.split('.')[-1] == 'ReduceLROnPlateau'
+    assert cfg.scheduler.mode == 'min'
+    assert cfg.scheduler.factor == 0.1
+    assert cfg.scheduler.patience == 10
+    assert cfg.scheduler.threshold == 0.0001
+    assert cfg.scheduler.threshold_mode == 'rel'
+    assert cfg.scheduler.cooldown == 0
+    assert cfg.scheduler.min_lr == 0
+    assert cfg.scheduler.eps == 1e-08
+    assert not cfg.scheduler.verbose

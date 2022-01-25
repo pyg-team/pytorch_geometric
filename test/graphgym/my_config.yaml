@@ -3,3 +3,5 @@ defaults:
   - transform@dataset.transform:
       - NormalizeFeatures
       - AddSelfLoops
+  - optim: Adam
+  - scheduler: ReduceLROnPlateau
