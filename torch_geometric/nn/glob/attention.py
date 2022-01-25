@@ -1,4 +1,7 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
 
 from torch_geometric.utils import softmax
@@ -17,7 +20,7 @@ class GlobalAttention(torch.nn.Module):
 
     where :math:`h_{\mathrm{gate}} \colon \mathbb{R}^F \to
     \mathbb{R}` and :math:`h_{\mathbf{\Theta}}` denote neural networks, *i.e.*
-    MLPS.
+    MLPs.
 
     Args:
         gate_nn (torch.nn.Module): A neural network :math:`h_{\mathrm{gate}}`
@@ -29,6 +32,18 @@ class GlobalAttention(torch.nn.Module):
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
+
+    Shapes:
+        - **input:**
+          x (Tensor): node features matrix
+          :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`,
+          batch (LongTensor): Batch vector :math:`\mathbf{b} \in
+          {\{0, \ldots, B-1\}}^N`, which assigns each node to a specific graph.
+          size (int, Optional): Output tensor size. If size is not given,
+          a minimal sized output tensor is returned.
+        - **output:**
+          out (Tensor): Attention vector of size :math:`B \times F`
+
     """
     def __init__(self, gate_nn, nn=None):
         super().__init__()
