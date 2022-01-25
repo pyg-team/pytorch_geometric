@@ -7,7 +7,6 @@ defaults:
   - optim: Adam
   - scheduler: ReduceLROnPlateau
 
-
 model:
   in_channels: 34
   out_channels: 4
