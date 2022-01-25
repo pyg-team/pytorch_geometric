@@ -91,7 +91,7 @@ def to_dataclass(cls: Any, base: Optional[Any] = None,
                           bases=() if base is None else (base, ))
 
 
-cs = ConfigStore.instance()
+config_store = ConfigStore.instance()
 
 
 @dataclass  # Register `torch_geometric.transforms` ###########################
@@ -109,7 +109,7 @@ for cls_name in set(transforms.__all__) - set([
     # We use an explicit additional nesting level inside each config to allow
     # for applying multiple transformations.
     # https://hydra.cc/docs/patterns/select_multiple_configs_from_config_group
-    cs.store(group='transform', name=cls_name, node={cls_name: cls})
+    config_store.store(group='transform', name=cls_name, node={cls_name: cls})
 
 
 @dataclass  # Register `torch_geometric.datasets` #############################
@@ -122,7 +122,7 @@ class Dataset:
 for cls_name in set(datasets.__all__) - set([]):
     cls = to_dataclass(getattr(datasets, cls_name), base=Dataset,
                        exclude=['pre_filter'])
-    cs.store(group='dataset', name=cls_name, node=cls)
+    config_store.store(group='dataset', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.Optimizer` ################################
@@ -136,7 +136,7 @@ for cls_name in set([
 ]) - set(['Optimizer']):
     cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
                        exclude=['params'])
-    cs.store(group='optim', name=cls_name, node=cls)
+    config_store.store(group='optim', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.lr_scheduler` #############################
@@ -153,7 +153,7 @@ for cls_name in set([
 ]):
     cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
                        base=Scheduler, exclude=['optimizer'])
-    cs.store(group='scheduler', name=cls_name, node=cls)
+    config_store.store(group='scheduler', name=cls_name, node=cls)
 
 
 @dataclass  # Register global schema ##########################################
@@ -163,4 +163,4 @@ class Config:
     scheduler: Optional[Scheduler] = None
 
 
-cs.store(name='config', node=Config)
+config_store.store(name='config', node=Config)
