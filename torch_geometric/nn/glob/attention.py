@@ -2,6 +2,7 @@ from typing import Optional
 
 import torch
 from torch import Tensor
+from torch.nn import Module
 from torch_scatter import scatter_add
 
 from torch_geometric.utils import softmax
@@ -45,7 +46,7 @@ class GlobalAttention(torch.nn.Module):
           out (Tensor): Attention vector of size :math:`B \times F`
 
     """
-    def __init__(self, gate_nn, nn=None):
+    def __init__(self, gate_nn: Module, nn: Optional[Module] = None):
         super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
@@ -56,7 +57,8 @@ class GlobalAttention(torch.nn.Module):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x, batch=None, size=None):
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                size: Optional[int] = None) -> Tensor:
         """"""
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.int64)
