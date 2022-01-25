@@ -83,6 +83,12 @@ def test_to_networkx_undirected():
     G = to_networkx(data, edge_attrs=['weight'], to_undirected=False)
     assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [2, 0]]
 
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected="upper")
+    assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [1, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
+    assert nx.to_numpy_matrix(G).tolist() == [[3, 2], [2, 0]]
+
 
 def test_from_networkx():
     x = torch.randn(2, 8)
