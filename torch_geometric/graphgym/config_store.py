@@ -159,6 +159,8 @@ for cls_name in set([
 @dataclass  # Register global schema ##########################################
 class Config:
     dataset: Dataset = MISSING
+    optim: Optimizer = MISSING
+    scheduler: Optional[Scheduler] = None
 
 
 cs.store(name='config', node=Config)
