@@ -1,4 +1,5 @@
-from typing import List, Optional, Tuple, Union
+import copy
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -33,3 +34,16 @@ NoneType = Optional[Tensor]
 # Types for sampling ##########################################################
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+
+# Helper functions ############################################################
+
+
+def map_annotation(annotation: Any, mapping: Dict[Any, Any]) -> Any:
+    if annotation.__dict__.get('__origin__', None) == Union:
+        args = annotation.__dict__.get('__args__', [])
+        out = copy.copy(annotation)
+        out.__dict__['__args__'] = [map_annotation(a, mapping) for a in args]
+        return out
+    elif annotation in mapping:
+        return mapping[annotation]
+    return annotation

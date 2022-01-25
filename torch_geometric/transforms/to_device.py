@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
@@ -12,15 +12,19 @@ class ToDevice(BaseTransform):
     Args:
         device (torch.device): The destination device.
         attrs (List[str], optional): If given, will only perform tensor device
-            conversion for the given attributes. (default: :obj:`[]`)
+            conversion for the given attributes. (default: :obj:`None`)
         non_blocking (bool, optional): If set to :obj:`True` and tensor
             values are in pinned memory, the copy will be asynchronous with
             respect to the host. (default: :obj:`False`)
     """
-    def __init__(self, device: Union[int, str], attrs: List[str] = [],
-                 non_blocking: bool = False):
+    def __init__(
+        self,
+        device: Union[int, str],
+        attrs: Optional[List[str]] = None,
+        non_blocking: bool = False,
+    ):
         self.device = device
-        self.attrs = attrs
+        self.attrs = attrs or []
         self.non_blocking = non_blocking
 
     def __call__(self, data: Union[Data, HeteroData]):

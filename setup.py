@@ -11,6 +11,7 @@ install_requires = [
     'pandas',
     'jinja2',
     'pyparsing',
+    'hydra-core',
     'scikit-learn',
     'googledrivedownloader',
 ]
