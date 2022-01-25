@@ -7,9 +7,15 @@ from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 
 import torch_geometric.datasets as datasets
+import torch_geometric.nn.models.basic_gnn as models
 import torch_geometric.transforms as transforms
+from torch_geometric.typing import map_annotation
 
 EXCLUDE = {'self', 'args', 'kwargs'}
+
+MAPPING = {
+    torch.nn.Module: Any,
+}
 
 
 def to_dataclass(cls: Any, base: Optional[Any] = None,
@@ -53,6 +59,8 @@ def to_dataclass(cls: Any, base: Optional[Any] = None,
 
         annotation = arg.annotation
         default = arg.default
+
+        annotation = map_annotation(annotation, mapping=MAPPING)
 
         if str(default) == "<required parameter>":
             # Fix `torch.optim.SGD.lr = _RequiredParameter()`
@@ -123,6 +131,18 @@ for cls_name in set(datasets.__all__) - set([]):
     cls = to_dataclass(getattr(datasets, cls_name), base=Dataset,
                        exclude=['pre_filter'])
     config_store.store(group='dataset', name=cls_name, node=cls)
+
+
+@dataclass  # Register `torch_geometric.models` ###############################
+class Model:
+    _target_: str = MISSING
+    in_channels: int = MISSING
+    out_channels: Optional[int] = None
+
+
+for cls_name in set(models.__all__) - set([]):
+    cls = to_dataclass(getattr(models, cls_name), base=Model, exclude=[])
+    config_store.store(group='model', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.Optimizer` ################################
