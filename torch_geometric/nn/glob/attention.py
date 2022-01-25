@@ -56,8 +56,11 @@ class GlobalAttention(torch.nn.Module):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x, batch, size=None):
+    def forward(self, x, batch=None, size=None):
         """"""
+        if batch is None:
+            batch = x.new_zeros(x.size(0), dtype=torch.int64)
+
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         size = batch[-1].item() + 1 if size is None else size
 
