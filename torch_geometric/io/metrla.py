@@ -5,14 +5,24 @@ from typing import Tuple, Union, Optional
 
 
 class MetrLaIo:
-
+    """A class that encapsulates all i/o operations related to the Metr-LA dataset."""
+    
     def __init__(self,
-                 n_readings,
-                 n_previous_steps,
-                 n_future_steps,
-                 add_time_of_day,
-                 add_day_of_week,
-                 normalized_k):
+                 n_readings: int,
+                 n_previous_steps: int,
+                 n_future_steps: int,
+                 add_time_of_day: bool=False,
+                 add_day_of_week:bool = False,
+                 normalized_k: float = .1) -> None:
+        """
+        
+        :param n_readings: 
+        :param n_previous_steps: 
+        :param n_future_steps: 
+        :param add_time_of_day: 
+        :param add_day_of_week: 
+        :param normalized_k: 
+        """
         self.n_readings = n_readings
         self.n_previous_steps = n_previous_steps
         self.n_future_steps = n_future_steps

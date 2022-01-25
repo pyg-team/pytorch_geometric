@@ -16,6 +16,7 @@ def test_metrla():
     dataset = MetrLa(root=root,
                      n_previous_steps=n_previous_steps,
                      n_future_steps=n_future_steps)
+
     expected_dataset_len = 34260
 
     # Sanity checks

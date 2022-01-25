@@ -98,7 +98,15 @@ class MetrLa(Dataset):
         
         :return: 
         """
-        return [f'data_{i}.pt' for i in range(self.dataset_len)]
+        return [f'data_{i}.pt' for i in range(self.dataset_len)] + ["edge_index.pt", "edge_attributes.pt"]
+
+    @property
+    def edge_index_file_name(self):
+        return self.processed_file_names[-2]
+
+    @property
+    def edge_attributes_file_name(self):
+        return self.processed_file_names[-1]
 
     def download(self) -> None:
         for file_name, gdrive_id in self.gdrive_ids.items():
@@ -118,6 +126,12 @@ class MetrLa(Dataset):
 
         edge_index, edge_attributes = dense_to_sparse(adjacency_matrix)
 
+        edge_index_path = Path(self.processed_dir) / self.edge_index_file_name
+        edge_attributes_path = Path(self.processed_dir) / self.edge_attributes_file_name
+
+        torch.save(edge_index, edge_index_path)
+        torch.save(edge_attributes, edge_attributes_path)
+
         for idx in range(self.dataset_len):
             # Select the "slice" among the first dimension - This pair represents a single training example.
             # To be wrapped in a "Data" object.
@@ -129,8 +143,6 @@ class MetrLa(Dataset):
             y_index = torch.tensor(data=x[idx, ...], dtype=torch.float32)
 
             data = Data(x=x_index,
-                        edge_index=edge_index,
-                        edge_attributes=edge_attributes,
                         y=y_index)
             if self.pre_transform is not None:
                 data = self.pre_transform(data)
@@ -139,11 +151,16 @@ class MetrLa(Dataset):
             torch.save(data, Path(self.processed_dir) / file_name)
 
     def len(self) -> int:
-        return len(self.processed_file_names)
+        return len(self.processed_file_names) - 2
 
     def get(self, idx: int) -> Data:
         file_name = self.processed_file_names[idx]
+        edge_index = torch.load(Path(self.processed_dir) / self.edge_index_file_name)
+        edge_attributes = torch.load(Path(self.processed_dir) / self.edge_attributes_file_name)
+
         data = torch.load(Path(self.processed_dir) / file_name)
+        setattr(data, 'edge_index', edge_index)
+        setattr(data, 'edge_attributes', edge_attributes)
         return data
 
     def __repr__(self) -> str:
