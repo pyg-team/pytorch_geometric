@@ -1,5 +1,5 @@
 import hydra
-from omegaconf import MISSING, DictConfig
+from omegaconf import DictConfig
 
 import torch_geometric.graphgym.config_store  # noqa
 
