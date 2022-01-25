@@ -15,4 +15,5 @@ def test_largest_connected_components():
 
     assert data.num_nodes == 5
 
-    assert torch.all(data.edge_index == before_transformation.edge_index[:, :10])
+    assert torch.all(data.edge_index
+                     == before_transformation.edge_index[:, :10])
