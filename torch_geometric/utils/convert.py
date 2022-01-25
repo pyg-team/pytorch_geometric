@@ -63,12 +63,13 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool or str, optional): If set to :obj:`True` or "upper",
-            will return a :obj:`networkx.Graph` instead of a
-            :obj:`networkx.DiGraph`. The undirected graph will correspond to the
-            upper triangle of the corresponding adjacency matrix. Similarly, if
-            set to "lower", the undirected graph will correspond to the lower
-            triangle of the adjacency matrix. (default: :obj:`False`)
+        to_undirected (bool or str, optional): If set to :obj:`True` or
+            "upper", will return a :obj:`networkx.Graph` instead of a
+            :obj:`networkx.DiGraph`. The undirected graph will correspond to
+            the upper triangle of the corresponding adjacency matrix.
+            Similarly, if set to "lower", the undirected graph will correspond
+            to the lower triangle of the adjacency matrix. (default:
+            :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
     """
@@ -92,20 +93,15 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
         if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
             values[key] = item[0]
 
-    if to_undirected:
-        to_undirected = "upper" if to_undirected is True else to_undirected
-        if to_undirected == "upper":
-            edge_to_skip = lambda u, v: u > v
-        elif to_undirected == "lower":
-            edge_to_skip = lambda u, v: u < v
-        else:
-            raise ValueError(f"Unknown setting {to_undirected=!r}")
-    else:
-        edge_to_skip = lambda u, v: False
+    to_undirected = "upper" if to_undirected is True else to_undirected
+    to_undirected_upper = True if to_undirected == "upper" else False
+    to_undirected_lower = True if to_undirected == "lower" else False
 
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
 
-        if edge_to_skip(u, v):
+        if to_undirected_upper and u > v:
+            continue
+        elif to_undirected_lower and u < v:
             continue
 
         if remove_self_loops and u == v:
