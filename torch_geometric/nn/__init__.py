@@ -11,6 +11,7 @@ from .pool import *  # noqa
 from .unpool import *  # noqa
 from .dense import *  # noqa
 from .models import *  # noqa
+from .head import *  # noqa
 from .functional import *  # noqa
 
 __all__ = [

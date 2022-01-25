@@ -151,6 +151,22 @@ Models
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
+Heads
+-----
+
+.. currentmodule:: torch_geometric.nn.head
+.. autosummary::
+   :nosignatures:
+
+   {% for cls in torch_geometric.nn.head.classes %}
+     {{ cls }}
+   {% endfor %}
+
+.. automodule:: torch_geometric.nn.head
+   :members:
+   :undoc-members:
+   :exclude-members: training
+
 Functional
 ----------
 
