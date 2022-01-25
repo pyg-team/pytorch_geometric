@@ -12,7 +12,29 @@ EXCLUDE_ARG_NAMES = {'self', 'args', 'kwargs', 'pre_filter'}
 
 
 def to_dataclass(cls: Any, base: Optional[Any] = None) -> Any:
-    r"""Converts a given class :obj:`cls` to a :obj:`dataclass` schema."""
+    r"""Converts the input arguments of a given class :obj:`cls` to a
+    :obj:`dataclass` schema, *e.g.*,
+
+    .. code-block:: python
+
+        from torch_geometric.transforms import NormalizeFeatures
+
+        dataclass = to_dataclass(NormalizeFeatures)
+
+    will generate
+
+    .. code-block:: python
+
+        @dataclass
+        class NormalizeFeatures:
+            _target_: str = "torch_geometric.transforms.NormalizeFeatures"
+            attrs: List[str] = field(default_factory = lambda: ["x"])
+
+    Args:
+        cls (Any): The class to generate a schema for.
+        base: (Any, optional): The base class of the schema.
+            (default: :obj:`None`)
+    """
     fields = []
 
     for name, arg in inspect.signature(cls.__init__).parameters.items():

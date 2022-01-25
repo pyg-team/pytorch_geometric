@@ -8,7 +8,7 @@ class Compose(BaseTransform):
     """Composes several transforms together.
 
     Args:
-        transforms ([callable]): List of transforms to compose.
+        transforms (List[Callable]): List of transforms to compose.
     """
     def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
