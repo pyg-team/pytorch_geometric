@@ -1,11 +1,13 @@
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import BatchNorm1d, Identity
+from torch.nn import Identity
 
+from torch_geometric.nn.act import ACTS
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.norm import NORMS
 
 
 class MLP(torch.nn.Module):
@@ -44,24 +46,31 @@ class MLP(torch.nn.Module):
             Will override :attr:`channel_list`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
-        batch_norm (bool, optional): If set to :obj:`False`, will not make use
-            of batch normalization. (default: :obj:`True`)
-        relu_first (bool, optional): If set to :obj:`True`, ReLU activation is
-            applied before batch normalization. (default: :obj:`False`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
+        norm (str, optional): The normalization operator to use.
+            (default: :obj:`"batch"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
     """
     def __init__(
-        self,
-        channel_list: Optional[Union[List[int], int]] = None,
-        *,
-        in_channels: Optional[int] = None,
-        hidden_channels: Optional[int] = None,
-        out_channels: Optional[int] = None,
-        num_layers: Optional[int] = None,
-        dropout: float = 0.,
-        batch_norm: bool = True,
-        relu_first: bool = False,
+            self,
+            channel_list: Optional[Union[List[int], int]] = None,
+            *,
+            in_channels: Optional[int] = None,
+            hidden_channels: Optional[int] = None,
+            out_channels: Optional[int] = None,
+            num_layers: Optional[int] = None,
+            dropout: float = 0.,
+            act: Union[str, Callable, None] = "relu",
+            norm: Optional[str] = "batch",
+            act_first: bool = False,
+            batch_norm: bool = True,  # TODO: deprecated
     ):
         super().__init__()
+
+        if batch_norm is False and norm == "batch":
+            norm = None
 
         if not isinstance(channel_list, (tuple, list)):
             in_channels = channel_list
@@ -75,7 +84,8 @@ class MLP(torch.nn.Module):
         assert len(channel_list) >= 2
         self.channel_list = channel_list
         self.dropout = dropout
-        self.relu_first = relu_first
+        self.act = ACTS[act] if isinstance(act, str) else act
+        self.act_first = act_first
 
         self.lins = torch.nn.ModuleList()
         for dims in zip(channel_list[:-1], channel_list[1:]):
@@ -83,7 +93,7 @@ class MLP(torch.nn.Module):
 
         self.norms = torch.nn.ModuleList()
         for dim in zip(channel_list[1:-1]):
-            self.norms.append(BatchNorm1d(dim) if batch_norm else Identity())
+            self.norms.append(NORMS[norm](dim) if norm else Identity())
 
         self.reset_parameters()
 
@@ -113,11 +123,11 @@ class MLP(torch.nn.Module):
         """"""
         x = self.lins[0](x)
         for lin, norm in zip(self.lins[1:], self.norms):
-            if self.relu_first:
-                x = x.relu_()
+            if self.act is not None and self.act_first:
+                x = self.act(x)
             x = norm(x)
-            if not self.relu_first:
-                x = x.relu_()
+            if self.act is not None and not self.act_first:
+                x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
         return x

@@ -4,6 +4,7 @@ defaults:
       - NormalizeFeatures
       - AddSelfLoops
   - model: GCN
+  - head: IdentityNodeHead
   - optim: Adam
   - scheduler: ReduceLROnPlateau
 
