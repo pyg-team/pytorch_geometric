@@ -10,10 +10,9 @@ from torch_geometric.nn.dense.linear import Linear
 
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
-
     There exists two ways to create an :class:`MLP`:
 
-    1. By specifying explit channel sizes, *e.g.*,
+    1. By specifying explicit channel sizes, *e.g.*,
 
        .. code-block:: python
 
@@ -21,8 +20,8 @@ class MLP(torch.nn.Module):
 
        creates a three-layer MLP with **differently** sized hidden layers.
 
-    1. By specifying a fixed hidden channel size over a certain number of
-       layers, *e.g.*,
+    1. By specifying fixed hidden channel sizes over a number of layers,
+       *e.g.*,
 
        .. code-block:: python
 
@@ -32,17 +31,17 @@ class MLP(torch.nn.Module):
        creates a three-layer MLP with **equally** sized hidden layers.
 
     Args:
-        channel_list (List[int] or int): List of input, intermediate and output
-            channels. :obj:`len(channel_list) - 1` denotes the number of layers
-            of the MLP.
+        channel_list (List[int] or int, optional): List of input, intermediate
+            and output channels. :obj:`len(channel_list) - 1` denotes the
+            number of layers of the MLP (default: :obj:`None`)
         in_channels (int): Size of each input sample.
-            Overrides :attr:`channel_list`. (default: :obj:`None`)
+            Will override :attr:`channel_list`. (default: :obj:`None`)
         hidden_channels (int): Size of each hidden sample.
-            Overrides :attr:`channel_list`. (default: :obj:`None`)
+            Will override :attr:`channel_list`. (default: :obj:`None`)
         out_channels (int): Size of each output sample.
-            Overrides :attr:`channel_list`. (default: :obj:`None`)
+            Will override :attr:`channel_list`. (default: :obj:`None`)
         num_layers (int, optional): The number of layers.
-            Overrides :attr:`channel_list`. (default: :obj:`None`)
+            Will override :attr:`channel_list`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
         batch_norm (bool, optional): If set to :obj:`False`, will not make use
@@ -72,6 +71,7 @@ class MLP(torch.nn.Module):
             channel_list = [hidden_channels] * (num_layers - 1)
             channel_list = [in_channels] + channel_list + [out_channels]
 
+        assert isinstance(channel_list, (tuple, list))
         assert len(channel_list) >= 2
         self.channel_list = channel_list
         self.dropout = dropout
