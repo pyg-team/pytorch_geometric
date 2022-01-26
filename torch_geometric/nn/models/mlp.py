@@ -9,26 +9,27 @@ from torch_geometric.nn.dense.linear import Linear
 
 
 class MLP(torch.nn.Module):
-    r"""A multi-layer perception (MLP) model.
+    r"""A Multi-Layer Perception (MLP) model.
 
     There exists two ways to create an :class:`MLP`:
 
-    1. Via :attr:`channel_list`
+    1. By specifying explit channel sizes, *e.g.*,
 
-      .. code-block:: python
+       .. code-block:: python
 
-        mlp = MLP([16, 32, 64, 128])
+          mlp = MLP([16, 32, 64, 128])
 
-      which creates a three-layer MLP with **differently sized hidden layers**.
+       creates a three-layer MLP with **differently** sized hidden layers.
 
-    1. Via :attr:`num_layers`
+    1. By specifying a fixed hidden channel size over a certain number of
+       layers, *e.g.*,
 
-      .. code-block:: python
+       .. code-block:: python
 
-        mlp = MLP(in_channels=16, hidden_channels=32,
-                  out_channels=128, num_layers=3)
+          mlp = MLP(in_channels=16, hidden_channels=32,
+                    out_channels=128, num_layers=3)
 
-      which creates a three-layer MLP with **equally sized hidden layers**.
+       creates a three-layer MLP with **equally** sized hidden layers.
 
     Args:
         channel_list (List[int] or int): List of input, intermediate and output
@@ -88,14 +89,17 @@ class MLP(torch.nn.Module):
 
     @property
     def in_channels(self) -> int:
+        r"""Size of each input sample."""
         return self.channel_list[0]
 
     @property
     def out_channels(self) -> int:
+        r"""Size of each output sample."""
         return self.channel_list[-1]
 
     @property
     def num_layers(self) -> int:
+        r"""The number of layers."""
         return len(self.channel_list) - 1
 
     def reset_parameters(self):
