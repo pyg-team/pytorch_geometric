@@ -106,7 +106,7 @@ class LINKX(torch.nn.Module):
         self.cat_lin2 = torch.nn.Linear(hidden_channels, hidden_channels)
 
         channels = [hidden_channels] * num_layers + [out_channels]
-        self.final_mlp = MLP(channels, dropout, relu_first=True)
+        self.final_mlp = MLP(channels, dropout=dropout, relu_first=True)
 
         self.reset_parameters()
 
