@@ -2,7 +2,6 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch.nn import Module
 from torch_scatter import scatter_add
 
 from torch_geometric.utils import softmax
@@ -36,17 +35,15 @@ class GlobalAttention(torch.nn.Module):
 
     Shapes:
         - **input:**
-          x (Tensor): node features matrix
-          :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`,
-          batch (LongTensor): Batch vector :math:`\mathbf{b} \in
-          {\{0, \ldots, B-1\}}^N`, which assigns each node to a specific graph.
-          size (int, Optional): Output tensor size. If size is not given,
-          a minimal sized output tensor is returned.
+          node features :math:`(|\mathcal{V}|, F)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
         - **output:**
-          out (Tensor): Attention vector of size :math:`B \times F`
+          graph features :math:`(|\mathcal{G}|, 2 * F)` where
+          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
 
     """
-    def __init__(self, gate_nn: Module, nn: Optional[Module] = None):
+    def __init__(self, gate_nn: torch.nn.Module,
+                 nn: Optional[torch.nn.Module] = None):
         super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
@@ -59,12 +56,19 @@ class GlobalAttention(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
                 size: Optional[int] = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (Tensor): The input node features.
+            batch (LongTensor, optional): A vector that maps each node to its
+                respective graph identifier. (default: :obj:`None`)
+            size (int, optional): The number of graphs in the batch.
+                (default: :obj:`None`)
+        """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.int64)
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        size = batch[-1].item() + 1 if size is None else size
+        size = int(batch.max()) + 1 if size is None else size
 
         gate = self.gate_nn(x).view(-1, 1)
         x = self.nn(x) if self.nn is not None else x
