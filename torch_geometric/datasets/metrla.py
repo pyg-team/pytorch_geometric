@@ -30,8 +30,7 @@ class MetrLa(Dataset):
     Gaussian kernel over the real-world distances between the sensors:
 
     .. math::`W_{ij} = exp(-\frac{dist(v_{i}, v_{j})^2}{\sigma^{2}}),
-        \text{if} dist(v_{i}, v_{j}) >= K, \text{otherwise} 0`, 
-    
+        \text{if} dist(v_{i}, v_{j}) >= K, \text{otherwise} 0`,
     Where K is a
     pre-fixed threshold, and dist(, ) is the real-world road distance
     between two sensors, and :math:`\sigma^{2}` is the variance of the
