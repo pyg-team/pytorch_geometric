@@ -37,7 +37,7 @@ class Set2Set(torch.nn.Module):
           node features :math:`(|\mathcal{V}|, F)`,
           batch vector :math:`(|\mathcal{V}|)` *(optional)*
         - **output:**
-          set features :math:`(|\mathcal{G}|, 2 * F)` where
+          graph features :math:`(|\mathcal{G}|, 2 * F)` where
           :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(self, in_channels: int, processing_steps: int,
@@ -57,28 +57,31 @@ class Set2Set(torch.nn.Module):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (Tensor): The input node features.
             batch (LongTensor, optional): A vector that maps each node to its
                 respective graph identifier. (default: :obj:`None`)
+            size (int, optional): The number of graphs in the batch.
+                (default: :obj:`None`)
         """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.int64)
 
-        batch_size = batch.max().item() + 1
+        size = int(batch.max()) + 1 if size is None else size
 
-        h = (x.new_zeros((self.num_layers, batch_size, self.in_channels)),
-             x.new_zeros((self.num_layers, batch_size, self.in_channels)))
-        q_star = x.new_zeros(batch_size, self.out_channels)
+        h = (x.new_zeros((self.num_layers, size, self.in_channels)),
+             x.new_zeros((self.num_layers, size, self.in_channels)))
+        q_star = x.new_zeros(size, self.out_channels)
 
         for _ in range(self.processing_steps):
             q, h = self.lstm(q_star.unsqueeze(0), h)
-            q = q.view(batch_size, self.in_channels)
+            q = q.view(size, self.in_channels)
             e = (x * q.index_select(0, batch)).sum(dim=-1, keepdim=True)
-            a = softmax(e, batch, num_nodes=batch_size)
-            r = scatter_add(a * x, batch, dim=0, dim_size=batch_size)
+            a = softmax(e, batch, num_nodes=size)
+            r = scatter_add(a * x, batch, dim=0, dim_size=size)
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star
