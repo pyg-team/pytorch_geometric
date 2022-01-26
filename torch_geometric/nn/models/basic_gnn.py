@@ -9,14 +9,9 @@ from torch.nn import Linear, ModuleList
 from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
                                      PNAConv, SAGEConv)
 from torch_geometric.nn.models import MLP
+from torch_geometric.nn.models.act import ACTS
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 from torch_geometric.typing import Adj
-
-ACTS = {
-    'relu': torch.nn.ReLU(inplace=True),
-    'elu': torch.nn.ELU(inplace=True),
-    'leaky_relu': torch.nn.LeakyReLU(inplace=True),
-}
 
 
 class BasicGNN(torch.nn.Module):
