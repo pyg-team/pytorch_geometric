@@ -7,6 +7,7 @@ from torch.nn import BatchNorm1d, Identity
 
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.models.act import ACTS
+from torch_geometric.nn.models.norm import NORMS
 
 
 class MLP(torch.nn.Module):
@@ -47,8 +48,8 @@ class MLP(torch.nn.Module):
             embedding. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        batch_norm (bool, optional): If set to :obj:`False`, will not make use
-            of batch normalization. (default: :obj:`True`)
+        norm (str, optional): The normalization operator to use.
+            (default: :obj:`"batch"`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before batch normalization. (default: :obj:`False`)
     """
@@ -62,7 +63,7 @@ class MLP(torch.nn.Module):
         num_layers: Optional[int] = None,
         dropout: float = 0.,
         act: Union[str, Callable, None] = "relu",
-        batch_norm: bool = True,
+        norm: Optional[str] = "batch",
         act_first: bool = False,
     ):
         super().__init__()
@@ -86,9 +87,11 @@ class MLP(torch.nn.Module):
         for dims in zip(channel_list[:-1], channel_list[1:]):
             self.lins.append(Linear(*dims))
 
-        self.norms = torch.nn.ModuleList()
-        for dim in zip(channel_list[1:-1]):
-            self.norms.append(BatchNorm1d(dim) if batch_norm else Identity())
+        self.norms = None
+        if norm is not None:
+            self.norms = torch.nn.ModuleList()
+            for dim in zip(channel_list[1:-1]):
+                self.norms.append(NORMS[norm](dim))
 
         self.reset_parameters()
 
@@ -110,21 +113,21 @@ class MLP(torch.nn.Module):
     def reset_parameters(self):
         for lin in self.lins:
             lin.reset_parameters()
-        for norm in self.norms:
-            if hasattr(norm, 'reset_parameters'):
-                norm.reset_parameters()
+        for norm in self.norms or []:
+            norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
         x = self.lins[0](x)
-        for lin, norm in zip(self.lins[1:], self.norms):
+        for i in range(self.num_layers):
             if self.act is not None and self.act_first:
                 x = self.act(x)
-            x = norm(x)
+            if self.norms is not None:
+                x = self.norms[i](x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
-            x = lin.forward(x)
+            x = self.lins[i + 1](x)
         return x
 
     def __repr__(self) -> str:

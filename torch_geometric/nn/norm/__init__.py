@@ -19,3 +19,7 @@ __all__ = [
 ]
 
 classes = __all__
+
+NORMS = {
+    'batch': BatchNorm,
+}
