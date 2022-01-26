@@ -50,8 +50,9 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
-                remove_self_loops=False):
+def to_networkx(data, node_attrs=None, edge_attrs=None,
+                to_undirected: Union[bool, str] = False,
+                remove_self_loops: bool = False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
@@ -62,10 +63,13 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool, optional): If set to :obj:`True`, will return a
-            a :obj:`networkx.Graph` instead of a :obj:`networkx.DiGraph`. The
-            undirected graph will correspond to the upper triangle of the
-            corresponding adjacency matrix. (default: :obj:`False`)
+        to_undirected (bool or str, optional): If set to :obj:`True` or
+            "upper", will return a :obj:`networkx.Graph` instead of a
+            :obj:`networkx.DiGraph`. The undirected graph will correspond to
+            the upper triangle of the corresponding adjacency matrix.
+            Similarly, if set to "lower", the undirected graph will correspond
+            to the lower triangle of the adjacency matrix. (default:
+            :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
     """
@@ -89,9 +93,15 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
         if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
             values[key] = item[0]
 
+    to_undirected = "upper" if to_undirected is True else to_undirected
+    to_undirected_upper = True if to_undirected == "upper" else False
+    to_undirected_lower = True if to_undirected == "lower" else False
+
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
 
-        if to_undirected and u > v:
+        if to_undirected_upper and u > v:
+            continue
+        elif to_undirected_lower and u < v:
             continue
 
         if remove_self_loops and u == v:
