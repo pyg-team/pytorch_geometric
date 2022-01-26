@@ -4,8 +4,17 @@ __version__ = '2.0.4'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
-    'tqdm', 'yacs', 'numpy', 'scipy', 'pandas', 'jinja2', 'requests',
-    'pyparsing', 'hydra-core', 'scikit-learn', 'googledrivedownloader'
+    'tqdm',
+    'yacs',
+    'numpy',
+    'scipy',
+    'pandas',
+    'jinja2',
+    'requests',
+    'pyparsing',
+    'hydra-core',
+    'scikit-learn',
+    'googledrivedownloader',
 ]
 
 full_install_requires = [

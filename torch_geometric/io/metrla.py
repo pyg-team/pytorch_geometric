@@ -83,8 +83,7 @@ class MetrLaIo:
         """
 
         data_df = pd.read_csv(filepath_or_buffer=data_path, index_col=0)
-        n_readings, n_nodes = data_df.shape
-
+        _, n_nodes = data_df.shape
         data = np.expand_dims(a=data_df.values, axis=-1)
 
         data = [data]
@@ -97,13 +96,13 @@ class MetrLaIo:
                 (2, 1, 0))
             data.append(time_of_day)
         if self.add_day_of_week:
-            day_of_week = np.zeros(shape=(n_readings, n_nodes, 7))
-            day_of_week[np.arange(stop=n_readings), :,
+            day_of_week = np.zeros(shape=(self.n_readings, n_nodes, 7))
+            day_of_week[np.arange(stop=self.n_readings), :,
                         data_df.index.dayofweek] = 1
             data.append(day_of_week)
 
         data = np.concatenate(data, axis=-1)
-
+        print(len(data))
         x, y = [], []
 
         for t in range(self.min_t, self.max_t):

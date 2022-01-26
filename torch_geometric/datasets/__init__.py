@@ -158,7 +158,7 @@ __all__ = [
     'RandomPartitionGraphDataset',
     'LINKXDataset',
     'EllipticBitcoinDataset',
-    'MetrLa'
+    'MetrLa',
 ]
 
 classes = __all__

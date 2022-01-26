@@ -1,4 +1,4 @@
-from pathlib import Path
+import os.path as osp
 from typing import Callable, Optional
 
 import torch
@@ -11,8 +11,9 @@ from torch_geometric.utils.sparse import dense_to_sparse
 
 class MetrLa(Dataset):
     r"""The Los Angeles Metropolitan (MetrLA) highway traffic dataset
-    introducted in `"Big Data and its Technical Challenges"
-    <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.681.7248&rep=rep1&type=pdf>`_
+    introducted in  the`"Big Data and its Technical Challenges"
+    <http://citeseerx.ist.psu.edu/viewdoc/download
+    ?doi=10.1.1.681.7248&rep=rep1&type=pdf>`_
     paper.
 
     Nodes represent sensors in a sensor network, each being able to
@@ -20,20 +21,22 @@ class MetrLa(Dataset):
     volumes (how many cars have passed by a sensor), aggregated in 5 minutes
     intervals. The traffic prediciton task is a time series regression,
     which aims to predict the traffic volumen values in each node for the
-    next *n_next* time steps, given the volumnes in the *n_prev*  previous
-    time steps. Both n_next and n_prev are pre-set values. Given the
-    time-series nature of the data, each node has an additional, temporal
-    dimension.
+    next :obj:`n_future_steps` time steps, given the volumnes in the
+    :obj:`n_previous_steps` previous time steps. Both :obj:`n_previous_steps`
+    and :obj:`n_future_steps`: are pre-set values. Given the time-series
+    nature of the data, each node has an additional, temporal dimension.
 
     The initial adjacency matrix is constructed by applying a thresholded
     Gaussian kernel over the real-world distances between the sensors:
 
-    :math:`W_{ij} = exp(-\frac{dist(v_{i}, v_{j})^2}{\sigma^{2}})`,
-    if :math:`dist(v_{i}, v_{j}) >= K`, otherwise :math:`0`, where K is a
+    .. math::`W_{ij} = exp(-\frac{dist(v_{i}, v_{j})^2}{\sigma^{2}}),
+        \text{if} dist(v_{i}, v_{j}) >= K, \text{otherwise} 0`, 
+    
+    Where K is a
     pre-fixed threshold, and dist(, ) is the real-world road distance
     between two sensors, and :math:`\sigma^{2}` is the variance of the
     distances between sensors. A zero-value in the adjacency matrix does
-    not indicate that thers is no road connection between two sensors (
+    not indicate that there is no road connection between two sensors (
     because there almost always is, since road networks are connected
     graphs. Instead, it means that the distance between them is larger than
     the threshold value.
@@ -58,6 +61,16 @@ class MetrLa(Dataset):
             version. The data object will be transformed before being saved to
             disk
     """
+
+    # n_readings != n_samples.
+    # The first is the number of lines in the .csv file, and the second is the
+    # resulting number of time series (data for the model). The second depends
+    # on the first, but also on n_previous_steps and
+    # n_future_steps.
+    # This value needs to be known at all times, and is otherwise available
+    # only when the `process` method is called (i.e. first time the data
+    # files are generated), when parsing the CSV file.
+
     gdrive_ids = {
         'distances.csv': '19Td6JafGnF8CD2H64jWCBV7k5GyFix2H',
         'locations.csv': '1FnioVF2jZuOl_St1ssLnvQgSHuEuDzvL',
@@ -65,21 +78,13 @@ class MetrLa(Dataset):
         'sensor-readings.csv': '1QZpu2GAeH6veewwF1WZXX-ErDoGxk7uF'
     }
 
+    n_readings = 34272
+
     def __init__(self, root: Optional[str], n_previous_steps: int,
                  n_future_steps: int, add_time_of_day: bool = False,
                  add_day_of_week: bool = False, normalized_k: float = .1,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None) -> None:
-        """This is a circular dependency. You need this to calculate processed
-        file names, but you need it before the call call to the "process"
-        method in the superclass. The only in-between place you could
-        effectively calculate this is before the process, so either in
-        __init__ (where you don't have access to the downloaded file
-        containing the readings, or in download, but download gets skipped
-        after the first time, so that's not reliable. Open to any
-        workarounds, but the dataset has a fixed size, so
-        this is not a deal breaker imo."""
-        self.n_readings = 34272
 
         self.io = MetrLaIo(n_readings=self.n_readings,
                            n_previous_steps=n_previous_steps,
@@ -101,16 +106,16 @@ class MetrLa(Dataset):
     def processed_file_names(self) -> str:
         r"""The name of the files in the :obj:`self.processed_dir`
         folder that must be present in order to skip processing."""
-        return [f'data_{i}.pt' for i in range(self.io.dataset_len)
-                ] + ["edge_index.pt", "edge_attributes.pt"]
+        return [f'data_{i}.pt'
+                for i in range(5)] + ["edge_index.pt", "edge_attributes.pt"]
 
     @property
-    def edge_index_file_name(self) -> str:
+    def __edge_index_file_name(self) -> str:
         r"""The name of the file containing the edge index."""
         return self.processed_file_names[-2]
 
     @property
-    def edge_attributes_file_name(self) -> str:
+    def __edge_attr_file_name(self) -> str:
         r"""The name of the file containing the edge attributes."""
         return self.processed_file_names[-1]
 
@@ -118,7 +123,7 @@ class MetrLa(Dataset):
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         for file_name, gdrive_id in self.gdrive_ids.items():
             gdd.download_file_from_google_drive(
-                file_id=gdrive_id, dest_path=Path(self.raw_dir) / file_name)
+                file_id=gdrive_id, dest_path=osp.join(self.raw_dir, file_name))
 
     def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
@@ -131,14 +136,15 @@ class MetrLa(Dataset):
 
         adjacency_matrix = torch.from_numpy(adjacency_matrix)
 
-        edge_index, edge_attributes = dense_to_sparse(adjacency_matrix)
+        edge_index, edge_attr = dense_to_sparse(adjacency_matrix)
 
-        edge_index_path = Path(self.processed_dir) / self.edge_index_file_name
-        edge_attributes_path = Path(
-            self.processed_dir) / self.edge_attributes_file_name
+        edge_index_path = osp.join(self.processed_dir,
+                                   self.__edge_index_file_name)
+        edge_attr_path = osp.join(self.processed_dir,
+                                  self.__edge_attr_file_name)
 
         torch.save(obj=edge_index, f=edge_index_path)
-        torch.save(obj=edge_attributes, f=edge_attributes_path)
+        torch.save(obj=edge_attr, f=edge_attr_path)
 
         for idx in range(self.io.dataset_len):
             # Select the "slice" among the first dimension
@@ -153,25 +159,29 @@ class MetrLa(Dataset):
             if self.pre_transform is not None:
                 data = self.pre_transform(data)
 
-            file_name = self.processed_file_names[idx]
-            torch.save(obj=data, f=Path(self.processed_dir) / file_name)
+            file_name = self.__get_file_name(idx)
+            torch.save(obj=data, f=osp.join(self.processed_dir, file_name))
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
-        return len(self.processed_file_names) - 2
+        return self.io.dataset_len
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
-        file_name = self.processed_file_names[idx]
-        edge_index = torch.load(f=Path(self.processed_dir) /
-                                self.edge_index_file_name)
-        edge_attributes = torch.load(f=Path(self.processed_dir) /
-                                     self.edge_attributes_file_name)
+        file_name = self.__get_file_name(idx)
 
-        data = torch.load(f=Path(self.processed_dir) / file_name)
-        setattr(data, 'edge_index', edge_index)
-        setattr(data, 'edge_attr', edge_attributes)
+        edge_index = torch.load(
+            f=osp.join(self.processed_dir, self.__edge_index_file_name))
+        edge_attr = torch.load(
+            f=osp.join(self.processed_dir, self.__edge_attr_file_name))
+
+        data = torch.load(f=osp.join(self.processed_dir, file_name))
+        data.edge_index = edge_index
+        data.edge_attr = edge_attr
         return data
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name.capitalize()}()'
+
+    def __get_file_name(self, idx: int) -> str:
+        return f"data_{idx}.pt"
