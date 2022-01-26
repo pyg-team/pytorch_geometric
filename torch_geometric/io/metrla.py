@@ -82,7 +82,7 @@ class MetrLaIo:
             A tuple containing the X and Y tensors.
         """
 
-        data_df = pd.read_hdf(path_or_buf=data_path)
+        data_df = pd.read_csv(filepath_or_buffer=data_path, index_col=0)
         n_readings, n_nodes = data_df.shape
 
         data = np.expand_dims(a=data_df.values, axis=-1)

@@ -62,7 +62,7 @@ class MetrLa(Dataset):
         'distances.csv': '19Td6JafGnF8CD2H64jWCBV7k5GyFix2H',
         'locations.csv': '1FnioVF2jZuOl_St1ssLnvQgSHuEuDzvL',
         'sensors.txt': '1235bXBxe4X73dJk3zwRzaIQ-8A7K_OEV',
-        'sensor-readings.h5': '1VgLjs4XB5O-IpcyZ5GAQG9sGuyxKe3Lc'
+        'sensor-readings.csv': '1QZpu2GAeH6veewwF1WZXX-ErDoGxk7uF'
     }
 
     def __init__(self, root: Optional[str], n_previous_steps: int,
