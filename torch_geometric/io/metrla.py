@@ -5,22 +5,24 @@ from typing import Tuple, Union, Optional
 
 
 class MetrLaIo:
-    """A class that encapsulates all i/o operations related to the Metr-LA dataset.
+    """A class that encapsulates i/o operations related to the Metr-LA dataset.
 
     Args:
-        n_readings: The number of readings in the dataset (not to be confunded with the dataset length).
-        n_previous_steps: The number of previous time steps to consider when building the predictor variable.
-        n_future_steps: The number of next time steps to consdier when building the target variable.
-        add_time_of_day: Whether to inject day of week information in the features.
-        add_day_of_week: Whether to inject time of day information in the features.
-        normalized_k:  The threshold for constructing the adjacency matrix based on the thresholded Gaussian kernel.
+        n_readings: The number of readings in the dataset (not to be confunded
+            with the dataset length).
+        n_previous_steps: The number of previous time steps to consider when
+            building the predictor variable.
+        n_future_steps: The number of next time steps to consdier when
+            building the target variable.
+        add_time_of_day: Whether to inject day of week information in
+            the features.
+        add_day_of_week: Whether to inject time of day information in
+            the features.
+        normalized_k:  The threshold for constructing the adjacency matrix
+            based on the thresholded Gaussian kernel.
     """
-
-    def __init__(self,
-                 n_readings: int,
-                 n_previous_steps: int,
-                 n_future_steps: int,
-                 add_time_of_day: bool = False,
+    def __init__(self, n_readings: int, n_previous_steps: int,
+                 n_future_steps: int, add_time_of_day: bool = False,
                  add_day_of_week: bool = False,
                  normalized_k: float = .1) -> None:
 
@@ -38,20 +40,20 @@ class MetrLaIo:
         self.adjacency_matrix: Optional[np.ndarray] = None
 
         self.previous_offsets = np.arange(start=-self.n_previous_steps + 1,
-                                          stop=1,
-                                          step=1)
-        self.future_offsets = np.arange(start=1,
-                                        stop=self.n_future_steps + 1,
+                                          stop=1, step=1)
+        self.future_offsets = np.arange(start=1, stop=self.n_future_steps + 1,
                                         step=1)
 
     @property
     def min_t(self):
-        """The minimum time step so that accessing the element of index min_t-n_previous_steps does not err."""
+        """The minimum time step so that accessing the element of
+        index min_t-n_previous_steps does not err."""
         return abs(min(self.previous_offsets))
 
     @property
     def max_t(self):
-        """The maximum time step so that accessing the elemnt of index max_t+n_future_steps does not err"""
+        """The maximum time step so that accessing the elemnt of
+        index max_t+n_future_steps does not err"""
         return abs(self.n_readings - abs(max(self.future_offsets)))
 
     @property
@@ -62,37 +64,41 @@ class MetrLaIo:
     def data(self):
         return self.x, self.y
 
-    def get_metrla_data(self,
-                        data_path: str) -> Tuple[np.ndarray, np.ndarray]:
+    def get_metrla_data(self, data_path: str) -> Tuple[np.ndarray, np.ndarray]:
         """
 
         Load the MetrLA data.
 
-        The returned values X (features/predictors/previous steps) and Y (target/next steps) are of shapes:
-        X(n_intervals, n_previous_steps, n_nodes, n_features), concretely (..., 207, 1).
-        Y(n_intervals, n_next_steps, n_nodes, n_features), concretely (..., 207, 1).
+        The returned values X (features/predictors/previous steps) and
+        Y (target/next steps) are of shapes:
+        X(n_intervals, n_previous_steps, n_nodes=207, n_features=1)
+        Y(n_intervals, n_next_steps, n_nodes=207, n_features=1)
 
         Args:
             data_path: The path where the readings data is stored.
 
         Returns:
             A tuple containing the X and Y tensors.
-
         """
 
         data_df = pd.read_hdf(path_or_buf=data_path)
         n_readings, n_nodes = data_df.shape
 
-        data = np.expand_dims(data_df.values, axis=-1)
+        data = np.expand_dims(a=data_df.values, axis=-1)
 
         data = [data]
         if self.add_time_of_day:
-            time_idx = (data_df.index.values - data_df.index.values.astype("datetime64[D]")) / np.timedelta(1, "D")
-            time_of_day = np.tile(time_id, [1, num_nodes, 1]).transpose((2, 1, 0))
+            time_idx = (data_df.index.values -
+                        data_df.index.values.astype("datetime64[D]")
+                        ) / np.timedelta(1, "D")
+
+            time_of_day = np.tile(time_idx, [1, n_nodes, 1]).transpose(
+                (2, 1, 0))
             data.append(time_of_day)
         if self.add_day_of_week:
             day_of_week = np.zeros(shape=(n_readings, n_nodes, 7))
-            day_of_week[np.arange(n_readings), :, data_df.index.dayofweek] = 1
+            day_of_week[np.arange(stop=n_readings), :,
+                        data_df.index.dayofweek] = 1
             data.append(day_of_week)
 
         data = np.concatenate(data, axis=-1)
@@ -103,23 +109,26 @@ class MetrLaIo:
             x.append(data[t + self.previous_offsets, ...])
             y.append(data[t + self.future_offsets, ...])
 
-        x = np.stack(x, axis=0)
-        y = np.stack(y, axis=0)
+        x = np.stack(arrays=x, axis=0)
+        y = np.stack(arrays=y, axis=0)
         return x, y
 
-    def generate_adjacency_matrix(self,
-                                  distances_path: Union[str, Path],
-                                  sensor_ids_path: Union[str, Path]) -> np.ndarray:
+    def generate_adjacency_matrix(
+            self, distances_path: Union[str, Path],
+            sensor_ids_path: Union[str, Path]) -> np.ndarray:
         """
-        Generates the adjacency matrix of a distance graph using a thresholded Gaussian filter.
-        Source: https://github.com/liyaguang/DCRNN/blob/master/scripts/gen_adj_mx.py
+        Generates the adjacency matrix of a distance graph using a
+        thresholded Gaussian filter.
+        https://github.com/liyaguang/DCRNN/blob/master/scripts/gen_adj_mx.py
 
         Args:
-            distances_path: The path to the dataframe with real-road distances between sensors, of form
-                (to, from, dist).
-            sensor_ids_path: The path to the dataframe containing the IDs of all the sensors in the METR-LA network.
+            distances_path: The path to the dataframe with real-road
+                distances between sensors, of form (to, from, dist).
+            sensor_ids_path: The path to the dataframe containing the IDs
+                of all the sensors in the METR-LA network.
 
-        Returns: A numpy array, which is the adjacency matrix generated by appling a thresholded gaussian kernel filter.
+        Returns: A numpy array, which is the adjacency matrix generated by
+            appling a thresholded gaussian kernel filter.
         """
 
         distances_df = pd.read_csv(filepath_or_buffer=distances_path)
@@ -127,8 +136,7 @@ class MetrLaIo:
 
         n_nodes = len(sensor_ids)
 
-        adjacency_matrix = np.full(shape=(n_nodes, n_nodes),
-                                   fill_value=np.inf,
+        adjacency_matrix = np.full(shape=(n_nodes, n_nodes), fill_value=np.inf,
                                    dtype=np.float32)
 
         sensor_id_to_idx = {}
@@ -139,7 +147,8 @@ class MetrLaIo:
             src, dst = int(row[0]), int(row[1])
             value = row[2]
             if src in sensor_id_to_idx and dst in sensor_id_to_idx:
-                adjacency_matrix[sensor_id_to_idx[src], sensor_id_to_idx[dst]] = value
+                adjacency_matrix[sensor_id_to_idx[src],
+                                 sensor_id_to_idx[dst]] = value
 
         distances = adjacency_matrix[~np.isinf(adjacency_matrix)].flatten()
         std = distances.std()
@@ -152,7 +161,8 @@ class MetrLaIo:
     @staticmethod
     def read_sensor_ids(path: Union[str, Path]) -> list[str]:
         """
-        Reads the sensor id's from a file containing a list of comma-separated integers.
+        Reads the sensor id's from a file containing a list of
+        comma-separated integers.
 
         Args:
             param path: The path to the file.
