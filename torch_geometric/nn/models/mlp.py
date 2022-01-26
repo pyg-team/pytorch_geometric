@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -45,10 +45,10 @@ class MLP(torch.nn.Module):
             Will override :attr:`channel_list`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         batch_norm (bool, optional): If set to :obj:`False`, will not make use
             of batch normalization. (default: :obj:`True`)
-        act (str, optional): The non-linear activation function to use.
-            (default: :obj:`"relu"`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before batch normalization. (default: :obj:`False`)
     """
@@ -61,8 +61,8 @@ class MLP(torch.nn.Module):
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
         dropout: float = 0.,
+        act: Union[str, Callable, None] = "relu",
         batch_norm: bool = True,
-        act: str = "relu",
         act_first: bool = False,
     ):
         super().__init__()
@@ -79,7 +79,7 @@ class MLP(torch.nn.Module):
         assert len(channel_list) >= 2
         self.channel_list = channel_list
         self.dropout = dropout
-        self.act = ACTS[act]
+        self.act = ACTS[act] if isinstance(act, str) else act
         self.act_first = act_first
 
         self.lins = torch.nn.ModuleList()
@@ -118,10 +118,10 @@ class MLP(torch.nn.Module):
         """"""
         x = self.lins[0](x)
         for lin, norm in zip(self.lins[1:], self.norms):
-            if self.act_first:
+            if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
-            if not self.act_first:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)

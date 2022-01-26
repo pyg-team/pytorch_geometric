@@ -10,7 +10,7 @@ class LinkHead(torch.nn.Module):
         return f'{self.__class__.__name__}()'
 
 
-class ConcatLinkHead(LinkHead):
+class MLPLinkHead(LinkHead):
     def __init__(self, in_channels: int, combine: str = "concat"):
         super().__init__()
         assert combine in ['concat', 'average', 'hadamard', 'l1', '2']
