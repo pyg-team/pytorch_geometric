@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.utils import degree
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import degree
 
 
 class OneHotDegree(BaseTransform):

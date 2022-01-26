@@ -1,9 +1,9 @@
-from typing import Any, Tuple, List, NamedTuple
+from typing import Any, List, NamedTuple, Tuple
 
 import torch
 
-from torch_geometric.profile.utils import (get_gpu_memory_from_nvidia_smi,
-                                           byte_to_megabyte)
+from torch_geometric.profile.utils import (byte_to_megabyte,
+                                           get_gpu_memory_from_nvidia_smi)
 
 
 class Stats(NamedTuple):
@@ -149,6 +149,7 @@ def get_stats_summary(stats_list: List[Stats]):
 
 def read_from_memlab(line_profiler: Any) -> List[float]:
     from pytorch_memlab.line_profiler.line_records import LineRecords
+
     # See: https://pytorch.org/docs/stable/cuda.html#torch.cuda.memory_stats
 
     track_stats = [  # Different statistic can be collected as needed.

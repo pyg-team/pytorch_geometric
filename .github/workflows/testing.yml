@@ -41,23 +41,9 @@ jobs:
           pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
 
-      - name: Install optional dependencies
-        run: |
-          pip install cython
-          pip install scikit-image
-          pip install trimesh
-          pip install pandas
-          pip install h5py
-          pip install numba
-          pip install tabulate
-          pip install matplotlib
-          # TODO: wait on numba==0.55
-          # pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
-          pip install pytorch-memlab
-
       - name: Install main package
         run: |
-          pip install -e .[test]
+          pip install -e .[full,test]
 
       - name: Run tests
         run: |

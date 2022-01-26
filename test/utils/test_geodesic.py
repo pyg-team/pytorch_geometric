@@ -1,7 +1,6 @@
 from math import sqrt
 
 import pytest
-
 import torch
 
 from torch_geometric.utils import geodesic_distance

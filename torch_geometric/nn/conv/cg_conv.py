@@ -1,11 +1,12 @@
-from typing import Union, Tuple
-from torch_geometric.typing import PairTensor, Adj, OptTensor
+from typing import Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Linear, BatchNorm1d
+from torch import Tensor
+from torch.nn import BatchNorm1d, Linear
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 
 class CGConv(MessagePassing):

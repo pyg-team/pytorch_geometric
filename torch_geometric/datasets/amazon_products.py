@@ -1,12 +1,12 @@
-from typing import Optional, Callable, List
-
 import json
 import os.path as osp
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
 import scipy.sparse as sp
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class AmazonProducts(InMemoryDataset):

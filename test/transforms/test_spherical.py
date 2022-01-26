@@ -1,8 +1,9 @@
 from math import pi as PI
 
 import torch
-from torch_geometric.transforms import Spherical
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import Spherical
 
 
 def test_spherical():

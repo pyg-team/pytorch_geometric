@@ -1,19 +1,17 @@
-from typing import Union, Tuple, List, Dict, Any, Optional, NamedTuple
-from torch_geometric.typing import NodeType, EdgeType, QueryType
-
 import copy
 import re
-from itertools import chain
+from collections import defaultdict, namedtuple
 from collections.abc import Mapping
-from collections import namedtuple, defaultdict
+from itertools import chain
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage)
+from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
+from torch_geometric.typing import EdgeType, NodeType, QueryType
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]

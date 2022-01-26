@@ -1,7 +1,7 @@
 import random
 
-import torch
 import numpy as np
+import torch
 
 from torch_geometric import seed_everything
 

@@ -1,19 +1,20 @@
 import os
 
 import torch
-import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, BatchNorm1d as BatchNorm
-import torch.multiprocessing as mp
 import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch.nn.functional as F
+from ogb.graphproppred import Evaluator
+from ogb.graphproppred import PygGraphPropPredDataset as Dataset
+from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
+from torch.nn import BatchNorm1d as BatchNorm
+from torch.nn import Linear, ReLU, Sequential
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler
 
-from torch_geometric.nn import GINEConv, global_mean_pool
-from torch_geometric.loader import DataLoader
 import torch_geometric.transforms as T
-
-from ogb.graphproppred import PygGraphPropPredDataset as Dataset, Evaluator
-from ogb.graphproppred.mol_encoder import AtomEncoder, BondEncoder
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GINEConv, global_mean_pool
 
 
 class GIN(torch.nn.Module):

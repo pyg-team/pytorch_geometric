@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import TargetIndegree
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import TargetIndegree
 
 
 def test_target_indegree():

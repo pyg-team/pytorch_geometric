@@ -1,12 +1,11 @@
-from typing import Tuple, Union, Any
-
-import os
 import gc
-import sys
-import random
+import os
 import os.path as osp
+import random
 import subprocess as sp
-from collections.abc import Sequence, Mapping
+import sys
+from collections.abc import Mapping, Sequence
+from typing import Any, Tuple, Union
 
 import torch
 from torch import Tensor
