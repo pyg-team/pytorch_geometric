@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -160,7 +160,7 @@ class MetrLaIo:
         return adjacency_matrix
 
     @staticmethod
-    def read_sensor_ids(path: Union[str, Path]) -> list[str]:
+    def read_sensor_ids(path: Union[str, Path]) -> List[str]:
         """
         Reads the sensor id's from a file containing a list of
         comma-separated integers.
