@@ -1,11 +1,12 @@
-from itertools import product
+import json
 import os
 import os.path as osp
-import json
+from itertools import product
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+import torch
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 from torch_geometric.utils import remove_self_loops
 

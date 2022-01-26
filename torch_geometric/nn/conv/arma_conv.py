@@ -1,14 +1,14 @@
 from typing import Callable, Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import nn
-from torch import Tensor
-from torch.nn import Parameter, ReLU
 import torch.nn.functional as F
+from torch import Tensor, nn
+from torch.nn import Parameter, ReLU
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 

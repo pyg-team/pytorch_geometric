@@ -1,14 +1,13 @@
-from tqdm import tqdm
-
 import torch
 import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import BAShapes
 from torch_geometric.nn import GCN, GNNExplainer
 from torch_geometric.utils import k_hop_subgraph
-import torch_geometric.transforms as T
 
 dataset = BAShapes(transform=T.GCNNorm())
 data = dataset[0]

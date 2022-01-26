@@ -1,17 +1,16 @@
-from typing import Any
-
-import os
-import shutil
+import functools
 import inspect
 import logging
-import functools
-from dataclasses import asdict
+import os
+import shutil
 from collections.abc import Iterable
+from dataclasses import asdict
+from typing import Any
 
 from yacs.config import CfgNode as CN
 
-from torch_geometric.data.makedirs import makedirs
 import torch_geometric.graphgym.register as register
+from torch_geometric.data.makedirs import makedirs
 
 # Global config object
 cfg = CN()

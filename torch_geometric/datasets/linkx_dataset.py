@@ -1,12 +1,11 @@
-from typing import Optional, Callable, List
-
 import os.path as osp
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
+import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import InMemoryDataset, download_url, Data
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class LINKXDataset(InMemoryDataset):

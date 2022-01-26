@@ -1,19 +1,18 @@
-from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
-                    Tuple, NamedTuple)
-from torch_geometric.typing import NodeType, EdgeType
-
 import copy
-import weakref
 import warnings
+import weakref
 from collections import namedtuple
-from collections.abc import Sequence, Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, coalesce
 
+from torch_geometric.data.view import ItemsView, KeysView, ValuesView
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import is_undirected
-from torch_geometric.data.view import KeysView, ValuesView, ItemsView
 
 
 class BaseStorage(MutableMapping):

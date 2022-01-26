@@ -1,17 +1,17 @@
-import sys
 import math
+import os.path as osp
 import random
 import shutil
-import os.path as osp
+import sys
 import warnings
-import pytest
 
+import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.nn import global_mean_pool
-from torch_geometric.datasets import TUDataset, Planetoid, DBLP
 from torch_geometric.data import LightningDataset, LightningNodeData
+from torch_geometric.datasets import DBLP, Planetoid, TUDataset
+from torch_geometric.nn import global_mean_pool
 
 try:
     from pytorch_lightning import LightningModule

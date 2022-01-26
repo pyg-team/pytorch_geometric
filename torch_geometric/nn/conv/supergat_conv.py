@@ -1,19 +1,18 @@
-from typing import Optional
-from torch_geometric.typing import OptTensor
-
 import math
+from typing import Optional
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import (remove_self_loops, add_self_loops, softmax,
-                                   is_undirected, negative_sampling,
-                                   batched_negative_sampling, to_undirected,
-                                   dropout_adj)
+from torch_geometric.typing import OptTensor
+from torch_geometric.utils import (add_self_loops, batched_negative_sampling,
+                                   dropout_adj, is_undirected,
+                                   negative_sampling, remove_self_loops,
+                                   softmax, to_undirected)
 
 from ..inits import glorot, zeros
 

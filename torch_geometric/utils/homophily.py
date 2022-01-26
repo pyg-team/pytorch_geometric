@@ -1,10 +1,11 @@
 from typing import Union
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 from torch_scatter import scatter_mean
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import Adj, OptTensor
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,

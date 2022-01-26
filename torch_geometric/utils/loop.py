@@ -1,9 +1,10 @@
 from typing import Optional, Tuple, Union
-from torch_geometric.typing import OptTensor
 
 import torch
 from torch import Tensor
 from torch_scatter import scatter
+
+from torch_geometric.typing import OptTensor
 
 from .num_nodes import maybe_num_nodes
 
