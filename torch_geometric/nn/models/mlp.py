@@ -51,21 +51,21 @@ class MLP(torch.nn.Module):
         norm (str, optional): The normalization operator to use.
             (default: :obj:`"batch"`)
         act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before batch normalization. (default: :obj:`False`)
+            applied before normalization. (default: :obj:`False`)
     """
     def __init__(
-        self,
-        channel_list: Optional[Union[List[int], int]] = None,
-        *,
-        in_channels: Optional[int] = None,
-        hidden_channels: Optional[int] = None,
-        out_channels: Optional[int] = None,
-        num_layers: Optional[int] = None,
-        dropout: float = 0.,
-        act: Union[str, Callable, None] = "relu",
-        norm: Optional[str] = "batch",
-        act_first: bool = False,
-        batch_norm: bool = True,
+            self,
+            channel_list: Optional[Union[List[int], int]] = None,
+            *,
+            in_channels: Optional[int] = None,
+            hidden_channels: Optional[int] = None,
+            out_channels: Optional[int] = None,
+            num_layers: Optional[int] = None,
+            dropout: float = 0.,
+            act: Union[str, Callable, None] = "relu",
+            norm: Optional[str] = "batch",
+            act_first: bool = False,
+            batch_norm: bool = True,  # TODO: deprecated
     ):
         super().__init__()
 
