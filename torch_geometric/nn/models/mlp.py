@@ -10,7 +10,7 @@ from torch_geometric.nn.dense.linear import Linear
 
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
-    There exists two ways to create an :class:`MLP`:
+    There exists two ways to instantiate an :class:`MLP`:
 
     1. By specifying explicit channel sizes, *e.g.*,
 
