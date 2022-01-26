@@ -11,7 +11,7 @@ from torch_geometric.utils.sparse import dense_to_sparse
 
 class MetrLa(Dataset):
     r"""The Los Angeles Metropolitan (MetrLA) highway traffic dataset
-    introducted in  the`"Big Data and its Technical Challenges"
+    introducted in  the `"Big Data and its Technical Challenges"
     <http://citeseerx.ist.psu.edu/viewdoc/download
     ?doi=10.1.1.681.7248&rep=rep1&type=pdf>`_
     paper.
@@ -28,10 +28,8 @@ class MetrLa(Dataset):
 
     The initial adjacency matrix is constructed by applying a thresholded
     Gaussian kernel over the real-world distances between the sensors:
-
     .. math::`W_{ij} = exp(-\frac{dist(v_{i}, v_{j})^2}{\sigma^{2}}),
-        \text{if} dist(v_{i}, v_{j}) >= K, \text{otherwise} 0`,
-    Where K is a
+    \text{if} dist(v_{i}, v_{j}) >= K, \text{otherwise} 0`, Where K is a
     pre-fixed threshold, and dist(, ) is the real-world road distance
     between two sensors, and :math:`\sigma^{2}` is the variance of the
     distances between sensors. A zero-value in the adjacency matrix does
