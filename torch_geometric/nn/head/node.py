@@ -2,7 +2,15 @@ import torch
 from torch import Tensor
 
 
-class IdentityNodeHead(torch.nn.Module):
+class NodeHead(torch.nn.Module):
+    def forward(self, x: Tensor) -> Tensor:
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
+
+
+class IdentityNodeHead(NodeHead):
     def __init__(self):
         super().__init__()
 
@@ -11,7 +19,7 @@ class IdentityNodeHead(torch.nn.Module):
         return x
 
 
-class MLPNodeHead(torch.nn.Module):
+class MLPNodeHead(NodeHead):
     def __init__(
         self,
         in_channels,
