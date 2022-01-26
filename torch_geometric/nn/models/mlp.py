@@ -3,11 +3,11 @@ from typing import Callable, List, Optional, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import BatchNorm1d, Identity
+from torch.nn import Identity
 
+from torch_geometric.nn.act import ACTS
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.models.act import ACTS
-from torch_geometric.nn.models.norm import NORMS
+from torch_geometric.nn.norm import NORMS
 
 
 class MLP(torch.nn.Module):
@@ -65,8 +65,12 @@ class MLP(torch.nn.Module):
         act: Union[str, Callable, None] = "relu",
         norm: Optional[str] = "batch",
         act_first: bool = False,
+        batch_norm: bool = True,
     ):
         super().__init__()
+
+        if batch_norm is False and norm == "batch":
+            norm = None
 
         if not isinstance(channel_list, (tuple, list)):
             in_channels = channel_list
@@ -87,11 +91,9 @@ class MLP(torch.nn.Module):
         for dims in zip(channel_list[:-1], channel_list[1:]):
             self.lins.append(Linear(*dims))
 
-        self.norms = None
-        if norm is not None:
-            self.norms = torch.nn.ModuleList()
-            for dim in zip(channel_list[1:-1]):
-                self.norms.append(NORMS[norm](dim))
+        self.norms = torch.nn.ModuleList()
+        for dim in zip(channel_list[1:-1]):
+            self.norms.append(NORMS[norm](dim) if norm else Identity())
 
         self.reset_parameters()
 
@@ -113,21 +115,21 @@ class MLP(torch.nn.Module):
     def reset_parameters(self):
         for lin in self.lins:
             lin.reset_parameters()
-        for norm in self.norms or []:
-            norm.reset_parameters()
+        for norm in self.norms:
+            if hasattr(norm, 'reset_parameters'):
+                norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
         x = self.lins[0](x)
-        for i in range(self.num_layers):
+        for lin, norm in zip(self.lins[1:], self.norms):
             if self.act is not None and self.act_first:
                 x = self.act(x)
-            if self.norms is not None:
-                x = self.norms[i](x)
+            x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
-            x = self.lins[i + 1](x)
+            x = lin.forward(x)
         return x
 
     def __repr__(self) -> str:

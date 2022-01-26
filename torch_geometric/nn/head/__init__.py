@@ -1,11 +1,11 @@
 from .node import IdentityNodeHead, MLPNodeHead
-from .link import ConcatLinkHead, InnerProductLinkHead
+from .link import MLPLinkHead, InnerProductLinkHead
 from .graph import MLPGraphHead
 
 __all__ = [
     'IdentityNodeHead',
     'MLPNodeHead',
-    'ConcatLinkHead',
+    'MLPLinkHead',
     'InnerProductLinkHead',
     'MLPGraphHead',
 ]
