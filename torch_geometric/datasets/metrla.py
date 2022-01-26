@@ -1,12 +1,11 @@
-from typing import Optional, Callable
-
 from pathlib import Path
+from typing import Callable, Optional
 
 import torch
-from torch_geometric.data import Data, Dataset
 from google_drive_downloader import GoogleDriveDownloader as gdd
+
+from torch_geometric.data import Data, Dataset
 from torch_geometric.io.metrla import MetrLaIo
-from typing import Optional
 from torch_geometric.utils.sparse import dense_to_sparse
 
 
