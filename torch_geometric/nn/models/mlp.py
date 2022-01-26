@@ -34,11 +34,11 @@ class MLP(torch.nn.Module):
         channel_list (List[int] or int, optional): List of input, intermediate
             and output channels. :obj:`len(channel_list) - 1` denotes the
             number of layers of the MLP (default: :obj:`None`)
-        in_channels (int): Size of each input sample.
+        in_channels (int, optional): Size of each input sample.
             Will override :attr:`channel_list`. (default: :obj:`None`)
-        hidden_channels (int): Size of each hidden sample.
+        hidden_channels (int, optional): Size of each hidden sample.
             Will override :attr:`channel_list`. (default: :obj:`None`)
-        out_channels (int): Size of each output sample.
+        out_channels (int, optional): Size of each output sample.
             Will override :attr:`channel_list`. (default: :obj:`None`)
         num_layers (int, optional): The number of layers.
             Will override :attr:`channel_list`. (default: :obj:`None`)
