@@ -116,8 +116,8 @@ class BasicGNN(torch.nn.Module):
     def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
         """"""
         xs: List[Tensor] = []
-        for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index, *args, **kwargs)
+        for i in range(self.num_layers):
+            x = self.convs[i](x, edge_index, *args, **kwargs)
             if (i == self.num_layers - 1 and self.has_out_channels
                     and self.jk_mode == 'last'):
                 break
@@ -227,7 +227,7 @@ class GIN(BasicGNN):
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
-        mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
+        mlp = MLP([in_channels, out_channels, out_channels], norm='batch')
         return GINConv(mlp, **kwargs)
 
 
