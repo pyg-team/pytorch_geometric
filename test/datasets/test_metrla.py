@@ -8,6 +8,7 @@ def test_metrla() -> None:
     n_previous_steps = 6
     n_future_steps = 6
 
+    print("This may take a couple of minutes...")
     dataset = MetrLa(root=root, n_previous_steps=n_previous_steps,
                      n_future_steps=n_future_steps)
 
