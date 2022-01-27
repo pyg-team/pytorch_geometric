@@ -102,7 +102,6 @@ class MetrLaIo:
             data.append(day_of_week)
 
         data = np.concatenate(data, axis=-1)
-        print(len(data))
         x, y = [], []
 
         for t in range(self.min_t, self.max_t):
