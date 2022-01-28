@@ -63,7 +63,7 @@ class MLP(torch.nn.Module):
     ):
         super().__init__()
 
-        if not isinstance(channel_list, (tuple, list)):
+        if isinstance(channel_list, int):
             in_channels = channel_list
 
         if in_channels is not None:
