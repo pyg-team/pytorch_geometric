@@ -26,7 +26,7 @@ class RootedSubgraphs(BaseTransform):
         self.q = q
         self.repeat = repeat
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         subgraphs_nodes_mask, subgraphs_edges_mask, hop_indicator_dense = extract_subgraphs(
             data.edge_index, data.num_nodes, self.num_hops, self.walk_length,
             self.p, self.q, self.repeat)
