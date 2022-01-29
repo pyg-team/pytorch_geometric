@@ -18,7 +18,7 @@ class RootedSubgraphs(BaseTransform):
         q (float, optional): parameters of node2vec's random walk.
         repeat (int, optional): times of repeating the random walk to reduce randomness. 
     """
-    def __init__(self, hops, walk_length=0, p=1, q=1, repeat=1):
+    def __init__(self, hops: int, walk_length: int=0, p: float=1., q: float=1., repeat: int=1):
         super().__init__()
         self.num_hops = hops
         self.walk_length = walk_length
