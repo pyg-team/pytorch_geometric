@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import torch
 from google_drive_downloader import GoogleDriveDownloader as gdd
@@ -176,6 +176,19 @@ class MetrLa(Dataset):
         data.edge_index = edge_index
         data.edge_attr = edge_attr
         return data
+
+    def get_adjacency_matrix(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Returns the graph's adjacency matrix in sparse COO format.
+
+        Returns: A tuple consisting of the index and attributes of the edges
+        in COO format.
+        """
+        edge_index = torch.load(
+            f=osp.join(self.processed_dir, self.__edge_index_file_name))
+        edge_attr = torch.load(
+            f=osp.join(self.processed_dir, self.__edge_attr_file_name))
+        return edge_index, edge_attr
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{self.name.capitalize()}()'
