@@ -24,8 +24,13 @@ class VarMisuse(Dataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        split (int, optional): Split of the data from either `train`, `valid`
-            or `test` (default: :str:`train`)
+        name (string): The name of the dataset (:obj:`"CS"`,
+            :obj:`"Physics"`).
+        split (string, optional): If :obj:`"train"`, loads the training
+            dataset.
+            If :obj:`"valid"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset.
+            (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
