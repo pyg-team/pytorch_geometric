@@ -1,11 +1,12 @@
-from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, Size
+from typing import Tuple, Union
 
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, Size
 
 
 class SAGEConv(MessagePassing):

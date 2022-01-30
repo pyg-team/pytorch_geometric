@@ -1,13 +1,14 @@
-from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
+from typing import Tuple, Union
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
-from ..inits import zeros, glorot
+from ..inits import glorot, zeros
 
 
 class GMMConv(MessagePassing):

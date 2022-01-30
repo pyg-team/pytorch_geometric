@@ -1,9 +1,10 @@
 import os.path as osp
 
 import torch
+
+import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.utils import degree
-import torch_geometric.transforms as T
 
 
 class NormalizedDegree(object):

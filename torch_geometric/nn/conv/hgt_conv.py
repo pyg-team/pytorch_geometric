@@ -1,17 +1,17 @@
-from typing import Union, Dict, Optional, List
-from torch_geometric.typing import NodeType, EdgeType, Metadata
-
 import math
+from typing import Dict, List, Optional, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Parameter
 from torch_sparse import SparseTensor
-from torch_geometric.nn.dense import Linear
-from torch_geometric.utils import softmax
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
+from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.utils import softmax
 
 
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:

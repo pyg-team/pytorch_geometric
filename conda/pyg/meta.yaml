@@ -11,7 +11,6 @@ requirements:
     - python {{ environ.get('PYTHON_VERSION') }}
 
   run:
-  run:
     - python {{ environ.get('PYTHON_VERSION') }}
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}

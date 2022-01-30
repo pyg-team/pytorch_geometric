@@ -1,5 +1,9 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
+
 from torch_geometric.utils import softmax
 
 
@@ -27,8 +31,17 @@ class Set2Set(torch.nn.Module):
             :obj:`num_layers=2` would mean stacking two LSTMs together to form
             a stacked LSTM, with the second LSTM taking in outputs of the first
             LSTM and computing the final results. (default: :obj:`1`)
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
+        - **output:**
+          graph features :math:`(|\mathcal{G}|, 2 * F)` where
+          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
-    def __init__(self, in_channels, processing_steps, num_layers=1):
+    def __init__(self, in_channels: int, processing_steps: int,
+                 num_layers: int = 1):
         super().__init__()
 
         self.in_channels = in_channels
@@ -44,20 +57,31 @@ class Set2Set(torch.nn.Module):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x, batch):
-        """"""
-        batch_size = batch.max().item() + 1
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                size: Optional[int] = None) -> Tensor:
+        r"""
+        Args:
+            x (Tensor): The input node features.
+            batch (LongTensor, optional): A vector that maps each node to its
+                respective graph identifier. (default: :obj:`None`)
+            size (int, optional): The number of graphs in the batch.
+                (default: :obj:`None`)
+        """
+        if batch is None:
+            batch = x.new_zeros(x.size(0), dtype=torch.int64)
 
-        h = (x.new_zeros((self.num_layers, batch_size, self.in_channels)),
-             x.new_zeros((self.num_layers, batch_size, self.in_channels)))
-        q_star = x.new_zeros(batch_size, self.out_channels)
+        size = int(batch.max()) + 1 if size is None else size
+
+        h = (x.new_zeros((self.num_layers, size, self.in_channels)),
+             x.new_zeros((self.num_layers, size, self.in_channels)))
+        q_star = x.new_zeros(size, self.out_channels)
 
         for _ in range(self.processing_steps):
             q, h = self.lstm(q_star.unsqueeze(0), h)
-            q = q.view(batch_size, self.in_channels)
+            q = q.view(size, self.in_channels)
             e = (x * q.index_select(0, batch)).sum(dim=-1, keepdim=True)
-            a = softmax(e, batch, num_nodes=batch_size)
-            r = scatter_add(a * x, batch, dim=0, dim_size=batch_size)
+            a = softmax(e, batch, num_nodes=size)
+            r = scatter_add(a * x, batch, dim=0, dim_size=size)
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star

@@ -310,7 +310,13 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
 
 .. code-block:: python
 
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import OGB_MAG
     from torch_geometric.nn import HeteroConv, GCNConv, SAGEConv, GATConv, Linear
+
+
+    dataset = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())
+    data = dataset[0]
 
     class HeteroGNN(torch.nn.Module):
         def __init__(self, hidden_channels, out_channels, num_layers):
@@ -353,7 +359,13 @@ These operators can be directly used to build heterogeneous GNN models as can be
 
 .. code-block:: python
 
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import OGB_MAG
     from torch_geometric.nn import HGTConv, Linear
+
+
+    dataset = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())
+    data = dataset[0]
 
     class HGT(torch.nn.Module):
         def __init__(self, hidden_channels, out_channels, num_heads, num_layers):

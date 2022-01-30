@@ -1,7 +1,6 @@
-from typing import Optional
-
 import os
 import os.path as osp
+from typing import Optional
 
 ENV_PYG_HOME = 'PYG_HOME'
 DEFAULT_CACHE_DIR = osp.join('~', '.cache', 'pyg')

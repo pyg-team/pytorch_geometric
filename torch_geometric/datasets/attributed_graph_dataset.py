@@ -1,13 +1,13 @@
-from typing import Optional, Callable, List
-
 import os
-import shutil
 import os.path as osp
+import shutil
+from typing import Callable, List, Optional
 
-import torch
 import scipy.sparse as sp
+import torch
 from torch_sparse import SparseTensor
-from torch_geometric.data import InMemoryDataset, Data, extract_zip
+
+from torch_geometric.data import Data, InMemoryDataset, extract_zip
 
 
 class AttributedGraphDataset(InMemoryDataset):

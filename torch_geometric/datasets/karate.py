@@ -1,6 +1,9 @@
-import torch
+from typing import Callable, Optional
+
 import numpy as np
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class KarateClub(InMemoryDataset):
@@ -34,7 +37,7 @@ class KarateClub(InMemoryDataset):
               - 34
               - 4
     """
-    def __init__(self, transform=None):
+    def __init__(self, transform: Optional[Callable] = None):
         super().__init__('.', transform)
 
         import networkx as nx

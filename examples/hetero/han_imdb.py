@@ -1,13 +1,13 @@
-from typing import Union, Dict, List
 import os.path as osp
+from typing import Dict, List, Union
 
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import HANConv
-import torch_geometric.transforms as T
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
 metapaths = [[('movie', 'actor'), ('actor', 'movie')],

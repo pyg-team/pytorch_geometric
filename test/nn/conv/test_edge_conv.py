@@ -1,7 +1,10 @@
 import torch
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
-from torch_geometric.nn import EdgeConv, DynamicEdgeConv
+
+from torch_geometric.nn import DynamicEdgeConv, EdgeConv
 
 
 def test_edge_conv_conv():
@@ -86,3 +89,5 @@ def test_dynamic_edge_conv_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2)).tolist() == out21.tolist()
     assert jit((x1, x2), (batch1, batch2)).tolist() == out22.tolist()
+
+    torch.jit.script(conv.jittable())  # Test without explicit typing.

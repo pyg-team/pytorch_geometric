@@ -1,19 +1,19 @@
-from typing import Dict, List, Tuple, Optional
-from torch_geometric.typing import NodeType, EdgeType
+from typing import Dict, List, Optional, Tuple
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torchmetrics import Accuracy
-from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import LightningDataModule, LightningModule, Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
+from torch import Tensor
+from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
-from torch_geometric.data import Batch
 from torch_geometric import seed_everything
+from torch_geometric.data import Batch
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import SAGEConv, Linear, to_hetero
+from torch_geometric.nn import Linear, SAGEConv, to_hetero
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class DataModule(LightningDataModule):

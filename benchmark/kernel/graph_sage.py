@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import SAGEConv, global_mean_pool, JumpingKnowledge
+
+from torch_geometric.nn import JumpingKnowledge, SAGEConv, global_mean_pool
 
 
 class GraphSAGE(torch.nn.Module):

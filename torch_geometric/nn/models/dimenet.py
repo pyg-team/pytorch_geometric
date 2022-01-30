@@ -1,17 +1,18 @@
-from typing import Callable
-
 import os
 import os.path as osp
-from math import sqrt, pi as PI
+from math import pi as PI
+from math import sqrt
+from typing import Callable
 
 import numpy as np
 import torch
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-from torch_geometric.nn import radius_graph
+
+from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.data import download_url, Dataset
+from torch_geometric.nn import radius_graph
 
 from ..acts import swish
 from ..inits import glorot_orthogonal
@@ -70,6 +71,7 @@ class SphericalBasisLayer(torch.nn.Module):
                  envelope_exponent=5):
         super().__init__()
         import sympy as sym
+
         from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
                                                              real_sph_harm)
 

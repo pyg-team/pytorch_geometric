@@ -1,6 +1,6 @@
 name: Building PyG Conda
 
-on: [workflow_dispatch]
+on: [workflow_dispatch]  # yamllint disable-line rule:truthy
 
 jobs:
 

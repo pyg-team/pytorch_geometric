@@ -1,19 +1,18 @@
-from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
-                    NamedTuple, Callable)
-from torch_geometric.typing import OptTensor, NodeType, EdgeType
-from torch_geometric.deprecation import deprecated
-
 import copy
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
-import torch
 import numpy as np
+import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
+                                          GlobalStorage, NodeStorage)
+from torch_geometric.deprecation import deprecated
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import subgraph
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage, GlobalStorage)
 
 
 class BaseData(object):

@@ -1,9 +1,10 @@
-import pickle
 import os.path as osp
+import pickle
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url)
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class MixHopSyntheticDataset(InMemoryDataset):

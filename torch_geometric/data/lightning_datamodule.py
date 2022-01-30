@@ -1,16 +1,14 @@
-from typing import Optional, Union
-
 import warnings
+from typing import Optional, Union
 
 import torch
 
-from torch_geometric.typing import InputNodes
-from torch_geometric.data import Data, HeteroData, Dataset
-
+from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.neighbor_loader import (NeighborSampler,
-                                                    NeighborLoader,
+from torch_geometric.loader.neighbor_loader import (NeighborLoader,
+                                                    NeighborSampler,
                                                     get_input_node_type)
+from torch_geometric.typing import InputNodes
 
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
@@ -50,8 +48,8 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
-        from pytorch_lightning.plugins import SingleDevicePlugin
-        from pytorch_lightning.plugins import DDPSpawnPlugin
+        from pytorch_lightning.plugins import (DDPSpawnPlugin,
+                                               SingleDevicePlugin)
         plugin = self.trainer.training_type_plugin
         if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
             raise NotImplementedError(

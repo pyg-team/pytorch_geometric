@@ -1,7 +1,8 @@
 from typing import List, Set
-from torch_geometric.typing import NodeType, EdgeType
 
 import torch
+
+from torch_geometric.typing import EdgeType, NodeType
 
 from .num_nodes import maybe_num_nodes_dict
 
