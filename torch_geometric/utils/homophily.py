@@ -48,6 +48,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       .. math::
         h_k = \frac{\sum_{u \in C_k}d_u^{(k_u)}}{\sum_{u \in C_k}d_u}
 
+      That measure is called the *class insensitive edge homophily ratio*
+
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
@@ -55,10 +57,10 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
             each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
-            either :obj:`"edge"` (first formula) or :obj:`"node"`
-            (second formula). (default: :obj:`"edge"`)
+            either :obj:`"edge"` (first formula), :obj:`"node"`
+            (second formula) or `"edge-insensitive"`. (default: :obj:`"edge"`)
     """
-    assert method in ['edge', 'node']
+    assert method in ['edge', 'node', 'edge-insensitive']
     y = y.squeeze(-1) if y.dim() > 1 else y
 
     if isinstance(edge_index, SparseTensor):
