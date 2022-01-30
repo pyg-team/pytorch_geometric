@@ -37,6 +37,17 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
       That measure is called the *node homophily ratio*.
 
+    - In the "Large-scale learning on non-homophilous graphs: \
+      New benchmarks and strong simple methods" paper, the class insensitive 
+      homophily metric better captures the presence or absence of homophily:
+
+      .. math::
+        \text{homophily} = \frac{1}{C-1}\sum_{k=0}^{C-1}\begin{bmatrix}
+        {h_k - \frac{\lvert C_k \rvert}{n}}\end{bmatrix}_+,
+        
+      .. math::
+        h_k = \frac{\sum_{u \in C_k}d_u^{(k_u)}}{\sum_{u \in C_k}d_u}
+
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
@@ -63,7 +74,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         else:
             return scatter_mean(out, batch[col], dim=0)
 
-    else:
+    elif method == 'node':
         out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
@@ -71,3 +82,19 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             return float(out.mean())
         else:
             return scatter_mean(out, batch, dim=0)
+
+    else:
+        c = y.squeeze().max() + 1
+        nonzero_labels = y[y >= 0]
+        counts = nonzero_labels.unique(return_counts=True)[1]
+        proportions = counts.float() / nonzero_labels.shape[0]
+        h = homophily(edge_index, y, batch=y, method='edge')
+
+        out = 0
+        for k in range(c):
+            class_add = torch.clamp(h[k] - proportions[k], min=0)
+            if not torch.isnan(class_add):
+                out += class_add
+
+        out /= c - 1
+        return out
