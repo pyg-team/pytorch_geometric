@@ -74,6 +74,7 @@ from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
+from .var_misuse import VarMisuse
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -157,6 +158,7 @@ __all__ = [
     'RandomPartitionGraphDataset',
     'LINKXDataset',
     'EllipticBitcoinDataset',
+    'VarMisuse',
 ]
 
 classes = __all__
