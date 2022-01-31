@@ -48,7 +48,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       .. math::
         h_k = \frac{\sum_{u \in C_k}d_u^{(k_u)}}{\sum_{u \in C_k}d_u}
 
-      That measure is called the *class insensitive edge homophily ratio*
+      That measure is called the *class insensitive edge homophily ratio*.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
