@@ -8,9 +8,8 @@ from torch_geometric.data import Data, Dataset, download_url, extract_gz
 
 
 class VarMisuse(Dataset):
-    r"""The VarMisuse dataset from the `"Learning to Represent Programs "
-    with Graphs. <https://arxiv.org/abs/1
-    711.00740>`_ paper, consisting of
+    r"""The VarMisuse dataset from the `"Learning to Represent Programs
+    with Graphs." <https://arxiv.org/abs/1711.00740>`_ paper, consisting of
     code from files from different open source projects represented as
     graphs for learning to identify misuse of variable and naming of
     variables.
