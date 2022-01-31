@@ -6,6 +6,7 @@ import torch
 
 from torch_geometric.data import Data, Dataset, download_url, extract_gz
 
+
 class VarMisuse(Dataset):
     r"""The VarMisuse dataset from the `"Learning to Represent Programs "
     with Graphs. <https://arxiv.org/abs/1
@@ -49,8 +50,10 @@ class VarMisuse(Dataset):
 
     BACKWARD_EDGE_TYPE_NAME_SUFFIX = "_Bkwd"
 
-    graph_edge_types_vocab = [edge_type_name + BACKWARD_EDGE_TYPE_NAME_SUFFIX
-                              for edge_type_name in graph_edge_types]
+    graph_edge_types_vocab = [
+        edge_type_name + BACKWARD_EDGE_TYPE_NAME_SUFFIX
+        for edge_type_name in graph_edge_types
+    ]
 
     def __init__(self, root: str, split='train',
                  transform: Optional[Callable] = None,
@@ -119,11 +122,9 @@ class VarMisuse(Dataset):
                             e_type_bkwd]
 
                         fwd_edges = torch.tensor(
-                            e_type_edges,
-                            dtype=torch.int32).t().contiguous()
-                        fwd_edge_type = torch.tensor([e_type_idx] *
-                                                     fwd_edges.size(1),
-                                                     dtype=torch.int8)
+                            e_type_edges, dtype=torch.int32).t().contiguous()
+                        fwd_edge_type = torch.tensor(
+                            [e_type_idx] * fwd_edges.size(1), dtype=torch.int8)
                         bkwd_edges = torch.flip(fwd_edges, [0])
                         bkwd_edge_type = torch.tensor([e_type_bkwd_idx] *
                                                       bkwd_edges.size(1),
@@ -143,11 +144,10 @@ class VarMisuse(Dataset):
                 for (node, label) in node_labels.items():
                     node_labels[int(node)] = label
 
-                data = Data(
-                    edge_index=edge_index, edge_type=edge_type,
-                    node_labels=node_labels, slot_node_id=slot_node_id,
-                    correct_candidate_id=correct_candidate_id,
-                    distractor_candidate_ids=distractor_candidate_ids)
+                data = Data(edge_index=edge_index, edge_type=edge_type,
+                            node_labels=node_labels, slot_node_id=slot_node_id,
+                            correct_candidate_id=correct_candidate_id,
+                            distractor_candidate_ids=distractor_candidate_ids)
 
                 data_list.append(data)
 
