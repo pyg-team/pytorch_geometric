@@ -47,6 +47,9 @@ class VarMisuse(Dataset):
         "ReturnsTo"
     ]
 
+    graph_edge_types_map = {edge_type_name: idx
+                            for idx, edge_type_name in enumerate(graph_edge_types)}
+
     def __init__(self, root: str, split: str = 'train',
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -108,7 +111,7 @@ class VarMisuse(Dataset):
                 raw_edges = raw_sample['ContextGraph']['Edges']
                 for e_type, e_type_edges in raw_edges.items():
                     if len(e_type_edges) > 0:
-                        e_type_idx = self.graph_edge_types[e_type] * 2
+                        e_type_idx = self.graph_edge_types_map[e_type] * 2
                         e_type_bkwd_idx = (e_type_idx * 2) + 1
 
                         fwd_edges = torch.tensor(
@@ -130,8 +133,8 @@ class VarMisuse(Dataset):
 
                 num_nodes = len(raw_sample['ContextGraph']['NodeLabels'])
                 node_labels = [""] * num_nodes
-                node_labels = raw_sample['ContextGraph']['NodeLabels']
-                for (node, label) in node_labels.items():
+                raw_node_labels = raw_sample['ContextGraph']['NodeLabels']
+                for (node, label) in raw_node_labels.items():
                     node_labels[int(node)] = label
 
                 data = Data(edge_index=edge_index, edge_type=edge_type,
