@@ -84,9 +84,9 @@ class VarMisuse(Dataset):
 
     def process(self):
         for idx, raw_path in enumerate(self.raw_paths):
-            self.process_path(self.raw_paths[idx])
+            self.process_path(self.raw_paths[idx], self.processed_paths[idx])
 
-    def process_path(self, raw_path):
+    def process_path(self, raw_path, processed_path):
         with open(raw_path, 'r') as f:
             graphs_json = f.read().split('\n')[:-1]
             data_list = []
@@ -156,7 +156,7 @@ class VarMisuse(Dataset):
 
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(d) for d in data_list]
-            torch.save(data_list, self.processed_paths[idx])
+            torch.save(data_list, processed_path)
 
     def len(self):
         return len(self.processed_file_names) * 100
