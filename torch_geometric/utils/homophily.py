@@ -58,7 +58,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
             either :obj:`"edge"` (first formula), :obj:`"node"`
-            (second formula) or `"edge-insensitive"`. (default: :obj:`"edge"`)
+            (second formula) or :obj:`"edge-insensitive"` (third formula). (default: :obj:`"edge"`)
     """
     assert method in ['edge', 'node', 'edge-insensitive']
     y = y.squeeze(-1) if y.dim() > 1 else y
