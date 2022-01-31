@@ -51,7 +51,7 @@ class VarMisuse(Dataset):
     BACKWARD_EDGE_TYPE_NAME_SUFFIX = "_Bkwd"
 
     graph_edge_types_vocab = [
-        edge_type_name + BACKWARD_EDGE_TYPE_NAME_SUFFIX
+        edge_type_name + self.BACKWARD_EDGE_TYPE_NAME_SUFFIX
         for edge_type_name in graph_edge_types
     ]
 
