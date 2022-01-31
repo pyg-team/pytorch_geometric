@@ -48,16 +48,10 @@ class VarMisuse(Dataset):
         "ReturnsTo"
     ]
 
-    BACKWARD_EDGE_TYPE_NAME_SUFFIX = "_Bkwd"
-
-    graph_edge_types_vocab = [
-        edge_type_name + self.BACKWARD_EDGE_TYPE_NAME_SUFFIX
-        for edge_type_name in graph_edge_types
-    ]
-
-    def __init__(self, root: str, split='train',
+    def __init__(self, root: str, split:str ='train',
                  transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None, pre_filter=None):
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         self.split = split
         super().__init__(root, transform, pre_transform, pre_filter)
 
@@ -115,11 +109,8 @@ class VarMisuse(Dataset):
                 raw_edges = raw_sample['ContextGraph']['Edges']
                 for e_type, e_type_edges in raw_edges.items():
                     if len(e_type_edges) > 0:
-                        e_type_bkwd = (e_type +
-                                       self.BACKWARD_EDGE_TYPE_NAME_SUFFIX)
-                        e_type_idx = self.graph_edge_types_vocab[e_type]
-                        e_type_bkwd_idx = self.graph_edge_types_vocab[
-                            e_type_bkwd]
+                        e_type_idx = self.graph_edge_types[e_type] * 2
+                        e_type_bkwd_idx = (e_type_idx * 2) + 1
 
                         fwd_edges = torch.tensor(
                             e_type_edges, dtype=torch.int32).t().contiguous()
