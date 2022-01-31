@@ -47,8 +47,10 @@ class VarMisuse(Dataset):
         "ReturnsTo"
     ]
 
-    graph_edge_types_map = {edge_type_name: idx
-                            for idx, edge_type_name in enumerate(graph_edge_types)}
+    graph_edge_types_map = {
+        edge_type_name: idx
+        for idx, edge_type_name in enumerate(graph_edge_types)
+    }
 
     def __init__(self, root: str, split: str = 'train',
                  transform: Optional[Callable] = None,
