@@ -37,16 +37,22 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
       That measure is called the *node homophily ratio*.
 
-    - In the "Large-scale learning on non-homophilous graphs: \
-      New benchmarks and strong simple methods" paper, the class insensitive 
-      homophily metric better captures the presence or absence of homophily:
+    - In the `"Large-scale learning on non-homophilous graphs: \
+      New benchmarks and strong simple methods"
+      <https://arxiv.org/abs/2110.14446v1>`_ paper, the class
+      insensitive homophily metric better captures the presence or
+      absence of homophily:
 
       .. math::
         \text{homophily} = \frac{1}{C-1}\sum_{k=0}^{C-1}\begin{bmatrix}
         {h_k - \frac{\lvert C_k \rvert}{n}}\end{bmatrix}_+,
-        
       .. math::
         h_k = \frac{\sum_{u \in C_k}d_u^{(k_u)}}{\sum_{u \in C_k}d_u}
+
+      where :math:`C_k` is the number of samples of class :math:`k`,
+      :math:`d_u` is the number of neighbors of node :math:`u`,
+      and :math:`d^{(k_u)}_u` is the number of neighbors of u that have
+      the same class label.
 
       That measure is called the *class insensitive edge homophily ratio*.
 
@@ -58,7 +64,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
             either :obj:`"edge"` (first formula), :obj:`"node"`
-            (second formula) or :obj:`"edge-insensitive"` (third formula). (default: :obj:`"edge"`)
+            (second formula) or :obj:`"edge-insensitive"`
+             (third formula). (default: :obj:`"edge"`)
     """
     assert method in ['edge', 'node', 'edge-insensitive']
     y = y.squeeze(-1) if y.dim() > 1 else y
@@ -87,9 +94,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
     else:
         c = y.squeeze().max() + 1
-        nonzero_labels = y[y >= 0]
-        counts = nonzero_labels.unique(return_counts=True)[1]
-        proportions = counts.float() / nonzero_labels.shape[0]
+        counts = y.unique(return_counts=True)[1]
+        proportions = counts.float() / y.shape[0]
         h = homophily(edge_index, y, batch=y, method='edge')
 
         out = 0
