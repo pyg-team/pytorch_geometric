@@ -1,33 +1,37 @@
 import os.path as osp
+from typing import Callable, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
+from torch import Tensor
+from torch.nn import BatchNorm1d as BN
 from torch.nn import Identity
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+from torch_cluster import fps, knn_graph
+from torch_scatter import scatter_max
+from torch_sparse import SparseTensor, set_diag
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import S3DIS
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import intersection_and_union as i_and_u
-from torch_geometric.nn.unpool import knn_interpolate
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.pool import knn
+from torch_geometric.nn.unpool import knn_interpolate
+from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import intersection_and_union as i_and_u
+from torch_geometric.utils import remove_self_loops, softmax
+
 #from torch_geometric.nn.conv import PointTransformerConv
 
-from torch_cluster import knn_graph
-from torch_cluster import fps
-from torch_scatter import scatter_max
 
-from typing import Union, Tuple, Callable, Optional
-from torch_geometric.typing import PairTensor, Adj, OptTensor
 
-from torch import Tensor
-from torch_sparse import SparseTensor, set_diag
 
-from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
-from torch_geometric.nn.inits import reset
 
 
 class PointTransformerConv(MessagePassing):
@@ -98,9 +102,9 @@ class PointTransformerConv(MessagePassing):
             self.pos_nn = Linear(3, out_channels)
 
         self.attn_nn = attn_nn
-        self.lin = Linear(in_channels[0], out_channels)#, bias=False)
-        self.lin_src = Linear(in_channels[0], out_channels)#, bias=False)
-        self.lin_dst = Linear(in_channels[1], out_channels)#, bias=False)
+        self.lin = Linear(in_channels[0], out_channels)  #, bias=False)
+        self.lin_src = Linear(in_channels[0], out_channels)  #, bias=False)
+        self.lin_dst = Linear(in_channels[1], out_channels)  #, bias=False)
 
         self.reset_parameters()
 
@@ -150,12 +154,13 @@ class PointTransformerConv(MessagePassing):
         if self.attn_nn is not None:
             alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index, ptr, size_i)
-        return (alpha.unsqueeze(1) * (x_j + delta).view(-1, self.share_planes, x_j.shape[1] // self.share_planes)).view(-1,x_j.shape[1])
+        return (alpha.unsqueeze(1) * (x_j + delta).view(
+            -1, self.share_planes, x_j.shape[1] // self.share_planes)).view(
+                -1, x_j.shape[1])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels})')
-
 
 
 class TransformerBlock(torch.nn.Module):
