@@ -1,6 +1,6 @@
-import re
-import inspect
 import importlib
+import inspect
+import re
 
 
 def paper_title(cls: str) -> str:

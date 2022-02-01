@@ -1,4 +1,4 @@
-from typing import Callable, Any, Iterator
+from typing import Any, Callable, Iterator
 
 from torch.utils.data.dataloader import DataLoader, _BaseDataLoaderIter
 

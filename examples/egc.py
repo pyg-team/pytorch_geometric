@@ -3,14 +3,15 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential, ReLU, Linear, BatchNorm1d
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from ogb.graphproppred import Evaluator
+from ogb.graphproppred import PygGraphPropPredDataset as OGBG
 from ogb.graphproppred.mol_encoder import AtomEncoder
-from ogb.graphproppred import PygGraphPropPredDataset as OGBG, Evaluator
+from torch.nn import BatchNorm1d, Linear, ReLU, Sequential
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from torch_geometric.nn import EGConv, global_mean_pool
-from torch_geometric.loader import DataLoader
 import torch_geometric.transforms as T
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import EGConv, global_mean_pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_multi_aggregators', action='store_true',

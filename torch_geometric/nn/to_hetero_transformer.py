@@ -1,18 +1,17 @@
-from typing import Tuple, Dict, Union, Optional, Any
-from torch_geometric.typing import NodeType, EdgeType, Metadata
-
 import copy
 import warnings
 from collections import defaultdict, deque
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer
+from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
-    from torch.fx import GraphModule, Graph, Node
+    from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
@@ -328,4 +327,4 @@ class ToHeteroTransformer(Transformer):
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
-    return key.replace(' ', '_')
+    return key.replace(' ', '_').replace('-', '_').replace(':', '_')

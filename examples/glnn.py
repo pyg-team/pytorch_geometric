@@ -6,9 +6,10 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCN, MLP
 from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import GCN, MLP
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--lamb', type=float, default=0.0,

@@ -1,8 +1,9 @@
 from copy import copy
 
 import torch
-from torch_geometric.transforms import FixedPoints
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import FixedPoints
 
 
 def test_fixed_points():

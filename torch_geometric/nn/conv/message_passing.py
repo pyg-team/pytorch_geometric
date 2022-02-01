@@ -1,27 +1,27 @@
-from typing import List, Optional, Set, Callable, get_type_hints
-from torch_geometric.typing import Adj, Size
-
-import os
-import re
 import inspect
+import os
 import os.path as osp
-from uuid import uuid1
-from itertools import chain
-from inspect import Parameter
+import re
 from collections import OrderedDict
+from inspect import Parameter
+from itertools import chain
+from typing import Callable, List, Optional, Set, get_type_hints
+from uuid import uuid1
 
 import torch
-from torch import Tensor
 from jinja2 import Template
+from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import Adj, Size
 
 from .utils.helpers import expand_left
+from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
-from .utils.typing import (sanitize, split_types_repr, parse_types,
-                           resolve_types)
-from .utils.inspector import Inspector, func_header_repr, func_body_repr
+from .utils.typing import (parse_types, resolve_types, sanitize,
+                           split_types_repr)
 
 
 class MessagePassing(torch.nn.Module):
@@ -187,7 +187,7 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
-                dim = 0 if arg[-2:] == '_j' else 1
+                dim = j if arg[-2:] == '_j' else i
                 data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
@@ -198,8 +198,7 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, Tensor):
                     self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index,
-                                         j if arg[-2:] == '_j' else i)
+                    data = self.__lift__(data, edge_index, dim)
 
                 out[arg] = data
 

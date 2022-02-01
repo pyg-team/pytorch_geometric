@@ -1,8 +1,8 @@
 import pytest
-
 import torch
-from torch_geometric.nn import GraphMultisetTransformer
-from torch_geometric.nn import GraphConv, GCNConv, GATConv
+
+from torch_geometric.nn import (GATConv, GCNConv, GraphConv,
+                                GraphMultisetTransformer)
 
 
 @pytest.mark.parametrize('layer_norm', [False, True])

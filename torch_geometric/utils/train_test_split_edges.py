@@ -2,8 +2,8 @@ import math
 
 import torch
 
-from torch_geometric.utils import to_undirected
 from torch_geometric.deprecation import deprecated
+from torch_geometric.utils import to_undirected
 
 
 @deprecated("use 'transforms.RandomLinkSplit' instead")

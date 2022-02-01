@@ -1,14 +1,14 @@
 from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding
-import torch.nn.functional as F
 
-from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear, HeteroLinear
+from torch_geometric.nn.dense.linear import HeteroLinear, Linear
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import softmax
 
 
 class HEATConv(MessagePassing):

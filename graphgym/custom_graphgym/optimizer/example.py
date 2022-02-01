@@ -1,7 +1,7 @@
 from typing import Iterator
 
 from torch.nn import Parameter
-from torch.optim import Optimizer, Adagrad
+from torch.optim import Adagrad, Optimizer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import torch_geometric.graphgym.register as register

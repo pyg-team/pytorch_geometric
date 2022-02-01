@@ -1,10 +1,10 @@
-from typing import Union, Tuple
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from typing import Tuple, Union
 
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 
 class LEConv(MessagePassing):

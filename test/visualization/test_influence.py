@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.datasets import KarateClub
 from torch_geometric.nn import GCNConv
 from torch_geometric.visualization import influence
