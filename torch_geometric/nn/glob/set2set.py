@@ -36,8 +36,7 @@ class Set2Set(torch.nn.Module):
         - **input:**
           node features :math:`(|\mathcal{V}|, F)`,
           batch vector :math:`(|\mathcal{V}|)` *(optional)*
-        - **output:**
-          graph features :math:`(|\mathcal{G}|, 2 * F)` where
+        - **output:** graph features :math:`(|\mathcal{G}|, 2 * F)` where
           :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(self, in_channels: int, processing_steps: int,

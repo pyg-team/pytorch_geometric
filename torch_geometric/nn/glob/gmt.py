@@ -10,8 +10,7 @@ from torch_geometric.utils import to_dense_batch
 
 
 class MAB(torch.nn.Module):
-    r"""Multihead Attention Block
-    """
+    r"""Multihead-Attention Block."""
     def __init__(self, dim_Q: int, dim_K: int, dim_V: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -90,8 +89,7 @@ class MAB(torch.nn.Module):
 
 
 class SAB(torch.nn.Module):
-    r"""Self Attention Block
-    """
+    r"""Self-Attention Block."""
     def __init__(self, in_channels: int, out_channels: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -111,8 +109,7 @@ class SAB(torch.nn.Module):
 
 
 class PMA(torch.nn.Module):
-    r"""graph Pooling with Multi-head Attention
-    """
+    r"""Graph pooling with Multihead-Attention."""
     def __init__(self, channels: int, num_heads: int, num_seeds: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
         super().__init__()
@@ -176,11 +173,11 @@ class GraphMultisetTransformer(torch.nn.Module):
 
     Shapes:
         - **input:**
-          node features :math:`(|\mathcal{V}|, F)`,
+          node features :math:`(|\mathcal{V}|, F_{in})`,
           batch vector :math:`(|\mathcal{V}|)`,
           edge indices :math:`(2, |\mathcal{E}|)` *(optional)*
-        - **output:**
-          batch-wise graph level features :math:`(|\mathcal{G}|, out\_channels)`
+        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` where
+          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(
         self,
