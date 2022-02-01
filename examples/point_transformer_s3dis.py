@@ -11,11 +11,151 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.utils import intersection_and_union as i_and_u
 from torch_geometric.nn.unpool import knn_interpolate
 from torch_geometric.nn.pool import knn
-from torch_geometric.nn.conv import PointTransformerConv
+#from torch_geometric.nn.conv import PointTransformerConv
 
 from torch_cluster import knn_graph
 from torch_cluster import fps
 from torch_scatter import scatter_max
+
+from typing import Union, Tuple, Callable, Optional
+from torch_geometric.typing import PairTensor, Adj, OptTensor
+
+from torch import Tensor
+from torch_sparse import SparseTensor, set_diag
+
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+
+from torch_geometric.nn.inits import reset
+
+
+class PointTransformerConv(MessagePassing):
+    r"""The Point Transformer layer from the `"Point Transformer"
+    <https://arxiv.org/abs/2012.09164>`_ paper
+
+    .. math::
+        \mathbf{x}^{\prime}_i =  \sum_{j \in
+        \mathcal{N}(i) \cup \{ i \}} \alpha_{i,j} \left(\mathbf{W}_3
+        \mathbf{x}_j + \delta_{ij} \right),
+
+    where the attention coefficients :math:`\alpha_{i,j}` and
+    positional embedding :math:`\delta_{ij}` are computed as
+
+    .. math::
+        \alpha_{i,j}= \textrm{softmax} \left( \gamma_\mathbf{\Theta}
+        (\mathbf{W}_1 \mathbf{x}_i - \mathbf{W}_2 \mathbf{x}_j +
+        \delta_{i,j}) \right)
+
+    and
+
+    .. math::
+        \delta_{i,j}= h_{\mathbf{\Theta}}(\mathbf{p}_i - \mathbf{p}_j),
+
+    with :math:`\gamma_\mathbf{\Theta}` and :math:`h_\mathbf{\Theta}`
+    denoting neural networks, *i.e.* MLPs, and
+    :math:`\mathbf{P} \in \mathbb{R}^{N \times D}` defines the position of
+    each point.
+
+    Args:
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
+        out_channels (int): Size of each output sample.
+        pos_nn : (torch.nn.Module, optional): A neural network
+            :math:`h_\mathbf{\Theta}` which maps relative spatial coordinates
+            :obj:`pos_j - pos_i` of shape :obj:`[-1, 3]` to shape
+            :obj:`[-1, out_channels]`.
+            Will default to a :class:`torch.nn.Linear` transformation if not
+            further specified. (default: :obj:`None`)
+        attn_nn : (torch.nn.Module, optional): A neural network
+            :math:`\gamma_\mathbf{\Theta}` which maps transformed
+            node features of shape :obj:`[-1, out_channels]`
+            to shape :obj:`[-1, out_channels]`. (default: :obj:`None`)
+        add_self_loops (bool, optional) : If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
+    """
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, pos_nn: Optional[Callable] = None,
+                 attn_nn: Optional[Callable] = None,
+                 add_self_loops: bool = True, share_planes: int = 8, **kwargs):
+        kwargs.setdefault('aggr', 'mean')
+        super().__init__(**kwargs)
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.add_self_loops = add_self_loops
+        self.share_planes = share_planes
+
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
+        self.pos_nn = pos_nn
+        if self.pos_nn is None:
+            self.pos_nn = Linear(3, out_channels)
+
+        self.attn_nn = attn_nn
+        self.lin = Linear(in_channels[0], out_channels)#, bias=False)
+        self.lin_src = Linear(in_channels[0], out_channels)#, bias=False)
+        self.lin_dst = Linear(in_channels[1], out_channels)#, bias=False)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        reset(self.pos_nn)
+        if self.attn_nn is not None:
+            reset(self.attn_nn)
+        self.lin.reset_parameters()
+        self.lin_src.reset_parameters()
+        self.lin_dst.reset_parameters()
+
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        pos: Union[Tensor, PairTensor],
+        edge_index: Adj,
+    ) -> Tensor:
+        """"""
+        if isinstance(x, Tensor):
+            alpha = (self.lin_src(x), self.lin_dst(x))
+            x: PairTensor = (self.lin(x), x)
+        else:
+            alpha = (self.lin_src(x[0]), self.lin_dst(x[1]))
+            x = (self.lin(x[0]), x[1])
+
+        if isinstance(pos, Tensor):
+            pos: PairTensor = (pos, pos)
+
+        if self.add_self_loops:
+            if isinstance(edge_index, Tensor):
+                edge_index, _ = remove_self_loops(edge_index)
+                edge_index, _ = add_self_loops(
+                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = set_diag(edge_index)
+
+        # propagate_type: (x: PairTensor, pos: PairTensor, alpha: PairTensor)
+        out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha, size=None)
+        return out
+
+    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
+                alpha_i: Tensor, alpha_j: Tensor, index: Tensor,
+                ptr: OptTensor, size_i: Optional[int]) -> Tensor:
+
+        delta = self.pos_nn(pos_i - pos_j)
+        alpha = alpha_i - alpha_j + delta
+        if self.attn_nn is not None:
+            alpha = self.attn_nn(alpha)
+        alpha = softmax(alpha, index, ptr, size_i)
+        return (alpha.unsqueeze(1) * (x_j + delta).view(-1, self.share_planes, x_j.shape[1] // self.share_planes)).view(-1,x_j.shape[1])
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')
+
 
 
 class TransformerBlock(torch.nn.Module):
@@ -28,7 +168,7 @@ class TransformerBlock(torch.nn.Module):
 
         self.attn_nn = Seq(
             BN(out_channels), ReLU(), MLP([out_channels, out_channels // 8]),
-            Lin(out_channels // 8, out_channels)
+            Lin(out_channels // 8, out_channels // 8)
             # NB : last should be // 8 according to original code, but custom
             # implementation makes it impossible at the moment
         )
@@ -71,12 +211,14 @@ class TransitionDown(torch.nn.Module):
         # beware of self loop
         id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
                             batch_y=sub_batch)
+        relative_pos = pos[id_k_neighbor[1]] - pos[id_k_neighbor[0]]
+        grouped_x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
 
         # transformation of features through a simple MLP
-        x = self.mlp(torch.cat([pos, x], axis=1))
+        x = self.mlp(grouped_x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
+        x_out, _ = scatter_max(x, id_k_neighbor[0],
                                dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
@@ -136,7 +278,7 @@ class Net(torch.nn.Module):
         in_channels = max(in_channels, 1)
 
         # first block
-        self.mlp_input = MLP([in_channels, dim_model[0]])
+        self.mlp_input = MLP([in_channels, dim_model[0]], bias=False)
 
         self.transformer_input = TransformerBlock(
             in_channels=dim_model[0],
