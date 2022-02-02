@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data.collate import collate
-from torch_geometric.data.data import BaseData
+from torch_geometric.data.data import BaseData, Data
 from torch_geometric.data.dataset import IndexType
 from torch_geometric.data.separate import separate
 
@@ -17,7 +17,7 @@ class DynamicInheritance(type):
     # * `Batch(Data)` in case `Data` objects are batched together
     # * `Batch(HeteroData)` in case `HeteroData` objects are batched together
     def __call__(cls, *args, **kwargs):
-        base_cls = kwargs.pop('_base_cls', BaseData)
+        base_cls = kwargs.pop('_base_cls', Data)
 
         if issubclass(base_cls, Batch):
             new_cls = base_cls
