@@ -51,7 +51,7 @@ class RootedSubgraphsData(Data):
 class RootedSubgraphs(BaseTransform):
     r"""
     Base class for rooted subgraphs.
-    The object transform a Data object to RootedSubgraphsData object. 
+    The object transforms a Data object to RootedSubgraphsData object. 
     """
     def __init__(self):
         super().__init__()
