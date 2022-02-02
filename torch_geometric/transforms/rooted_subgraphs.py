@@ -13,7 +13,7 @@ class RootedSubgraphsData(Data):
     Additional Properties:
         subgraphs_nodes_mapper (LongTensor): map each node in rooted subgraphs to a node in the original graph.
             Size: :math:'\sum_{i=1}^{N}N_i x 1'
-        subgraphs_edges_mapper (LongTensor): map each edge in rotted subgraphs to a edge in the original graph.
+        subgraphs_edges_mapper (LongTensor): map each edge in rooted subgraphs to a edge in the original graph.
             Size: :math:'\sum_{i=1}^{N}M_i x 1'
         subgraphs_batch: map each node in rooted subgraphs to its corresponding rooted subgraph index. 
             Size: :math:'\sum_{i=1}^{N}N_i x 1'
