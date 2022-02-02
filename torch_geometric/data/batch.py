@@ -7,7 +7,7 @@ import torch
 import numpy as np
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.collate import collate
 from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import IndexType
@@ -18,7 +18,7 @@ class DynamicInheritance(type):
     # * `Batch(Data)` in case `Data` objects are batched together
     # * `Batch(HeteroData)` in case `HeteroData` objects are batched together
     def __call__(cls, *args, **kwargs):
-        base_cls = kwargs.pop('_base_cls', Data)
+        base_cls = kwargs.pop('_base_cls', BaseData)
 
         if issubclass(base_cls, Batch):
             new_cls = base_cls
@@ -55,7 +55,7 @@ class Batch(metaclass=DynamicInheritance):
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
     @classmethod
-    def from_data_list(cls, data_list: Union[List[Data], List[HeteroData]],
+    def from_data_list(cls, data_list: List[BaseData],
                        follow_batch: Optional[List[str]] = None,
                        exclude_keys: Optional[List[str]] = None):
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
@@ -81,7 +81,7 @@ class Batch(metaclass=DynamicInheritance):
 
         return batch
 
-    def get_example(self, idx: int) -> Union[Data, HeteroData]:
+    def get_example(self, idx: int) -> BaseData:
         r"""Gets the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object at index :obj:`idx`.
         The :class:`~torch_geometric.data.Batch` object must have been created
@@ -105,7 +105,7 @@ class Batch(metaclass=DynamicInheritance):
         return data
 
     def index_select(self,
-                     idx: IndexType) -> Union[List[Data], List[HeteroData]]:
+                     idx: IndexType) -> List[BaseData]:
         r"""Creates a subset of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects from specified
         indices :obj:`idx`.
@@ -153,7 +153,7 @@ class Batch(metaclass=DynamicInheritance):
         else:
             return self.index_select(idx)
 
-    def to_data_list(self) -> Union[List[Data], List[HeteroData]]:
+    def to_data_list(self) -> List[BaseData]:
         r"""Reconstructs the list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects from the
         :class:`~torch_geometric.data.Batch` object.

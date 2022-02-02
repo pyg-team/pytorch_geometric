@@ -118,11 +118,12 @@ class TemporalData(BaseData):
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        data = copy.copy(self)
-        for key, item in data:
-            if item.size(0) == self.num_events:
+        data = {}
+        num_events = self.num_events
+        for key, item in self:
+            if item.size(0) == num_events:
                 data[key] = item[prepared_idx]
-        return data
+        return TemporalData(**data)
 
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
@@ -232,34 +233,12 @@ class TemporalData(BaseData):
         return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'batch' in key:
-            return int(value.max()) + 1
-        elif key in ['src', 'dst']:
-            return self.num_nodes
-        else:
-            return 0
+        return 0
 
     def __repr__(self) -> str:
         cls = self.__class__.__name__
         info = ', '.join([size_repr(k, v) for k, v in self._store.items()])
         return f'{cls}({info})'
-
-    ###########################################################################
-
-    def train_val_test_split(self, val_ratio: float = 0.15,
-                             test_ratio: float = 0.15):
-        val_time, test_time = np.quantile(
-            self.t.cpu().numpy(),
-            [1. - val_ratio - test_ratio, 1. - test_ratio])
-
-        val_idx = int((self.t <= val_time).sum())
-        test_idx = int((self.t <= test_time).sum())
-
-        return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
-
-    def seq_batches(self, batch_size: int):
-        for start in range(0, self.num_events, batch_size):
-            yield self[start:start + batch_size]
 
     ###########################################################################
 
