@@ -52,8 +52,10 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       where :math:`C_k` is the number of samples of class :math:`k`,
       :math:`d_u` is the number of neighbors of node :math:`u`,
       and :math:`d^{(k_u)}_u` is the number of neighbors of u that have
-      the same class label. That measure is called the *class
-      insensitive edge homophily ratio*.
+      the same class label. 
+      
+      That measure is called the *class insensitive edge homophily
+      ratio*.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
