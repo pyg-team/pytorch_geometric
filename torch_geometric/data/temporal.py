@@ -2,7 +2,6 @@ import copy
 from typing import (Any, Dict, Iterable, List, NamedTuple, Optional, Tuple,
                     Union)
 
-import numpy as np
 import torch
 from torch import Tensor
 
