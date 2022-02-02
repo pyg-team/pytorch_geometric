@@ -34,7 +34,7 @@ class VarMisuse(Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-    url = ('https://github.com/amitamb-ml/'
+    url = ('https://github.com/amitamb/'
            'varmisuse-data/raw/main/graphs-{}/{}.jsonl.gz')
 
     windows_count = {'train': 20, 'valid': 4, 'test': 4}
