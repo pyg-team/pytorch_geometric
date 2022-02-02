@@ -6,7 +6,7 @@ from torch_geometric.data import InMemoryDataset
 
 
 class TemporalDataset(InMemoryDataset):
-    r"""Dataset base class for creating temporal graph datasets which easily 
+    r"""Dataset base class for creating temporal graph datasets which easily
     fit into CPU memory.
     Inherits from :class:`torch_geometric.data.InMemoryDataset`.
 
@@ -24,10 +24,9 @@ class TemporalDataset(InMemoryDataset):
 
         Args:
             val_ratio (float, optional): The proportion (in percents) of the
-                dataset to include in the validation split. (default: 
-                :float:`0.15`)
+                dataset to include in the validation split. (default: `0.15`)
             test_ratio (float, optional): The proportion (in percents) of the
-                dataset to include in the test split. (default: :float:`0.15`)
+                dataset to include in the test split. (default: `0.15`)
         """
         val_time, test_time = np.quantile(
             self.data.t.cpu().numpy(),

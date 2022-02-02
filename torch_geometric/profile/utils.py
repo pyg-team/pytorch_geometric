@@ -5,7 +5,7 @@ import random
 import subprocess as sp
 import sys
 from collections.abc import Mapping, Sequence
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 import torch
 from torch import Tensor
