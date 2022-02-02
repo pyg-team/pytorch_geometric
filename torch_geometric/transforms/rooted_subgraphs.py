@@ -5,7 +5,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_sparse import SparseTensor
 
 class RootedSubgraphsData(Data):
-    r""" A data object describing a homogeneous graph with recording each node's rooted subgraph. 
+    r""" A data object describing a homogeneous graph together with each node's rooted subgraph. 
     It contains several additional propreties that hold the information of all nodes' rooted subgraphs.
     Assume the data represents a graph with :math:'N' nodes and :math:'M' edges, also each node 
     :math:'i\in \[N\]' has a rooted subgraph with :math:'N_i' nodes and :math:'M_i' edges.
