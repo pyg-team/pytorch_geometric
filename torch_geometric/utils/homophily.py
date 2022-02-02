@@ -52,20 +52,19 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       where :math:`C_k` is the number of samples of class :math:`k`,
       :math:`d_u` is the number of neighbors of node :math:`u`,
       and :math:`d^{(k_u)}_u` is the number of neighbors of u that have
-      the same class label.
-
-      That measure is called the *class insensitive edge homophily ratio*.
+      the same class label. That measure is called the *class
+      insensitive edge homophily ratio*.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
         batch (LongTensor, optional): Batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
-            each node to a specific example. (default: :obj:`None`)
+        :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
+        each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
-            either :obj:`"edge"` (first formula), :obj:`"node"`
-            (second formula) or :obj:`"edge-insensitive"`
-             (third formula). (default: :obj:`"edge"`)
+        either :obj:`"edge"` (first formula), :obj:`"node"`
+        (second formula) or :obj:`"edge-insensitive"`
+        (third formula). (default: :obj:`"edge"`)
     """
     assert method in ['edge', 'node', 'edge-insensitive']
     y = y.squeeze(-1) if y.dim() > 1 else y
