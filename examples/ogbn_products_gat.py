@@ -4,9 +4,10 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch.nn import Linear as Lin
 from tqdm import tqdm
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
+
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import GATConv
 

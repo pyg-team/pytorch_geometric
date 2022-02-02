@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import ToSparseTensor
+
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.transforms import ToSparseTensor
 
 
 def test_to_sparse_tensor():

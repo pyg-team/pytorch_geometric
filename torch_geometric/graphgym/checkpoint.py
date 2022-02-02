@@ -1,8 +1,7 @@
-from typing import List, Dict, Optional, Union, Any
-
-import os
 import glob
+import os
 import os.path as osp
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 

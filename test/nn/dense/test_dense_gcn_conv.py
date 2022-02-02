@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.nn import GCNConv, DenseGCNConv
+
+from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 def test_dense_gcn_conv():

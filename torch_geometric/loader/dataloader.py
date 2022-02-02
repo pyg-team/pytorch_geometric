@@ -1,6 +1,5 @@
-from typing import Union, List, Optional
-
 from collections.abc import Mapping, Sequence
+from typing import List, Optional, Union
 
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate

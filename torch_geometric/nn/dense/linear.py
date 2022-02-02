@@ -1,12 +1,10 @@
-from typing import Optional
-
 import copy
 import math
+from typing import Optional
 
 import torch
-from torch import nn
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
@@ -37,6 +35,10 @@ class Linear(torch.nn.Module):
             (:obj:`"zeros"` or :obj:`None`).
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
+
+    Shapes:
+        - **input:** features :math:`(*, F_{in})`
+        - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
                  weight_initializer: Optional[str] = None,
@@ -105,7 +107,10 @@ class Linear(torch.nn.Module):
                                f"'{self.bias_initializer}' is not supported")
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (Tensor): The features.
+        """
         return F.linear(x, self.weight, self.bias)
 
     @torch.no_grad()
@@ -167,6 +172,12 @@ class HeteroLinear(torch.nn.Module):
         num_types (int): The number of types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
+
+    Shapes:
+        - **input:**
+          features :math:`(*, F_{in})`,
+          type vector :math:`(*)`
+        - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
                  **kwargs):
@@ -187,7 +198,11 @@ class HeteroLinear(torch.nn.Module):
             lin.reset_parameters()
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (Tensor): The input features.
+            type_vec (LongTensor): A vector that maps each entry to a type.
+        """
         out = x.new_empty(x.size(0), self.out_channels)
         for i, lin in enumerate(self.lins):
             mask = type_vec == i

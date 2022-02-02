@@ -1,12 +1,11 @@
-from typing import Optional, Callable
-
 import os.path as osp
+from typing import Callable, Optional
 
-import torch
 import numpy as np
-
+import torch
 from torch_sparse import coalesce
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class WikipediaNetwork(InMemoryDataset):

@@ -1,16 +1,15 @@
-from typing import Union, List, Dict, Callable, Optional, Any
-from torch_geometric.typing import EdgeType, InputNodes
-
 from collections.abc import Sequence
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.base import BaseDataLoader
-from torch_geometric.loader.utils import edge_type_to_str
-from torch_geometric.loader.utils import to_csc, to_hetero_csc
-from torch_geometric.loader.utils import filter_data, filter_hetero_data
+from torch_geometric.loader.utils import (edge_type_to_str, filter_data,
+                                          filter_hetero_data, to_csc,
+                                          to_hetero_csc)
+from torch_geometric.typing import EdgeType, InputNodes
 
 NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
 

@@ -1,6 +1,6 @@
+import errno
 import os
 import os.path as osp
-import errno
 
 
 def makedirs(path: str):

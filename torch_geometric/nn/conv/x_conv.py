@@ -1,11 +1,14 @@
-from typing import Optional
-
 from math import ceil
+from typing import Optional
 
 import torch
 from torch import Tensor
-from torch.nn import Sequential as S, Linear as L, BatchNorm1d as BN
-from torch.nn import ELU, Conv1d
+from torch.nn import ELU
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Conv1d
+from torch.nn import Linear as L
+from torch.nn import Sequential as S
+
 from torch_geometric.nn import Reshape
 
 from ..inits import reset

@@ -3,9 +3,9 @@ from typing import Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import to_undirected
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import to_undirected
 
 
 class ToUndirected(BaseTransform):

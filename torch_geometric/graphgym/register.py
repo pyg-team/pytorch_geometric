@@ -1,4 +1,4 @@
-from typing import Dict, Any, Union, Callable
+from typing import Any, Callable, Dict, Union
 
 act_dict: Dict[str, Any] = {}
 node_encoder_dict: Dict[str, Any] = {}

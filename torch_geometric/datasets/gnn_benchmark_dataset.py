@@ -1,13 +1,13 @@
-from typing import Optional, Callable, List
-
+import logging
 import os
 import os.path as osp
 import pickle
-import logging
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
-                                  Data)
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 from torch_geometric.utils import remove_self_loops
 
 

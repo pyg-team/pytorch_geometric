@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import ShapeNet
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, DynamicEdgeConv
 from torch_geometric.utils import intersection_and_union as i_and_u
