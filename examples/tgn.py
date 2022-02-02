@@ -97,6 +97,7 @@ criterion = torch.nn.BCEWithLogitsLoss()
 # Helper vector to map global node indices to local ones.
 assoc = torch.empty(data.num_nodes, dtype=torch.long, device=device)
 
+
 def train():
     memory.train()
     gnn.train()
@@ -122,8 +123,8 @@ def train():
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, edge_index, 
-                data.t[e_id].to(device), data.msg[e_id].to(device))
+        z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
+                data.msg[e_id].to(device))
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -164,8 +165,8 @@ def test(inference_data_loader):
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, edge_index, 
-                data.t[e_id].to(device), data.msg[e_id].to(device))
+        z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
+                data.msg[e_id].to(device))
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])

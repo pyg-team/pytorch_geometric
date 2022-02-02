@@ -1,7 +1,8 @@
 import os.path as osp
 
 import torch
-from torch_geometric.data import TemporalDataset, TemporalData, download_url
+
+from torch_geometric.data import TemporalData, TemporalDataset, download_url
 
 
 class JODIEDataset(TemporalDataset):

@@ -1,5 +1,7 @@
 import copy
+
 import numpy as np
+
 from torch_geometric.data import InMemoryDataset
 
 
@@ -11,12 +13,11 @@ class TemporalDataset(InMemoryDataset):
     To create a temporal graph please inherits from this class. An example
     can be seem in :class:`torch_geometric.dataset.JODIEDataset`.
     """
-
     def _get_partial_dataset(self, idx):
         dataset = copy.copy(self)
         dataset.data = self.data[idx]
         return dataset
-    
+
     def train_val_test_split(self, val_ratio=0.15, test_ratio=0.15):
         r"""Split the dataset in 3 parts new datasets: training, validation
         and test.
@@ -34,7 +35,7 @@ class TemporalDataset(InMemoryDataset):
 
         val_idx = int((self.data.t <= val_time).sum())
         test_idx = int((self.data.t <= test_time).sum())
-        
+
         train = self._get_partial_dataset(slice(None, val_idx, None))
         val = self._get_partial_dataset(slice(val_idx, test_idx, None))
         test = self._get_partial_dataset(slice(test_idx, None, None))

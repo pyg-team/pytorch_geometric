@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.data.data import BaseData
 from torch_geometric.data.collate import collate
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import IndexType
 from torch_geometric.data.separate import separate
 
@@ -103,8 +103,7 @@ class Batch(metaclass=DynamicInheritance):
 
         return data
 
-    def index_select(self,
-                     idx: IndexType) -> List[BaseData]:
+    def index_select(self, idx: IndexType) -> List[BaseData]:
         r"""Creates a subset of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects from specified
         indices :obj:`idx`.

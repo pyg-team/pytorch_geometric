@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
 
-from torch_geometric.data import Dataset, Batch
+from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
 
 
