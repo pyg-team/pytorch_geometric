@@ -19,6 +19,7 @@ from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
+from .explainer import to_captum
 
 __all__ = [
     'MLP',
@@ -50,6 +51,7 @@ __all__ = [
     'RECT_L',
     'LINKX',
     'LightGCN',
+    'to_captum',
 ]
 
 classes = __all__
