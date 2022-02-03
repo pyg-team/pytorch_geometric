@@ -1,3 +1,6 @@
+import os
+import os.path as osp
+import sys
 from itertools import product
 
 import pytest
@@ -89,3 +92,35 @@ def test_pna(out_dim, dropout, act, norm, jk):
                 scalers=scalers, deg=deg)
     assert str(model) == f'PNA(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
+
+
+# There exists a Python 3.6 pickling bug:
+# >>> pickle.PicklingError: Can't pickle typing.Union[torch.Tensor, NoneType]:
+# >>> it's not the same object as typing.Union
+# The easiest way to avoid this is to upgrade to at least Python 3.7
+@pytest.mark.skipif(sys.version_info.minor < 7, reason='Pickle requires Py3.7')
+def test_packaging():
+    os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
+
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    model = GraphSAGE(8, 16, num_layers=2)
+    path = osp.join(torch.hub._get_torch_home(), 'model.pt')
+    torch.save(model, path)
+
+    model = torch.load(path)
+    with torch.no_grad():
+        assert model(x, edge_index).size() == (3, 16)
+
+    model = GraphSAGE(8, 16, num_layers=2)
+    path = osp.join(torch.hub._get_torch_home(), 'package.pt')
+    with torch.package.PackageExporter(path) as pe:
+        pe.extern('torch_geometric.nn.**')
+        pe.extern('_operator')
+        pe.save_pickle('models', 'model.pkl', model)
+
+    pi = torch.package.PackageImporter(path)
+    model = pi.load_pickle('models', 'model.pkl')
+    with torch.no_grad():
+        assert model(x, edge_index).size() == (3, 16)
