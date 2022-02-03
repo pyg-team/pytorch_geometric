@@ -106,7 +106,7 @@ def test_packaging():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
     model = GraphSAGE(8, 16, num_layers=2)
-    path = osp.join(torch.hub._get_torch_home(), 'model.pt')
+    path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
     model = torch.load(path)
@@ -114,7 +114,7 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
     model = GraphSAGE(8, 16, num_layers=2)
-    path = osp.join(torch.hub._get_torch_home(), 'package.pt')
+    path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
         pe.extern('_operator')
