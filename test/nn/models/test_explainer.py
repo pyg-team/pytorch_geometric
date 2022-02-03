@@ -1,43 +1,17 @@
 import pytest
 import torch
-import torch.nn.functional as F
 
-from torch_geometric.nn import GATConv, GCNConv, to_captum
+from torch_geometric.nn import GAT, GCN, to_captum
 
-
-# TODO: Use same as in GNNExplainer Test
-class GCN(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = GCNConv(3, 16)
-        self.conv2 = GCNConv(16, 7)
-
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = self.conv2(x, edge_index)
-        return x.log_softmax(dim=1)
-
-
-class GAT(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = GATConv(3, 16, heads=2, concat=True)
-        self.conv2 = GATConv(2 * 16, 7, heads=2, concat=False)
-
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = self.conv2(x, edge_index)
-        return x.log_softmax(dim=1)
-
+GCN = GCN(3, 16, 2, 7, dropout=0.5)
+GAT = GAT(3, 16, 2, 7, heads=2, concat=False)
 
 mask_type = ['edge', 'node_and_edge', 'node']
 
 
-@pytest.mark.parametrize("mask_type", mask_type)
-@pytest.mark.parametrize("model", [GCN(), GAT()])
-@pytest.mark.parametrize("node_idx", [None, 1])
+@pytest.mark.parametrize('mask_type', mask_type)
+@pytest.mark.parametrize('model', [GCN, GAT])
+@pytest.mark.parametrize('node_idx', [None, 1])
 def test_to_captum(model, mask_type, node_idx):
     captum_model = to_captum(model, mask_type=mask_type, node_idx=node_idx)
 
