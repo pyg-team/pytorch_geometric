@@ -1,16 +1,16 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, matmul, fill_diag, sum as sparsesum, mul
-from torch_geometric.nn.inits import zeros
-from torch_geometric.nn.dense.linear import Linear
+from torch.nn import Parameter, ReLU, Sequential, LayerNorm
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_scatter import scatter_add
+from torch_sparse import SparseTensor, matmul, fill_diag, sum as sparsesum, mul
 
 
 @torch.jit._overload
@@ -29,7 +29,6 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
              add_self_loops=True, dtype=None):
-
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
@@ -49,7 +48,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+            edge_weight = torch.ones((edge_index.size(1),), dtype=dtype,
                                      device=edge_index.device)
 
         if add_self_loops:
@@ -69,27 +68,22 @@ class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classification with Graph Convolutional Networks"
     <https://arxiv.org/abs/1609.02907>`_ paper
-
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
         \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
-
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
     adjacency matrix with inserted self-loops and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
     The adjacency matrix can include other values than :obj:`1` representing
     edge weights via the optional :obj:`edge_weight` tensor.
-
     Its node-wise formulation is given by:
-
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \sum_{j \in \mathcal{N}(v) \cup
-        \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j \hat{d}_i}} \mathbf{x}_j
-
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \hat{d}_i}} \mathbf{x}_j
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
     :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
     node :obj:`i` (default: :obj:`1.0`)
-
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
@@ -120,10 +114,10 @@ class GCNConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  improved: bool = False, cached: bool = False,
                  add_self_loops: bool = True, normalize: bool = True,
-                 bias: bool = True, **kwargs):
+                 bias: bool = True, explain: bool = False, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(GCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -131,6 +125,7 @@ class GCNConv(MessagePassing):
         self.cached = cached
         self.add_self_loops = add_self_loops
         self.normalize = normalize
+        self.explain = explain
 
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -143,16 +138,34 @@ class GCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
+        if self.explain:
+            self.convert = Linear(in_channels, out_channels)
+            self.bias_explain = Parameter(torch.Tensor(out_channels))
+
+            self.residual = Sequential(
+                Linear(
+                    in_channels +
+                    out_channels,
+                    out_channels),
+                LayerNorm(out_channels),
+                ReLU())
+
+            self.process_message = Sequential(LayerNorm(out_channels),
+                                              ReLU())
+
         self.reset_parameters()
 
     def reset_parameters(self):
+        if self.explain:
+            zeros(self.bias_explain)
         self.lin.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+                edge_weight: OptTensor = None,
+                message_scale=None, message_replacement=None) -> Tensor:
         """"""
 
         if self.normalize:
@@ -178,23 +191,67 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        x = self.lin(x)
+        if not self.explain:
+            x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+                             message_scale=message_scale,
+                             message_replacement=message_replacement)
 
-        if self.bias is not None:
+        if self.bias is not False and not self.explain:
             out += self.bias
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+    def message(self, x_i: Tensor, x_j: Tensor, edge_index: Tensor,
+                edge_weight: OptTensor, message_scale,
+                message_replacement) -> Tensor:
+        if self.explain:
+            basis_messages = x_j if edge_weight is None else edge_weight.view(
+                -1, 1) * x_j
+            basis_messages = self.convert(basis_messages)
+            count = torch.arange(edge_index.shape[1])
+            basis_messages = basis_messages[count, :] + self.bias_explain
+            basis_messages = self.process_message(basis_messages)
+
+            if message_scale is not None:
+                basis_messages = basis_messages * message_scale.unsqueeze(-1)
+
+                if message_replacement is not None:
+                    if basis_messages.shape == message_replacement.shape:
+                        basis_messages = basis_messages + \
+                            (1 - message_scale).unsqueeze(
+                                -1) * message_replacement
+                    else:
+                        basis_messages = basis_messages + \
+                            (1 - message_scale).unsqueeze(
+                                -1) * message_replacement.unsqueeze(0)
+
+            self.latest_messages = basis_messages
+            self.latest_source_embeddings = x_j
+            self.latest_target_embeddings = x_i
+
+            return basis_messages
+        else:
+            return x_j if edge_weight is None else edge_weight.view(
+                -1, 1) * x_j
+
+    def get_latest_source_embeddings(self):
+        return self.latest_source_embeddings
+
+    def get_latest_target_embeddings(self):
+        return self.latest_target_embeddings
+
+    def get_latest_messages(self):
+        return self.latest_messages
+
+    def update(self, aggr_out: Tensor, x: Tensor):
+        if self.explain:
+            repr = torch.cat((aggr_out, x), 1)
+            result = self.residual(repr)
+            return result
+        return aggr_out
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
