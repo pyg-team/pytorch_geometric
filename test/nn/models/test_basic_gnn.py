@@ -108,7 +108,6 @@ def test_packaging():
     model = torch.load('model.pt')
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
-    os.remove('model.pt')
 
     model = GraphSAGE(8, 16, num_layers=2)
     with torch.package.PackageExporter('package.pt') as pe:
@@ -120,4 +119,3 @@ def test_packaging():
     model = pi.load_pickle('models', 'model.pkl')
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
-    os.remove('package.pt')
