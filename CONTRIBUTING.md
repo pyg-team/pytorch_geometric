@@ -36,7 +36,7 @@ To develop PyG on your machine, here are some tips:
 4. Install PyG in editable mode:
 
    ```bash
-   pip install -e .[dev,full]
+   pip install -e ".[dev,full]"
    ```
 
    This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
