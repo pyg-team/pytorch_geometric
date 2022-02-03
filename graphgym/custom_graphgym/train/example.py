@@ -1,14 +1,14 @@
-import torch
-import time
 import logging
+import time
 
+import torch
+
+from torch_geometric.graphgym.checkpoint import (clean_ckpt, load_ckpt,
+                                                 save_ckpt)
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.loss import compute_loss
-from torch_geometric.graphgym.utils.epoch import is_eval_epoch, is_ckpt_epoch
-from torch_geometric.graphgym.checkpoint import load_ckpt, save_ckpt, \
-    clean_ckpt
-
 from torch_geometric.graphgym.register import register_train
+from torch_geometric.graphgym.utils.epoch import is_ckpt_epoch, is_eval_epoch
 
 
 def train_epoch(logger, loader, model, optimizer, scheduler):
@@ -44,14 +44,16 @@ def eval_epoch(logger, loader, model):
         time_start = time.time()
 
 
+@register_train('example')
 def train_example(loggers, loaders, model, optimizer, scheduler):
     start_epoch = 0
     if cfg.train.auto_resume:
-        start_epoch = load_ckpt(model, optimizer, scheduler)
+        start_epoch = load_ckpt(model, optimizer, scheduler,
+                                cfg.train.epoch_resume)
     if start_epoch == cfg.optim.max_epoch:
         logging.info('Checkpoint found, Task already done')
     else:
-        logging.info('Start from epoch {}'.format(start_epoch))
+        logging.info('Start from epoch %s', start_epoch)
 
     num_splits = len(loggers)
     for cur_epoch in range(start_epoch, cfg.optim.max_epoch):
@@ -68,7 +70,4 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
     if cfg.train.ckpt_clean:
         clean_ckpt()
 
-    logging.info('Task done, results saved in {}'.format(cfg.run_dir))
-
-
-register_train('example', train_example)
+    logging.info('Task done, results saved in %s', cfg.run_dir)

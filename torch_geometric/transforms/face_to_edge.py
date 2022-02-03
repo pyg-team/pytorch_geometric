@@ -1,7 +1,7 @@
 import torch
 
-from torch_geometric.utils import to_undirected
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import to_undirected
 
 
 class FaceToEdge(BaseTransform):
@@ -26,6 +26,3 @@ class FaceToEdge(BaseTransform):
                 data.face = None
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

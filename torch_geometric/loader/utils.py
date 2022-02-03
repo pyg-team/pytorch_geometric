@@ -1,23 +1,39 @@
-from typing import Union, Tuple, Dict
-from torch_geometric.typing import OptTensor, EdgeType
-
 import copy
+import math
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.storage import NodeStorage, EdgeStorage
+from torch_geometric.data.storage import EdgeStorage, NodeStorage
+from torch_geometric.typing import EdgeType, OptTensor
 
 
-def edge_type_to_str(edge_type: EdgeType) -> str:
+def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
+    out: Optional[Tensor] = None
+    if torch.utils.data.get_worker_info() is not None:
+        # If we are in a background process, we write directly into a shared
+        # memory tensor to avoid an extra copy:
+        size = list(value.size())
+        size[dim] = index.numel()
+        numel = math.prod(size)
+        storage = value.storage()._new_shared(numel)
+        out = value.new(storage).view(size)
+    return torch.index_select(value, 0, index, out=out)
+
+
+def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     # Since C++ cannot take dictionaries with tuples as key as input, edge type
     # triplets need to be converted into single strings.
-    return '__'.join(edge_type)
+    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
-def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
+def to_csc(
+    data: Union[Data, EdgeStorage],
+    device: Optional[torch.device] = None,
+) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
     # `perm` vector that denotes the permutation of edges.
@@ -25,14 +41,14 @@ def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
     # `perm` can be of type `None`.
     if hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
-        return colptr, row, None
+        return colptr.to(device), row.to(device), None
 
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
         size = data.size()
         perm = (col * size[0]).add_(row).argsort()
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        return colptr, row[perm], perm
+        return colptr.to(device), row[perm].to(device), perm.to(device)
 
     raise AttributeError(
         "Data object does not contain attributes 'adj_t' or 'edge_index'")
@@ -40,6 +56,7 @@ def to_csc(data: Union[Data, EdgeStorage]) -> Tuple[Tensor, Tensor, OptTensor]:
 
 def to_hetero_csc(
     data: HeteroData,
+    device: Optional[torch.device] = None,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -51,60 +68,67 @@ def to_hetero_csc(
 
     for store in data.edge_stores:
         key = edge_type_to_str(store._key)
-        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store)
+        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store, device)
 
     return colptr_dict, row_dict, perm_dict
 
 
-def filter_node_store_(store: NodeStorage, index: Tensor) -> NodeStorage:
+def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
+                       index: Tensor) -> NodeStorage:
     # Filters a node storage object to only hold the nodes in `index`:
-    num_nodes = store.num_nodes
-
     for key, value in store.items():
         if key == 'num_nodes':
-            store.num_nodes = index.numel()
+            out_store.num_nodes = index.numel()
 
-        elif isinstance(value, Tensor) and value.size(0) == num_nodes:
-            store[key] = value[index]
+        elif store.is_node_attr(key):
+            index = index.to(value.device)
+            out_store[key] = index_select(value, index, dim=0)
 
     return store
 
 
-def filter_edge_store_(store: EdgeStorage, row: Tensor, col: Tensor,
-                       index: Tensor, perm: OptTensor = None) -> EdgeStorage:
+def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
+                       col: Tensor, index: Tensor,
+                       perm: OptTensor = None) -> EdgeStorage:
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
-    num_edges = store.num_edges
-
     for key, value in store.items():
         if key == 'edge_index':
-            store.edge_index = torch.stack([row, col], dim=0)
+            edge_index = torch.stack([row, col], dim=0)
+            out_store.edge_index = edge_index.to(value.device)
 
         elif key == 'adj_t':
             # NOTE: We expect `(row, col)` to be sorted by `col` (CSC layout).
+            row = row.to(value.device())
+            col = col.to(value.device())
             edge_attr = value.storage.value()
-            edge_attr = None if edge_attr is None else edge_attr[index]
+            if edge_attr is not None:
+                index = index.to(edge_attr.device)
+                edge_attr = edge_attr[index]
             sparse_sizes = store.size()[::-1]
-            store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
-                                       sparse_sizes=sparse_sizes,
-                                       is_sorted=True)
+            out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
+                                           sparse_sizes=sparse_sizes,
+                                           is_sorted=True)
 
-        elif isinstance(value, Tensor) and value.size(0) == num_edges:
-            store[key] = value[index] if perm is None else value[perm[index]]
+        elif store.is_edge_attr(key):
+            if perm is None:
+                index = index.to(value.device)
+                out_store[key] = index_select(value, index, dim=0)
+            else:
+                perm = perm.to(value.device)
+                index = index.to(value.device)
+                out_store[key] = index_select(value, perm[index], dim=0)
 
     return store
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
                 edge: Tensor, perm: OptTensor = None) -> Data:
-    # Filters a homogeneous data object to only hold nodes in `node` and edges
-    # in `edge`:
-    data = copy.copy(data)
-
-    filter_node_store_(data._store, node)
-    filter_edge_store_(data._store, row, col, edge, perm)
-
-    return data
+    # Filters a data object to only hold nodes in `node` and edges in `edge`:
+    out = copy.copy(data)
+    filter_node_store_(data._store, out._store, node)
+    filter_edge_store_(data._store, out._store, row, col, edge, perm)
+    return out
 
 
 def filter_hetero_data(
@@ -117,15 +141,16 @@ def filter_hetero_data(
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
-    data = copy.copy(data)
+    out = copy.copy(data)
 
-    for store in data.node_stores:
-        node_type = store._key
-        filter_node_store_(store, node_dict[node_type])
+    for node_type in data.node_types:
+        filter_node_store_(data[node_type], out[node_type],
+                           node_dict[node_type])
 
-    for store in data.edge_stores:
-        edge_type = edge_type_to_str(store._key)
-        filter_edge_store_(store, row_dict[edge_type], col_dict[edge_type],
-                           edge_dict[edge_type], perm_dict[edge_type])
+    for edge_type in data.edge_types:
+        edge_type_str = edge_type_to_str(edge_type)
+        filter_edge_store_(data[edge_type], out[edge_type],
+                           row_dict[edge_type_str], col_dict[edge_type_str],
+                           edge_dict[edge_type_str], perm_dict[edge_type_str])
 
-    return data
+    return out

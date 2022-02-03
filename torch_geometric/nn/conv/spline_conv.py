@@ -1,14 +1,14 @@
 import warnings
-from typing import Union, Tuple, List
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
+from typing import List, Tuple, Union
 
 import torch
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
 from torch.nn import Parameter
-from torch_geometric.utils.repeat import repeat
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform, zeros
 
@@ -60,17 +60,20 @@ class SplineConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int,
-                 dim: int,
-                 kernel_size: Union[int, List[int]],
-                 is_open_spline: bool = True,
-                 degree: int = 1,
-                 aggr: str = 'mean',
-                 root_weight: bool = True,
-                 bias: bool = True,
-                 **kwargs):  # yapf: disable
-        super(SplineConv, self).__init__(aggr=aggr, **kwargs)
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        dim: int,
+        kernel_size: Union[int, List[int]],
+        is_open_spline: bool = True,
+        degree: int = 1,
+        aggr: str = 'mean',
+        root_weight: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
+        super().__init__(aggr=aggr, **kwargs)
 
         if spline_basis is None:
             raise ImportError("'SplineConv' requires 'torch-spline-conv'")
@@ -159,7 +162,6 @@ class SplineConv(MessagePassing):
         module._hook.remove()
         delattr(module, '_hook')
 
-    def __repr__(self):
-        return '{}({}, {}, dim={})'.format(self.__class__.__name__,
-                                           self.in_channels, self.out_channels,
-                                           self.dim)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, dim={self.dim})')

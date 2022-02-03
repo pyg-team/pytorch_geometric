@@ -1,37 +1,22 @@
-import os
-import torch
 import logging
+import os
 
 import custom_graphgym  # noqa, register custom modules
+import torch
 
+from torch_geometric import seed_everything
 from torch_geometric.graphgym.cmd_args import parse_args
-from torch_geometric.graphgym.config import (cfg, dump_cfg, set_run_dir,
-                                             set_agg_dir, load_cfg)
+from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
+                                             set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
-from torch_geometric.graphgym.logger import set_printing, create_logger
-from torch_geometric.graphgym.optimizer import create_optimizer, \
-    create_scheduler, OptimizerConfig, SchedulerConfig
+from torch_geometric.graphgym.logger import create_logger, set_printing
 from torch_geometric.graphgym.model_builder import create_model
+from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
+from torch_geometric.graphgym.register import train_dict
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
-from torch_geometric.graphgym.register import train_dict
-from torch_geometric import seed_everything
-
-
-def new_optimizer_config(cfg):
-    return OptimizerConfig(optimizer=cfg.optim.optimizer,
-                           base_lr=cfg.optim.base_lr,
-                           weight_decay=cfg.optim.weight_decay,
-                           momentum=cfg.optim.momentum)
-
-
-def new_scheduler_config(cfg):
-    return SchedulerConfig(scheduler=cfg.optim.scheduler,
-                           steps=cfg.optim.steps, lr_decay=cfg.optim.lr_decay,
-                           max_epoch=cfg.optim.max_epoch)
-
 
 if __name__ == '__main__':
     # Load cmd line args
@@ -53,14 +38,13 @@ if __name__ == '__main__':
         loaders = create_loader()
         loggers = create_logger()
         model = create_model()
-        optimizer = create_optimizer(model.parameters(),
-                                     new_optimizer_config(cfg))
-        scheduler = create_scheduler(optimizer, new_scheduler_config(cfg))
+        optimizer = create_optimizer(model.parameters(), cfg.optim)
+        scheduler = create_scheduler(optimizer, cfg.optim)
         # Print model info
         logging.info(model)
         logging.info(cfg)
         cfg.params = params_count(model)
-        logging.info('Num parameters: {}'.format(cfg.params))
+        logging.info('Num parameters: %s', cfg.params)
         # Start training
         if cfg.train.mode == 'standard':
             train(loggers, loaders, model, optimizer, scheduler)
@@ -71,4 +55,4 @@ if __name__ == '__main__':
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done
     if args.mark_done:
-        os.rename(args.cfg_file, '{}_done'.format(args.cfg_file))
+        os.rename(args.cfg_file, f'{args.cfg_file}_done')

@@ -4,7 +4,8 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
-from torch_geometric.data import Data, Batch
+
+from torch_geometric.data import Batch, Data
 
 
 class ShaDowKHopSampler(torch.utils.data.DataLoader):
@@ -13,6 +14,12 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
     Given a graph in a :obj:`data` object, the sampler will create shallow,
     localized subgraphs.
     A deep GNN on this local graph then smooths the informative local signals.
+
+    .. note::
+
+        For an example of using :class:`ShaDowKHopSampler`, see
+        `examples/shadow.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/shadow.py>`_.
 
     Args:
         data (torch_geometric.data.Data): The graph data object.

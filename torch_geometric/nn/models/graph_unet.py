@@ -1,9 +1,10 @@
 import torch
 import torch.nn.functional as F
 from torch_sparse import spspmm
-from torch_geometric.nn import TopKPooling, GCNConv
-from torch_geometric.utils import (add_self_loops, sort_edge_index,
-                                   remove_self_loops)
+
+from torch_geometric.nn import GCNConv, TopKPooling
+from torch_geometric.utils import (add_self_loops, remove_self_loops,
+                                   sort_edge_index)
 from torch_geometric.utils.repeat import repeat
 
 
@@ -27,7 +28,7 @@ class GraphUNet(torch.nn.Module):
     """
     def __init__(self, in_channels, hidden_channels, out_channels, depth,
                  pool_ratios=0.5, sum_res=True, act=F.relu):
-        super(GraphUNet, self).__init__()
+        super().__init__()
         assert depth >= 1
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -121,7 +122,7 @@ class GraphUNet(torch.nn.Module):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         return edge_index, edge_weight
 
-    def __repr__(self):
-        return '{}({}, {}, {}, depth={}, pool_ratios={})'.format(
-            self.__class__.__name__, self.in_channels, self.hidden_channels,
-            self.out_channels, self.depth, self.pool_ratios)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels}, {self.out_channels}, '
+                f'depth={self.depth}, pool_ratios={self.pool_ratios})')

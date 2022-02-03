@@ -1,6 +1,9 @@
 import torch
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn import GINConv, GINEConv
 
 
@@ -105,6 +108,17 @@ def test_gine_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
     assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+
+
+def test_gine_conv_edge_dim():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_attr = torch.randn(edge_index.size(1), 8)
+
+    nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
+    conv = GINEConv(nn, train_eps=True, edge_dim=8)
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (4, 32)
 
 
 def test_static_gin_conv():

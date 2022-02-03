@@ -1,6 +1,9 @@
 import torch
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn import NNConv
 
 
@@ -15,7 +18,7 @@ def test_nn_conv():
     nn = Seq(Lin(3, 32), ReLU(), Lin(32, 8 * 32))
     conv = NNConv(8, 32, nn=nn)
     assert conv.__repr__() == (
-        'NNConv(8, 32, aggr="add", nn=Sequential(\n'
+        'NNConv(8, 32, aggr=add, nn=Sequential(\n'
         '  (0): Linear(in_features=3, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=32, out_features=256, bias=True)\n'
@@ -37,7 +40,7 @@ def test_nn_conv():
     adj = adj.sparse_resize((4, 2))
     conv = NNConv((8, 16), 32, nn=nn)
     assert conv.__repr__() == (
-        'NNConv((8, 16), 32, aggr="add", nn=Sequential(\n'
+        'NNConv((8, 16), 32, aggr=add, nn=Sequential(\n'
         '  (0): Linear(in_features=3, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=32, out_features=256, bias=True)\n'

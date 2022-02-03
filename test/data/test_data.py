@@ -1,6 +1,8 @@
 import copy
 
 import torch
+import torch.multiprocessing as mp
+
 import torch_geometric
 from torch_geometric.data import Data
 
@@ -46,7 +48,9 @@ def test_data():
     clone = data.clone()
     assert clone != data
     assert len(clone) == len(data)
+    assert clone.x.data_ptr() != data.x.data_ptr()
     assert clone.x.tolist() == data.x.tolist()
+    assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
     # Test `data.to_heterogenous()`:
@@ -121,12 +125,40 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_data_subgraph():
+    x = torch.arange(5)
+    y = torch.tensor([0.])
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
+    edge_weight = torch.arange(edge_index.size(1))
+
+    data = Data(x=x, y=y, edge_index=edge_index, edge_weight=edge_weight,
+                num_nodes=5)
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 5
+    assert torch.allclose(out.x, torch.arange(1, 4))
+    assert torch.allclose(out.y, y)
+    assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert out.num_nodes == 3
+
+    out = data.subgraph(torch.tensor([False, False, False, True, True]))
+    assert len(out) == 5
+    assert torch.allclose(out.x, torch.arange(3, 5))
+    assert torch.allclose(out.y, y)
+    assert out.edge_index.tolist() == [[0, 1], [1, 0]]
+    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(6, 8)])
+    assert out.num_nodes == 2
+
+
 def test_copy_data():
     data = Data(x=torch.randn(20, 5))
 
     out = copy.copy(data)
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
@@ -136,6 +168,7 @@ def test_copy_data():
     out = copy.deepcopy(data)
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
@@ -158,3 +191,22 @@ def test_debug_data():
     Data(norm=torch.torch.randn(5, 3), num_nodes=5)
 
     torch_geometric.set_debug(False)
+
+
+def run(rank, data_list):
+    for data in data_list:
+        assert data.x.is_shared()
+        data.x.add_(1)
+
+
+def test_data_share_memory():
+    data_list = [Data(x=torch.zeros(8)) for _ in range(10)]
+
+    for data in data_list:
+        assert not data.x.is_shared()
+
+    mp.spawn(run, args=(data_list, ), nprocs=4, join=True)
+
+    for data in data_list:
+        assert data.x.is_shared()
+        assert torch.allclose(data.x, torch.full((8, ), 4.))

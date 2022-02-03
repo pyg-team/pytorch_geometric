@@ -1,8 +1,8 @@
 import torch
 
-from torch_geometric.utils import is_undirected
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import RandomLinkSplit
+from torch_geometric.utils import is_undirected, to_undirected
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -92,7 +92,8 @@ def test_random_link_split_on_hetero_data():
     data['a'].x = torch.arange(100, 300)
 
     data['p', 'p'].edge_index = get_edge_index(100, 100, 500)
-    data['p', 'p'].edge_attr = torch.arange(500)
+    data['p', 'p'].edge_index = to_undirected(data['p', 'p'].edge_index)
+    data['p', 'p'].edge_attr = torch.arange(data['p', 'p'].num_edges)
     data['p', 'a'].edge_index = get_edge_index(100, 200, 1000)
     data['p', 'a'].edge_attr = torch.arange(500, 1500)
     data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])

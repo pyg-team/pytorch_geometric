@@ -1,11 +1,12 @@
+import glob
 import os
 import os.path as osp
 import shutil
-import glob
 
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 
@@ -47,8 +48,7 @@ class WILLOWObjectClass(InMemoryDataset):
                  pre_filter=None):
         assert category.lower() in self.categories
         self.category = category
-        super(WILLOWObjectClass, self).__init__(root, transform, pre_transform,
-                                                pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -77,10 +77,10 @@ class WILLOWObjectClass(InMemoryDataset):
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
+        import torchvision.models as models
+        import torchvision.transforms as T
         from PIL import Image
         from scipy.io import loadmat
-        import torchvision.transforms as T
-        import torchvision.models as models
 
         category = self.category.capitalize()
         names = glob.glob(osp.join(self.raw_dir, category, '*.png'))
@@ -103,7 +103,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
         data_list = []
         for name in names:
-            pos = loadmat('{}.mat'.format(name))['pts_coord']
+            pos = loadmat(f'{name}.mat')['pts_coord']
             x, y = torch.from_numpy(pos).to(torch.float)
             pos = torch.stack([x, y], dim=1)
 
@@ -112,7 +112,7 @@ class WILLOWObjectClass(InMemoryDataset):
             if pos.size(0) != 10:
                 continue
 
-            with open('{}.png'.format(name), 'rb') as f:
+            with open(f'{name}.png', 'rb') as f:
                 img = Image.open(f).convert('RGB')
 
             # Rescale keypoints.
@@ -156,6 +156,6 @@ class WILLOWObjectClass(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
-                                            self.category)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'category={self.category})')

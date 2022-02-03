@@ -1,12 +1,12 @@
 import torch
-from tqdm import tqdm
 import torch.nn.functional as F
-from torch.nn import Linear, LayerNorm, ReLU
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from torch.nn import LayerNorm, Linear, ReLU
 from torch_scatter import scatter
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
+from tqdm import tqdm
 
-from torch_geometric.nn import GENConv, DeepGCNLayer
 from torch_geometric.loader import RandomNodeSampler
+from torch_geometric.nn import DeepGCNLayer, GENConv
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../data')
 splitted_idx = dataset.get_idx_split()
@@ -31,7 +31,7 @@ test_loader = RandomNodeSampler(data, num_parts=5, num_workers=5)
 
 class DeeperGCN(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers):
-        super(DeeperGCN, self).__init__()
+        super().__init__()
 
         self.node_encoder = Linear(data.x.size(-1), hidden_channels)
         self.edge_encoder = Linear(data.edge_attr.size(-1), hidden_channels)

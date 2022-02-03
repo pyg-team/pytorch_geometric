@@ -1,0 +1,74 @@
+name: Testing
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  pytest:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [3.6, 3.9]
+        torch-version: [1.8.0, 1.9.0]
+        include:
+          - torch-version: 1.8.0
+            torchvision-version: 0.9.0
+          - torch-version: 1.9.0
+            torchvision-version: 0.10.0
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
+        run: |
+          pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+      - name: Install internal dependencies
+        run: |
+          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+
+      - name: Install optional dependencies
+        run: |
+          pip install cython
+          pip install scikit-image
+          pip install trimesh
+          pip install pandas
+          pip install h5py
+          pip install numba
+          pip install tabulate
+          pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+          pip install pytorch-memlab
+
+      - name: Install main package
+        run: |
+          pip install -e .[test]
+
+      - name: Run test-suite
+        run: |
+          python -m pytest
+
+      - name: Generate coverage report
+        if: success()
+        run: |
+          pip install coverage
+          coverage xml
+
+      - name: Upload coverage report to codecov
+        uses: codecov/codecov-action@v1
+        if: success()
+        with:
+          file: coverage.xml

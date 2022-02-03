@@ -1,12 +1,14 @@
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, Sequential, ReLU, BatchNorm1d as BN
-from torch_geometric.nn import GINConv, global_mean_pool, JumpingKnowledge
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Linear, ReLU, Sequential
+
+from torch_geometric.nn import GINConv, JumpingKnowledge, global_mean_pool
 
 
 class GIN0(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
-        super(GIN0, self).__init__()
+        super().__init__()
         self.conv1 = GINConv(
             Sequential(
                 Linear(dataset.num_features, hidden),
@@ -53,7 +55,7 @@ class GIN0(torch.nn.Module):
 
 class GIN0WithJK(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
-        super(GIN0WithJK, self).__init__()
+        super().__init__()
         self.conv1 = GINConv(
             Sequential(
                 Linear(dataset.num_features, hidden),
@@ -108,7 +110,7 @@ class GIN0WithJK(torch.nn.Module):
 
 class GIN(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
-        super(GIN, self).__init__()
+        super().__init__()
         self.conv1 = GINConv(
             Sequential(
                 Linear(dataset.num_features, hidden),
@@ -155,7 +157,7 @@ class GIN(torch.nn.Module):
 
 class GINWithJK(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
-        super(GINWithJK, self).__init__()
+        super().__init__()
         self.conv1 = GINConv(
             Sequential(
                 Linear(dataset.num_features, hidden),
