@@ -1,6 +1,7 @@
-from torch_geometric.loader import DataLoader
 from torch.utils.data import _utils
 from torch.utils.data.dataloader import _BaseDataLoaderIter
+
+from torch_geometric.loader import DataLoader
 
 
 class _SingleProcessTemporalDataLoaderIter(_BaseDataLoaderIter):
