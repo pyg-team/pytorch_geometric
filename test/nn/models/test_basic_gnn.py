@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 import sys
 from itertools import product
 
@@ -103,19 +103,21 @@ def test_packaging():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
     model = GraphSAGE(8, 16, num_layers=2)
-    torch.save(model, 'model.pt')
+    path = osp.join(torch.hub._get_torch_home(), 'model.pt')
+    torch.save(model, path)
 
-    model = torch.load('model.pt')
+    model = torch.load(path)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 
     model = GraphSAGE(8, 16, num_layers=2)
-    with torch.package.PackageExporter('package.pt') as pe:
+    path = osp.join(torch.hub._get_torch_home(), 'package.pt')
+    with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
 
-    pi = torch.package.PackageImporter('package.pt')
+    pi = torch.package.PackageImporter(path)
     model = pi.load_pickle('models', 'model.pkl')
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
