@@ -1,3 +1,4 @@
+import os
 import os.path as osp
 import sys
 from itertools import product
@@ -99,6 +100,8 @@ def test_pna(out_dim, dropout, act, norm, jk):
 # The easiest way to avoid this is to upgrade to at least Python 3.7
 @pytest.mark.skipif(sys.version_info.minor < 7, reason='Pickle requires Py3.7')
 def test_packaging():
+    os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
+
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
