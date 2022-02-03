@@ -2,8 +2,8 @@ import scipy.sparse
 import torch
 import torch.nn.functional as F
 from torch_sparse import coalesce
-from torch_geometric.nn import SignedConv
 
+from torch_geometric.nn import SignedConv
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling)
 
@@ -25,7 +25,7 @@ class SignedGCN(torch.nn.Module):
     """
     def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
                  bias=True):
-        super(SignedGCN, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -206,7 +206,7 @@ class SignedGCN(torch.nn.Module):
             pos_edge_index (LongTensor): The positive edge indices.
             neg_edge_index (LongTensor): The negative edge indices.
         """
-        from sklearn.metrics import roc_auc_score, f1_score
+        from sklearn.metrics import f1_score, roc_auc_score
 
         with torch.no_grad():
             pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
@@ -222,8 +222,6 @@ class SignedGCN(torch.nn.Module):
 
         return auc, f1
 
-    def __repr__(self):
-        return '{}({}, {}, num_layers={})'.format(self.__class__.__name__,
-                                                  self.in_channels,
-                                                  self.hidden_channels,
-                                                  self.num_layers)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.hidden_channels}, num_layers={self.num_layers})')

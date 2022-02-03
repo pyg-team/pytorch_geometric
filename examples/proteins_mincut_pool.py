@@ -4,10 +4,11 @@ from math import ceil
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import GCNConv, DenseGraphConv, dense_mincut_pool
-from torch_geometric.utils import to_dense_batch, to_dense_adj
+from torch_geometric.nn import DenseGraphConv, GCNConv, dense_mincut_pool
+from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
@@ -23,7 +24,7 @@ train_loader = DataLoader(train_dataset, batch_size=20)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, hidden_channels=32):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
         num_nodes = ceil(0.5 * average_nodes)
@@ -111,10 +112,7 @@ for epoch in range(1, 15000):
         patience -= 1
         if patience == 0:
             break
-    print('Epoch: {:03d}, '
-          'Train Loss: {:.3f}, Train Acc: {:.3f}, '
-          'Val Loss: {:.3f}, Val Acc: {:.3f}, '
-          'Test Loss: {:.3f}, Test Acc: {:.3f}'.format(epoch, train_loss,
-                                                       train_acc, val_loss,
-                                                       val_acc, test_loss,
-                                                       test_acc))
+    print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.3f}, '
+          f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
+          f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
+          f'Test Acc: {test_acc:.3f}')

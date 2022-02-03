@@ -1,19 +1,17 @@
-from typing import Union, Tuple, List, Dict, Any, Optional, NamedTuple
-from torch_geometric.typing import NodeType, EdgeType, QueryType
-
 import copy
 import re
-from itertools import chain
+from collections import defaultdict, namedtuple
 from collections.abc import Mapping
-from collections import namedtuple, defaultdict
+from itertools import chain
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage)
+from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
+from torch_geometric.typing import EdgeType, NodeType, QueryType
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -111,11 +109,12 @@ class HeteroData(BaseData):
         # `data.*` => Link to the `_global_store`.
         # Using `data.*_dict` is the same as using `collect()` for collecting
         # nodes and edges features.
-        if bool(re.search('_dict$', key)):
-            out = self.collect(key[:-5])
-            if len(out) > 0:
-                return out
-        return getattr(self._global_store, key)
+        if hasattr(self._global_store, key):
+            return getattr(self._global_store, key)
+        elif bool(re.search('_dict$', key)):
+            return self.collect(key[:-5])
+        raise AttributeError(f"'{self.__class__.__name__}' has no "
+                             f"attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
         # NOTE: We aim to prevent duplicates in node or edge types.
@@ -301,7 +300,7 @@ class HeteroData(BaseData):
                 args = edge_types[0]
                 return args
 
-        if len(args) == 2:
+        elif len(args) == 2:
             # Try to find the unique source/destination node tuple:
             edge_types = [
                 key for key in self.edge_types

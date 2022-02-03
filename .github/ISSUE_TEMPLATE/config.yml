@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🙏 Ask a Question
+    url: https://github.com/pyg-team/pytorch_geometric/discussions/new
+    about: Ask and answer PyG related questions
+  - name: 💬 Slack
+    url: https://join.slack.com/t/torchgeometricco/shared_invite/zt-p6br3yuo-BxRoe36OHHLF6jYU8xHtBA
+    about: Chat with our community

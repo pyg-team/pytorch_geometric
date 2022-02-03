@@ -17,6 +17,12 @@ class {{cls_name}}(torch.nn.Module):
         {% for output in call[2] %}{{output}}{{ ", " if not loop.last }}{% endfor %} = self.module_{{loop.index - 1}}({% for input in call[1] %}{{input}}{{ ", " if not loop.last }}{% endfor %}){% endfor %}
         return {% for output in calls[-1][2] %}{{output}}{{ ", " if not loop.last }}{% endfor %}
 
+    def __getitem__(self, idx: int) -> torch.nn.Module:
+        return getattr(self, f'module_{idx}')
+
+    def __len__(self) -> int:
+        return {{calls|length}}
+
     def __repr__(self) -> str:
         return 'Sequential(\n{}\n)'.format('\n'.join(
-            [f'  ({i}): ' + str(getattr(self, f'module_{i}')) for i in range({{calls|length}})]))
+            [f'  ({idx}): ' + str(self[idx]) for idx in range(len(self))]))

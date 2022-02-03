@@ -1,26 +1,23 @@
 import os.path as osp
-import torch
 import random
-import sys
 import shutil
-
+import sys
 from collections import namedtuple
 
+import torch
+
 from torch_geometric import seed_everything
-from torch_geometric.graphgym.train import train
+from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
+                                             set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
+from torch_geometric.graphgym.logger import create_logger, set_printing
 from torch_geometric.graphgym.model_builder import create_model
-from torch_geometric.graphgym.models.head import GNNNodeHead
-from torch_geometric.graphgym.logger import set_printing, create_logger
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
-from torch_geometric.graphgym.config import (cfg, dump_cfg, set_run_dir,
-                                             set_agg_dir, load_cfg)
-from torch_geometric.graphgym.utils import (agg_runs, params_count,
-                                            auto_select_device)
-from torch_geometric.graphgym.optimizer import (create_optimizer,
-                                                create_scheduler,
-                                                OptimizerConfig,
-                                                SchedulerConfig)
+from torch_geometric.graphgym.models.head import GNNNodeHead
+from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
+from torch_geometric.graphgym.train import train
+from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
+                                            params_count)
 
 
 def test_run_single_graphgym():
@@ -52,18 +49,10 @@ def test_run_single_graphgym():
     assert isinstance(model.post_mp, GNNNodeHead)
     assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
 
-    optimizer_config = OptimizerConfig(optimizer=cfg.optim.optimizer,
-                                       base_lr=cfg.optim.base_lr,
-                                       weight_decay=cfg.optim.weight_decay,
-                                       momentum=cfg.optim.momentum)
-    optimizer = create_optimizer(model.parameters(), optimizer_config)
+    optimizer = create_optimizer(model.parameters(), cfg.optim)
     assert isinstance(optimizer, torch.optim.Adam)
 
-    scheduler_config = SchedulerConfig(scheduler=cfg.optim.scheduler,
-                                       steps=cfg.optim.steps,
-                                       lr_decay=cfg.optim.lr_decay,
-                                       max_epoch=cfg.optim.max_epoch)
-    scheduler = create_scheduler(optimizer, scheduler_config)
+    scheduler = create_scheduler(optimizer, cfg.optim)
     assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)

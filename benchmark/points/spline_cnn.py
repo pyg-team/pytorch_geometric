@@ -1,11 +1,12 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear as Lin
-from torch_geometric.nn import SplineConv, radius_graph, fps, global_mean_pool
-
 from points.datasets import get_dataset
 from points.train_eval import run
+from torch.nn import Linear as Lin
+
+from torch_geometric.nn import SplineConv, fps, global_mean_pool, radius_graph
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=200)
@@ -19,7 +20,7 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, num_classes):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = SplineConv(1, 64, dim=3, kernel_size=5)
         self.conv2 = SplineConv(64, 64, dim=3, kernel_size=5)

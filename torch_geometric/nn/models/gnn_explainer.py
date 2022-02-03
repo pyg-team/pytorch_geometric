@@ -1,10 +1,10 @@
-from typing import Optional
-
-from math import sqrt
 from inspect import signature
+from math import sqrt
+from typing import Optional
 
 import torch
 from tqdm import tqdm
+
 from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph, to_networkx
@@ -355,8 +355,8 @@ class GNNExplainer(torch.nn.Module):
 
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
-        import networkx as nx
         import matplotlib.pyplot as plt
+        import networkx as nx
 
         assert edge_mask.size(0) == edge_index.size(1)
 

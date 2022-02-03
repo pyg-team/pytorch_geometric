@@ -1,6 +1,7 @@
 import copy
 
 import torch
+
 from torch_geometric.data import HeteroData
 
 x_paper = torch.randn(10, 16)
@@ -22,14 +23,18 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 def test_init_hetero_data():
     data = HeteroData()
+    data['v1'].x = 1
     data['paper'].x = x_paper
     data['author'].x = x_author
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
     data = HeteroData(
+        v1={'x': 1},
         paper={'x': x_paper},
         author={'x': x_author},
         paper__paper={'edge_index': edge_index_paper_paper},
@@ -37,8 +42,13 @@ def test_init_hetero_data():
         author__paper={'edge_index': edge_index_author_paper},
     )
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
     data = HeteroData({
+        'v1': {
+            'x': 1
+        },
         'paper': {
             'x': x_paper
         },
@@ -56,6 +66,8 @@ def test_init_hetero_data():
         },
     })
     assert len(data) == 2
+    assert len(data.edge_types) == 3
+    assert data.node_types == ['v1', 'paper', 'author']
 
 
 def test_hetero_data_functions():
@@ -108,6 +120,7 @@ def test_copy_hetero_data():
 
     out = copy.copy(data)
     assert id(data) != id(out)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
@@ -119,6 +132,7 @@ def test_copy_hetero_data():
 
     out = copy.deepcopy(data)
     assert id(data) != id(out)
+    assert len(data.stores) == len(out.stores)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
     assert id(out) == id(out['paper']._parent())

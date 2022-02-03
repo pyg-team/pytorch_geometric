@@ -1,12 +1,13 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import OptTensor, Adj
 
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 
 
 class FAConv(MessagePassing):
@@ -50,6 +51,16 @@ class FAConv(MessagePassing):
             the layer's :meth:`forward` method. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          initial node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)` or
+          :math:`((|\mathcal{V}|, F), ((2, |\mathcal{E}|),
+          (|\mathcal{E}|)))` if :obj:`return_attention_weights=True`
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
@@ -157,6 +168,5 @@ class FAConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * (alpha * edge_weight).view(-1, 1)
 
-    def __repr__(self):
-        return '{}({}, eps={})'.format(self.__class__.__name__, self.channels,
-                                       self.eps)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.channels}, eps={self.eps})'

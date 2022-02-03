@@ -29,8 +29,8 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
     """
 
     if p < 0. or p > 1.:
-        raise ValueError('Dropout probability has to be between 0 and 1, '
-                         'but got {}'.format(p))
+        raise ValueError(f'Dropout probability has to be between 0 and 1 '
+                         f'(got {p}')
 
     if not training or p == 0.0:
         return edge_index, edge_attr

@@ -2,16 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
-import torch_geometric.graphgym.models.head
-from torch_geometric.graphgym.models.layer import (new_layer_config,
+from torch_geometric.graphgym.init import init_weights
+from torch_geometric.graphgym.models.layer import (BatchNorm1dNode,
                                                    GeneralLayer,
                                                    GeneralMultiLayer,
-                                                   BatchNorm1dNode)
-from torch_geometric.graphgym.init import init_weights
-
-import torch_geometric.graphgym.models.encoder  # noqa, register module
-import torch_geometric.graphgym.register as register
+                                                   new_layer_config)
+from torch_geometric.graphgym.register import register_stage
 
 
 def GNNLayer(dim_in, dim_out, has_act=True):
@@ -43,10 +41,12 @@ def GNNPreMP(dim_in, dim_out, num_layers):
     return GeneralMultiLayer(
         'linear',
         layer_config=new_layer_config(dim_in, dim_out, num_layers,
-                                      has_act=False,
-                                      has_bias=False, cfg=cfg))
+                                      has_act=False, has_bias=False, cfg=cfg))
 
 
+@register_stage('stack')
+@register_stage('skipsum')
+@register_stage('skipconcat')
 class GNNStackStage(nn.Module):
     """
     Simple Stage that stack GNN layers
@@ -57,7 +57,7 @@ class GNNStackStage(nn.Module):
         num_layers (int): Number of GNN layers
     """
     def __init__(self, dim_in, dim_out, num_layers):
-        super(GNNStackStage, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
         for i in range(num_layers):
             if cfg.gnn.stage_type == 'skipconcat':
@@ -82,15 +82,6 @@ class GNNStackStage(nn.Module):
         return batch
 
 
-stage_dict = {
-    'stack': GNNStackStage,
-    'skipsum': GNNStackStage,
-    'skipconcat': GNNStackStage,
-}
-
-register.stage_dict = {**register.stage_dict, **stage_dict}
-
-
 class FeatureEncoder(nn.Module):
     """
     Encoding node and edge features
@@ -99,7 +90,7 @@ class FeatureEncoder(nn.Module):
         dim_in (int): Input feature dimension
     """
     def __init__(self, dim_in):
-        super(FeatureEncoder, self).__init__()
+        super().__init__()
         self.dim_in = dim_in
         if cfg.dataset.node_encoder:
             # Encode integer node features via nn.Embeddings
@@ -139,7 +130,7 @@ class GNN(nn.Module):
         **kwargs (optional): Optional additional args
     """
     def __init__(self, dim_in, dim_out, **kwargs):
-        super(GNN, self).__init__()
+        super().__init__()
         GNNStage = register.stage_dict[cfg.gnn.stage_type]
         GNNHead = register.head_dict[cfg.gnn.head]
 
@@ -147,8 +138,8 @@ class GNN(nn.Module):
         dim_in = self.encoder.dim_in
 
         if cfg.gnn.layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(
-                dim_in, cfg.gnn.dim_inner, cfg.gnn.layers_pre_mp)
+            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner,
+                                   cfg.gnn.layers_pre_mp)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
             self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,
