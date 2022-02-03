@@ -18,7 +18,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 from torch.nn import Linear
 
 from torch_geometric.datasets import JODIEDataset
-from torch_geometric.loader import DataLoader
+from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn import TGNMemory, TransformerConv
 from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
                                            LastNeighborLoader)
@@ -34,9 +34,9 @@ min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 train_dataset, val_dataset, test_dataset = dataset.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-train_loader = DataLoader(train_dataset, batch_size=200)
-val_loader = DataLoader(val_dataset, batch_size=200)
-test_loader = DataLoader(test_dataset, batch_size=200)
+train_loader = TemporalDataLoader(train_dataset, batch_size=200)
+val_loader = TemporalDataLoader(val_dataset, batch_size=200)
+test_loader = TemporalDataLoader(test_dataset, batch_size=200)
 
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
