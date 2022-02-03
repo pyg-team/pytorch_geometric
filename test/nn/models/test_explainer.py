@@ -27,11 +27,12 @@ def test_to_captum(model, mask_type, node_idx):
         out = captum_model(mask.unsqueeze(0), edge_index)
     elif mask_type == 'edge':
         mask = torch.ones(edge_index.shape[1], dtype=torch.float) * 0.5
-        out = captum_model(mask, x, edge_index)
+        out = captum_model(mask.unsqueeze(0), x, edge_index)
     elif mask_type == 'node_and_edge':
         node_mask = x * 0.0
         edge_mask = torch.ones(edge_index.shape[1], dtype=torch.float) * 0.5
-        out = captum_model(node_mask.unsqueeze(0), edge_mask, edge_index)
+        out = captum_model(node_mask.unsqueeze(0), edge_mask.unsqueeze(0),
+                           edge_index)
 
     if node_idx is not None:
         assert out.shape == (1, 7)

@@ -6,7 +6,6 @@ from torch import Tensor
 from torch_geometric.nn import MessagePassing
 
 
-# TODO: Use set_masks, clear_masks also for GNNExplainer
 def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
               apply_sigmoid: bool = True):
     """Apply mask to every graph layer in the model."""
@@ -29,6 +28,7 @@ def clear_masks(model: torch.nn.Module):
             module.__edge_mask__ = None
             module.__loop_mask__ = None
             module.__apply_sigmoid__ = True
+    return module
 
 
 class CaptumModel(torch.nn.Module):
@@ -37,9 +37,17 @@ class CaptumModel(torch.nn.Module):
 
     Args:
         model (torch.nn.Module): Model to be explained.
-        mask_type (str): Denotes the type of mask which is to be created with a
-            captum explainer. Valid inputs are :obj:`'edge'`, :obj:`'node'`,
-            and :obj:`'node_and_edge'`. (default: :obj:`'edge'`)
+        mask_type (str): Denotes the type of mask to be created with a Captum
+            explainer. Valid inputs are :obj:`'edge'`, :obj:`'node'`, and
+            :obj:`'node_and_edge'`. The input for the forward function with
+            mask_type :obj:`'edge'` should be an edge_mask tensor of shape
+            (1, num_edges), :obj:`x` and :obj:`edge_index`. The input for the
+            forward function with mask_type :obj:`'node'` should be a
+            node_input of shape (1, num_nodes, num_features) and
+            :obj:`edge_index`. The input for the forward function with
+            mask_type :obj:`'node_and_edge'` should be a node_input tensor of
+            shape (1, num_nodes, num_features), an edge_mask tensor of shape
+            (1, num_edges), and :obj:`edge_index`. (default: :obj:`'edge'`)
         node_idx (int, optional): Index of the node to be explained. With
             :obj:`'node_idx'` set, the forward function will return the output
             of the model for the node at the index specified.
@@ -57,6 +65,18 @@ class CaptumModel(torch.nn.Module):
 
     def forward(self, mask, *args):
         """"""
+        # The mask tensor, which comes from Captum's attribution methods,
+        # contains the number of samples in dimension 0. Since we are
+        # working with only one sample, we squeeze the tensors below.
+        assert mask.shape[0] == 1, "Dimension 0 of input should be 1"
+        if self.mask_type == "edge":
+            assert len(args) >= 2, "Expects at least x and edge_index as args."
+        if self.mask_type == "node":
+            assert len(args) >= 1, "Expects at least edge_index as args."
+        if self.mask_type == "node_and_edge":
+            assert args[0].shape[0] == 1, "Dimension 0 of input should be 1"
+            assert len(args[1:]) >= 1, "Expects at least edge_index as args."
+
         # Set edge mask
         if self.mask_type == 'edge':
             set_masks(self.model, mask.squeeze(0), args[1],

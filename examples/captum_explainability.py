@@ -47,6 +47,8 @@ node_idx = 10
 target = int(data.y[node_idx])
 
 # Edge explainability for node 10
+# Captum assumes that for all given input tensors, dimension 0 is
+# equal to the number of samples. Therefore, we use unsqueeze(0).
 input_mask = torch.ones(data.num_edges, dtype=torch.float, requires_grad=True,
                         device=device)
 captum_model = to_captum(model, mask_type='edge', node_idx=node_idx)
