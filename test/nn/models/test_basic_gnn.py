@@ -114,5 +114,4 @@ def test_packaging():
     model = pi.load_pickle('models', 'model.pkl')
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
-
     os.remove('package.pt')
