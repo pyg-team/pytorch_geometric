@@ -1,10 +1,7 @@
-from typing import Union, List, Optional
-
 from torch_geometric.loader import DataLoader
+from torch.utils.data import _utils
 from torch.utils.data.dataloader import _BaseDataLoaderIter
 
-from torch_geometric.data import Dataset
-from torch_geometric.data.data import BaseData
 
 class _SingleProcessTemporalDataLoaderIter(_BaseDataLoaderIter):
     def __init__(self, loader):
