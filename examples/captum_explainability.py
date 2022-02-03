@@ -3,7 +3,7 @@ import os.path as osp
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
-from captum.attr import IntegratedGradients, Saliency
+from captum.attr import IntegratedGradients
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
@@ -45,29 +45,50 @@ for epoch in range(1, 201):
     optimizer.step()
 
 node_idx = 10
-captum_model = to_captum(model, mask_type="edge", node_idx=node_idx).to(device)
 target = data.y[node_idx].item()
+
+# Edge explainability for node 10
 input_mask = torch.ones(data.num_edges,
                         dtype=torch.float).requires_grad_(True).to(device)
-
-# Edge explainability with Integrated Gradients for node 10
+captum_model = to_captum(model, mask_type="edge", node_idx=node_idx).to(device)
 ig = IntegratedGradients(captum_model)
 ig_attr = ig.attribute(input_mask.unsqueeze(0), target=target,
                        additional_forward_args=(x, edge_index),
                        internal_batch_size=1)
 
-# Edge explainability with Saliency for node 10
-sa = Saliency(captum_model)
-sa_attr = sa.attribute(input_mask.unsqueeze(0), target=target,
-                       additional_forward_args=(x, edge_index))
-
 # Scale attributions to [0, 1]
 ig_attr = ig_attr.squeeze(0).abs() / ig_attr.abs().max()
-sa_attr = sa_attr.squeeze(0).abs() / sa_attr.abs().max()
 
 # Visualize attributions with GNNExplainer visualizer
 explainer = GNNExplainer(model)
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr, y=data.y)
+ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr)
 plt.show()
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, sa_attr, y=data.y)
+
+# Node explainability for node 10
+captum_model = to_captum(model, mask_type="node", node_idx=node_idx).to(device)
+ig = IntegratedGradients(captum_model)
+ig_attr_node = ig.attribute(x.unsqueeze(0), target=target,
+                            additional_forward_args=(edge_index),
+                            internal_batch_size=1)
+ig_attr_node = ig_attr_node.squeeze(0).abs().sum(dim=1)
+ig_attr_node /= ig_attr_node.max()
+
+ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr,
+                                     node_alpha=ig_attr_node)
+plt.show()
+
+# Node and edge explainability for node 10
+captum_model = to_captum(model, mask_type="node_and_edge",
+                         node_idx=node_idx).to(device)
+ig = IntegratedGradients(captum_model)
+ig_attr_node_and_edge = ig.attribute(
+    (x.unsqueeze(0), input_mask.unsqueeze(0)), target=target,
+    additional_forward_args=(edge_index), internal_batch_size=1)
+ig_attr_node = ig_attr_node_and_edge[0].squeeze(0).abs().sum(dim=1)
+ig_attr_node /= ig_attr_node.max()
+ig_attr_edge = ig_attr_node_and_edge[1].squeeze(0).abs()
+ig_attr_edge /= ig_attr_edge.max()
+
+ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr_edge,
+                                     node_alpha=ig_attr_node)
 plt.show()

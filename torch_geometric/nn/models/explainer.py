@@ -59,8 +59,9 @@ class CaptumModel(torch.nn.Module):
             set_masks(self.model, mask.squeeze(0), args[1],
                       apply_sigmoid=False)
         elif self.mask_type == 'node_and_edge':
-            set_masks(self.model, mask[1].squeeze(0), args[0],
+            set_masks(self.model, args[0].squeeze(0), args[1],
                       apply_sigmoid=False)
+            args = args[1:]
 
         # Edge mask
         if self.mask_type == 'edge':
@@ -68,7 +69,7 @@ class CaptumModel(torch.nn.Module):
 
         # Node mask
         elif self.mask_type == 'node':
-            x = self.model(mask, *args)
+            x = self.model(mask.squeeze(0), *args)
 
         # Node and edge mask
         else:
