@@ -1,13 +1,15 @@
-import numpy as np
-from torch.nn import Parameter
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-import os.path as osp
 import math
+import os.path as osp
+
+import numpy as np
 import torch
 import torch.nn.functional as F
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from torch.nn import Parameter
+
 from torch_geometric.datasets import DBLP
-from torch_geometric.nn import SAGEConv, HeteroConv, GATConv
+from torch_geometric.nn import GATConv, HeteroConv, SAGEConv
 
 EPS = 1e-15
 
@@ -151,33 +153,26 @@ class HeteroUnsupervised(torch.nn.Module):
                 zip(pos_embeds, neg_embeds, summaries):
 
             pos_loss = -torch.log(
-                self.discriminate(pos_embed, summary, sigmoid=True) + EPS
-            ).mean()
-            neg_loss = -torch.log(
-                1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS
-            ).mean()
+                self.discriminate(pos_embed, summary, sigmoid=True) +
+                EPS).mean()
+            neg_loss = -torch.log(1 - self.discriminate(
+                neg_embed, summary, sigmoid=True) + EPS).mean()
             total_loss += (pos_loss + neg_loss)
 
         return total_loss
 
 
-model = HeteroUnsupervised(
-    data.metadata(),
-    out_channels=64,
-    hidden_channels=64,
-    num_layers=2
-)
+model = HeteroUnsupervised(data.metadata(), out_channels=64,
+                           hidden_channels=64, num_layers=2)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 data, model = data.to(device), model.to(device)
 
 with torch.no_grad():  # Initialize lazy modules.
     out = model(data.x_dict, data.edge_index_dict)
 
-optimizer = torch.optim.Adam(model.parameters(),
-                             lr=0.005, weight_decay=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.001)
 
 
 def train():
