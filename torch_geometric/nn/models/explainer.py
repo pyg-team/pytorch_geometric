@@ -43,7 +43,7 @@ class CaptumModel(torch.nn.Module):
             mask type :obj:`'edge'` should be an edge_mask tensor of shape
             (1, num_edges), :obj:`x` and :obj:`edge_index`. The input for the
             forward function with mask_type :obj:`'node'` should be a
-            node_input of shape (1, num_nodes, num_features) and
+            node input of shape :obj:`[1, num_nodes, num_features]` and
             :obj:`edge_index`. The input for the forward function with
             mask_type :obj:`'node_and_edge'` should be a node_input tensor of
             shape (1, num_nodes, num_features), an edge_mask tensor of shape
