@@ -1,8 +1,8 @@
 import torch
-from torch_sparse import spspmm, coalesce
+from torch_sparse import coalesce, spspmm
 
-from torch_geometric.utils import remove_self_loops
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import remove_self_loops
 
 
 class TwoHop(BaseTransform):
@@ -28,6 +28,3 @@ class TwoHop(BaseTransform):
             data.edge_attr = edge_attr
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

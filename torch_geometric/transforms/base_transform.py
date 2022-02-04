@@ -1,4 +1,7 @@
-class BaseTransform(object):
+from typing import Any
+
+
+class BaseTransform:
     r"""An abstract base class for writing transforms.
 
     Transforms are a general way to modify and customize
@@ -20,5 +23,8 @@ class BaseTransform(object):
         data = TUDataset(path, name='MUTAG')[0]
         data = transform(data)  # Explicitly transform data.
     """
-    def __call__(self, data):
+    def __call__(self, data: Any) -> Any:
         raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'

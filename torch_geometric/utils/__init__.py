@@ -24,9 +24,9 @@ from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
-from .negative_sampling import (negative_sampling,
+from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
-                                batched_negative_sampling)
+                                structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
@@ -69,8 +69,9 @@ __all__ = [
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
     'negative_sampling',
-    'structured_negative_sampling',
     'batched_negative_sampling',
+    'structured_negative_sampling',
+    'structured_negative_sampling_feasible',
     'train_test_split_edges',
     'accuracy',
     'true_positive',

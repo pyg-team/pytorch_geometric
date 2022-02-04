@@ -1,9 +1,10 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import SGConv
-
 from citation import get_planetoid_dataset, random_planetoid_splits, run
+
+from torch_geometric.nn import SGConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
@@ -20,9 +21,9 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, dataset):
-        super(Net, self).__init__()
-        self.conv1 = SGConv(
-            dataset.num_features, dataset.num_classes, K=args.K, cached=True)
+        super().__init__()
+        self.conv1 = SGConv(dataset.num_features, dataset.num_classes,
+                            K=args.K, cached=True)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()

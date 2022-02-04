@@ -1,7 +1,7 @@
+import json
 import os
 import os.path as osp
 import shutil
-import json
 
 import torch
 
@@ -29,7 +29,9 @@ class ShapeNet(InMemoryDataset):
             Can be explicitly set to :obj:`None` to load all categories.
             (default: :obj:`None`)
         include_normals (bool, optional): If set to :obj:`False`, will not
-            include normal vectors as input features. (default: :obj:`True`)
+            include normal vectors as input features to :obj:`data.x`.
+            As a result, :obj:`data.x` will be :obj:`None`.
+            (default: :obj:`True`)
         split (string, optional): If :obj:`"train"`, loads the training
             dataset.
             If :obj:`"val"`, loads the validation dataset.
@@ -100,8 +102,7 @@ class ShapeNet(InMemoryDataset):
             categories = [categories]
         assert all(category in self.category_ids for category in categories)
         self.categories = categories
-        super(ShapeNet, self).__init__(root, transform, pre_transform,
-                                       pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -135,7 +136,7 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            os.path.join('{}_{}.pt'.format(cats, split))
+            osp.join(f'{cats}_{split}.pt')
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
@@ -186,6 +187,6 @@ class ShapeNet(InMemoryDataset):
             torch.save(self.collate(data_list), self.processed_paths[i])
         torch.save(self.collate(trainval), self.processed_paths[3])
 
-    def __repr__(self):
-        return '{}({}, categories={})'.format(self.__class__.__name__,
-                                              len(self), self.categories)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'categories={self.categories})')

@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_add
 from torch_sparse import coalesce
+
 from torch_geometric.utils import softmax
 
 
@@ -53,7 +54,7 @@ class EdgePooling(torch.nn.Module):
 
     def __init__(self, in_channels, edge_score_method=None, dropout=0,
                  add_to_edge_score=0.5):
-        super(EdgePooling, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         if edge_score_method is None:
             edge_score_method = self.compute_edge_score_softmax
@@ -189,5 +190,5 @@ class EdgePooling(torch.nn.Module):
         new_x = new_x[unpool_info.cluster]
         return new_x, unpool_info.edge_index, unpool_info.batch
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.in_channels)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.in_channels})'

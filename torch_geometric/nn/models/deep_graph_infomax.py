@@ -20,7 +20,7 @@ class DeepGraphInfomax(torch.nn.Module):
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
     def __init__(self, hidden_channels, encoder, summary, corruption):
-        super(DeepGraphInfomax, self).__init__()
+        super().__init__()
         self.hidden_channels = hidden_channels
         self.encoder = encoder
         self.summary = summary
@@ -80,5 +80,5 @@ class DeepGraphInfomax(torch.nn.Module):
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.hidden_channels)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.hidden_channels})'

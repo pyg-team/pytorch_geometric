@@ -1,15 +1,14 @@
-from typing import Optional, Callable, List
-
-import os
 import logging
+import os
 import os.path as osp
 from collections import Counter
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.data import (InMemoryDataset, Data, HeteroData,
-                                  download_url, extract_tar)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar)
 
 
 class Entities(InMemoryDataset):
@@ -82,6 +81,7 @@ class Entities(InMemoryDataset):
 
     def process(self):
         import gzip
+
         import pandas as pd
         import rdflib as rdf
 
@@ -155,22 +155,12 @@ class Entities(InMemoryDataset):
         test_idx = torch.tensor(test_indices, dtype=torch.long)
         test_y = torch.tensor(test_labels, dtype=torch.long)
 
-        if not self.hetero:
-            data = Data(edge_index=edge_index, edge_type=edge_type,
-                        train_idx=train_idx, train_y=train_y,
-                        test_idx=test_idx, test_y=test_y, num_nodes=N)
-        else:
-            data = HeteroData(
-                v={
-                    'train_idx': train_idx,
-                    'train_y': train_y,
-                    'test_idx': test_idx,
-                    'test_y': test_y,
-                    'num_nodes': N,
-                })
-            for i in range(R):
-                mask = edge_type == i
-                data['v', f'{i}', 'v'].edge_index = edge_index[:, mask]
+        data = Data(edge_index=edge_index, edge_type=edge_type,
+                    train_idx=train_idx, train_y=train_y, test_idx=test_idx,
+                    test_y=test_y, num_nodes=N)
+
+        if self.hetero:
+            data = data.to_heterogeneous(node_type_names=['v'])
 
         torch.save(self.collate([data]), self.processed_paths[0])
 

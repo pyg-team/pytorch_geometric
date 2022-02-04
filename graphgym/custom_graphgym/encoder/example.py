@@ -1,10 +1,11 @@
 import torch
-from torch_geometric.graphgym.register import (register_node_encoder,
-                                               register_edge_encoder)
-
 from ogb.utils.features import get_bond_feature_dims
 
+from torch_geometric.graphgym.register import (register_edge_encoder,
+                                               register_node_encoder)
 
+
+@register_node_encoder('example')
 class ExampleNodeEncoder(torch.nn.Module):
     """
         Provides an encoder for integer node features
@@ -13,7 +14,7 @@ class ExampleNodeEncoder(torch.nn.Module):
         num_classes - the number of classes for the embedding mapping to learn
     """
     def __init__(self, emb_dim, num_classes=None):
-        super(ExampleNodeEncoder, self).__init__()
+        super().__init__()
 
         self.encoder = torch.nn.Embedding(num_classes, emb_dim)
         torch.nn.init.xavier_uniform_(self.encoder.weight.data)
@@ -25,12 +26,10 @@ class ExampleNodeEncoder(torch.nn.Module):
         return batch
 
 
-register_node_encoder('example', ExampleNodeEncoder)
-
-
+@register_edge_encoder('example')
 class ExampleEdgeEncoder(torch.nn.Module):
     def __init__(self, emb_dim):
-        super(ExampleEdgeEncoder, self).__init__()
+        super().__init__()
 
         self.bond_embedding_list = torch.nn.ModuleList()
         full_bond_feature_dims = get_bond_feature_dims()
@@ -48,6 +47,3 @@ class ExampleEdgeEncoder(torch.nn.Module):
 
         batch.edge_attr = bond_embedding
         return batch
-
-
-register_edge_encoder('example', ExampleEdgeEncoder)

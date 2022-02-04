@@ -3,8 +3,9 @@ from math import ceil
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import TUDataset
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DenseDataLoader
 from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
@@ -33,7 +34,7 @@ train_loader = DenseDataLoader(train_dataset, batch_size=20)
 class GNN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
                  normalize=False, lin=True):
-        super(GNN, self).__init__()
+        super().__init__()
 
         self.conv1 = DenseSAGEConv(in_channels, hidden_channels, normalize)
         self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
@@ -52,7 +53,7 @@ class GNN(torch.nn.Module):
         batch_size, num_nodes, num_channels = x.size()
 
         x = x.view(-1, num_channels)
-        x = getattr(self, 'bn{}'.format(i))(x)
+        x = getattr(self, f'bn{i}')(x)
         x = x.view(batch_size, num_nodes, num_channels)
         return x
 
@@ -74,7 +75,7 @@ class GNN(torch.nn.Module):
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         num_nodes = ceil(0.25 * max_nodes)
         self.gnn1_pool = GNN(dataset.num_features, 64, num_nodes)

@@ -1,9 +1,10 @@
 import os.path as osp
 
-import torch
 import numpy as np
+import torch
 from torch_sparse import coalesce
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class WebKB(InMemoryDataset):
@@ -35,7 +36,7 @@ class WebKB(InMemoryDataset):
         self.name = name.lower()
         assert self.name in ['cornell', 'texas', 'wisconsin']
 
-        super(WebKB, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -48,9 +49,9 @@ class WebKB(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return ['out1_node_feature_label.txt', 'out1_graph_edges.txt'] + [
-            '{}_split_0.6_0.2_{}.npz'.format(self.name, i) for i in range(10)
-        ]
+        out = ['out1_node_feature_label.txt', 'out1_graph_edges.txt']
+        out += [f'{self.name}_split_0.6_0.2_{i}.npz' for i in range(10)]
+        return out
 
     @property
     def processed_file_names(self):
@@ -92,5 +93,5 @@ class WebKB(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}()'.format(self.name)
+    def __repr__(self) -> str:
+        return f'{self.name}()'

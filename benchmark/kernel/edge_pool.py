@@ -1,13 +1,14 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import (GraphConv, EdgePooling, global_mean_pool,
-                                JumpingKnowledge)
+
+from torch_geometric.nn import (EdgePooling, GraphConv, JumpingKnowledge,
+                                global_mean_pool)
 
 
 class EdgePool(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
-        super(EdgePool, self).__init__()
+        super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
         self.pools = torch.nn.ModuleList()

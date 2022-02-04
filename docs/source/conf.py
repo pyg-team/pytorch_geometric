@@ -1,6 +1,8 @@
 import datetime
-import sphinx_rtd_theme
 import doctest
+
+import sphinx_rtd_theme
+
 import torch_geometric
 
 extensions = [
@@ -22,7 +24,7 @@ master_doc = 'index'
 
 author = 'Matthias Fey'
 project = 'pytorch_geometric'
-copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+copyright = f'{datetime.datetime.now().year}, {author}'
 
 version = torch_geometric.__version__
 release = torch_geometric.__version__
@@ -32,7 +34,12 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE
 autodoc_member_order = 'bysource'
-intersphinx_mapping = {'python': ('https://docs.python.org/', None)}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
+    'torch': ('https://pytorch.org/docs/master', None),
+}
 
 html_theme_options = {
     'collapse_navigation': False,
@@ -43,7 +50,7 @@ html_theme_options = {
 
 html_logo = '_static/img/pyg2.png'
 html_static_path = ['_static']
-html_context = {'css_files': ['_static/css/custom.css']}
+html_css_files = ['css/custom.css']
 rst_context = {'torch_geometric': torch_geometric}
 
 add_module_names = False

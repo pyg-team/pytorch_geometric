@@ -1,12 +1,13 @@
-from typing import Optional, List, Dict
-from torch_geometric.typing import Adj, OptTensor
+from typing import Dict, List, Optional
 
 import torch
 from torch import Tensor
+from torch.nn import ModuleList, ReLU, Sequential
 from torch_scatter import scatter
-from torch.nn import ModuleList, Sequential, ReLU
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import degree
 
 from ..inits import reset
@@ -71,6 +72,13 @@ class PNAConv(MessagePassing):
             be split between towers or not (default: :obj:`False`).
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  aggregators: List[str], scalers: List[str], deg: Tensor,
@@ -79,7 +87,7 @@ class PNAConv(MessagePassing):
                  divide_input: bool = False, **kwargs):
 
         kwargs.setdefault('aggr', None)
-        super(PNAConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         if divide_input:
             assert in_channels % towers == 0

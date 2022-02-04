@@ -50,5 +50,5 @@ class SIGN(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(K={})'.format(self.__class__.__name__, self.K)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(K={self.K})'

@@ -1,13 +1,14 @@
 import os.path as osp
 
 import torch
-from torch.nn import Linear
 import torch.nn.functional as F
 from sklearn.metrics import f1_score
-from torch_geometric.datasets import PPI
+from torch.nn import Linear
+
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCN2Conv
+from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GCN2Conv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'GCN2_PPI')
 pre_transform = T.Compose([T.GCNNorm(), T.ToSparseTensor()])
@@ -22,7 +23,7 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 class Net(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, alpha, theta,
                  shared_weights=True, dropout=0.0):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.lins = torch.nn.ModuleList()
         self.lins.append(Linear(train_dataset.num_features, hidden_channels))
@@ -92,5 +93,5 @@ for epoch in range(1, 2001):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
-    print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
-        epoch, loss, val_f1, test_f1))
+    print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
+          f'Test: {test_f1:.4f}')
