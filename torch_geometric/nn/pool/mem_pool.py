@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
+from torch.nn import Conv2d, KLDivLoss, Linear, Parameter
 
 from torch_geometric.utils import to_dense_batch
 

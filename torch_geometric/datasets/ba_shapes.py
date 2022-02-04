@@ -1,7 +1,8 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data
+
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.utils import barabasi_albert_graph
 
 

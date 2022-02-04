@@ -2,7 +2,7 @@ import torch
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
-from torch_geometric.graphgym.register import register_network, network_dict
+from torch_geometric.graphgym.register import network_dict, register_network
 
 register_network('gnn', GNN)
 

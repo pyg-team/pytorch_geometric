@@ -1,15 +1,14 @@
-from typing import Union, Tuple, Dict, Optional
-from torch_geometric.typing import OptTensor, EdgeType
-
-import math
 import copy
+import math
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.storage import NodeStorage, EdgeStorage
+from torch_geometric.data.storage import EdgeStorage, NodeStorage
+from torch_geometric.typing import EdgeType, OptTensor
 
 
 def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:

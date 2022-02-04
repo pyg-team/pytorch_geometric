@@ -1,14 +1,15 @@
 from typing import Optional
-from torch_geometric.typing import OptTensor
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.inits import zeros
-from torch_geometric.utils import get_laplacian
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import OptTensor
+from torch_geometric.utils import (add_self_loops, get_laplacian,
+                                   remove_self_loops)
 
 
 class ChebConv(MessagePassing):
@@ -71,7 +72,6 @@ class ChebConv(MessagePassing):
           batch vector :math:`(|\mathcal{V}|)` *(optional)*,
           maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
-
     """
     def __init__(self, in_channels: int, out_channels: int, K: int,
                  normalization: Optional[str] = 'sym', bias: bool = True,
@@ -126,8 +126,9 @@ class ChebConv(MessagePassing):
 
         return edge_index, edge_weight
 
-    def forward(self, x, edge_index, edge_weight: OptTensor = None,
-                batch: OptTensor = None, lambda_max: OptTensor = None):
+    def forward(self, x: Tensor, edge_index: Tensor,
+                edge_weight: OptTensor = None, batch: OptTensor = None,
+                lambda_max: OptTensor = None):
         """"""
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'

@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.utils import (negative_sampling, remove_self_loops,
-                                   add_self_loops)
+
+from torch_geometric.utils import (add_self_loops, negative_sampling,
+                                   remove_self_loops)
 
 from ..inits import reset
 
@@ -114,7 +115,7 @@ class GAE(torch.nn.Module):
             neg_edge_index (LongTensor): The negative edges to evaluate
                 against.
         """
-        from sklearn.metrics import roc_auc_score, average_precision_score
+        from sklearn.metrics import average_precision_score, roc_auc_score
 
         pos_y = z.new_ones(pos_edge_index.size(1))
         neg_y = z.new_zeros(neg_edge_index.size(1))

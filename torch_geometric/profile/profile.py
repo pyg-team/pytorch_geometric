@@ -1,9 +1,9 @@
-from typing import Any, Tuple, List, NamedTuple
+from typing import Any, List, NamedTuple, Tuple
 
 import torch
 
-from torch_geometric.profile.utils import (get_gpu_memory_from_nvidia_smi,
-                                           byte_to_megabyte)
+from torch_geometric.profile.utils import (byte_to_megabyte,
+                                           get_gpu_memory_from_nvidia_smi)
 
 
 class Stats(NamedTuple):
@@ -27,7 +27,7 @@ class StatsSummary(NamedTuple):
 
 def profileit():
     r"""A decorator to facilitate profiling a function, *e.g.*, obtaining
-    training runtime and memory statistics a specific model on a specific
+    training runtime and memory statistics of a specific model on a specific
     dataset.
     Returns a :obj:`Stats` object with the attributes :obj:`time`,
     :obj:`max_active_cuda`, :obj:`max_reserved_cuda`, :obj:`max_active_cuda`,
@@ -90,7 +90,7 @@ def profileit():
 
 def timeit():
     r"""A decorator to facilitate timing a function, *e.g.*, obtaining the
-    runtime time of a specific model on a specific dataset.
+    runtime of a specific model on a specific dataset.
 
     .. code-block:: python
 
@@ -149,6 +149,7 @@ def get_stats_summary(stats_list: List[Stats]):
 
 def read_from_memlab(line_profiler: Any) -> List[float]:
     from pytorch_memlab.line_profiler.line_records import LineRecords
+
     # See: https://pytorch.org/docs/stable/cuda.html#torch.cuda.memory_stats
 
     track_stats = [  # Different statistic can be collected as needed.

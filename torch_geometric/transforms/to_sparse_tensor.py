@@ -1,10 +1,10 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.utils import sort_edge_index
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import sort_edge_index
 
 
 class ToSparseTensor(BaseTransform):

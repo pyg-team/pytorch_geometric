@@ -1,14 +1,14 @@
 from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding
-import torch.nn.functional as F
 
-from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear, HeteroLinear
+from torch_geometric.nn.dense.linear import HeteroLinear, Linear
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import softmax
 
 
 class HEATConv(MessagePassing):
@@ -47,6 +47,15 @@ class HEATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          node types :math:`(|\mathcal{V}|)`,
+          edge types :math:`(|\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_node_types: int, num_edge_types: int,

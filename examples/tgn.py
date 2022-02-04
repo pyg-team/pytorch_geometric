@@ -14,13 +14,13 @@
 import os.path as osp
 
 import torch
-from torch.nn import Linear
 from sklearn.metrics import average_precision_score, roc_auc_score
+from torch.nn import Linear
 
 from torch_geometric.datasets import JODIEDataset
 from torch_geometric.nn import TGNMemory, TransformerConv
-from torch_geometric.nn.models.tgn import (LastNeighborLoader, IdentityMessage,
-                                           LastAggregator)
+from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
+                                           LastNeighborLoader)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

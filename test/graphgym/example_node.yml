@@ -1,13 +1,13 @@
-tensorboard_each_run: False
-tensorboard_agg: False
+tensorboard_each_run: false
+tensorboard_agg: false
 dataset:
   format: PyG
   name: Cora
   task: node
   task_type: classification
-  node_encoder: False
+  node_encoder: false
   node_encoder_name: Atom
-  edge_encoder: False
+  edge_encoder: false
   edge_encoder_name: Bond
 train:
   batch_size: 128
@@ -26,11 +26,11 @@ gnn:
   dim_inner: 16
   layer_type: gcnconv
   stage_type: stack
-  batchnorm: False
+  batchnorm: false
   act: prelu
   dropout: 0.1
   agg: mean
-  normalize_adj: False
+  normalize_adj: false
 optim:
   optimizer: adam
   base_lr: 0.01

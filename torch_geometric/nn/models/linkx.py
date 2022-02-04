@@ -1,5 +1,3 @@
-from torch_geometric.typing import OptTensor, Adj
-
 import math
 
 import torch
@@ -8,8 +6,9 @@ from torch.nn import BatchNorm1d, Parameter
 from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn import inits
-from torch_geometric.nn.models import MLP
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.models import MLP
+from torch_geometric.typing import Adj, OptTensor
 
 
 class SparseLinear(MessagePassing):
@@ -107,7 +106,7 @@ class LINKX(torch.nn.Module):
         self.cat_lin2 = torch.nn.Linear(hidden_channels, hidden_channels)
 
         channels = [hidden_channels] * num_layers + [out_channels]
-        self.final_mlp = MLP(channels, dropout, relu_first=True)
+        self.final_mlp = MLP(channels, dropout=dropout, relu_first=True)
 
         self.reset_parameters()
 

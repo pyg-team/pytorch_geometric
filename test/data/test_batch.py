@@ -1,12 +1,13 @@
 import os
-import sys
 import random
+import sys
 
-import torch
 import numpy as np
+import torch
 from torch_sparse import SparseTensor
+
 import torch_geometric
-from torch_geometric.data import Data, HeteroData, Batch
+from torch_geometric.data import Batch, Data, HeteroData
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):

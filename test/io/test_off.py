@@ -1,9 +1,10 @@
-import sys
-import random
 import os
 import os.path as osp
+import random
+import sys
 
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.io import read_off, write_off
 

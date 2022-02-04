@@ -1,12 +1,13 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import OptTensor, Adj
 
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 
 
 class FAConv(MessagePassing):
@@ -58,7 +59,7 @@ class FAConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)` or
-          :math:`((|\mathcal{V}|, H), ((2, |\mathcal{E}|),
+          :math:`((|\mathcal{V}|, F), ((2, |\mathcal{E}|),
           (|\mathcal{E}|)))` if :obj:`return_attention_weights=True`
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]

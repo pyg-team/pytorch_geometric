@@ -1,14 +1,14 @@
-from typing import Union, Dict, Optional, List
+from typing import Dict, List, Optional, Union
 
 import torch
-from torch import Tensor, nn
 import torch.nn.functional as F
+from torch import Tensor, nn
 
-from torch_geometric.typing import NodeType, EdgeType, Metadata, Adj
-from torch_geometric.nn.dense import Linear
-from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
+from torch_geometric.utils import softmax
 
 
 def group(xs: List[Tensor], q: nn.Parameter,

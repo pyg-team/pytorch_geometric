@@ -1,8 +1,8 @@
-import torch
 import numpy as np
-from torch_geometric.utils import (erdos_renyi_graph,
-                                   stochastic_blockmodel_graph,
-                                   barabasi_albert_graph)
+import torch
+
+from torch_geometric.utils import (barabasi_albert_graph, erdos_renyi_graph,
+                                   stochastic_blockmodel_graph)
 
 
 def test_erdos_renyi_graph():

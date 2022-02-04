@@ -1,13 +1,12 @@
-from typing import Optional, Callable
-
 import random
-from itertools import product
 from collections import defaultdict
+from itertools import product
+from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, Data, HeteroData
-from torch_geometric.utils import to_undirected, coalesce, remove_self_loops
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
 
 
 class FakeDataset(InMemoryDataset):
@@ -31,8 +30,8 @@ class FakeDataset(InMemoryDataset):
             If set to :obj:`"auto"`, will return graph-level labels if
             :obj:`num_graphs > 1`, and node-level labels other-wise.
             (default: :obj:`"auto"`)
-        is_undirected (bool): Whether the graphs to generate are undirected.
-            (default: :obj:`True`)
+        is_undirected (bool, optional): Whether the graphs to generate are
+            undirected. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
