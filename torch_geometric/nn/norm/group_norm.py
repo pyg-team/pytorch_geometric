@@ -1,11 +1,12 @@
-from torch_geometric.typing import OptTensor
-
 import torch
-from torch.nn import Parameter
 from torch import Tensor
+from torch.nn import Parameter
 from torch_scatter import scatter_add
+
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import degree
-from ..inits import zeros, ones
+
+from ..inits import ones, zeros
 
 
 class GroupNorm(torch.nn.Module):
