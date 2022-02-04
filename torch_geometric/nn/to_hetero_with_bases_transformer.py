@@ -1,21 +1,21 @@
-from typing import List, Dict, Union, Optional, Any
-from torch_geometric.typing import NodeType, EdgeType, Metadata
-
 import copy
 import warnings
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
 from torch.nn import Module, Parameter
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn.fx import Transformer
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
+from torch_geometric.nn.fx import Transformer
+from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
-    from torch.fx import GraphModule, Graph, Node
-except ImportError:
+    from torch.fx import Graph, GraphModule, Node
+except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
@@ -41,17 +41,17 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         import torch
         from torch_geometric.nn import SAGEConv, to_hetero_with_bases
 
-        Net(torch.nn.Module):
+        class GNN(torch.nn.Module):
             def __init__(self):
-                self.conv1 = SAGEConv(16, 16)
-                self.conv2 = SAGEConv(16, 16)
+                self.conv1 = SAGEConv((16, 16), 32)
+                self.conv2 = SAGEConv((32, 32), 32)
 
             def forward(self, x, edge_index):
                 x = self.conv1(x, edge_index).relu()
                 x = self.conv2(x, edge_index).relu()
                 return x
 
-        model = Net()
+        model = GNN()
 
         node_types = ['paper', 'author']
         edge_types = [
@@ -144,6 +144,15 @@ class ToHeteroWithBasesTransformer(Transformer):
         debug: bool = False,
     ):
         super().__init__(module, input_map, debug)
+
+        unused_node_types = get_unused_node_types(*metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behaviour.")
+
         self.metadata = metadata
         self.num_bases = num_bases
         self.in_channels = in_channels or {}
@@ -536,4 +545,5 @@ def split_output(
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
-    return '__'.join(key) if isinstance(key, tuple) else key
+    key = '__'.join(key) if isinstance(key, tuple) else key
+    return key.replace(' ', '_').replace('-', '_').replace(':', '_')

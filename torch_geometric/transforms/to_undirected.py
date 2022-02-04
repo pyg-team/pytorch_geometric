@@ -3,9 +3,9 @@ from typing import Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import to_undirected
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import to_undirected
 
 
 class ToUndirected(BaseTransform):
@@ -50,13 +50,18 @@ class ToUndirected(BaseTransform):
                 inv_store = data[dst, f'rev_{rel}', src]
                 inv_store.edge_index = rev_edge_index
                 for key, value in store.items():
+                    if key == 'edge_index':
+                        continue
                     if isinstance(value, Tensor) and value.size(0) == nnz:
                         inv_store[key] = value
 
             else:
                 keys, values = [], []
                 for key, value in store.items():
-                    if isinstance(value, Tensor) and value.size(0) == nnz:
+                    if key == 'edge_index':
+                        continue
+
+                    if store.is_edge_attr(key):
                         keys.append(key)
                         values.append(value)
 

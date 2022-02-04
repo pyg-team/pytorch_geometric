@@ -28,6 +28,7 @@ from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
+from .point_transformer_conv import PointTransformerConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
 from .pna_conv import PNAConv
@@ -43,7 +44,10 @@ from .eg_conv import EGConv
 from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
+from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
+from .han_conv import HANConv
+from .lg_conv import LGConv
 
 __all__ = [
     'MessagePassing',
@@ -81,6 +85,7 @@ __all__ = [
     'XConv',
     'PPFConv',
     'FeaStConv',
+    'PointTransformerConv',
     'HypergraphConv',
     'LEConv',
     'PNAConv',
@@ -96,7 +101,10 @@ __all__ = [
     'PDNConv',
     'GeneralConv',
     'HGTConv',
+    'HEATConv',
     'HeteroConv',
+    'HANConv',
+    'LGConv',
 ]
 
 classes = __all__

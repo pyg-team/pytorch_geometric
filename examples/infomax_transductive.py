@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn as nn
+
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, DeepGraphInfomax
+from torch_geometric.nn import DeepGraphInfomax, GCNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -12,7 +13,7 @@ dataset = Planetoid(path, dataset)
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, hidden_channels):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.conv = GCNConv(in_channels, hidden_channels, cached=True)
         self.prelu = nn.PReLU(hidden_channels)
 
@@ -55,6 +56,6 @@ def test():
 
 for epoch in range(1, 301):
     loss = train()
-    print('Epoch: {:03d}, Loss: {:.4f}'.format(epoch, loss))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
 acc = test()
-print('Accuracy: {:.4f}'.format(acc))
+print(f'Accuracy: {acc:.4f}')

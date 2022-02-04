@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-from torch.nn import Linear, BatchNorm1d
+from torch.nn import BatchNorm1d, Linear
 
 
 class DiffGroupNorm(torch.nn.Module):
@@ -42,7 +42,7 @@ class DiffGroupNorm(torch.nn.Module):
     """
     def __init__(self, in_channels, groups, lamda=0.01, eps=1e-5, momentum=0.1,
                  affine=True, track_running_stats=True):
-        super(DiffGroupNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.groups = groups
@@ -104,6 +104,6 @@ class DiffGroupNorm(torch.nn.Module):
 
         return numerator / (denominator + eps)
 
-    def __repr__(self):
-        return '{}({}, groups={})'.format(self.__class__.__name__,
-                                          self.in_channels, self.groups)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'groups={self.groups})')

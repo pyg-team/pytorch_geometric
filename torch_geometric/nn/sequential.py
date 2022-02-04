@@ -1,7 +1,6 @@
-from typing import List, Union, Tuple, Callable
-
 import os
 import os.path as osp
+from typing import Callable, List, Tuple, Union
 from uuid import uuid1
 
 import torch

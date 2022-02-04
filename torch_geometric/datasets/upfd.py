@@ -1,13 +1,13 @@
 import os
 import os.path as osp
 
-import torch
 import numpy as np
 import scipy.sparse as sp
-
+import torch
 from torch_sparse import coalesce
-from torch_geometric.io import read_txt_array
+
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import read_txt_array
 
 
 class UPFD(InMemoryDataset):
@@ -29,7 +29,7 @@ class UPFD(InMemoryDataset):
     .. note::
 
         For an example of using UPFD, see `examples/upfd.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         upfd.py>`_.
 
     Args:
@@ -79,7 +79,7 @@ class UPFD(InMemoryDataset):
         self.root = root
         self.name = name
         self.feature = feature
-        super(UPFD, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]

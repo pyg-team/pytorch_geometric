@@ -1,10 +1,10 @@
-from typing import Optional, Callable, List
-
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_tu_data
 
@@ -52,6 +52,60 @@ class TUDataset(InMemoryDataset):
             (default: :obj:`False`)
         cleaned: (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - MUTAG
+              - 188
+              - ~17.9
+              - ~39.6
+              - 7
+              - 2
+            * - ENZYMES
+              - 600
+              - ~32.6
+              - ~124.3
+              - 3
+              - 6
+            * - PROTEINS
+              - 1,113
+              - ~39.1
+              - ~145.6
+              - 3
+              - 2
+            * - COLLAB
+              - 5,000
+              - ~74.5
+              - ~4914.4
+              - 0
+              - 3
+            * - IMDB-BINARY
+              - 1,000
+              - ~19.8
+              - ~193.1
+              - 0
+              - 2
+            * - REDDIT-BINARY
+              - 2,000
+              - ~429.6
+              - ~995.5
+              - 0
+              - 2
+            * - ...
+              -
+              -
+              -
+              -
+              -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'

@@ -1,11 +1,11 @@
 import os.path as osp
 
-import torch
 import pandas as pd
+import torch
 from sentence_transformers import SentenceTransformer
 
-from torch_geometric.data import HeteroData
-from torch_geometric.data import download_url, extract_zip
+from torch_geometric.data import HeteroData, download_url, extract_zip
+from torch_geometric.transforms import RandomLinkSplit, ToUndirected
 
 url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 root = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
@@ -105,3 +105,23 @@ data['movie'].x = movie_x
 data['user', 'rates', 'movie'].edge_index = edge_index
 data['user', 'rates', 'movie'].edge_label = edge_label
 print(data)
+
+# We can now convert `data` into an appropriate format for training a
+# graph-based machine learning model:
+
+# 1. Add a reverse ('movie', 'rev_rates', 'user') relation for message passing.
+data = ToUndirected()(data)
+del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
+
+# 2. Perform a link-level split into training, validation, and test edges.
+transform = RandomLinkSplit(
+    num_val=0.05,
+    num_test=0.1,
+    neg_sampling_ratio=0.0,
+    edge_types=[('user', 'rates', 'movie')],
+    rev_edge_types=[('movie', 'rev_rates', 'user')],
+)
+train_data, val_data, test_data = transform(data)
+print(train_data)
+print(val_data)
+print(test_data)

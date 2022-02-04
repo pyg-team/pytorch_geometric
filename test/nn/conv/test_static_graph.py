@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.data import Data, Batch
-from torch_geometric.nn import MessagePassing, GCNConv, ChebConv
+
+from torch_geometric.data import Batch, Data
+from torch_geometric.nn import ChebConv, GCNConv, MessagePassing
 
 
 class MyConv(MessagePassing):

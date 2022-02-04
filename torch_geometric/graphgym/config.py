@@ -1,10 +1,16 @@
+import functools
+import inspect
 import logging
 import os
+import shutil
+from collections.abc import Iterable
+from dataclasses import asdict
+from typing import Any
+
 from yacs.config import CfgNode as CN
 
-from torch_geometric.graphgym.utils.io import makedirs_rm_exist
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.data.makedirs import makedirs
 
 # Global config object
 cfg = CN()
@@ -34,11 +40,11 @@ def set_cfg(cfg):
     # Output directory
     cfg.out_dir = 'results'
 
-    # Config destination (in OUT_DIR)
+    # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
 
     # Random seed
-    cfg.seed = 1
+    cfg.seed = 0
 
     # Print rounding
     cfg.round = 4
@@ -202,26 +208,6 @@ def set_cfg(cfg):
 
     # Define label: Column name
     cfg.dataset.label_column = 'none'
-
-    # ----------------------------------------------------------------------- #
-    # Snowflake options
-    # ----------------------------------------------------------------------- #
-    cfg.snowflake = CN()
-
-    # Account name
-    cfg.snowflake.account = 'EPA65780'
-
-    # User name
-    cfg.snowflake.user = 'yjxxx'
-
-    # Password
-    cfg.snowflake.password = 'Test12345'
-
-    # Warehouse name
-    cfg.snowflake.warehouse = 'SF_TUTS_WH'
-
-    # Database name
-    cfg.snowflake.database = 'Vrtex'
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -449,7 +435,7 @@ def set_cfg(cfg):
 
 
 def assert_cfg(cfg):
-    """Checks config values, do certain post processing"""
+    r"""Checks config values, do necessary post processing to the configs"""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
         raise ValueError('Task {} not supported, must be one of node, '
                          'edge, graph, link_pred'.format(cfg.dataset.task))
@@ -471,33 +457,116 @@ def assert_cfg(cfg):
         logging.warning('Layers after message passing should be >=1')
     if cfg.gnn.head == 'default':
         cfg.gnn.head = cfg.dataset.task
+    cfg.run_dir = cfg.out_dir
 
 
 def dump_cfg(cfg):
-    """Dumps the config to the output directory."""
+    r"""
+    Dumps the config to the output directory specified in
+    :obj:`cfg.out_dir`
+
+    Args:
+        cfg (CfgNode): Configuration node
+
+    """
+    makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
 
-def update_out_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
-    cfg.out_dir = os.path.join(out_dir, fname, str(cfg.seed))
+def load_cfg(cfg, args):
+    r"""
+    Load configurations from file system and command line
+
+    Args:
+        cfg (CfgNode): Configuration node
+        args (ArgumentParser): Command argument parser
+
+    """
+    cfg.merge_from_file(args.cfg_file)
+    cfg.merge_from_list(args.opts)
+    assert_cfg(cfg)
+
+
+def makedirs_rm_exist(dir):
+    if os.path.isdir(dir):
+        shutil.rmtree(dir)
+    os.makedirs(dir, exist_ok=True)
+
+
+def get_fname(fname):
+    r"""
+    Extract filename from file name path
+
+    Args:
+        fname (string): Filename for the yaml format configuration file
+    """
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
+    return fname
+
+
+def set_run_dir(out_dir, fname):
+    r"""
+    Create the directory for each random seed experiment run
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
+    fname = get_fname(fname)
+    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
-        os.makedirs(cfg.out_dir, exist_ok=True)
+        os.makedirs(cfg.run_dir, exist_ok=True)
     else:
-        makedirs_rm_exist(cfg.out_dir)
+        makedirs_rm_exist(cfg.run_dir)
 
 
-def get_parent_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
+def set_agg_dir(out_dir, fname):
+    r"""
+    Create the directory for aggregated results over
+    all the random seeds
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
+    fname = get_fname(fname)
     return os.path.join(out_dir, fname)
 
 
-def rm_parent_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
-    makedirs_rm_exist(os.path.join(out_dir, fname))
-
-
 set_cfg(cfg)
+
+
+def from_config(func):
+    if inspect.isclass(func):
+        params = list(inspect.signature(func.__init__).parameters.values())[1:]
+    else:
+        params = list(inspect.signature(func).parameters.values())
+
+    arg_names = [p.name for p in params]
+    has_defaults = [p.default != inspect.Parameter.empty for p in params]
+
+    @functools.wraps(func)
+    def wrapper(*args, cfg: Any = None, **kwargs):
+        if cfg is not None:
+            cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+
+            iterator = zip(arg_names[len(args):], has_defaults[len(args):])
+            for arg_name, has_default in iterator:
+                if arg_name in kwargs:
+                    continue
+                elif arg_name in cfg:
+                    kwargs[arg_name] = cfg[arg_name]
+                elif not has_default:
+                    raise ValueError(f"'cfg.{arg_name}' undefined")
+        return func(*args, **kwargs)
+
+    return wrapper

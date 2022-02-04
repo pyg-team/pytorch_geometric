@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, NamedTuple, Union, Callable
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -69,10 +69,10 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         For an example of using :obj:`NeighborSampler`, see
         `examples/reddit.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         reddit.py>`_ or
         `examples/ogbn_products_sage.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_products_sage.py>`_.
 
     Args:
@@ -118,6 +118,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
 
         # Save for Pytorch Lightning...
         self.edge_index = edge_index
@@ -160,7 +162,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
         elif node_idx.dtype == torch.bool:
             node_idx = node_idx.nonzero(as_tuple=False).view(-1)
 
-        super(NeighborSampler, self).__init__(
+        super().__init__(
             node_idx.view(-1).tolist(), collate_fn=self.sample, **kwargs)
 
     def sample(self, batch):
@@ -190,5 +192,5 @@ class NeighborSampler(torch.utils.data.DataLoader):
         out = self.transform(*out) if self.transform is not None else out
         return out
 
-    def __repr__(self):
-        return '{}(sizes={})'.format(self.__class__.__name__, self.sizes)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(sizes={self.sizes})'

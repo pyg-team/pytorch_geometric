@@ -1,16 +1,16 @@
 import os.path as osp
 
-import torch
-from torch.nn import Linear
 import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
+import torch
 from sklearn.cluster import KMeans
-from sklearn.metrics.cluster import (v_measure_score, homogeneity_score,
-                                     completeness_score)
+from sklearn.manifold import TSNE
+from sklearn.metrics.cluster import (completeness_score, homogeneity_score,
+                                     v_measure_score)
+from torch.nn import Linear
 
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCNConv, ARGVA
 from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import ARGVA, GCNConv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([

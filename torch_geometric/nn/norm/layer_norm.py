@@ -1,9 +1,9 @@
-from torch_geometric.typing import OptTensor
-
 import torch
-from torch.nn import Parameter
 from torch import Tensor
+from torch.nn import Parameter
 from torch_scatter import scatter
+
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import degree
 
 from ..inits import ones, zeros
@@ -31,7 +31,7 @@ class LayerNorm(torch.nn.Module):
             (default: :obj:`True`)
     """
     def __init__(self, in_channels, eps=1e-5, affine=True):
-        super(LayerNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps
@@ -64,13 +64,13 @@ class LayerNorm(torch.nn.Module):
             mean = scatter(x, batch, dim=0, dim_size=batch_size,
                            reduce='add').sum(dim=-1, keepdim=True) / norm
 
-            x = x - mean[batch]
+            x = x - mean.index_select(0, batch)
 
             var = scatter(x * x, batch, dim=0, dim_size=batch_size,
                           reduce='add').sum(dim=-1, keepdim=True)
             var = var / norm
 
-            out = x / (var + self.eps).sqrt()[batch]
+            out = x / (var + self.eps).sqrt().index_select(0, batch)
 
         if self.weight is not None and self.bias is not None:
             out = out * self.weight + self.bias

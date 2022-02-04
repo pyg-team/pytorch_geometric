@@ -1,10 +1,11 @@
 import torch
-from torch_geometric.transforms import Constant
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import Constant
 
 
 def test_constant():
-    assert Constant().__repr__() == 'Constant(value=1)'
+    assert str(Constant()) == 'Constant(value=1.0)'
 
     x = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1], [1, 2]])

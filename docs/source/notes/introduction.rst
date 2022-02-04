@@ -83,7 +83,7 @@ Besides holding a number of node-level, edge-level or graph-level attributes, :c
                 [1.0]])
 
     for key, item in data:
-        print("{} found in data".format(key))
+        print(f'{key} found in data')
     >>> x found in data
     >>> edge_index found in data
 
@@ -247,7 +247,7 @@ Let's learn about it in an example:
 
     for batch in loader:
         batch
-        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
+        >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         batch.num_graphs
         >>> 32
@@ -273,7 +273,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 
     for data in loader:
         data
-        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
+        >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         data.num_graphs
         >>> 32
@@ -365,7 +365,7 @@ Now let's implement a two-layer GCN:
 
     class GCN(torch.nn.Module):
         def __init__(self):
-            super(Net, self).__init__()
+            super().__init__()
             self.conv1 = GCNConv(dataset.num_node_features, 16)
             self.conv2 = GCNConv(16, dataset.num_classes)
 
@@ -407,9 +407,23 @@ Finally, we can evaluate our model on the test nodes:
     pred = model(data).argmax(dim=1)
     correct = (pred[data.test_mask] == data.y[data.test_mask]).sum()
     acc = int(correct) / int(data.test_mask.sum())
-    print('Accuracy: {:.4f}'.format(acc))
+    print(f'Accuracy: {acc:.4f}')
     >>> Accuracy: 0.8150
 
 This is all it takes to implement your first graph neural network.
 The easiest way to learn more about Graph Neural Networks is to study the examples in the :obj:`examples/` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!
+
+Exercises
+---------
+
+1. What does :obj:`edge_index.t().contiguous()` do?
+
+2. Load the :obj:`"IMDB-BINARY"` dataset from the :class:`~torch_geometric.datasets.TUDataset` benchmark suite and randomly split it into 80%/10%/10% training, validation and test graphs.
+
+3. What does each number of the following output mean?
+
+   .. code-block:: python
+
+       print(batch)
+       >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])

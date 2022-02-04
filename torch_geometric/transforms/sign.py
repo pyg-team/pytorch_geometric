@@ -22,7 +22,7 @@ class SIGN(BaseTransform):
         Since intermediate node representations are pre-computed, this operator
         is able to scale well to large graphs via classic mini-batching.
         For an example of using SIGN, see `examples/sign.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         sign.py>`_.
 
     Args:
@@ -50,5 +50,5 @@ class SIGN(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(K={})'.format(self.__class__.__name__, self.K)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(K={self.K})'

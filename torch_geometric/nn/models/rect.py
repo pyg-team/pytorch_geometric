@@ -1,11 +1,11 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-import torch.nn.functional as F
 from torch_scatter import scatter
+
 from torch_geometric.nn import GCNConv
+from torch_geometric.typing import Adj, OptTensor
 
 
 class RECT_L(torch.nn.Module):
@@ -18,7 +18,7 @@ class RECT_L(torch.nn.Module):
     .. note::
 
         For an example of using RECT, see `examples/rect.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         rect.py>`_.
 
     Args:

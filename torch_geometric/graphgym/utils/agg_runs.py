@@ -1,12 +1,15 @@
-import os
-import numpy as np
-import pandas as pd
 import logging
+import os
+
+import numpy as np
 
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.utils.io import dict_list_to_json, \
-    dict_list_to_tb, json_to_dict_list, makedirs_rm_exist, string_to_python, \
-    dict_to_json
+from torch_geometric.graphgym.utils.io import (dict_list_to_json,
+                                               dict_list_to_tb, dict_to_json,
+                                               json_to_dict_list,
+                                               makedirs_rm_exist,
+                                               string_to_python)
+
 try:
     from tensorboardX import SummaryWriter
 except ImportError:
@@ -37,7 +40,12 @@ def join_list(l1, l2):
 
 
 def agg_dict_list(dict_list):
-    '''default agg: mean + std'''
+    """
+    Aggregate a list of dictionaries: mean + std
+    Args:
+        dict_list: list of dictionaries
+
+    """
     dict_agg = {'epoch': dict_list[0]['epoch']}
     for key in dict_list[0]:
         if key != 'epoch':
@@ -65,8 +73,16 @@ def rm_keys(dict, keys):
         dict.pop(key, None)
 
 
-# single experiments
 def agg_runs(dir, metric_best='auto'):
+    r'''
+    Aggregate over different random seeds of a single experiment
+
+    Args:
+        dir (str): Directory of the results, containing 1 experiment
+        metric_best (str, optional): The metric for selecting the best
+        validation performance. Options: auto, accuracy, auc.
+
+    '''
     results = {'train': None, 'val': None, 'test': None}
     results_best = {'train': None, 'val': None, 'test': None}
     for seed in os.listdir(dir):
@@ -140,8 +156,17 @@ def agg_runs(dir, metric_best='auto'):
         os.path.join(dir, 'agg')))
 
 
-# agg across grid search
 def agg_batch(dir, metric_best='auto'):
+    r'''
+    Aggregate across results from multiple experiments via grid search
+
+    Args:
+        dir (str): Directory of the results, containing multiple experiments
+        metric_best (str, optional): The metric for selecting the best
+        validation performance. Options: auto, accuracy, auc.
+
+    '''
+    import pandas as pd
     results = {'train': [], 'val': [], 'test': []}
     for run in os.listdir(dir):
         if run != 'agg':

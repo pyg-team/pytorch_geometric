@@ -1,10 +1,10 @@
-from typing import Optional, Callable, List
-
+import glob
 import os
 import os.path as osp
-import glob
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_off
 
@@ -75,7 +75,7 @@ class GeometricShapes(InMemoryDataset):
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob('{}/*.off'.format(folder))
+            paths = glob.glob(f'{folder}/*.off')
             for path in paths:
                 data = read_off(path)
                 data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)

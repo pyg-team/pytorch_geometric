@@ -2,32 +2,62 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.head import head_dict
-from torch_geometric.graphgym.models.layer import (GeneralLayer,
-                                                   GeneralMultiLayer,
-                                                   BatchNorm1dNode,
-                                                   BatchNorm1dEdge)
-from torch_geometric.graphgym.init import init_weights
-from torch_geometric.graphgym.models.encoder import node_encoder_dict, \
-    edge_encoder_dict
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.init import init_weights
+from torch_geometric.graphgym.models.layer import (BatchNorm1dNode,
+                                                   GeneralLayer,
+                                                   GeneralMultiLayer,
+                                                   new_layer_config)
+from torch_geometric.graphgym.register import register_stage
 
 
 def GNNLayer(dim_in, dim_out, has_act=True):
-    return GeneralLayer(cfg.gnn.layer_type, dim_in, dim_out, has_act)
+    """
+    Wrapper for a GNN layer
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        has_act (bool): Whether has activation function after the layer
+
+    """
+    return GeneralLayer(
+        cfg.gnn.layer_type,
+        layer_config=new_layer_config(dim_in, dim_out, 1, has_act=has_act,
+                                      has_bias=False, cfg=cfg))
 
 
-def GNNPreMP(dim_in, dim_out):
-    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in, dim_out,
-                             dim_inner=dim_out, final_act=True)
+def GNNPreMP(dim_in, dim_out, num_layers):
+    """
+    Wrapper for NN layer before GNN message passing
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        num_layers (int): Number of layers
+
+    """
+    return GeneralMultiLayer(
+        'linear',
+        layer_config=new_layer_config(dim_in, dim_out, num_layers,
+                                      has_act=False, has_bias=False, cfg=cfg))
 
 
+@register_stage('stack')
+@register_stage('skipsum')
+@register_stage('skipconcat')
 class GNNStackStage(nn.Module):
-    '''Simple Stage that stack GNN layers'''
+    """
+    Simple Stage that stack GNN layers
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        num_layers (int): Number of GNN layers
+    """
     def __init__(self, dim_in, dim_out, num_layers):
-        super(GNNStackStage, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
         for i in range(num_layers):
             if cfg.gnn.stage_type == 'skipconcat':
@@ -38,6 +68,7 @@ class GNNStackStage(nn.Module):
             self.add_module('layer{}'.format(i), layer)
 
     def forward(self, batch):
+        """"""
         for i, layer in enumerate(self.children()):
             x = batch.x
             batch = layer(batch)
@@ -51,53 +82,64 @@ class GNNStackStage(nn.Module):
         return batch
 
 
-stage_dict = {
-    'stack': GNNStackStage,
-    'skipsum': GNNStackStage,
-    'skipconcat': GNNStackStage,
-}
-
-stage_dict = {**register.stage_dict, **stage_dict}
-
-
 class FeatureEncoder(nn.Module):
-    '''Encoding node/edge features'''
+    """
+    Encoding node and edge features
+
+    Args:
+        dim_in (int): Input feature dimension
+    """
     def __init__(self, dim_in):
-        super(FeatureEncoder, self).__init__()
+        super().__init__()
         self.dim_in = dim_in
         if cfg.dataset.node_encoder:
             # Encode integer node features via nn.Embeddings
-            NodeEncoder = node_encoder_dict[cfg.dataset.node_encoder_name]
+            NodeEncoder = register.node_encoder_dict[
+                cfg.dataset.node_encoder_name]
             self.node_encoder = NodeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.node_encoder_bn:
-                self.node_encoder_bn = BatchNorm1dNode(cfg.gnn.dim_inner)
+                self.node_encoder_bn = BatchNorm1dNode(
+                    new_layer_config(cfg.gnn.dim_inner, -1, -1, has_act=False,
+                                     has_bias=False, cfg=cfg))
             # Update dim_in to reflect the new dimension fo the node features
             self.dim_in = cfg.gnn.dim_inner
         if cfg.dataset.edge_encoder:
             # Encode integer edge features via nn.Embeddings
-            EdgeEncoder = edge_encoder_dict[cfg.dataset.edge_encoder_name]
+            EdgeEncoder = register.edge_encoder_dict[
+                cfg.dataset.edge_encoder_name]
             self.edge_encoder = EdgeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.edge_encoder_bn:
-                self.edge_encoder_bn = BatchNorm1dEdge(cfg.gnn.dim_inner)
+                self.edge_encoder_bn = BatchNorm1dNode(
+                    new_layer_config(cfg.gnn.dim_inner, -1, -1, has_act=False,
+                                     has_bias=False, cfg=cfg))
 
     def forward(self, batch):
+        """"""
         for module in self.children():
             batch = module(batch)
         return batch
 
 
 class GNN(nn.Module):
-    '''General GNN model: encoder + stage + head'''
+    """
+    General GNN model: encoder + stage + head
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        **kwargs (optional): Optional additional args
+    """
     def __init__(self, dim_in, dim_out, **kwargs):
-        super(GNN, self).__init__()
-        GNNStage = stage_dict[cfg.gnn.stage_type]
-        GNNHead = head_dict[cfg.gnn.head]
+        super().__init__()
+        GNNStage = register.stage_dict[cfg.gnn.stage_type]
+        GNNHead = register.head_dict[cfg.gnn.head]
 
         self.encoder = FeatureEncoder(dim_in)
         dim_in = self.encoder.dim_in
 
         if cfg.gnn.layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner)
+            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner,
+                                   cfg.gnn.layers_pre_mp)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
             self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,
@@ -107,6 +149,7 @@ class GNN(nn.Module):
         self.apply(init_weights)
 
     def forward(self, batch):
+        """"""
         for module in self.children():
             batch = module(batch)
         return batch

@@ -1,13 +1,12 @@
-from typing import List, Optional, Callable, Union, Any, Tuple
-
-import sys
-import re
 import copy
-import warnings
-import numpy as np
 import os.path as osp
+import re
+import sys
+import warnings
 from collections.abc import Sequence
+from typing import Any, Callable, List, Optional, Tuple, Union
 
+import numpy as np
 import torch.utils.data
 from torch import Tensor
 
@@ -81,10 +80,10 @@ class Dataset(torch.utils.data.Dataset):
         self.pre_filter = pre_filter
         self._indices: Optional[Sequence] = None
 
-        if 'download' in self.__class__.__dict__.keys():
+        if 'download' in self.__class__.__dict__:
             self._download()
 
-        if 'process' in self.__class__.__dict__.keys():
+        if 'process' in self.__class__.__dict__:
             self._process()
 
     def indices(self) -> Sequence:

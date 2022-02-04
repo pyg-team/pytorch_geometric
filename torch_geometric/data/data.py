@@ -1,17 +1,18 @@
-from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
-                    NamedTuple, Callable)
-from torch_geometric.typing import OptTensor
-from torch_geometric.deprecation import deprecated
-
 import copy
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
-import torch
 import numpy as np
+import torch
+from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage, GlobalStorage)
+from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
+                                          GlobalStorage, NodeStorage)
+from torch_geometric.deprecation import deprecated
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.utils import subgraph
 
 
 class BaseData(object):
@@ -42,6 +43,9 @@ class BaseData(object):
     def __repr__(self) -> str:
         raise NotImplementedError
 
+    def stores_as(self, data: 'BaseData'):
+        raise NotImplementedError
+
     @property
     def stores(self) -> List[BaseStorage]:
         raise NotImplementedError
@@ -49,10 +53,6 @@ class BaseData(object):
     @property
     def node_stores(self) -> List[NodeStorage]:
         raise NotImplementedError
-
-    def __delitem__(self, key):
-        r"""Delete the data of the attribute :obj:`key`."""
-        return delattr(self, key)
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
@@ -185,10 +185,6 @@ class BaseData(object):
         r"""Returns :obj:`True` if graph edges are directed."""
         return not self.is_undirected()
 
-    def clone(self):
-        r"""Performs a deep-copy of the data object."""
-        return copy.deepcopy(self)
-
     def apply_(self, func: Callable, *args: List[str]):
         r"""Applies the in-place function :obj:`func`, either to all attributes
         or only the ones given in :obj:`*args`."""
@@ -202,6 +198,11 @@ class BaseData(object):
         for store in self.stores:
             store.apply(func, *args)
         return self
+
+    def clone(self, *args: List[str]):
+        r"""Performs cloning of tensors, either for all attributes or only the
+        ones given in :obj:`*args`."""
+        return copy.copy(self).apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: List[str]):
         r"""Ensures a contiguous memory layout, either for all attributes or
@@ -261,6 +262,16 @@ class BaseData(object):
         until all current work queued on :obj:`stream` has been completed,
         either for all attributes or only the ones given in :obj:`*args`."""
         return self.apply_(lambda x: x.record_stream(stream), *args)
+
+    @property
+    def is_cuda(self) -> bool:
+        r"""Returns :obj:`True` if any :class:`torch.Tensor` attribute is
+        stored on the GPU, :obj:`False` otherwise."""
+        for store in self.stores:
+            for value in store.values():
+                if isinstance(value, Tensor) and value.is_cuda:
+                    return True
+        return False
 
     # Deprecated functions ####################################################
 
@@ -325,52 +336,52 @@ class Data(BaseData):
                  edge_attr: OptTensor = None, y: OptTensor = None,
                  pos: OptTensor = None, **kwargs):
         super().__init__()
-        self._store = GlobalStorage(_parent=self)
+        self.__dict__['_store'] = GlobalStorage(_parent=self)
 
-        self.x = x
-        self.edge_index = edge_index
-        self.edge_attr = edge_attr
-        self.y = y
-        self.pos = pos
+        if x is not None:
+            self.x = x
+        if edge_index is not None:
+            self.edge_index = edge_index
+        if edge_attr is not None:
+            self.edge_attr = edge_attr
+        if y is not None:
+            self.y = y
+        if pos is not None:
+            self.pos = pos
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     def __getattr__(self, key: str) -> Any:
+        if '_store' not in self.__dict__:
+            raise RuntimeError(
+                "The 'data' object was created by an older version of PyG. "
+                "If this error occurred while loading an already existing "
+                "dataset, remove the 'processed/' directory in the dataset's "
+                "root folder and try again.")
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
-        # `data._* = ...` => Link to the private `__dict__` store.
-        # `data.* = ...` => Link to the `_store`.
-        if key[:1] == '_':
-            self.__dict__[key] = value
-        else:
-            setattr(self._store, key, value)
+        setattr(self._store, key, value)
 
     def __delattr__(self, key: str):
-        # `del data._*` => Link to the private `__dict__` store.
-        # `del data.*` => Link to the `_store`.
-        if key[:1] == '_':
-            del self.__dict__[key]
-        else:
-            delattr(self._store, key)
+        delattr(self._store, key)
 
     def __getitem__(self, key: str) -> Any:
-        # Gets the data of the attribute :obj:`key`.
         return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
-        # Sets the attribute :obj:`key` to :obj:`value`.
         self._store[key] = value
 
     def __delitem__(self, key: str):
-        del self.store[key]
+        if key in self._store:
+            del self._store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._store = copy.copy(self._store)
+        out.__dict__['_store'] = copy.copy(self._store)
         out._store._parent = out
         return out
 
@@ -387,10 +398,15 @@ class Data(BaseData):
 
         if not has_dict:
             info = [size_repr(k, v) for k, v in self._store.items()]
-            return '{}({})'.format(cls, ', '.join(info))
+            info = ', '.join(info)
+            return f'{cls}({info})'
         else:
             info = [size_repr(k, v, indent=2) for k, v in self._store.items()]
-            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
+            info = ',\n'.join(info)
+            return f'{cls}(\n{info}\n)'
+
+    def stores_as(self, data: 'Data'):
+        return self
 
     @property
     def stores(self) -> List[BaseStorage]:
@@ -419,13 +435,170 @@ class Data(BaseData):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'index' in key or 'face' in key:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0
 
     def debug(self):
         pass  # TODO
+
+    def is_node_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
+        node-level attribute."""
+        return self._store.is_node_attr(key)
+
+    def is_edge_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
+        edge-level attribute."""
+        return self._store.is_edge_attr(key)
+
+    def subgraph(self, subset: Tensor):
+        r"""Returns the induced subgraph given by the node indices
+        :obj:`subset`.
+
+        Args:
+            subset (LongTensor or BoolTensor): The nodes to keep.
+        """
+
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
+
+        if subset.dtype == torch.bool:
+            num_nodes = int(subset.sum())
+        else:
+            num_nodes = subset.size(0)
+
+        data = copy.copy(self)
+
+        for key, value in data:
+            if key == 'edge_index':
+                data.edge_index = edge_index
+            elif key == 'num_nodes':
+                data.num_nodes = num_nodes
+            elif isinstance(value, Tensor):
+                if self.is_node_attr(key):
+                    data[key] = value[subset]
+                elif self.is_edge_attr(key):
+                    data[key] = value[edge_mask]
+
+        return data
+
+    def to_heterogeneous(self, node_type: Optional[Tensor] = None,
+                         edge_type: Optional[Tensor] = None,
+                         node_type_names: Optional[List[NodeType]] = None,
+                         edge_type_names: Optional[List[EdgeType]] = None):
+        r"""Converts a :class:`~torch_geometric.data.Data` object to a
+        heterogeneous :class:`~torch_geometric.data.HeteroData` object.
+        For this, node and edge attributes are splitted according to the
+        node-level and edge-level vectors :obj:`node_type` and
+        :obj:`edge_type`, respectively.
+        :obj:`node_type_names` and :obj:`edge_type_names` can be used to give
+        meaningful node and edge type names, respectively.
+        That is, the node_type :obj:`0` is given by :obj:`node_type_names[0]`.
+        If the :class:`~torch_geometric.data.Data` object was constructed via
+        :meth:`~torch_geometric.data.HeteroData.to_homogeneous`, the object can
+        be reconstructed without any need to pass in additional arguments.
+
+        Args:
+            node_type (Tensor, optional): A node-level vector denoting the type
+                of each node. (default: :obj:`None`)
+            edge_type (Tensor, optional): An edge-level vector denoting the
+                type of each edge. (default: :obj:`None`)
+            node_type_names (List[str], optional): The names of node types.
+                (default: :obj:`None`)
+            edge_type_names (List[Tuple[str, str, str]], optional): The names
+                of edge types. (default: :obj:`None`)
+        """
+        from torch_geometric.data import HeteroData
+
+        if node_type is None:
+            node_type = self._store.get('node_type', None)
+        if node_type is None:
+            node_type = torch.zeros(self.num_nodes, dtype=torch.long)
+
+        if node_type_names is None:
+            store = self._store
+            node_type_names = store.__dict__.get('_node_type_names', None)
+        if node_type_names is None:
+            node_type_names = [str(i) for i in node_type.unique().tolist()]
+
+        if edge_type is None:
+            edge_type = self._store.get('edge_type', None)
+        if edge_type is None:
+            edge_type = torch.zeros(self.num_edges, dtype=torch.long)
+
+        if edge_type_names is None:
+            store = self._store
+            edge_type_names = store.__dict__.get('_edge_type_names', None)
+        if edge_type_names is None:
+            edge_type_names = []
+            edge_index = self.edge_index
+            for i in edge_type.unique().tolist():
+                src, dst = edge_index[:, edge_type == i]
+                src_types = node_type[src].unique().tolist()
+                dst_types = node_type[dst].unique().tolist()
+                if len(src_types) != 1 and len(dst_types) != 1:
+                    raise ValueError(
+                        "Could not construct a 'HeteroData' object from the "
+                        "'Data' object because single edge types span over "
+                        "multiple node types")
+                edge_type_names.append((node_type_names[src_types[0]], str(i),
+                                        node_type_names[dst_types[0]]))
+
+        # We iterate over node types to find the local node indices belonging
+        # to each node type. Furthermore, we create a global `index_map` vector
+        # that maps global node indices to local ones in the final
+        # heterogeneous graph:
+        node_ids, index_map = {}, torch.empty_like(node_type)
+        for i, key in enumerate(node_type_names):
+            node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
+            index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
+
+        # We iterate over edge types to find the local edge indices:
+        edge_ids = {}
+        for i, key in enumerate(edge_type_names):
+            edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
+
+        data = HeteroData()
+
+        for i, key in enumerate(node_type_names):
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif isinstance(value, Tensor) and self.is_node_attr(attr):
+                    data[key][attr] = value[node_ids[i]]
+
+            if len(data[key]) == 0:
+                data[key].num_nodes = node_ids[i].size(0)
+
+        for i, key in enumerate(edge_type_names):
+            src, _, dst = key
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif attr == 'edge_index':
+                    edge_index = value[:, edge_ids[i]]
+                    edge_index[0] = index_map[edge_index[0]]
+                    edge_index[1] = index_map[edge_index[1]]
+                    data[key].edge_index = edge_index
+                elif isinstance(value, Tensor) and self.is_edge_attr(attr):
+                    data[key][attr] = value[edge_ids[i]]
+
+        # Add global attributes.
+        keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
+        for attr, value in self.items():
+            if attr in keys:
+                continue
+            if len(data.node_stores) == 1:
+                data.node_stores[0][attr] = value
+            else:
+                data[attr] = value
+
+        return data
 
     ###########################################################################
 
@@ -473,6 +646,10 @@ class Data(BaseData):
         return self['edge_index'] if 'edge_index' in self._store else None
 
     @property
+    def edge_weight(self) -> Any:
+        return self['edge_weight'] if 'edge_weight' in self._store else None
+
+    @property
     def edge_attr(self) -> Any:
         return self['edge_attr'] if 'edge_attr' in self._store else None
 
@@ -484,13 +661,17 @@ class Data(BaseData):
     def pos(self) -> Any:
         return self['pos'] if 'pos' in self._store else None
 
+    @property
+    def batch(self) -> Any:
+        return self['batch'] if 'batch' in self._store else None
+
     # Deprecated functions ####################################################
 
     @property
     @deprecated(details="use 'data.face.size(-1)' instead")
     def num_faces(self) -> Optional[int]:
         r"""Returns the number of faces in the mesh."""
-        if 'face' in self._store:
+        if 'face' in self._store and isinstance(self.face, Tensor):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
@@ -500,9 +681,9 @@ class Data(BaseData):
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:
     pad = ' ' * indent
-    if isinstance(value, torch.Tensor) and value.dim() == 0:
+    if isinstance(value, Tensor) and value.dim() == 0:
         out = value.item()
-    elif isinstance(value, torch.Tensor):
+    elif isinstance(value, Tensor):
         out = str(list(value.size()))
     elif isinstance(value, np.ndarray):
         out = str(list(value.shape))

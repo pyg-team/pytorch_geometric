@@ -5,19 +5,26 @@ They are constructed in the init function of the gnn.GNN.
 import torch
 import torch.nn as nn
 
-from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.layer import MLP
-from torch_geometric.graphgym.models.pooling import pooling_dict
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.models.layer import MLP, new_layer_config
+from torch_geometric.graphgym.register import register_head
 
 
+@register_head('node')
 class GNNNodeHead(nn.Module):
-    '''Head of GNN, node prediction'''
+    """
+    GNN prediction head for node prediction tasks.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
     def __init__(self, dim_in, dim_out):
-        super(GNNNodeHead, self).__init__()
-        self.layer_post_mp = MLP(dim_in, dim_out,
-                                 num_layers=cfg.gnn.layers_post_mp, bias=True)
+        super().__init__()
+        self.layer_post_mp = MLP(
+            new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
+                             has_act=False, has_bias=True, cfg=cfg))
 
     def _apply_index(self, batch):
         mask = '{}_mask'.format(batch.split)
@@ -30,25 +37,23 @@ class GNNNodeHead(nn.Module):
         return pred, label
 
 
+@register_head('edge')
+@register_head('link_pred')
 class GNNEdgeHead(nn.Module):
-    '''Head of GNN, edge prediction'''
+    """
+    GNN prediction head for edge/link prediction tasks.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
     def __init__(self, dim_in, dim_out):
-        ''' Head of Edge and link prediction models.
-
-        Args:
-            dim_out: output dimension. For binary prediction, dim_out=1.
-        '''
-        # Use dim_in for graph conv, since link prediction dim_out could be
-        # binary
-        # E.g. if decoder='dot', link probability is dot product between
-        # node embeddings, of dimension dim_in
-        super(GNNEdgeHead, self).__init__()
+        super().__init__()
         # module to decode edges from node embeddings
-
         if cfg.model.edge_decoding == 'concat':
-            self.layer_post_mp = MLP(dim_in * 2, dim_out,
-                                     num_layers=cfg.gnn.layers_post_mp,
-                                     bias=True)
+            self.layer_post_mp = MLP(
+                new_layer_config(dim_in * 2, dim_out, cfg.gnn.layers_post_mp,
+                                 has_act=False, has_bias=True, cfg=cfg))
             # requires parameter
             self.decode_module = lambda v1, v2: \
                 self.layer_post_mp(torch.cat((v1, v2), dim=-1))
@@ -57,9 +62,9 @@ class GNNEdgeHead(nn.Module):
                 raise ValueError(
                     'Binary edge decoding ({})is used for multi-class '
                     'edge/link prediction.'.format(cfg.model.edge_decoding))
-            self.layer_post_mp = MLP(dim_in, dim_in,
-                                     num_layers=cfg.gnn.layers_post_mp,
-                                     bias=True)
+            self.layer_post_mp = MLP(
+                new_layer_config(dim_in, dim_in, cfg.gnn.layers_post_mp,
+                                 has_act=False, has_bias=True, cfg=cfg))
             if cfg.model.edge_decoding == 'dot':
                 self.decode_module = lambda v1, v2: torch.sum(v1 * v2, dim=-1)
             elif cfg.model.edge_decoding == 'cosine_similarity':
@@ -84,18 +89,23 @@ class GNNEdgeHead(nn.Module):
         return pred, label
 
 
+@register_head('graph')
 class GNNGraphHead(nn.Module):
-    '''Head of GNN, graph prediction
-
+    """
+    GNN prediction head for graph prediction tasks.
     The optional post_mp layer (specified by cfg.gnn.post_mp) is used
     to transform the pooled embedding using an MLP.
-    '''
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
     def __init__(self, dim_in, dim_out):
-        super(GNNGraphHead, self).__init__()
-        # todo: PostMP before or after global pooling
-        self.layer_post_mp = MLP(dim_in, dim_out,
-                                 num_layers=cfg.gnn.layers_post_mp, bias=True)
-        self.pooling_fun = pooling_dict[cfg.model.graph_pooling]
+        super().__init__()
+        self.layer_post_mp = MLP(
+            new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
+                             has_act=False, has_bias=True, cfg=cfg))
+        self.pooling_fun = register.pooling_dict[cfg.model.graph_pooling]
 
     def _apply_index(self, batch):
         return batch.graph_feature, batch.y
@@ -106,14 +116,3 @@ class GNNGraphHead(nn.Module):
         batch.graph_feature = graph_emb
         pred, label = self._apply_index(batch)
         return pred, label
-
-
-# Head models for external interface
-head_dict = {
-    'node': GNNNodeHead,
-    'edge': GNNEdgeHead,
-    'link_pred': GNNEdgeHead,
-    'graph': GNNGraphHead
-}
-
-head_dict = {**register.head_dict, **head_dict}

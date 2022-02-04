@@ -1,10 +1,9 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 
 from torch_geometric.nn.models import LabelPropagation
+from torch_geometric.typing import Adj, OptTensor
 
 
 class CorrectAndSmooth(torch.nn.Module):
@@ -51,7 +50,7 @@ class CorrectAndSmooth(torch.nn.Module):
 
         For an example of using the C&S model, see
         `examples/correct_and_smooth.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         correct_and_smooth.py>`_.
 
     Args:
@@ -67,7 +66,7 @@ class CorrectAndSmooth(torch.nn.Module):
     def __init__(self, num_correction_layers: int, correction_alpha: float,
                  num_smoothing_layers: int, smoothing_alpha: float,
                  autoscale: bool = True, scale: float = 1.0):
-        super(CorrectAndSmooth, self).__init__()
+        super().__init__()
         self.autoscale = autoscale
         self.scale = scale
 

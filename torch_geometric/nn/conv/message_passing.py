@@ -1,27 +1,27 @@
-from typing import List, Optional, Set, Callable, get_type_hints
-from torch_geometric.typing import Adj, Size
-
-import os
-import re
 import inspect
+import os
 import os.path as osp
-from uuid import uuid1
-from itertools import chain
-from inspect import Parameter
+import re
 from collections import OrderedDict
+from inspect import Parameter
+from itertools import chain
+from typing import Callable, List, Optional, Set, get_type_hints
+from uuid import uuid1
 
 import torch
-from torch import Tensor
 from jinja2 import Template
+from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import Adj, Size
 
 from .utils.helpers import expand_left
+from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
-from .utils.typing import (sanitize, split_types_repr, parse_types,
-                           resolve_types)
-from .utils.inspector import Inspector, func_header_repr, func_body_repr
+from .utils.typing import (parse_types, resolve_types, sanitize,
+                           split_types_repr)
 
 
 class MessagePassing(torch.nn.Module):
@@ -48,6 +48,29 @@ class MessagePassing(torch.nn.Module):
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`-2`)
+        decomposed_layers (int, optional): The number of feature decomposition
+            layers, as introduced in the `"Optimizing Memory Efficiency of
+            Graph Neural Networks on Edge Computing Platforms"
+            <https://arxiv.org/abs/2104.03058>`_ paper.
+            Feature decomposition reduces the peak memory usage by slicing
+            the feature dimensions into separated feature decomposition layers
+            during GNN aggregation.
+            This method can accelerate GNN execution on CPU-based platforms
+            (*e.g.*, 2-3x speedup on the
+            :class:`~torch_geometric.datasets.Reddit` dataset) for common GNN
+            models such as :class:`~torch_geometric.nn.models.GCN`,
+            :class:`~torch_geometric.nn.models.GraphSAGE`,
+            :class:`~torch_geometric.nn.models.GIN`, etc.
+            However, this method is not applicable to all GNN operators
+            available, in particular for operators in which message computation
+            can not easily be decomposed, *e.g.* in attention-based GNNs.
+            The selection of the optimal value of :obj:`decomposed_layers`
+            depends both on the specific graph dataset and available hardware
+            resources.
+            A value of :obj:`2` is suitable in most cases.
+            Although the peak memory usage is directly associated with the
+            granularity of feature decomposition, the same is not necessarily
+            true for execution speedups. (default: :obj:`1`)
     """
 
     special_args: Set[str] = {
@@ -56,9 +79,10 @@ class MessagePassing(torch.nn.Module):
     }
 
     def __init__(self, aggr: Optional[str] = "add",
-                 flow: str = "source_to_target", node_dim: int = -2):
+                 flow: str = "source_to_target", node_dim: int = -2,
+                 decomposed_layers: int = 1):
 
-        super(MessagePassing, self).__init__()
+        super().__init__()
 
         self.aggr = aggr
         assert self.aggr in ['add', 'mean', 'max', None]
@@ -67,17 +91,21 @@ class MessagePassing(torch.nn.Module):
         assert self.flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
+        self.decomposed_layers = decomposed_layers
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
+        self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
+        self.__edge_user_args__ = self.inspector.keys(
+            ['edge_update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -96,6 +124,8 @@ class MessagePassing(torch.nn.Module):
         self._aggregate_forward_hooks = OrderedDict()
         self._message_and_aggregate_forward_pre_hooks = OrderedDict()
         self._message_and_aggregate_forward_hooks = OrderedDict()
+        self._edge_update_forward_pre_hooks = OrderedDict()
+        self._edge_update_forward_hooks = OrderedDict()
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -157,7 +187,7 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
-                dim = 0 if arg[-2:] == '_j' else 1
+                dim = j if arg[-2:] == '_j' else i
                 data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
@@ -168,8 +198,7 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, Tensor):
                     self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index,
-                                         j if arg[-2:] == '_j' else i)
+                    data = self.__lift__(data, edge_index, dim)
 
                 out[arg] = data
 
@@ -185,9 +214,12 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
             out['ptr'] = edge_index.storage.rowptr()
-            out['edge_weight'] = edge_index.storage.value()
-            out['edge_attr'] = edge_index.storage.value()
-            out['edge_type'] = edge_index.storage.value()
+            if out.get('edge_weight', None) is None:
+                out['edge_weight'] = edge_index.storage.value()
+            if out.get('edge_attr', None) is None:
+                out['edge_attr'] = edge_index.storage.value()
+            if out.get('edge_type', None) is None:
+                out['edge_type'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
         out['size'] = size
@@ -227,6 +259,7 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
+        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
@@ -258,50 +291,102 @@ class MessagePassing(torch.nn.Module):
 
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
-            coll_dict = self.__collect__(self.__user_args__, edge_index, size,
-                                         kwargs)
+            if decomposed_layers > 1:
+                user_args = self.__user_args__
+                decomp_args = {a[:-2] for a in user_args if a[-2:] == '_j'}
+                decomp_kwargs = {
+                    a: kwargs[a].chunk(decomposed_layers, -1)
+                    for a in decomp_args
+                }
+                decomp_out = []
 
-            msg_kwargs = self.inspector.distribute('message', coll_dict)
-            for hook in self._message_forward_pre_hooks.values():
-                res = hook(self, (msg_kwargs, ))
-                if res is not None:
-                    msg_kwargs = res[0] if isinstance(res, tuple) else res
-            out = self.message(**msg_kwargs)
-            for hook in self._message_forward_hooks.values():
-                res = hook(self, (msg_kwargs, ), out)
-                if res is not None:
-                    out = res
+            for i in range(decomposed_layers):
+                if decomposed_layers > 1:
+                    for arg in decomp_args:
+                        kwargs[arg] = decomp_kwargs[arg][i]
 
-            # For `GNNExplainer`, we require a separate message and aggregate
-            # procedure since this allows us to inject the `edge_mask` into the
-            # message passing computation scheme.
-            if self.__explain__:
-                edge_mask = self.__edge_mask__.sigmoid()
-                # Some ops add self-loops to `edge_index`. We need to do the
-                # same for `edge_mask` (but do not train those).
-                if out.size(self.node_dim) != edge_mask.size(0):
-                    edge_mask = edge_mask[self.__loop_mask__]
-                    loop = edge_mask.new_ones(size[0])
-                    edge_mask = torch.cat([edge_mask, loop], dim=0)
-                assert out.size(self.node_dim) == edge_mask.size(0)
-                out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
+                coll_dict = self.__collect__(self.__user_args__, edge_index,
+                                             size, kwargs)
 
-            aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
-            for hook in self._aggregate_forward_pre_hooks.values():
-                res = hook(self, (aggr_kwargs, ))
-                if res is not None:
-                    aggr_kwargs = res[0] if isinstance(res, tuple) else res
-            out = self.aggregate(out, **aggr_kwargs)
-            for hook in self._aggregate_forward_hooks.values():
-                res = hook(self, (aggr_kwargs, ), out)
-                if res is not None:
-                    out = res
+                msg_kwargs = self.inspector.distribute('message', coll_dict)
+                for hook in self._message_forward_pre_hooks.values():
+                    res = hook(self, (msg_kwargs, ))
+                    if res is not None:
+                        msg_kwargs = res[0] if isinstance(res, tuple) else res
+                out = self.message(**msg_kwargs)
+                for hook in self._message_forward_hooks.values():
+                    res = hook(self, (msg_kwargs, ), out)
+                    if res is not None:
+                        out = res
 
-            update_kwargs = self.inspector.distribute('update', coll_dict)
-            out = self.update(out, **update_kwargs)
+                # For `GNNExplainer`, we require a separate message and
+                # aggregate procedure since this allows us to inject the
+                # `edge_mask` into the message passing computation scheme.
+                if self.__explain__:
+                    edge_mask = self.__edge_mask__.sigmoid()
+                    # Some ops add self-loops to `edge_index`. We need to do
+                    # the same for `edge_mask` (but do not train those).
+                    if out.size(self.node_dim) != edge_mask.size(0):
+                        edge_mask = edge_mask[self.__loop_mask__]
+                        loop = edge_mask.new_ones(size[0])
+                        edge_mask = torch.cat([edge_mask, loop], dim=0)
+                    assert out.size(self.node_dim) == edge_mask.size(0)
+                    out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
+
+                aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
+                for hook in self._aggregate_forward_pre_hooks.values():
+                    res = hook(self, (aggr_kwargs, ))
+                    if res is not None:
+                        aggr_kwargs = res[0] if isinstance(res, tuple) else res
+                out = self.aggregate(out, **aggr_kwargs)
+                for hook in self._aggregate_forward_hooks.values():
+                    res = hook(self, (aggr_kwargs, ), out)
+                    if res is not None:
+                        out = res
+
+                update_kwargs = self.inspector.distribute('update', coll_dict)
+                out = self.update(out, **update_kwargs)
+
+                if decomposed_layers > 1:
+                    decomp_out.append(out)
+
+            if decomposed_layers > 1:
+                out = torch.cat(decomp_out, dim=-1)
 
         for hook in self._propagate_forward_hooks.values():
             res = hook(self, (edge_index, size, kwargs), out)
+            if res is not None:
+                out = res
+
+        return out
+
+    def edge_updater(self, edge_index: Adj, **kwargs):
+        r"""The initial call to compute or update features for each edge in the
+        graph.
+
+        Args:
+            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` that defines the underlying
+                graph connectivity/message passing flow.
+                See :meth:`propagate` for more information.
+            **kwargs: Any additional data which is needed to compute or update
+                features for each edge in the graph.
+        """
+        for hook in self._edge_update_forward_pre_hooks.values():
+            res = hook(self, (edge_index, kwargs))
+            if res is not None:
+                edge_index, kwargs = res
+
+        size = self.__check_input__(edge_index, size=None)
+
+        coll_dict = self.__collect__(self.__edge_user_args__, edge_index, size,
+                                     kwargs)
+
+        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        out = self.edge_update(**edge_kwargs)
+
+        for hook in self._edge_update_forward_hooks.values():
+            res = hook(self, (edge_index, kwargs), out)
             if res is not None:
                 out = res
 
@@ -357,6 +442,16 @@ class MessagePassing(torch.nn.Module):
         which was initially passed to :meth:`propagate`.
         """
         return inputs
+
+    def edge_update(self) -> Tensor:
+        r"""Computes or updates features for each edge in the graph.
+        This function can take any argument as input which was initially passed
+        to :meth:`edge_updater`.
+        Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
+        the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
+        raise NotImplementedError
 
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
@@ -464,6 +559,28 @@ class MessagePassing(torch.nn.Module):
         self._message_and_aggregate_forward_hooks[handle.id] = hook
         return handle
 
+    def register_edge_update_forward_pre_hook(
+            self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`edge_update` is
+        invoked. See :meth:`register_propagate_forward_pre_hook` for more
+        information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_pre_hooks)
+        self._edge_update_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_edge_update_forward_hook(self,
+                                          hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`edge_update` has
+        computed an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._edge_update_forward_hooks)
+        self._edge_update_forward_hooks[handle.id] = hook
+        return handle
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
@@ -552,3 +669,9 @@ class MessagePassing(torch.nn.Module):
         module.jittable = None
 
         return module
+
+    def __repr__(self) -> str:
+        if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
+            return (f'{self.__class__.__name__}({self.in_channels}, '
+                    f'{self.out_channels})')
+        return f'{self.__class__.__name__}()'

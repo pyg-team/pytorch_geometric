@@ -1,14 +1,15 @@
-from typing import Optional, Union, Tuple
-from torch_geometric.typing import OptTensor, Adj
+from typing import Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Parameter as Param
+from torch import Tensor
 from torch.nn import Parameter
+from torch.nn import Parameter as Param
 from torch_scatter import scatter
-from torch_sparse import SparseTensor, matmul, masked_select_nnz
+from torch_sparse import SparseTensor, masked_select_nnz, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 
@@ -84,16 +85,19 @@ class RGCNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int,
-                 num_relations: int,
-                 num_bases: Optional[int] = None,
-                 num_blocks: Optional[int] = None,
-                 aggr: str = 'mean',
-                 root_weight: bool = True,
-                 bias: bool = True, **kwargs):  # yapf: disable
-
-        super(RGCNConv, self).__init__(aggr=aggr, node_dim=0, **kwargs)
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        num_relations: int,
+        num_bases: Optional[int] = None,
+        num_blocks: Optional[int] = None,
+        aggr: str = 'mean',
+        root_weight: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '
@@ -229,11 +233,9 @@ class RGCNConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,
-                                                     self.in_channels,
-                                                     self.out_channels,
-                                                     self.num_relations)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_relations={self.num_relations})')
 
 
 class FastRGCNConv(RGCNConv):
@@ -271,7 +273,8 @@ class FastRGCNConv(RGCNConv):
 
         return out
 
-    def message(self, x_j: Tensor, edge_type: Tensor, index: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_type: Tensor,
+                edge_index_j: Tensor) -> Tensor:
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
             weight = (self.comp @ weight.view(self.num_bases, -1)).view(
@@ -288,7 +291,7 @@ class FastRGCNConv(RGCNConv):
 
         else:  # No regularization/Basis-decomposition ========================
             if x_j.dtype == torch.long:
-                weight_index = edge_type * weight.size(1) + index
+                weight_index = edge_type * weight.size(1) + edge_index_j
                 return weight.view(-1, self.out_channels)[weight_index]
 
             return torch.bmm(x_j.unsqueeze(-2), weight[edge_type]).squeeze(-2)

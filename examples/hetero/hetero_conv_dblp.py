@@ -2,10 +2,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import DBLP
-from torch_geometric.nn import SAGEConv, HeteroConv, Linear
+from torch_geometric.nn import HeteroConv, Linear, SAGEConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
+path = '/data/datasets/DBLP'
 dataset = DBLP(path)
 data = dataset[0]
 print(data)
@@ -21,7 +23,7 @@ class HeteroGNN(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
             conv = HeteroConv({
-                edge_type: SAGEConv(-1, hidden_channels)
+                edge_type: SAGEConv((-1, -1), hidden_channels)
                 for edge_type in metadata[1]
             })
             self.convs.append(conv)
