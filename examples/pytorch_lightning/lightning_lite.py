@@ -4,9 +4,9 @@ import torch
 import torch.nn.functional as F
 from pytorch_lightning.lite import LightningLite
 
-from torch_geometric.nn import GAT
 from torch_geometric.datasets import Flickr
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import GAT
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Flickr')
 
