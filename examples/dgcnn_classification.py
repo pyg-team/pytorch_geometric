@@ -2,13 +2,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Dropout, Linear as Lin
-from torch_geometric.datasets import ModelNet
-import torch_geometric.transforms as T
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn import DynamicEdgeConv, global_max_pool
+from torch.nn import Linear
 
-from pointnet2_classification import MLP
+import torch_geometric.transforms as T
+from torch_geometric.datasets import ModelNet
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import MLP, DynamicEdgeConv, global_max_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
@@ -26,10 +25,10 @@ class Net(torch.nn.Module):
 
         self.conv1 = DynamicEdgeConv(MLP([2 * 3, 64, 64, 64]), k, aggr)
         self.conv2 = DynamicEdgeConv(MLP([2 * 64, 128]), k, aggr)
-        self.lin1 = MLP([128 + 64, 1024])
+        self.lin1 = Linear(128 + 64, 1024)
 
-        self.mlp = Seq(MLP([1024, 512]), Dropout(0.5), MLP([512, 256]),
-                       Dropout(0.5), Lin(256, out_channels))
+        self.mlp = MLP([1024, 512, 256, out_channels], dropout=0.5,
+                       batch_norm=False)
 
     def forward(self, data):
         pos, batch = data.pos, data.batch
@@ -77,6 +76,5 @@ def test(loader):
 for epoch in range(1, 201):
     loss = train()
     test_acc = test(test_loader)
-    print('Epoch {:03d}, Loss: {:.4f}, Test: {:.4f}'.format(
-        epoch, loss, test_acc))
+    print(f'Epoch {epoch:03d}, Loss: {loss:.4f}, Test: {test_acc:.4f}')
     scheduler.step()

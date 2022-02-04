@@ -3,12 +3,13 @@ import os.path as osp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.datasets import MNISTSuperpixels
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (NNConv, global_mean_pool, graclus, max_pool,
+                                max_pool_x)
 from torch_geometric.utils import normalized_cut
-from torch_geometric.nn import (NNConv, graclus, max_pool, max_pool_x,
-                                global_mean_pool)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
@@ -27,7 +28,7 @@ def normalized_cut_2d(edge_index, pos):
 
 class Net(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(),
                             nn.Linear(25, d.num_features * 32))
         self.conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')
@@ -94,4 +95,4 @@ def test():
 for epoch in range(1, 31):
     train(epoch)
     test_acc = test()
-    print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))
+    print(f'Epoch: {epoch:02d}, Test: {test_acc:.4f}')

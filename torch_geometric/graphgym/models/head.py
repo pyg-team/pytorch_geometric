@@ -5,13 +5,13 @@ They are constructed in the init function of the gnn.GNN.
 import torch
 import torch.nn as nn
 
-from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.layer import new_layer_config, MLP
-import torch_geometric.graphgym.models.pooling  # noqa, register module
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.models.layer import MLP, new_layer_config
+from torch_geometric.graphgym.register import register_head
 
 
+@register_head('node')
 class GNNNodeHead(nn.Module):
     """
     GNN prediction head for node prediction tasks.
@@ -21,7 +21,7 @@ class GNNNodeHead(nn.Module):
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
     def __init__(self, dim_in, dim_out):
-        super(GNNNodeHead, self).__init__()
+        super().__init__()
         self.layer_post_mp = MLP(
             new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
                              has_act=False, has_bias=True, cfg=cfg))
@@ -37,6 +37,8 @@ class GNNNodeHead(nn.Module):
         return pred, label
 
 
+@register_head('edge')
+@register_head('link_pred')
 class GNNEdgeHead(nn.Module):
     """
     GNN prediction head for edge/link prediction tasks.
@@ -46,7 +48,7 @@ class GNNEdgeHead(nn.Module):
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
     def __init__(self, dim_in, dim_out):
-        super(GNNEdgeHead, self).__init__()
+        super().__init__()
         # module to decode edges from node embeddings
         if cfg.model.edge_decoding == 'concat':
             self.layer_post_mp = MLP(
@@ -87,6 +89,7 @@ class GNNEdgeHead(nn.Module):
         return pred, label
 
 
+@register_head('graph')
 class GNNGraphHead(nn.Module):
     """
     GNN prediction head for graph prediction tasks.
@@ -98,7 +101,7 @@ class GNNGraphHead(nn.Module):
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
     def __init__(self, dim_in, dim_out):
-        super(GNNGraphHead, self).__init__()
+        super().__init__()
         self.layer_post_mp = MLP(
             new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
                              has_act=False, has_bias=True, cfg=cfg))
@@ -113,14 +116,3 @@ class GNNGraphHead(nn.Module):
         batch.graph_feature = graph_emb
         pred, label = self._apply_index(batch)
         return pred, label
-
-
-# Head models for external interface
-head_dict = {
-    'node': GNNNodeHead,
-    'edge': GNNEdgeHead,
-    'link_pred': GNNEdgeHead,
-    'graph': GNNGraphHead
-}
-
-register.head_dict = {**register.head_dict, **head_dict}

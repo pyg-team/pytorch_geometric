@@ -1,14 +1,14 @@
-from typing import Union, Dict, Optional, List
+from typing import Dict, List, Optional, Union
 
 import torch
-from torch import Tensor, nn
 import torch.nn.functional as F
+from torch import Tensor, nn
 
-from torch_geometric.typing import NodeType, EdgeType, Metadata, Adj
-from torch_geometric.nn.dense import Linear
-from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
+from torch_geometric.utils import softmax
 
 
 def group(xs: List[Tensor], q: nn.Parameter,
@@ -30,6 +30,12 @@ class HANConv(MessagePassing):
     `"Heterogenous Graph Attention Network"
     <https://arxiv.org/pdf/1903.07293.pdf>`_ paper.
 
+    .. note::
+
+        For an example of using HANConv, see `examples/hetero/han_imdb.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        hetero/han_imdb.py>`_.
+
     Args:
         in_channels (int or Dict[str, int]): Size of each input sample of every
             node type, or :obj:`-1` to derive the size from the first input(s)
@@ -44,6 +50,9 @@ class HANConv(MessagePassing):
             (default: :obj:`1`)
         negative_slope (float, optional): LeakyReLU angle of the negative
             slope. (default: :obj:`0.2`)
+        dropout (float, optional): Dropout probability of the normalized
+            attention coefficients which exposes each node to a stochastically
+            sampled neighborhood during training. (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -54,6 +63,7 @@ class HANConv(MessagePassing):
         metadata: Metadata,
         heads: int = 1,
         negative_slope=0.2,
+        dropout: float = 0.0,
         **kwargs,
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
@@ -66,6 +76,7 @@ class HANConv(MessagePassing):
         self.out_channels = out_channels
         self.negative_slope = negative_slope
         self.metadata = metadata
+        self.dropout = dropout
         self.k_lin = nn.Linear(out_channels, out_channels)
         self.q = nn.Parameter(torch.Tensor(1, out_channels))
 
@@ -91,10 +102,9 @@ class HANConv(MessagePassing):
         glorot(self.q)
 
     def forward(
-        self,
-        x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType, Adj]
-    ) -> Dict[NodeType, Optional[Tensor]]:
+        self, x_dict: Dict[NodeType, Tensor],
+        edge_index_dict: Dict[EdgeType,
+                              Adj]) -> Dict[NodeType, Optional[Tensor]]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
@@ -154,6 +164,7 @@ class HANConv(MessagePassing):
         alpha = alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         out = x_dst_i * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
 

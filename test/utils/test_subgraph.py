@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import subgraph, k_hop_subgraph
+
+from torch_geometric.utils import k_hop_subgraph, subgraph
 
 
 def test_subgraph():

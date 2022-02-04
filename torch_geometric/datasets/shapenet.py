@@ -1,7 +1,7 @@
+import json
 import os
 import os.path as osp
 import shutil
-import json
 
 import torch
 
@@ -102,8 +102,7 @@ class ShapeNet(InMemoryDataset):
             categories = [categories]
         assert all(category in self.category_ids for category in categories)
         self.categories = categories
-        super(ShapeNet, self).__init__(root, transform, pre_transform,
-                                       pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -137,7 +136,7 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            os.path.join('{}_{}.pt'.format(cats, split))
+            osp.join(f'{cats}_{split}.pt')
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
@@ -188,6 +187,6 @@ class ShapeNet(InMemoryDataset):
             torch.save(self.collate(data_list), self.processed_paths[i])
         torch.save(self.collate(trainval), self.processed_paths[3])
 
-    def __repr__(self):
-        return '{}({}, categories={})'.format(self.__class__.__name__,
-                                              len(self), self.categories)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({len(self)}, '
+                f'categories={self.categories})')

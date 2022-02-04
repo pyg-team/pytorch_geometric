@@ -44,6 +44,3 @@ class PointPairFeatures(BaseTransform):
             data.edge_attr = ppf
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

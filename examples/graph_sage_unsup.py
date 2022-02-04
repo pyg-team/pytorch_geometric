@@ -3,13 +3,13 @@ import os.path as osp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_cluster import random_walk
 from sklearn.linear_model import LogisticRegression
+from torch_cluster import random_walk
 
 import torch_geometric.transforms as T
-from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborSampler as RawNeighborSampler
+from torch_geometric.nn import SAGEConv
 
 EPS = 1e-15
 
@@ -33,7 +33,7 @@ class NeighborSampler(RawNeighborSampler):
                                   dtype=torch.long)
 
         batch = torch.cat([batch, pos_batch, neg_batch], dim=0)
-        return super(NeighborSampler, self).sample(batch)
+        return super().sample(batch)
 
 
 train_loader = NeighborSampler(data.edge_index, sizes=[10, 10], batch_size=256,
@@ -42,7 +42,7 @@ train_loader = NeighborSampler(data.edge_index, sizes=[10, 10], batch_size=256,
 
 class SAGE(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers):
-        super(SAGE, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
         self.convs = nn.ModuleList()
         for i in range(num_layers):

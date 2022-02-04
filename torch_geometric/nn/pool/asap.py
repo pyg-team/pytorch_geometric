@@ -1,4 +1,4 @@
-from typing import Union, Optional, Callable
+from typing import Callable, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -7,9 +7,8 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import LEConv
-from torch_geometric.utils import softmax
 from torch_geometric.nn.pool.topk_pool import topk
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, softmax
 
 
 class ASAPooling(torch.nn.Module):
@@ -55,7 +54,7 @@ class ASAPooling(torch.nn.Module):
                  GNN: Optional[Callable] = None, dropout: float = 0.0,
                  negative_slope: float = 0.2, add_self_loops: bool = False,
                  **kwargs):
-        super(ASAPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -135,6 +134,6 @@ class ASAPooling(torch.nn.Module):
 
         return x, edge_index, edge_weight, batch, perm
 
-    def __repr__(self):
-        return '{}({}, ratio={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.ratio)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'ratio={self.ratio})')

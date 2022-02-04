@@ -1,6 +1,5 @@
-from typing import Any
-
 import math
+from typing import Any
 
 import torch
 from torch import Tensor

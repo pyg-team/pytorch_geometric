@@ -3,7 +3,8 @@ import os.path as osp
 import re
 
 import torch
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_gz)
 
 x_map = {
@@ -114,8 +115,7 @@ class MoleculeNet(InMemoryDataset):
                  pre_filter=None):
         self.name = name.lower()
         assert self.name in self.names.keys()
-        super(MoleculeNet, self).__init__(root, transform, pre_transform,
-                                          pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -217,5 +217,5 @@ class MoleculeNet(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({})'.format(self.names[self.name][0], len(self))
+    def __repr__(self) -> str:
+        return f'{self.names[self.name][0]}({len(self)})'

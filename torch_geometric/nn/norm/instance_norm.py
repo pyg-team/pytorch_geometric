@@ -1,9 +1,9 @@
-from torch_geometric.typing import OptTensor
-
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
 from torch_scatter import scatter
+
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import degree
 
 
@@ -38,8 +38,8 @@ class InstanceNorm(_InstanceNorm):
     """
     def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=False,
                  track_running_stats=False):
-        super(InstanceNorm, self).__init__(in_channels, eps, momentum, affine,
-                                           track_running_stats)
+        super().__init__(in_channels, eps, momentum, affine,
+                         track_running_stats)
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""

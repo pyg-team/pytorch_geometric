@@ -1,6 +1,6 @@
 package:
   name: pyg
-  version: 2.0.2
+  version: 2.0.4
 
 source:
   path: ../..
@@ -10,7 +10,6 @@ requirements:
     - pip
     - python {{ environ.get('PYTHON_VERSION') }}
 
-  run:
   run:
     - python {{ environ.get('PYTHON_VERSION') }}
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}

@@ -1,20 +1,16 @@
+import dgl.function as fn
 import torch
 import torch.nn.functional as F
-from torch.nn import Parameter
-from torch_geometric.nn.inits import glorot, zeros
-import dgl.function as fn
 from dgl.nn.pytorch import EdgeSoftmax
+from torch.nn import Parameter
+
+from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATConv(torch.nn.Module):
-    def __init__(self,
-                 g,
-                 in_channels,
-                 out_channels,
-                 heads=1,
-                 negative_slope=0.2,
-                 dropout=0):
-        super(GATConv, self).__init__()
+    def __init__(self, g, in_channels, out_channels, heads=1,
+                 negative_slope=0.2, dropout=0):
+        super().__init__()
 
         self.g = g
         self.in_channels = in_channels
@@ -23,8 +19,8 @@ class GATConv(torch.nn.Module):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
         self.bias = Parameter(torch.Tensor(heads * out_channels))
         self.reset_parameters()
@@ -58,7 +54,7 @@ class GATConv(torch.nn.Module):
 
 class GAT(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GAT, self).__init__()
+        super().__init__()
         self.g = g
         self.conv1 = GATConv(g, in_channels, 8, 8, 0.6, 0.2)
         self.conv2 = GATConv(g, 64, out_channels, 1, 0.6, 0.2)
@@ -72,21 +68,16 @@ class GAT(torch.nn.Module):
 
 
 class GATSPMVConv(torch.nn.Module):
-    def __init__(self,
-                 g,
-                 in_channels,
-                 out_channels,
-                 heads=1,
-                 negative_slope=0.2,
-                 dropout=0):
-        super(GATSPMVConv, self).__init__()
+    def __init__(self, g, in_channels, out_channels, heads=1,
+                 negative_slope=0.2, dropout=0):
+        super().__init__()
         self.g = g
         self.out_channels = out_channels
         self.heads = heads
         self.negative_slope = negative_slope
         self.dropout = dropout
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att_l = Parameter(torch.Tensor(heads, out_channels, 1))
         self.att_r = Parameter(torch.Tensor(heads, out_channels, 1))
         self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -126,7 +117,7 @@ class GATSPMVConv(torch.nn.Module):
 
 class GATSPMV(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GATSPMV, self).__init__()
+        super().__init__()
         self.g = g
         self.conv1 = GATSPMVConv(g, in_channels, 8, 8, 0.6, 0.2)
         self.conv2 = GATSPMVConv(g, 64, out_channels, 1, 0.6, 0.2)

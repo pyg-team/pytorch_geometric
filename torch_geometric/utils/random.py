@@ -1,6 +1,7 @@
-import torch
 import numpy as np
-from torch_geometric.utils import to_undirected, remove_self_loops
+import torch
+
+from torch_geometric.utils import remove_self_loops, to_undirected
 
 
 def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
@@ -41,17 +42,17 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
     Args:
         block_sizes ([int] or LongTensor): The sizes of blocks.
         edge_probs ([[float]] or FloatTensor): The density of edges going
-        from each block to each other block. Must be symmetric if the graph is
-            undirected.
+            from each block to each other block. Must be symmetric if the
+            graph is undirected.
         directed (bool, optional): If set to :obj:`True`, will return a
             directed graph. (default: :obj:`False`)
     """
 
     size, prob = block_sizes, edge_probs
 
-    if not torch.is_tensor(size):
+    if not isinstance(size, torch.Tensor):
         size = torch.tensor(size, dtype=torch.long)
-    if not torch.is_tensor(prob):
+    if not isinstance(prob, torch.Tensor):
         prob = torch.tensor(prob, dtype=torch.float)
 
     assert size.dim() == 1

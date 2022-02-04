@@ -1,9 +1,10 @@
+import glob
 import os
 import os.path as osp
-import glob
 
 import torch
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 from torch_geometric.io import read_txt_array
 
@@ -61,7 +62,7 @@ class TOSCA(InMemoryDataset):
         for cat in categories:
             assert cat in self.categories
         self.categories = categories
-        super(TOSCA, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -70,7 +71,8 @@ class TOSCA(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        return '{}.pt'.format('_'.join([cat[:2] for cat in self.categories]))
+        name = '_'.join([cat[:2] for cat in self.categories])
+        return f'{name}.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -80,13 +82,14 @@ class TOSCA(InMemoryDataset):
     def process(self):
         data_list = []
         for cat in self.categories:
-            paths = glob.glob(osp.join(self.raw_dir, '{}*.tri'.format(cat)))
+            paths = glob.glob(osp.join(self.raw_dir, f'{cat}*.tri'))
             paths = [path[:-4] for path in paths]
             paths = sorted(paths, key=lambda e: (len(e), e))
 
             for path in paths:
-                pos = read_txt_array('{}.vert'.format(path))
-                face = read_txt_array('{}.tri'.format(path), dtype=torch.long)
+                pos = read_txt_array(f'{path}.vert')
+                face = read_txt_array(f'{path}.tri', dtype=torch.long)
+                face = face - face.min()  # Ensure zero-based index.
                 data = Data(pos=pos, face=face.t().contiguous())
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue

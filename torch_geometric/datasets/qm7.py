@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class QM7b(InMemoryDataset):
@@ -21,13 +22,29 @@ class QM7b(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 7,211
+              - ~15.4
+              - ~245.0
+              - 0
+              - 14
     """
 
     url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat'
 
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(QM7b, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

@@ -1,11 +1,10 @@
-from typing import Optional, Callable
-
-import os
 import datetime
+import os
+from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_gz)
 
 

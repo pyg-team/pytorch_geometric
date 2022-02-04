@@ -285,7 +285,11 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[AttentiveFP](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.AttentiveFP)** from Xiong *et al.*: [Pushing the Boundaries of Molecular Representation for Drug Discovery with the Graph Attention Mechanism](https://pubs.acs.org/doi/10.1021/acs.jmedchem.9b00959) (J. Med. Chem. 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/attentive_fp.py)]
 * **[DeepGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DeepGCNLayer)** and the **[GENConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GENConv)** from Li *et al.*: [DeepGCNs: Can GCNs Go as Deep as CNNs?](https://arxiv.org/abs/1904.03751) (ICCV 2019) and [DeeperGCN: All You Need to Train Deeper GCNs](https://arxiv.org/abs/2006.07739) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_proteins_deepgcn.py)]
 * **[RECT](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.RECT_L)** from Wang *et al.*: [Network Embedding with Completely-imbalanced Labels](https://ieeexplore.ieee.org/document/8979355) (TKDE 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/rect.py)]
-* **[GNNExplainer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GNNExplainer)** from Ying *et al.*: [GNNExplainer: Generating Explanations for Graph Neural Networks](https://arxiv.org/abs/1903.03894) (NeurIPS 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer.py)]
+* **[GNNExplainer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GNNExplainer)** from Ying *et al.*: [GNNExplainer: Generating Explanations for Graph Neural Networks](https://arxiv.org/abs/1903.03894) (NeurIPS 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py)]
+* **SEAL** from Zhang and Chen: [Link Prediction Based on Graph Neural Networks](https://arxiv.org/abs/1802.09691) (NeurIPS 2018) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/seal_link_pred.py)]
+* **Graph-less Neural Networks** from Zhang *et al.*: [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation](https://arxiv.org/abs/2110.08727) (CoRR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/glnn.py)]
+* **[LINKX](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LINKX)** from Lim *et al.*: [Large Scale Learning on Non-Homophilous Graphs:
+New Benchmarks and Strong Simple Methods](https://arxiv.org/abs/2110.14446) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/linkx.py)]
 </details>
 
 **GNN operators and utilities:**
@@ -293,7 +297,7 @@ PyG comes with a rich set of neural network operators that are commonly used in 
 They follow an extensible design: It is easy to apply these operators and graph utilities to existing GNN layers and models to further enhance model performance.
 
 * **[DropEdge](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.dropout_adj)** from Rong *et al.*: [DropEdge: Towards Deep Graph Convolutional Networks on Node Classification](https://openreview.net/forum?id=Hkx1qkrKPr) (ICLR 2020)
-* **[GraphNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphNorm)** from Cai *et al.*: [GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training](https://arxiv.org/abs/2009.03294) (CoRR 2020)
+* **[GraphNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphNorm)** from Cai *et al.*: [GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training](https://proceedings.mlr.press/v139/cai21e.html) (ICML 2021)
 * **[GDC](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.GDC)** from Klicpera *et al.*: [Diffusion Improves Graph Learning](https://arxiv.org/abs/1911.05485) (NeurIPS 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py)]
 
 <details>
@@ -324,7 +328,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 <details>
 <summary><b>Expand to see all implemented scalable GNNs...</b></summary>
 
-* **[ShaDow](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.ShaDowKHopSampler)** from Zeng *et al.*: [Deep Graph Neural Networks with Shallow Subgraph Samplers](https://arxiv.org/abs/2012.01380) (CoRR 2020)
+* **[ShaDow](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.ShaDowKHopSampler)** from Zeng *et al.*: [Deep Graph Neural Networks with Shallow Subgraph Samplers](https://arxiv.org/abs/2012.01380) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/shadow.py)]
 * **[SIGN](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.SIGN)** from Rossi *et al.*: [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/sign.py)]
 * **[HGTLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.loader.HGTLoader)** from Hu *et al.*: [Heterogeneous Graph Transformer](https://arxiv.org/abs/2003.01332) (WWW 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
 </details>

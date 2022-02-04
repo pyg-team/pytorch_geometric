@@ -1,14 +1,14 @@
 import math
-from typing import Union, Tuple, Optional
-from torch_geometric.typing import PairTensor, Adj, OptTensor
+from typing import Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import softmax
 
 
@@ -110,6 +110,7 @@ class TransformerConv(MessagePassing):
         self.concat = concat
         self.dropout = dropout
         self.edge_dim = edge_dim
+        self._alpha = None
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -223,7 +224,6 @@ class TransformerConv(MessagePassing):
         out *= alpha.view(-1, self.heads, 1)
         return out
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

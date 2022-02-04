@@ -1,16 +1,16 @@
-from typing import Union, Tuple, Optional
-from torch_geometric.typing import (Adj, Size, OptTensor, PairTensor)
+from typing import Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Parameter
 from torch_sparse import SparseTensor, set_diag
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
-
 from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class GATv2Conv(MessagePassing):
@@ -53,8 +53,10 @@ class GATv2Conv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -85,12 +87,27 @@ class GATv2Conv(MessagePassing):
             (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
+          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          If :obj:`return_attention_weights=True`, then
+          :math:`((|\mathcal{V}|, H * F_{out}),
+          ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
+          or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
+          (|\mathcal{E}|, H)))` if bipartite
     """
     _alpha: OptTensor
 
     def __init__(
         self,
-        in_channels: int,
+        in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
         heads: int = 1,
         concat: bool = True,
@@ -103,7 +120,7 @@ class GATv2Conv(MessagePassing):
         share_weights: bool = False,
         **kwargs,
     ):
-        super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -116,13 +133,22 @@ class GATv2Conv(MessagePassing):
         self.fill_value = fill_value
         self.share_weights = share_weights
 
-        self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
-                            weight_initializer='glorot')
-        if share_weights:
-            self.lin_r = self.lin_l
-        else:
-            self.lin_r = Linear(in_channels, heads * out_channels, bias=bias,
+        if isinstance(in_channels, int):
+            self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
                                 weight_initializer='glorot')
+            if share_weights:
+                self.lin_r = self.lin_l
+            else:
+                self.lin_r = Linear(in_channels, heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
+        else:
+            self.lin_l = Linear(in_channels[0], heads * out_channels,
+                                bias=bias, weight_initializer='glorot')
+            if share_weights:
+                self.lin_r = self.lin_l
+            else:
+                self.lin_r = Linear(in_channels[1], heads * out_channels,
+                                    bias=bias, weight_initializer='glorot')
 
         self.att = Parameter(torch.Tensor(1, heads, out_channels))
 
@@ -152,12 +178,12 @@ class GATv2Conv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None,
+                edge_attr: OptTensor = None,
                 return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -191,8 +217,6 @@ class GATv2Conv(MessagePassing):
                 num_nodes = x_l.size(0)
                 if x_r is not None:
                     num_nodes = min(num_nodes, x_r.size(0))
-                if size is not None:
-                    num_nodes = min(size[0], size[1])
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
@@ -208,8 +232,8 @@ class GATv2Conv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r),
-                             edge_attr=edge_attr, size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
+                             size=None)
 
         alpha = self._alpha
         self._alpha = None
@@ -251,7 +275,6 @@ class GATv2Conv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.unsqueeze(-1)
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

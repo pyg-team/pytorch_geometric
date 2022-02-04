@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import Constant
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import Constant
 
 
 def test_constant():

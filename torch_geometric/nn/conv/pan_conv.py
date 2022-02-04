@@ -1,5 +1,4 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj
 
 import torch
 from torch import Tensor
@@ -8,6 +7,7 @@ from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj
 
 
 class PANConv(MessagePassing):
@@ -34,12 +34,18 @@ class PANConv(MessagePassing):
         filter_size (int): The filter size :math:`L`.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, filter_size: int,
                  **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(PANConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -105,8 +111,6 @@ class PANConv(MessagePassing):
 
         return out
 
-    def __repr__(self):
-        return '{}({}, {}, filter_size={})'.format(self.__class__.__name__,
-                                                   self.in_channels,
-                                                   self.out_channels,
-                                                   self.filter_size)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, filter_size={self.filter_size})')

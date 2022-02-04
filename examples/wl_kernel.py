@@ -1,14 +1,15 @@
-import warnings
 import argparse
 import os.path as osp
+import warnings
 
 import torch
-from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
-from torch_geometric.nn import WLConv
+from sklearn.metrics import accuracy_score
+from sklearn.svm import LinearSVC
+
 from torch_geometric.data import Batch
 from torch_geometric.datasets import TUDataset
+from torch_geometric.nn import WLConv
 
 warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
@@ -25,7 +26,7 @@ data = Batch.from_data_list(dataset)
 
 class WL(torch.nn.Module):
     def __init__(self, num_layers):
-        super(WL, self).__init__()
+        super().__init__()
         self.convs = torch.nn.ModuleList([WLConv() for _ in range(num_layers)])
 
     def forward(self, x, edge_index, batch=None):

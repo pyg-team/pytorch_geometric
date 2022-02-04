@@ -1,15 +1,15 @@
-import sys
+import os.path as osp
 import random
 import shutil
-import os.path as osp
+import sys
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.utils import erdos_renyi_graph
-from torch_geometric.loader import NeighborSampler
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn.conv import SAGEConv, GATConv
+from torch_geometric.loader import NeighborSampler
+from torch_geometric.nn.conv import GATConv, SAGEConv
+from torch_geometric.utils import erdos_renyi_graph
 
 
 def test_neighbor_sampler():
@@ -47,7 +47,7 @@ def test_neighbor_sampler_on_cora():
 
     class SAGE(torch.nn.Module):
         def __init__(self, in_channels, out_channels):
-            super(SAGE, self).__init__()
+            super().__init__()
 
             self.convs = torch.nn.ModuleList()
             self.convs.append(SAGEConv(in_channels, 16))
@@ -74,7 +74,7 @@ def test_neighbor_sampler_on_cora():
 
     class GAT(torch.nn.Module):
         def __init__(self, in_channels, out_channels):
-            super(SAGE, self).__init__()
+            super().__init__()
 
             self.convs = torch.nn.ModuleList()
             self.convs.append(GATConv(in_channels, 16, heads=2))
