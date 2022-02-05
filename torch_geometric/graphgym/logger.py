@@ -2,11 +2,10 @@ import logging
 import math
 import sys
 
-from torch_geometric.graphgym import register
-
 import torch
 
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
@@ -171,8 +170,7 @@ class Logger(object):
             func = register.metric_dict.get(custom_metric)
             if not func:
                 raise ValueError(
-                    f'Unknown custom metric function name: {custom_metric}'
-                )
+                    f'Unknown custom metric function name: {custom_metric}')
             custom_metric_score = func(self._true, self._pred, self.task_type)
             task_stats[custom_metric] = custom_metric_score
 
