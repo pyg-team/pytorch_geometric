@@ -15,6 +15,7 @@ optimizer_dict: Dict[str, Any] = {}
 scheduler_dict: Dict[str, Any] = {}
 loss_dict: Dict[str, Any] = {}
 train_dict: Dict[str, Any] = {}
+metric_dict: Dict[str, Any] = {}
 
 
 def register_base(mapping: Dict[str, Any], key: str,
@@ -117,17 +118,6 @@ def register_train(key: str, module: Any = None):
     return register_base(train_dict, key, module)
 
 
-metric_dict = {}
-
-
-def register_metric(key, module):
-    """
-    Register a customized metric function.
-    After registeration, the module can be directly called by GraphGym.
-
-    Args:
-        key (string): Name of the module
-        module: PyTorch modeul
-
-    """
-    register_base(key, module, metric_dict)
+def register_metric(key: str, module: Any = None):
+    r"""Register a customized metric function."""
+    return register_base(metric_dict, key, module)

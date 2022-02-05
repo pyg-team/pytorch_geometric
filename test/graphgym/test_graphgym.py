@@ -7,6 +7,7 @@ from collections import namedtuple
 import torch
 
 from torch_geometric import seed_everything
+from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
                                              set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
@@ -18,7 +19,6 @@ from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
                                             params_count)
-from torch_geometric.graphgym import register
 
 
 def test_run_single_graphgym():
@@ -94,17 +94,8 @@ def test_run_trivial_graphgym():
     loggers = create_logger()
     model = create_model()
 
-    optimizer_config = OptimizerConfig(optimizer=cfg.optim.optimizer,
-                                       base_lr=cfg.optim.base_lr,
-                                       weight_decay=cfg.optim.weight_decay,
-                                       momentum=cfg.optim.momentum)
-    optimizer = create_optimizer(model.parameters(), optimizer_config)
-
-    scheduler_config = SchedulerConfig(scheduler=cfg.optim.scheduler,
-                                       steps=cfg.optim.steps,
-                                       lr_decay=cfg.optim.lr_decay,
-                                       max_epoch=cfg.optim.max_epoch)
-    scheduler = create_scheduler(optimizer, scheduler_config)
+    optimizer = create_optimizer(model.parameters(), cfg.optim)
+    scheduler = create_scheduler(optimizer, cfg.optim)
 
     cfg.params = params_count(model)
 
