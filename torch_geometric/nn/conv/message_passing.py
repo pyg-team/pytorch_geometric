@@ -591,6 +591,8 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        source = inspect.getsource(self.__class__)
+
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
         if hasattr(self, 'propagate_type'):
             prop_types = {
@@ -598,7 +600,6 @@ class MessagePassing(torch.nn.Module):
                 for k, v in self.propagate_type.items()
             }
         else:
-            source = inspect.getsource(self.__class__)
             match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
             if match is None:
                 raise TypeError(
@@ -611,14 +612,47 @@ class MessagePassing(torch.nn.Module):
             prop_types = split_types_repr(match.group(1))
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
+        # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
+        if 'edge_update' in self.__class__.__dict__.keys():
+            if hasattr(self, 'edge_updater_type'):
+                edge_updater_types = {
+                    k: sanitize(str(v))
+                    for k, v in self.edge_updater.items()
+                }
+            else:
+                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
+                                  source)
+                if match is None:
+                    raise TypeError(
+                        'TorchScript support requires the definition of the '
+                        'types passed to `edge_updater()`. Please specificy '
+                        'them via\n\n edge_updater_types = {"arg1": type1, '
+                        '"arg2": type2, ... }\n\n or via\n\n'
+                        '# edge_updater_types: (arg1: type1, arg2: type2, ...)'
+                        '\n\ninside the `MessagePassing` module.')
+                edge_updater_types = split_types_repr(match.group(1))
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in edge_updater_types])
+        else:
+            edge_updater_types = {}
+
         type_hints = get_type_hints(self.__class__.update)
         prop_return_type = type_hints.get('return', 'Tensor')
         if str(prop_return_type)[:6] == '<class':
             prop_return_type = prop_return_type.__name__
 
+        type_hints = get_type_hints(self.__class__.edge_update)
+        edge_updater_return_type = type_hints.get('return', 'Tensor')
+        if str(edge_updater_return_type)[:6] == '<class':
+            edge_updater_return_type = edge_updater_return_type.__name__
+
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
+
+        # Parse `__collect__()` types to format `{arg:1, type1, ...}`,
+        # specific to the argument used for edge updates.
+        edge_collect_types = self.inspector.types(['edge_update'])
 
         # Collect `forward()` header, body and @overload types.
         forward_types = parse_types(self.forward)
@@ -651,6 +685,7 @@ class MessagePassing(torch.nn.Module):
             fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
+            edge_user_args=self.__edge_user_args__,
             forward_header=forward_header,
             forward_types=forward_types,
             forward_body=forward_body,
@@ -658,16 +693,18 @@ class MessagePassing(torch.nn.Module):
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
             update_args=self.inspector.keys(['update']),
+            edge_collect_types=edge_collect_types,
+            edge_update_args=self.inspector.keys(['edge_update']),
+            edge_updater_types=edge_updater_types,
+            edge_updater_return_type=edge_updater_return_type,
             check_input=inspect.getsource(self.__check_input__)[:-1],
             lift=inspect.getsource(self.__lift__)[:-1],
         )
-
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
         module.jittable = None
-
         return module
 
     def __repr__(self) -> str:

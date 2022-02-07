@@ -77,7 +77,7 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
-        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+        if self.in_channels <= 0:
             pass
         elif self.weight_initializer == 'glorot':
             inits.glorot(self.weight)
@@ -94,9 +94,7 @@ class Linear(torch.nn.Module):
             raise RuntimeError(f"Linear layer weight initializer "
                                f"'{self.weight_initializer}' is not supported")
 
-        if isinstance(self.weight, nn.parameter.UninitializedParameter):
-            pass
-        elif self.bias is None:
+        if self.bias is None or self.in_channels <= 0:
             pass
         elif self.bias_initializer == 'zeros':
             inits.zeros(self.bias)
