@@ -85,8 +85,6 @@ def run(rank, world_size, dataset, quiver_feature, quiver_sampler):
 
     y = data.y.to(rank)
 
-    print(quiver_feature.shape)
-
     for epoch in range(1, 21):
         model.train()
 
