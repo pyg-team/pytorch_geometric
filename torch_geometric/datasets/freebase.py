@@ -1,7 +1,8 @@
-from typing import Optional, Callable, List
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data, download_url
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class FB15k_237(InMemoryDataset):

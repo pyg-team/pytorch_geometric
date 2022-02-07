@@ -1,8 +1,9 @@
 import os.path as osp
 
 import torch
-from torch_geometric.nn import TransE
+
 from torch_geometric.datasets import FB15k_237
+from torch_geometric.nn import TransE
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FB15k')

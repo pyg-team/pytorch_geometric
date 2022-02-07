@@ -1,12 +1,11 @@
+import math
 from typing import List, Tuple
 
-import math
-from tqdm import tqdm
-
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding
-import torch.nn.functional as F
+from tqdm import tqdm
 
 
 class KEModel(torch.nn.Module):
