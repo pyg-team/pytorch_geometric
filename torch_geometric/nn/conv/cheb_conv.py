@@ -1,14 +1,15 @@
 from typing import Optional
-from torch_geometric.typing import OptTensor
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.inits import zeros
-from torch_geometric.utils import get_laplacian
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import OptTensor
+from torch_geometric.utils import (add_self_loops, get_laplacian,
+                                   remove_self_loops)
 
 
 class ChebConv(MessagePassing):
@@ -62,12 +63,21 @@ class ChebConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*,
+          maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, K: int,
                  normalization: Optional[str] = 'sym', bias: bool = True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ChebConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         assert K > 0
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
@@ -116,8 +126,9 @@ class ChebConv(MessagePassing):
 
         return edge_index, edge_weight
 
-    def forward(self, x, edge_index, edge_weight: OptTensor = None,
-                batch: OptTensor = None, lambda_max: OptTensor = None):
+    def forward(self, x: Tensor, edge_index: Tensor,
+                edge_weight: OptTensor = None, batch: OptTensor = None,
+                lambda_max: OptTensor = None):
         """"""
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'
@@ -158,7 +169,7 @@ class ChebConv(MessagePassing):
     def message(self, x_j, norm):
         return norm.view(-1, 1) * x_j
 
-    def __repr__(self):
-        return '{}({}, {}, K={}, normalization={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            len(self.lins), self.normalization)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, K={len(self.lins)}, '
+                f'normalization={self.normalization})')

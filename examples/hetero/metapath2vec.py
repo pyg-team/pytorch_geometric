@@ -3,6 +3,7 @@
 import os.path as osp
 
 import torch
+
 from torch_geometric.datasets import AMiner
 from torch_geometric.nn import MetaPath2Vec
 

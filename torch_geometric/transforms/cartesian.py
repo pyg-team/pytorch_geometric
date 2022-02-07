@@ -40,6 +40,6 @@ class Cartesian(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

@@ -1,19 +1,18 @@
-from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
-                    Tuple, NamedTuple)
-from torch_geometric.typing import NodeType, EdgeType
-
 import copy
-import weakref
 import warnings
+import weakref
 from collections import namedtuple
-from collections.abc import Sequence, Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, coalesce
 
+from torch_geometric.data.view import ItemsView, KeysView, ValuesView
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import is_undirected
-from torch_geometric.data.view import KeysView, ValuesView, ItemsView
 
 
 class BaseStorage(MutableMapping):
@@ -68,8 +67,8 @@ class BaseStorage(MutableMapping):
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
-        if value is None and key in self:
-            del self[key]
+        if value is None and key in self._mapping:
+            del self._mapping[key]
         elif value is not None:
             self._mapping[key] = value
 
@@ -95,7 +94,7 @@ class BaseStorage(MutableMapping):
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
-        out = self.__dict__
+        out = self.__dict__.copy()
 
         _parent = out.get('_parent', None)
         if _parent is not None:
@@ -119,7 +118,7 @@ class BaseStorage(MutableMapping):
     # In contrast to standard `keys()`, `values()` and `items()` functions of
     # Python dictionaries, we allow to only iterate over a subset of items
     # denoted by a list of keys `args`.
-    # This is especically useful for adding PyTorch Tensor functionality to the
+    # This is especially useful for adding PyTorch Tensor functionality to the
     # storage object, e.g., in case we only want to transfer a subset of keys
     # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
@@ -230,6 +229,20 @@ class NodeStorage(BaseStorage):
         return key
 
     @property
+    def can_infer_num_nodes(self):
+        keys = set(self.keys())
+        num_node_keys = {
+            'num_nodes', 'x', 'pos', 'batch', 'adj', 'adj_t', 'edge_index',
+            'face'
+        }
+        if len(keys & num_node_keys) > 0:
+            return True
+        elif len([key for key in keys if 'node' in key]) > 0:
+            return True
+        else:
+            return False
+
+    @property
     def num_nodes(self) -> Optional[int]:
         # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:
@@ -240,7 +253,7 @@ class NodeStorage(BaseStorage):
                 return value.size(self._parent().__cat_dim__(key, value, self))
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
-        if 'adj_t' in self and isinstance(self.adj, SparseTensor):
+        if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
@@ -269,6 +282,18 @@ class NodeStorage(BaseStorage):
     @property
     def num_features(self) -> int:
         return self.num_node_features
+
+    def is_node_attr(self, key: str) -> bool:
+        value = self[key]
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if not isinstance(value, Tensor):
+            return False
+        if value.size(cat_dim) != self.num_nodes:
+            return False
+        return True
+
+    def is_edge_attr(self, key: str) -> bool:
+        return False
 
 
 class EdgeStorage(BaseStorage):
@@ -339,6 +364,18 @@ class EdgeStorage(BaseStorage):
 
         return size if dim is None else size[dim]
 
+    def is_node_attr(self, key: str) -> bool:
+        return False
+
+    def is_edge_attr(self, key: str) -> bool:
+        value = self[key]
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if not isinstance(value, Tensor):
+            return False
+        if value.size(cat_dim) != self.num_edges:
+            return False
+        return True
+
     def is_coalesced(self) -> bool:
         for value in self.values('adj', 'adj_t'):
             return value.is_coalesced()
@@ -405,6 +442,30 @@ class GlobalStorage(NodeStorage, EdgeStorage):
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
         size = (self.num_nodes, self.num_nodes)
         return size if dim is None else size[dim]
+
+    def is_node_attr(self, key: str) -> bool:
+        value = self[key]
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, Tensor):
+            return False
+        if value.size(cat_dim) != num_nodes:
+            return False
+        if num_nodes != num_edges:
+            return True
+        return 'edge' not in key
+
+    def is_edge_attr(self, key: str) -> bool:
+        value = self[key]
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        num_edges = self.num_edges
+        if not isinstance(value, Tensor):
+            return False
+        if value.size(cat_dim) != num_edges:
+            return False
+        return 'edge' in key
 
 
 def recursive_apply_(data: Any, func: Callable):

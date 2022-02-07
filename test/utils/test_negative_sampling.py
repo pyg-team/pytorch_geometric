@@ -1,10 +1,13 @@
 import torch
-from torch_geometric.utils import to_undirected, is_undirected
-from torch_geometric.utils.negative_sampling import edge_index_to_vector
-from torch_geometric.utils.negative_sampling import vector_to_edge_index
-from torch_geometric.utils import (negative_sampling,
+
+from torch_geometric.utils import (batched_negative_sampling,
+                                   contains_self_loops, is_undirected,
+                                   negative_sampling,
                                    structured_negative_sampling,
-                                   batched_negative_sampling)
+                                   structured_negative_sampling_feasible,
+                                   to_undirected)
+from torch_geometric.utils.negative_sampling import (edge_index_to_vector,
+                                                     vector_to_edge_index)
 
 
 def is_negative(edge_index, neg_edge_index, size, bipartite):
@@ -85,6 +88,46 @@ def test_bipartite_negative_sampling():
     assert is_negative(edge_index, neg_edge_index, (3, 4), bipartite=True)
 
 
+def test_batched_negative_sampling():
+    edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
+    edge_index = torch.cat([edge_index, edge_index + 4], dim=1)
+    batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
+
+    neg_edge_index = batched_negative_sampling(edge_index, batch)
+    assert neg_edge_index.size(1) <= edge_index.size(1)
+
+    adj = torch.zeros(8, 8, dtype=torch.bool)
+    adj[edge_index[0], edge_index[1]] = True
+    neg_adj = torch.zeros(8, 8, dtype=torch.bool)
+    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
+
+    assert (adj & neg_adj).sum() == 0
+    assert (adj | neg_adj).sum() == edge_index.size(1) + neg_edge_index.size(1)
+    assert neg_adj[:4, 4:].sum() == 0
+    assert neg_adj[4:, :4].sum() == 0
+
+
+def test_bipartite_batched_negative_sampling():
+    edge_index1 = torch.as_tensor([[0, 0, 1, 1], [0, 1, 2, 3]])
+    edge_index2 = edge_index1 + torch.tensor([[2], [4]])
+    edge_index3 = edge_index2 + torch.tensor([[2], [4]])
+    edge_index = torch.cat([edge_index1, edge_index2, edge_index3], dim=1)
+    src_batch = torch.tensor([0, 0, 1, 1, 2, 2])
+    dst_batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2])
+
+    neg_edge_index = batched_negative_sampling(edge_index,
+                                               (src_batch, dst_batch))
+    assert neg_edge_index.size(1) <= edge_index.size(1)
+
+    adj = torch.zeros(6, 12, dtype=torch.bool)
+    adj[edge_index[0], edge_index[1]] = True
+    neg_adj = torch.zeros(6, 12, dtype=torch.bool)
+    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
+
+    assert (adj & neg_adj).sum() == 0
+    assert (adj | neg_adj).sum() == edge_index.size(1) + neg_edge_index.size(1)
+
+
 def test_structured_negative_sampling():
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
 
@@ -100,20 +143,17 @@ def test_structured_negative_sampling():
     neg_adj[i, k] = 1
     assert (adj & neg_adj).sum() == 0
 
+    # Test with no self-loops:
+    edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 1]])
+    i, j, k = structured_negative_sampling(edge_index, num_nodes=4,
+                                           contains_neg_self_loops=False)
+    neg_edge_index = torch.vstack([i, k])
+    assert not contains_self_loops(neg_edge_index)
 
-def test_batched_negative_sampling():
-    edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
-    edge_index = torch.cat([edge_index, edge_index + 4], dim=1)
-    batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
 
-    neg_edge_index = batched_negative_sampling(edge_index, batch)
-    assert neg_edge_index.size(1) <= edge_index.size(1)
-
-    adj = torch.zeros(8, 8, dtype=torch.bool)
-    adj[edge_index[0], edge_index[1]] = True
-
-    neg_adj = torch.zeros(8, 8, dtype=torch.bool)
-    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
-    assert (adj & neg_adj).sum() == 0
-    assert neg_adj[:4, 4:].sum() == 0
-    assert neg_adj[4:, :4].sum() == 0
+def test_structured_negative_sampling_feasible():
+    edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
+                                   [1, 2, 0, 2, 0, 1, 1]])
+    assert not structured_negative_sampling_feasible(edge_index, 3, False)
+    assert structured_negative_sampling_feasible(edge_index, 3, True)
+    assert structured_negative_sampling_feasible(edge_index, 4, False)

@@ -1,11 +1,12 @@
 from typing import Union
-from torch_geometric.typing import PairTensor, Adj
 
 import torch
 from torch import Tensor
-from torch_geometric.nn.dense.linear import Linear
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, PairTensor
 
 
 class SignedConv(MessagePassing):
@@ -58,7 +59,7 @@ class SignedConv(MessagePassing):
                  bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'mean')
-        super(SignedConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -132,8 +133,6 @@ class SignedConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, first_aggr={})'.format(self.__class__.__name__,
-                                                  self.in_channels,
-                                                  self.out_channels,
-                                                  self.first_aggr)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, first_aggr={self.first_aggr})')

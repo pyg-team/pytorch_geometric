@@ -1,11 +1,12 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import Planetoid
+
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCNConv, ChebConv  # noqa
+from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import ChebConv, GCNConv  # noqa
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_gdc', action='store_true',
@@ -28,7 +29,7 @@ if args.use_gdc:
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(dataset.num_features, 16, cached=True,
                              normalize=not args.use_gdc)
         self.conv2 = GCNConv(16, dataset.num_classes, cached=True,
@@ -77,5 +78,5 @@ for epoch in range(1, 201):
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
-    log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, train_acc, best_val_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, '
+          f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')

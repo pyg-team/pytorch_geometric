@@ -1,11 +1,12 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor
 
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 
 class APPNP(MessagePassing):
@@ -45,6 +46,13 @@ class APPNP(MessagePassing):
             symmetric normalization. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
@@ -53,7 +61,7 @@ class APPNP(MessagePassing):
                  cached: bool = False, add_self_loops: bool = True,
                  normalize: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(APPNP, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.K = K
         self.alpha = alpha
         self.dropout = dropout
@@ -114,12 +122,11 @@ class APPNP(MessagePassing):
 
         return x
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}(K={}, alpha={})'.format(self.__class__.__name__, self.K,
-                                           self.alpha)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(K={self.K}, alpha={self.alpha})'

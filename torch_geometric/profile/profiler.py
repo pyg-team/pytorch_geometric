@@ -1,7 +1,6 @@
-from typing import Tuple, List, NamedTuple
-
 import functools
-from collections import defaultdict, namedtuple, OrderedDict
+from collections import OrderedDict, defaultdict, namedtuple
+from typing import List, NamedTuple, Tuple
 
 import torch
 import torch.profiler as torch_profiler

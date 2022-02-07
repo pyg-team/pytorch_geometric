@@ -1,9 +1,10 @@
+import glob
 import os
 import os.path as osp
 import shutil
-import glob
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_off
 
@@ -54,8 +55,7 @@ class ModelNet(InMemoryDataset):
                  pre_transform=None, pre_filter=None):
         assert name in ['10', '40']
         self.name = name
-        super(ModelNet, self).__init__(root, transform, pre_transform,
-                                       pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
 
@@ -74,7 +74,7 @@ class ModelNet(InMemoryDataset):
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        folder = osp.join(self.root, 'ModelNet{}'.format(self.name))
+        folder = osp.join(self.root, f'ModelNet{self.name}')
         shutil.rmtree(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
@@ -94,7 +94,7 @@ class ModelNet(InMemoryDataset):
         data_list = []
         for target, category in enumerate(categories):
             folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob('{}/{}_*.off'.format(folder, category))
+            paths = glob.glob(f'{folder}/{category}_*.off')
             for path in paths:
                 data = read_off(path)
                 data.y = torch.tensor([target])
@@ -108,5 +108,5 @@ class ModelNet(InMemoryDataset):
 
         return self.collate(data_list)
 
-    def __repr__(self):
-        return '{}{}({})'.format(self.__class__.__name__, self.name, len(self))
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}{self.name}({len(self)})'

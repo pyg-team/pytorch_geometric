@@ -1,11 +1,11 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 
 
 class TAGConv(MessagePassing):
@@ -37,7 +37,7 @@ class TAGConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, K: int = 3,
                  bias: bool = True, normalize: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(TAGConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -81,7 +81,6 @@ class TAGConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, K={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.out_channels,
-                                         self.K)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, K={self.K})')

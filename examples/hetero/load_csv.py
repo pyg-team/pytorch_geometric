@@ -1,11 +1,11 @@
 import os.path as osp
 
-import torch
 import pandas as pd
+import torch
 from sentence_transformers import SentenceTransformer
 
 from torch_geometric.data import HeteroData, download_url, extract_zip
-from torch_geometric.transforms import ToUndirected, RandomLinkSplit
+from torch_geometric.transforms import RandomLinkSplit, ToUndirected
 
 url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 root = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
@@ -114,8 +114,14 @@ data = ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # 2. Perform a link-level split into training, validation, and test edges.
-transform = RandomLinkSplit(num_val=0.05, num_test=0.1, neg_sampling_ratio=0.0,
-                            edge_type=('user', 'rates', 'movie'),
-                            rev_edge_type=('movie', 'rev_rates', 'user'))
+transform = RandomLinkSplit(
+    num_val=0.05,
+    num_test=0.1,
+    neg_sampling_ratio=0.0,
+    edge_types=[('user', 'rates', 'movie')],
+    rev_edge_types=[('movie', 'rev_rates', 'user')],
+)
 train_data, val_data, test_data = transform(data)
 print(train_data)
+print(val_data)
+print(test_data)

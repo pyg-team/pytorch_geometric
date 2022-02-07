@@ -55,5 +55,5 @@ class SamplePoints(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.num})'

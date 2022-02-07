@@ -1,5 +1,5 @@
-import numbers
 import itertools
+import numbers
 
 
 def repeat(src, length):

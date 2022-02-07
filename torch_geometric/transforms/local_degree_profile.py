@@ -1,8 +1,8 @@
 import torch
-from torch_scatter import scatter_min, scatter_max, scatter_mean, scatter_std
+from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_std
 
-from torch_geometric.utils import degree
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import degree
 
 
 class LocalDegreeProfile(BaseTransform):
@@ -40,6 +40,3 @@ class LocalDegreeProfile(BaseTransform):
             data.x = x
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

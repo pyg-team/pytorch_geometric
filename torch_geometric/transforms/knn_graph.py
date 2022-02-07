@@ -1,6 +1,6 @@
 import torch_geometric
-from torch_geometric.utils import to_undirected
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import to_undirected
 
 
 class KNNGraph(BaseTransform):
@@ -41,5 +41,5 @@ class KNNGraph(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(k={})'.format(self.__class__.__name__, self.k)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(k={self.k})'

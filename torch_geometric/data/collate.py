@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union, Any
-
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -24,6 +23,10 @@ def collate(
     # individually collating all their stores.
     # In addition, `collate` can handle nested data structures such as
     # dictionaries and lists.
+
+    if not isinstance(data_list, (list, tuple)):
+        # Materialize `data_list` to keep the `_parent` weakref alive.
+        data_list = list(data_list)
 
     if cls != data_list[0].__class__:
         out = cls(_base_cls=data_list[0].__class__)  # Dynamic inheritance.
@@ -54,6 +57,7 @@ def collate(
     #   We also need to make use of `inc_dict` when re-constructuing individual
     #   elements as attributes that got incremented need to be decremented
     #   while separating to obtain original values.
+    device = None
     slice_dict, inc_dict = defaultdict(dict), defaultdict(dict)
     for out_store in out.stores:
         key = out_store._key
@@ -72,9 +76,15 @@ def collate(
                 out_store.num_nodes = sum(values)
                 continue
 
+            # Skip batching of `ptr` vectors for now:
+            if attr == 'ptr':
+                continue
+
             # Collate attributes into a unified representation:
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
+
+            device = value.device if isinstance(value, Tensor) else device
 
             out_store[attr] = value
             if key is not None:
@@ -88,16 +98,15 @@ def collate(
             if (attr in follow_batch and isinstance(slices, Tensor)
                     and slices.dim() == 1):
                 repeats = slices[1:] - slices[:-1]
-                batch = torch.arange(len(values)).repeat_interleave(repeats)
+                batch = repeat_interleave(repeats.tolist(), device=device)
                 out_store[f'{attr}_batch'] = batch
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
-                and stores[0].num_nodes is not None):
-            repeats = torch.tensor([store.num_nodes for store in stores])
-            arange = torch.arange(len(stores))
-            out_store.batch = arange.repeat_interleave(repeats)
-            out_store.ptr = cumsum(repeats)
+                and stores[0].can_infer_num_nodes):
+            repeats = [store.num_nodes for store in stores]
+            out_store.batch = repeat_interleave(repeats, device=device)
+            out_store.ptr = cumsum(torch.tensor(repeats, device=device))
 
     return out, slice_dict, inc_dict
 
@@ -112,7 +121,57 @@ def _collate(
 
     elem = values[0]
 
-    if isinstance(elem, Mapping):
+    if isinstance(elem, Tensor):
+        # Concatenate a list of `torch.Tensor` along the `cat_dim`.
+        # NOTE: We need to take care of incrementing elements appropriately.
+        cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
+        if cat_dim is None or elem.dim() == 0:
+            values = [value.unsqueeze(0) for value in values]
+        slices = cumsum([value.size(cat_dim or 0) for value in values])
+        if increment:
+            incs = get_incs(key, values, data_list, stores)
+            if incs.dim() > 1 or int(incs[-1]) != 0:
+                values = [
+                    value + inc.to(value.device)
+                    for value, inc in zip(values, incs)
+                ]
+        else:
+            incs = None
+
+        if torch.utils.data.get_worker_info() is not None:
+            # Write directly into shared memory to avoid an extra copy:
+            numel = sum(value.numel() for value in values)
+            storage = elem.storage()._new_shared(numel)
+            out = elem.new(storage)
+        else:
+            out = None
+
+        value = torch.cat(values, dim=cat_dim or 0, out=out)
+        return value, slices, incs
+
+    elif isinstance(elem, SparseTensor) and increment:
+        # Concatenate a list of `SparseTensor` along the `cat_dim`.
+        # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
+        cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
+        cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
+        repeats = [[value.size(dim) for dim in cat_dims] for value in values]
+        slices = cumsum(repeats)
+        value = cat(values, dim=cat_dim)
+        return value, slices, None
+
+    elif isinstance(elem, (int, float)):
+        # Convert a list of numerical values to a `torch.Tensor`.
+        value = torch.tensor(values)
+        if increment:
+            incs = get_incs(key, values, data_list, stores)
+            if int(incs[-1]) != 0:
+                value.add_(incs)
+        else:
+            incs = None
+        slices = torch.arange(len(values) + 1)
+        return value, slices, incs
+
+    elif isinstance(elem, Mapping):
         # Recursively collate elements of dictionaries.
         value_dict, slice_dict, inc_dict = {}, {}, {}
         for key in elem.keys():
@@ -132,39 +191,6 @@ def _collate(
             inc_list.append(incs)
         return value_list, slice_list, inc_list
 
-    elif isinstance(elem, Tensor):
-        # Concatenate a list of `torch.Tensor` along the `cat_dim`.
-        # NOTE: We need to take care of incrementing elements appropriately.
-        cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
-        if cat_dim is None or elem.dim() == 0:
-            values = [value.unsqueeze(0) for value in values]
-        slices = cumsum([value.size(cat_dim or 0) for value in values])
-        if increment:
-            incs = get_incs(key, values, data_list, stores)
-            if incs.dim() > 1 or int(incs[-1]) != 0:
-                values = [value + inc for value, inc in zip(values, incs)]
-        else:
-            incs = None
-
-        value = torch.cat(values, dim=cat_dim or 0)
-        return value, slices, incs
-
-    elif isinstance(elem, SparseTensor) and increment:
-        # Concatenate a list of `SparseTensor` along the `cat_dim`.
-        # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
-        cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
-        cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
-        repeats = [[value.size(dim) for dim in cat_dims] for value in values]
-        slices = cumsum(repeats)
-        value = cat(values, dim=cat_dim)
-        return value, slices, None
-
-    elif isinstance(elem, (int, float)):
-        # Convert a list of numerical values to a `torch.Tensor`.
-        value = torch.tensor(values)
-        slices = torch.arange(len(values) + 1)
-        return value, slices, None
-
     else:
         # Other-wise, just return the list of values as it is.
         slices = torch.arange(len(values) + 1)
@@ -172,6 +198,14 @@ def _collate(
 
 
 ###############################################################################
+
+
+def repeat_interleave(
+    repeats: List[int],
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
+    return torch.cat(outs, dim=0)
 
 
 def cumsum(value: Union[Tensor, List[int]]) -> Tensor:

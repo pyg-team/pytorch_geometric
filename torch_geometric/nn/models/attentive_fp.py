@@ -1,13 +1,13 @@
 from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Linear, Parameter, GRUCell
+from torch import Tensor
+from torch.nn import GRUCell, Linear, Parameter
 
-from torch_geometric.utils import softmax
 from torch_geometric.nn import GATConv, MessagePassing, global_add_pool
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import softmax
 
 from ..inits import glorot, zeros
 
@@ -15,7 +15,7 @@ from ..inits import glorot, zeros
 class GATEConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  dropout: float = 0.0):
-        super(GATEConv, self).__init__(aggr='add', node_dim=0)
+        super().__init__(aggr='add', node_dim=0)
 
         self.dropout = dropout
 
@@ -76,7 +76,7 @@ class AttentiveFP(torch.nn.Module):
     def __init__(self, in_channels: int, hidden_channels: int,
                  out_channels: int, edge_dim: int, num_layers: int,
                  num_timesteps: int, dropout: float = 0.0):
-        super(AttentiveFP, self).__init__()
+        super().__init__()
 
         self.num_layers = num_layers
         self.num_timesteps = num_timesteps

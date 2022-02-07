@@ -14,13 +14,13 @@
 import os.path as osp
 
 import torch
-from torch.nn import Linear
 from sklearn.metrics import average_precision_score, roc_auc_score
+from torch.nn import Linear
 
 from torch_geometric.datasets import JODIEDataset
 from torch_geometric.nn import TGNMemory, TransformerConv
-from torch_geometric.nn.models.tgn import (LastNeighborLoader, IdentityMessage,
-                                           LastAggregator)
+from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
+                                           LastNeighborLoader)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -39,7 +39,7 @@ neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
-        super(GraphAttentionEmbedding, self).__init__()
+        super().__init__()
         self.time_enc = time_enc
         edge_dim = msg_dim + time_enc.out_channels
         self.conv = TransformerConv(in_channels, out_channels // 2, heads=2,
@@ -54,7 +54,7 @@ class GraphAttentionEmbedding(torch.nn.Module):
 
 class LinkPredictor(torch.nn.Module):
     def __init__(self, in_channels):
-        super(LinkPredictor, self).__init__()
+        super().__init__()
         self.lin_src = Linear(in_channels, in_channels)
         self.lin_dst = Linear(in_channels, in_channels)
         self.lin_final = Linear(in_channels, 1)

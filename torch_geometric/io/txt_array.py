@@ -2,8 +2,12 @@ import torch
 
 
 def parse_txt_array(src, sep=None, start=0, end=None, dtype=None, device=None):
-    src = [[float(x) for x in line.split(sep)[start:end]] for line in src]
-    src = torch.tensor(src, dtype=dtype).squeeze()
+    to_number = int
+    if torch.is_floating_point(torch.empty(0, dtype=dtype)):
+        to_number = float
+
+    src = [[to_number(x) for x in line.split(sep)[start:end]] for line in src]
+    src = torch.tensor(src).to(dtype).squeeze()
     return src
 
 
