@@ -16,6 +16,7 @@ from torch_sparse import SparseTensor, set_diag
 import torch_geometric.transforms as T
 from torch_geometric.datasets import S3DIS
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import reset
@@ -86,7 +87,7 @@ class PointTransformerConv(MessagePassing):
                  out_channels: int, pos_nn: Optional[Callable] = None,
                  attn_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, share_planes: int = 8, **kwargs):
-        kwargs.setdefault('aggr', 'mean')
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -102,9 +103,9 @@ class PointTransformerConv(MessagePassing):
             self.pos_nn = Linear(3, out_channels)
 
         self.attn_nn = attn_nn
-        self.lin = Linear(in_channels[0], out_channels)  #, bias=False)
-        self.lin_src = Linear(in_channels[0], out_channels)  #, bias=False)
-        self.lin_dst = Linear(in_channels[1], out_channels)  #, bias=False)
+        self.lin = Linear(in_channels[0], out_channels)
+        self.lin_src = Linear(in_channels[0], out_channels)
+        self.lin_dst = Linear(in_channels[1], out_channels)
 
         self.reset_parameters()
 
@@ -149,8 +150,8 @@ class PointTransformerConv(MessagePassing):
                 alpha_i: Tensor, alpha_j: Tensor, index: Tensor,
                 ptr: OptTensor, size_i: Optional[int]) -> Tensor:
 
-        delta = self.pos_nn(pos_i - pos_j)
-        alpha = alpha_i - alpha_j + delta
+        delta = self.pos_nn(pos_j - pos_i)
+        alpha = alpha_j - alpha_i + delta
         if self.attn_nn is not None:
             alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index, ptr, size_i)
@@ -174,13 +175,12 @@ class TransformerBlock(torch.nn.Module):
         self.attn_nn = Seq(
             BN(out_channels), ReLU(), MLP([out_channels, out_channels // 8]),
             Lin(out_channels // 8, out_channels // 8)
-            # NB : last should be // 8 according to original code, but custom
-            # implementation makes it impossible at the moment
         )
 
         self.transformer = PointTransformerConv(in_channels, out_channels,
                                                 pos_nn=self.pos_nn,
-                                                attn_nn=self.attn_nn)
+                                                attn_nn=self.attn_nn,
+                                                add_self_loops=False)
 
         self.bn1 = BN(in_channels)
         self.bn2 = BN(in_channels)
@@ -216,11 +216,13 @@ class TransitionDown(torch.nn.Module):
         # beware of self loop
         id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
                             batch_y=sub_batch)
-        relative_pos = pos[id_k_neighbor[1]] - pos[id_k_neighbor[0]]
-        grouped_x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
+        relative_pos = pos[id_k_neighbor[1]] - pos[id_clusters][id_k_neighbor[0]]
+        
+        #get neighbors features and add relative positions as features
+        x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
 
         # transformation of features through a simple MLP
-        x = self.mlp(grouped_x)
+        x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
         x_out, _ = scatter_max(x, id_k_neighbor[0],
@@ -268,9 +270,20 @@ class TransitionSummit(torch.nn.Module):
         self.mlp_sub = Seq(Lin(in_channels, in_channels), ReLU())
         self.mlp = MLP([2 * in_channels, in_channels])
 
-    def forward(self, x):
-        #import pdb; pdb.set_trace()
-        x = self.mlp(torch.cat((x, self.mlp_sub(x)), 1))
+    def forward(self, x, batch=None):
+        if batch is None:
+            batch= torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
+        
+        # compute the mean of features batch_wise
+        x_mean = global_mean_pool(x, batch= batch)
+        x_mean = self.mlp_sub(x_mean)   # (batchs, features)
+        
+        # reshape back to (N_points, features)
+        counts = batch.unique(return_counts=True)[1]
+        x_mean = torch.cat( [ x_mean[i].repeat(counts[i],1) for i in range(x_mean.shape[0]) ], dim=0)
+        
+        # transform features
+        x = self.mlp(torch.cat((x, x_mean), 1))
         return x
 
 
@@ -347,7 +360,7 @@ class Net(torch.nn.Module):
 
         # first block
         x = self.mlp_input(x)
-        edge_index = knn_graph(pos, k=self.k, batch=batch)
+        edge_index = knn_graph(pos, k=self.k, batch=batch, loop=True)
         x = self.transformer_input(x, pos, edge_index)
 
         # save outputs for skipping connections
@@ -360,7 +373,7 @@ class Net(torch.nn.Module):
         for i in range(len(self.encoders)):
 
             x, pos, batch = self.encoders[i][0](x, pos, batch=batch)
-            edge_index = knn_graph(pos, k=self.k, batch=batch)
+            edge_index = knn_graph(pos, k=self.k, batch=batch, loop=True)
             for layer in self.encoders[i][1:]:
                 x = layer(x, pos, edge_index)
 
@@ -370,8 +383,8 @@ class Net(torch.nn.Module):
             edges_index.append(edge_index)
 
         # summit
-        x = self.mlp_summit(x)
-        edge_index = knn_graph(pos, k=self.k, batch=batch)
+        x = self.mlp_summit(x, batch=batch)
+        edge_index = knn_graph(pos, k=self.k, batch=batch, loop=True)
         for layer in self.transformer_summit:
             x = layer(x, pos, edge_index)
 
