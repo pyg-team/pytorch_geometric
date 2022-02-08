@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import GINEConv
+from torch_geometric.nn import BatchNorm, GINEConv
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
 
@@ -113,6 +113,15 @@ class Net8(torch.nn.Module):
         return x
 
 
+class Net9(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.batch_norm = BatchNorm(16)
+
+    def forward(self, x: Tensor) -> Tensor:
+        return self.batch_norm(x)
+
+
 def test_to_hetero():
     metadata = (['paper', 'author'], [('paper', 'cites', 'paper'),
                                       ('paper', 'written_by', 'author'),
@@ -194,6 +203,13 @@ def test_to_hetero():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (4, 32)
     assert out['author'].size() == (8, 32)
+
+    model = Net9()
+    model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 16), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 16)
+    assert out['author'].size() == (8, 16)
 
 
 class GraphConv(MessagePassing):
