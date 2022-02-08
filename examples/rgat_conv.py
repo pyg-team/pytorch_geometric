@@ -1,12 +1,12 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils import clip_grad_value_
-from torch.nn import Linear
-
 import torch.optim as optim
-from torch_geometric.datasets import Entities
 from rgat_conv import RGATConv
+from torch.nn import Linear
+from torch.nn.utils import clip_grad_value_
+
+from torch_geometric.datasets import Entities
 
 
 class Net(nn.Module):
@@ -22,13 +22,13 @@ class Net(nn.Module):
         self.conv_layers = nn.ModuleList([
             RGATConv(16, 20, num_relations=90, num_bases=35, mod="additive",
                      attention_mechanism="within-relation",
-                     attention_mode="multiplicative-self-attention",
-                     heads=2, d=2),
+                     attention_mode="multiplicative-self-attention", heads=2,
+                     d=2),
             RGATConv(80, 25, num_relations=90, num_blocks=2, mod=None,
                      attention_mechanism="across-relation",
-                     attention_mode="additive-self-attention",
-                     heads=2, d=1, dropout=0.6, edge_dim=16, bias=False),
-                     ])
+                     attention_mode="additive-self-attention", heads=2, d=1,
+                     dropout=0.6, edge_dim=16, bias=False),
+        ])
 
         self.fc = Linear(16, self.in_channels, bias=False)
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         test_acc = torch.sum(output[test_mask].argmax(dim=1) == test_labels)
         test_acc = test_acc.item() / len(test_mask)
 
-        print('Epoch {:03d}'.format(epoch+1),
+        print('Epoch {:03d}'.format(epoch + 1),
               'train_loss: {:.4f}'.format(loss),
               'train_acc: {:.4f}'.format(train_acc),
               'test_acc: {:.4f}'.format(test_acc))
