@@ -14,7 +14,7 @@ train:
   eval_period: 2
   ckpt_period: 100
   enable_ckpt: false
-  skip_train_eval: True
+  skip_train_eval: true
   sampler: full_batch
 model:
   type: gnn
