@@ -1,8 +1,11 @@
-import torch
 import re
+
+import torch
+from torch_sparse import SparseTensor
+
 from torch_geometric.data import Data
 from torch_geometric.transforms import BaseTransform
-from torch_sparse import SparseTensor
+
 
 class RootedSubgraphsData(Data):
     r""" A data object describing a homogeneous graph together with each node's rooted subgraph. 
@@ -48,6 +51,7 @@ class RootedSubgraphsData(Data):
         else:
             return super().__cat_dim__(key, value, *args, **kwargs)
 
+
 class RootedSubgraphs(BaseTransform):
     r"""
     Base class for rooted subgraphs.
@@ -67,13 +71,13 @@ class RootedSubgraphs(BaseTransform):
         raise NotImplementedError
 
     def __call__(self, data: Data) -> Data:
-        subgraphs_nodes_mask, hop_indicator_dense = self.extract_subgraphs(data)
+        subgraphs_nodes_mask, hop_indicator_dense = self.extract_subgraphs(
+            data)
         subgraphs_edges_mask = subgraphs_nodes_mask[:, data.edge_index[0]] & \
                                subgraphs_nodes_mask[:, data.edge_index[1]]  # N x E dense mask matrix
 
-        subgraphs_nodes, subgraphs_edges, hop_indicator = to_sparse(subgraphs_nodes_mask, 
-                                                                    subgraphs_edges_mask, 
-                                                                    hop_indicator_dense)
+        subgraphs_nodes, subgraphs_edges, hop_indicator = to_sparse(
+            subgraphs_nodes_mask, subgraphs_edges_mask, hop_indicator_dense)
         combined_subgraphs = combine_subgraphs(data.edge_index,
                                                subgraphs_nodes,
                                                subgraphs_edges,
@@ -88,7 +92,8 @@ class RootedSubgraphs(BaseTransform):
         data.hop_indicator = hop_indicator
         data.__num_nodes__ = data.num_nodes
         return data
-    
+
+
 class RootedEgoNets(RootedSubgraphs):
     """ Record rooted k-hop Egonet for each node in the graph.
     From the `"From Stars to Subgraphs: Uplifting Any GNN with Local Structure Awareness"
@@ -104,9 +109,11 @@ class RootedEgoNets(RootedSubgraphs):
     def extract_subgraphs(self, data: Data):
         # return k-hop subgraphs for all nodes in the graph
         row, col = data.edge_index
-        sparse_adj = SparseTensor(row=row, col=col, sparse_sizes=(data.num_nodes, data.num_nodes))
+        sparse_adj = SparseTensor(
+            row=row, col=col, sparse_sizes=(data.num_nodes, data.num_nodes))
         hop_mask = sparse_adj.to_dense() > 0
-        hop_indicator = torch.eye(data.num_nodes, dtype=torch.bool, device=data.edge_index.device) - 1
+        hop_indicator = torch.eye(data.num_nodes, dtype=torch.bool,
+                                  device=data.edge_index.device) - 1
 
         for i in range(self.num_hops):
             hop_indicator[(hop_indicator == -1) & hop_mask] = i + 1
@@ -117,11 +124,13 @@ class RootedEgoNets(RootedSubgraphs):
 
         return node_mask, hop_indicator
 
-
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.hops})'
 
+
 from torch_cluster import random_walk
+
+
 class RootedRWSubgraphs(RootedSubgraphs):
     """ Record rooted random-walk based subgraph for each node in the graph.
     From the `"From Stars to Subgraphs: Uplifting Any GNN with Local Structure Awareness"
@@ -136,7 +145,9 @@ class RootedRWSubgraphs(RootedSubgraphs):
         return_hops (bool, optional): whether return distance to centroid feature.   
         max_hops (int, optional): if return hops, the maximum D2C. 
     """
-    def __init__(self, walk_length: int=0, p: float=1., q: float=1., repeat: int=1, return_hops: bool=True, max_hops: int=10):
+    def __init__(self, walk_length: int = 0, p: float = 1., q: float = 1.,
+                 repeat: int = 1, return_hops: bool = True,
+                 max_hops: int = 10):
         super().__init__()
         self.walk_length = walk_length
         self.p = p
@@ -149,25 +160,25 @@ class RootedRWSubgraphs(RootedSubgraphs):
         row, col = data.edge_index
         num_nodes = data.num_nodes
         start = torch.arange(num_nodes, device=row.device)
-        walks = [random_walk(row, col, 
-                             start=start, 
-                             walk_length=self.walk_length, 
-                             p=self.p, 
-                             q=self.q,
-                             num_nodes=num_nodes) 
+        walks = [
+            random_walk(row, col, start=start, walk_length=self.walk_length,
+                        p=self.p, q=self.q, num_nodes=num_nodes)
             for _ in range(self.repeat)
         ]
         walk = torch.cat(walks, dim=-1)
         node_mask = row.new_empty((num_nodes, num_nodes), dtype=torch.bool)
         # print(walk.shape)
         node_mask.fill_(False)
-        node_mask[start.repeat_interleave((self.walk_length + 1) * self.repeat),
-                walk.reshape(-1)] = True
+        node_mask[start.repeat_interleave(
+            (self.walk_length + 1) * self.repeat),
+                  walk.reshape(-1)] = True
 
         if self.return_hops:  # this is fast enough
-            sparse_adj = SparseTensor(row=row, col=col, sparse_sizes=(num_nodes, num_nodes))
+            sparse_adj = SparseTensor(row=row, col=col,
+                                      sparse_sizes=(num_nodes, num_nodes))
             hop_mask = sparse_adj.to_dense() > 0
-            hop_indicator = torch.eye(data.num_nodes, dtype=torch.bool, device=data.edge_index.device) - 1
+            hop_indicator = torch.eye(data.num_nodes, dtype=torch.bool,
+                                      device=data.edge_index.device) - 1
 
             for i in range(self.max_hops):
                 hop_indicator[(hop_indicator == -1) & hop_mask] = i + 1
@@ -177,10 +188,8 @@ class RootedRWSubgraphs(RootedSubgraphs):
             return node_mask, hop_indicator
         return node_mask, None
 
-
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(l{self.walk_length}-p{self.p}-q{self.q}-r{self.repeat})'
-
 
 
 def to_sparse(node_mask, edge_mask, hop_indicator):
@@ -189,6 +198,7 @@ def to_sparse(node_mask, edge_mask, hop_indicator):
     if hop_indicator is not None:
         hop_indicator = hop_indicator[subgraphs_nodes[0], subgraphs_nodes[1]]
     return subgraphs_nodes, subgraphs_edges,
+
 
 def combine_subgraphs(edge_index, subgraphs_nodes, subgraphs_edges,
                       num_selected=None, num_nodes=None):
