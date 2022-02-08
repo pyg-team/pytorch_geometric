@@ -40,14 +40,17 @@ class CaptumModel(torch.nn.Module):
         mask_type (str): Denotes the type of mask to be created with a Captum
             explainer. Valid inputs are :obj:`'edge'`, :obj:`'node'`, and
             :obj:`'node_and_edge'`. The input for the forward function with
-            mask type :obj:`'edge'` should be an edge_mask tensor of shape
-            (1, num_edges), :obj:`x` and :obj:`edge_index`. The input for the
-            forward function with mask_type :obj:`'node'` should be a
+            mask type :obj:`'edge'` should be an edge mask tensor of shape
+            :obj:`[1, num_edges]`, :obj:`x` and :obj:`edge_index`. The input
+            for the forward function with mask_type :obj:`'node'` should be a
             node input of shape :obj:`[1, num_nodes, num_features]` and
             :obj:`edge_index`. The input for the forward function with
             mask_type :obj:`'node_and_edge'` should be a node input tensor of
-            shape (1, num_nodes, num_features), an edge_mask tensor of shape
-            :obj:`[1, num_edges]`, and :obj:`edge_index`. (default: :obj:`'edge'`)
+            shape :obj:`[1, num_nodes, num_features]`, an edge mask tensor of
+            shape :obj:`[1, num_edges]`, and :obj:`edge_index`. For all types,
+            additional arguments can be passed to the forward function as long
+            as the first arguments are set as described.
+            (default: :obj:`'edge'`)
         node_idx (int, optional): Index of the node to be explained. With
             :obj:`'node_idx'` set, the forward function will return the output
             of the model for the node at the index specified.

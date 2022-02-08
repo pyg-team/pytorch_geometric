@@ -27,6 +27,7 @@ full_install_requires = [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'captum',
 ]
 
 test_requires = [
