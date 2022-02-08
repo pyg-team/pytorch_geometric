@@ -10,7 +10,9 @@ install_requires = [
     'scipy',
     'pandas',
     'jinja2',
+    'requests',
     'pyparsing',
+    'hydra-core',
     'scikit-learn',
     'googledrivedownloader',
 ]

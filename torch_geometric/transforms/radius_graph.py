@@ -17,8 +17,13 @@ class RadiusGraph(BaseTransform):
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
     """
-    def __init__(self, r, loop=False, max_num_neighbors=32,
-                 flow='source_to_target'):
+    def __init__(
+        self,
+        r: float,
+        loop: bool = False,
+        max_num_neighbors: int = 32,
+        flow: str = 'source_to_target',
+    ):
         self.r = r
         self.loop = loop
         self.max_num_neighbors = max_num_neighbors

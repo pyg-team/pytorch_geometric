@@ -47,6 +47,7 @@ from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .add_metapaths import AddMetaPaths
 from .rooted_subgraphs import RootedSubgraphs
+from .largest_connected_components import LargestConnectedComponents
 
 __all__ = [
     'BaseTransform',
@@ -98,6 +99,7 @@ __all__ = [
     'RandomLinkSplit',
     'AddMetaPaths',
     'RootedSubgraphs',
+    'LargestConnectedComponents',
 ]
 
 classes = __all__

@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 import numpy as np
 import torch
 
@@ -35,7 +37,7 @@ class KarateClub(InMemoryDataset):
               - 34
               - 4
     """
-    def __init__(self, transform=None):
+    def __init__(self, transform: Optional[Callable] = None):
         super().__init__('.', transform)
 
         import networkx as nx
