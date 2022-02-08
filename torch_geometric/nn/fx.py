@@ -5,7 +5,6 @@ import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense import Linear
 
 try:
     from torch.fx import Graph, GraphModule, Node
