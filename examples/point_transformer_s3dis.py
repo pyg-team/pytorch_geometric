@@ -30,11 +30,6 @@ from torch_geometric.utils import remove_self_loops, softmax
 #from torch_geometric.nn.conv import PointTransformerConv
 
 
-
-
-
-
-
 class PointTransformerConv(MessagePassing):
     r"""The Point Transformer layer from the `"Point Transformer"
     <https://arxiv.org/abs/2012.09164>`_ paper
@@ -172,10 +167,9 @@ class TransformerBlock(torch.nn.Module):
 
         self.pos_nn = Seq(MLP([3, 3]), Lin(3, out_channels))
 
-        self.attn_nn = Seq(
-            BN(out_channels), ReLU(), MLP([out_channels, out_channels // 8]),
-            Lin(out_channels // 8, out_channels // 8)
-        )
+        self.attn_nn = Seq(BN(out_channels), ReLU(),
+                           MLP([out_channels, out_channels // 8]),
+                           Lin(out_channels // 8, out_channels // 8))
 
         self.transformer = PointTransformerConv(in_channels, out_channels,
                                                 pos_nn=self.pos_nn,
@@ -216,8 +210,9 @@ class TransitionDown(torch.nn.Module):
         # beware of self loop
         id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
                             batch_y=sub_batch)
-        relative_pos = pos[id_k_neighbor[1]] - pos[id_clusters][id_k_neighbor[0]]
-        
+        relative_pos = pos[id_k_neighbor[1]] - pos[id_clusters][
+            id_k_neighbor[0]]
+
         #get neighbors features and add relative positions as features
         x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
 
@@ -272,16 +267,18 @@ class TransitionSummit(torch.nn.Module):
 
     def forward(self, x, batch=None):
         if batch is None:
-            batch= torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
-        
+            batch = torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
+
         # compute the mean of features batch_wise
-        x_mean = global_mean_pool(x, batch= batch)
-        x_mean = self.mlp_sub(x_mean)   # (batchs, features)
-        
+        x_mean = global_mean_pool(x, batch=batch)
+        x_mean = self.mlp_sub(x_mean)  # (batchs, features)
+
         # reshape back to (N_points, features)
         counts = batch.unique(return_counts=True)[1]
-        x_mean = torch.cat( [ x_mean[i].repeat(counts[i],1) for i in range(x_mean.shape[0]) ], dim=0)
-        
+        x_mean = torch.cat(
+            [x_mean[i].repeat(counts[i], 1) for i in range(x_mean.shape[0])],
+            dim=0)
+
         # transform features
         x = self.mlp(torch.cat((x, x_mean), 1))
         return x
