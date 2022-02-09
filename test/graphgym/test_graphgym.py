@@ -9,6 +9,7 @@ import torch
 
 from torch_geometric import seed_everything
 from torch_geometric.graphgym import register
+from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
                                              set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
@@ -38,7 +39,6 @@ def test_run_single_graphgym():
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
 
-    # TODO: test enable_ckpt
     for skip_train_eval, use_trivial_metric in itertools.product([True, False],
                                                                  repeat=2):
         load_cfg(cfg, args)
@@ -54,6 +54,7 @@ def test_run_single_graphgym():
         set_run_dir(cfg.out_dir, args.cfg_file)
 
         cfg.train.skip_train_eval = skip_train_eval
+        cfg.train.enable_ckpt = use_trivial_metric and skip_train_eval
         if use_trivial_metric:
             num_trivial_metric_calls = 0
             cfg.metric_best = 'trivial'
@@ -90,6 +91,7 @@ def test_run_single_graphgym():
         if use_trivial_metric:
             # 6 total epochs, 4 eval epochs, 3 splits (1 training split)
             assert num_trivial_metric_calls == 12 if skip_train_eval else 14
+        assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
         agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
 
