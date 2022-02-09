@@ -18,12 +18,12 @@ class RGAT(nn.Module):
         self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35,
-                     mod="additive", attention_mechanism="within-relation",
+            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35, mod="additive",
+                     attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
-            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2,
-                     mod=None, attention_mechanism="across-relation",
+            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2, mod=None,
+                     attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
         ])
@@ -47,11 +47,12 @@ class RGAT(nn.Module):
 
 if __name__ == '__main__':
     dataset = Entities(root='/tmp/AIFB', name='AIFB')
+    data = dataset[0]
 
     edge_index, edge_type, train_labels, test_labels, train_mask, test_mask, \
-        num_nodes = dataset[0].edge_index, dataset[0].edge_type, \
-        dataset[0].train_y, dataset[0].test_y, dataset[0].train_idx, \
-        dataset[0].test_idx, dataset[0].num_nodes
+        num_nodes = data.edge_index, data.edge_type, \
+        data.train_y, data.test_y, data.train_idx, \
+        data.test_idx, data.num_nodes
 
     x = torch.randn(num_nodes, 16)
     edge_attr = torch.randn(58086, 2, 3, 7, 16)
