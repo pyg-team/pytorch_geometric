@@ -209,7 +209,7 @@ class RGATConv(MessagePassing):
         **kwargs,
     ):
 
-        super(RGATConv, self).__init__(aggr=aggr, node_dim=0, **kwargs)
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         self.heads = heads
         self.negative_slope = negative_slope
