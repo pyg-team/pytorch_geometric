@@ -18,12 +18,12 @@ class RGAT(nn.Module):
         self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35,
-                     mod="additive", attention_mechanism="within-relation",
+            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35, mod="additive",
+                     attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
-            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2,
-                     mod=None, attention_mechanism="across-relation",
+            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2, mod=None,
+                     attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
         ])
@@ -62,8 +62,8 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
                            msgrad=False)
 
-    model.train()
     for epoch in range(100):
+        model.train()
         optimizer.zero_grad()
         output = model(x, edge_index, edge_type, edge_attr, torch.tensor([0]))
         loss = F.nll_loss(output[train_mask], train_labels)
