@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
-from class_resolver.contrib.torch import activation_resolver
 from torch import Tensor
 from torch.nn import BatchNorm1d, Identity
 
@@ -80,6 +79,9 @@ class MLP(torch.nn.Module):
         relu_first: bool = False,
     ):
         super().__init__()
+
+        from class_resolver.contrib.torch import activation_resolver
+
         act_first = act_first or relu_first  # Backward compatibility.
         batch_norm_kwargs = batch_norm_kwargs or {}
 
