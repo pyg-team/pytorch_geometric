@@ -11,8 +11,8 @@ def test_config_store():
     assert len(cfg) == 4
     assert 'dataset' in cfg
     assert 'model' in cfg
-    assert 'optim' in cfg
-    assert 'scheduler' in cfg
+    assert 'optimizer' in cfg
+    assert 'lr_scheduler' in cfg
 
     # Check `cfg.dataset`:
     assert len(cfg.dataset) == 3
@@ -52,24 +52,24 @@ def test_config_store():
     assert not cfg.model.act_first
     assert cfg.model.act_kwargs is None
 
-    # Check `cfg.optim`:
-    assert len(cfg.optim) == 6
-    assert cfg.optim._target_.split('.')[-1] == 'Adam'
-    assert cfg.optim.lr == 0.001
-    assert cfg.optim.betas == [0.9, 0.999]
-    assert cfg.optim.eps == 1e-08
-    assert cfg.optim.weight_decay == 0
-    assert not cfg.optim.amsgrad
+    # Check `cfg.optimizer`:
+    assert len(cfg.optimizer) == 6
+    assert cfg.optimizer._target_.split('.')[-1] == 'Adam'
+    assert cfg.optimizer.lr == 0.001
+    assert cfg.optimizer.betas == [0.9, 0.999]
+    assert cfg.optimizer.eps == 1e-08
+    assert cfg.optimizer.weight_decay == 0
+    assert not cfg.optimizer.amsgrad
 
-    # Check `cfg.scheduler`:
-    assert len(cfg.scheduler) == 10
-    assert cfg.scheduler._target_.split('.')[-1] == 'ReduceLROnPlateau'
-    assert cfg.scheduler.mode == 'min'
-    assert cfg.scheduler.factor == 0.1
-    assert cfg.scheduler.patience == 10
-    assert cfg.scheduler.threshold == 0.0001
-    assert cfg.scheduler.threshold_mode == 'rel'
-    assert cfg.scheduler.cooldown == 0
-    assert cfg.scheduler.min_lr == 0
-    assert cfg.scheduler.eps == 1e-08
-    assert not cfg.scheduler.verbose
+    # Check `cfg.lr_scheduler`:
+    assert len(cfg.lr_scheduler) == 10
+    assert cfg.lr_scheduler._target_.split('.')[-1] == 'ReduceLROnPlateau'
+    assert cfg.lr_scheduler.mode == 'min'
+    assert cfg.lr_scheduler.factor == 0.1
+    assert cfg.lr_scheduler.patience == 10
+    assert cfg.lr_scheduler.threshold == 0.0001
+    assert cfg.lr_scheduler.threshold_mode == 'rel'
+    assert cfg.lr_scheduler.cooldown == 0
+    assert cfg.lr_scheduler.min_lr == 0
+    assert cfg.lr_scheduler.eps == 1e-08
+    assert not cfg.lr_scheduler.verbose
