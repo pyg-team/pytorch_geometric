@@ -9,7 +9,7 @@ from torch.nn.utils import clip_grad_value_
 from torch_geometric.datasets import Entities
 
 
-class Net(nn.Module):
+class RGAT(nn.Module):
     def __init__(self, d=2):
         super(Net, self).__init__()
 
