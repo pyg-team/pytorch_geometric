@@ -10,21 +10,19 @@ from torch_geometric.datasets import Entities
 
 
 class RGAT(nn.Module):
-    def __init__(self, d=2):
+    def __init__(self, in_channels, out_channels, nclass=4):
         super().__init__()
 
-        self.nclass = 4
-        self.readout = "add"
-        self.in_channels = 16
-        self.out_channels = 25
-        self.d = d
+        self.nclass = nclass
+        self.in_channels = in_channels
+        self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(16, 20, num_relations=90, num_bases=35, mod="additive",
+            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35, mod="additive",
                      attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
-            RGATConv(80, 25, num_relations=90, num_blocks=2, mod=None,
+            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2, mod=None,
                      attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
@@ -32,7 +30,7 @@ class RGAT(nn.Module):
 
         self.fc = Linear(16, self.in_channels, bias=False)
 
-        self.linear = Linear(self.d * self.out_channels, self.nclass)
+        self.linear = Linear(2 * self.out_channels, self.nclass)
 
     def forward(self, x, edge_index, edge_type, edge_attr):
         if x.dim() == 1:
@@ -61,7 +59,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 16)
     edge_attr = torch.randn(58086, 2, 3, 7, 16)
 
-    model = RGAT()
+    model = RGAT(16, 25)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
                            msgrad=False)
 
