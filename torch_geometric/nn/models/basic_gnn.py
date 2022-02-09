@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Callable, Dict, List, Optional, Union, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -118,9 +118,8 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    def forward(
-            self, x: Tensor, edge_index: Adj, *args, **kwargs
-    ) -> Union[Tensor, Tuple[Tensor, List[Tuple[Tensor]]]]:
+    def forward(self, x: Tensor, edge_index: Adj, *args,
+                **kwargs) -> Union[Tensor, Tuple[Tensor, List[Tuple[Tensor]]]]:
         """"""
         xs: List[Tensor] = []
         atts: List[Tuple[Tensor]] = []
