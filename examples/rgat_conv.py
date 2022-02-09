@@ -65,7 +65,7 @@ if __name__ == '__main__':
     for epoch in range(100):
         model.train()
         optimizer.zero_grad()
-        output = model(x, edge_index, edge_type, edge_attr, torch.tensor([0]))
+        output = model(x, edge_index, edge_type, edge_attr)
         loss = F.nll_loss(output[train_mask], train_labels)
         loss.backward()
         clip_grad_value_(model.parameters(), 2.0)
