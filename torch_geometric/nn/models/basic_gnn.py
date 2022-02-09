@@ -34,17 +34,27 @@ class BasicGNN(torch.nn.Module):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`).
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Union[str, Callable, None] = "relu",
-                 norm: Optional[torch.nn.Module] = None, jk: str = "last",
-                 **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        out_channels: Optional[int] = None,
+        dropout: float = 0.0,
+        act: Union[str, Callable, None] = "relu",
+        norm: Optional[torch.nn.Module] = None,
+        jk: Optional[str] = None,
+        **kwargs,
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
