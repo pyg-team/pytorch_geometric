@@ -33,29 +33,7 @@ def clear_masks(model: torch.nn.Module):
 
 class CaptumModel(torch.nn.Module):
     r"""Model with forward function that can be easily used for
-    explainability with `Captum.ai <https://captum.ai/>`_.
-
-    Args:
-        model (torch.nn.Module): Model to be explained.
-        mask_type (str): Denotes the type of mask to be created with a Captum
-            explainer. Valid inputs are :obj:`'edge'`, :obj:`'node'`, and
-            :obj:`'node_and_edge'`. The input for the forward function with
-            mask type :obj:`'edge'` should be an edge mask tensor of shape
-            :obj:`[1, num_edges]`, :obj:`x` and :obj:`edge_index`. The input
-            for the forward function with mask_type :obj:`'node'` should be a
-            node input of shape :obj:`[1, num_nodes, num_features]` and
-            :obj:`edge_index`. The input for the forward function with
-            mask_type :obj:`'node_and_edge'` should be a node input tensor of
-            shape :obj:`[1, num_nodes, num_features]`, an edge mask tensor of
-            shape :obj:`[1, num_edges]`, and :obj:`edge_index`. For all types,
-            additional arguments can be passed to the forward function as long
-            as the first arguments are set as described.
-            (default: :obj:`'edge'`)
-        node_idx (int, optional): Index of the node to be explained. With
-            :obj:`'node_idx'` set, the forward function will return the output
-            of the model for the node at the index specified.
-            (default: :obj:`None`)
-    """
+    explainability with `Captum.ai <https://captum.ai/>`_."""
     def __init__(self, model: torch.nn.Module, mask_type: str = "edge",
                  node_idx: Optional[int] = None):
         super().__init__()
@@ -112,5 +90,34 @@ class CaptumModel(torch.nn.Module):
 
 def to_captum(model: torch.nn.Module, mask_type: str = "edge",
               node_idx: Optional[int] = None) -> torch.nn.Module:
-    """Convert a model to a model that can be used for Captum explainers."""
+    r"""Converts a model to a model that can be used for 
+    `Captum.ai <https://captum.ai/>`_. attribution methods.
+
+    Args:
+        model (torch.nn.Module): Model to be explained.
+        mask_type (str): Denotes the type of mask to be created with a Captum
+            explainer. Valid inputs are :obj:`'edge'`, :obj:`'node'`, and
+            :obj:`'node_and_edge'`. The input for the forward function with
+            mask type :obj:`'edge'` should be an edge mask tensor of shape
+            :obj:`[1, num_edges]`, :obj:`x` and :obj:`edge_index`. The input
+            for the forward function with mask_type :obj:`'node'` should be a
+            node input of shape :obj:`[1, num_nodes, num_features]` and
+            :obj:`edge_index`. The input for the forward function with
+            mask_type :obj:`'node_and_edge'` should be a node input tensor of
+            shape :obj:`[1, num_nodes, num_features]`, an edge mask tensor of
+            shape :obj:`[1, num_edges]`, and :obj:`edge_index`. For all types,
+            additional arguments can be passed to the forward function as long
+            as the first arguments are set as described.
+            (default: :obj:`'edge'`)
+        node_idx (int, optional): Index of the node to be explained. With
+            :obj:`'node_idx'` set, the forward function will return the output
+            of the model for the node at the index specified.
+            (default: :obj:`None`)
+    .. note::
+        For an example of using a Captum attribution method, see
+        `examples/captum_explainability.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        captum_explainability.py>`_.
+
+    """
     return CaptumModel(model, mask_type, node_idx)
