@@ -90,8 +90,8 @@ class CaptumModel(torch.nn.Module):
 
 def to_captum(model: torch.nn.Module, mask_type: str = "edge",
               node_idx: Optional[int] = None) -> torch.nn.Module:
-    r"""Converts a model to a model that can be used for 
-    `Captum.ai <https://captum.ai/>`_. attribution methods.
+    r"""Converts a model to a model that can be used for
+    `Captum.ai <https://captum.ai/>`_ attribution methods.
 
     Args:
         model (torch.nn.Module): Model to be explained.
