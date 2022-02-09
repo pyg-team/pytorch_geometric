@@ -11,7 +11,7 @@ from torch_geometric.datasets import Entities
 
 class RGAT(nn.Module):
     def __init__(self, d=2):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.nclass = 4
         self.readout = "add"
@@ -19,7 +19,7 @@ class RGAT(nn.Module):
         self.out_channels = 25
         self.d = d
 
-        self.conv_layers = nn.ModuleList([
+        self.convs = nn.ModuleList([
             RGATConv(16, 20, num_relations=90, num_bases=35, mod="additive",
                      attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
@@ -40,7 +40,7 @@ class RGAT(nn.Module):
 
         hid_x = self.fc(x)
 
-        for yt, conv in enumerate(self.conv_layers):
+        for yt, conv in enumerate(self.convs):
             if yt == 0:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr=None)
             else:
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 16)
     edge_attr = torch.randn(58086, 2, 3, 7, 16)
 
-    model = Net()
+    model = RGAT()
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
                            msgrad=False)
 
