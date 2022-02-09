@@ -67,7 +67,12 @@ def test_run_single_graphgym():
     shutil.rmtree(cfg.dataset.dir)
 
 
+num_trivial_metric_calls = 0
+
+
 def trivial_metric(true, pred, task_type):
+    global num_trivial_metric_calls
+    num_trivial_metric_calls += 1
     return 1
 
 
@@ -102,6 +107,8 @@ def test_run_trivial_graphgym():
     train(loggers, loaders, model, optimizer, scheduler)
 
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+
+    assert num_trivial_metric_calls == 12  # 4 eval epochs, 3 splits
 
     shutil.rmtree(cfg.out_dir)
     shutil.rmtree(cfg.dataset.dir)
