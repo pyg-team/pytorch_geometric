@@ -38,7 +38,7 @@ class RGAT(nn.Module):
         # be passed to any "RGAT" layer.
         for yt, conv in enumerate(self.convs):
             if yt == 0:
-                hid_x = conv(hid_x, edge_index, edge_type, edge_attr=None)
+                hid_x = conv(x, edge_index, edge_type, edge_attr=None)
             else:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr)
 
