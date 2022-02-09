@@ -18,25 +18,25 @@ class RGAT(nn.Module):
         self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35,
-                     mod="additive", attention_mechanism="within-relation",
+            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35, mod="additive",
+                     attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
-            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2,
-                     mod=None, attention_mechanism="across-relation",
+            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2, mod=None,
+                     attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
         ])
 
-        self.fc = Linear(16, self.in_channels, bias=False)
+        self.lin1 = Linear(16, self.in_channels, bias=False)
 
-        self.linear = Linear(2 * self.out_channels, self.nclass)
+        self.lin2 = Linear(2 * self.out_channels, self.nclass)
 
     def forward(self, x, edge_index, edge_type, edge_attr):
         if x.dim() == 1:
             x = x.unsqueeze(-1)
 
-        hid_x = self.fc(x)
+        hid_x = self.lin1(x)
 
         for yt, conv in enumerate(self.convs):
             if yt == 0:
@@ -44,7 +44,7 @@ class RGAT(nn.Module):
             else:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr)
 
-        x = self.linear(hid_x)
+        x = self.lin2(hid_x)
         return F.log_softmax(x, dim=-1)
 
 
