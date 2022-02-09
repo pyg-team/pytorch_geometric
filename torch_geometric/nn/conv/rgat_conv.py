@@ -5,13 +5,13 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter, ReLU
 from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, ones, zeros
 from torch_geometric.typing import Adj, OptTensor, Size
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+from torch_geometric.utils import softmax
 
 
 class RGATConv(MessagePassing):
@@ -169,15 +169,8 @@ class RGATConv(MessagePassing):
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`False`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
-        fill_value (float, optional): The way to generate
-            edge features of self-loops (in case :obj:`edge_dim != None`).
-            If given as :obj:`float`, edge features of
-            self-loops will be directly given by :obj:`fill_value`.
-            (default: :obj:`1.`)
         bias (bool, optional): If set to :obj:`False`, the layer will not
             learn an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -202,9 +195,7 @@ class RGATConv(MessagePassing):
         concat: bool = True,
         negative_slope: float = 0.2,
         dropout: float = 0.0,
-        add_self_loops: bool = False,
         edge_dim: Optional[int] = None,
-        fill_value: float = 1.,
         bias: bool = True,
         **kwargs,
     ):
@@ -220,9 +211,7 @@ class RGATConv(MessagePassing):
         self.attention_mode = attention_mode
         self.attention_mechanism = attention_mechanism
         self.d = d
-        self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
-        self.fill_value = fill_value
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -247,13 +236,6 @@ class RGATConv(MessagePassing):
             raise ValueError('"additive-self-attention" mode cannot be '
                              'applied when value of d is greater than 1. '
                              'Use "multiplicative-self-attention" instead.')
-
-        if (self.edge_dim is not None and self.edge_dim != 1
-                and self.add_self_loops):
-            raise ValueError('"edge_dim" with value greater than 1 is '
-                             'currently not yet supported for '
-                             '"edge_attr" while adding self loops to the '
-                             'input graph')
 
         if self.dropout > 0.0 and self.mod in mod_types:
             raise ValueError('mod must be None with dropout value greater '
@@ -361,24 +343,6 @@ class RGATConv(MessagePassing):
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-
-        if self.add_self_loops:
-            if isinstance(edge_index, Tensor):
-                num_nodes = x.size(0)
-                num_nodes = min(size) if size is not None else num_nodes
-                edge_index, edge_attr = remove_self_loops(
-                    edge_index, edge_attr)
-                edge_index, edge_attr = add_self_loops(
-                    edge_index, edge_attr, fill_value=self.fill_value,
-                    num_nodes=num_nodes)
-            elif isinstance(edge_index, SparseTensor):
-                if self.edge_dim is None:
-                    edge_index = set_diag(edge_index)
-                else:
-                    raise NotImplementedError(
-                        "The usage of 'edge_attr' and 'add_self_loops' "
-                        "simultaneously is currently not yet supported for "
-                        "'edge_index' in a 'SparseTensor' form")
 
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)
