@@ -1,3 +1,4 @@
+import itertools
 import os.path as osp
 import random
 import shutil
@@ -20,53 +21,6 @@ from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
                                             params_count)
 
-
-def test_run_single_graphgym():
-    Args = namedtuple('Args', ['cfg_file', 'opts'])
-    root = osp.join(osp.dirname(osp.realpath(__file__)))
-    args = Args(osp.join(root, 'example_node.yml'), [])
-
-    load_cfg(cfg, args)
-    cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dump_cfg(cfg)
-    set_printing()
-
-    seed_everything(cfg.seed)
-    auto_select_device()
-    set_run_dir(cfg.out_dir, args.cfg_file)
-
-    loaders = create_loader()
-    assert len(loaders) == 3
-
-    loggers = create_logger()
-    assert len(loggers) == 3
-
-    model = create_model()
-    assert isinstance(model, torch.nn.Module)
-    assert isinstance(model.encoder, FeatureEncoder)
-    assert isinstance(model.mp, GNNStackStage)
-    assert isinstance(model.post_mp, GNNNodeHead)
-    assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
-
-    optimizer = create_optimizer(model.parameters(), cfg.optim)
-    assert isinstance(optimizer, torch.optim.Adam)
-
-    scheduler = create_scheduler(optimizer, cfg.optim)
-    assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
-
-    cfg.params = params_count(model)
-    assert cfg.params == 23880
-
-    train(loggers, loaders, model, optimizer, scheduler)
-
-    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
-
-    shutil.rmtree(cfg.out_dir)
-    shutil.rmtree(cfg.dataset.dir)
-
-
 num_trivial_metric_calls = 0
 
 
@@ -76,39 +30,68 @@ def trivial_metric(true, pred, task_type):
     return 1
 
 
-def test_run_trivial_graphgym():
+def test_run_single_graphgym():
+    global num_trivial_metric_calls
     register.register_metric('trivial', trivial_metric)
-    cfg.metric_best = 'trivial'
-    cfg.custom_metrics = ['trivial']
 
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
 
-    load_cfg(cfg, args)
-    cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dump_cfg(cfg)
-    set_printing()
+    # TODO: test enable_ckpt
+    for skip_train_eval, use_trivial_metric in itertools.product([True, False],
+                                                                 repeat=2):
+        load_cfg(cfg, args)
+        cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+        cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+        cfg.dataset.dir = osp.join('/', 'tmp',
+                                   str(random.randrange(sys.maxsize)))
+        dump_cfg(cfg)
+        set_printing()
 
-    seed_everything(cfg.seed)
-    auto_select_device()
-    set_run_dir(cfg.out_dir, args.cfg_file)
-    loaders = create_loader()
-    loggers = create_logger()
-    model = create_model()
+        seed_everything(cfg.seed)
+        auto_select_device()
+        set_run_dir(cfg.out_dir, args.cfg_file)
 
-    optimizer = create_optimizer(model.parameters(), cfg.optim)
-    scheduler = create_scheduler(optimizer, cfg.optim)
+        cfg.train.skip_train_eval = skip_train_eval
+        if use_trivial_metric:
+            num_trivial_metric_calls = 0
+            cfg.metric_best = 'trivial'
+            cfg.custom_metrics = ['trivial']
+        else:
+            cfg.metric_best = 'auto'
+            cfg.custom_metrics = []
 
-    cfg.params = params_count(model)
+        loaders = create_loader()
+        assert len(loaders) == 3
 
-    train(loggers, loaders, model, optimizer, scheduler)
+        loggers = create_logger()
+        assert len(loggers) == 3
 
-    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+        model = create_model()
+        assert isinstance(model, torch.nn.Module)
+        assert isinstance(model.encoder, FeatureEncoder)
+        assert isinstance(model.mp, GNNStackStage)
+        assert isinstance(model.post_mp, GNNNodeHead)
+        assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
 
-    assert num_trivial_metric_calls == 12  # 4 eval epochs, 3 splits
+        optimizer = create_optimizer(model.parameters(), cfg.optim)
+        assert isinstance(optimizer, torch.optim.Adam)
 
-    shutil.rmtree(cfg.out_dir)
-    shutil.rmtree(cfg.dataset.dir)
+        scheduler = create_scheduler(optimizer, cfg.optim)
+        assert isinstance(scheduler,
+                          torch.optim.lr_scheduler.CosineAnnealingLR)
+
+        cfg.params = params_count(model)
+        assert cfg.params == 23880
+
+        train(loggers, loaders, model, optimizer, scheduler)
+
+        if use_trivial_metric:
+            # 6 total epochs, 4 eval epochs, 3 splits (1 training split)
+            assert num_trivial_metric_calls == 12 if skip_train_eval else 14
+
+        agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+
+        shutil.rmtree(cfg.out_dir)
+        shutil.rmtree(cfg.dataset.dir)
