@@ -20,6 +20,7 @@ install_requires = [
 full_install_requires = [
     'h5py',
     'numba',
+    'captum',
     'rdflib',
     'trimesh',
     'networkx',
