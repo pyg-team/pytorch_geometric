@@ -14,6 +14,7 @@ install_requires = [
     'pyparsing',
     'hydra-core',
     'scikit-learn',
+    'class-resolver',
     'googledrivedownloader',
 ]
 
