@@ -18,12 +18,12 @@ class RGAT(nn.Module):
         self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35,
-                     mod="additive", attention_mechanism="within-relation",
+            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35, mod="additive",
+                     attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
-            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2,
-                     mod=None, attention_mechanism="across-relation",
+            RGATConv(80, self.out_channels, num_relations=90, num_blocks=2, mod=None,
+                     attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
         ])
@@ -35,6 +35,10 @@ class RGAT(nn.Module):
     def forward(self, x, edge_index, edge_type, edge_attr):
         hid_x = self.lin1(x)
 
+        # "edge_attr" is being put to some use only for the second layer
+        # just to check if arbitrary ordering of "edge_attr" among layers
+        # of a GNN module can be achieved. Nevertheless, "edge_attr" can
+        # be passed to any "RGAT" layer.
         for yt, conv in enumerate(self.convs):
             if yt == 0:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr=None)
