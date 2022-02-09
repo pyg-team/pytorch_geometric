@@ -60,7 +60,7 @@ ig_attr = ig.attribute(input_mask.unsqueeze(0), target=target,
 # Scale attributions to [0, 1]
 ig_attr = ig_attr.squeeze(0).abs() / ig_attr.abs().max()
 
-# Visualize attributions with GNNExplainer visualizer
+# Visualize absolute values of attributions with GNNExplainer visualizer
 # TODO: Change to general Explainer visualizer
 explainer = GNNExplainer(model)
 ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr)
