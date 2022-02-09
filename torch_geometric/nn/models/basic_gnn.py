@@ -1,5 +1,5 @@
 import copy
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -104,11 +104,17 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
+    def forward(
+            self, x: Tensor, edge_index: Adj, *args, **kwargs
+    ) -> Union[Tensor, Tuple[Tensor, List[Tuple[Tensor]]]]:
         """"""
         xs: List[Tensor] = []
+        atts: List[Tuple[Tensor]] = []
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, *args, **kwargs)
+            if isinstance(x, tuple):
+                atts.append(x[1])
+                x = x[0]
             if (i == self.num_layers - 1 and self.has_out_channels
                     and self.jk_mode == 'last'):
                 break
@@ -122,6 +128,9 @@ class BasicGNN(torch.nn.Module):
 
         x = self.jk(xs) if hasattr(self, 'jk') else x
         x = self.lin(x) if hasattr(self, 'lin') else x
+
+        if len(atts) > 0:
+            return x, atts
         return x
 
     def __repr__(self) -> str:
