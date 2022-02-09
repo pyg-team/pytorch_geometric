@@ -102,9 +102,14 @@ def to_dataclass(cls: Any, base: Optional[Any] = None,
 config_store = ConfigStore.instance()
 
 
-@dataclass  # Register `torch_geometric.transforms` ###########################
-class Transform:
+@dataclass
+class BaseConfig:
     _target_: str = MISSING
+
+
+@dataclass  # Register `torch_geometric.transforms` ###########################
+class Transform(BaseConfig):
+    pass
 
 
 for cls_name in set(transforms.__all__) - set([
@@ -121,8 +126,7 @@ for cls_name in set(transforms.__all__) - set([
 
 
 @dataclass  # Register `torch_geometric.datasets` #############################
-class Dataset:
-    _target_: str = MISSING
+class Dataset(BaseConfig):
     transform: Dict[str, Transform] = field(default_factory=dict)
     pre_transform: Dict[str, Transform] = field(default_factory=dict)
 
@@ -134,10 +138,8 @@ for cls_name in set(datasets.__all__) - set([]):
 
 
 @dataclass  # Register `torch_geometric.models` ###############################
-class Model:
-    _target_: str = MISSING
-    in_channels: int = MISSING
-    out_channels: Optional[int] = None
+class Model(BaseConfig):
+    pass
 
 
 for cls_name in set(models.__all__) - set([]):
@@ -146,8 +148,8 @@ for cls_name in set(models.__all__) - set([]):
 
 
 @dataclass  # Register `torch.optim.Optimizer` ################################
-class Optimizer:
-    _target_: str = MISSING
+class Optimizer(BaseConfig):
+    pass
 
 
 for cls_name in set([
@@ -156,12 +158,12 @@ for cls_name in set([
 ]) - set(['Optimizer']):
     cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
                        exclude=['params'])
-    config_store.store(group='optim', name=cls_name, node=cls)
+    config_store.store(group='optimizer', name=cls_name, node=cls)
 
 
 @dataclass  # Register `torch.optim.lr_scheduler` #############################
-class Scheduler:
-    _target_: str = MISSING
+class LRScheduler(BaseConfig):
+    pass
 
 
 for cls_name in set([
@@ -172,15 +174,12 @@ for cls_name in set([
         'ChainedScheduler'
 ]):
     cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
-                       base=Scheduler, exclude=['optimizer'])
-    config_store.store(group='scheduler', name=cls_name, node=cls)
+                       base=LRScheduler, exclude=['optimizer'])
+    config_store.store(group='lr_scheduler', name=cls_name, node=cls)
 
 
 @dataclass  # Register global schema ##########################################
 class Config:
     dataset: Dataset = MISSING
     optim: Optimizer = MISSING
-    scheduler: Optional[Scheduler] = None
-
-
-config_store.store(name='config', node=Config)
+    lr_scheduler: Optional[LRScheduler] = None
