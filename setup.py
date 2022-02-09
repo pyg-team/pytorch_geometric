@@ -20,6 +20,7 @@ install_requires = [
 full_install_requires = [
     'h5py',
     'numba',
+    'captum',
     'rdflib',
     'trimesh',
     'networkx',
@@ -27,7 +28,6 @@ full_install_requires = [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
-    'captum',
 ]
 
 test_requires = [

@@ -11,8 +11,7 @@ from torch_geometric.nn import GCNConv, GNNExplainer, to_captum
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-transform = T.NormalizeFeatures()
-dataset = Planetoid(path, dataset, transform=transform)
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 
@@ -33,12 +32,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GCN().to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
-x, edge_index = data.x, data.edge_index
 
 for epoch in range(1, 201):
     model.train()
     optimizer.zero_grad()
-    log_logits = model(x, edge_index)
+    log_logits = model(data.x, data.edge_index)
     loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
@@ -46,50 +44,63 @@ for epoch in range(1, 201):
 node_idx = 10
 target = int(data.y[node_idx])
 
-# Edge explainability for node 10
+# Edge explainability
+# ===================
+
 # Captum assumes that for all given input tensors, dimension 0 is
 # equal to the number of samples. Therefore, we use unsqueeze(0).
-input_mask = torch.ones(data.num_edges, dtype=torch.float, requires_grad=True,
-                        device=device)
 captum_model = to_captum(model, mask_type='edge', node_idx=node_idx)
-ig = IntegratedGradients(captum_model)
-ig_attr = ig.attribute(input_mask.unsqueeze(0), target=target,
-                       additional_forward_args=(x, edge_index),
-                       internal_batch_size=1)
+edge_mask = torch.ones(data.num_edges, requires_grad=True, device=device)
 
-# Scale attributions to [0, 1]
-ig_attr = ig_attr.squeeze(0).abs() / ig_attr.abs().max()
+ig = IntegratedGradients(captum_model)
+ig_attr_edge = ig.attribute(edge_mask.unsqueeze(0), target=target,
+                            additional_forward_args=(data.x, data.edge_index),
+                            internal_batch_size=1)
+
+# Scale attributions to [0, 1]:
+ig_attr_edge = ig_attr_edge.squeeze(0).abs()
+ig_attr_edge /= ig_attr_edge.max()
 
 # Visualize absolute values of attributions with GNNExplainer visualizer
-# TODO: Change to general Explainer visualizer
-explainer = GNNExplainer(model)
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr)
+explainer = GNNExplainer(model)  # TODO: Change to general Explainer visualizer
+ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge)
 plt.show()
 
-# Node explainability for node 10
+# Node explainability
+# ===================
+
 captum_model = to_captum(model, mask_type='node', node_idx=node_idx)
+
 ig = IntegratedGradients(captum_model)
-ig_attr_node = ig.attribute(x.unsqueeze(0), target=target,
-                            additional_forward_args=(edge_index),
+ig_attr_node = ig.attribute(data.x.unsqueeze(0), target=target,
+                            additional_forward_args=(data.edge_index),
                             internal_batch_size=1)
+
+# Scale attributions to [0, 1]:
 ig_attr_node = ig_attr_node.squeeze(0).abs().sum(dim=1)
 ig_attr_node /= ig_attr_node.max()
 
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr,
+# Visualize absolute values of attributions with GNNExplainer visualizer
+ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()
 
-# Node and edge explainability for node 10
+# Node and edge explainability
+# ============================
+
 captum_model = to_captum(model, mask_type='node_and_edge', node_idx=node_idx)
+
 ig = IntegratedGradients(captum_model)
-ig_attr_node_and_edge = ig.attribute(
-    (x.unsqueeze(0), input_mask.unsqueeze(0)), target=target,
-    additional_forward_args=(edge_index), internal_batch_size=1)
-ig_attr_node = ig_attr_node_and_edge[0].squeeze(0).abs().sum(dim=1)
+ig_attr_node, ig_attr_edge = ig.attribute(
+    (data.x.unsqueeze(0), edge_mask.unsqueeze(0)), target=target,
+    additional_forward_args=(data.edge_index), internal_batch_size=1)
+
+# Scale attributions to [0, 1]:
+ig_attr_node = ig_attr_node.squeeze(0).abs().sum(dim=1)
 ig_attr_node /= ig_attr_node.max()
-ig_attr_edge = ig_attr_node_and_edge[1].squeeze(0).abs()
+ig_attr_edge = ig_attr_edge.squeeze(0).abs()
 ig_attr_edge /= ig_attr_edge.max()
 
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, ig_attr_edge,
+ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()

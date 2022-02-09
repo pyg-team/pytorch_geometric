@@ -10,6 +10,7 @@ from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
+from .explainer import to_captum
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -19,7 +20,6 @@ from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
-from .explainer import to_captum
 
 __all__ = [
     'MLP',
@@ -42,6 +42,7 @@ __all__ = [
     'SchNet',
     'DimeNet',
     'GNNExplainer',
+    'to_captum',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
@@ -51,7 +52,6 @@ __all__ = [
     'RECT_L',
     'LINKX',
     'LightGCN',
-    'to_captum',
 ]
 
 classes = __all__

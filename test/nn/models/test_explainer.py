@@ -17,9 +17,17 @@ GCN = GCN(3, 16, 2, 7, dropout=0.5)
 GAT = GAT(3, 16, 2, 7, heads=2, concat=False)
 mask_types = ['edge', 'node_and_edge', 'node']
 methods = [
-    'Saliency', 'InputXGradient', 'Deconvolution', 'FeatureAblation',
-    'ShapleyValueSampling', 'IntegratedGradients', 'GradientShap', 'Occlusion',
-    'GuidedBackprop', 'KernelShap', 'Lime'
+    'Saliency',
+    'InputXGradient',
+    'Deconvolution',
+    'FeatureAblation',
+    'ShapleyValueSampling',
+    'IntegratedGradients',
+    'GradientShap',
+    'Occlusion',
+    'GuidedBackprop',
+    'KernelShap',
+    'Lime',
 ]
 
 
