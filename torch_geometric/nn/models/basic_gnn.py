@@ -60,7 +60,8 @@ class BasicGNN(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
         self.dropout = dropout
-        self.act = ACTS[act] if isinstance(act, str) else act
+        self.act = activation_resolver.make(act, **act_kwargs)
+        self.act_first = act_first
         self.jk_mode = jk
         self.has_out_channels = out_channels is not None
 
@@ -70,7 +71,7 @@ class BasicGNN(torch.nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, **kwargs))
-        if self.has_out_channels and self.jk_mode == 'last':
+        if self.has_out_channels and self.jk_mode is None:
             self.convs.append(
                 self.init_conv(hidden_channels, out_channels, **kwargs))
         else:
@@ -82,10 +83,10 @@ class BasicGNN(torch.nn.Module):
             self.norms = ModuleList()
             for _ in range(num_layers - 1):
                 self.norms.append(copy.deepcopy(norm))
-            if not (self.has_out_channels and self.jk_mode == 'last'):
+            if self.jk_mode is not None:
                 self.norms.append(copy.deepcopy(norm))
 
-        if self.jk_mode != 'last':
+        if self.jk_mode is not None and self.jk_mode != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
 
         if self.has_out_channels:
