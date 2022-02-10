@@ -119,5 +119,5 @@ def register_train(key: str, module: Any = None):
 
 
 def register_metric(key: str, module: Any = None):
-    r"""Register a customized metric function."""
+    r"""Register a metric function in GraphGym."""
     return register_base(metric_dict, key, module)
