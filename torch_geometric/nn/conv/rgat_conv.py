@@ -281,9 +281,9 @@ class RGATConv(MessagePassing):
         elif num_blocks is not None:
             assert (self.in_channels % self.num_blocks == 0
                     and (self.heads * self.out_channels) %
-                    self.num_blocks == 0), \
-                "both 'in_channels' and 'heads * out_channels' must be " \
-                "multiple of 'num_blocks' used"
+                    self.num_blocks == 0), (
+                "both 'in_channels' and 'heads * out_channels' must be "
+                "multiple of 'num_blocks' used")
             self.weight = Parameter(
                 torch.Tensor(self.num_relations, self.num_blocks,
                              self.in_channels // self.num_blocks,
@@ -373,13 +373,13 @@ class RGATConv(MessagePassing):
                 raise ValueError('Block-diagonal decomposition not supported '
                                  'for non-continuous input features.')
             w = self.weight
-            x_i, x_j = x_i.view(-1, 1, w.size(1), w.size(2)), x_j.\
-                view(-1, 1, w.size(1), w.size(2))
+            x_i = x_i.view(-1, 1, w.size(1), w.size(2))
+            x_j = x_j.view(-1, 1, w.size(1), w.size(2))
             w = torch.index_select(w, 0, edge_type)
-            outi = torch.einsum('abcd,acde->ace', x_i, w).contiguous().\
-                view(-1, self.heads * self.out_channels)
-            outj = torch.einsum('abcd,acde->ace', x_j, w).contiguous().\
-                view(-1, self.heads * self.out_channels)
+            outi = torch.einsum('abcd,acde->ace', x_i, w)
+            outi = outi.contiguous().view(-1, self.heads * self.out_channels)
+            outj = torch.einsum('abcd,acde->ace', x_j, w)
+            outj = outj.contiguous().view(-1, self.heads * self.out_channels)
         else:  # No regularization/Basis-decomposition ========================
             if self.num_bases is None:
                 w = self.weight
@@ -393,9 +393,9 @@ class RGATConv(MessagePassing):
         if edge_attr is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)
-            assert self.lin_edge is not None, "Please set 'edge_dim = " \
-                                              "edge_attr.size(-1)' while " \
-                                              "calling the RGATConv layer"
+            assert self.lin_edge is not None, (
+                "Please set 'edge_dim = edge_attr.size(-1)' while calling the "
+                "RGATConv layer")
             edge_attributes = self.lin_edge(edge_attr).view(
                 -1, self.heads * self.out_channels)
             if edge_attributes.size(0) != edge_attr.size(0):
@@ -430,21 +430,20 @@ class RGATConv(MessagePassing):
         if self.mod == "additive":
             if self.attention_mode == "additive-self-attention":
                 ones = torch.ones_like(alpha)
-                h = outj.view(-1, self.heads, self.out_channels) * \
-                    ones.view(-1, self.heads, 1)
+                h = (outj.view(-1, self.heads, self.out_channels) *
+                     ones.view(-1, self.heads, 1))
                 h = torch.mul(self.w, h)
 
-                return outj.view(-1, self.heads, self.out_channels) * alpha.\
-                    view(-1, self.heads, 1) + h
+                return (outj.view(-1, self.heads, self.out_channels) *
+                        alpha.view(-1, self.heads, 1) + h)
             elif self.attention_mode == "multiplicative-self-attention":
                 ones = torch.ones_like(alpha)
-                h = outj.view(-1, self.heads, 1, self.out_channels) * \
-                    ones.view(-1, self.heads, self.d, 1)
+                h = (outj.view(-1, self.heads, 1, self.out_channels) *
+                     ones.view(-1, self.heads, self.d, 1))
                 h = torch.mul(self.w, h)
 
-                return outj.view(-1, self.heads, 1,
-                                 self.out_channels) * alpha.\
-                    view(-1, self.heads, self.d, 1) + h
+                return (outj.view(-1, self.heads, 1, self.out_channels) *
+                        alpha.view(-1, self.heads, self.d, 1) + h)
 
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
