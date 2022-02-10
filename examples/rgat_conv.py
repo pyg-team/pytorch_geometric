@@ -22,12 +22,19 @@ class RGAT(nn.Module):
                      mod="additive", attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
+            # The "in_channels" for every single layer after the first layer
+            # must be equal to the product of three arguments:
+            # "heads * d * out_channels" being used in the previous layer
+            # because each RGATConv layer outputs "heads * d * out_channels"
+            # features for each node
             RGATConv(80, self.out_channels, num_relations=90, num_blocks=2,
                      mod=None, attention_mechanism="across-relation",
                      attention_mode="additive-self-attention", heads=2, d=1,
                      dropout=0.6, edge_dim=16, bias=False),
         ])
 
+        # The following layer is being used so that the final returned output
+        # will consist of "nclass" features for each node
         self.lin = Linear(2 * self.out_channels, self.nclass)
 
     def forward(self, x, edge_index, edge_type, edge_attr):
