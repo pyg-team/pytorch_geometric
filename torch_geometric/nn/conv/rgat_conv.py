@@ -279,11 +279,11 @@ class RGATConv(MessagePassing):
                 torch.Tensor(self.num_bases, self.in_channels,
                              self.heads * self.out_channels))
         elif num_blocks is not None:
-            assert (self.in_channels % self.num_blocks == 0
-                    and (self.heads * self.out_channels) %
-                    self.num_blocks == 0), (
-                "both 'in_channels' and 'heads * out_channels' must be "
-                "multiple of 'num_blocks' used")
+            assert (
+                self.in_channels % self.num_blocks == 0
+                and (self.heads * self.out_channels) % self.num_blocks == 0), (
+                    "both 'in_channels' and 'heads * out_channels' must be "
+                    "multiple of 'num_blocks' used")
             self.weight = Parameter(
                 torch.Tensor(self.num_relations, self.num_blocks,
                              self.in_channels // self.num_blocks,
