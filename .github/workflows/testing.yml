@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-2019]
+        os: [ubuntu-latest, windows-latest]
         python-version: [3.7, 3.9]
         torch-version: [1.9.0, 1.10.0]
         include:
