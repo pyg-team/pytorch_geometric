@@ -15,7 +15,7 @@ out_dims = [None, 8]
 dropouts = [0.0, 0.5]
 acts = [None, 'leaky_relu', torch.relu_, F.elu, ReLU()]
 norms = [None, BatchNorm1d(16), LayerNorm(16)]
-jks = ['last', 'cat', 'max', 'lstm']
+jks = [None, 'last', 'cat', 'max', 'lstm']
 
 
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',

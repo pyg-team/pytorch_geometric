@@ -114,6 +114,7 @@ class MessagePassing(torch.nn.Module):
         self.__explain__ = False
         self.__edge_mask__ = None
         self.__loop_mask__ = None
+        self.__apply_sigmoid__ = True
 
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
@@ -323,7 +324,9 @@ class MessagePassing(torch.nn.Module):
                 # aggregate procedure since this allows us to inject the
                 # `edge_mask` into the message passing computation scheme.
                 if self.__explain__:
-                    edge_mask = self.__edge_mask__.sigmoid()
+                    edge_mask = self.__edge_mask__
+                    if self.__apply_sigmoid__:
+                        edge_mask = edge_mask.sigmoid()
                     # Some ops add self-loops to `edge_index`. We need to do
                     # the same for `edge_mask` (but do not train those).
                     if out.size(self.node_dim) != edge_mask.size(0):

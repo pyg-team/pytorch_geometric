@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.models.explainer import clear_masks, set_masks
 from torch_geometric.utils import k_hop_subgraph, to_networkx
 
 EPS = 1e-15
@@ -98,20 +99,11 @@ class GNNExplainer(torch.nn.Module):
         if not self.allow_edge_mask:
             self.edge_mask.requires_grad_(False)
             self.edge_mask.fill_(float('inf'))  # `sigmoid()` returns `1`.
-        self.loop_mask = edge_index[0] != edge_index[1]
 
-        for module in self.model.modules():
-            if isinstance(module, MessagePassing):
-                module.__explain__ = True
-                module.__edge_mask__ = self.edge_mask
-                module.__loop_mask__ = self.loop_mask
+        set_masks(self.model, self.edge_mask, edge_index, apply_sigmoid=True)
 
     def __clear_masks__(self):
-        for module in self.model.modules():
-            if isinstance(module, MessagePassing):
-                module.__explain__ = False
-                module.__edge_mask__ = None
-                module.__loop_mask__ = None
+        module = clear_masks(self.model)
         self.node_feat_masks = None
         self.edge_mask = None
         module.loop_mask = None
