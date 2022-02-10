@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     model = RGAT(16, 25)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
-                           msgrad=False)
+                           amsgrad=False)
 
     for epoch in range(100):
         model.train()
