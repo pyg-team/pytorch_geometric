@@ -136,8 +136,7 @@ class RGATConv(MessagePassing):
 
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-        the size from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
         num_bases (int, optional): If set to not :obj:`None`, this layer will
@@ -148,14 +147,14 @@ class RGATConv(MessagePassing):
             use the block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use.
+        aggr (str, optional): The aggregation scheme to use.
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`)
-        mod (string, optional): The cardinality preservation option to use.
+        mod (str, optional): The cardinality preservation option to use.
             (:obj:`"additive"`, :obj:`"scaled"`, :obj:`"f-additive"`,
             :obj:`"f-scaled"`, default: :obj:`None`)
-        attention_mechanism (string): The attention mechanism to use.
+        attention_mechanism (str): The attention mechanism to use.
             (:obj:`"within-relation"`, :obj:`"across-relation"`)
-        attention_mode (string): The mode to calculate attention logits.
+        attention_mode (str): The mode to calculate attention logits.
             (:obj:`"additive-self-attention"`,
             :obj:`"multiplicative-self-attention"`)
         heads (int, optional): Number of multi-head-attentions.
