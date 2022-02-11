@@ -185,7 +185,7 @@ for cls_name in set([
         'Optimizer',
 ]):
     cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
-                       exclude_args=[0])
+                       exclude_args=['params'])
     config_store.store(group='optimizer', name=cls_name, node=cls)
 
 
@@ -205,7 +205,7 @@ for cls_name in set([
         'ChainedScheduler',
 ]):
     cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
-                       base=LRScheduler, exclude_args=[0])
+                       base=LRScheduler, exclude_args=['optimizer'])
     config_store.store(group='lr_scheduler', name=cls_name, node=cls)
 
 
