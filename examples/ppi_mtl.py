@@ -6,7 +6,7 @@ from sklearn.metrics import f1_score
 
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import BatchNorm, GCNConv
+from torch_geometric.nn import GATConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -21,26 +21,26 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.body_convs = torch.nn.ModuleList()
-        self.body_norms = torch.nn.ModuleList()
+        self.body_conv = GATConv(train_dataset.num_features, 256, heads=4)
+        self.body_fc = torch.nn.Linear(train_dataset.num_features, 4 * 256)
 
-        for layer in range(4):
-            in_channels = train_dataset.num_features if layer == 0 else 256
-            self.body_convs.append(GCNConv(in_channels, 256))
-            self.body_norms.append(BatchNorm(256))
-
-        self.heads = torch.nn.ModuleList()
+        self.head_convs = torch.nn.ModuleList()
+        self.head_fc1 = torch.nn.ModuleList()
+        self.head_fc2 = torch.nn.ModuleList()
         for task in range(train_dataset.num_classes):
-            self.heads.append(GCNConv(256, 2))
+            self.head_convs.append(GATConv(4 * 256, 64, heads=4))
+            self.head_fc1.append(torch.nn.Linear(4 * 256, 4 * 64))
+            self.head_fc2.append(torch.nn.Linear(4 * 64, 2))
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor):
-        for conv, norm in zip(self.body_convs, self.body_norms):
-            x = conv(x, edge_index)
-            x = x.relu()
-            x = norm(x)
-            x = F.dropout(x, 0.5, training=self.training)
+        x = F.elu(self.body_conv(x, edge_index) + self.body_fc(x))
 
-        return [head(x, edge_index) for head in self.heads]
+        out = []
+        for conv, fc1, fc2 in zip(self.head_convs, self.head_fc1, self.head_fc2):
+            x_head = F.elu(conv(x, edge_index) + fc1(x))
+            out.append(fc2(x_head))
+        
+        return out
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
