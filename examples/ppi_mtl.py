@@ -36,10 +36,11 @@ class Net(torch.nn.Module):
         x = F.elu(self.body_conv(x, edge_index) + self.body_fc(x))
 
         out = []
-        for conv, fc1, fc2 in zip(self.head_convs, self.head_fc1, self.head_fc2):
+        for conv, fc1, fc2 in zip(self.head_convs, self.head_fc1,
+                                  self.head_fc2):
             x_head = F.elu(conv(x, edge_index) + fc1(x))
             out.append(fc2(x_head))
-        
+
         return out
 
 
