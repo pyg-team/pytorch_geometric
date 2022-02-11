@@ -46,10 +46,10 @@ def dropout_adj(
 
     row, col = edge_index
 
-    mask = torch.rand(row.size(0), device=edge_index.device) < p
+    mask = torch.rand(row.size(0), device=edge_index.device) >= p
 
     if force_undirected:
-        mask &= row < col
+        mask[row > col] = False
 
     row, col, edge_attr = filter_adj(row, col, edge_attr, mask)
 
