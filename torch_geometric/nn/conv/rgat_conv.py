@@ -39,12 +39,12 @@ class RGATConv(MessagePassing):
     (:math:`\mathbf{r}`)
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
-        \mathbf{k}^{(r)}_j) \ \ \ \ \text{(Additive \ attention \ logits)}
+        \mathbf{k}^{(r)}_j) \ \ \ \ \text{(additive attention logits)}
 
     and
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathbf{q}^{(r)}_i \ \cdot
-        \ \mathbf{k}^{(r)}_j \ \ \ \ (Multiplicative \ attention \ logits)
+        \ \mathbf{k}^{(r)}_j \ \ \ \ \text{(multiplicative attention logits)}
 
     If the graph has multi-dimensional edge features
     :math:`\mathbf{e}^{(r)}_{i,j}`, the attention logits
@@ -53,14 +53,14 @@ class RGATConv(MessagePassing):
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
         \mathbf{k}^{(r)}_j + (\mathbf{\Theta}^{(r)}_e\mathbf{e}^{(r)}_{i,j}
-        \ \cdot \ \mathbf{E}^{(r)})) \ \ \ \ (Additive \ attention \ logits)
+        \ \cdot \ \mathbf{E}^{(r)})) \ \ \ \ \text{(additive attention logits)}
 
     and
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = (\mathbf{q}^{(r)}_i \ \cdot
         \ \mathbf{k}^{(r)}_j) \ \cdot \ (\mathbf{\Theta}^{(r)}_e
         \ \mathbf{e}^{(r)}_{i,j} \ \cdot \ \mathbf{E}^{(r)})
-        \ \ \ \ (Multiplicative \ attention \ logits),
+        \ \ \ \ \text{(multiplicative attention logits)},
 
     where the edge kernel (:math:`\mathbf{E}^{(r)}`) when combine with the
     query and key kernels form the final attention kernel
@@ -74,7 +74,7 @@ class RGATConv(MessagePassing):
         \exp\left(\mathbf{E}^{(r)}_{i,j}\right)}
         {\sum_{k \in \mathcal{N}(i)^{(r)}}
         \exp\left(\mathbf{E}^{(r)}_{i,k}\right)}
-        \ \ \ (within-relation \ attention \ mechanism)
+        \ \ \ \text{(within-relation attention mechanism)}
 
     and
 
@@ -85,7 +85,7 @@ class RGATConv(MessagePassing):
         {\sum_{r^{\prime} \in \mathcal{R}}\sum_{k \in
         \mathcal{N}(i)^{(r^{\prime})}}
         \exp\left(\mathbf{E}^{(r^{\prime})}_{i,k}\right)}
-        \ \ \ (across-relation \ attention \ mechanism)
+        \ \ \ \text{(across-relation attention mechanism)}
 
     where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.
     Edge type needs to be a one-dimensional :obj:`torch.long` tensor which
@@ -99,21 +99,21 @@ class RGATConv(MessagePassing):
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
         \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j + \mathcal{W} \ \odot
-        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j \ \ \ (additive)
+        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j \ \ \ \text{(additive)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \psi(|\mathcal{N}^{(r)}_i|) \ \odot
         \ \sum_{j \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j}
-        \mathbf{x}^{(r)}_j \ \ \ (scaled)
+        \mathbf{x}^{(r)}_j \ \ \ \text{(scaled)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
-        (\alpha^{(r)}_{i,j} + 1) \mathbf{x}^{(r)}_j \ \ \ (f-additive)
+        (\alpha^{(r)}_{i,j} + 1) \mathbf{x}^{(r)}_j \ \ \ \text{(f-additive)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = |\mathcal{N}^{(r)}_i| \ \odot \ \sum_{j
         \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j
-        \ \ \ (f-scaled)
+        \ \ \ \text{(f-scaled)}
 
     .. note::
         When :obj:`attention_mode=additive-self-attention` and
