@@ -60,8 +60,10 @@ class RGAT(nn.Module):
 
 
 if __name__ == '__main__':
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = Entities(root='/tmp/AIFB', name='AIFB')
     data = dataset[0]
+    data = data.to(device)
 
     edge_index, edge_type, train_labels, test_labels, train_mask, test_mask, \
         num_nodes = data.edge_index, data.edge_type, \
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 16)
     edge_attr = torch.randn(58086, 2, 3, 7, 16)
 
-    model = RGAT(16, 16, 25)
+    model = RGAT(16, 16, 25).to(device)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
                            amsgrad=False)
 
