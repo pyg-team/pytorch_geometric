@@ -10,15 +10,16 @@ from torch_geometric.datasets import Entities
 
 
 class RGAT(nn.Module):
-    def __init__(self, in_channels, out_channels, nclass=4):
+    def __init__(self, in_channels, hidden_channels, out_channels, nclass=4):
         super().__init__()
 
         self.nclass = nclass
         self.in_channels = in_channels
+        self.hidden_channels = hidden_channels
         self.out_channels = out_channels
 
         self.convs = nn.ModuleList([
-            RGATConv(self.in_channels, 20, num_relations=90, num_bases=35,
+            RGATConv(self.hidden_channels, 20, num_relations=90, num_bases=35,
                      mod="additive", attention_mechanism="within-relation",
                      attention_mode="multiplicative-self-attention", heads=2,
                      d=2),
@@ -33,19 +34,24 @@ class RGAT(nn.Module):
                      dropout=0.6, edge_dim=16, bias=False),
         ])
 
+        self.fc = Linear(self.in_channels, self.hidden_channels, bias=False)
+        
         # The following layer is being used so that the final returned output
         # will consist of "nclass" features for each node
         self.lin = Linear(2 * self.out_channels, self.nclass)
 
     def forward(self, x, edge_index, edge_type, edge_attr):
 
+        hid_x = self.fc(x)
+        
         # "edge_attr" is being put to some use only for the second layer
         # just to check if arbitrary ordering of "edge_attr" among layers
         # of a GNN module can be achieved. Nevertheless, "edge_attr" can
         # be passed to any "RGAT" layer.
         for yt, conv in enumerate(self.convs):
             if yt == 0:
-                hid_x = conv(x, edge_index, edge_type, edge_attr=None)
+                hid_x = conv(hid_x, edge_index, edge_type, edge_attr=None)
+                hid_x = F.relu(hid_x)
             else:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr)
 
@@ -65,7 +71,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 16)
     edge_attr = torch.randn(58086, 2, 3, 7, 16)
 
-    model = RGAT(16, 25)
+    model = RGAT(16, 16, 25)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-3,
                            amsgrad=False)
 
