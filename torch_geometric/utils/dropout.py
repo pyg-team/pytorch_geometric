@@ -1,15 +1,24 @@
+from typing import Optional, Tuple
+
 import torch
-from torch_sparse import coalesce
+from torch import Tensor
 
-from .num_nodes import maybe_num_nodes
+from torch_geometric.typing import OptTensor
 
 
-def filter_adj(row, col, edge_attr, mask):
+def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,
+               mask: Tensor) -> Tuple[Tensor, Tensor, OptTensor]:
     return row[mask], col[mask], None if edge_attr is None else edge_attr[mask]
 
 
-def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
-                num_nodes=None, training=True):
+def dropout_adj(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    p: float = 0.5,
+    force_undirected: bool = False,
+    num_nodes: Optional[int] = None,
+    training: bool = True,
+) -> Tuple[Tensor, OptTensor]:
     r"""Randomly drops edges from the adjacency matrix
     :obj:`(edge_index, edge_attr)` with probability :obj:`p` using samples from
     a Bernoulli distribution.
