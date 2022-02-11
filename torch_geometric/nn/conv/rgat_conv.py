@@ -39,7 +39,7 @@ class RGATConv(MessagePassing):
     (:math:`\mathbf{r}`)
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
-        \mathbf{k}^{(r)}_j) \ \ \ \ (Additive \ attention \ logits)
+        \mathbf{k}^{(r)}_j) \ \ \ \ \text{(Additive \ attention \ logits)}
 
     and
 
