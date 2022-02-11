@@ -99,7 +99,8 @@ class RGATConv(MessagePassing):
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
         \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j + \mathcal{W} \ \odot
-        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j \ \ \ \text{(additive)}
+        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j
+        \ \ \ \text{(additive)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \psi(|\mathcal{N}^{(r)}_i|) \ \odot
