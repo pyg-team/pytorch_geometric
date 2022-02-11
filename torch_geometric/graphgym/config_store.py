@@ -1,6 +1,6 @@
 import inspect
 from dataclasses import dataclass, field, make_dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from hydra.core.config_store import ConfigStore
@@ -21,7 +21,9 @@ MAPPING = {
 def to_dataclass(
     cls: Any,
     base: Optional[Any] = None,
+    map_args: Optional[Dict[str, Tuple]] = None,
     exclude_args: Optional[List[str]] = None,
+    strict: bool = False,
 ) -> Any:
     r"""Converts the input arguments of a given class :obj:`cls` to a
     :obj:`dataclass` schema, *e.g.*,
@@ -45,17 +47,39 @@ def to_dataclass(
         cls (Any): The class to generate a schema for.
         base: (Any, optional): The base class of the schema.
             (default: :obj:`None`)
-        exclude_args (List[str], optional): Arguments to exclude.
+        map_args (Dict[str, Tuple], optional): Arguments for which annotation
+            and default values should be overriden. (default: :obj:`None`)
+        exclude_args (List[str or int], optional): Arguments to exclude.
             (default: :obj:`None`)
+        strict (bool, optional): If set to :obj:`True`, ensures that all
+            arguments in either :obj:`map_args` and :obj:`exclude_args` are
+            present in the input parameters. (default: :obj:`False`)
     """
     fields = []
 
-    for name, arg in inspect.signature(cls.__init__).parameters.items():
+    params = inspect.signature(cls.__init__).parameters
+
+    if strict:  # Check that keys in map_args or exlcude_args are present.
+        args = set() if map_args is None else set(map_args.keys())
+        if exclude_args is not None:
+            args |= set([arg for arg in exclude_args if isinstance(arg, str)])
+        diff = args - set(params.keys())
+        if len(diff) > 0:
+            raise ValueError(f"Expected input argument(s) {diff} in "
+                             f"'{cls.__name__}'")
+
+    for i, (name, arg) in enumerate(params.items()):
         if name in EXCLUDE:
             continue
-        if exclude_args is not None and name in exclude_args:
-            continue
-        if base is not None and name in base.__dataclass_fields__:
+        if exclude_args is not None:
+            if name in exclude_args or i in exclude_args:
+                continue
+        if base is not None:
+            if name in base.__dataclass_fields__:
+                continue
+
+        if map_args is not None and name in map_args:
+            fields.append((name, ) + map_args[name])
             continue
 
         annotation, default = arg.annotation, arg.default
@@ -125,13 +149,17 @@ for cls_name in set(transforms.__all__) - set([
 
 @dataclass  # Register `torch_geometric.datasets` #############################
 class Dataset:
-    transform: Dict[str, Transform] = field(default_factory=dict)
-    pre_transform: Dict[str, Transform] = field(default_factory=dict)
+    pass
 
+
+map_dataset_args = {
+    'transform': (Dict[str, Transform], field(default_factory=dict)),
+    'pre_transform': (Dict[str, Transform], field(default_factory=dict)),
+}
 
 for cls_name in set(datasets.__all__) - set([]):
     cls = to_dataclass(getattr(datasets, cls_name), base=Dataset,
-                       exclude_args=['pre_filter'])
+                       map_args=map_dataset_args, exclude_args=['pre_filter'])
     config_store.store(group='dataset', name=cls_name, node=cls)
 
 
@@ -157,7 +185,7 @@ for cls_name in set([
         'Optimizer',
 ]):
     cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
-                       exclude_args=['params'])
+                       exclude_args=[0])
     config_store.store(group='optimizer', name=cls_name, node=cls)
 
 
@@ -177,7 +205,7 @@ for cls_name in set([
         'ChainedScheduler',
 ]):
     cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
-                       base=LRScheduler, exclude_args=['optimizer'])
+                       base=LRScheduler, exclude_args=[0])
     config_store.store(group='lr_scheduler', name=cls_name, node=cls)
 
 
