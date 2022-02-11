@@ -35,7 +35,7 @@ class RGAT(nn.Module):
         ])
 
         self.fc = Linear(self.in_channels, self.hidden_channels, bias=False)
-        
+
         # The following layer is being used so that the final returned output
         # will consist of "nclass" features for each node
         self.lin = Linear(2 * self.out_channels, self.nclass)
@@ -43,7 +43,7 @@ class RGAT(nn.Module):
     def forward(self, x, edge_index, edge_type, edge_attr):
 
         hid_x = self.fc(x)
-        
+
         # "edge_attr" is being put to some use only for the second layer
         # just to check if arbitrary ordering of "edge_attr" among layers
         # of a GNN module can be achieved. Nevertheless, "edge_attr" can
