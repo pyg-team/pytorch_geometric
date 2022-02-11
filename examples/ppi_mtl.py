@@ -40,11 +40,7 @@ class Net(torch.nn.Module):
             x = norm(x)
             x = F.dropout(x, 0.5, training=self.training)
 
-        return [
-            head(x, edge_index)
-            for head
-            in self.heads
-        ]
+        return [head(x, edge_index) for head in self.heads]
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -61,7 +57,7 @@ def train():
         data = data.to(device)
         optimizer.zero_grad()
         losses = [
-            criterion(out, data.y[:,i].long())
+            criterion(out, data.y[:, i].long())
             for i, out in enumerate(model(data.x, data.edge_index))
         ]
         loss = sum(losses)
