@@ -34,15 +34,15 @@ class RGAT(nn.Module):
                      dropout=0.6, edge_dim=16, bias=False),
         ])
 
-        self.fc = Linear(self.in_channels, self.hidden_channels, bias=False)
+        self.lin1 = Linear(self.in_channels, self.hidden_channels, bias=False)
 
         # The following layer is being used so that the final returned output
         # will consist of "nclass" features for each node
-        self.lin = Linear(2 * self.out_channels, self.nclass)
+        self.lin2 = Linear(2 * self.out_channels, self.nclass)
 
     def forward(self, x, edge_index, edge_type, edge_attr):
 
-        hid_x = self.fc(x)
+        hid_x = self.lin1(x)
 
         # "edge_attr" is being put to some use only for the second layer
         # just to check if arbitrary ordering of "edge_attr" among layers
@@ -55,7 +55,7 @@ class RGAT(nn.Module):
             else:
                 hid_x = conv(hid_x, edge_index, edge_type, edge_attr)
 
-        x = self.lin(hid_x)
+        x = self.lin2(hid_x)
         return F.log_softmax(x, dim=-1)
 
 
