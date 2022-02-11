@@ -17,19 +17,19 @@ val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
-class Net(nn.Module):
+class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.body_convs = nn.ModuleList()
-        self.body_norms = nn.ModuleList()
+        self.body_convs = torch.nn.ModuleList()
+        self.body_norms = torch.nn.ModuleList()
 
-        for layer in range(2):
+        for layer in range(4):
             in_channels = train_dataset.num_features if layer == 0 else 256
             self.body_convs.append(GCNConv(in_channels, 256))
             self.body_norms.append(BatchNorm(256))
 
-        self.heads = nn.ModuleList()
+        self.heads = torch.nn.ModuleList()
         for task in range(train_dataset.num_classes):
             self.heads.append(GCNConv(256, 2))
 
