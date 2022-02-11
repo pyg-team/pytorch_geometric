@@ -35,14 +35,12 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
     if not training or p == 0.0:
         return edge_index, edge_attr
 
-    N = maybe_num_nodes(edge_index, num_nodes)
     row, col = edge_index
 
-    if force_undirected:
-        row, col, edge_attr = filter_adj(row, col, edge_attr, row < col)
+    mask = torch.rand(row.size(0), device=edge_index.device) < p
 
-    mask = edge_index.new_full((row.size(0), ), 1 - p, dtype=torch.float)
-    mask = torch.bernoulli(mask).to(torch.bool)
+    if force_undirected:
+        mask &= row < col
 
     row, col, edge_attr = filter_adj(row, col, edge_attr, mask)
 
@@ -52,7 +50,6 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
              torch.cat([col, row], dim=0)], dim=0)
         if edge_attr is not None:
             edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
     else:
         edge_index = torch.stack([row, col], dim=0)
 
