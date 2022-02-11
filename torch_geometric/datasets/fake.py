@@ -89,17 +89,9 @@ class FakeDataset(InMemoryDataset):
             data.num_nodes = num_nodes
 
         if self.edge_dim > 1:
-            if self.task == 'graph':
-                data.edge_attr = torch.rand(data.num_edges,
-                                            self.edge_dim) + data.y
-            elif self.task == 'node':
-                # no need to consider variance in edge distribution
-                data.edge_attr = torch.rand(data.num_edges, self.edge_dim)
+            data.edge_attr = torch.rand(data.num_edges, self.edge_dim)
         elif self.edge_dim == 1:
-            if self.task == 'graph':
-                data.edge_weight = torch.rand(data.num_edges) + data.y
-            elif self.task == 'node':
-                data.edge_weight = torch.rand(data.num_edges)
+            data.edge_weight = torch.rand(data.num_edges)
 
         return data
 
