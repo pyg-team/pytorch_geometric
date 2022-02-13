@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch_geometric.nn import RGATConv
 from torch.nn import Linear
 from torch.nn.utils import clip_grad_value_
 
 from torch_geometric.datasets import Entities
+from torch_geometric.nn import RGATConv
 
 
 class RGAT(nn.Module):
