@@ -1,5 +1,5 @@
 import torch
-from rgat_conv import RGATConv
+from torch_geometric.nn import RGATConv
 from torch_sparse import SparseTensor
 
 
