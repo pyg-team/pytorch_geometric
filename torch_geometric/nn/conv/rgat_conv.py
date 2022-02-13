@@ -344,6 +344,7 @@ class RGATConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
 
+        # propagate_type: (x: Tensor, edge_type: OptTensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)
 
@@ -390,6 +391,7 @@ class RGATConv(MessagePassing):
         qi = torch.matmul(outi, self.q)
         kj = torch.matmul(outj, self.k)
 
+        alpha_edge, alpha = 0, torch.tensor([0])
         if edge_attr is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)
@@ -447,7 +449,7 @@ class RGATConv(MessagePassing):
 
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
-                ones = alpha.new_ones(index.size())
+                ones = torch.ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
@@ -459,7 +461,7 @@ class RGATConv(MessagePassing):
                     alpha.view(-1, self.heads, 1),
                     degree.view(-1, 1, self.out_channels))
             elif self.attention_mode == "multiplicative-self-attention":
-                ones = alpha.new_ones(index.size())
+                ones = torch.ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
@@ -475,7 +477,7 @@ class RGATConv(MessagePassing):
             alpha = torch.where(alpha > 0, alpha + 1, alpha)
 
         elif self.mod == "f-scaled":
-            ones = alpha.new_ones(index.size())
+            ones = torch.ones(index.size())
             degree = scatter_add(ones, index,
                                  dim_size=size_i)[index].unsqueeze(-1)
             alpha = alpha * degree
@@ -489,7 +491,7 @@ class RGATConv(MessagePassing):
         if self.attention_mode == "additive-self-attention":
             return alpha.view(-1, self.heads, 1) * outj.view(
                 -1, self.heads, self.out_channels)
-        elif self.attention_mode == "multiplicative-self-attention":
+        else:
             return (alpha.view(-1, self.heads, self.d, 1) *
                     outj.view(-1, self.heads, 1, self.out_channels))
 
@@ -504,7 +506,7 @@ class RGATConv(MessagePassing):
                 aggr_out = aggr_out + self.bias
 
             return aggr_out
-        elif self.attention_mode == "multiplicative-self-attention":
+        else:
             if self.concat is True:
                 aggr_out = aggr_out.view(
                     -1, self.heads * self.d * self.out_channels)
