@@ -1,5 +1,6 @@
 from .message_passing import MessagePassing
 from .gcn_conv import GCNConv
+from .rgat_conv import RGATConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
@@ -52,6 +53,7 @@ from .lg_conv import LGConv
 __all__ = [
     'MessagePassing',
     'GCNConv',
+    'RGATConv',
     'ChebConv',
     'SAGEConv',
     'GraphConv',

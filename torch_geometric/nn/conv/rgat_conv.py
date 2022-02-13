@@ -1,16 +1,17 @@
 from typing import Optional
-from torch_geometric.typing import (Adj, Size, OptTensor)
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch_geometric.nn.conv import MessagePassing
-from torch_sparse import SparseTensor, set_diag
+from torch import Tensor
 from torch.nn import Parameter, ReLU
-from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
-from torch_geometric.nn.inits import zeros, ones, glorot
 from torch_scatter import scatter_add
+from torch_sparse import SparseTensor
+
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, ones, zeros
+from torch_geometric.typing import Adj, OptTensor, Size
+from torch_geometric.utils import softmax
 
 
 class RGATConv(MessagePassing):
@@ -38,12 +39,12 @@ class RGATConv(MessagePassing):
     (:math:`\mathbf{r}`)
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
-        \mathbf{k}^{(r)}_j) \ \ \ \ (Additive \ attention \ logits)
+        \mathbf{k}^{(r)}_j) \ \ \ \ \text{(additive attention logits)}
 
     and
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathbf{q}^{(r)}_i \ \cdot
-        \ \mathbf{k}^{(r)}_j \ \ \ \ (Multiplicative \ attention \ logits)
+        \ \mathbf{k}^{(r)}_j \ \ \ \ \text{(multiplicative attention logits)}
 
     If the graph has multi-dimensional edge features
     :math:`\mathbf{e}^{(r)}_{i,j}`, the attention logits
@@ -52,14 +53,14 @@ class RGATConv(MessagePassing):
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
         \mathbf{k}^{(r)}_j + (\mathbf{\Theta}^{(r)}_e\mathbf{e}^{(r)}_{i,j}
-        \ \cdot \ \mathbf{E}^{(r)})) \ \ \ \ (Additive \ attention \ logits)
+        \ \cdot \ \mathbf{E}^{(r)})) \ \ \ \ \text{(additive attention logits)}
 
     and
 
     .. math:: \mathbf{E}^{(r)}_{i,j} = (\mathbf{q}^{(r)}_i \ \cdot
         \ \mathbf{k}^{(r)}_j) \ \cdot \ (\mathbf{\Theta}^{(r)}_e
         \ \mathbf{e}^{(r)}_{i,j} \ \cdot \ \mathbf{E}^{(r)})
-        \ \ \ \ (Multiplicative \ attention \ logits),
+        \ \ \ \ \text{(multiplicative attention logits)},
 
     where the edge kernel (:math:`\mathbf{E}^{(r)}`) when combine with the
     query and key kernels form the final attention kernel
@@ -73,7 +74,7 @@ class RGATConv(MessagePassing):
         \exp\left(\mathbf{E}^{(r)}_{i,j}\right)}
         {\sum_{k \in \mathcal{N}(i)^{(r)}}
         \exp\left(\mathbf{E}^{(r)}_{i,k}\right)}
-        \ \ \ (within-relation \ attention \ mechanism)
+        \ \ \ \text{(within-relation attention mechanism)}
 
     and
 
@@ -84,7 +85,7 @@ class RGATConv(MessagePassing):
         {\sum_{r^{\prime} \in \mathcal{R}}\sum_{k \in
         \mathcal{N}(i)^{(r^{\prime})}}
         \exp\left(\mathbf{E}^{(r^{\prime})}_{i,k}\right)}
-        \ \ \ (across-relation \ attention \ mechanism)
+        \ \ \ \text{(across-relation attention mechanism)}
 
     where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.
     Edge type needs to be a one-dimensional :obj:`torch.long` tensor which
@@ -98,21 +99,22 @@ class RGATConv(MessagePassing):
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
         \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j + \mathcal{W} \ \odot
-        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j \ \ \ (additive)
+        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j
+        \ \ \ \text{(additive)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \psi(|\mathcal{N}^{(r)}_i|) \ \odot
         \ \sum_{j \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j}
-        \mathbf{x}^{(r)}_j \ \ \ (scaled)
+        \mathbf{x}^{(r)}_j \ \ \ \text{(scaled)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
-        (\alpha^{(r)}_{i,j} + 1) \mathbf{x}^{(r)}_j \ \ \ (f-additive)
+        (\alpha^{(r)}_{i,j} + 1) \mathbf{x}^{(r)}_j \ \ \ \text{(f-additive)}
 
     .. math::
         \mathbf{x}^{{\prime}(r)}_i = |\mathcal{N}^{(r)}_i| \ \odot \ \sum_{j
         \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j
-        \ \ \ (f-scaled)
+        \ \ \ \text{(f-scaled)}
 
     .. note::
         When :obj:`attention_mode=additive-self-attention` and
@@ -134,8 +136,7 @@ class RGATConv(MessagePassing):
 
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-        the size from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
         num_bases (int, optional): If set to not :obj:`None`, this layer will
@@ -146,14 +147,14 @@ class RGATConv(MessagePassing):
             use the block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use.
+        aggr (str, optional): The aggregation scheme to use.
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`)
-        mod (string, optional): The cardinality preservation option to use.
+        mod (str, optional): The cardinality preservation option to use.
             (:obj:`"additive"`, :obj:`"scaled"`, :obj:`"f-additive"`,
             :obj:`"f-scaled"`, default: :obj:`None`)
-        attention_mechanism (string): The attention mechanism to use.
+        attention_mechanism (str): The attention mechanism to use.
             (:obj:`"within-relation"`, :obj:`"across-relation"`)
-        attention_mode (string): The mode to calculate attention logits.
+        attention_mode (str): The mode to calculate attention logits.
             (:obj:`"additive-self-attention"`,
             :obj:`"multiplicative-self-attention"`)
         heads (int, optional): Number of multi-head-attentions.
@@ -168,15 +169,8 @@ class RGATConv(MessagePassing):
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`False`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
-        fill_value (float, optional): The way to generate
-            edge features of self-loops (in case :obj:`edge_dim != None`).
-            If given as :obj:`float`, edge features of
-            self-loops will be directly given by :obj:`fill_value`.
-            (default: :obj:`1.`)
         bias (bool, optional): If set to :obj:`False`, the layer will not
             learn an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -186,29 +180,27 @@ class RGATConv(MessagePassing):
     _alpha: OptTensor
 
     def __init__(
-            self,
-            in_channels: int,
-            out_channels: int,
-            num_relations: int,
-            num_bases: Optional[int] = None,
-            num_blocks: Optional[int] = None,
-            aggr: str = 'add',
-            mod: Optional[str] = None,
-            attention_mechanism: str = "within-relation",
-            attention_mode: str = "additive-self-attention",
-            heads: int = 1,
-            d: int = 1,
-            concat: bool = True,
-            negative_slope: float = 0.2,
-            dropout: float = 0.0,
-            add_self_loops: bool = False,
-            edge_dim: Optional[int] = None,
-            fill_value: float = 1.,
-            bias: bool = True,
-            **kwargs,
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_relations: int,
+        num_bases: Optional[int] = None,
+        num_blocks: Optional[int] = None,
+        aggr: str = 'add',
+        mod: Optional[str] = None,
+        attention_mechanism: str = "within-relation",
+        attention_mode: str = "additive-self-attention",
+        heads: int = 1,
+        d: int = 1,
+        concat: bool = True,
+        negative_slope: float = 0.2,
+        dropout: float = 0.0,
+        edge_dim: Optional[int] = None,
+        bias: bool = True,
+        **kwargs,
     ):
 
-        super(RGATConv, self).__init__(aggr=aggr, node_dim=0, **kwargs)
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         self.heads = heads
         self.negative_slope = negative_slope
@@ -219,9 +211,7 @@ class RGATConv(MessagePassing):
         self.attention_mode = attention_mode
         self.attention_mechanism = attention_mechanism
         self.d = d
-        self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
-        self.fill_value = fill_value
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -231,13 +221,13 @@ class RGATConv(MessagePassing):
 
         mod_types = ['additive', 'scaled', 'f-additive', 'f-scaled']
 
-        if self.attention_mechanism != "within-relation" and \
-                self.attention_mechanism != "across-relation":
+        if (self.attention_mechanism != "within-relation"
+                and self.attention_mechanism != "across-relation"):
             raise ValueError('attention mechanism must either be '
                              '"within-relation" or "across-relation"')
 
-        if self.attention_mode != "additive-self-attention" and \
-                self.attention_mode != "multiplicative-self-attention":
+        if (self.attention_mode != "additive-self-attention"
+                and self.attention_mode != "multiplicative-self-attention"):
             raise ValueError('attention mode must either be '
                              '"additive-self-attention" or '
                              '"multiplicative-self-attention"')
@@ -246,13 +236,6 @@ class RGATConv(MessagePassing):
             raise ValueError('"additive-self-attention" mode cannot be '
                              'applied when value of d is greater than 1. '
                              'Use "multiplicative-self-attention" instead.')
-
-        if self.edge_dim is not None and self.edge_dim != 1 and \
-                self.add_self_loops:
-            raise ValueError('"edge_dim" with value greater than 1 is '
-                             'currently not yet supported for '
-                             '"edge_attr" while adding self loops to the '
-                             'input graph')
 
         if self.dropout > 0.0 and self.mod in mod_types:
             raise ValueError('mod must be None with dropout value greater '
@@ -265,59 +248,57 @@ class RGATConv(MessagePassing):
 
         # The learnable parameters to compute both attention logits and
         # attention coefficients:
-        self.q = Parameter(torch.Tensor(self.heads * self.out_channels,
-                                        self.heads * self.d))
-        self.k = Parameter(torch.Tensor(self.heads * self.out_channels,
-                                        self.heads * self.d))
+        self.q = Parameter(
+            torch.Tensor(self.heads * self.out_channels, self.heads * self.d))
+        self.k = Parameter(
+            torch.Tensor(self.heads * self.out_channels, self.heads * self.d))
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(self.heads * self.d *
-                                               self.out_channels))
+            self.bias = Parameter(
+                torch.Tensor(self.heads * self.d * self.out_channels))
         elif bias and not concat:
             self.bias = Parameter(torch.Tensor(self.d * self.out_channels))
         else:
             self.register_parameter('bias', None)
 
         if edge_dim is not None:
-            self.lin_edge = Linear(self.edge_dim, self.heads *
-                                   self.out_channels, bias=False,
+            self.lin_edge = Linear(self.edge_dim,
+                                   self.heads * self.out_channels, bias=False,
                                    weight_initializer='glorot')
-            self.e = Parameter(torch.Tensor(self.heads * self.out_channels,
-                                            self.heads * self.d))
+            self.e = Parameter(
+                torch.Tensor(self.heads * self.out_channels,
+                             self.heads * self.d))
         else:
             self.lin_edge = None
             self.register_parameter('e', None)
 
         if num_bases is not None:
-            self.att = Parameter(torch.Tensor(self.num_relations,
-                                              self.num_bases))
-            self.basis = Parameter(torch.Tensor(self.num_bases,
-                                                self.in_channels,
-                                                self.heads *
-                                                self.out_channels))
+            self.att = Parameter(
+                torch.Tensor(self.num_relations, self.num_bases))
+            self.basis = Parameter(
+                torch.Tensor(self.num_bases, self.in_channels,
+                             self.heads * self.out_channels))
         elif num_blocks is not None:
-            assert (self.in_channels % self.num_blocks == 0
-                    and (self.heads * self.out_channels) %
-                    self.num_blocks == 0), \
-                "both 'in_channels' and 'heads * out_channels' must be " \
-                "multiple of 'num_blocks' used"
+            assert (
+                self.in_channels % self.num_blocks == 0
+                and (self.heads * self.out_channels) % self.num_blocks == 0), (
+                    "both 'in_channels' and 'heads * out_channels' must be "
+                    "multiple of 'num_blocks' used")
             self.weight = Parameter(
                 torch.Tensor(self.num_relations, self.num_blocks,
                              self.in_channels // self.num_blocks,
                              (self.heads * self.out_channels) //
                              self.num_blocks))
         else:
-            self.weight = Parameter(torch.Tensor(self.num_relations,
-                                                 self.in_channels,
-                                                 self.heads *
-                                                 self.out_channels))
+            self.weight = Parameter(
+                torch.Tensor(self.num_relations, self.in_channels,
+                             self.heads * self.out_channels))
 
         self.w = Parameter(torch.ones(self.out_channels))
-        self.l1 = Parameter(torch.FloatTensor(1, self.out_channels))
-        self.b1 = Parameter(torch.FloatTensor(1, self.out_channels))
-        self.l2 = Parameter(torch.FloatTensor(self.out_channels,
-                                              self.out_channels))
-        self.b2 = Parameter(torch.FloatTensor(1, self.out_channels))
+        self.l1 = Parameter(torch.Tensor(1, self.out_channels))
+        self.b1 = Parameter(torch.Tensor(1, self.out_channels))
+        self.l2 = Parameter(torch.Tensor(self.out_channels, self.out_channels))
+        self.b2 = Parameter(torch.Tensor(1, self.out_channels))
 
         self._alpha = None
 
@@ -343,17 +324,19 @@ class RGATConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj, edge_type: OptTensor = None,
                 edge_attr: OptTensor = None, size: Size = None,
                 return_attention_weights=None):
-
         r"""
         Args:
-            x: The input node features. Can be either a :obj:`[num_nodes,
-                in_channels]` node feature matrix, or an optional
-                one-dimensional node index tensor (in which case input features
-                are treated as trainable node embeddings).
+            x (Tensor): The input node features. Can be either a
+                :obj:`[num_nodes, in_channels]` node feature matrix, or an
+                optional one-dimensional node index tensor (in which case
+                input features are treated as trainable node embeddings).
+            edge_index (LongTensor): The edge indices.
             edge_type: The one-dimensional relation type/index for each edge in
                 :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
                 :class:`torch_sparse.tensor.SparseTensor`.
+                (default: :obj:`None`)
+            edge_attr (Tensor, optional): Edge feature matrix.
                 (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
@@ -361,24 +344,7 @@ class RGATConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
 
-        if self.add_self_loops:
-            if isinstance(edge_index, Tensor):
-                num_nodes = x.size(0)
-                num_nodes = min(size) if size is not None else num_nodes
-                edge_index, edge_attr = remove_self_loops(
-                    edge_index, edge_attr)
-                edge_index, edge_attr = add_self_loops(
-                    edge_index, edge_attr, fill_value=self.fill_value,
-                    num_nodes=num_nodes)
-            elif isinstance(edge_index, SparseTensor):
-                if self.edge_dim is None:
-                    edge_index = set_diag(edge_index)
-                else:
-                    raise NotImplementedError(
-                        "The usage of 'edge_attr' and 'add_self_loops' "
-                        "simultaneously is currently not yet supported for "
-                        "'edge_index' in a 'SparseTensor' form")
-
+        # propagate_type: (x: Tensor, edge_type: OptTensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)
 
@@ -400,21 +366,21 @@ class RGATConv(MessagePassing):
 
         if self.num_bases is not None:  # Basis-decomposition =================
             w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
-            w = w.view(self.num_relations, self.in_channels, self.heads *
-                       self.out_channels)
+            w = w.view(self.num_relations, self.in_channels,
+                       self.heads * self.out_channels)
         if self.num_blocks is not None:  # Block-diagonal-decomposition =======
-            if x_i.dtype == torch.long and x_j.dtype == torch.long and \
-                    self.num_blocks is not None:
+            if (x_i.dtype == torch.long and x_j.dtype == torch.long
+                    and self.num_blocks is not None):
                 raise ValueError('Block-diagonal decomposition not supported '
                                  'for non-continuous input features.')
             w = self.weight
-            x_i, x_j = x_i.view(-1, 1, w.size(1), w.size(2)), x_j.\
-                view(-1, 1, w.size(1), w.size(2))
+            x_i = x_i.view(-1, 1, w.size(1), w.size(2))
+            x_j = x_j.view(-1, 1, w.size(1), w.size(2))
             w = torch.index_select(w, 0, edge_type)
-            outi = torch.einsum('abcd,acde->ace', x_i, w).contiguous().\
-                view(-1, self.heads * self.out_channels)
-            outj = torch.einsum('abcd,acde->ace', x_j, w).contiguous().\
-                view(-1, self.heads * self.out_channels)
+            outi = torch.einsum('abcd,acde->ace', x_i, w)
+            outi = outi.contiguous().view(-1, self.heads * self.out_channels)
+            outj = torch.einsum('abcd,acde->ace', x_j, w)
+            outj = outj.contiguous().view(-1, self.heads * self.out_channels)
         else:  # No regularization/Basis-decomposition ========================
             if self.num_bases is None:
                 w = self.weight
@@ -425,14 +391,15 @@ class RGATConv(MessagePassing):
         qi = torch.matmul(outi, self.q)
         kj = torch.matmul(outj, self.k)
 
+        alpha_edge, alpha = 0, torch.tensor([0])
         if edge_attr is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)
-            assert self.lin_edge is not None, "Please set 'edge_dim = " \
-                                              "edge_attr.size(-1)' while " \
-                                              "calling the RGATConv layer"
-            edge_attributes = self.lin_edge(edge_attr).view(-1, self.heads *
-                                                            self.out_channels)
+            assert self.lin_edge is not None, (
+                "Please set 'edge_dim = edge_attr.size(-1)' while calling the "
+                "RGATConv layer")
+            edge_attributes = self.lin_edge(edge_attr).view(
+                -1, self.heads * self.out_channels)
             if edge_attributes.size(0) != edge_attr.size(0):
                 edge_attributes = torch.index_select(edge_attributes, 0,
                                                      edge_type)
@@ -465,52 +432,52 @@ class RGATConv(MessagePassing):
         if self.mod == "additive":
             if self.attention_mode == "additive-self-attention":
                 ones = torch.ones_like(alpha)
-                h = outj.view(-1, self.heads, self.out_channels) * \
-                    ones.view(-1, self.heads, 1)
+                h = (outj.view(-1, self.heads, self.out_channels) *
+                     ones.view(-1, self.heads, 1))
                 h = torch.mul(self.w, h)
 
-                return outj.view(-1, self.heads, self.out_channels) * alpha.\
-                    view(-1, self.heads, 1) + h
+                return (outj.view(-1, self.heads, self.out_channels) *
+                        alpha.view(-1, self.heads, 1) + h)
             elif self.attention_mode == "multiplicative-self-attention":
                 ones = torch.ones_like(alpha)
-                h = outj.view(-1, self.heads, 1, self.out_channels) * \
-                    ones.view(-1, self.heads, self.d, 1)
+                h = (outj.view(-1, self.heads, 1, self.out_channels) *
+                     ones.view(-1, self.heads, self.d, 1))
                 h = torch.mul(self.w, h)
 
-                return outj.view(-1, self.heads, 1,
-                                 self.out_channels) * alpha.\
-                    view(-1, self.heads, self.d, 1) + h
+                return (outj.view(-1, self.heads, 1, self.out_channels) *
+                        alpha.view(-1, self.heads, self.d, 1) + h)
 
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
-                ones = alpha.new_ones(index.size())
+                ones = torch.ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
 
-                return torch.mul(outj.view(-1, self.heads, self.out_channels) *
-                                 alpha.view(-1, self.heads, 1),
-                                 degree.view(-1, 1, self.out_channels))
+                return torch.mul(
+                    outj.view(-1, self.heads, self.out_channels) *
+                    alpha.view(-1, self.heads, 1),
+                    degree.view(-1, 1, self.out_channels))
             elif self.attention_mode == "multiplicative-self-attention":
-                ones = alpha.new_ones(index.size())
+                ones = torch.ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
 
-                return torch.mul(outj.view(-1, self.heads, 1,
-                                           self.out_channels) *
-                                 alpha.view(-1, self.heads, self.d, 1),
-                                 degree.view(-1, 1, 1, self.out_channels))
+                return torch.mul(
+                    outj.view(-1, self.heads, 1, self.out_channels) *
+                    alpha.view(-1, self.heads, self.d, 1),
+                    degree.view(-1, 1, 1, self.out_channels))
 
         elif self.mod == "f-additive":
             alpha = torch.where(alpha > 0, alpha + 1, alpha)
 
         elif self.mod == "f-scaled":
-            ones = alpha.new_ones(index.size())
+            ones = torch.ones(index.size())
             degree = scatter_add(ones, index,
                                  dim_size=size_i)[index].unsqueeze(-1)
             alpha = alpha * degree
@@ -522,13 +489,13 @@ class RGATConv(MessagePassing):
             alpha = alpha  # original
 
         if self.attention_mode == "additive-self-attention":
-            return alpha.view(-1, self.heads, 1) * outj.view(-1, self.heads,
-                                                             self.out_channels)
-        elif self.attention_mode == "multiplicative-self-attention":
+            return alpha.view(-1, self.heads, 1) * outj.view(
+                -1, self.heads, self.out_channels)
+        else:
             return (alpha.view(-1, self.heads, self.d, 1) *
                     outj.view(-1, self.heads, 1, self.out_channels))
 
-    def update(self, aggr_out: Tensor):
+    def update(self, aggr_out: Tensor) -> Tensor:
         if self.attention_mode == "additive-self-attention":
             if self.concat is True:
                 aggr_out = aggr_out.view(-1, self.heads * self.out_channels)
@@ -539,10 +506,10 @@ class RGATConv(MessagePassing):
                 aggr_out = aggr_out + self.bias
 
             return aggr_out
-        elif self.attention_mode == "multiplicative-self-attention":
+        else:
             if self.concat is True:
-                aggr_out = aggr_out.view(-1, self.heads * self.d *
-                                         self.out_channels)
+                aggr_out = aggr_out.view(
+                    -1, self.heads * self.d * self.out_channels)
             else:
                 aggr_out = aggr_out.mean(dim=1)
                 aggr_out = aggr_out.view(-1, self.d * self.out_channels)
@@ -552,7 +519,7 @@ class RGATConv(MessagePassing):
 
             return aggr_out
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
                                              self.out_channels, self.heads)
