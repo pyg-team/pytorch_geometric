@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from rgat_conv import RGATConv
+from torch_geometric.nn import RGATConv
 from torch.nn import Linear
 from torch.nn.utils import clip_grad_value_
 
