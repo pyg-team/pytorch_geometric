@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.nn import RGATConv
 from torch_sparse import SparseTensor
+
+from torch_geometric.nn import RGATConv
 
 
 def test_rgat_conv():
