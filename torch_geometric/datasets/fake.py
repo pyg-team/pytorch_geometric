@@ -36,7 +36,8 @@ class FakeDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes and their shapes *e.g.* :obj:`{'global_features':5}`.
+        **kwargs (optional): Additional attributes and their shapes
+            *e.g.* :obj:`{'global_features':5}`.
     """
     def __init__(
         self,
@@ -131,7 +132,8 @@ class FakeHeteroDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes and their shapes *e.g.* :obj:`{'global_features':5}`.
+        **kwargs (optional): Additional attributes and their shapes
+            *e.g.* :obj:`{'global_features':5}`.
     """
     def __init__(
         self,
