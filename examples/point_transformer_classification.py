@@ -101,6 +101,7 @@ def MLP(channels, batch_norm=True, bias=True):
     ])[0]
 
 
+
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
