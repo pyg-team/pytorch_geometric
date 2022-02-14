@@ -37,7 +37,7 @@ class FakeDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
         **kwargs (optional): Additional attributes and their shapes
-            *e.g.* :obj:`{'global_features':5}`.
+            *e.g.* :obj:`global_features=5`.
     """
     def __init__(
         self,
@@ -133,7 +133,7 @@ class FakeHeteroDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
         **kwargs (optional): Additional attributes and their shapes
-            *e.g.* :obj:`{'global_features':5}`.
+            *e.g.* :obj:`global_features=5`.
     """
     def __init__(
         self,
