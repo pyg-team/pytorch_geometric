@@ -12,6 +12,8 @@ from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.utils import intersection_and_union as i_and_u
 from torch_geometric.nn.unpool import knn_interpolate
+from torch_geometric.nn import global_mean_pool
+
 
 from torch_cluster import knn_graph
 
@@ -38,6 +40,29 @@ class TransitionUp(torch.nn.Module):
 
         return x
 
+class TransitionSummit(torch.nn.Module):
+    def __init__(self, in_channels):
+        super().__init__()
+        self.mlp_sub = Seq(Lin(in_channels, in_channels), ReLU())
+        self.mlp = MLP([2 * in_channels, in_channels])
+
+    def forward(self, x, batch=None):
+        if batch is None:
+            batch = torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
+
+        # compute the mean of features batch_wise
+        x_mean = global_mean_pool(x, batch=batch)
+        x_mean = self.mlp_sub(x_mean)  # (batchs, features)
+
+        # reshape back to (N_points, features)
+        counts = batch.unique(return_counts=True)[1]
+        x_mean = torch.cat(
+            [x_mean[i].repeat(counts[i], 1) for i in range(x_mean.shape[0])],
+            dim=0)
+
+        # transform features
+        x = self.mlp(torch.cat((x, x_mean), 1))
+        return x
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):

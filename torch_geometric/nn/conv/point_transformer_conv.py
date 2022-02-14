@@ -62,13 +62,14 @@ class PointTransformerConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, pos_nn: Optional[Callable] = None,
                  attn_nn: Optional[Callable] = None,
-                 add_self_loops: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'mean')
+                 add_self_loops: bool = True, share_planes: int = 8, **kwargs):
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.add_self_loops = add_self_loops
+        self.share_planes = share_planes
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -78,9 +79,9 @@ class PointTransformerConv(MessagePassing):
             self.pos_nn = Linear(3, out_channels)
 
         self.attn_nn = attn_nn
-        self.lin = Linear(in_channels[0], out_channels, bias=False)
-        self.lin_src = Linear(in_channels[0], out_channels, bias=False)
-        self.lin_dst = Linear(in_channels[1], out_channels, bias=False)
+        self.lin = Linear(in_channels[0], out_channels)
+        self.lin_src = Linear(in_channels[0], out_channels)
+        self.lin_dst = Linear(in_channels[1], out_channels)
 
         self.reset_parameters()
 
@@ -125,12 +126,14 @@ class PointTransformerConv(MessagePassing):
                 alpha_i: Tensor, alpha_j: Tensor, index: Tensor,
                 ptr: OptTensor, size_i: Optional[int]) -> Tensor:
 
-        delta = self.pos_nn(pos_i - pos_j)
-        alpha = alpha_i - alpha_j + delta
+        delta = self.pos_nn(pos_j - pos_i)
+        alpha = alpha_j - alpha_i + delta
         if self.attn_nn is not None:
             alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index, ptr, size_i)
-        return alpha * (x_j + delta)
+        return (alpha.unsqueeze(1) * (x_j + delta).view(
+            -1, self.share_planes, x_j.shape[1] // self.share_planes)).view(
+                -1, x_j.shape[1])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
