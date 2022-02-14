@@ -36,20 +36,14 @@ class FakeDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
+        **kwargs (optional): Additional attributes and their shapes.
     """
-    def __init__(
-        self,
-        num_graphs: int = 1,
-        avg_num_nodes: int = 1000,
-        avg_degree: int = 10,
-        num_channels: int = 64,
-        edge_dim: int = 0,
-        num_classes: int = 10,
-        task: str = "auto",
-        is_undirected: bool = True,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, num_graphs: int = 1, avg_num_nodes: int = 1000,
+                 avg_degree: int = 10, num_channels: int = 64,
+                 edge_dim: int = 0, num_classes: int = 10, task: str = "auto",
+                 is_undirected: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None, **kwargs):
         super().__init__('.', transform)
 
         if task == 'auto':
@@ -64,10 +58,12 @@ class FakeDataset(InMemoryDataset):
         self.task = task
         self.is_undirected = is_undirected
 
-        data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
+        data_list = [
+            self.generate_data(**kwargs) for _ in range(max(num_graphs, 1))
+        ]
         self.data, self.slices = self.collate(data_list)
 
-    def generate_data(self) -> Data:
+    def generate_data(self, **kwargs) -> Data:
         num_nodes = get_num_nodes(self.avg_num_nodes, self.avg_degree)
 
         data = Data()
@@ -92,6 +88,9 @@ class FakeDataset(InMemoryDataset):
             data.edge_attr = torch.rand(data.num_edges, self.edge_dim)
         elif self.edge_dim == 1:
             data.edge_weight = torch.rand(data.num_edges)
+
+        for feature_name, feature_shape in kwargs.items():
+            setattr(data, feature_name, torch.randn(feature_shape))
 
         return data
 
