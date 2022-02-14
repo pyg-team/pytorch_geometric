@@ -36,14 +36,22 @@ class FakeDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes and their shapes.
+        **kwargs (optional): Additional attributes and their shapes *e.g.* :obj:`{'global_features':5}`.
     """
-    def __init__(self, num_graphs: int = 1, avg_num_nodes: int = 1000,
-                 avg_degree: int = 10, num_channels: int = 64,
-                 edge_dim: int = 0, num_classes: int = 10, task: str = "auto",
-                 is_undirected: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None, **kwargs):
+    def __init__(
+        self,
+        num_graphs: int = 1,
+        avg_num_nodes: int = 1000,
+        avg_degree: int = 10,
+        num_channels: int = 64,
+        edge_dim: int = 0,
+        num_classes: int = 10,
+        task: str = "auto",
+        is_undirected: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        **kwargs,
+    ):
         super().__init__('.', transform)
 
         if task == 'auto':
@@ -57,13 +65,12 @@ class FakeDataset(InMemoryDataset):
         self._num_classes = num_classes
         self.task = task
         self.is_undirected = is_undirected
+        self.kwargs = kwargs
 
-        data_list = [
-            self.generate_data(**kwargs) for _ in range(max(num_graphs, 1))
-        ]
+        data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
         self.data, self.slices = self.collate(data_list)
 
-    def generate_data(self, **kwargs) -> Data:
+    def generate_data(self) -> Data:
         num_nodes = get_num_nodes(self.avg_num_nodes, self.avg_degree)
 
         data = Data()
@@ -89,7 +96,7 @@ class FakeDataset(InMemoryDataset):
         elif self.edge_dim == 1:
             data.edge_weight = torch.rand(data.num_edges)
 
-        for feature_name, feature_shape in kwargs.items():
+        for feature_name, feature_shape in self.kwargs.items():
             setattr(data, feature_name, torch.randn(feature_shape))
 
         return data
@@ -124,14 +131,23 @@ class FakeHeteroDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes and their shapes.
+        **kwargs (optional): Additional attributes and their shapes *e.g.* :obj:`{'global_features':5}`.
     """
-    def __init__(self, num_graphs: int = 1, num_node_types: int = 3,
-                 num_edge_types: int = 6, avg_num_nodes: int = 1000,
-                 avg_degree: int = 10, avg_num_channels: int = 64,
-                 edge_dim: int = 0, num_classes: int = 10, task: str = "auto",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None, **kwargs):
+    def __init__(
+        self,
+        num_graphs: int = 1,
+        num_node_types: int = 3,
+        num_edge_types: int = 6,
+        avg_num_nodes: int = 1000,
+        avg_degree: int = 10,
+        avg_num_channels: int = 64,
+        edge_dim: int = 0,
+        num_classes: int = 10,
+        task: str = "auto",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        **kwargs,
+    ):
         super().__init__('.', transform)
 
         if task == 'auto':
@@ -161,13 +177,12 @@ class FakeHeteroDataset(InMemoryDataset):
         self.edge_dim = edge_dim
         self._num_classes = num_classes
         self.task = task
+        self.kwargs = kwargs
 
-        data_list = [
-            self.generate_data(**kwargs) for _ in range(max(num_graphs, 1))
-        ]
+        data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
         self.data, self.slices = self.collate(data_list)
 
-    def generate_data(self, **kwargs) -> HeteroData:
+    def generate_data(self) -> HeteroData:
         data = HeteroData()
 
         iterator = zip(self.node_types, self.num_channels)
@@ -205,7 +220,7 @@ class FakeHeteroDataset(InMemoryDataset):
         if self._num_classes > 0 and self.task == 'graph':
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
 
-        for feature_name, feature_shape in kwargs.items():
+        for feature_name, feature_shape in self.kwargs.items():
             setattr(data, feature_name, torch.randn(feature_shape))
 
         return data
