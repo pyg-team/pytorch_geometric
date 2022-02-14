@@ -83,6 +83,16 @@ class TransformerConv(MessagePassing):
             option  :attr:`beta` is set to :obj:`False`. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|`),
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:**
+          node features :math:`(|\mathcal{V}|, H * F_{out})` where H is the number
+          of heads. If :obj:`return_attention_weights=True`, then
+          :math:`((|\mathcal{V}|, H * F_{out}), ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
     """
     _alpha: OptTensor
 
