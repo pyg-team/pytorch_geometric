@@ -40,6 +40,7 @@ class TransitionUp(torch.nn.Module):
 
         return x
 
+
 class TransitionSummit(torch.nn.Module):
     def __init__(self, in_channels):
         super().__init__()
@@ -63,6 +64,7 @@ class TransitionSummit(torch.nn.Module):
         # transform features
         x = self.mlp(torch.cat((x, x_mean), 1))
         return x
+
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):

@@ -15,6 +15,7 @@ from torch_geometric.datasets import S3DIS
 from torch_geometric.loader import DataLoader
 from torch_geometric.utils import intersection_and_union as i_and_u
 
+
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
@@ -50,7 +51,6 @@ class Net(torch.nn.Module):
                     ]))
 
         # summit layers
-        #self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
         self.mlp_summit = TransitionSummit(dim_model[-1])
 
         self.transformer_summit = Seq(*[
@@ -163,7 +163,7 @@ def test(loader):
     model.eval()
 
     preds = [
-    ]  #to compute IoU on the full dataset instead of a per-batch basis
+    ]  # to compute IoU on the full dataset instead of a per-batch basis
     labels = []  # we will stack the predictions and labels
     for i, data in enumerate(loader):
         data = data.to(device)
@@ -179,12 +179,12 @@ def test(loader):
     # matrix too large to fit all at once so we do it in two times
 
     i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000],
-                           13)  #, data.batch)
+                           13)
     i += i_sub
     u += u_sub
 
     i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:],
-                           13)  #, data.batch)
+                           13)
     i += i_sub
     u += u_sub
 
@@ -203,7 +203,7 @@ if __name__ == '__main__':
         T.RandomRotate(15, axis=1),
         T.RandomRotate(15, axis=2),
     ])
-    pre_transform = None  #T.Compose([])#T.NormalizeScale()
+    pre_transform = T.NormalizeScale()
     train_dataset = S3DIS(path, test_area=5, train=True, transform=transform,
                           pre_transform=pre_transform)
     test_dataset = S3DIS(path, test_area=5, train=False,
@@ -217,8 +217,6 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
                                                 gamma=0.1)
-    #ptimizer = torch.optim.SGD(model.parameters(), lr=0.5, momentum=0.9, weight_decay=0.0001)
-    #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60,80], gamma=0.1)
 
     loss_history = []
     test_iou_history = []

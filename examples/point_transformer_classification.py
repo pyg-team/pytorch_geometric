@@ -78,7 +78,7 @@ class TransitionDown(torch.nn.Module):
         relative_pos = pos[id_k_neighbor[1]] - pos[id_clusters][
             id_k_neighbor[0]]
 
-        #get neighbors features and add relative positions as features
+        # get neighbors features and add relative positions as features
         x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
 
         # transformation of features through a simple MLP
@@ -99,7 +99,6 @@ def MLP(channels, batch_norm=True, bias=True):
             BN(channels[i]) if batch_norm else Identity(), ReLU())
         for i in range(1, len(channels))
     ])[0]
-
 
 
 class Net(torch.nn.Module):
