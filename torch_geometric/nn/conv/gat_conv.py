@@ -159,8 +159,15 @@ class GATConv(MessagePassing):
             self.register_parameter('bias', None)
 
         self._alpha = None
+        self._edge_index = None
 
         self.reset_parameters()
+
+    @property
+    def get_attention_weights(self):
+        if isinstance(self._edge_index, SparseTensor):
+            return self._edge_index.set_value(self._alpha, layout='coo')
+        return self._edge_index, self._alpha
 
     def reset_parameters(self):
         self.lin_src.reset_parameters()
@@ -242,9 +249,7 @@ class GATConv(MessagePassing):
         out = self.propagate(edge_index, x=x, alpha=alpha, edge_attr=edge_attr,
                              size=size)
 
-        alpha = self._alpha
-        assert alpha is not None
-        self._alpha = None
+        self._edge_index = edge_index
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -254,13 +259,7 @@ class GATConv(MessagePassing):
         if self.bias is not None:
             out += self.bias
 
-        if isinstance(return_attention_weights, bool):
-            if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
-            elif isinstance(edge_index, SparseTensor):
-                return out, edge_index.set_value(alpha, layout='coo')
-        else:
-            return out
+        return out
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
                 edge_attr: OptTensor, index: Tensor, ptr: OptTensor,
