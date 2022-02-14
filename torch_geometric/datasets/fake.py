@@ -124,21 +124,14 @@ class FakeHeteroDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
+        **kwargs (optional): Additional attributes and their shapes.
     """
-    def __init__(
-        self,
-        num_graphs: int = 1,
-        num_node_types: int = 3,
-        num_edge_types: int = 6,
-        avg_num_nodes: int = 1000,
-        avg_degree: int = 10,
-        avg_num_channels: int = 64,
-        edge_dim: int = 0,
-        num_classes: int = 10,
-        task: str = "auto",
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-    ):
+    def __init__(self, num_graphs: int = 1, num_node_types: int = 3,
+                 num_edge_types: int = 6, avg_num_nodes: int = 1000,
+                 avg_degree: int = 10, avg_num_channels: int = 64,
+                 edge_dim: int = 0, num_classes: int = 10, task: str = "auto",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None, **kwargs):
         super().__init__('.', transform)
 
         if task == 'auto':
@@ -169,10 +162,12 @@ class FakeHeteroDataset(InMemoryDataset):
         self._num_classes = num_classes
         self.task = task
 
-        data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
+        data_list = [
+            self.generate_data(**kwargs) for _ in range(max(num_graphs, 1))
+        ]
         self.data, self.slices = self.collate(data_list)
 
-    def generate_data(self) -> HeteroData:
+    def generate_data(self, **kwargs) -> HeteroData:
         data = HeteroData()
 
         iterator = zip(self.node_types, self.num_channels)
@@ -209,6 +204,9 @@ class FakeHeteroDataset(InMemoryDataset):
 
         if self._num_classes > 0 and self.task == 'graph':
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])
+
+        for feature_name, feature_shape in kwargs.items():
+            setattr(data, feature_name, torch.randn(feature_shape))
 
         return data
 
