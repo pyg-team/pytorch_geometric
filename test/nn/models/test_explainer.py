@@ -33,9 +33,9 @@ methods = [
 
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('model', [GCN, GAT])
-@pytest.mark.parametrize('node_idx', [None, 1])
-def test_to_captum(model, mask_type, node_idx):
-    captum_model = to_captum(model, mask_type=mask_type, node_idx=node_idx)
+@pytest.mark.parametrize('output_idx', [None, 1])
+def test_to_captum(model, mask_type, output_idx):
+    captum_model = to_captum(model, mask_type=mask_type, output_idx=output_idx)
     pre_out = model(x, edge_index)
     if mask_type == 'node':
         mask = x * 0.0
@@ -51,9 +51,9 @@ def test_to_captum(model, mask_type, node_idx):
         out = captum_model(node_mask.unsqueeze(0), edge_mask.unsqueeze(0),
                            edge_index)
 
-    if node_idx is not None:
+    if output_idx is not None:
         assert out.shape == (1, 7)
-        assert torch.any(out != pre_out[[node_idx]])
+        assert torch.any(out != pre_out[[output_idx]])
     else:
         assert out.shape == (8, 7)
         assert torch.any(out != pre_out)
