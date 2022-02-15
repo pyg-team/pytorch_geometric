@@ -33,13 +33,13 @@ def clear_masks(model: torch.nn.Module):
 
 class CaptumModel(torch.nn.Module):
     def __init__(self, model: torch.nn.Module, mask_type: str = "edge",
-                 node_idx: Optional[int] = None):
+                 output_idx: Optional[int] = None):
         super().__init__()
         assert mask_type in ['edge', 'node', 'node_and_edge']
 
         self.mask_type = mask_type
         self.model = model
-        self.node_idx = node_idx
+        self.output_idx = output_idx
 
     def forward(self, mask, *args):
         """"""
@@ -77,14 +77,14 @@ class CaptumModel(torch.nn.Module):
         if self.mask_type in ['edge', 'node_and_edge']:
             clear_masks(self.model)
 
-        if self.node_idx is not None:
-            x = x[self.node_idx].unsqueeze(0)
+        if self.output_idx is not None:
+            x = x[self.output_idx].unsqueeze(0)
 
         return x
 
 
 def to_captum(model: torch.nn.Module, mask_type: str = "edge",
-              node_idx: Optional[int] = None) -> torch.nn.Module:
+              output_idx: Optional[int] = None) -> torch.nn.Module:
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
 
@@ -97,13 +97,15 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
         ...  # Train the model.
 
         # Explain predictions for node `10`:
-        node_idx = 10
+        output_idx = 10
 
-        captum_model = to_captum(model, mask_type="edge", node_idx=node_idx)
+        captum_model = to_captum(model, mask_type="edge",
+                                 output_idx=output_idx)
         edge_mask = torch.ones(num_edges, requires_grad=True, device=device)
 
         ig = IntegratedGradients(captum_model)
-        ig_attr = ig.attribute(edge_mask.unsqueeze(0), target=int(y[node_idx]),
+        ig_attr = ig.attribute(edge_mask.unsqueeze(0),
+                               target=int(y[output_idx]),
                                additional_forward_args=(x, edge_index),
                                internal_batch_size=1)
 
@@ -136,9 +138,9 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
             For all mask types, additional arguments can be passed to the
             forward function as long as the first arguments are set as
             described. (default: :obj:`"edge"`)
-        node_idx (int, optional): Index of the node to be explained. With
-            :obj:`node_idx` set, the forward function will return the output of
-            the model for the node at the index specified.
-            (default: :obj:`None`)
+        output_idx (int, optional): Index of the output element (node or link
+            index) to be explained. With :obj:`output_idx` set, the forward
+            function will return the output of the model for the element at
+            the index specified. (default: :obj:`None`)
     """
-    return CaptumModel(model, mask_type, node_idx)
+    return CaptumModel(model, mask_type, output_idx)
