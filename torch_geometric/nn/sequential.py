@@ -34,8 +34,8 @@ def Sequential(
             Linear(64, out_channels),
         ])
 
-    where ``'x, edge_index'`` defines the input arguments of :obj:`model`,
-    and ``'x, edge_index -> x'`` defines the function header, *i.e.* input
+    where :obj:`'x, edge_index'` defines the input arguments of :obj:`model`,
+    and :obj:`'x, edge_index -> x'` defines the function header, *i.e.* input
     arguments *and* return types, of :class:`~torch_geometric.nn.conv.GCNConv`.
 
     In particular, this also allows to create more sophisticated models,
@@ -62,28 +62,35 @@ def Sequential(
     Args:
         input_args (str): The input arguments of the model.
         modules ([(str, Callable) or Callable]): A list of modules (with
-            optional function header definitions).
+            optional function header definitions). Alternatively, an
+            :obj:`OrderedDict` of modules (and function header definitions) can
+            be passed.
     """
 
     input_args = [x.strip() for x in input_args.split(',')]
 
+    if not isinstance(modules, dict):
+        modules = {f'module_{i}': module for i, module in enumerate(modules)}
+
     # We require the first entry of the input list to define arguments:
-    assert len(modules) > 0 and isinstance(modules[0], (tuple, list))
+    assert len(modules) > 0
+    first_module = list(modules.values())[0]
+    assert isinstance(first_module, (tuple, list))
 
     # A list holding the callable function and the input and output names:
-    calls: List[Tuple[Callable, List[str], List[str]]] = []
+    calls: List[Tuple[str, Callable, List[str], List[str]]] = []
 
-    for module in modules:
+    for name, module in modules.items():
         if isinstance(module, (tuple, list)) and len(module) >= 2:
             module, desc = module[:2]
             in_desc, out_desc = parse_desc(desc)
         elif isinstance(module, (tuple, list)):
             module = module[0]
-            in_desc = out_desc = calls[-1][2]
+            in_desc = out_desc = calls[-1][-1]
         else:
-            in_desc = out_desc = calls[-1][2]
+            in_desc = out_desc = calls[-1][-1]
 
-        calls.append((module, in_desc, out_desc))
+        calls.append((name, module, in_desc, out_desc))
 
     root = os.path.dirname(osp.realpath(__file__))
     with open(osp.join(root, 'sequential.jinja'), 'r') as f:
@@ -98,8 +105,9 @@ def Sequential(
 
     # Instantiate a class from the rendered module representation.
     module = class_from_module_repr(cls_name, module_repr)()
-    for i, (submodule, _, _) in enumerate(calls):
-        setattr(module, f'module_{i}', submodule)
+    module._names = list(modules.keys())
+    for name, submodule, _, _ in calls:
+        setattr(module, name, submodule)
     return module
 
 

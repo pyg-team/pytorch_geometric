@@ -41,15 +41,15 @@ for epoch in range(1, 201):
     loss.backward()
     optimizer.step()
 
-node_idx = 10
-target = int(data.y[node_idx])
+output_idx = 10
+target = int(data.y[output_idx])
 
 # Edge explainability
 # ===================
 
 # Captum assumes that for all given input tensors, dimension 0 is
 # equal to the number of samples. Therefore, we use unsqueeze(0).
-captum_model = to_captum(model, mask_type='edge', node_idx=node_idx)
+captum_model = to_captum(model, mask_type='edge', output_idx=output_idx)
 edge_mask = torch.ones(data.num_edges, requires_grad=True, device=device)
 
 ig = IntegratedGradients(captum_model)
@@ -63,13 +63,13 @@ ig_attr_edge /= ig_attr_edge.max()
 
 # Visualize absolute values of attributions with GNNExplainer visualizer
 explainer = GNNExplainer(model)  # TODO: Change to general Explainer visualizer
-ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge)
+ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge)
 plt.show()
 
 # Node explainability
 # ===================
 
-captum_model = to_captum(model, mask_type='node', node_idx=node_idx)
+captum_model = to_captum(model, mask_type='node', output_idx=output_idx)
 
 ig = IntegratedGradients(captum_model)
 ig_attr_node = ig.attribute(data.x.unsqueeze(0), target=target,
@@ -81,14 +81,15 @@ ig_attr_node = ig_attr_node.squeeze(0).abs().sum(dim=1)
 ig_attr_node /= ig_attr_node.max()
 
 # Visualize absolute values of attributions with GNNExplainer visualizer
-ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge,
+ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()
 
 # Node and edge explainability
 # ============================
 
-captum_model = to_captum(model, mask_type='node_and_edge', node_idx=node_idx)
+captum_model = to_captum(model, mask_type='node_and_edge',
+                         output_idx=output_idx)
 
 ig = IntegratedGradients(captum_model)
 ig_attr_node, ig_attr_edge = ig.attribute(
@@ -101,6 +102,6 @@ ig_attr_node /= ig_attr_node.max()
 ig_attr_edge = ig_attr_edge.squeeze(0).abs()
 ig_attr_edge /= ig_attr_edge.max()
 
-ax, G = explainer.visualize_subgraph(node_idx, data.edge_index, ig_attr_edge,
+ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()
