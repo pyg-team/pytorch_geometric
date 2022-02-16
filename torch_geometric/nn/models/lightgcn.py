@@ -78,6 +78,8 @@ class LightGCN(torch.nn.Module):
         self.register_buffer('alpha', alpha)
 
         self.embedding = Embedding(num_nodes, embedding_dim)
+        torch.nn.init.xavier_uniform_(self.embedding.weight)
+        
         self.convs = ModuleList([LGConv(**kwargs) for _ in range(num_layers)])
 
         self.reset_parameters()
