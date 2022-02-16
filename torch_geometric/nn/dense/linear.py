@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Optional
+from typing import Any, Optional
 
 import torch
 import torch.nn.functional as F
@@ -8,6 +8,12 @@ from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
+
+
+def is_uninitialized_parameter(x: Any) -> bool:
+    if not hasattr(nn.parameter, 'UninitializedParameter'):
+        return False
+    return isinstance(x, nn.parameter.UninitializedParameter)
 
 
 class Linear(torch.nn.Module):
@@ -113,7 +119,7 @@ class Linear(torch.nn.Module):
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
-        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+        if is_uninitialized_parameter(self.weight):
             self.in_channels = input[0].size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             self.reset_parameters()
@@ -121,7 +127,7 @@ class Linear(torch.nn.Module):
         delattr(self, '_hook')
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
-        if isinstance(self.weight, nn.parameter.UninitializedParameter):
+        if is_uninitialized_parameter(self.weight):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
@@ -132,14 +138,14 @@ class Linear(torch.nn.Module):
                         missing_keys, unexpected_keys, error_msgs):
 
         weight = state_dict[prefix + 'weight']
-        if isinstance(weight, nn.parameter.UninitializedParameter):
+        if is_uninitialized_parameter(weight):
             self.in_channels = -1
             self.weight = nn.parameter.UninitializedParameter()
             if not hasattr(self, '_hook'):
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
 
-        elif isinstance(self.weight, nn.parameter.UninitializedParameter):
+        elif is_uninitialized_parameter(self.weight):
             self.in_channels = weight.size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             if hasattr(self, '_hook'):
