@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.nn import GCNConv, DenseGCNConv
+
+from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 def test_dense_gcn_conv():
@@ -9,7 +10,7 @@ def test_dense_gcn_conv():
     assert dense_conv.__repr__() == 'DenseGCNConv(16, 16)'
 
     # Ensure same weights and bias.
-    dense_conv.weight = sparse_conv.weight
+    dense_conv.lin.weight = sparse_conv.lin.weight
     dense_conv.bias = sparse_conv.bias
 
     x = torch.randn((5, channels))

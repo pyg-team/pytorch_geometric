@@ -1,7 +1,7 @@
-import sys
-import random
 import os.path as osp
+import random
 import shutil
+import sys
 
 from torch_geometric.datasets import TUDataset
 

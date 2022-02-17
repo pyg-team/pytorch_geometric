@@ -1,0 +1,30 @@
+from typing import *
+from torch_geometric.typing import *
+
+import torch
+from torch import Tensor
+from torch_sparse import SparseTensor
+
+
+class {{cls_name}}(torch.nn.Module):
+    def reset_parameters(self):
+        for name in self._names:
+            module = getattr(self, name)
+            if hasattr(module, 'reset_parameters'):
+                module.reset_parameters()
+
+    def forward(self, {{ input_args|join(', ') }}):
+        """"""{% for name, module, in_desc, out_desc in calls %}
+        {% for output in out_desc %}{{output}}{{ ", " if not loop.last }}{% endfor %} = self.{{name}}({% for input in in_desc %}{{input}}{{ ", " if not loop.last }}{% endfor %}){% endfor %}
+        return {% for output in calls[-1][-1] %}{{output}}{{ ", " if not loop.last }}{% endfor %}
+
+    def __getitem__(self, idx: int) -> torch.nn.Module:
+        return getattr(self, self._names[idx])
+
+    def __len__(self) -> int:
+        return {{calls|length}}
+
+    def __repr__(self) -> str:
+        return 'Sequential(\n{}\n)'.format('\n'.join(
+            [f'  ({idx}): ' + str(self[idx]) for idx in range(len(self))]))
+

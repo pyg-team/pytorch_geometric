@@ -1,30 +1,21 @@
 import os
 import os.path as osp
-from math import sqrt, pi as PI
+from math import pi as PI
+from math import sqrt
+from typing import Callable
 
 import numpy as np
 import torch
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-from torch_geometric.nn import radius_graph
-from torch_geometric.data import download_url
+
+from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.nn import radius_graph
 
 from ..acts import swish
 from ..inits import glorot_orthogonal
-from .dimenet_utils import bessel_basis, real_sph_harm
-
-try:
-    import sympy as sym
-except ImportError:
-    sym = None
-
-try:
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    import tensorflow as tf
-except ImportError:
-    tf = None
 
 qm9_target_dict = {
     0: 'mu',
@@ -43,7 +34,7 @@ qm9_target_dict = {
 
 class Envelope(torch.nn.Module):
     def __init__(self, exponent):
-        super(Envelope, self).__init__()
+        super().__init__()
         self.p = exponent + 1
         self.a = -(self.p + 1) * (self.p + 2) / 2
         self.b = self.p * (self.p + 2)
@@ -59,7 +50,7 @@ class Envelope(torch.nn.Module):
 
 class BesselBasisLayer(torch.nn.Module):
     def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5):
-        super(BesselBasisLayer, self).__init__()
+        super().__init__()
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
 
@@ -78,7 +69,12 @@ class BesselBasisLayer(torch.nn.Module):
 class SphericalBasisLayer(torch.nn.Module):
     def __init__(self, num_spherical, num_radial, cutoff=5.0,
                  envelope_exponent=5):
-        super(SphericalBasisLayer, self).__init__()
+        super().__init__()
+        import sympy as sym
+
+        from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
+                                                             real_sph_harm)
+
         assert num_radial <= 64
         self.num_spherical = num_spherical
         self.num_radial = num_radial
@@ -117,7 +113,7 @@ class SphericalBasisLayer(torch.nn.Module):
 
 class EmbeddingBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, act=swish):
-        super(EmbeddingBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.emb = Embedding(95, hidden_channels)
@@ -139,7 +135,7 @@ class EmbeddingBlock(torch.nn.Module):
 
 class ResidualLayer(torch.nn.Module):
     def __init__(self, hidden_channels, act=swish):
-        super(ResidualLayer, self).__init__()
+        super().__init__()
         self.act = act
         self.lin1 = Linear(hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, hidden_channels)
@@ -159,7 +155,7 @@ class ResidualLayer(torch.nn.Module):
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels, num_bilinear, num_spherical,
                  num_radial, num_before_skip, num_after_skip, act=swish):
-        super(InteractionBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
@@ -221,7 +217,7 @@ class InteractionBlock(torch.nn.Module):
 class OutputBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
                  act=swish):
-        super(OutputBlock, self).__init__()
+        super().__init__()
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
@@ -258,7 +254,7 @@ class DimeNet(torch.nn.Module):
 
         For an example of using a pretrained DimeNet variant, see
         `examples/qm9_pretrained_dimenet.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         qm9_pretrained_dimenet.py>`_.
 
     Args:
@@ -270,6 +266,9 @@ class DimeNet(torch.nn.Module):
         num_radial (int): Number of radial basis functions.
         cutoff: (float, optional): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance.
+            (default: :obj:`32`)
         envelope_exponent (int, optional): Shape of the smooth cutoff.
             (default: :obj:`5`)
         num_before_skip: (int, optional): Number of residual layers in the
@@ -278,24 +277,23 @@ class DimeNet(torch.nn.Module):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers: (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (function, optional): The activation funtion.
+        act: (Callable, optional): The activation funtion.
             (default: :obj:`swish`)
     """
 
     url = ('https://github.com/klicperajo/dimenet/raw/master/pretrained/'
            'dimenet')
 
-    def __init__(self, hidden_channels, out_channels, num_blocks, num_bilinear,
-                 num_spherical, num_radial, cutoff=5.0, envelope_exponent=5,
-                 num_before_skip=1, num_after_skip=2, num_output_layers=3,
-                 act=swish):
-        super(DimeNet, self).__init__()
+    def __init__(self, hidden_channels: int, out_channels: int,
+                 num_blocks: int, num_bilinear: int, num_spherical: int,
+                 num_radial, cutoff: float = 5.0, max_num_neighbors: int = 32,
+                 envelope_exponent: int = 5, num_before_skip: int = 1,
+                 num_after_skip: int = 2, num_output_layers: int = 3,
+                 act: Callable = swish):
+        super().__init__()
 
         self.cutoff = cutoff
-
-        if sym is None:
-            raise ImportError('Package `sympy` could not be found.')
-
+        self.max_num_neighbors = max_num_neighbors
         self.num_blocks = num_blocks
 
         self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
@@ -326,10 +324,9 @@ class DimeNet(torch.nn.Module):
             interaction.reset_parameters()
 
     @staticmethod
-    def from_qm9_pretrained(root, dataset, target):
-        if tf is None:
-            raise ImportError(
-                '`DimeNet.from_qm9_pretrained` requires `tensorflow`.')
+    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
@@ -434,7 +431,8 @@ class DimeNet(torch.nn.Module):
 
     def forward(self, z, pos, batch=None):
         """"""
-        edge_index = radius_graph(pos, r=self.cutoff, batch=batch)
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
 
         i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
             edge_index, num_nodes=z.size(0))

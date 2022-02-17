@@ -1,13 +1,11 @@
-from torch_geometric.typing import Adj, Size, OptTensor
-
-import torch
 from torch import Tensor
-from torch.nn import Parameter
-from torch_sparse import SparseTensor, matmul, set_diag, sum
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, degree
+from torch_sparse import SparseTensor, matmul, set_diag
+from torch_sparse import sum as sparsesum
 
-from ..inits import glorot, zeros
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import add_self_loops, degree, remove_self_loops
 
 
 class ClusterGCNConv(MessagePassing):
@@ -24,7 +22,8 @@ class ClusterGCNConv(MessagePassing):
     + \mathbf{I})`.
 
     Args:
-        in_channels (int or tuple): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         diag_lambda: (float, optional): Diagonal enhancement value
             :math:`\lambda`. (default: :obj:`0.`)
@@ -34,38 +33,40 @@ class ClusterGCNConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  diag_lambda: float = 0., add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ClusterGCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.diag_lambda = diag_lambda
         self.add_self_loops = add_self_loops
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-        self.root_weight = Parameter(torch.Tensor(in_channels, out_channels))
-
-        if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
-        else:
-            self.register_parameter('bias', None)
+        self.lin_out = Linear(in_channels, out_channels, bias=bias,
+                              weight_initializer='glorot')
+        self.lin_root = Linear(in_channels, out_channels, bias=False,
+                               weight_initializer='glorot')
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
-        glorot(self.root_weight)
-        zeros(self.bias)
+        self.lin_out.reset_parameters()
+        self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, size: Size = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         """"""
         edge_weight: OptTensor = None
         if isinstance(edge_index, Tensor):
-            num_nodes = size[1] if size is not None else x.size(self.node_dim)
+            num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
@@ -81,7 +82,7 @@ class ClusterGCNConv(MessagePassing):
                 edge_index = set_diag(edge_index)
 
             col, row, _ = edge_index.coo()  # Transposed.
-            deg_inv = 1. / sum(edge_index, dim=1).clamp_(1.)
+            deg_inv = 1. / sparsesum(edge_index, dim=1).clamp_(1.)
 
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
@@ -90,10 +91,7 @@ class ClusterGCNConv(MessagePassing):
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
-        out = out @ self.weight + x @ self.root_weight
-
-        if self.bias is not None:
-            out += self.bias
+        out = self.lin_out(out) + self.lin_root(x)
 
         return out
 
@@ -103,8 +101,6 @@ class ClusterGCNConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, diag_lambda={})'.format(self.__class__.__name__,
-                                                   self.in_channels,
-                                                   self.out_channels,
-                                                   self.diag_lambda)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, diag_lambda={self.diag_lambda})')

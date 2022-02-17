@@ -1,9 +1,10 @@
-import pickle
 import os.path as osp
+import pickle
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url)
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class MixHopSyntheticDataset(InMemoryDataset):
@@ -36,8 +37,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
     def __init__(self, root, homophily, transform=None, pre_transform=None):
         self.homophily = homophily
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        super(MixHopSyntheticDataset, self).__init__(root, transform,
-                                                     pre_transform)
+        super().__init__(root, transform, pre_transform)
 
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -90,6 +90,5 @@ class MixHopSyntheticDataset(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}(homophily={:.1f})'.format(self.__class__.__name__,
-                                             self.homophily)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(homophily={self.homophily:.1f})'

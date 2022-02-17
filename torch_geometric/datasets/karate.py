@@ -1,15 +1,16 @@
-import torch
+from typing import Callable, Optional
+
 import numpy as np
-import networkx as nx
-import community as community_louvain
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class KarateClub(InMemoryDataset):
     r"""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
     <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
-    34 nodes, connected by 154 (undirected and unweighted) edges.
+    34 nodes, connected by 156 (undirected and unweighted) edges.
     Every node is labeled by one of four classes obtained via modularity-based
     clustering, following the `"Semi-supervised Classification with Graph
     Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_ paper.
@@ -21,9 +22,25 @@ class KarateClub(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 34
+              - 156
+              - 34
+              - 4
     """
-    def __init__(self, transform=None):
-        super(KarateClub, self).__init__('.', transform, None, None)
+    def __init__(self, transform: Optional[Callable] = None):
+        super().__init__('.', transform)
+
+        import networkx as nx
 
         G = nx.karate_club_graph()
 
@@ -34,9 +51,11 @@ class KarateClub(InMemoryDataset):
         col = torch.from_numpy(adj.col.astype(np.int64)).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        # Compute communities.
-        partition = community_louvain.best_partition(G)
-        y = torch.tensor([partition[i] for i in range(G.number_of_nodes())])
+        # Create communities.
+        y = torch.tensor([
+            1, 1, 1, 1, 3, 3, 3, 1, 0, 1, 3, 1, 1, 1, 0, 0, 3, 1, 0, 1, 0, 1,
+            0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 0, 0
+        ], dtype=torch.long)
 
         # Select a single training node for each community
         # (we just use the first one).
@@ -47,6 +66,3 @@ class KarateClub(InMemoryDataset):
         data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask)
 
         self.data, self.slices = self.collate([data])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

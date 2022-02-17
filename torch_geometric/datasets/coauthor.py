@@ -1,6 +1,8 @@
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -26,30 +28,53 @@ class Coauthor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - CS
+              - 18,333
+              - 163,788
+              - 6,805
+              - 15
+            * - Physics
+              - 34,493
+              - 495,924
+              - 8,415
+              - 5
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         assert name.lower() in ['cs', 'physics']
         self.name = 'CS' if name.lower() == 'cs' else 'Physics'
-        super(Coauthor, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
-        return 'ms_academic_{}.npz'.format(self.name[:3].lower())
+    def raw_file_names(self) -> str:
+        return f'ms_academic_{self.name[:3].lower()}.npz'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -61,5 +86,5 @@ class Coauthor(InMemoryDataset):
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}{}()'.format(self.__class__.__name__, self.name)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}{self.name}()'

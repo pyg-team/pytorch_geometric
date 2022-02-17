@@ -1,7 +1,7 @@
 import os.path as osp
 
 import torch
-import pandas
+
 from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
@@ -13,7 +13,7 @@ class JODIEDataset(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.names
 
-        super(JODIEDataset, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -36,7 +36,9 @@ class JODIEDataset(InMemoryDataset):
         download_url(self.url.format(self.name), self.raw_dir)
 
     def process(self):
-        df = pandas.read_csv(self.raw_paths[0], skiprows=1, header=None)
+        import pandas as pd
+
+        df = pd.read_csv(self.raw_paths[0], skiprows=1, header=None)
 
         src = torch.from_numpy(df.iloc[:, 0].values).to(torch.long)
         dst = torch.from_numpy(df.iloc[:, 1].values).to(torch.long)

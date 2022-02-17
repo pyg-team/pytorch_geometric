@@ -29,7 +29,7 @@ class DeepGCNLayer(torch.nn.Module):
 
         For an example of using :obj:`GENConv`, see
         `examples/ogbn_proteins_deepgcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
@@ -50,7 +50,7 @@ class DeepGCNLayer(torch.nn.Module):
     """
     def __init__(self, conv=None, norm=None, act=None, block='res+',
                  dropout=0., ckpt_grad=False):
-        super(DeepGCNLayer, self).__init__()
+        super().__init__()
 
         self.conv = conv
         self.norm = norm
@@ -70,8 +70,9 @@ class DeepGCNLayer(torch.nn.Module):
         x = args.pop(0)
 
         if self.block == 'res+':
+            h = x
             if self.norm is not None:
-                h = self.norm(x)
+                h = self.norm(h)
             if self.act is not None:
                 h = self.act(h)
             h = F.dropout(h, p=self.dropout, training=self.training)
@@ -101,5 +102,5 @@ class DeepGCNLayer(torch.nn.Module):
 
             return F.dropout(h, p=self.dropout, training=self.training)
 
-    def __repr__(self):
-        return '{}(block={})'.format(self.__class__.__name__, self.block)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(block={self.block})'

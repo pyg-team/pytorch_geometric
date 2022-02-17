@@ -1,11 +1,13 @@
-import re
 import math
+import re
 
-import torch
 import numpy as np
+import torch
+
+from torch_geometric.transforms import BaseTransform
 
 
-class FixedPoints(object):
+class FixedPoints(BaseTransform):
     r"""Samples a fixed number of :obj:`num` points and features from a point
     cloud.
 
@@ -50,6 +52,5 @@ class FixedPoints(object):
 
         return data
 
-    def __repr__(self):
-        return '{}({}, replace={})'.format(self.__class__.__name__, self.num,
-                                           self.replace)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.num}, replace={self.replace})'

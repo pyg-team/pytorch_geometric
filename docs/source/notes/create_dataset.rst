@@ -1,7 +1,7 @@
 Creating Your Own Datasets
 ==========================
 
-Although PyTorch Geometric already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
+Although PyG already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
 
 Implementing datasets by yourself is straightforward and you may want to take a look at the source code to find out how the various datasets are implemented.
 However, we give a brief introduction on what is needed to setup your own dataset.
@@ -48,8 +48,8 @@ Let's see this process in a simplified example:
 
 
     class MyOwnDataset(InMemoryDataset):
-        def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+        def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
+            super().__init__(root, transform, pre_transform, pre_filter)
             self.data, self.slices = torch.load(self.processed_paths[0])
 
         @property
@@ -101,8 +101,8 @@ Let's see this process in a simplified example:
 
 
     class MyOwnDataset(Dataset):
-        def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+        def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
+            super().__init__(root, transform, pre_transform, pre_filter)
 
         @property
         def raw_file_names(self):
@@ -118,7 +118,7 @@ Let's see this process in a simplified example:
             ...
 
         def process(self):
-            i = 0
+            idx = 0
             for raw_path in self.raw_paths:
                 # Read data from `raw_path`.
                 data = Data(...)
@@ -129,14 +129,14 @@ Let's see this process in a simplified example:
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
 
-                torch.save(data, osp.join(self.processed_dir, 'data_{}.pt'.format(i)))
-                i += 1
+                torch.save(data, osp.join(self.processed_dir, f'data_{idx}.pt'))
+                idx += 1
 
         def len(self):
             return len(self.processed_file_names)
 
         def get(self, idx):
-            data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx)))
+            data = torch.load(osp.join(self.processed_dir, f'data_{idx}.pt'))
             return data
 
 Here, each graph data object gets saved individually in :meth:`~torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`~torch_geometric.data.Dataset.get`.
@@ -152,16 +152,41 @@ Frequently Asked Questions
 
         class MyOwnDataset(Dataset):
             def __init__(self, transform=None, pre_transform=None):
-                super(MyOwnDataset, self).__init__(None, transform, pre_transform)
+                super().__init__(None, transform, pre_transform)
 
 #. **Do I really need to use these dataset interfaces?**
 
     No! Just as in regular PyTorch, you do not have to use datasets, *e.g.*, when you want to create synthetic data on the fly without saving them explicitly to disk.
-    In this case, simply pass a regular python list holding :class:`torch_geometric.data.Data` objects and pass them to :class:`torch_geometric.data.DataLoader`:
+    In this case, simply pass a regular python list holding :class:`torch_geometric.data.Data` objects and pass them to :class:`torch_geometric.loader.DataLoader`:
 
     .. code-block:: python
 
-        from torch_geometric.data import Data, DataLoader
+        from torch_geometric.data import Data
+        from torch_geometric.loader import DataLoader
 
         data_list = [Data(...), ..., Data(...)]
         loader = DataLoader(data_list, batch_size=32)
+
+Exercises
+---------
+
+Consider the following :class:`~torch_geometric.data.InMemoryDataset` constructed from a list of :obj:`~torch_geometric.data.Data` objects:
+
+.. code-block:: python
+
+    class MyDataset(InMemoryDataset):
+        def __init__(self, root, data_list, transform=None):
+            self.data_list = data_list
+            super().__init__(root, transform)
+            self.data, self.slices = torch.load(self.processed_paths[0])
+
+        @property
+        def processed_file_names(self):
+            return 'data.pt'
+
+        def process(self):
+            torch.save(self.collate(self.data_list), self.processed_paths[0])
+
+1. What is the output of :obj:`self.processed_paths[0]`?
+
+2. What does :meth:`~torch_geometric.data.InMemoryDataset.collate` do?

@@ -7,7 +7,11 @@ runs/
 .cache/
 .eggs/
 lightning_logs/
+outputs/
+graphgym/datasets/
+graphgym/results/
 *.egg-info/
+.ipynb_checkpoints
 .coverage
 .coverage.*
 coverage.xml

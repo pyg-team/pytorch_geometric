@@ -43,7 +43,7 @@ class MetaLayer(torch.nn.Module):
 
         class EdgeModel(torch.nn.Module):
             def __init__(self):
-                super(EdgeModel, self).__init__()
+                super().__init__()
                 self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
             def forward(self, src, dest, edge_attr, u, batch):
@@ -56,7 +56,7 @@ class MetaLayer(torch.nn.Module):
 
         class NodeModel(torch.nn.Module):
             def __init__(self):
-                super(NodeModel, self).__init__()
+                super().__init__()
                 self.node_mlp_1 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
                 self.node_mlp_2 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
@@ -75,7 +75,7 @@ class MetaLayer(torch.nn.Module):
 
         class GlobalModel(torch.nn.Module):
             def __init__(self):
-                super(GlobalModel, self).__init__()
+                super().__init__()
                 self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
             def forward(self, x, edge_index, edge_attr, u, batch):
@@ -91,7 +91,7 @@ class MetaLayer(torch.nn.Module):
         x, edge_attr, u = op(x, edge_index, edge_attr, u, batch)
     """
     def __init__(self, edge_model=None, node_model=None, global_model=None):
-        super(MetaLayer, self).__init__()
+        super().__init__()
         self.edge_model = edge_model
         self.node_model = node_model
         self.global_model = global_model
@@ -123,10 +123,9 @@ class MetaLayer(torch.nn.Module):
 
         return x, edge_attr, u
 
-    def __repr__(self):
-        return ('{}(\n'
-                '    edge_model={},\n'
-                '    node_model={},\n'
-                '    global_model={}\n'
-                ')').format(self.__class__.__name__, self.edge_model,
-                            self.node_model, self.global_model)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(\n'
+                f'  edge_model={self.edge_model},\n'
+                f'  node_model={self.node_model},\n'
+                f'  global_model={self.global_model}\n'
+                f')')

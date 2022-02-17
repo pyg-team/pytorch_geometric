@@ -2,15 +2,16 @@ from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, Linear
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.utils import add_remaining_self_loops
+from torch.nn import Parameter
 from torch_scatter import scatter
-from torch_sparse import SparseTensor, matmul, fill_diag
+from torch_sparse import SparseTensor, fill_diag, matmul
 
-from ..inits import glorot, zeros
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import add_remaining_self_loops
 
 
 class EGConv(MessagePassing):
@@ -37,11 +38,12 @@ class EGConv(MessagePassing):
 
     .. note::
         For an example of using :obj:`EGConv`, see `examples/egc.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/
         examples/egc.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         aggregators (List[str], optional): Aggregators to be used.
             Supported aggregators are :obj:`"sum"`, :obj:`"mean"`,
@@ -66,6 +68,12 @@ class EGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, OptTensor]]
@@ -75,7 +83,7 @@ class EGConv(MessagePassing):
                  aggregators: List[str] = ["symnorm"], num_heads: int = 8,
                  num_bases: int = 4, cached: bool = False,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
-        super(EGConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:
             raise ValueError(
@@ -93,21 +101,22 @@ class EGConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.aggregators = aggregators
 
-        self.bases_weight = Parameter(
-            torch.Tensor(in_channels, (out_channels // num_heads) * num_bases))
-        self.comb_weight = Linear(in_channels,
-                                  num_heads * num_bases * len(aggregators))
+        self.bases_lin = Linear(in_channels,
+                                (out_channels // num_heads) * num_bases,
+                                bias=False, weight_initializer='glorot')
+        self.comb_lin = Linear(in_channels,
+                               num_heads * num_bases * len(aggregators))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.bases_weight)
-        self.comb_weight.reset_parameters()
+        self.bases_lin.reset_parameters()
+        self.comb_lin.reset_parameters()
         zeros(self.bias)
         self._cached_adj_t = None
         self._cached_edge_index = None
@@ -158,9 +167,9 @@ class EGConv(MessagePassing):
                         self._cached_adj_t = edge_index
 
         # [num_nodes, (out_channels // num_heads) * num_bases]
-        bases = torch.matmul(x, self.bases_weight)
+        bases = self.bases_lin(x)
         # [num_nodes, num_heads * num_bases * num_aggrs]
-        weightings = self.comb_weight(x)
+        weightings = self.comb_lin(x)
 
         # [num_nodes, num_aggregators, (out_channels // num_heads) * num_bases]
         # propagate_type: (x: Tensor, symnorm_weight: OptTensor)
@@ -233,8 +242,6 @@ class EGConv(MessagePassing):
 
         return torch.stack(outs, dim=1) if len(outs) > 1 else outs[0]
 
-    def __repr__(self):
-        return '{}({}, {}, aggregators={})'.format(self.__class__.__name__,
-                                                   self.in_channels,
-                                                   self.out_channels,
-                                                   self.aggregators)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggregators={self.aggregators})')

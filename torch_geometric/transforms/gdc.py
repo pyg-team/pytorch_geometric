@@ -1,31 +1,14 @@
-import warnings
-
-import torch
 import numpy as np
+import torch
 from scipy.linalg import expm
-from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
-from torch_sparse import coalesce
 from torch_scatter import scatter_add
+from torch_sparse import coalesce
 
-try:
-    import numba
-except ImportError:
-    numba = None
-
-
-def jit(**kwargs):
-    def decorator(func):
-        if numba is None:
-            return func
-        try:
-            return numba.jit(cache=True, **kwargs)(func)
-        except RuntimeError:
-            return numba.jit(cache=False, **kwargs)(func)
-
-    return decorator
+from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 
 
-class GDC(object):
+class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
     `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
     paper.
@@ -35,7 +18,7 @@ class GDC(object):
         The paper offers additional advice on how to choose the
         hyperparameters.
         For an example of using GCN with GDC, see `examples/gcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         gcn.py>`_.
 
     Args:
@@ -85,9 +68,7 @@ class GDC(object):
                  sparsification_kwargs=dict(method='threshold',
                                             avg_degree=64), exact=True):
 
-        if numba is None:
-            warnings.warn(('Efficiency of GDC can be greatly improved by '
-                           'installing numba.'))
+        self.__calc_ppr__ = get_calc_ppr()
 
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
@@ -185,8 +166,7 @@ class GDC(object):
             pass
         else:
             raise ValueError(
-                'Transition matrix normalization {} unknown.'.format(
-                    normalization))
+                f"Transition matrix normalization '{normalization}' unknown")
 
         return edge_index, edge_weight
 
@@ -253,7 +233,7 @@ class GDC(object):
                 mat = mat @ adj_matrix
                 diff_matrix += coeff * mat
         else:
-            raise ValueError('Exact GDC diffusion {} unknown.'.format(method))
+            raise ValueError(f"Exact GDC diffusion '{method}' unknown")
 
         return diff_matrix
 
@@ -296,7 +276,7 @@ class GDC(object):
                                               return_counts=True)
             indptr = np.append(indptr, len(edge_index_np[0]))
 
-            neighbors, neighbor_weights = GDC.__calc_ppr__(
+            neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
                 kwargs['eps'])
             ppr_normalization = 'col' if normalization == 'col' else 'row'
@@ -321,8 +301,8 @@ class GDC(object):
                 pass
             else:
                 raise ValueError(
-                    ('Transition matrix normalization {} not implemented for '
-                     'non-exact GDC computation.').format(normalization))
+                    f"Transition matrix normalization '{normalization}' not "
+                    f"implemented for non-exact GDC computation")
 
         elif method == 'heat':
             raise NotImplementedError(
@@ -331,8 +311,7 @@ class GDC(object):
                  '"Kloster and Gleich: Heat kernel based community detection '
                  '(KDD 2014)."'))
         else:
-            raise ValueError(
-                'Approximate GDC diffusion {} unknown.'.format(method))
+            raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 
         return edge_index, edge_weight
 
@@ -341,7 +320,6 @@ class GDC(object):
 
         Args:
             matrix (Tensor): Matrix to sparsify.
-            num_nodes (int): Number of nodes.
             method (str): Method of sparsification. Options:
 
                 1. :obj:`"threshold"`: Remove all edges with weights smaller
@@ -378,27 +356,26 @@ class GDC(object):
             edge_weight = matrix.flatten()[edge_index_flat]
 
         elif method == 'topk':
-            assert kwargs['dim'] in [0, 1]
-            sort_idx = torch.argsort(matrix, dim=kwargs['dim'],
-                                     descending=True)
-            if kwargs['dim'] == 0:
-                top_idx = sort_idx[:kwargs['k']]
-                edge_weight = torch.gather(matrix, dim=kwargs['dim'],
+            k, dim = min(N, kwargs['k']), kwargs['dim']
+            assert dim in [0, 1]
+            sort_idx = torch.argsort(matrix, dim=dim, descending=True)
+            if dim == 0:
+                top_idx = sort_idx[:k]
+                edge_weight = torch.gather(matrix, dim=dim,
                                            index=top_idx).flatten()
 
-                row_idx = torch.arange(0, N, device=matrix.device).repeat(
-                    kwargs['k'])
+                row_idx = torch.arange(0, N, device=matrix.device).repeat(k)
                 edge_index = torch.stack([top_idx.flatten(), row_idx], dim=0)
             else:
-                top_idx = sort_idx[:, :kwargs['k']]
-                edge_weight = torch.gather(matrix, dim=kwargs['dim'],
+                top_idx = sort_idx[:, :k]
+                edge_weight = torch.gather(matrix, dim=dim,
                                            index=top_idx).flatten()
 
                 col_idx = torch.arange(
-                    0, N, device=matrix.device).repeat_interleave(kwargs['k'])
+                    0, N, device=matrix.device).repeat_interleave(k)
                 edge_index = torch.stack([col_idx, top_idx.flatten()], dim=0)
         else:
-            raise ValueError('GDC sparsification {} unknown.'.format(method))
+            raise ValueError(f"GDC sparsification '{method}' unknown")
 
         return edge_index, edge_weight
 
@@ -435,9 +412,9 @@ class GDC(object):
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
             raise NotImplementedError(
-                'Sparse topk sparsification not implemented.')
+                'Sparse topk sparsification not implemented')
         else:
-            raise ValueError('GDC sparsification {} unknown.'.format(method))
+            raise ValueError(f"GDC sparsification '{method}' unknown")
 
         return edge_index, edge_weight
 
@@ -451,7 +428,7 @@ class GDC(object):
         :rtype: (:class:`Tensor`)
         """
         if symmetric:
-            e, V = torch.symeig(matrix, eigenvectors=True)
+            e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
             diff_mat_np = expm(matrix.cpu().numpy())
@@ -494,7 +471,7 @@ class GDC(object):
         """
         edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
         i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=np.int))
+                      np.fromiter(map(len, neighbors), dtype=int))
         j = np.concatenate(neighbors)
         if normalization == 'col':
             edge_index = torch.Tensor(np.vstack([j, i])).to(device)
@@ -507,9 +484,12 @@ class GDC(object):
                 f"PPR matrix normalization {normalization} unknown.")
         return edge_index, edge_weight
 
-    @staticmethod
-    @jit(nopython=True, parallel=True)
-    def __calc_ppr__(indptr, indices, out_degree, alpha, eps):
+
+def get_calc_ppr():
+    import numba
+
+    @numba.jit(nopython=True, parallel=True)
+    def calc_ppr(indptr, indices, out_degree, alpha, eps):
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
@@ -526,8 +506,6 @@ class GDC(object):
 
         :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
         """
-        if numba is None:
-            raise ImportError('`GDC.ppr` requires `numba`.')
 
         alpha_eps = alpha * eps
         js = [[0]] * len(out_degree)
@@ -562,5 +540,4 @@ class GDC(object):
             vals[inode] = list(p.values())
         return js, vals
 
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
+    return calc_ppr

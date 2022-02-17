@@ -1,8 +1,12 @@
+from typing import Dict, List, Optional, Tuple
+
 import torch
+from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
-from sklearn.linear_model import LogisticRegression
+
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 EPS = 1e-15
 
@@ -17,17 +21,19 @@ class MetaPath2Vec(torch.nn.Module):
 
     .. note::
 
-        For an example of using MetaPath2Vec, see `examples/metapath2vec.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
-        metapath2vec.py>`_.
+        For an example of using MetaPath2Vec, see
+        `examples/hetero/metapath2vec.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        hetero/metapath2vec.py>`_.
 
     Args:
-        edge_index_dict (dict): Dictionary holding edge indices for each
-            :obj:`(source_node_type, relation_type, target_node_type)` present
-            in the heterogeneous graph.
+        edge_index_dict (Dict[Tuple[str, str, str], Tensor]): Dictionary
+            holding edge indices for each
+            :obj:`(src_node_type, rel_type, dst_node_type)` present in the
+            heterogeneous graph.
         embedding_dim (int): The size of each embedding vector.
-        metapath (list): The metapath described as a list of
-            :obj:`(source_node_type, relation_type, target_node_type)` tuples.
+        metapath (List[Tuple[str, str, str]]): The metapath described as a list
+            of :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
         walk_length (int): The walk length.
         context_size (int): The actual context size which is considered for
             positive samples. This parameter increases the effective sampling
@@ -36,15 +42,24 @@ class MetaPath2Vec(torch.nn.Module):
             node. (default: :obj:`1`)
         num_negative_samples (int, optional): The number of negative samples to
             use for each positive sample. (default: :obj:`1`)
-        num_nodes_dict (dict, optional): Dictionary holding the number of nodes
-            for each node type. (default: :obj:`None`)
+        num_nodes_dict (Dict[str, int], optional): Dictionary holding the
+            number of nodes for each node type. (default: :obj:`None`)
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
-    def __init__(self, edge_index_dict, embedding_dim, metapath, walk_length,
-                 context_size, walks_per_node=1, num_negative_samples=1,
-                 num_nodes_dict=None, sparse=False):
-        super(MetaPath2Vec, self).__init__()
+    def __init__(
+        self,
+        edge_index_dict: Dict[EdgeType, Tensor],
+        embedding_dim: int,
+        metapath: List[EdgeType],
+        walk_length: int,
+        context_size: int,
+        walks_per_node: int = 1,
+        num_negative_samples: int = 1,
+        num_nodes_dict: Optional[Dict[NodeType, int]] = None,
+        sparse: bool = False,
+    ):
+        super().__init__()
 
         if num_nodes_dict is None:
             num_nodes_dict = {}
@@ -65,8 +80,11 @@ class MetaPath2Vec(torch.nn.Module):
             adj = adj.to('cpu')
             adj_dict[keys] = adj
 
-        assert metapath[0][0] == metapath[-1][-1]
-        assert walk_length >= context_size
+        assert walk_length + 1 >= context_size
+        if walk_length > len(metapath) and metapath[0][0] != metapath[-1][-1]:
+            raise AttributeError(
+                "The 'walk_length' is longer than the given 'metapath', but "
+                "the 'metapath' does not denote a cycle")
 
         self.adj_dict = adj_dict
         self.embedding_dim = embedding_dim
@@ -94,37 +112,48 @@ class MetaPath2Vec(torch.nn.Module):
         assert len(offset) == walk_length + 1
         self.offset = torch.tensor(offset)
 
-        self.embedding = Embedding(count, embedding_dim, sparse=sparse)
+        # + 1 denotes a dummy node used to link to for isolated nodes.
+        self.embedding = Embedding(count + 1, embedding_dim, sparse=sparse)
+        self.dummy_idx = count
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.embedding.reset_parameters()
 
-    def forward(self, node_type, batch=None):
-        """Returns the embeddings for the nodes in :obj:`subset` of type
+    def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:
+        r"""Returns the embeddings for the nodes in :obj:`batch` of type
         :obj:`node_type`."""
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
+        r"""Returns the data loader that creates both positive and negative
+        random walks on the heterogeneous graph.
+
+        Args:
+            **kwargs (optional): Arguments of
+                :class:`torch.utils.data.DataLoader`, such as
+                :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last` or
+                :obj:`num_workers`.
+        """
         return DataLoader(range(self.num_nodes_dict[self.metapath[0][0]]),
-                          collate_fn=self.sample, **kwargs)
+                          collate_fn=self._sample, **kwargs)
 
-    def pos_sample(self, batch):
-        # device = self.embedding.weight.device
-
+    def _pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
 
         rws = [batch]
         for i in range(self.walk_length):
             keys = self.metapath[i % len(self.metapath)]
             adj = self.adj_dict[keys]
-            batch = adj.sample(num_neighbors=1, subset=batch).squeeze()
+            batch = sample(adj, batch, num_neighbors=1,
+                           dummy_idx=self.dummy_idx).view(-1)
             rws.append(batch)
 
         rw = torch.stack(rws, dim=-1)
         rw.add_(self.offset.view(1, -1))
+        rw[rw > self.dummy_idx] = self.dummy_idx
 
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
@@ -132,7 +161,7 @@ class MetaPath2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def neg_sample(self, batch):
+    def _neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
         rws = [batch]
@@ -151,12 +180,12 @@ class MetaPath2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def sample(self, batch):
-        if not isinstance(batch, torch.Tensor):
-            batch = torch.tensor(batch)
-        return self.pos_sample(batch), self.neg_sample(batch)
+    def _sample(self, batch: List[int]) -> Tuple[Tensor, Tensor]:
+        if not isinstance(batch, Tensor):
+            batch = torch.tensor(batch, dtype=torch.long)
+        return self._pos_sample(batch), self._neg_sample(batch)
 
-    def loss(self, pos_rw, neg_rw):
+    def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
 
         # Positive loss.
@@ -183,17 +212,40 @@ class MetaPath2Vec(torch.nn.Module):
 
         return pos_loss + neg_loss
 
-    def test(self, train_z, train_y, test_z, test_y, solver='lbfgs',
-             multi_class='auto', *args, **kwargs):
+    def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
+             test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
+             *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
+        from sklearn.linear_model import LogisticRegression
+
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__,
-                                   self.embedding.weight.size(0),
-                                   self.embedding.weight.size(1))
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}('
+                f'{self.embedding.weight.size(0) - 1}, '
+                f'{self.embedding.weight.size(1)})')
+
+
+def sample(src: SparseTensor, subset: Tensor, num_neighbors: int,
+           dummy_idx: int) -> Tensor:
+
+    mask = subset < dummy_idx
+    rowcount = torch.zeros_like(subset)
+    rowcount[mask] = src.storage.rowcount()[subset[mask]]
+    mask = mask & (rowcount > 0)
+    offset = torch.zeros_like(subset)
+    offset[mask] = src.storage.rowptr()[subset[mask]]
+
+    rand = torch.rand((rowcount.size(0), num_neighbors), device=subset.device)
+    rand.mul_(rowcount.to(rand.dtype).view(-1, 1))
+    rand = rand.to(torch.long)
+    rand.add_(offset.view(-1, 1))
+
+    col = src.storage.col()[rand]
+    col[~mask] = dummy_idx
+    return col

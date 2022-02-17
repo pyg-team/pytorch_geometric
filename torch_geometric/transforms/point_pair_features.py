@@ -1,8 +1,10 @@
 import torch
+
 import torch_geometric
+from torch_geometric.transforms import BaseTransform
 
 
-class PointPairFeatures(object):
+class PointPairFeatures(BaseTransform):
     r"""Computes the rotation-invariant Point Pair Features
 
     .. math::
@@ -42,6 +44,3 @@ class PointPairFeatures(object):
             data.edge_attr = ppf
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

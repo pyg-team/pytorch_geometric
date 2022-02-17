@@ -1,69 +1,87 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be additionally installed.
-These packages come with their own CPU and GPU kernel implementations based on `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_.
-
 .. note::
-    We do not recommend installation as root user on your system python.
-    Please setup an `Anaconda/Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ environment or create a `Docker image <https://www.docker.com/>`_.
+    We do not recommend installation as a root user on your system Python.
+    Please setup a `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_ environment or create a `Docker image <https://www.docker.com/>`_.
 
-Please follow the steps below for a successful installation.
+Quick Start
+-----------
 
-Installation via Binaries
+.. raw:: html
+   :file: quick-start.html
+
+Installation via Anaconda
 -------------------------
 
-We provide pip wheels for all major OS/PyTorch/CUDA combinations:
+**Update:** You can now install PyG via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS/PyTorch/CUDA combinations 🤗
+Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started/locally/>`_, simply run
+
+.. code-block:: none
+
+    conda install pyg -c pyg -c conda-forge
+
+Installation via Pip Wheels
+---------------------------
+
+We have outsourced a lot of functionality of PyG to other packages, which needs to be installed in advance.
+These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
+We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
 
     .. code-block:: none
 
-        $ python -c "import torch; print(torch.__version__)"
-        >>> 1.8.0
+        python -c "import torch; print(torch.__version__)"
+        >>> 1.10.0
 
 #. Find the CUDA version PyTorch was installed with:
 
     .. code-block:: none
 
-        $ python -c "import torch; print(torch.version.cuda)"
-        >>> 11.1
+        python -c "import torch; print(torch.version.cuda)"
+        >>> 11.3
 
 #. Install the relevant packages:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.8.0`), respectively.
-    For example, for PyTorch 1.8.0/1.8.1 and CUDA 11.1, type:
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by the specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`, :obj:`cu113`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`, :obj:`1.9.1`, :obj:`1.10.0`), respectively.
+    For example, for PyTorch 1.10.0 and CUDA 11.3, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
+         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
+         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
          pip install torch-geometric
 
-    For PyTorch 1.7.0/1.7.1 and CUDA 10.2, type:
+    For PyTorch 1.9.0/1.9.1 and CUDA 10.2, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
+         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
          pip install torch-geometric
+
+#. Install additional packages *(optional)*:
+
+    To add additional functionality to PyG, such as k-NN and radius graph generation or :class:`~torch_geometric.nn.conv.SplineConv` support, run
+
+    .. code-block:: none
+
+         pip install torch-cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+
+    following the same procedure as mentioned above.
 
 Installation from Source
 ------------------------
 
-In case a specific version is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyTorch Geometric from source:
+In case a specific version is not supported by `our wheels <https://data.pyg.org/whl>`_, you can alternatively install PyG from source:
 
 #. Ensure that your CUDA is setup correctly (optional):
 
@@ -71,73 +89,78 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
 
         .. code-block:: none
 
-            $ python -c "import torch; print(torch.cuda.is_available())"
+            python -c "import torch; print(torch.cuda.is_available())"
             >>> True
 
     #. Add CUDA to :obj:`$PATH` and :obj:`$CPATH` (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
-            $ export PATH=/usr/local/cuda/bin:$PATH
-            $ echo $PATH
+            export PATH=/usr/local/cuda/bin:$PATH
+            echo $PATH
             >>> /usr/local/cuda/bin:...
 
-            $ export CPATH=/usr/local/cuda/include:$CPATH
-            $ echo $CPATH
+            export CPATH=/usr/local/cuda/include:$CPATH
+            echo $CPATH
             >>> /usr/local/cuda/include:...
 
     #. Add CUDA to :obj:`$LD_LIBRARY_PATH` on Linux and to :obj:`$DYLD_LIBRARY_PATH` on macOS (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
-            $ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-            $ echo $LD_LIBRARY_PATH
+            export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+            echo $LD_LIBRARY_PATH
             >>> /usr/local/cuda/lib64:...
 
-            $ export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
-            $ echo $DYLD_LIBRARY_PATH
+            export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+            echo $DYLD_LIBRARY_PATH
             >>> /usr/local/cuda/lib:...
 
     #. Verify that :obj:`nvcc` is accessible from terminal:
 
         .. code-block:: none
 
-            $ nvcc --version
-            >>> 10.2
+            nvcc --version
+            >>> 11.3
 
     #. Ensure that PyTorch and system CUDA versions match:
 
         .. code-block:: none
 
-            $ python -c "import torch; print(torch.version.cuda)"
-            >>> 10.2
+            python -c "import torch; print(torch.version.cuda)"
+            >>> 11.3
 
-            $ nvcc --version
-            >>> 10.2
+            nvcc --version
+            >>> 11.3
 
-#. Install all needed packages:
+#. Install the relevant packages:
 
     .. code-block:: none
 
       pip install torch-scatter
       pip install torch-sparse
+      pip install torch-geometric
+
+#. Install additional packages *(optional)*:
+
+    .. code-block:: none
+
       pip install torch-cluster
       pip install torch-spline-conv
-      pip install torch-geometric
 
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, :obj:`No module named 'torch_*.*_cuda'`, or execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
-In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
-You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.
+You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
 Frequently Asked Questions
 --------------------------
 
-#. ``ImportError: ***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/rusty1s/pytorch_geometric/issues/43>`_).
+#. ``ImportError: ***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/pyg-team/pytorch_geometric/issues/43>`_).
 
-#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_). On macOS, it may help to install clang compilers via conda (see `Issue#18 <https://github.com/rusty1s/pytorch_geometric/issues/18>`_):
+#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_). On macOS, it may help to install clang compilers via conda (see `Issue#18 <https://github.com/pyg-team/pytorch_geometric/issues/18>`_):
 
    .. code-block:: none
 
@@ -145,7 +168,7 @@ Frequently Asked Questions
 
 #. Unable to import ``*_cuda``: You need to ``import torch`` first before importing any of the extension packages (see `Issue#6 <https://github.com/rusty1s/pytorch_scatter/issues/6>`_).
 
-#. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
+#. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/pyg-team/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/pyg-team/pytorch_geometric/issues/106>`_).
 
 #. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 (and below 6) (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
    You will also need to reinstall PyTorch because ``gcc`` versions must be consistent across all PyTorch packages.
@@ -166,9 +189,9 @@ Frequently Asked Questions
 
    .. code-block:: none
 
-       $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py install
+       $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python -m pip install .
 
-#. On macOS: ``ld: warning: directory not found for option '-L/usr/local/cuda/lib64'`` and ``ld: library not found for -lcudart``: Symlink ``cuda/lib`` to ``cuda/lib64`` (see `Issue#116 <https://github.com/rusty1s/pytorch_geometric/issues/116>`_):
+#. On macOS: ``ld: warning: directory not found for option '-L/usr/local/cuda/lib64'`` and ``ld: library not found for -lcudart``: Symlink ``cuda/lib`` to ``cuda/lib64`` (see `Issue#116 <https://github.com/pyg-team/pytorch_geometric/issues/116>`_):
 
    .. code-block:: none
 

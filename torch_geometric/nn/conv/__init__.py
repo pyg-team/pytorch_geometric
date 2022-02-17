@@ -7,6 +7,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
@@ -18,7 +19,7 @@ from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointConv
+from .point_conv import PointNetConv, PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
@@ -27,6 +28,7 @@ from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
+from .point_transformer_conv import PointTransformerConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
 from .pna_conv import PNAConv
@@ -39,6 +41,13 @@ from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
+from .pdn_conv import PDNConv
+from .general_conv import GeneralConv
+from .hgt_conv import HGTConv
+from .heat_conv import HEATConv
+from .hetero_conv import HeteroConv
+from .han_conv import HANConv
+from .lg_conv import LGConv
 
 __all__ = [
     'MessagePassing',
@@ -50,6 +59,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'GATv2Conv',
     'TransformerConv',
     'AGNNConv',
     'TAGConv',
@@ -63,6 +73,7 @@ __all__ = [
     'FastRGCNConv',
     'SignedConv',
     'DNAConv',
+    'PointNetConv',
     'PointConv',
     'GMMConv',
     'SplineConv',
@@ -74,6 +85,7 @@ __all__ = [
     'XConv',
     'PPFConv',
     'FeaStConv',
+    'PointTransformerConv',
     'HypergraphConv',
     'LEConv',
     'PNAConv',
@@ -85,7 +97,14 @@ __all__ = [
     'FiLMConv',
     'SuperGATConv',
     'FAConv',
-    'EGConv'
+    'EGConv',
+    'PDNConv',
+    'GeneralConv',
+    'HGTConv',
+    'HEATConv',
+    'HeteroConv',
+    'HANConv',
+    'LGConv',
 ]
 
 classes = __all__

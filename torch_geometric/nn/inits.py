@@ -1,24 +1,41 @@
 import math
+from typing import Any
 
 import torch
+from torch import Tensor
 
 
-def uniform(size, tensor):
-    if tensor is not None:
+def uniform(size: int, value: Any):
+    if isinstance(value, Tensor):
         bound = 1.0 / math.sqrt(size)
-        tensor.data.uniform_(-bound, bound)
+        value.data.uniform_(-bound, bound)
+    else:
+        for v in value.parameters() if hasattr(value, 'parameters') else []:
+            uniform(size, v)
+        for v in value.buffers() if hasattr(value, 'buffers') else []:
+            uniform(size, v)
 
 
-def kaiming_uniform(tensor, fan, a):
-    if tensor is not None:
+def kaiming_uniform(value: Any, fan: int, a: float):
+    if isinstance(value, Tensor):
         bound = math.sqrt(6 / ((1 + a**2) * fan))
-        tensor.data.uniform_(-bound, bound)
+        value.data.uniform_(-bound, bound)
+    else:
+        for v in value.parameters() if hasattr(value, 'parameters') else []:
+            kaiming_uniform(v, fan, a)
+        for v in value.buffers() if hasattr(value, 'buffers') else []:
+            kaiming_uniform(v, fan, a)
 
 
-def glorot(tensor):
-    if tensor is not None:
-        stdv = math.sqrt(6.0 / (tensor.size(-2) + tensor.size(-1)))
-        tensor.data.uniform_(-stdv, stdv)
+def glorot(value: Any):
+    if isinstance(value, Tensor):
+        stdv = math.sqrt(6.0 / (value.size(-2) + value.size(-1)))
+        value.data.uniform_(-stdv, stdv)
+    else:
+        for v in value.parameters() if hasattr(value, 'parameters') else []:
+            glorot(v)
+        for v in value.buffers() if hasattr(value, 'buffers') else []:
+            glorot(v)
 
 
 def glorot_orthogonal(tensor, scale):
@@ -28,29 +45,37 @@ def glorot_orthogonal(tensor, scale):
         tensor.data *= scale.sqrt()
 
 
-def zeros(tensor):
-    if tensor is not None:
-        tensor.data.fill_(0)
+def constant(value: Any, fill_value: float):
+    if isinstance(value, Tensor):
+        value.data.fill_(fill_value)
+    else:
+        for v in value.parameters() if hasattr(value, 'parameters') else []:
+            constant(v, fill_value)
+        for v in value.buffers() if hasattr(value, 'buffers') else []:
+            constant(v, fill_value)
 
 
-def ones(tensor):
-    if tensor is not None:
-        tensor.data.fill_(1)
+def zeros(value: Any):
+    constant(value, 0.)
 
 
-def normal(tensor, mean, std):
-    if tensor is not None:
-        tensor.data.normal_(mean, std)
+def ones(tensor: Any):
+    constant(tensor, 1.)
 
 
-def reset(nn):
-    def _reset(item):
-        if hasattr(item, 'reset_parameters'):
-            item.reset_parameters()
+def normal(value: Any, mean: float, std: float):
+    if isinstance(value, Tensor):
+        value.data.normal_(mean, std)
+    else:
+        for v in value.parameters() if hasattr(value, 'parameters') else []:
+            normal(v, mean, std)
+        for v in value.buffers() if hasattr(value, 'buffers') else []:
+            normal(v, mean, std)
 
-    if nn is not None:
-        if hasattr(nn, 'children') and len(list(nn.children())) > 0:
-            for item in nn.children():
-                _reset(item)
-        else:
-            _reset(nn)
+
+def reset(value: Any):
+    if hasattr(value, 'reset_parameters'):
+        value.reset_parameters()
+    else:
+        for child in value.children() if hasattr(value, 'children') else []:
+            reset(child)

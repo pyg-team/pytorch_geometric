@@ -2,7 +2,6 @@ import torch
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
-from sklearn.linear_model import LogisticRegression
 
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -25,7 +24,7 @@ class Node2Vec(torch.nn.Module):
     .. note::
 
         For an example of using Node2Vec, see `examples/node2vec.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         node2vec.py>`_.
 
     Args:
@@ -50,7 +49,7 @@ class Node2Vec(torch.nn.Module):
     def __init__(self, edge_index, embedding_dim, walk_length, context_size,
                  walks_per_node=1, p=1, q=1, num_negative_samples=1,
                  num_nodes=None, sparse=False):
-        super(Node2Vec, self).__init__()
+        super().__init__()
 
         if random_walk is None:
             raise ImportError('`Node2Vec` requires `torch-cluster`.')
@@ -80,7 +79,7 @@ class Node2Vec(torch.nn.Module):
     def forward(self, batch=None):
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
         return DataLoader(range(self.adj.sparse_size(0)),
@@ -148,13 +147,14 @@ class Node2Vec(torch.nn.Module):
              multi_class='auto', *args, **kwargs):
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
+        from sklearn.linear_model import LogisticRegression
+
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__,
-                                   self.embedding.weight.size(0),
-                                   self.embedding.weight.size(1))
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.embedding.weight.size(0)}, '
+                f'{self.embedding.weight.size(1)})')

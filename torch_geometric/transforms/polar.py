@@ -2,8 +2,10 @@ from math import pi as PI
 
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class Polar(object):
+
+class Polar(BaseTransform):
     r"""Saves the polar coordinates of linked nodes in its edge attributes.
 
     Args:
@@ -16,7 +18,6 @@ class Polar(object):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
         self.max = max_value
@@ -47,6 +48,6 @@ class Polar(object):
 
         return data
 
-    def __repr__(self):
-        return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

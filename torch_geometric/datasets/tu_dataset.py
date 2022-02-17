@@ -1,8 +1,10 @@
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_tu_data
 
@@ -50,19 +52,75 @@ class TUDataset(InMemoryDataset):
             (default: :obj:`False`)
         cleaned: (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - MUTAG
+              - 188
+              - ~17.9
+              - ~39.6
+              - 7
+              - 2
+            * - ENZYMES
+              - 600
+              - ~32.6
+              - ~124.3
+              - 3
+              - 6
+            * - PROTEINS
+              - 1,113
+              - ~39.1
+              - ~145.6
+              - 3
+              - 2
+            * - COLLAB
+              - 5,000
+              - ~74.5
+              - ~4914.4
+              - 0
+              - 3
+            * - IMDB-BINARY
+              - 1,000
+              - ~19.8
+              - ~193.1
+              - 0
+              - 2
+            * - REDDIT-BINARY
+              - 2,000
+              - ~429.6
+              - ~995.5
+              - 0
+              - 2
+            * - ...
+              -
+              -
+              -
+              -
+              -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
 
-    def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None, use_node_attr=False, use_edge_attr=False,
-                 cleaned=False):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None,
+                 use_node_attr: bool = False, use_edge_attr: bool = False,
+                 cleaned: bool = False):
         self.name = name
         self.cleaned = cleaned
-        super(TUDataset, self).__init__(root, transform, pre_transform,
-                                        pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
         if self.data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
@@ -72,17 +130,17 @@ class TUDataset(InMemoryDataset):
             self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
 
     @property
-    def raw_dir(self):
-        name = 'raw{}'.format('_cleaned' if self.cleaned else '')
+    def raw_dir(self) -> str:
+        name = f'raw{"_cleaned" if self.cleaned else ""}'
         return osp.join(self.root, self.name, name)
 
     @property
-    def processed_dir(self):
-        name = 'processed{}'.format('_cleaned' if self.cleaned else '')
+    def processed_dir(self) -> str:
+        name = f'processed{"_cleaned" if self.cleaned else ""}'
         return osp.join(self.root, self.name, name)
 
     @property
-    def num_node_labels(self):
+    def num_node_labels(self) -> int:
         if self.data.x is None:
             return 0
         for i in range(self.data.x.size(1)):
@@ -92,13 +150,13 @@ class TUDataset(InMemoryDataset):
         return 0
 
     @property
-    def num_node_attributes(self):
+    def num_node_attributes(self) -> int:
         if self.data.x is None:
             return 0
         return self.data.x.size(1) - self.num_node_labels
 
     @property
-    def num_edge_labels(self):
+    def num_edge_labels(self) -> int:
         if self.data.edge_attr is None:
             return 0
         for i in range(self.data.edge_attr.size(1)):
@@ -107,24 +165,24 @@ class TUDataset(InMemoryDataset):
         return 0
 
     @property
-    def num_edge_attributes(self):
+    def num_edge_attributes(self) -> int:
         if self.data.edge_attr is None:
             return 0
         return self.data.edge_attr.size(1) - self.num_edge_labels
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         names = ['A', 'graph_indicator']
-        return ['{}_{}.txt'.format(self.name, name) for name in names]
+        return [f'{self.name}_{name}.txt' for name in names]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
         folder = osp.join(self.root, self.name)
-        path = download_url('{}/{}.zip'.format(url, self.name), folder)
+        path = download_url(f'{url}/{self.name}.zip', folder)
         extract_zip(path, folder)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
@@ -145,5 +203,5 @@ class TUDataset(InMemoryDataset):
 
         torch.save((self.data, self.slices), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({})'.format(self.name, len(self))
+    def __repr__(self) -> str:
+        return f'{self.name}({len(self)})'

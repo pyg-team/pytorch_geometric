@@ -1,0 +1,36 @@
+out_dir: results
+dataset:
+  format: OGB
+  name: ogbg-molhiv
+  task: graph
+  task_type: classification
+  node_encoder: true
+  node_encoder_name: Atom
+  edge_encoder: true
+  edge_encoder_name: Bond
+train:
+  batch_size: 128
+  eval_period: 1
+  ckpt_period: 100
+  sampler: full_batch
+model:
+  type: gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: add
+gnn:
+  layers_pre_mp: 1
+  layers_mp: 2
+  layers_post_mp: 1
+  dim_inner: 300
+  layer_type: generalconv
+  stage_type: stack
+  batchnorm: true
+  act: prelu
+  dropout: 0.0
+  agg: mean
+  normalize_adj: false
+optim:
+  optimizer: adam
+  base_lr: 0.01
+  max_epoch: 100

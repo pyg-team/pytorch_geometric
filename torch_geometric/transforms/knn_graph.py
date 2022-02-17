@@ -1,8 +1,9 @@
 import torch_geometric
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
-class KNNGraph(object):
+class KNNGraph(BaseTransform):
     r"""Creates a k-NN graph based on node positions :obj:`pos`.
 
     Args:
@@ -11,9 +12,12 @@ class KNNGraph(object):
             self-loops. (default: :obj:`False`)
         force_undirected (bool, optional): If set to :obj:`True`, new edges
             will be undirected. (default: :obj:`False`)
-        flow (string, optional): The flow direction when using in combination
+        flow (string, optional): The flow direction when used in combination
             with message passing (:obj:`"source_to_target"` or
-            :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+            :obj:`"target_to_source"`).
+            If set to :obj:`"source_to_target"`, every target node will have
+            exactly :math:`k` source nodes pointing to it.
+            (default: :obj:`"source_to_target"`)
     """
     def __init__(self, k=6, loop=False, force_undirected=False,
                  flow='source_to_target'):
@@ -37,5 +41,5 @@ class KNNGraph(object):
 
         return data
 
-    def __repr__(self):
-        return '{}(k={})'.format(self.__class__.__name__, self.k)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(k={self.k})'

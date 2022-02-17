@@ -3,13 +3,9 @@ import os.path as osp
 import re
 
 import torch
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_gz)
 
-try:
-    from rdkit import Chem
-except ImportError:
-    Chem = None
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_gz)
 
 x_map = {
     'atomic_num':
@@ -117,14 +113,9 @@ class MoleculeNet(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None,
                  pre_filter=None):
-
-        if Chem is None:
-            raise ImportError('`MoleculeNet` requires `rdkit`.')
-
         self.name = name.lower()
         assert self.name in self.names.keys()
-        super(MoleculeNet, self).__init__(root, transform, pre_transform,
-                                          pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -151,6 +142,8 @@ class MoleculeNet(InMemoryDataset):
             os.unlink(path)
 
     def process(self):
+        from rdkit import Chem
+
         with open(self.raw_paths[0], 'r') as f:
             dataset = f.read().split('\n')[1:-1]
             dataset = [x for x in dataset if len(x) > 0]  # Filter empty lines.
@@ -224,5 +217,5 @@ class MoleculeNet(InMemoryDataset):
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}({})'.format(self.names[self.name][0], len(self))
+    def __repr__(self) -> str:
+        return f'{self.names[self.name][0]}({len(self)})'

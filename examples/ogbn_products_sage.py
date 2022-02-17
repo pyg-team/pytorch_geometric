@@ -4,9 +4,10 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from tqdm import tqdm
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
-from torch_geometric.data import NeighborSampler
+
+from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
@@ -26,7 +27,7 @@ subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
 
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
-        super(SAGE, self).__init__()
+        super().__init__()
 
         self.num_layers = num_layers
 

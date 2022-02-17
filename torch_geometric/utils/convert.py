@@ -1,10 +1,10 @@
-from typing import Optional, Tuple
+from collections import defaultdict
+from typing import List, Optional, Tuple, Union
 
+import scipy.sparse
 import torch
 from torch import Tensor
-from torch.utils.dlpack import to_dlpack, from_dlpack
-import scipy.sparse
-import networkx as nx
+from torch.utils.dlpack import from_dlpack, to_dlpack
 
 import torch_geometric.data
 
@@ -50,8 +50,9 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
-                remove_self_loops=False):
+def to_networkx(data, node_attrs=None, edge_attrs=None,
+                to_undirected: Union[bool, str] = False,
+                remove_self_loops: bool = False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
@@ -62,13 +63,17 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool, optional): If set to :obj:`True`, will return a
-            a :obj:`networkx.Graph` instead of a :obj:`networkx.DiGraph`. The
-            undirected graph will correspond to the upper triangle of the
-            corresponding adjacency matrix. (default: :obj:`False`)
+        to_undirected (bool or str, optional): If set to :obj:`True` or
+            "upper", will return a :obj:`networkx.Graph` instead of a
+            :obj:`networkx.DiGraph`. The undirected graph will correspond to
+            the upper triangle of the corresponding adjacency matrix.
+            Similarly, if set to "lower", the undirected graph will correspond
+            to the lower triangle of the adjacency matrix. (default:
+            :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
     """
+    import networkx as nx
 
     if to_undirected:
         G = nx.Graph()
@@ -77,8 +82,10 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
 
     G.add_nodes_from(range(data.num_nodes))
 
+    node_attrs, edge_attrs = node_attrs or [], edge_attrs or []
+
     values = {}
-    for key, item in data:
+    for key, item in data(*(node_attrs + edge_attrs)):
         if torch.is_tensor(item):
             values[key] = item.squeeze().tolist()
         else:
@@ -86,56 +93,121 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
         if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
             values[key] = item[0]
 
+    to_undirected = "upper" if to_undirected is True else to_undirected
+    to_undirected_upper = True if to_undirected == "upper" else False
+    to_undirected_lower = True if to_undirected == "lower" else False
+
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
 
-        if to_undirected and v > u:
+        if to_undirected_upper and u > v:
+            continue
+        elif to_undirected_lower and u < v:
             continue
 
         if remove_self_loops and u == v:
             continue
 
         G.add_edge(u, v)
-        for key in edge_attrs if edge_attrs is not None else []:
+
+        for key in edge_attrs:
             G[u][v][key] = values[key][i]
 
-    for key in node_attrs if node_attrs is not None else []:
+    for key in node_attrs:
         for i, feat_dict in G.nodes(data=True):
             feat_dict.update({key: values[key][i]})
 
     return G
 
 
-def from_networkx(G):
+def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
+                  group_edge_attrs: Optional[Union[List[str], all]] = None):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
+        group_node_attrs (List[str] or all, optional): The node attributes to
+            be concatenated and added to :obj:`data.x`. (default: :obj:`None`)
+        group_edge_attrs (List[str] or all, optional): The edge attributes to
+            be concatenated and added to :obj:`data.edge_attr`.
+            (default: :obj:`None`)
+
+    .. note::
+
+        All :attr:`group_node_attrs` and :attr:`group_edge_attrs` values must
+        be numeric.
     """
+    import networkx as nx
 
     G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
-    edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
 
-    data = {}
+    if isinstance(G, (nx.MultiGraph, nx.MultiDiGraph)):
+        edges = list(G.edges(keys=False))
+    else:
+        edges = list(G.edges)
+
+    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+
+    data = defaultdict(list)
+
+    if G.number_of_nodes() > 0:
+        node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
+    else:
+        node_attrs = {}
+
+    if G.number_of_edges() > 0:
+        edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
+    else:
+        edge_attrs = {}
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+        if set(feat_dict.keys()) != set(node_attrs):
+            raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            data[str(key)].append(value)
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+        if set(feat_dict.keys()) != set(edge_attrs):
+            raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            key = f'edge_{key}' if key in node_attrs else key
+            data[str(key)].append(value)
 
-    for key, item in data.items():
+    for key, value in data.items():
         try:
-            data[key] = torch.tensor(item)
+            data[key] = torch.tensor(value)
         except ValueError:
             pass
 
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
-    data.num_nodes = G.number_of_nodes()
+
+    if group_node_attrs is all:
+        group_node_attrs = list(node_attrs)
+    if group_node_attrs is not None:
+        xs = []
+        for key in group_node_attrs:
+            x = data[key]
+            x = x.view(-1, 1) if x.dim() <= 1 else x
+            xs.append(x)
+            del data[key]
+        data.x = torch.cat(xs, dim=-1)
+
+    if group_edge_attrs is all:
+        group_edge_attrs = list(edge_attrs)
+    if group_edge_attrs is not None:
+        xs = []
+        for key in group_edge_attrs:
+            key = f'edge_{key}' if key in node_attrs else key
+            x = data[key]
+            x = x.view(-1, 1) if x.dim() <= 1 else x
+            xs.append(x)
+            del data[key]
+        data.edge_attr = torch.cat(xs, dim=-1)
+
+    if data.x is None and data.pos is None:
+        data.num_nodes = G.number_of_nodes()
 
     return data
 

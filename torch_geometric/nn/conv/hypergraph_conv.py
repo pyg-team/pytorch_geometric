@@ -1,14 +1,15 @@
 from typing import Optional
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_scatter import scatter_add
-from torch_geometric.utils import softmax
-from torch_geometric.nn.conv import MessagePassing
 
-from ..inits import glorot, zeros
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.utils import softmax
 
 
 class HypergraphConv(MessagePassing):
@@ -39,7 +40,8 @@ class HypergraphConv(MessagePassing):
         ])
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         use_attention (bool, optional): If set to :obj:`True`, attention
             will be added to this layer. (default: :obj:`False`)
@@ -57,12 +59,20 @@ class HypergraphConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          hyperedge indices :math:`(|\mathcal{V}|, |\mathcal{E}|)`,
+          hyperedge weights :math:`(|\mathcal{E}|)` *(optional)*
+          hyperedge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
                  concat=True, negative_slope=0.2, dropout=0, bias=True,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(HypergraphConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(flow='source_to_target', node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -73,13 +83,14 @@ class HypergraphConv(MessagePassing):
             self.concat = concat
             self.negative_slope = negative_slope
             self.dropout = dropout
-            self.weight = Parameter(
-                torch.Tensor(in_channels, heads * out_channels))
+            self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                              weight_initializer='glorot')
             self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
         else:
             self.heads = 1
             self.concat = True
-            self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+            self.lin = Linear(in_channels, out_channels, bias=False,
+                              weight_initializer='glorot')
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -91,7 +102,7 @@ class HypergraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        self.lin.reset_parameters()
         if self.use_attention:
             glorot(self.att)
         zeros(self.bias)
@@ -121,13 +132,13 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is None:
             hyperedge_weight = x.new_ones(num_edges)
 
-        x = torch.matmul(x, self.weight)
+        x = self.lin(x)
 
         alpha = None
         if self.use_attention:
             assert hyperedge_attr is not None
             x = x.view(-1, self.heads, self.out_channels)
-            hyperedge_attr = torch.matmul(hyperedge_attr, self.weight)
+            hyperedge_attr = self.lin(hyperedge_attr)
             hyperedge_attr = hyperedge_attr.view(-1, self.heads,
                                                  self.out_channels)
             x_i = x[hyperedge_index[0]]
@@ -147,12 +158,10 @@ class HypergraphConv(MessagePassing):
         B = 1.0 / B
         B[B == float("inf")] = 0
 
-        self.flow = 'source_to_target'
         out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha,
                              size=(num_nodes, num_edges))
-        self.flow = 'target_to_source'
-        out = self.propagate(hyperedge_index, x=out, norm=D, alpha=alpha,
-                             size=(num_edges, num_nodes))
+        out = self.propagate(hyperedge_index.flip([0]), x=out, norm=D,
+                             alpha=alpha, size=(num_edges, num_nodes))
 
         if self.concat is True:
             out = out.view(-1, self.heads * self.out_channels)
@@ -173,7 +182,3 @@ class HypergraphConv(MessagePassing):
             out = alpha.view(-1, self.heads, 1) * out
 
         return out
-
-    def __repr__(self):
-        return "{}({}, {})".format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

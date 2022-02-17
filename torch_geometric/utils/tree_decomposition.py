@@ -1,15 +1,10 @@
 from itertools import chain
 
 import torch
-from torch_sparse import SparseTensor
 from scipy.sparse.csgraph import minimum_spanning_tree
+from torch_sparse import SparseTensor
 
 from torch_geometric.utils import to_undirected
-
-try:
-    import rdkit.Chem as Chem
-except ImportError:
-    Chem = None
 
 
 def tree_decomposition(mol, return_vocab=False):
@@ -28,9 +23,7 @@ def tree_decomposition(mol, return_vocab=False):
 
     :rtype: (LongTensor, LongTensor, int)
     """
-
-    if Chem is None:
-        raise ImportError('Package `rdkit` could not be found.')
+    import rdkit.Chem as Chem
 
     # Cliques = rings and bonds.
     cliques = [list(x) for x in Chem.GetSymmSSSR(mol)]

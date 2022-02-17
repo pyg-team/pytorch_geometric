@@ -1,7 +1,9 @@
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class SamplePoints(object):
+
+class SamplePoints(BaseTransform):
     r"""Uniformly samples :obj:`num` points on the mesh faces according to
     their face area.
 
@@ -53,5 +55,5 @@ class SamplePoints(object):
 
         return data
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.num})'

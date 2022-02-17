@@ -1,13 +1,14 @@
 from typing import Callable, Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import Tensor
-from torch.nn import Parameter, ReLU
 import torch.nn.functional as F
+from torch import Tensor, nn
+from torch.nn import Parameter, ReLU
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 
@@ -31,7 +32,8 @@ class ARMAConv(MessagePassing):
     \mathbf{A} \mathbf{D}^{-1/2}`.
 
     Args:
-        in_channels (int): Size of each input sample :math:`\mathbf{x}^{(t)}`.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample
             :math:`\mathbf{x}^{(t+1)}`.
         num_stacks (int, optional): Number of parallel stacks :math:`K`.
@@ -48,6 +50,13 @@ class ARMAConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_stacks: int = 1, num_layers: int = 1,
@@ -55,7 +64,7 @@ class ARMAConv(MessagePassing):
                  act: Optional[Callable] = ReLU(), dropout: float = 0.,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(ARMAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -68,9 +77,15 @@ class ARMAConv(MessagePassing):
         K, T, F_in, F_out = num_stacks, num_layers, in_channels, out_channels
         T = 1 if self.shared_weights else T
 
-        self.init_weight = Parameter(torch.Tensor(K, F_in, F_out))
         self.weight = Parameter(torch.Tensor(max(1, T - 1), K, F_out, F_out))
-        self.root_weight = Parameter(torch.Tensor(T, K, F_in, F_out))
+        if in_channels > 0:
+            self.init_weight = Parameter(torch.Tensor(K, F_in, F_out))
+            self.root_weight = Parameter(torch.Tensor(T, K, F_in, F_out))
+        else:
+            self.init_weight = torch.nn.parameter.UninitializedParameter()
+            self.root_weight = torch.nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
 
         if bias:
             self.bias = Parameter(torch.Tensor(T, K, 1, F_out))
@@ -80,9 +95,10 @@ class ARMAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.init_weight)
         glorot(self.weight)
-        glorot(self.root_weight)
+        if not isinstance(self.init_weight, torch.nn.UninitializedParameter):
+            glorot(self.init_weight)
+            glorot(self.root_weight)
         zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj,
@@ -128,7 +144,20 @@ class ARMAConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, num_stacks={}, num_layers={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.num_stacks, self.num_layers)
+    @torch.no_grad()
+    def initialize_parameters(self, module, input):
+        if isinstance(self.init_weight, nn.parameter.UninitializedParameter):
+            F_in, F_out = input[0].size(-1), self.out_channels
+            T, K = self.weight.size(0) + 1, self.weight.size(1)
+            self.init_weight.materialize((K, F_in, F_out))
+            self.root_weight.materialize((T, K, F_in, F_out))
+            glorot(self.init_weight)
+            glorot(self.root_weight)
+
+        module._hook.remove()
+        delattr(module, '_hook')
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_stacks={self.num_stacks}, '
+                f'num_layers={self.num_layers})')

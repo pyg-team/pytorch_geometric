@@ -1,8 +1,10 @@
 import torch
 from torch_scatter import scatter_max
 
+from torch_geometric.transforms import BaseTransform
 
-class LocalCartesian(object):
+
+class LocalCartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
     attributes. Each coordinate gets *neighborhood-normalized* to the
     interval :math:`{[0, 1]}^D`.
@@ -39,6 +41,3 @@ class LocalCartesian(object):
             data.edge_attr = cart
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

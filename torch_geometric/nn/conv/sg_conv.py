@@ -1,11 +1,12 @@
 from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
 
 from torch import Tensor
-from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor
 
 
 class SGConv(MessagePassing):
@@ -23,7 +24,8 @@ class SGConv(MessagePassing):
     edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
@@ -47,7 +49,7 @@ class SGConv(MessagePassing):
                  cached: bool = False, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(SGConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -86,7 +88,7 @@ class SGConv(MessagePassing):
                 if self.cached:
                     self._cached_x = x
         else:
-            x = cache
+            x = cache.detach()
 
         return self.lin(x)
 
@@ -96,7 +98,6 @@ class SGConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, K={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.out_channels,
-                                         self.K)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, K={self.K})')

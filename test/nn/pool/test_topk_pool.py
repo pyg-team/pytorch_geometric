@@ -1,7 +1,6 @@
-from __future__ import division
-
 import torch
-from torch_geometric.nn.pool.topk_pool import topk, filter_adj, TopKPooling
+
+from torch_geometric.nn.pool.topk_pool import TopKPooling, filter_adj, topk
 
 
 def test_topk():

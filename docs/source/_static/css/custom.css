@@ -1,3 +1,7 @@
+.wy-side-nav-search .wy-dropdown > a img.logo, .wy-side-nav-search > a img.logo {
+  height: 150px;
+}
+
 .wy-side-nav-search {
   background: rgb(243,244,247);
 }
@@ -117,18 +121,16 @@ h2,
   background: rgb(243,244,247);
 }
 
-.rst-content dl:not(.docutils) dt.field-odd,
 .rst-content dl:not(.docutils) dt.field-odd {
   text-transform: uppercase;
   background: inherit;
   border: none;
-  padding: 6px 0;
+  margin-bottom: 6px !important;
 }
 
-.rst-content dl:not(.docutils) .property {
+.rst-content dl:not(.docutils) .property:first-child .pre {
   text-transform: uppercase;
   font-style: normal;
-  padding-right: 12px;
 }
 
 em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {
@@ -180,5 +182,32 @@ em.sig-param span.default_value {
 .wy-table th,
 .rst-content table.docutils th,
 .rst-content table.field-list th {
-  padding: 16px;
+  padding: 14px;
+}
+
+table.colwidths-given tr td p,
+table.colwidths-given tr th p {
+  text-align: center;
+}
+
+table.colwidths-given tr td:first-child p,
+table.colwidths-given tr th:first-child p {
+  text-align: left;
+}
+
+dl:not(.py) > dt {
+  text-transform: uppercase;
+  background: inherit !important;
+  color: inherit !important;
+  border: none !important;
+}
+
+html.writer-html5 .rst-content dl.field-list > dt,
+html.writer-html5 .rst-content dl.footnote > dt {
+  padding-left: 0;
+}
+
+html.writer-html5 .rst-content dl.field-list,
+html.writer-html5 .rst-content dl.footnote {
+  display: inherit;
 }

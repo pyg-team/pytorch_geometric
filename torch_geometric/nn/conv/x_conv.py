@@ -1,11 +1,14 @@
-from typing import Optional
-
 from math import ceil
+from typing import Optional
 
 import torch
 from torch import Tensor
-from torch.nn import Sequential as S, Linear as L, BatchNorm1d as BN
-from torch.nn import ELU, Conv1d
+from torch.nn import ELU
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Conv1d
+from torch.nn import Linear as L
+from torch.nn import Sequential as S
+
 from torch_geometric.nn import Reshape
 
 from ..inits import reset
@@ -59,7 +62,7 @@ class XConv(torch.nn.Module):
     def __init__(self, in_channels: int, out_channels: int, dim: int,
                  kernel_size: int, hidden_channels: Optional[int] = None,
                  dilation: int = 1, bias: bool = True, num_workers: int = 1):
-        super(XConv, self).__init__()
+        super().__init__()
 
         if knn_graph is None:
             raise ImportError('`XConv` requires `torch-cluster`.')
@@ -125,37 +128,29 @@ class XConv(torch.nn.Module):
         edge_index = knn_graph(pos, K * self.dilation, batch, loop=True,
                                flow='target_to_source',
                                num_workers=self.num_workers)
-        row, col = edge_index[0], edge_index[1]
 
         if self.dilation > 1:
-            dil = self.dilation
-            index = torch.randint(K * dil, (N, K), dtype=torch.long,
-                                  device=row.device)
-            arange = torch.arange(N, dtype=torch.long, device=row.device)
-            arange = arange * (K * dil)
-            index = (index + arange.view(-1, 1)).view(-1)
-            row, col = row[index], col[index]
+            edge_index = edge_index[:, ::self.dilation]
+
+        row, col = edge_index[0], edge_index[1]
 
         pos = pos[col] - pos[row]
 
-        x_star = self.mlp1(pos.view(N * K, D))
+        x_star = self.mlp1(pos)
         if x is not None:
             x = x.unsqueeze(-1) if x.dim() == 1 else x
             x = x[col].view(N, K, self.in_channels)
             x_star = torch.cat([x_star, x], dim=-1)
         x_star = x_star.transpose(1, 2).contiguous()
-        x_star = x_star.view(N, self.in_channels + self.hidden_channels, K, 1)
 
         transform_matrix = self.mlp2(pos.view(N, K * D))
-        transform_matrix = transform_matrix.view(N, 1, K, K)
 
-        x_transformed = torch.matmul(transform_matrix, x_star)
-        x_transformed = x_transformed.view(N, -1, K)
+        x_transformed = torch.matmul(x_star, transform_matrix)
 
         out = self.conv(x_transformed)
 
         return out
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')

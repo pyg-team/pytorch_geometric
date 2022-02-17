@@ -1,9 +1,11 @@
 import torch
-from torch_scatter import scatter_min, scatter_max, scatter_mean, scatter_std
+from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_std
+
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
 
 
-class LocalDegreeProfile(object):
+class LocalDegreeProfile(BaseTransform):
     r"""Appends the Local Degree Profile (LDP) from the `"A Simple yet
     Effective Baseline for Non-attribute Graph Classification"
     <https://arxiv.org/abs/1811.03508>`_ paper
@@ -15,7 +17,6 @@ class LocalDegreeProfile(object):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
-
     def __call__(self, data):
         row, col = data.edge_index
         N = data.num_nodes
@@ -39,6 +40,3 @@ class LocalDegreeProfile(object):
             data.x = x
 
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

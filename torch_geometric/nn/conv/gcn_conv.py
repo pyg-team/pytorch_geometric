@@ -1,16 +1,18 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, matmul, fill_diag, sum, mul
+from torch_sparse import SparseTensor, fill_diag, matmul, mul
+from torch_sparse import sum as sparsesum
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-from ..inits import glorot, zeros
 
 
 @torch.jit._overload
@@ -38,7 +40,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
             adj_t = adj_t.fill_value(1., dtype=dtype)
         if add_self_loops:
             adj_t = fill_diag(adj_t, fill_value)
-        deg = sum(adj_t, dim=1)
+        deg = sparsesum(adj_t, dim=1)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
@@ -83,15 +85,17 @@ class GCNConv(MessagePassing):
     Its node-wise formulation is given by:
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \sum_{j \in \mathcal{N}(v) \cup
-        \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j \hat{d}_i}} \mathbf{x}_j
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
     :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
     node :obj:`i` (default: :obj:`1.0`)
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
@@ -111,6 +115,13 @@ class GCNConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
@@ -122,7 +133,7 @@ class GCNConv(MessagePassing):
                  bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(GCNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -134,7 +145,8 @@ class GCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.lin = Linear(in_channels, out_channels, bias=False,
+                          weight_initializer='glorot')
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -144,7 +156,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        self.lin.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -176,7 +188,7 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        x = x @ self.weight
+        x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -192,7 +204,3 @@ class GCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

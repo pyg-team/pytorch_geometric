@@ -1,10 +1,11 @@
-from typing import Union, Tuple, Optional, Callable
-from torch_geometric.typing import PairTensor, Adj
+from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
-from torch.nn import Parameter
-from torch.nn import Linear, Sigmoid
+from torch.nn import Parameter, Sigmoid
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, PairTensor
 
 from ..inits import zeros
 
@@ -26,8 +27,10 @@ class ResGatedGraphConv(MessagePassing):
     with :math:`\sigma` denoting the sigmoid function.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         act (callable, optional): Gating function :math:`\sigma`.
             (default: :meth:`torch.nn.Sigmoid()`)
@@ -50,7 +53,7 @@ class ResGatedGraphConv(MessagePassing):
     ):
 
         kwargs.setdefault('aggr', 'add')
-        super(ResGatedGraphConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -107,7 +110,3 @@ class ResGatedGraphConv(MessagePassing):
 
     def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor) -> Tensor:
         return self.act(k_i + q_j) * v_j
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

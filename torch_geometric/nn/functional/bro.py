@@ -10,7 +10,7 @@ def bro(
 ) -> torch.Tensor:
     r"""The Batch Representation Orthogonality penalty from the `"Improving
     Molecular Graph Neural Network Explainability with Orthonormalization
-    and Induced Sparsity" <https://arxiv.org/abs/1810.00826>`_ paper
+    and Induced Sparsity" <https://arxiv.org/abs/2105.04854>`_ paper
 
     Computes a regularization for each graph representation in a minibatch
     according to:
@@ -33,20 +33,18 @@ def bro(
 
     """
     _, counts = torch.unique(batch, return_counts=True)
-    diags = torch.stack(
-        [
-            torch.diag(x) for x in torch.nn.utils.rnn.pad_sequence(
-                sequences=torch.ones_like(batch).split_with_sizes(
-                    counts.tolist()),
-                padding_value=0.,
-                batch_first=True,
-            )
-        ]
-    )
+    diags = torch.stack([
+        torch.diag(x) for x in torch.nn.utils.rnn.pad_sequence(
+            sequences=torch.ones_like(batch).split_with_sizes(counts.tolist()),
+            padding_value=0.,
+            batch_first=True,
+        )
+    ])
     x = x.split_with_sizes(split_sizes=counts.tolist())
     x = torch.nn.utils.rnn.pad_sequence(
-        sequences=x, padding_value=0., batch_first=True,
+        sequences=x,
+        padding_value=0.,
+        batch_first=True,
     )
-    return torch.sum(
-        torch.norm(x @ x.transpose(1, 2) - diags, p=p, dim=(1, 2))
-    ) / counts.shape[0]
+    return torch.sum(torch.norm(x @ x.transpose(1, 2) - diags, p=p,
+                                dim=(1, 2))) / counts.shape[0]

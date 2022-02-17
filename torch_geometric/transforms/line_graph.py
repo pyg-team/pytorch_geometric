@@ -1,10 +1,13 @@
 import torch
-from torch_sparse import coalesce
 from torch_scatter import scatter_add
+from torch_sparse import coalesce
+
+from torch_geometric.data import Data
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import remove_self_loops
 
 
-class LineGraph(object):
+class LineGraph(BaseTransform):
     r"""Converts a graph to its corresponding line-graph:
 
     .. math::
@@ -27,10 +30,10 @@ class LineGraph(object):
         force_directed (bool, optional): If set to :obj:`True`, the graph will
             be always treated as a directed graph. (default: :obj:`False`)
     """
-    def __init__(self, force_directed=False):
+    def __init__(self, force_directed: bool = False):
         self.force_directed = force_directed
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
         (row, col), edge_attr = coalesce(edge_index, edge_attr, N, N)
@@ -89,6 +92,3 @@ class LineGraph(object):
 
         data.edge_attr = None
         return data
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

@@ -1,0 +1,12 @@
+---
+cff-version: 1.2.0
+message: "Please cite our paper if you use this code in your own work."
+title: "Fast Graph Representation Learning with PyTorch Geometric"
+authors:
+- family-names: "Fey"
+  given-names: "Matthias"
+- family-names: "Lenssen"
+  given-names: "Jan Eric"
+date-released: 2019-05-06
+license: MIT
+url: "https://github.com/pyg-team/pytorch_geometric"

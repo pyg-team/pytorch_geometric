@@ -1,12 +1,15 @@
 import torch
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-from torch_geometric.nn.inits import uniform, glorot, zeros, ones, reset
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+
+from torch_geometric.nn.inits import glorot, ones, reset, uniform, zeros
 
 
 def test_inits():
     x = torch.empty(1, 4)
 
-    uniform(size=4, tensor=x)
+    uniform(size=4, value=x)
     assert x.min() >= -0.5
     assert x.max() <= 0.5
 

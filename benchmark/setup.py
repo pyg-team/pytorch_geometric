@@ -1,11 +1,12 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='torch_geometric_benchmark',
     version='0.1.0',
-    description='PyTorch Geometric Benchmark Suite',
+    description='PyG Benchmark Suite',
     author='Matthias Fey',
     author_email='matthias.fey@tu-dortmund.de',
-    url='https://github.com/rusty1s/pytorch_geometric_benchmark',
+    url='https://github.com/pyg-team/pytorch_geometric_benchmark',
     install_requires=['scikit-learn'],
-    packages=find_packages())
+    packages=find_packages(),
+)

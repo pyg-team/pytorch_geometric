@@ -1,7 +1,8 @@
 import torch_geometric
+from torch_geometric.transforms import BaseTransform
 
 
-class RadiusGraph(object):
+class RadiusGraph(BaseTransform):
     r"""Creates edges based on node positions :obj:`pos` to all points within a
     given distance.
 
@@ -16,8 +17,13 @@ class RadiusGraph(object):
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
     """
-    def __init__(self, r, loop=False, max_num_neighbors=32,
-                 flow='source_to_target'):
+    def __init__(
+        self,
+        r: float,
+        loop: bool = False,
+        max_num_neighbors: int = 32,
+        flow: str = 'source_to_target',
+    ):
         self.r = r
         self.loop = loop
         self.max_num_neighbors = max_num_neighbors
@@ -31,5 +37,5 @@ class RadiusGraph(object):
             self.flow)
         return data
 
-    def __repr__(self):
-        return '{}(r={})'.format(self.__class__.__name__, self.r)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(r={self.r})'

@@ -1,8 +1,10 @@
 from scipy.sparse.linalg import eigs, eigsh
+
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
-class LaplacianLambdaMax(object):
+class LaplacianLambdaMax(BaseTransform):
     r"""Computes the highest eigenvalue of the graph Laplacian given by
     :meth:`torch_geometric.utils.get_laplacian`.
 
@@ -23,7 +25,6 @@ class LaplacianLambdaMax(object):
             expects undirected graphs as input, and can hence speed up the
             computation of the largest eigenvalue. (default: :obj:`False`)
     """
-
     def __init__(self, normalization=None, is_undirected=False):
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
         self.normalization = normalization
@@ -49,6 +50,5 @@ class LaplacianLambdaMax(object):
 
         return data
 
-    def __repr__(self):
-        return '{}(normalization={})'.format(self.__class__.__name__,
-                                             self.normalization)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(normalization={self.normalization})'

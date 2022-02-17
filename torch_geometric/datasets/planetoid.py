@@ -1,6 +1,8 @@
 import os.path as osp
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
 
@@ -43,16 +45,43 @@ class Planetoid(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - Cora
+              - 2,708
+              - 10,556
+              - 1,433
+              - 7
+            * - CiteSeer
+              - 3,327
+              - 9,104
+              - 3,703
+              - 6
+            * - PubMed
+              - 19,717
+              - 88,648
+              - 500
+              - 3
     """
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
-    def __init__(self, root, name, split="public", num_train_per_class=20,
-                 num_val=500, num_test=1000, transform=None,
-                 pre_transform=None):
+    def __init__(self, root: str, name: str, split: str = "public",
+                 num_train_per_class: int = 20, num_val: int = 500,
+                 num_test: int = 1000, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name
 
-        super(Planetoid, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
         self.split = split
@@ -84,30 +113,30 @@ class Planetoid(InMemoryDataset):
             self.data, self.slices = self.collate([data])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
-        return ['ind.{}.{}'.format(self.name.lower(), name) for name in names]
+        return [f'ind.{self.name.lower()}.{name}' for name in names]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
         for name in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, name), self.raw_dir)
+            download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}()'.format(self.name)
+    def __repr__(self) -> str:
+        return f'{self.name}()'

@@ -1,10 +1,11 @@
-from typing import Union, Tuple
-from torch_geometric.typing import OptTensor, OptPairTensor, Adj, Size
+from typing import Tuple, Union
 
 from torch import Tensor
-from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
 class GraphConv(MessagePassing):
@@ -21,8 +22,10 @@ class GraphConv(MessagePassing):
     target node :obj:`i` (default: :obj:`1`)
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
@@ -31,11 +34,26 @@ class GraphConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: Union[int, Tuple[int,
-                                                     int]], out_channels: int,
-                 aggr: str = 'add', bias: bool = True, **kwargs):
-        super(GraphConv, self).__init__(aggr=aggr, **kwargs)
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        aggr: str = 'add',
+        bias: bool = True,
+        **kwargs,
+    ):
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -43,14 +61,14 @@ class GraphConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
-        self.lin_r = Linear(in_channels[1], out_channels, bias=False)
+        self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin_root = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_l.reset_parameters()
-        self.lin_r.reset_parameters()
+        self.lin_rel.reset_parameters()
+        self.lin_root.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
@@ -61,11 +79,11 @@ class GraphConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
-        out = self.lin_l(out)
+        out = self.lin_rel(out)
 
         x_r = x[1]
         if x_r is not None:
-            out += self.lin_r(x_r)
+            out += self.lin_root(x_r)
 
         return out
 
@@ -75,7 +93,3 @@ class GraphConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return matmul(adj_t, x[0], reduce=self.aggr)
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
