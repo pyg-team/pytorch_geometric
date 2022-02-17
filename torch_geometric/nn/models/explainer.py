@@ -19,20 +19,20 @@ def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module.__explain__ = True
-            module.__edge_mask__ = mask
-            module.__loop_mask__ = loop_mask
-            module.__apply_sigmoid__ = apply_sigmoid
+            module._explain = True
+            module._edge_mask = mask
+            module._loop_mask = loop_mask
+            module._apply_sigmoid = apply_sigmoid
 
 
 def clear_masks(model: torch.nn.Module):
     """Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module.__explain__ = False
-            module.__edge_mask__ = None
-            module.__loop_mask__ = None
-            module.__apply_sigmoid__ = True
+            module._explain = False
+            module._edge_mask = None
+            module._loop_mask = None
+            module._apply_sigmoid = True
     return module
 
 
@@ -152,14 +152,14 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
 
 
 class Explainer(torch.nn.Module):
-    r"""Base Explainer class for Graph Neural Networks, e.g.
-    PGExplainer and GNNExplainer."""
+    r"""Base Explainer class for Graph Neural Networks, *e.g.* :class:`
+    ~torch_geometric.nn.GNNExplainer and :class:`
+    ~torch_geometric.nn.PGExplainer`."""
 
     # TODO: Change docstring
-    # TODO: Rearange args
     def __init__(self, model: torch.nn.Module, lr: Optional[float] = None,
                  epochs: Optional[int] = None, num_hops: Optional[int] = None,
-                 return_type: str = 'log_prob', log: bool = False, **kwargs):
+                 return_type: str = 'log_prob', log: bool = False):
         super().__init__()
         assert return_type in ['log_prob', 'prob', 'raw', 'regression']
 
@@ -186,14 +186,13 @@ class Explainer(torch.nn.Module):
                     k += 1
             self._num_hops = k
 
-    def __flow__(self):
+    def _flow(self):
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
 
-    # TODO: Find out, whether to change variable name node_idx here as well?
-    def __subgraph__(self, node_idx, x, edge_index, **kwargs):
+    def subgraph(self, node_idx, x, edge_index, **kwargs):
         r"""Returns the subgraph of the given node.
         Args:
             node_idx (int): The node idx to explain.
@@ -205,7 +204,7 @@ class Explainer(torch.nn.Module):
         num_nodes, num_edges = x.size(0), edge_index.size(0)
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
             node_idx, self.num_hops, edge_index, relabel_nodes=True,
-            num_nodes=num_nodes, flow=self.__flow__())
+            num_nodes=num_nodes, flow=self._flow())
 
         x = x[subset]
         kwargs_new = {}
@@ -217,35 +216,34 @@ class Explainer(torch.nn.Module):
             kwargs_new[key] = value  # TODO: this is not in PGExplainer
         return x, edge_index, mapping, edge_mask, subset, kwargs_new
 
-    def __to_log_prob__(self, x):
+    def _to_log_prob(self, x):
         x = x.log_softmax(dim=-1) if self.return_type == 'raw' else x
         x = x.log() if self.return_type == 'prob' else x
         return x
 
+    @torch.no_grad()
     def get_initial_prediction(self, x, edge_index, batch=None, **kwargs):
-        with torch.no_grad():
-            if batch is not None:
-                out = self.model(x, edge_index, batch, **kwargs)
-            else:
-                out = self.model(x, edge_index, **kwargs)
-            # Is this if necessary?
-            if self.return_type == 'regression':
-                prediction = out
-            else:
-                log_logits = self.__to_log_prob__(out)
-                prediction = log_logits.argmax(dim=-1)
+        if batch is not None:
+            out = self.model(x, edge_index, batch, **kwargs)
+        else:
+            out = self.model(x, edge_index, **kwargs)
+        if self.return_type == 'regression':
+            prediction = out
+        else:
+            log_logits = self._to_log_prob(out)
+            prediction = log_logits.argmax(dim=-1)
         return prediction
 
-    def get_loss(self, out, prediction, node_idx):
+    def get_loss(self, out, prediction, node_idx=None, **kwargs):
         if self.return_type == 'regression':
-            loss = self.__loss__(node_idx, out, prediction)
+            loss = self._loss(out, prediction, node_idx, **kwargs)
         else:
-            log_logits = self.__to_log_prob__(out)
-            loss = self.__loss__(node_idx, log_logits, prediction)
+            log_logits = self._to_log_prob(out)
+            loss = self._loss(log_logits, prediction, node_idx, **kwargs)
         return loss
 
     @abstractmethod
-    def __loss__(self):
+    def _loss(self):
         # TODO: Check if loss is used in most GNN Xai methods.
         raise NotImplementedError
 
@@ -295,7 +293,7 @@ class Explainer(torch.nn.Module):
             # Only operate on a k-hop subgraph around `node_idx`.
             subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
                 node_idx, self.num_hops, edge_index, relabel_nodes=True,
-                num_nodes=None, flow=self.__flow__())
+                num_nodes=None, flow=self._flow())
 
         edge_mask = edge_mask[hard_edge_mask]
 

@@ -9,8 +9,8 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet
-from .gnn_explainer import GNNExplainer
 from .explainer import Explainer, to_captum
+from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -42,9 +42,9 @@ __all__ = [
     'GraphUNet',
     'SchNet',
     'DimeNet',
-    'GNNExplainer',
     'Explainer',
     'to_captum',
+    'GNNExplainer',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
