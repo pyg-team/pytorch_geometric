@@ -111,7 +111,7 @@ def test_captum_attribution_methods(mask_type, method):
         assert attributions[1].shape == (1, 14)
 
 
-@pytest.mark.parametrize('model', [GCN(), GAT()])
+@pytest.mark.parametrize('model', [GCN, GAT])
 def test_gnn_explainer_to_log_prob(model):
     raw_to_log = Explainer(model, return_type='raw')._to_log_prob
     prob_to_log = Explainer(model, return_type='prob')._to_log_prob
