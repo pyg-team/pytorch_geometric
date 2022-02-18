@@ -12,12 +12,9 @@ from torch_cluster import knn_graph
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import intersection_and_union as i_and_u
-from torch_geometric.nn.unpool import knn_interpolate
 from torch_geometric.nn import global_mean_pool
-
-
-from torch_cluster import knn_graph
+from torch_geometric.nn.unpool import knn_interpolate
+from torch_geometric.utils import intersection_and_union as i_and_u
 
 
 class TransitionUp(torch.nn.Module):

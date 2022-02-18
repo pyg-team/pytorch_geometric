@@ -2,13 +2,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from point_transformer_classification import (MLP, TransformerBlock,
+                                              TransitionDown)
+from point_transformer_segmentation import TransitionSummit, TransitionUp
 from torch.nn import Linear as Lin
 from torch.nn import Sequential as Seq
 from torch_cluster import knn_graph
-
-from point_transformer_classification import TransitionDown, TransformerBlock
-from point_transformer_classification import MLP
-from point_transformer_segmentation import TransitionUp, TransitionSummit
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import S3DIS
@@ -178,13 +177,11 @@ def test(loader):
     # intersection_and_union does one-hot encoding, making the full labels
     # matrix too large to fit all at once so we do it in two times
 
-    i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000],
-                           13)
+    i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000], 13)
     i += i_sub
     u += u_sub
 
-    i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:],
-                           13)
+    i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:], 13)
     i += i_sub
     u += u_sub
 
