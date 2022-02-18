@@ -53,9 +53,12 @@ class PointTransformerConv(MessagePassing):
         attn_nn : (torch.nn.Module, optional): A neural network
             :math:`\gamma_\mathbf{\Theta}` which maps transformed
             node features of shape :obj:`[-1, out_channels]`
-            to shape :obj:`[-1, out_channels]`. (default: :obj:`None`)
+            to shape :obj:`[-1, out_channels // share_planes]`.
+            (default::obj:`None`)
         add_self_loops (bool, optional) : If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
+        share_planes (int, optional) : Specify how much planes will share the
+            same weight. (default: :obj:`8`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -82,14 +85,18 @@ class PointTransformerConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.share_planes = share_planes
 
-        if isinstance(in_channels, int):
-            in_channels = (in_channels, in_channels)
-
         self.pos_nn = pos_nn
         if self.pos_nn is None:
             self.pos_nn = Linear(3, out_channels)
 
         self.attn_nn = attn_nn
+        if self.attn_nn is None:
+            self.attn_nn = Linear(out_channels,
+                                  out_channels // self.share_planes)
+
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
         self.lin = Linear(in_channels[0], out_channels)
         self.lin_src = Linear(in_channels[0], out_channels)
         self.lin_dst = Linear(in_channels[1], out_channels)
@@ -139,8 +146,7 @@ class PointTransformerConv(MessagePassing):
 
         delta = self.pos_nn(pos_j - pos_i)
         alpha = alpha_j - alpha_i + delta
-        if self.attn_nn is not None:
-            alpha = self.attn_nn(alpha)
+        alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index, ptr, size_i)
         return (alpha.unsqueeze(1) * (x_j + delta).view(
             -1, self.share_planes, x_j.shape[1] // self.share_planes)).view(

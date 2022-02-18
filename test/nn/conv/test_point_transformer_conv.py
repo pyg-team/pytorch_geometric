@@ -30,7 +30,7 @@ def test_point_transformer_conv():
     assert torch.allclose(jit(x1, pos1, adj.t()), out, atol=1e-6)
 
     pos_nn = Sequential(Linear(3, 16), ReLU(), Linear(16, 32))
-    attn_nn = Sequential(Linear(32, 32), ReLU(), Linear(32, 32))
+    attn_nn = Sequential(Linear(32, 32), ReLU(), Linear(32, 4))
     conv = PointTransformerConv(16, 32, pos_nn, attn_nn)
 
     out = conv(x1, pos1, edge_index)

@@ -186,7 +186,7 @@ def test(loader):
     u += u_sub
 
     iou = i / u
-    iou = iou[torch.isnan(iou) == False].mean()
+    iou = iou[~torch.isnan(iou)].mean()
     # Compute mean IoU.
     return iou
 
