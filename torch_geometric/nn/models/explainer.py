@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from inspect import signature
 from math import sqrt
 from typing import Optional
@@ -152,9 +151,32 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
 
 
 class Explainer(torch.nn.Module):
-    r"""Base Explainer class for Graph Neural Networks, *e.g.* :class:`
-    ~torch_geometric.nn.GNNExplainer and :class:`
-    ~torch_geometric.nn.PGExplainer`."""
+    r"""An abstract class for implementing Explainer methods for Graph Neural
+    Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer and
+    :class:`~torch_geometric.nn.PGExplainer`. It also provides a general
+    visualization methods for graph attributions.
+
+    Args:
+        model (torch.nn.Module): The GNN module to explain.
+        epochs (int, optional): The number of epochs to train.
+            (default: :obj:`None`)
+        lr (float, optional): The learning rate to apply.
+            (default: :obj:`None`)
+        num_hops (int, optional): The number of hops the :obj:`model` is
+            aggregating information from.
+            If set to :obj:`None`, will automatically try to detect this
+            information based on the number of
+            :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
+            layers inside :obj:`model`. (default: :obj:`None`)
+        return_type (str, optional): Denotes the type of output from
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
+            returns the logarithm of probabilities), :obj:`"prob"` (the
+            model returns probabilities), :obj:`"raw"` (the model returns raw
+            scores) and :obj:`"regression"` (the model returns scalars).
+            (default: :obj:`"log_prob"`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
+    """
 
     # TODO: Change docstring
     def __init__(self, model: torch.nn.Module, lr: Optional[float] = None,
@@ -179,7 +201,6 @@ class Explainer(torch.nn.Module):
         if num_hops is not None:
             self._num_hops = num_hops
         else:
-            # Could this be a general utils function?
             k = 0
             for module in self.model.modules():
                 if isinstance(module, MessagePassing):
@@ -195,7 +216,7 @@ class Explainer(torch.nn.Module):
     def subgraph(self, node_idx, x, edge_index, **kwargs):
         r"""Returns the subgraph of the given node.
         Args:
-            node_idx (int): The node idx to explain.
+            node_idx (int): The prediction for node idx to explain.
             x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             **kwargs (optional): Additional arguments passed to the GNN module.
@@ -242,13 +263,6 @@ class Explainer(torch.nn.Module):
             loss = self._loss(log_logits, prediction, node_idx, **kwargs)
         return loss
 
-    @abstractmethod
-    def _loss(self):
-        # TODO: Check if loss is used in most GNN Xai methods.
-        raise NotImplementedError
-
-    # TODO: Should this method be outside the class?
-    # TODO: Enhance for negative attributions
     def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
                            threshold=None, edge_y=None, node_alpha=None,
                            seed=10, **kwargs):

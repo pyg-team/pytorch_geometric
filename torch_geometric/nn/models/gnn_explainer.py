@@ -93,7 +93,6 @@ class GNNExplainer(Explainer):
         module = clear_masks(self.model)
         self.node_feat_masks = None
         self.edge_mask = None
-        # TODO: Is the following necessary?
         module.loop_mask = None
 
     def _loss(self, log_logits, prediction, node_idx):
@@ -104,7 +103,6 @@ class GNNExplainer(Explainer):
                 loss = torch.cdist(log_logits, prediction)
         else:
             if node_idx is not None:
-                # TODO: Shouldn't this be also the distance between the probs?
                 loss = -log_logits[node_idx, prediction[node_idx]]
             else:
                 loss = -log_logits[0, prediction[0]]
