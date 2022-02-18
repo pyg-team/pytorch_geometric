@@ -1,12 +1,13 @@
 import json
 import os
 import os.path as osp
-from typing import Callable, List, Optional
 import shutil
+from typing import Callable, List, Optional
+
 import torch
 
-from torch_geometric.data import (Data, Dataset, download_url,
-                                  extract_gz, extract_zip)
+from torch_geometric.data import (Data, Dataset, download_url, extract_gz,
+                                  extract_zip)
 
 
 class VarMisuse(Dataset):
@@ -36,7 +37,7 @@ class VarMisuse(Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-    
+
     url = "https://archive.org/download/varmisuse-dataset/graphs-{}.zip"
 
     chunks_count = {'train': 1250, 'valid': 213, 'test': 585}
