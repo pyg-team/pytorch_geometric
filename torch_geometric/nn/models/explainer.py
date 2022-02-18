@@ -152,7 +152,7 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
 
 class Explainer(torch.nn.Module):
     r"""An abstract class for implementing Explainer methods for Graph Neural
-    Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer and
+    Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer` and
     :class:`~torch_geometric.nn.PGExplainer`. It also provides a general
     visualization methods for graph attributions.
 
