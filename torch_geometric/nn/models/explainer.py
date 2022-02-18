@@ -186,9 +186,12 @@ class Explainer(torch.nn.Module):
         self.model = model
         self.lr = lr
         self.epochs = epochs
-        self.num_hops = num_hops if not None else get_num_hops(self.model)
+        self.num_hops = num_hops
         self.return_type = return_type
         self.log = log
+
+        if self.num_hops is None:
+            self.num_hops = get_num_hops(self.model)
 
     def _flow(self):
         for module in self.model.modules():
