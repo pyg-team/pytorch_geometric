@@ -1,10 +1,12 @@
 import json
 import os
+import os.path as osp
 from typing import Callable, List, Optional
-
+import shutil
 import torch
 
-from torch_geometric.data import Data, Dataset, download_url, extract_gz
+from torch_geometric.data import (Data, Dataset, download_url,
+                                  extract_gz, extract_zip)
 
 
 class VarMisuse(Dataset):
@@ -34,12 +36,13 @@ class VarMisuse(Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-    url = ('https://github.com/amitamb/'
-           'varmisuse-data/raw/main/graphs-{}/{}.jsonl.gz')
+    
+    url = "https://archive.org/download/varmisuse-dataset/graphs-{}.zip"
 
-    windows_count = {'train': 20, 'valid': 4, 'test': 4}
+    chunks_count = {'train': 1250, 'valid': 213, 'test': 585}
 
     chunks_per_window = 10
+    samples_per_chunk = 100
 
     graph_edge_types = [
         "Child", "NextToken", "LastUse", "LastWrite", "LastLexicalUse",
@@ -70,16 +73,24 @@ class VarMisuse(Dataset):
     @property
     def chunk_names(self) -> List[str]:
         chunk_names = []
-        total_windows = self.windows_count[self.split]
-        for window in range(total_windows):
-            for chunk in range(self.chunks_per_window):
-                chunk_names.append(f'chunk_{window}-{chunk}')
+        total_chunks = self.chunks_count[self.split]
+
+        for chunk_num in range(total_chunks):
+            window, chunk = divmod(chunk_num, self.chunks_per_window)
+            chunk_names.append(f'chunk_{window}-{chunk}')
         return chunk_names
 
     def download(self):
+        full_url = self.url.format(self.split)
+        shutil.rmtree(self.raw_dir)
+        path = download_url(full_url, self.root)
+        # path = osp.join(self.root, 'graphs-' + self.split + '.zip')
+        extract_zip(path, self.root)
+        os.rename(osp.join(self.root, 'graphs-' + self.split), self.raw_dir)
+        os.unlink(path)
+
         for chunk_name in self.chunk_names:
-            full_url = self.url.format(self.split, chunk_name)
-            path = download_url(full_url, self.raw_dir)
+            path = osp.join(self.raw_dir, chunk_name + '.jsonl.gz')
             extract_gz(path, self.raw_dir)
             os.unlink(path)
 
@@ -154,11 +165,11 @@ class VarMisuse(Dataset):
             torch.save(data_list, processed_path)
 
     def len(self):
-        return len(self.processed_file_names) * 100
+        return len(self.processed_file_names) * self.samples_per_chunk
 
     def get(self, idx):
-        file_idx, data_idx = divmod(idx, 100)
-        window, chunk = divmod(file_idx, 10)
+        file_idx, data_idx = divmod(idx, self.samples_per_chunk)
+        window, chunk = divmod(file_idx, self.chunks_per_window)
         data_list = torch.load(
             os.path.join(self.processed_dir, f'chunk_{window}-{chunk}.pt'))
         data = data_list[data_idx]
