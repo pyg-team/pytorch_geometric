@@ -120,7 +120,7 @@ class Net(torch.nn.Module):
                               ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
-        x = pos if x is None else torch.cat([pos,x], dim=1)
+        x = pos if x is None else torch.cat([pos, x], dim=1)
 
         out_x = []
         out_pos = []
