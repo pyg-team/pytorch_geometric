@@ -1,6 +1,8 @@
 import copy
 
 import torch
+import torch.multiprocessing as mp
+
 import torch_geometric
 from torch_geometric.data import Data
 
@@ -46,7 +48,9 @@ def test_data():
     clone = data.clone()
     assert clone != data
     assert len(clone) == len(data)
+    assert clone.x.data_ptr() != data.x.data_ptr()
     assert clone.x.tolist() == data.x.tolist()
+    assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
     # Test `data.to_heterogenous()`:
@@ -187,3 +191,22 @@ def test_debug_data():
     Data(norm=torch.torch.randn(5, 3), num_nodes=5)
 
     torch_geometric.set_debug(False)
+
+
+def run(rank, data_list):
+    for data in data_list:
+        assert data.x.is_shared()
+        data.x.add_(1)
+
+
+def test_data_share_memory():
+    data_list = [Data(x=torch.zeros(8)) for _ in range(10)]
+
+    for data in data_list:
+        assert not data.x.is_shared()
+
+    mp.spawn(run, args=(data_list, ), nprocs=4, join=True)
+
+    for data in data_list:
+        assert data.x.is_shared()
+        assert torch.allclose(data.x, torch.full((8, ), 4.))

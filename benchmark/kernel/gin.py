@@ -1,7 +1,9 @@
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, Sequential, ReLU, BatchNorm1d as BN
-from torch_geometric.nn import GINConv, global_mean_pool, JumpingKnowledge
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Linear, ReLU, Sequential
+
+from torch_geometric.nn import GINConv, JumpingKnowledge, global_mean_pool
 
 
 class GIN0(torch.nn.Module):

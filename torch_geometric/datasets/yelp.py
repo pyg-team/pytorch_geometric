@@ -1,10 +1,11 @@
 import json
 import os.path as osp
 
-import torch
 import numpy as np
 import scipy.sparse as sp
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class Yelp(InMemoryDataset):
@@ -22,6 +23,20 @@ class Yelp(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 716,847
+              - 13,954,819
+              - 300
+              - 100
     """
 
     adj_full_id = '1Juwx8HtDwSzmVIJ31ooVa1WljI4U5JnA'

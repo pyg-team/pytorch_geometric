@@ -1,11 +1,12 @@
-from typing import Tuple, Optional, Union, List
+import copy
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 # Types for accessing data ####################################################
 
-# Node-types are denoted by a single string, e.g.: `data['paper']`
+# Node-types are denoted by a single string, e.g.: `data['paper']`:
 NodeType = str
 
 # Edge-types are denotes by a triplet of strings, e.g.:
@@ -29,3 +30,20 @@ OptPairTensor = Tuple[Tensor, Optional[Tensor]]
 PairOptTensor = Tuple[Optional[Tensor], Optional[Tensor]]
 Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
+
+# Types for sampling ##########################################################
+
+InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+
+# Helper functions ############################################################
+
+
+def map_annotation(annotation: Any, mapping: Dict[Any, Any]) -> Any:
+    if getattr(annotation, '__origin__', None) == Union:
+        args = getattr(annotation, '__args__', [])
+        out = copy.copy(annotation)
+        setattr(out, '__args__', [map_annotation(a, mapping) for a in args])
+        return out
+    elif annotation in mapping:
+        return mapping[annotation]
+    return annotation

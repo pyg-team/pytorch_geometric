@@ -1,14 +1,15 @@
-from typing import Union, Dict, List, Tuple, Callable, Optional
-from torch_geometric.typing import NodeType
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.loader.utils import to_hetero_csc, filter_hetero_data
+from torch_geometric.loader.base import BaseDataLoader
+from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
+from torch_geometric.typing import NodeType
 
 
-class HGTLoader(torch.utils.data.DataLoader):
+class HGTLoader(BaseDataLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -88,9 +89,6 @@ class HGTLoader(torch.utils.data.DataLoader):
         transform: Callable = None,
         **kwargs,
     ):
-        if kwargs.get('num_workers', 0) > 0:
-            torch.multiprocessing.set_sharing_strategy('file_system')
-
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
@@ -119,24 +117,30 @@ class HGTLoader(torch.utils.data.DataLoader):
         # Convert the graph data into a suitable format for sampling.
         # NOTE: Since C++ cannot take dictionaries with tuples as key as
         # input, edge type triplets are converted into single strings.
-        self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(data)
+        self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
+            data, device='cpu')
 
         super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
                          **kwargs)
 
     def sample(self, indices: List[int]) -> HeteroData:
         input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
-
         node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
-            self.colptr_dict, self.row_dict, input_node_dict, self.num_samples,
-            self.num_hops)
+            self.colptr_dict,
+            self.row_dict,
+            input_node_dict,
+            self.num_samples,
+            self.num_hops,
+        )
+        return node_dict, row_dict, col_dict, edge_dict, len(indices)
 
+    def transform_fn(self, out: Any) -> HeteroData:
+        node_dict, row_dict, col_dict, edge_dict, batch_size = out
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                   edge_dict, self.perm_dict)
-        data[self.input_nodes[0]].batch_size = len(indices)
-        data = data if self.transform is None else self.transform(data)
+        data[self.input_nodes[0]].batch_size = batch_size
 
-        return data
+        return data if self.transform is None else self.transform(data)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

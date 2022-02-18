@@ -10,6 +10,7 @@ from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
+from .explainer import to_captum
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -17,6 +18,8 @@ from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
+from .linkx import LINKX
+from .lightgcn import LightGCN
 
 __all__ = [
     'MLP',
@@ -39,6 +42,7 @@ __all__ = [
     'SchNet',
     'DimeNet',
     'GNNExplainer',
+    'to_captum',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
@@ -46,6 +50,8 @@ __all__ = [
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
+    'LINKX',
+    'LightGCN',
 ]
 
 classes = __all__

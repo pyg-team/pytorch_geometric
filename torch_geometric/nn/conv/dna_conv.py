@@ -1,16 +1,17 @@
 import math
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
-from ..inits import uniform, kaiming_uniform
+from ..inits import kaiming_uniform, uniform
 
 
 class Linear(torch.nn.Module):
@@ -220,6 +221,13 @@ class DNAConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, L, F)` where :math:`L` is the
+          number of layers,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]

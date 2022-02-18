@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union, Any
-
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -132,7 +131,10 @@ def _collate(
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
-                values = [value + inc for value, inc in zip(values, incs)]
+                values = [
+                    value + inc.to(value.device)
+                    for value, inc in zip(values, incs)
+                ]
         else:
             incs = None
 

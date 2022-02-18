@@ -1,15 +1,15 @@
-from typing import Optional, Callable, List
-
-import sys
 import os
 import os.path as osp
-from tqdm import tqdm
+import sys
+from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
-                                  Data)
+from tqdm import tqdm
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -106,6 +106,22 @@ class QM9(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 130,831
+              - ~18.0
+              - ~37.3
+              - 11
+              - 19
     """  # noqa: E501
 
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
@@ -164,10 +180,9 @@ class QM9(InMemoryDataset):
     def process(self):
         try:
             import rdkit
-            from rdkit import Chem
-            from rdkit.Chem.rdchem import HybridizationType
+            from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
-            from rdkit import RDLogger
+            from rdkit.Chem.rdchem import HybridizationType
             RDLogger.DisableLog('rdApp.*')
 
         except ImportError:

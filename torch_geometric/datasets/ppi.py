@@ -1,11 +1,12 @@
-from itertools import product
+import json
 import os
 import os.path as osp
-import json
+from itertools import product
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
+import torch
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 from torch_geometric.utils import remove_self_loops
 
@@ -34,6 +35,22 @@ class PPI(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #tasks
+            * - 20
+              - ~2,245.3
+              - ~61,318.4
+              - 50
+              - 121
     """
 
     url = 'https://data.dgl.ai/dataset/ppi.zip'

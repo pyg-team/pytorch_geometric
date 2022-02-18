@@ -1,6 +1,5 @@
-from typing import Any
-
 from collections.abc import Mapping, Sequence
+from typing import Any
 
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -65,7 +64,7 @@ def _separate(
         value = value.narrow(cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
         if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
-            value = value - incs[idx]
+            value = value - incs[idx].to(value.device)
         return value
 
     elif isinstance(value, SparseTensor) and decrement:

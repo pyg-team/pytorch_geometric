@@ -1,6 +1,9 @@
-import torch
+from typing import Callable, Optional
+
 import numpy as np
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class KarateClub(InMemoryDataset):
@@ -19,9 +22,23 @@ class KarateClub(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 34
+              - 156
+              - 34
+              - 4
     """
-    def __init__(self, transform=None):
-        super().__init__('.', transform, None, None)
+    def __init__(self, transform: Optional[Callable] = None):
+        super().__init__('.', transform)
 
         import networkx as nx
 

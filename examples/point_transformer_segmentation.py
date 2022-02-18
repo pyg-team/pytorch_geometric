@@ -1,11 +1,13 @@
-from point_transformer_classification import TransitionDown, TransformerBlock
-from point_transformer_classification import MLP
-
 import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from point_transformer_classification import (MLP, TransformerBlock,
+                                              TransitionDown)
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+from torch_cluster import knn_graph
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet

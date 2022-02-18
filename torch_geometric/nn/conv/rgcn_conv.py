@@ -1,14 +1,15 @@
-from typing import Optional, Union, Tuple
-from torch_geometric.typing import OptTensor, Adj
+from typing import Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Parameter as Param
+from torch import Tensor
 from torch.nn import Parameter
+from torch.nn import Parameter as Param
 from torch_scatter import scatter
-from torch_sparse import SparseTensor, matmul, masked_select_nnz
+from torch_sparse import SparseTensor, masked_select_nnz, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 
@@ -272,7 +273,8 @@ class FastRGCNConv(RGCNConv):
 
         return out
 
-    def message(self, x_j: Tensor, edge_type: Tensor, index: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_type: Tensor,
+                edge_index_j: Tensor) -> Tensor:
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
             weight = (self.comp @ weight.view(self.num_bases, -1)).view(
@@ -289,7 +291,7 @@ class FastRGCNConv(RGCNConv):
 
         else:  # No regularization/Basis-decomposition ========================
             if x_j.dtype == torch.long:
-                weight_index = edge_type * weight.size(1) + index
+                weight_index = edge_type * weight.size(1) + edge_index_j
                 return weight.view(-1, self.out_channels)[weight_index]
 
             return torch.bmm(x_j.unsqueeze(-2), weight[edge_type]).squeeze(-2)

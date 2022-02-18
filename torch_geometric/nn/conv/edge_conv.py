@@ -1,9 +1,10 @@
-from typing import Callable, Union, Optional
-from torch_geometric.typing import OptTensor, PairTensor, PairOptTensor, Adj
+from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
 
 from ..inits import reset
 
@@ -34,6 +35,15 @@ class EdgeConv(MessagePassing):
             (default: :obj:`"max"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V}|, F_{in}), (|\mathcal{V}|, F_{in}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super().__init__(aggr=aggr, **kwargs)
@@ -79,7 +89,7 @@ class DynamicEdgeConv(MessagePassing):
     """
     def __init__(self, nn: Callable, k: int, aggr: str = 'max',
                  num_workers: int = 1, **kwargs):
-        super().__init__(aggr=aggr, flow='target_to_source', **kwargs)
+        super().__init__(aggr=aggr, flow='source_to_target', **kwargs)
 
         if knn is None:
             raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
@@ -95,11 +105,14 @@ class DynamicEdgeConv(MessagePassing):
     def forward(
             self, x: Union[Tensor, PairTensor],
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        # type: (Tensor, OptTensor) -> Tensor  # noqa
+        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
-        assert x[0].dim() == 2, \
-            'Static graphs not supported in `DynamicEdgeConv`.'
+
+        if x[0].dim() != 2:
+            raise ValueError("Static graphs not supported in DynamicEdgeConv")
 
         b: PairOptTensor = (None, None)
         if isinstance(batch, Tensor):
@@ -108,8 +121,7 @@ class DynamicEdgeConv(MessagePassing):
             assert batch is not None
             b = (batch[0], batch[1])
 
-        edge_index = knn(x[0], x[1], self.k, b[0], b[1],
-                         num_workers=self.num_workers)
+        edge_index = knn(x[0], x[1], self.k, b[0], b[1]).flip([0])
 
         # propagate_type: (x: PairTensor)
         return self.propagate(edge_index, x=x, size=None)

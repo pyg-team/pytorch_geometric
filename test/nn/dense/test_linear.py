@@ -1,12 +1,12 @@
 import copy
-import pytest
 from itertools import product
 
+import pytest
 import torch
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-from torch_geometric.nn import Linear, HeteroLinear
+from torch_geometric.nn import HeteroLinear, Linear
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -27,6 +27,24 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
+
+
+@pytest.mark.parametrize('dim1,dim2', product([-1, 16], [-1, 16]))
+def test_load_lazy_linear(dim1, dim2):
+    lin1 = Linear(dim1, 32)
+    lin2 = Linear(dim1, 32)
+    lin2.load_state_dict(lin1.state_dict())
+
+    if dim1 != -1:
+        assert torch.allclose(lin1.weight, lin2.weight)
+        assert torch.allclose(lin1.bias, lin2.bias)
+        assert not hasattr(lin1, '_hook')
+        assert not hasattr(lin2, '_hook')
+    else:
+        assert isinstance(lin1.weight, UninitializedParameter)
+        assert isinstance(lin2.weight, UninitializedParameter)
+        assert hasattr(lin1, '_hook')
+        assert hasattr(lin2, '_hook')
 
 
 @pytest.mark.parametrize('lazy', [True, False])
@@ -78,7 +96,7 @@ def test_hetero_linear():
     x = torch.randn((3, 16))
     node_type = torch.tensor([0, 1, 2])
 
-    lin = HeteroLinear(in_channels=16, out_channels=32, num_node_types=3)
+    lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
     assert str(lin) == 'HeteroLinear(16, 32, bias=True)'
 
     out = lin(x, node_type)

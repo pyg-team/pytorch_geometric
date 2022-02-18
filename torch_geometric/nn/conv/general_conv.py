@@ -1,13 +1,14 @@
-import torch
-from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, Size, Optional
+from typing import Tuple, Union
 
-from torch import Tensor
-from torch_geometric.nn.dense.linear import Linear
-from torch.nn import Parameter
+import torch
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import Parameter
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot
+from torch_geometric.typing import Adj, Optional, OptPairTensor, Size
 from torch_geometric.utils import softmax
 
 
@@ -115,7 +116,8 @@ class GeneralConv(MessagePassing):
 
     def reset_parameters(self):
         self.lin_msg.reset_parameters()
-        self.lin_self.reset_parameters()
+        if hasattr(self.lin_self, 'reset_parameters'):
+            self.lin_self.reset_parameters()
         if self.in_edge_channels is not None:
             self.lin_edge.reset_parameters()
         if self.attention and self.attention_type == 'additive':

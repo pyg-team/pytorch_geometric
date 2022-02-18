@@ -2,19 +2,20 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
+from torch.nn import BatchNorm1d as BN
 from torch.nn import Identity
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+from torch_cluster import fps, knn_graph
+from torch_scatter import scatter_max
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.pool import knn
-from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn import global_mean_pool
-
-from torch_cluster import knn_graph
-from torch_cluster import fps
-from torch_scatter import scatter_max
+from torch_geometric.nn.conv import PointTransformerConv
+from torch_geometric.nn.pool import knn
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
@@ -85,7 +86,7 @@ class TransitionDown(torch.nn.Module):
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x, id_k_neighbor[0],
+        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
                                dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
@@ -122,23 +123,15 @@ class Net(torch.nn.Module):
             # Add Transition Down block followed by a Transformer block
             self.transition_down.append(
                 TransitionDown(in_channels=dim_model[i],
-                               out_channels=dim_model[i + 1],
-                               k=self.k)
-            )
+                               out_channels=dim_model[i + 1], k=self.k))
 
             self.transformers_down.append(
                 TransformerBlock(in_channels=dim_model[i + 1],
-                                 out_channels=dim_model[i + 1])
-            )
+                                 out_channels=dim_model[i + 1]))
 
         # class score computation
-        self.mlp_output = Seq(
-            Lin(dim_model[-1], 64),
-            ReLU(),
-            Lin(64, 64),
-            ReLU(),
-            Lin(64, out_channels)
-        )
+        self.mlp_output = Seq(Lin(dim_model[-1], 64), ReLU(), Lin(64, 64),
+                              ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
 
@@ -197,11 +190,10 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(0, train_dataset.num_classes, dim_model=[
-                32, 64, 128, 256, 512], k=16).to(device)
+    model = Net(0, train_dataset.num_classes,
+                dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                                step_size=20,
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
                                                 gamma=0.5)
 
     for epoch in range(1, 201):

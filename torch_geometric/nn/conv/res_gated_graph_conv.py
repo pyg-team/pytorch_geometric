@@ -1,11 +1,11 @@
-from typing import Union, Tuple, Optional, Callable
-from torch_geometric.typing import PairTensor, Adj
+from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
-from torch.nn import Parameter
-from torch.nn import Sigmoid
+from torch.nn import Parameter, Sigmoid
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, PairTensor
 
 from ..inits import zeros
 
