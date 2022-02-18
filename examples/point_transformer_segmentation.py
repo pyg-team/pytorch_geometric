@@ -120,10 +120,7 @@ class Net(torch.nn.Module):
                               ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
-
-        # add dummy features in case there is none
-        if x is None:
-            x = torch.ones((pos.shape[0], 1)).to(pos.get_device())
+        x = pos if x is None else torch.cat([pos,x], dim=1)
 
         out_x = []
         out_pos = []
@@ -236,7 +233,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(3, train_dataset.num_classes,
+    model = Net(3 + 3, train_dataset.num_classes,
                 dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,

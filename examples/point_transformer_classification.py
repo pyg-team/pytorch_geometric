@@ -17,10 +17,10 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn.pool import knn
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet40')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
-train_dataset = ModelNet(path, '10', True, transform, pre_transform)
-test_dataset = ModelNet(path, '10', False, transform, pre_transform)
+train_dataset = ModelNet(path, '40', True, transform, pre_transform)
+test_dataset = ModelNet(path, '40', False, transform, pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
@@ -134,10 +134,7 @@ class Net(torch.nn.Module):
                               ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
-
-        # add dummy features in case there is none
-        if x is None:
-            x = torch.ones((pos.shape[0], 1), device=pos.get_device())
+        x = pos if x is None else torch.cat([pos,x], dim=1)
 
         # first block
         x = self.mlp_input(x)
@@ -190,7 +187,7 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(0, train_dataset.num_classes,
+    model = Net(0 + 3, train_dataset.num_classes,
                 dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
