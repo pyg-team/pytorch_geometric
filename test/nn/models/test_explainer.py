@@ -112,7 +112,7 @@ def test_captum_attribution_methods(mask_type, method):
 
 
 @pytest.mark.parametrize('model', [GCN, GAT])
-def test_gnn_explainer_to_log_prob(model):
+def test_explainer_to_log_prob(model):
     raw_to_log = Explainer(model, return_type='raw')._to_log_prob
     prob_to_log = Explainer(model, return_type='prob')._to_log_prob
     log_to_log = Explainer(model, return_type='log_prob')._to_log_prob
