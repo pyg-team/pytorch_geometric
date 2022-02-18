@@ -193,7 +193,7 @@ class Explainer(torch.nn.Module):
         self.log = log
 
     @property
-    def num_hops(self):
+    def num_hops(self) -> int:
         return self._num_hops
 
     @num_hops.setter
