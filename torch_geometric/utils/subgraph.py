@@ -8,10 +8,10 @@ from torch_geometric.nn import MessagePassing
 from .num_nodes import maybe_num_nodes
 
 
-def get_num_hops(model: torch.nn.Module, ):
+def get_num_hops(model: torch.nn.Module):
     r"""Returns the number of hops the model is aggregating information from."""
     num_hops = 0
-    for module in self.model.modules():
+    for module in model.modules():
         if isinstance(module, MessagePassing):
             num_hops += 1
     return num_hops
