@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import k_hop_subgraph, to_networkx
+from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
 
 
 def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
@@ -177,8 +177,6 @@ class Explainer(torch.nn.Module):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
-
-    # TODO: Change docstring
     def __init__(self, model: torch.nn.Module, lr: Optional[float] = None,
                  epochs: Optional[int] = None, num_hops: Optional[int] = None,
                  return_type: str = 'log_prob', log: bool = False):
@@ -188,24 +186,9 @@ class Explainer(torch.nn.Module):
         self.model = model
         self.lr = lr
         self.epochs = epochs
-        self.num_hops = num_hops
+        self.num_hops = num_hops if not None else get_num_hops(self.model)
         self.return_type = return_type
         self.log = log
-
-    @property
-    def num_hops(self) -> int:
-        return self._num_hops
-
-    @num_hops.setter
-    def num_hops(self, num_hops):
-        if num_hops is not None:
-            self._num_hops = num_hops
-        else:
-            k = 0
-            for module in self.model.modules():
-                if isinstance(module, MessagePassing):
-                    k += 1
-            self._num_hops = k
 
     def _flow(self):
         for module in self.model.modules():
@@ -213,7 +196,7 @@ class Explainer(torch.nn.Module):
                 return module.flow
         return 'source_to_target'
 
-    def subgraph(self, node_idx, x, edge_index, **kwargs):
+    def subgraph(self, node_idx: int, x: Tensor, edge_index: Tensor, **kwargs):
         r"""Returns the subgraph of the given node.
         Args:
             node_idx (int): The prediction for node idx to explain.
@@ -243,7 +226,8 @@ class Explainer(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def get_initial_prediction(self, x, edge_index, batch=None, **kwargs):
+    def get_initial_prediction(self, x: Tensor, edge_index: Tensor,
+                               batch: Optional[Tensor] = None, **kwargs):
         if batch is not None:
             out = self.model(x, edge_index, batch, **kwargs)
         else:
@@ -255,7 +239,8 @@ class Explainer(torch.nn.Module):
             prediction = log_logits.argmax(dim=-1)
         return prediction
 
-    def get_loss(self, out, prediction, node_idx=None, **kwargs):
+    def get_loss(self, out: Tensor, prediction: Tensor,
+                 node_idx: Optional[int] = None, **kwargs):
         if self.return_type == 'regression':
             loss = self._loss(out, prediction, node_idx, **kwargs)
         else:
@@ -263,9 +248,12 @@ class Explainer(torch.nn.Module):
             loss = self._loss(log_logits, prediction, node_idx, **kwargs)
         return loss
 
-    def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
-                           threshold=None, edge_y=None, node_alpha=None,
-                           seed=10, **kwargs):
+    def visualize_subgraph(self, node_idx: int, edge_index: Tensor,
+                           edge_mask: Tensor, y: Optional[Tensor] = None,
+                           threshold: Optional[int] = None,
+                           edge_y: Optional[Tensor] = None,
+                           node_alpha: Optional[Tensor] = None, seed: int = 10,
+                           **kwargs):
         r"""Visualizes the subgraph given an edge mask
         :attr:`edge_mask`.
 

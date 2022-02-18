@@ -90,10 +90,9 @@ class GNNExplainer(Explainer):
             self.edge_mask = torch.nn.Parameter(torch.randn(E) * std)
 
     def _clear_masks(self):
-        module = clear_masks(self.model)
+        clear_masks(self.model)
         self.node_feat_masks = None
         self.edge_mask = None
-        module.loop_mask = None
 
     def _loss(self, log_logits, prediction, node_idx):
         if self.return_type == 'regression':
