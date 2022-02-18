@@ -2,10 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU
+from torch.nn import Linear, ReLU, Sequential
+
+from torch_geometric.data import Batch, DataLoader
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader, Batch
-from torch_geometric.nn import GINConv, global_add_pool, PGExplainer
+from torch_geometric.nn import GINConv, PGExplainer, global_add_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
 dataset = TUDataset(path, name='MUTAG').shuffle()
