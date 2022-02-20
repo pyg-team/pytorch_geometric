@@ -19,6 +19,8 @@ External Resources
 
 * Benedek Rozemberczki: **PyTorch Geometric Temporal** - A temporal GNN library built upon PyG [`GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__, `Documentation <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__]
 
+* Yixuan He: **PyTorch Geometric Signed Directed** - A signed and directed GNN library built upon PyG [`GitHub <https://github.com/SherylHYX/pytorch_geometric_signed_directed>`__, `Documentation <https://pytorch-geometric-signed-directed.readthedocs.io/en/latest/>`__]
+
 * Steeve Huang: **Hands-on Graph Neural Networks with PyTorch & PyTorch Geometric** [`Tutorial <https://towardsdatascience.com/hands-on-graph-neural-networks-with-pytorch-pytorch-geometric-359487e221a8>`__, `Code <https://github.com/khuangaf/Pytorch-Geometric-YooChoose>`__]
 
 * Francesco Landolfi: **PyTorch Geometric Tutorial** [`PDF (0.4MB) <http://pages.di.unipi.it/citraro/files/slides/Landolfi_tutorial.pdf>`__]
