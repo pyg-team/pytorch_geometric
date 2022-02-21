@@ -1,5 +1,6 @@
 import os
 
+import quiver
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
@@ -10,8 +11,6 @@ from tqdm import tqdm
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
-
-import quiver
 
 
 class SAGE(torch.nn.Module):
@@ -66,12 +65,12 @@ def run(rank, world_size, dataset, quiver_feature, quiver_sampler):
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
     torch.cuda.set_device(rank)
 
-
     data = dataset[0]
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
 
-    train_loader = torch.utils.data.DataLoader(train_idx, batch_size=1024, shuffle=True, num_workers=0)
+    train_loader = torch.utils.data.DataLoader(train_idx, batch_size=1024,
+                                               shuffle=True, num_workers=0)
 
     if rank == 0:
         subgraph_loader = NeighborSampler(data.edge_index, node_idx=None,
@@ -106,7 +105,8 @@ def run(rank, world_size, dataset, quiver_feature, quiver_sampler):
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
             with torch.no_grad():
-                out = model.module.inference(quiver_feature, rank, subgraph_loader)
+                out = model.module.inference(quiver_feature, rank,
+                                             subgraph_loader)
             res = out.argmax(dim=-1) == data.y
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
@@ -128,10 +128,15 @@ if __name__ == '__main__':
     # Create Quiver Sampler And Feature
     #####################################
     csr_topo = quiver.CSRTopo(data.edge_index)
-    quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, [25, 10], 0, mode='GPU')
+    quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, [25, 10], 0,
+                                                 mode='GPU')
 
-    quiver_feature = quiver.Feature(rank=0, device_list=list(range(world_size)), device_cache_size="2G", cache_policy="device_replicate", csr_topo=csr_topo)
+    quiver_feature = quiver.Feature(rank=0,
+                                    device_list=list(range(world_size)),
+                                    device_cache_size="2G",
+                                    cache_policy="device_replicate",
+                                    csr_topo=csr_topo)
     quiver_feature.from_cpu_tensor(data.x)
 
-   
-    mp.spawn(run, args=(world_size, dataset, quiver_feature, quiver_sampler), nprocs=world_size, join=True)
+    mp.spawn(run, args=(world_size, dataset, quiver_feature, quiver_sampler),
+             nprocs=world_size, join=True)
