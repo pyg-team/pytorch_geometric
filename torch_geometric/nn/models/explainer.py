@@ -153,8 +153,8 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
 class Explainer(torch.nn.Module):
     r"""An abstract class for integrating explainability into Graph Neural
     Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer` and
-    :class:`~torch_geometric.nn.PGExplainer`. It also provides a general
-    visualization methods for graph attributions.
+    :class:`~torch_geometric.nn.PGExplainer`.
+    It also provides general visualization methods for graph attributions.
 
     Args:
         model (torch.nn.Module): The GNN module to explain.
@@ -201,8 +201,9 @@ class Explainer(torch.nn.Module):
 
     def subgraph(self, node_idx: int, x: Tensor, edge_index: Tensor, **kwargs):
         r"""Returns the subgraph of the given node.
+
         Args:
-            node_idx (int): The prediction for node idx to explain.
+            node_idx (int): The node to explain.
             x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             **kwargs (optional): Additional arguments passed to the GNN module.
@@ -251,18 +252,17 @@ class Explainer(torch.nn.Module):
             loss = self._loss(log_logits, prediction, node_idx, **kwargs)
         return loss
 
-    def visualize_subgraph(self, node_idx: int, edge_index: Tensor,
+    def visualize_subgraph(self, node_idx: Optional[int], edge_index: Tensor,
                            edge_mask: Tensor, y: Optional[Tensor] = None,
                            threshold: Optional[int] = None,
                            edge_y: Optional[Tensor] = None,
                            node_alpha: Optional[Tensor] = None, seed: int = 10,
                            **kwargs):
-        r"""Visualizes the subgraph given an edge mask
-        :attr:`edge_mask`.
+        r"""Visualizes the subgraph given an edge mask :attr:`edge_mask`.
 
         Args:
             node_idx (int): The node id to explain.
-                Set to :obj:`-1` to explain graph.
+                Set to :obj:`None` to explain a graph.
             edge_index (LongTensor): The edge indices.
             edge_mask (Tensor): The edge mask.
             y (Tensor, optional): The ground-truth node-prediction labels used
@@ -287,7 +287,7 @@ class Explainer(torch.nn.Module):
 
         assert edge_mask.size(0) == edge_index.size(1)
 
-        if node_idx == -1:
+        if node_idx is None or node_idx < 0:
             hard_edge_mask = torch.BoolTensor([True] * edge_index.size(1),
                                               device=edge_mask.device)
             subset = torch.arange(edge_index.max().item() + 1,

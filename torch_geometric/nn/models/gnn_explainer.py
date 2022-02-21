@@ -94,14 +94,14 @@ class GNNExplainer(Explainer):
         self.node_feat_masks = None
         self.edge_mask = None
 
-    def _loss(self, log_logits, prediction, node_idx):
+    def _loss(self, log_logits, prediction, node_idx: Optional[int] = None):
         if self.return_type == 'regression':
-            if node_idx is not None:
+            if node_idx is not None and node_idx >= 0:
                 loss = torch.cdist(log_logits[node_idx], prediction[node_idx])
             else:
                 loss = torch.cdist(log_logits, prediction)
         else:
-            if node_idx is not None:
+            if node_idx is not None and node_idx >= 0:
                 loss = -log_logits[node_idx, prediction[node_idx]]
             else:
                 loss = -log_logits[0, prediction[0]]
