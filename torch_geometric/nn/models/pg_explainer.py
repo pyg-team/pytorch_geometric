@@ -1,7 +1,7 @@
 from typing import Optional
 
 import torch
-from torch import nn
+from torch import Tensor, nn
 from torch.nn.functional import nll_loss
 from torch_scatter import scatter_mean
 from tqdm import tqdm
@@ -83,12 +83,11 @@ class PGExplainer(Explainer):
         temp = self.coeffs['temp']
         return temp[0] * ((temp[1] / temp[0])**(e / self.epochs))
 
-    def _create_explainer_input(self, edge_index, x, node_id=None):
-
+    def _create_explainer_input(self, edge_index, x, node_idx=None) -> Tensor:
         rows, cols = edge_index
         x_j, x_i = x[rows], x[cols]
         if self.task == 'node':
-            x_node = x[node_id].repeat(rows.size(0), 1)
+            x_node = x[node_idx].repeat(rows.size(0), 1)
             return torch.cat([x_i, x_j, x_node], 1)
         else:
             return torch.cat([x_i, x_j], 1)
@@ -131,7 +130,8 @@ class PGExplainer(Explainer):
 
         return loss + size_loss + mask_ent_loss
 
-    def train_explainer(self, x, z, edge_index, node_idxs=None, batch=None,
+    def train_explainer(self, x: Tensor, z: Tensor, edge_index: Tensor,
+                        node_idxs: Optional[int] = None, batch: Tensor = None,
                         **kwargs):
         r"""Trains the :obj:`explainer_model` to predict an
         edge mask that is crucial to explain the predictions of
@@ -155,7 +155,6 @@ class PGExplainer(Explainer):
         """
         assert x.shape[0] == z.shape[0]
         assert ~(batch is None and node_idxs is None)
-        print("batch: ", batch)
 
         self.model.eval()
         clear_masks(self.model)
@@ -230,7 +229,8 @@ class PGExplainer(Explainer):
             pbar.close()
         clear_masks(self.model)
 
-    def explain(self, x, z, edge_index, node_idx=None, **kwargs):
+    def explain(self, x: Tensor, z: Tensor, edge_index: Tensor,
+                node_idx: Optional[int] = None, **kwargs) -> Tensor:
         r"""Returns an :obj:`edge_mask` that explains :obj:`model` prediction.
 
         Args:
