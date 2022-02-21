@@ -193,7 +193,7 @@ class Explainer(torch.nn.Module):
         if self.num_hops is None:
             self.num_hops = get_num_hops(self.model)
 
-    def _flow(self):
+    def _flow(self) -> str:
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
