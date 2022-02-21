@@ -1,6 +1,5 @@
 from .message_passing import MessagePassing
 from .gcn_conv import GCNConv
-from .rgat_conv import RGATConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
@@ -18,6 +17,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointNetConv, PointConv
@@ -53,7 +53,6 @@ from .lg_conv import LGConv
 __all__ = [
     'MessagePassing',
     'GCNConv',
-    'RGATConv',
     'ChebConv',
     'SAGEConv',
     'GraphConv',
@@ -73,6 +72,7 @@ __all__ = [
     'MFConv',
     'RGCNConv',
     'FastRGCNConv',
+    'RGATConv',
     'SignedConv',
     'DNAConv',
     'PointNetConv',
