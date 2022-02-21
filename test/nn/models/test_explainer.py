@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.nn import GAT, GCN, to_captum
+from torch_geometric.nn import GAT, GCN, Explainer, to_captum
 
 try:
     from captum import attr  # noqa
@@ -109,3 +109,17 @@ def test_captum_attribution_methods(mask_type, method):
     else:
         assert attributions[0].shape == (1, 8, 3)
         assert attributions[1].shape == (1, 14)
+
+
+@pytest.mark.parametrize('model', [GCN, GAT])
+def test_explainer_to_log_prob(model):
+    raw_to_log = Explainer(model, return_type='raw')._to_log_prob
+    prob_to_log = Explainer(model, return_type='prob')._to_log_prob
+    log_to_log = Explainer(model, return_type='log_prob')._to_log_prob
+
+    raw = torch.tensor([[1, 3.2, 6.1], [9, 9, 0.1]])
+    prob = raw.softmax(dim=-1)
+    log_prob = raw.log_softmax(dim=-1)
+
+    assert torch.allclose(raw_to_log(raw), prob_to_log(prob))
+    assert torch.allclose(prob_to_log(prob), log_to_log(log_prob))

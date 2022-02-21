@@ -111,10 +111,10 @@ class MessagePassing(torch.nn.Module):
         self.fuse = self.inspector.implements('message_and_aggregate')
 
         # Support for GNNExplainer.
-        self.__explain__ = False
-        self.__edge_mask__ = None
-        self.__loop_mask__ = None
-        self.__apply_sigmoid__ = True
+        self._explain = False
+        self._edge_mask = None
+        self._loop_mask = None
+        self._apply_sigmoid = True
 
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
@@ -260,7 +260,7 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
+        decomposed_layers = 1 if self._explain else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
@@ -271,7 +271,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self.__explain__):
+                and not self._explain):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -323,14 +323,14 @@ class MessagePassing(torch.nn.Module):
                 # For `GNNExplainer`, we require a separate message and
                 # aggregate procedure since this allows us to inject the
                 # `edge_mask` into the message passing computation scheme.
-                if self.__explain__:
-                    edge_mask = self.__edge_mask__
-                    if self.__apply_sigmoid__:
+                if self._explain:
+                    edge_mask = self._edge_mask
+                    if self._apply_sigmoid:
                         edge_mask = edge_mask.sigmoid()
                     # Some ops add self-loops to `edge_index`. We need to do
                     # the same for `edge_mask` (but do not train those).
                     if out.size(self.node_dim) != edge_mask.size(0):
-                        edge_mask = edge_mask[self.__loop_mask__]
+                        edge_mask = edge_mask[self._loop_mask]
                         loop = edge_mask.new_ones(size[0])
                         edge_mask = torch.cat([edge_mask, loop], dim=0)
                     assert out.size(self.node_dim) == edge_mask.size(0)
