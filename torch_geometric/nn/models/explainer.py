@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from inspect import signature
 from math import sqrt
 from typing import Optional
@@ -8,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import k_hop_subgraph, to_networkx
+from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
 
 
 def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
@@ -152,11 +151,32 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
 
 
 class Explainer(torch.nn.Module):
-    r"""Base Explainer class for Graph Neural Networks, *e.g.* :class:`
-    ~torch_geometric.nn.GNNExplainer and :class:`
-    ~torch_geometric.nn.PGExplainer`."""
+    r"""An abstract class for integrating explainability into Graph Neural
+    Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer` and
+    :class:`~torch_geometric.nn.PGExplainer`.
+    It also provides general visualization methods for graph attributions.
 
-    # TODO: Change docstring
+    Args:
+        model (torch.nn.Module): The GNN module to explain.
+        epochs (int, optional): The number of epochs to train.
+            (default: :obj:`None`)
+        lr (float, optional): The learning rate to apply.
+            (default: :obj:`None`)
+        num_hops (int, optional): The number of hops the :obj:`model` is
+            aggregating information from.
+            If set to :obj:`None`, will automatically try to detect this
+            information based on the number of
+            :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
+            layers inside :obj:`model`. (default: :obj:`None`)
+        return_type (str, optional): Denotes the type of output from
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
+            returns the logarithm of probabilities), :obj:`"prob"` (the
+            model returns probabilities), :obj:`"raw"` (the model returns raw
+            scores) and :obj:`"regression"` (the model returns scalars).
+            (default: :obj:`"log_prob"`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
+    """
     def __init__(self, model: torch.nn.Module, lr: Optional[float] = None,
                  epochs: Optional[int] = None, num_hops: Optional[int] = None,
                  return_type: str = 'log_prob', log: bool = False):
@@ -166,36 +186,21 @@ class Explainer(torch.nn.Module):
         self.model = model
         self.lr = lr
         self.epochs = epochs
-        self.num_hops = num_hops
+        self.num_hops = num_hops or get_num_hops(self.model)
         self.return_type = return_type
         self.log = log
 
-    @property
-    def num_hops(self):
-        return self._num_hops
-
-    @num_hops.setter
-    def num_hops(self, num_hops):
-        if num_hops is not None:
-            self._num_hops = num_hops
-        else:
-            # Could this be a general utils function?
-            k = 0
-            for module in self.model.modules():
-                if isinstance(module, MessagePassing):
-                    k += 1
-            self._num_hops = k
-
-    def _flow(self):
+    def _flow(self) -> str:
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
 
-    def subgraph(self, node_idx, x, edge_index, **kwargs):
+    def subgraph(self, node_idx: int, x: Tensor, edge_index: Tensor, **kwargs):
         r"""Returns the subgraph of the given node.
+
         Args:
-            node_idx (int): The node idx to explain.
+            node_idx (int): The node to explain.
             x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             **kwargs (optional): Additional arguments passed to the GNN module.
@@ -222,7 +227,8 @@ class Explainer(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def get_initial_prediction(self, x, edge_index, batch=None, **kwargs):
+    def get_initial_prediction(self, x: Tensor, edge_index: Tensor,
+                               batch: Optional[Tensor] = None, **kwargs):
         if batch is not None:
             out = self.model(x, edge_index, batch, **kwargs)
         else:
@@ -234,7 +240,8 @@ class Explainer(torch.nn.Module):
             prediction = log_logits.argmax(dim=-1)
         return prediction
 
-    def get_loss(self, out, prediction, node_idx=None, **kwargs):
+    def get_loss(self, out: Tensor, prediction: Tensor,
+                 node_idx: Optional[int] = None, **kwargs):
         if self.return_type == 'regression':
             loss = self._loss(out, prediction, node_idx, **kwargs)
         else:
@@ -242,22 +249,17 @@ class Explainer(torch.nn.Module):
             loss = self._loss(log_logits, prediction, node_idx, **kwargs)
         return loss
 
-    @abstractmethod
-    def _loss(self):
-        # TODO: Check if loss is used in most GNN Xai methods.
-        raise NotImplementedError
-
-    # TODO: Should this method be outside the class?
-    # TODO: Enhance for negative attributions
-    def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
-                           threshold=None, edge_y=None, node_alpha=None,
-                           seed=10, **kwargs):
-        r"""Visualizes the subgraph given an edge mask
-        :attr:`edge_mask`.
+    def visualize_subgraph(self, node_idx: Optional[int], edge_index: Tensor,
+                           edge_mask: Tensor, y: Optional[Tensor] = None,
+                           threshold: Optional[int] = None,
+                           edge_y: Optional[Tensor] = None,
+                           node_alpha: Optional[Tensor] = None, seed: int = 10,
+                           **kwargs):
+        r"""Visualizes the subgraph given an edge mask :attr:`edge_mask`.
 
         Args:
             node_idx (int): The node id to explain.
-                Set to :obj:`-1` to explain graph.
+                Set to :obj:`None` to explain a graph.
             edge_index (LongTensor): The edge indices.
             edge_mask (Tensor): The edge mask.
             y (Tensor, optional): The ground-truth node-prediction labels used
@@ -282,7 +284,7 @@ class Explainer(torch.nn.Module):
 
         assert edge_mask.size(0) == edge_index.size(1)
 
-        if node_idx == -1:
+        if node_idx is None or node_idx < 0:
             hard_edge_mask = torch.BoolTensor([True] * edge_index.size(1),
                                               device=edge_mask.device)
             subset = torch.arange(edge_index.max().item() + 1,
