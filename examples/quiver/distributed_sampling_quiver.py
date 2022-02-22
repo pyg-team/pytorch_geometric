@@ -124,19 +124,19 @@ if __name__ == '__main__':
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
 
-    #####################################
-    # Create Quiver Sampler And Feature
-    #####################################
-    csr_topo = quiver.CSRTopo(data.edge_index)
+    ########################################################################
+    # For configuring the arguments of Quiver CSRTopo, Sampler and Feature, 
+    # please refer to: https://torch-quiver.readthedocs.io/en/latest/api/
+    ########################################################################
+    csr_topo = quiver.CSRTopo(data.edge_index) # Quiver 
     quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, [25, 10], 0,
-                                                 mode='GPU')
-
+                                                 mode='GPU') # Quiver
     quiver_feature = quiver.Feature(rank=0,
                                     device_list=list(range(world_size)),
                                     device_cache_size="2G",
                                     cache_policy="device_replicate",
-                                    csr_topo=csr_topo)
-    quiver_feature.from_cpu_tensor(data.x)
+                                    csr_topo=csr_topo) # Quiver
+    quiver_feature.from_cpu_tensor(data.x) # Quiver
 
     mp.spawn(run, args=(world_size, dataset, quiver_feature, quiver_sampler),
              nprocs=world_size, join=True)
