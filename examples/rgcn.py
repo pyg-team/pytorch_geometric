@@ -70,9 +70,9 @@ def train():
 def test():
     model.eval()
     pred = model(data.edge_index, data.edge_type).argmax(dim=-1)
-    train_acc = pred[data.train_idx].eq(data.train_y).to(torch.float).mean()
-    test_acc = pred[data.test_idx].eq(data.test_y).to(torch.float).mean()
-    return train_acc.item(), test_acc.item()
+    train_acc = float((pred[data.train_idx] == data.train_y).mean())
+    test_acc = float((pred[data.test_idx] == data.test_y).mean())
+    return train_acc, test_acc
 
 
 for epoch in range(1, 51):
