@@ -97,4 +97,7 @@ def test_neighbor_sampler_on_cora():
     out2 = model.full(data.x, data.edge_index)[batch]
     assert torch.allclose(out1, out2)
 
-    shutil.rmtree(root)
+    try:
+        shutil.rmtree(root)
+    except PermissionError:
+        pass

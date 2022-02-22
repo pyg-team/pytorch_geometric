@@ -14,12 +14,14 @@ install_requires = [
     'pyparsing',
     'hydra-core',
     'scikit-learn',
+    'class-resolver>=0.3.2',
     'googledrivedownloader',
 ]
 
 full_install_requires = [
     'h5py',
     'numba',
+    'captum',
     'rdflib',
     'trimesh',
     'networkx',
@@ -53,7 +55,7 @@ setup(
         'graph-neural-networks',
         'graph-convolutional-networks',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=install_requires,
     extras_require={
         'full': full_install_requires,

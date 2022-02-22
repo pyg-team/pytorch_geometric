@@ -8,7 +8,7 @@ from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
                    add_remaining_self_loops)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
-from .subgraph import subgraph, k_hop_subgraph
+from .subgraph import get_num_hops, subgraph, k_hop_subgraph
 from .homophily import homophily
 from .get_laplacian import get_laplacian
 from .to_dense_batch import to_dense_batch
@@ -47,6 +47,7 @@ __all__ = [
     'add_remaining_self_loops',
     'contains_isolated_nodes',
     'remove_isolated_nodes',
+    'get_num_hops',
     'subgraph',
     'k_hop_subgraph',
     'homophily',
