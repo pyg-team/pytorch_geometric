@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# This script shows how to use Quiver in an PyG example: https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py
 import os
 
 import quiver
@@ -125,8 +127,9 @@ if __name__ == '__main__':
     print('Let\'s use', world_size, 'GPUs!')
 
     ########################################################################
-    # For configuring the arguments of Quiver CSRTopo, Sampler and Feature,
-    # please refer to: https://torch-quiver.readthedocs.io/en/latest/api/
+    # The below code enable Quiver for PyG.
+    # Please refer to: https://torch-quiver.readthedocs.io/en/latest/api/ for
+    # how to configure the CSRTopo, Sampler and Feature of Quiver.
     ########################################################################
     csr_topo = quiver.CSRTopo(data.edge_index)  # Quiver
     quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, [25, 10], 0,
