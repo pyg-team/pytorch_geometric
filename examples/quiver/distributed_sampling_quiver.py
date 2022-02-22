@@ -1,4 +1,4 @@
-# This script shows how to use Quiver in an existing PyG example: 
+# This script shows how to use Quiver in an existing PyG example:
 # https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py
 
 import os
