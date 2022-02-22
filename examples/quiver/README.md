@@ -10,6 +10,10 @@ Assuming you have installed PyTorch and PyG, you can install Quiver as follow:
 pip install torch-quiver==0.1.1
 ```
 
+## Usage
+
+The API and design documentation of Quiver can be found [here](https://github.com/quiver-team/torch-quiver). 
+
 ## Examples
 
 We provide several examples to show how to use Quiver:
