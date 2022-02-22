@@ -144,7 +144,7 @@ class RGATConv(MessagePassing):
             :obj:`"f-scaled"`, :obj:`None`). (default: :obj:`None`)
         attention_mechanism (str, optional): The attention mechanism to use
             (:obj:`"within-relation"`, :obj:`"across-relation"`).
-            (default: :obj:`"within-relation"`)
+            (default: :obj:`"across-relation"`)
         attention_mode (str, optional): The mode to calculate attention logits.
             (:obj:`"additive-self-attention"`,
             :obj:`"multiplicative-self-attention"`).
@@ -179,7 +179,7 @@ class RGATConv(MessagePassing):
         num_bases: Optional[int] = None,
         num_blocks: Optional[int] = None,
         mod: Optional[str] = None,
-        attention_mechanism: str = "within-relation",
+        attention_mechanism: str = "across-relation",
         attention_mode: str = "additive-self-attention",
         heads: int = 1,
         dim: int = 1,
@@ -412,10 +412,9 @@ class RGATConv(MessagePassing):
 
         if self.attention_mechanism == "within-relation":
             across_out = torch.zeros_like(alpha)
-
-            for r in range(index.size(0)):
-                g = softmax(alpha[r], index[r], ptr)
-                across_out[r] += g.view(self.heads * self.dim)
+            for r in range(self.num_relations):
+                mask = edge_type == r
+                across_out[mask] = softmax(alpha[mask], index[mask])
             alpha = across_out
         elif self.attention_mechanism == "across-relation":
             alpha = softmax(alpha, index, ptr, size_i)

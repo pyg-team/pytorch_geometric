@@ -70,8 +70,8 @@ def train():
 def test():
     model.eval()
     pred = model(data.edge_index, data.edge_type).argmax(dim=-1)
-    train_acc = float((pred[data.train_idx] == data.train_y).mean())
-    test_acc = float((pred[data.test_idx] == data.test_y).mean())
+    train_acc = float((pred[data.train_idx] == data.train_y).float().mean())
+    test_acc = float((pred[data.test_idx] == data.test_y).float().mean())
     return train_acc, test_acc
 
 

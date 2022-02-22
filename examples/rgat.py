@@ -16,17 +16,13 @@ class RGAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
                  num_relations):
         super().__init__()
-
         self.conv1 = RGATConv(in_channels, hidden_channels, num_relations)
         self.conv2 = RGATConv(hidden_channels, hidden_channels, num_relations)
-        self.lin = torch.nn.Linear(2 * hidden_channels, out_channels)
+        self.lin = torch.nn.Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, edge_type):
-        print(x.shape, x.device)
         x = self.conv1(x, edge_index, edge_type).relu()
-        print(x.shape, x.device)
         x = self.conv2(x, edge_index, edge_type).relu()
-        print(x.shape, x.device)
         x = self.lin(x)
         return F.log_softmax(x, dim=-1)
 
@@ -51,8 +47,8 @@ def train():
 def test():
     model.eval()
     pred = model(data.x, data.edge_index, data.edge_type).argmax(dim=-1)
-    train_acc = float((pred[data.train_idx] == data.train_y).mean())
-    test_acc = float((pred[data.test_idx] == data.test_y).mean())
+    train_acc = float((pred[data.train_idx] == data.train_y).float().mean())
+    test_acc = float((pred[data.test_idx] == data.test_y).float().mean())
     return train_acc, test_acc
 
 
