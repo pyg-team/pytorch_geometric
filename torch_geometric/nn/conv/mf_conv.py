@@ -36,10 +36,13 @@ class MFConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
     Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})`
+        - **inputs:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, max_degree: int = 10, bias=True, **kwargs):

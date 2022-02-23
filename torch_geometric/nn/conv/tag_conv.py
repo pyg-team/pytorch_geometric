@@ -36,7 +36,7 @@ class TAGConv(MessagePassing):
 
     Shapes:
         - **input:**
-          node_features :math:`(|\mathcal{V}|, F_{in})`
+          node_features :math:`(|\mathcal{V}|, F_{in})`,
           edge_index :math:`(2, |\mathcal{E}|)`,
           edge_weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
