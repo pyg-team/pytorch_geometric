@@ -19,7 +19,7 @@ The API and design documentation of Quiver can be found [here](https://github.co
 
 We provide several examples to showcase the usage of Quiver within PyG:
 
-### Single-GPU
+### Single-GPU Training
 
 The single-GPU example leverages Quiver's ability of **(i)** GPU-based graph sampling and feature aggregation, and **(ii)** GNN data caching algorithm (which cache hot data in GPU memory) while enabling fast access to CPU data using a Quiver shared tensor implementation:
 
@@ -27,7 +27,7 @@ The single-GPU example leverages Quiver's ability of **(i)** GPU-based graph sam
 python single_gpu_quiver.py
 ```
 
-### Multi-GPU PyG example
+### Multi-GPU Training
 
 The multi-GPU example further leverages Quiver's ability of **(i)** distributing sampling and feature aggregation to multiple GPUs, and **(ii)** using multi-GPU memories to cache and replicate hot GNN data:
 
@@ -35,6 +35,6 @@ The multi-GPU example further leverages Quiver's ability of **(i)** distributing
 python multi_gpu_quiver.py
 ```
 
-### Distributed PyG example
+### Distributed Training
 
 A Quiver-based distributed PyG example is coming soon.
