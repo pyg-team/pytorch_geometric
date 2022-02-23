@@ -90,9 +90,10 @@ class TransformerConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|`),
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:**
-          node features :math:`(|\mathcal{V}|, H * F_{out})` where H is the number
-          of heads. If :obj:`return_attention_weights=True`, then
-          :math:`((|\mathcal{V}|, H * F_{out}), ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
+          node features :math:`(|\mathcal{V}|, H * F_{out})` where H is the
+          number of heads. If :obj:`return_attention_weights=True`, then
+          :math:`((|\mathcal{V}|, H * F_{out}), ((2, |\mathcal{E}|),
+          (|\mathcal{E}|, H)))`
     """
     _alpha: OptTensor
 
