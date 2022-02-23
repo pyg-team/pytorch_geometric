@@ -20,10 +20,10 @@ We provide several examples to show how to use Quiver:
 
 ### 1-GPU PyG example
 
-A 1-GPU PyG example can benefit from Quiver's ability of (i) GPU-based graph sampling and feature aggregation, and (ii) GNN data caching algorithm (which cache hot data in GPU memory) while enabling fast access to CPU data using a Quiver unified tensor implementation. To run this example, you can:
+A 1-GPU PyG example can benefit from Quiver's ability of (i) GPU-based graph sampling and feature aggregation, and (ii) GNN data caching algorithm (which cache hot data in GPU memory) while enabling fast access to CPU data using a Quiver shard tensor implementation. To run this example, you can:
 
 ```bash
-python .........
+python reddit_quiver.py
 ```
 
 ### Multi-GPU PyG example
@@ -33,7 +33,7 @@ PyG can further benefit from Quiver's ability of (i) distributing sampling and f
 To run this example, you can:
 
 ```bash
-python .........
+python distributed_sampling_quiver.py
 ```
 
 ### Distributed PyG example
