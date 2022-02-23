@@ -112,10 +112,10 @@ class ChebConv(MessagePassing):
                                                 num_nodes)
 
         if lambda_max is None:
-            lambda_max = 2.0 * edge_weight
-        if not isinstance(lambda_max, torch.Tensor):
-            lambda_max = torch.tensor(lambda_max, dtype=edge_weight.dtype,
-                                      device=edge_weight.device)
+            lambda_max = 2.0 * edge_weight.max()
+        elif not isinstance(lambda_max, torch.Tensor):
+            lambda_max = torch.tensor(lambda_max, dtype=dtype,
+                                      device=edge_index.device)
         assert lambda_max is not None
 
         if batch is not None and lambda_max.numel() > 1:
