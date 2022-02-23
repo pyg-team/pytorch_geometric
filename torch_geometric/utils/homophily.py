@@ -43,7 +43,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       and size of each class:
 
       .. math::
-        \frac{1}{C} \sum_{k=1}^{C} \max \left(0, h_k - \frac{|\mathcal{C}_k|}
+        \frac{1}{C-1} \sum_{k=1}^{C} \max \left(0, h_k - \frac{|\mathcal{C}_k|}
         {|\mathcal{V}|} \right),
 
       where :math:`C` denotes the number of classes, :math:`|\mathcal{C}_k|`
@@ -105,7 +105,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         counts = counts.view(num_graphs, num_classes)
         proportions = counts / num_nodes.view(-1, 1)
 
-        out = (h - proportions).clamp_(min=0).mean(dim=-1)
+        out = (h - proportions).clamp_(min=0).sum(dim=-1).div(num_classes - 1)
         return out if out.numel() > 1 else float(out)
 
     else:
