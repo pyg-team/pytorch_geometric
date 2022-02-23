@@ -54,6 +54,13 @@ class SignedConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`
+          positive edge indices :math:`(2, |\mathcal{E}^{+}|)`
+          negative edge indices :math:`(2, |\mathcal{E}^{-}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, first_aggr: bool,
                  bias: bool = True, **kwargs):
