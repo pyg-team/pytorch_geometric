@@ -131,8 +131,8 @@ class PGExplainer(Explainer):
         return loss + size_loss + mask_ent_loss
 
     def train_explainer(self, x: Tensor, z: Tensor, edge_index: Tensor,
-                        node_idxs: Optional[LongTensor] = None, batch: Tensor = None,
-                        **kwargs):
+                        node_idxs: Optional[LongTensor] = None,
+                        batch: Tensor = None, **kwargs):
         r"""Trains the :obj:`explainer_model` to predict an
         edge mask that is crucial to explain the predictions of
         the :obj:`model`.
