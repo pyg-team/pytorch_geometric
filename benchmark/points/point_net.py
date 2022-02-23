@@ -1,11 +1,14 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-from torch_geometric.nn import PointConv, radius_graph, fps, global_max_pool
-
 from points.datasets import get_dataset
 from points.train_eval import run
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+
+from torch_geometric.nn import PointConv, fps, global_max_pool, radius_graph
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=200)

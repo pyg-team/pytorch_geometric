@@ -1,5 +1,6 @@
 from typing import Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
@@ -11,10 +12,12 @@ class LinearTransformation(BaseTransform):
     matrix computed offline.
 
     Args:
-        matrix (Tensor): tensor with shape :obj:`[D, D]` where :obj:`D`
+        matrix (Tensor): Tensor with shape :obj:`[D, D]` where :obj:`D`
             corresponds to the dimensionality of node positions.
     """
     def __init__(self, matrix: Tensor):
+        if not isinstance(matrix, Tensor):
+            matrix = torch.tensor(matrix)
         assert matrix.dim() == 2, (
             'Transformation matrix should be two-dimensional.')
         assert matrix.size(0) == matrix.size(1), (

@@ -1,7 +1,7 @@
 import os.path as osp
 
-from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
+from torch_geometric.datasets import ModelNet
 
 
 def get_dataset(num_points):

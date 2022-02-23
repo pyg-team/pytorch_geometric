@@ -1,12 +1,12 @@
-from typing import Union, Dict, List, Tuple, Callable, Optional, Any
-from torch_geometric.typing import NodeType
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader.base import BaseDataLoader
-from torch_geometric.loader.utils import to_hetero_csc, filter_hetero_data
+from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
+from torch_geometric.typing import NodeType
 
 
 class HGTLoader(BaseDataLoader):

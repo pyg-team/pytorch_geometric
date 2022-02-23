@@ -1,16 +1,15 @@
 import os.path as osp
 
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-
-import pytorch_lightning as pl
 from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
 from torch_geometric import seed_everything
-from torch_geometric.datasets import TUDataset
 from torch_geometric.data import LightningDataset
-from torch_geometric.nn import GIN, global_add_pool, MLP
+from torch_geometric.datasets import TUDataset
+from torch_geometric.nn import GIN, MLP, global_add_pool
 
 
 class Model(pl.LightningModule):

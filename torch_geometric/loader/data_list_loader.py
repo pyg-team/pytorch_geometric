@@ -1,8 +1,8 @@
-from typing import Union, List
+from typing import List, Union
 
 import torch
 
-from torch_geometric.data import Data, HeteroData, Dataset
+from torch_geometric.data import Data, Dataset, HeteroData
 
 
 def collate_fn(data_list):

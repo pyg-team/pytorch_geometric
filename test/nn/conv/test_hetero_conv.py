@@ -1,9 +1,9 @@
 import pytest
-
 import torch
+
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import HeteroConv, Linear
-from torch_geometric.nn import MessagePassing, GCNConv, SAGEConv, GATConv
+from torch_geometric.nn import (GATConv, GCNConv, HeteroConv, Linear,
+                                MessagePassing, SAGEConv)
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
