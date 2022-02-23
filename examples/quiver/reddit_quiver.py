@@ -1,3 +1,5 @@
+# This script shows how to use Quiver in an existing PyG example:
+# https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py
 import quiver
 import torch
 import torch.nn.functional as F
@@ -23,6 +25,11 @@ train_loader = torch.utils.data.DataLoader(train_idx,
                                            batch_size=1024,
                                            shuffle=True,
                                            drop_last=True) # Quiver
+########################################################################
+# The below code enable Quiver for PyG.
+# Please refer to: https://torch-quiver.readthedocs.io/en/latest/api/ for
+# how to configure the CSRTopo, Sampler and Feature of Quiver.
+########################################################################
 csr_topo = quiver.CSRTopo(data.edge_index) # Quiver
 quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, sizes=[25, 10], device=0, mode='GPU') # Quiver
 
