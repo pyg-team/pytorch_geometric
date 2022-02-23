@@ -2,6 +2,7 @@
 # https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py
 import os
 
+import quiver
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
@@ -9,7 +10,6 @@ import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
-import quiver
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
