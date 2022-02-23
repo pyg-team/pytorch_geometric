@@ -1,15 +1,15 @@
 # This script shows how to use Quiver in an existing PyG example:
 # https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py
+import os.path as osp
+
 import quiver
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
-import os.path as osp
-
-
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 dataset = Reddit(path)
@@ -21,18 +21,17 @@ train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
 # Step 1: Using Quiver's sampler
 ################################
 
-train_loader = torch.utils.data.DataLoader(train_idx,
-                                           batch_size=1024,
+train_loader = torch.utils.data.DataLoader(train_idx, batch_size=1024,
                                            shuffle=True,
-                                           drop_last=True) # Quiver
+                                           drop_last=True)  # Quiver
 ########################################################################
 # The below code enable Quiver for PyG.
 # Please refer to: https://torch-quiver.readthedocs.io/en/latest/api/ for
 # how to configure the CSRTopo, Sampler and Feature of Quiver.
 ########################################################################
-csr_topo = quiver.CSRTopo(data.edge_index) # Quiver
-quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, sizes=[25, 10], device=0, mode='GPU') # Quiver
-
+csr_topo = quiver.CSRTopo(data.edge_index)  # Quiver
+quiver_sampler = quiver.pyg.GraphSageSampler(csr_topo, sizes=[25, 10],
+                                             device=0, mode='GPU')  # Quiver
 
 subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
                                   batch_size=1024, shuffle=False,
@@ -96,12 +95,13 @@ model = SAGE(dataset.num_features, 256, dataset.num_classes)
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-
 ################################
 # Step 2: Using Quiver's Feature
 ################################
-x = quiver.Feature(rank=0, device_list=[0], device_cache_size="4G", cache_policy="device_replicate", csr_topo=csr_topo) # Quiver
-x.from_cpu_tensor(data.x) # Quiver
+x = quiver.Feature(rank=0, device_list=[0], device_cache_size="4G",
+                   cache_policy="device_replicate",
+                   csr_topo=csr_topo)  # Quiver
+x.from_cpu_tensor(data.x)  # Quiver
 
 y = data.y.squeeze().to(device)
 
@@ -117,8 +117,8 @@ def train(epoch):
     # Step 3: Training the PyG Model with Quiver
     ############################################
     # for batch_size, n_id, adjs in train_loader: # Original PyG Code
-    for seeds in train_loader: # Quiver
-        n_id, batch_size, adjs = quiver_sampler.sample(seeds) # Quiver
+    for seeds in train_loader:  # Quiver
+        n_id, batch_size, adjs = quiver_sampler.sample(seeds)  # Quiver
         # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
         adjs = [adj.to(device) for adj in adjs]
 
