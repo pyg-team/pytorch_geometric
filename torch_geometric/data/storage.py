@@ -12,7 +12,7 @@ from torch_sparse import SparseTensor, coalesce
 
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.utils import is_undirected
+from torch_geometric.utils import contains_isolated_nodes, is_undirected
 
 
 class BaseStorage(MutableMapping):
@@ -402,7 +402,10 @@ class EdgeStorage(BaseStorage):
         edge_index, num_nodes = self.edge_index, self.size(1)
         if num_nodes is None:
             raise NameError("Unable to infer 'num_nodes'")
-        return torch.unique(edge_index[1]).numel() < num_nodes
+        if self.is_bipartite():
+            return torch.unique(edge_index[1]).numel() < num_nodes
+        else:
+            return contains_isolated_nodes(edge_index, num_nodes)
 
     def has_self_loops(self) -> bool:
         if self.is_bipartite():

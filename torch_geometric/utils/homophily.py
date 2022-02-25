@@ -6,6 +6,7 @@ from torch_scatter import scatter_mean
 from torch_sparse import SparseTensor
 
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import degree
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -21,8 +22,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       that have the same class label:
 
       .. math::
-        \text{homophily} = \frac{| \{ (v,w) : (v,w) \in \mathcal{E} \wedge
-        y_v = y_w \} | } {|\mathcal{E}|}
+        \frac{| \{ (v,w) : (v,w) \in \mathcal{E} \wedge y_v = y_w \} | }
+        {|\mathcal{E}|}
 
       That measure is called the *edge homophily ratio*.
 
@@ -31,27 +32,43 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       across neighborhoods:
 
       .. math::
-        \text{homophily} = \frac{1}{|\mathcal{V}|} \sum_{v \in \mathcal{V}}
-        \frac{ | \{ (w,v) : w \in \mathcal{N}(v) \wedge y_v = y_w \} |  }
-        { |\mathcal{N}(v)| }
+        \frac{1}{|\mathcal{V}|} \sum_{v \in \mathcal{V}} \frac{ | \{ (w,v) : w
+        \in \mathcal{N}(v) \wedge y_v = y_w \} |  } { |\mathcal{N}(v)| }
 
       That measure is called the *node homophily ratio*.
+
+    - In the `"Large-Scale Learning on Non-Homophilous Graphs: New Benchmarks
+      and Strong Simple Methods" <https://arxiv.org/abs/2110.14446>`_ paper,
+      edge homophily is modified to be insensitive to the number of classes
+      and size of each class:
+
+      .. math::
+        \frac{1}{C} \sum_{k=1}^{C} \max \left(0, h_k - \frac{|\mathcal{C}_k|}
+        {|\mathcal{V}|} \right),
+
+      where :math:`C` denotes the number of classes, :math:`|\mathcal{C}_k|`
+      denotes the number of nodes of class :math:`k`, and :math:`h_k` denotes
+      the edge homophily ratio of nodes of class :math:`k`.
+
+      Thus, that measure is called the *class insensitive edge homophily
+      ratio*.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
-        batch (LongTensor, optional): Batch vector
+        batch (LongTensor, optional): Batch vector\
             :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
             each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
-            either :obj:`"edge"` (first formula) or :obj:`"node"`
-            (second formula). (default: :obj:`"edge"`)
+            either :obj:`"edge"` (first formula), :obj:`"node"` (second
+            formula) or :obj:`"edge_insensitive"` (third formula).
+            (default: :obj:`"edge"`)
     """
-    assert method in ['edge', 'node']
+    assert method in {'edge', 'node', 'edge_insensitive'}
     y = y.squeeze(-1) if y.dim() > 1 else y
 
     if isinstance(edge_index, SparseTensor):
-        col, row, _ = edge_index.coo()
+        row, col, _ = edge_index.coo()
     else:
         row, col = edge_index
 
@@ -61,9 +78,10 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         if batch is None:
             return float(out.mean())
         else:
-            return scatter_mean(out, batch[col], dim=0)
+            dim_size = int(batch.max()) + 1
+            return scatter_mean(out, batch[col], dim=0, dim_size=dim_size)
 
-    else:
+    elif method == 'node':
         out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
@@ -71,3 +89,24 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             return float(out.mean())
         else:
             return scatter_mean(out, batch, dim=0)
+
+    elif method == 'edge_insensitive':
+        assert y.dim() == 1
+        num_classes = int(y.max()) + 1
+        batch = torch.zeros_like(y) if batch is None else batch
+        num_nodes = degree(batch, dtype=torch.int64)
+        num_graphs = num_nodes.numel()
+        batch = num_classes * batch + y
+
+        h = homophily(edge_index, y, batch, method='edge')
+        h = h.view(num_graphs, num_classes)
+
+        counts = batch.bincount(minlength=num_classes * num_graphs)
+        counts = counts.view(num_graphs, num_classes)
+        proportions = counts / num_nodes.view(-1, 1)
+
+        out = (h - proportions).clamp_(min=0).mean(dim=-1)
+        return out if out.numel() > 1 else float(out)
+
+    else:
+        raise NotImplementedError
