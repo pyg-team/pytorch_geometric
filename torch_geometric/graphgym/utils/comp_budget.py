@@ -1,7 +1,5 @@
 import math
 
-from yacs.config import CfgNode as CN
-
 from torch_geometric.graphgym.config import cfg, set_cfg
 from torch_geometric.graphgym.model_builder import create_model
 
@@ -60,6 +58,7 @@ def match_computation(stats_baseline, key=['gnn', 'dim_inner'], mode='sqrt'):
 
 
 def dict_to_stats(cfg_dict):
+    from yacs.config import CfgNode as CN
     set_cfg(cfg)
     cfg_new = CN(cfg_dict)
     cfg.merge_from_other_cfg(cfg_new)
@@ -80,6 +79,7 @@ def match_baseline_cfg(cfg_dict, cfg_dict_baseline, verbose=True):
 
 
     '''
+    from yacs.config import CfgNode as CN
     stats_baseline = dict_to_stats(cfg_dict_baseline)
     set_cfg(cfg)
     cfg_new = CN(cfg_dict)
