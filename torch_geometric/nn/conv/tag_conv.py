@@ -33,6 +33,13 @@ class TAGConv(MessagePassing):
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node_features :math:`(|\mathcal{V}|, F_{in})`,
+          edge_index :math:`(2, |\mathcal{E}|)`,
+          edge_weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, K: int = 3,
                  bias: bool = True, normalize: bool = True, **kwargs):
