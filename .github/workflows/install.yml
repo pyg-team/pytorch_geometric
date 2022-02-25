@@ -39,7 +39,7 @@ jobs:
 
       - name: Test imports
         run: |
-          python -c "imort torch_geometric"
-          python -c "imort torch_geometric.datasets"
-          python -c "imort torch_geometric.nn"
-          python -c "imort torch_geometric.graphgym"
+          python -c "import torch_geometric"
+          python -c "import torch_geometric.datasets"
+          python -c "import torch_geometric.nn"
+          python -c "import torch_geometric.graphgym"
