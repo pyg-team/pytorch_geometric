@@ -58,7 +58,6 @@ def collate(
     #   elements as attributes that got incremented need to be decremented
     #   while separating to obtain original values.
     device = None
-    print('---------------')
     slice_dict, inc_dict = defaultdict(dict), defaultdict(dict)
     for out_store in out.stores:
         key = out_store._key
