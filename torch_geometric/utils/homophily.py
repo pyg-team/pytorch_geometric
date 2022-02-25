@@ -2,7 +2,7 @@ from typing import Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_mean
+from torch_scatter import scatter_max, scatter_mean
 from torch_sparse import SparseTensor
 
 from torch_geometric.typing import Adj, OptTensor
@@ -92,24 +92,27 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
 
     elif method == 'edge_insensitive':
         assert y.dim() == 1
-        num_classes = int(y.max()) + 1
         batch = torch.zeros_like(y) if batch is None else batch
         num_nodes = degree(batch, dtype=torch.int64)
         num_graphs = num_nodes.numel()
-        batch = num_classes * batch + y
+        num_classes, _ = scatter_max(y, batch)
+        num_classes += 1
+        max_num_classes = int(y.max()) + 1
+        batch = max_num_classes * batch + y
 
         out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
         dim_size = int(batch.max()) + 1
+
         h = scatter_mean(torch.cat((out, out)), batch[torch.cat((row, col))],
                          dim=0, dim_size=dim_size)
-        h = h.view(num_graphs, num_classes)
+        h = h.view(num_graphs, max_num_classes)
 
-        counts = batch.bincount(minlength=num_classes * num_graphs)
-        counts = counts.view(num_graphs, num_classes)
+        counts = batch.bincount(minlength=max_num_classes * num_graphs)
+        counts = counts.view(num_graphs, max_num_classes)
         proportions = counts / num_nodes.view(-1, 1)
 
-        out = (h - proportions).clamp_(min=0).sum(dim=-1).div(num_classes - 1)
+        out = (h - proportions).clamp_(min=0).sum(dim=-1) / (num_classes - 1)
         return out if out.numel() > 1 else float(out)
 
     else:
