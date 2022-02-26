@@ -4,8 +4,8 @@ defaults:
       - NormalizeFeatures
       - AddSelfLoops
   - model: GCN
-  - optim: Adam
-  - scheduler: ReduceLROnPlateau
+  - optimizer: Adam
+  - lr_scheduler: ReduceLROnPlateau
 
 model:
   in_channels: 34

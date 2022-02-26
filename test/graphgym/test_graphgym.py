@@ -4,9 +4,12 @@ import shutil
 import sys
 from collections import namedtuple
 
+import pytest
 import torch
 
 from torch_geometric import seed_everything
+from torch_geometric.graphgym import register
+from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
                                              set_agg_dir, set_run_dir)
 from torch_geometric.graphgym.loader import create_loader
@@ -19,8 +22,18 @@ from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
                                             params_count)
 
+num_trivial_metric_calls = 0
 
-def test_run_single_graphgym():
+
+def trivial_metric(true, pred, task_type):
+    global num_trivial_metric_calls
+    num_trivial_metric_calls += 1
+    return 1
+
+
+@pytest.mark.parametrize('skip_train_eval', [True, False])
+@pytest.mark.parametrize('use_trivial_metric', [True, False])
+def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
@@ -35,6 +48,19 @@ def test_run_single_graphgym():
     seed_everything(cfg.seed)
     auto_select_device()
     set_run_dir(cfg.out_dir, args.cfg_file)
+
+    cfg.train.skip_train_eval = skip_train_eval
+    cfg.train.enable_ckpt = use_trivial_metric and skip_train_eval
+    if use_trivial_metric:
+        if 'trivial' not in register.metric_dict:
+            register.register_metric('trivial', trivial_metric)
+        global num_trivial_metric_calls
+        num_trivial_metric_calls = 0
+        cfg.metric_best = 'trivial'
+        cfg.custom_metrics = ['trivial']
+    else:
+        cfg.metric_best = 'auto'
+        cfg.custom_metrics = []
 
     loaders = create_loader()
     assert len(loaders) == 3
@@ -59,6 +85,12 @@ def test_run_single_graphgym():
     assert cfg.params == 23880
 
     train(loggers, loaders, model, optimizer, scheduler)
+
+    if use_trivial_metric:
+        # 6 total epochs, 4 eval epochs, 3 splits (1 training split)
+        assert num_trivial_metric_calls == 12 if skip_train_eval else 14
+
+    assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
 

@@ -7,7 +7,8 @@ from torch_geometric.graphgym.checkpoint import (clean_ckpt, load_ckpt,
                                                  save_ckpt)
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.loss import compute_loss
-from torch_geometric.graphgym.utils.epoch import is_ckpt_epoch, is_eval_epoch
+from torch_geometric.graphgym.utils.epoch import (is_ckpt_epoch, is_eval_epoch,
+                                                  is_train_eval_epoch)
 
 
 def train_epoch(logger, loader, model, optimizer, scheduler):
@@ -71,13 +72,14 @@ def train(loggers, loaders, model, optimizer, scheduler):
     split_names = ['val', 'test']
     for cur_epoch in range(start_epoch, cfg.optim.max_epoch):
         train_epoch(loggers[0], loaders[0], model, optimizer, scheduler)
-        loggers[0].write_epoch(cur_epoch)
+        if is_train_eval_epoch(cur_epoch):
+            loggers[0].write_epoch(cur_epoch)
         if is_eval_epoch(cur_epoch):
             for i in range(1, num_splits):
                 eval_epoch(loggers[i], loaders[i], model,
                            split=split_names[i - 1])
                 loggers[i].write_epoch(cur_epoch)
-        if is_ckpt_epoch(cur_epoch):
+        if is_ckpt_epoch(cur_epoch) and cfg.train.enable_ckpt:
             save_ckpt(model, optimizer, scheduler, cur_epoch)
     for logger in loggers:
         logger.close()
