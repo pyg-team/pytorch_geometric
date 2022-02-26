@@ -17,6 +17,12 @@ class WLConv(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
         \mathbf{x}_j \colon j \in \mathcal{N}(i) \} \right)
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node to hash maps :math:`(|\mathcal{V}|)`
     """
     def __init__(self):
         super().__init__()
