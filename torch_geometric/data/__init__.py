@@ -4,7 +4,6 @@ from .temporal import TemporalData
 from .batch import Batch
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
-from .temporal_dataset import TemporalDataset
 from .lightning_datamodule import LightningDataset, LightningNodeData
 from .makedirs import makedirs
 from .download import download_url
@@ -17,7 +16,6 @@ __all__ = [
     'Batch',
     'Dataset',
     'InMemoryDataset',
-    'TemporalDataset',
     'LightningDataset',
     'LightningNodeData',
     'makedirs',

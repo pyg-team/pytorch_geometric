@@ -18,6 +18,23 @@ class _SingleProcessTemporalDataLoaderIter(_BaseDataLoaderIter):
 
 
 class TemporalDataLoader(DataLoader):
+    r"""A data loader which merges data objects from a
+    :class:`torch_geometric.data.TemporalData` to a mini-batch.
+
+    Args:
+        dataset (TemporalData): The :obj:`temporalData` from which to load the data.
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        shuffle (bool, optional): If set to :obj:`True`, the data will be
+            reshuffled at every epoch. (default: :obj:`False`)
+        follow_batch (List[str], optional): Creates assignment batch
+            vectors for each key in the list. (default: :obj:`None`)
+        exclude_keys (List[str], optional): Will exclude each key in the
+            list. (default: :obj:`None`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`.
+    """
+
     def __iter__(self) -> '_BaseDataLoaderIter':
         if self.num_workers == 0:
             return _SingleProcessTemporalDataLoaderIter(self)

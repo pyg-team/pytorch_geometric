@@ -1,11 +1,10 @@
 import os.path as osp
 
 import torch
+from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
-from torch_geometric.data import TemporalData, TemporalDataset, download_url
 
-
-class JODIEDataset(TemporalDataset):
+class JODIEDataset(InMemoryDataset):
     url = 'http://snap.stanford.edu/jodie/{}.csv'
     names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
 
@@ -53,3 +52,6 @@ class JODIEDataset(TemporalDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
+
+    def __repr__(self):
+        return f'{self.name.capitalize()}()'

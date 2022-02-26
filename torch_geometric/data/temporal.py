@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 from typing import (Any, Dict, Iterable, List, NamedTuple, Optional, Tuple,
                     Union)
 
@@ -110,18 +111,21 @@ class TemporalData(BaseData):
                 f'{type(idx).__name__}).')
         return idx
 
+    def __generate_item(self, idx):
+        data = {}
+        num_events = self.num_events
+        for key, item in self._store.items():
+            if item.size(0) == num_events:
+                data[key] = item[idx]
+        return TemporalData(**data)
+
     def __getitem__(self, idx: Any) -> Any:
         if isinstance(idx, str):
             return self._store[idx]
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        data = {}
-        num_events = self.num_events
-        for key, item in self:
-            if item.size(0) == num_events:
-                data[key] = item[prepared_idx]
-        return TemporalData(**data)
+        return self.__generate_item(prepared_idx)
 
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
@@ -133,7 +137,7 @@ class TemporalData(BaseData):
 
         prepared_idx = self.__prepare_non_str_idx(idx)
 
-        for key, item in self:
+        for key, item in self._store.items():
             if item.shape[0] == self.num_events:
                 del item[prepared_idx]
 
@@ -153,8 +157,11 @@ class TemporalData(BaseData):
         delattr(self._store, key)
 
     def __iter__(self) -> Iterable:
-        for key, value in self._store.items():
-            yield key, value
+        for idx, _ in enumerate(self.src):
+            yield self.__generate_item(torch.tensor([idx]))
+
+    def __len__(self):
+        return len(self.src)
 
     def __call__(self, *args: List[str]) -> Iterable:
         for key, value in self._store.items(*args):
@@ -237,6 +244,28 @@ class TemporalData(BaseData):
         cls = self.__class__.__name__
         info = ', '.join([size_repr(k, v) for k, v in self._store.items()])
         return f'{cls}({info})'
+
+    ###########################################################################
+
+    def train_val_test_split(self, val_ratio: float = 0.15,
+                             test_ratio: float = 0.15):
+        r"""Split the dataset in 3 parts new datasets: training, validation
+        and test.
+
+        Args:
+            val_ratio (float, optional): The proportion (in percents) of the
+                dataset to include in the validation split. (default: `0.15`)
+            test_ratio (float, optional): The proportion (in percents) of the
+                dataset to include in the test split. (default: `0.15`)
+        """
+        val_time, test_time = np.quantile(
+            self.t.cpu().numpy(),
+            [1. - val_ratio - test_ratio, 1. - test_ratio])
+
+        val_idx = int((self.t <= val_time).sum())
+        test_idx = int((self.t <= test_time).sum())
+
+        return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
 
     ###########################################################################
 

@@ -31,12 +31,12 @@ data = dataset.data
 
 # Ensure to only sample actual destination nodes as negatives.
 min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
-train_dataset, val_dataset, test_dataset = dataset.train_val_test_split(
+train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-train_loader = TemporalDataLoader(train_dataset, batch_size=200)
-val_loader = TemporalDataLoader(val_dataset, batch_size=200)
-test_loader = TemporalDataLoader(test_dataset, batch_size=200)
+train_loader = TemporalDataLoader(train_data, batch_size=200)
+val_loader = TemporalDataLoader(val_data, batch_size=200)
+test_loader = TemporalDataLoader(test_data, batch_size=200)
 
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
@@ -141,7 +141,7 @@ def train():
         memory.detach()
         total_loss += float(loss) * batch.num_events
 
-    return total_loss / train_dataset.data.num_events
+    return total_loss / train_data.num_events
 
 
 @torch.no_grad()
