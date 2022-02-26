@@ -35,7 +35,6 @@ class TemporalDataLoader(DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
-
     def __iter__(self) -> '_BaseDataLoaderIter':
         if self.num_workers == 0:
             return _SingleProcessTemporalDataLoaderIter(self)
