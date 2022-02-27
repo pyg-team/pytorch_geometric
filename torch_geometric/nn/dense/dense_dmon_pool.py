@@ -42,6 +42,13 @@ class DMonPooling(MessagePassing):
         \mathcal{L}_c = \frac{\sqrt{C}}{n}
         {\left\|\sum_i\mathbf{C_i}^{\top}\right\|}_F - 1.
 
+    .. note::
+
+        For an example of using :class:`DMonPooling`, see
+        `examples/proteins_dmon_pool.py
+        <https://github.com/pyg-team/pytorch_geometric/blob
+        /master/examples/proteins_dmon_pool.py>`_.
+
     Args:
         dense_size (list): A 2D list whose each 1D list contains size for each
             Linear layer being used.
