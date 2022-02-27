@@ -6,7 +6,7 @@ from torch.nn import Linear
 
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import GCNConv, DenseGraphConv, DMonPooling
+from torch_geometric.nn import DenseGraphConv, DMonPooling, GCNConv
 from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 dataset = TUDataset(root='/tmp/PROTEINS', name='PROTEINS').shuffle()
