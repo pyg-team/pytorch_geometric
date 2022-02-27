@@ -62,7 +62,8 @@ class XConv(torch.nn.Module):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          positions :math:`(|\mathcal{V}|, D)`
+          positions :math:`(|\mathcal{V}|, D)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
         - **output:**
           node features :math:`(|\mathcal{V}|, F_{out})`
     """

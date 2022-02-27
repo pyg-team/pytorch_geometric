@@ -20,10 +20,10 @@ class WLConv(torch.nn.Module):
 
     Shapes:
         - **input:**
-          node coloring :math:`(|\mathcal{V}|, F_{in})` (one-hot encodings) or
-          :math:`(|\mathcal{V}|)` (integer),
+          node coloring :math:`(|\mathcal{V}|, F_{in})` *(one-hot encodings)*
+          or :math:`(|\mathcal{V}|)` *(integer-based)*,
           edge indices :math:`(2, |\mathcal{E}|)`
-        - **output:** node coloring :math:`(|\mathcal{V}|)`
+        - **output:** node coloring :math:`(|\mathcal{V}|)` *(integer-based)*
     """
     def __init__(self):
         super().__init__()

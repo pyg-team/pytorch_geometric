@@ -92,7 +92,7 @@ class DynamicEdgeConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V}|, F_{in}), (|\mathcal{V}|, F_{in}))`
           if bipartite,
-          batch vector :math:`(|\mathcal{V}|)`
+          batch vector :math:`(|\mathcal{V}|)` or
           :math:`((|\mathcal{V}|), (|\mathcal{V}|))`
           if bipartite *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
