@@ -52,15 +52,14 @@ class DMonPooling(MessagePassing):
         /master/examples/proteins_dmon_pool.py>`_.
 
     Args:
-        dense_size (List[int]): List of input and output channels such that
-            :obj:`len(channel_list) - 1` denotes the number of layers of
-            the MLP.
+        dense_size (List[List[int]]): A 2D list whose each 1D list contains
+            size for each Linear layer being used.
         k (int, optional): Number of clusters.
             (default: :obj:`16`)
         p (float, optional): Probability value for dropout layer.
             (default: :obj:`0.2`)
     """
-    def __init__(self, dense_size: List[int], k: int = 16, p: float = 0.2):
+    def __init__(self, dense_size: List[List[int]], k: int = 16, p: float = 0.2):
         super().__init__()
         self.dense_size = dense_size
         self.k = k
