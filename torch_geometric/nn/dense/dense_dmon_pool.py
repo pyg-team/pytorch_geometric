@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 from torch.nn import SELU, Dropout, Sequential
 
@@ -58,7 +60,7 @@ class DMonPooling(MessagePassing):
         p (float, optional): Probability value for dropout layer.
             (default: :obj:`0.2`)
     """
-    def __init__(self, dense_size: list, k: int = 16, p: float = 0.2):
+    def __init__(self, dense_size: List[int], k: int = 16, p: float = 0.2):
         super().__init__()
         self.dense_size = dense_size
         self.k = k
