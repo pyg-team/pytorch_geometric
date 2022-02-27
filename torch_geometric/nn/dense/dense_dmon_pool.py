@@ -2,7 +2,7 @@ import torch
 from torch.nn import SELU, Dropout, Sequential
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn import MLP
 
 EPS = 1e-15
 
@@ -50,40 +50,30 @@ class DMonPooling(MessagePassing):
         /master/examples/proteins_dmon_pool.py>`_.
 
     Args:
-        dense_size (list): A 2D list whose each 1D list contains size for each
-            Linear layer being used.
+        dense_size (List[int]): List of input and output channels such that
+            :obj:`len(channel_list) - 1` denotes the number of layers of
+            the MLP.
         k (int, optional): Number of clusters.
             (default: :obj:`16`)
         p (float, optional): Probability value for dropout layer.
             (default: :obj:`0.2`)
     """
-    def __init__(self, dense_size, k=16, p=0.2):
+    def __init__(self, dense_size: list, k: int = 16, p: float = 0.2):
         super().__init__()
         self.dense_size = dense_size
         self.k = k
         self.dropout_rate = p
 
         mlp = []
-        if len(self.dense_size) > 1:
-            for size in self.dense_size:
-                mlp.append(Linear(size[0], size[1]))
-                mlp.append(SELU())
-            mlp.append(
-                Linear(self.dense_size[-1][1], self.k,
-                       bias_initializer='zeros'))
+        if len(self.dense_size) > 2:
+            mlp.append(MLP(self.dense_size, batch_norm=False))
+            mlp.append(SELU())
+            mlp.append(MLP([self.dense_size[-1], self.k]))
         else:
-            mlp.append(
-                Linear(self.dense_size[-1][1], self.k,
-                       bias_initializer='zeros'))
+            mlp.append(MLP([self.dense_size[-1], self.k]))
+
         mlp.append(Dropout(self.dropout_rate))
         self.mlp = Sequential(*mlp)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        for module in self.mlp.modules():
-            if isinstance(module, Linear):
-                module.reset_parameters()
 
     def forward(self, x, adj, mask=None):
         r"""
