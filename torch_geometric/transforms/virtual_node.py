@@ -7,7 +7,7 @@ from torch_geometric.transforms import BaseTransform
 
 class VirtualNode(BaseTransform):
     r"""Appends a virtual node to the given homogeneous graph that is connected
-    to all other nodes as first described in the `"Neural Message Passing for
+    to all other nodes, as described in the `"Neural Message Passing for
     Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
     The virtual node serves as a global scratch space that each node both reads
     from and writes to in every step of message passing.
