@@ -6,7 +6,7 @@ from torch.nn import Linear
 
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import DenseGraphConv, DMonPooling, GCNConv
+from torch_geometric.nn import GCNConv, DenseGraphConv, DMonPooling
 from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 dataset = TUDataset(root='/tmp/PROTEINS', name='PROTEINS').shuffle()
@@ -26,11 +26,13 @@ class Net(torch.nn.Module):
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
         num_nodes = ceil(0.5 * average_nodes)
-        self.pool1 = DMonPooling([hidden_channels], num_nodes)
+        self.pool1 = DMonPooling([[hidden_channels, hidden_channels]],
+                                 num_nodes)
 
         self.conv2 = DenseGraphConv(hidden_channels, hidden_channels)
         num_nodes = ceil(0.5 * num_nodes)
-        self.pool2 = DMonPooling([hidden_channels], num_nodes)
+        self.pool2 = DMonPooling([[hidden_channels, hidden_channels]],
+                                 num_nodes)
 
         self.conv3 = DenseGraphConv(hidden_channels, hidden_channels)
 
