@@ -1,7 +1,8 @@
 import torch
+from torch.nn import SELU, Dropout, Sequential
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch.nn import SELU, Dropout, Sequential
 
 EPS = 1e-15
 
@@ -49,7 +50,6 @@ class DMonPooling(MessagePassing):
         p (float, optional): Probability value for dropout layer.
             (default: :obj:`0.2`)
     """
-
     def __init__(self, dense_size, k=16, p=0.2):
         super().__init__()
         self.dense_size = dense_size
@@ -61,11 +61,13 @@ class DMonPooling(MessagePassing):
             for size in self.dense_size:
                 mlp.append(Linear(size[0], size[1]))
                 mlp.append(SELU())
-            mlp.append(Linear(self.dense_size[-1][1], self.k,
-                              bias_initializer='zeros'))
+            mlp.append(
+                Linear(self.dense_size[-1][1], self.k,
+                       bias_initializer='zeros'))
         else:
-            mlp.append(Linear(self.dense_size[-1][1], self.k,
-                              bias_initializer='zeros'))
+            mlp.append(
+                Linear(self.dense_size[-1][1], self.k,
+                       bias_initializer='zeros'))
         mlp.append(Dropout(self.dropout_rate))
         self.mlp = Sequential(*mlp)
 
@@ -132,8 +134,8 @@ class DMonPooling(MessagePassing):
             i_s / torch.norm(i_s), dim=(-1, -2))
         ortho_loss = torch.mean(ortho_loss)
 
-        cluster_loss = torch.norm(
-            torch.einsum('ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
+        cluster_loss = torch.norm(torch.einsum(
+            'ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
 
         # Fix and normalize coarsened adjacency matrix.
         ind = torch.arange(k, device=out_adj.device)
