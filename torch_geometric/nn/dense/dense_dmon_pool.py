@@ -3,8 +3,8 @@ from typing import List
 import torch
 from torch.nn import SELU, Dropout, Sequential
 
-from torch_geometric.nn.models import MLP
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.models import MLP
 
 EPS = 1e-15
 
