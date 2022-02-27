@@ -9,7 +9,7 @@ def test_dense_dmon_pool():
     adj = torch.ones((batch_size, num_nodes, num_nodes))
     mask = torch.randint(0, 2, (batch_size, num_nodes), dtype=torch.bool)
 
-    pool = DMonPooling([channels], num_clusters)
+    pool = DMonPooling([[channels, channels]], num_clusters)
 
     s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(x, adj, mask)
     assert s.size() == (2, 20, 10)
