@@ -114,7 +114,7 @@ class SuperGATConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`,
-          negative edge indices :math:`(2, |\mathcal{E}^{-}|)` *(optional)*
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})`
     """
     att_x: OptTensor

@@ -61,10 +61,10 @@ class XConv(torch.nn.Module):
 
     Shapes:
         - **input:**
-          point features :math:`(|\mathcal{V}|, F_{in})`,
-          point positions :math:`(|\mathcal{V}|, |\mathcal{D}|)`
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          positions :math:`(|\mathcal{V}|, D)`
         - **output:**
-          point features :math:`(|\mathcal{V}|, F_{out})`
+          node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, dim: int,
                  kernel_size: int, hidden_channels: Optional[int] = None,

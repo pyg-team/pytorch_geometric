@@ -92,10 +92,11 @@ class DynamicEdgeConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V}|, F_{in}), (|\mathcal{V}|, F_{in}))`
           if bipartite,
-          batch vector :math:`(|\mathcal{V}|)` *(optional)*
+          batch vector :math:`(|\mathcal{V}|)`
+          :math:`((|\mathcal{V}|), (|\mathcal{V}|))`
+          if bipartite *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
-
     """
     def __init__(self, nn: Callable, k: int, aggr: str = 'max',
                  num_workers: int = 1, **kwargs):
