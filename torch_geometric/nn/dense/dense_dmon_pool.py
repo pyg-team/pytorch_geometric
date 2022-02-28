@@ -1,15 +1,12 @@
-from typing import List
+from typing import List, Union
 
 import torch
-from torch.nn import SELU, Dropout, Sequential
-
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+import torch.nn.functional as F
 
 EPS = 1e-15
 
 
-class DMonPooling(MessagePassing):
+class DMonPooling(torch.nn.Module):
     r"""Spectral modularity pooling operator from the `"Graph Clustering with
     Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
 
@@ -52,41 +49,26 @@ class DMonPooling(MessagePassing):
         /master/examples/proteins_dmon_pool.py>`_.
 
     Args:
-        dense_size (List[List[int]]): A 2D list whose each 1D list contains
-            size for each Linear layer being used.
-        k (int, optional): Number of clusters.
-            (default: :obj:`16`)
-        p (float, optional): Probability value for dropout layer.
-            (default: :obj:`0.2`)
+        channels (List[int]): List of input and intermediate channels in order
+            to construct an MLP.
+        k (int): The number of clusters.
+        dropout (float, optional): Dropout probability. (default: :obj:`0`)
     """
-    def __init__(self, dense_size: List[List[int]], k: int = 16,
-                 p: float = 0.2):
+    def __init__(self, channels: Union[int, List[int]], k: int,
+                 dropout: float = 0.0):
         super().__init__()
-        self.dense_size = dense_size
-        self.k = k
-        self.dropout_rate = p
 
-        mlp = []
-        if len(self.dense_size) > 1:
-            for size in self.dense_size:
-                mlp.append(Linear(size[0], size[1]))
-                mlp.append(SELU())
-            mlp.append(
-                Linear(self.dense_size[-1][1], self.k,
-                       bias_initializer='zeros'))
-        else:
-            mlp.append(
-                Linear(self.dense_size[-1][1], self.k,
-                       bias_initializer='zeros'))
-        mlp.append(Dropout(self.dropout_rate))
-        self.mlp = Sequential(*mlp)
+        if isinstance(channels, int):
+            channels = [channels]
+
+        from torch_geometric.nn.models.mlp import MLP
+        self.mlp = MLP(channels + [k], act='selu', batch_norm=False)
+        self.dropout = dropout
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        for module in self.mlp.modules():
-            if isinstance(module, Linear):
-                module.reset_parameters()
+        self.mlp.reset_parameters()
 
     def forward(self, x, adj, mask=None):
         r"""
@@ -111,6 +93,7 @@ class DMonPooling(MessagePassing):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
 
         s = self.mlp(x)
+        s = F.dropout(s, self.dropout, training=self.training)
 
         s = torch.softmax(s, dim=-1)
 
@@ -121,8 +104,7 @@ class DMonPooling(MessagePassing):
             x, s = x * mask, s * mask
 
         out = torch.matmul(s.transpose(1, 2), x)
-        activation = SELU()
-        out = activation(out)
+        out = F.selu(out)
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         degrees = torch.einsum('ijk->ik', adj).transpose(0, 1)

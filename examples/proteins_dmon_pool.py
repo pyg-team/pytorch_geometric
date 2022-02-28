@@ -10,7 +10,7 @@ from torch_geometric.nn import DenseGraphConv, DMonPooling, GCNConv
 from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 dataset = TUDataset(root='/tmp/PROTEINS', name='PROTEINS').shuffle()
-average_nodes = int(dataset.data.x.size(0) / len(dataset))
+avg_num_nodes = int(dataset.data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -25,14 +25,12 @@ class Net(torch.nn.Module):
         super().__init__()
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
-        num_nodes = ceil(0.5 * average_nodes)
-        self.pool1 = DMonPooling([[hidden_channels, hidden_channels]],
-                                 num_nodes)
+        num_nodes = ceil(0.5 * avg_num_nodes)
+        self.pool1 = DMonPooling([hidden_channels, hidden_channels], num_nodes)
 
         self.conv2 = DenseGraphConv(hidden_channels, hidden_channels)
         num_nodes = ceil(0.5 * num_nodes)
-        self.pool2 = DMonPooling([[hidden_channels, hidden_channels]],
-                                 num_nodes)
+        self.pool2 = DMonPooling([hidden_channels, hidden_channels], num_nodes)
 
         self.conv3 = DenseGraphConv(hidden_channels, hidden_channels)
 
@@ -40,20 +38,19 @@ class Net(torch.nn.Module):
         self.lin2 = Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, batch=None):
-
-        x = F.relu(self.conv1(x, edge_index))
+        x = self.conv1(x, edge_index).relu()
         x, mask = to_dense_batch(x, batch)
         adj = to_dense_adj(edge_index, batch)
 
         _, x, adj, sp1, o1, c1 = self.pool1(x, adj, mask)
 
-        x = F.relu(self.conv2(x, adj))
+        x = self.conv2(x, adj).relu()
         _, x, adj, sp2, o2, c2 = self.pool2(x, adj)
 
         x = self.conv3(x, adj)
 
         x = x.mean(dim=1)
-        x = F.relu(self.lin1(x))
+        x = self.lin1(x).relu()
         x = self.lin2(x)
         return F.log_softmax(x, dim=-1), sp1 + sp2 + o1 + o2 + c1 + c2
 
