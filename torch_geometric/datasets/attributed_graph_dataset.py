@@ -7,7 +7,8 @@ import scipy.sparse as sp
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, InMemoryDataset, extract_zip
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -30,6 +31,7 @@ class AttributedGraphDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     datasets = {
         'wiki': '1EPhlbziZTQv19OsTrKrAJwsElbVPEbiV',
@@ -70,9 +72,8 @@ class AttributedGraphDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-        path = osp.join(self.raw_dir, f'{self.name}.zip')
-        gdd.download_file_from_google_drive(self.datasets[self.name], path)
+        url = self.url.format(self.datasets[self.name])
+        path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
         path = osp.join(self.raw_dir, f'{self.name}.attr')
