@@ -8,7 +8,8 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot
-from torch_geometric.typing import Adj, Optional, OptPairTensor, Size
+from torch_geometric.typing import (Adj, Optional, OptPairTensor, OptTensor,
+                                    Size)
 from torch_geometric.utils import softmax
 
 
@@ -49,6 +50,16 @@ class GeneralConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(
         self,
@@ -124,36 +135,35 @@ class GeneralConv(MessagePassing):
             glorot(self.att_msg)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None, edge_feature: Tensor = None) -> Tensor:
+                edge_attr: Tensor = None, size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]
         # propagate_type: (x: OptPairTensor)
-        out = self.propagate(edge_index, x=x, size=size,
-                             edge_feature=edge_feature)
+        out = self.propagate(edge_index, x=x, size=size, edge_attr=edge_attr)
         out = out.mean(dim=1)  # todo: other approach to aggregate heads
         out += self.lin_self(x_self)
         if self.normalize_l2:
             out = F.normalize(out, p=2, dim=-1)
         return out
 
-    def message_basic(self, x_i: Tensor, x_j: Tensor, edge_feature: Tensor):
+    def message_basic(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor):
         if self.directed_msg:
             x_j = self.lin_msg(x_j)
         else:
             x_j = self.lin_msg(x_j) + self.lin_msg_i(x_i)
-        if edge_feature is not None:
-            x_j = x_j + self.lin_edge(edge_feature)
+        if edge_attr is not None:
+            x_j = x_j + self.lin_edge(edge_attr)
         return x_j
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
-                size_i: Tensor, edge_feature: Tensor) -> Tensor:
-        x_j_out = self.message_basic(x_i, x_j, edge_feature)
+                size_i: Tensor, edge_attr: Tensor) -> Tensor:
+        x_j_out = self.message_basic(x_i, x_j, edge_attr)
         x_j_out = x_j_out.view(-1, self.heads, self.out_channels)
         if self.attention:
             if self.attention_type == 'dot_product':
-                x_i_out = self.message_basic(x_j, x_i, edge_feature)
+                x_i_out = self.message_basic(x_j, x_i, edge_attr)
                 x_i_out = x_i_out.view(-1, self.heads, self.out_channels)
                 alpha = (x_i_out * x_j_out).sum(dim=-1) / self.scaler
             else:

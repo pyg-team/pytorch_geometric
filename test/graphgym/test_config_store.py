@@ -1,10 +1,12 @@
 import hydra
 from omegaconf import DictConfig
 
-import torch_geometric.graphgym.config_store  # noqa
+from torch_geometric.graphgym.config_store import fill_config_store
 
 
 def test_config_store():
+    fill_config_store()
+
     with hydra.initialize(config_path='.'):
         cfg = hydra.compose(config_name='my_config')
 
@@ -15,7 +17,7 @@ def test_config_store():
     assert 'lr_scheduler' in cfg
 
     # Check `cfg.dataset`:
-    assert len(cfg.dataset) == 3
+    assert len(cfg.dataset) == 2
     assert cfg.dataset._target_.split('.')[-1] == 'KarateClub'
 
     # Check `cfg.dataset.transform`:
@@ -23,9 +25,6 @@ def test_config_store():
     assert len(cfg.dataset.transform) == 2
     assert 'NormalizeFeatures' in cfg.dataset.transform
     assert 'AddSelfLoops' in cfg.dataset.transform
-
-    assert isinstance(cfg.dataset.pre_transform, DictConfig)
-    assert len(cfg.dataset.pre_transform) == 0
 
     assert isinstance(cfg.dataset.transform.NormalizeFeatures, DictConfig)
     assert (cfg.dataset.transform.NormalizeFeatures._target_.split('.')[-1] ==

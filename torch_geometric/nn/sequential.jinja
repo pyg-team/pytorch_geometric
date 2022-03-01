@@ -8,17 +8,18 @@ from torch_sparse import SparseTensor
 
 class {{cls_name}}(torch.nn.Module):
     def reset_parameters(self):
-        for module in self.children():
+        for name in self._names:
+            module = getattr(self, name)
             if hasattr(module, 'reset_parameters'):
                 module.reset_parameters()
 
     def forward(self, {{ input_args|join(', ') }}):
-        """"""{% for call in calls %}
-        {% for output in call[2] %}{{output}}{{ ", " if not loop.last }}{% endfor %} = self.module_{{loop.index - 1}}({% for input in call[1] %}{{input}}{{ ", " if not loop.last }}{% endfor %}){% endfor %}
-        return {% for output in calls[-1][2] %}{{output}}{{ ", " if not loop.last }}{% endfor %}
+        """"""{% for name, module, in_desc, out_desc in calls %}
+        {% for output in out_desc %}{{output}}{{ ", " if not loop.last }}{% endfor %} = self.{{name}}({% for input in in_desc %}{{input}}{{ ", " if not loop.last }}{% endfor %}){% endfor %}
+        return {% for output in calls[-1][-1] %}{{output}}{{ ", " if not loop.last }}{% endfor %}
 
     def __getitem__(self, idx: int) -> torch.nn.Module:
-        return getattr(self, f'module_{idx}')
+        return getattr(self, self._names[idx])
 
     def __len__(self) -> int:
         return {{calls|length}}
@@ -26,3 +27,4 @@ class {{cls_name}}(torch.nn.Module):
     def __repr__(self) -> str:
         return 'Sequential(\n{}\n)'.format('\n'.join(
             [f'  ({idx}): ' + str(self[idx]) for idx in range(len(self))]))
+
