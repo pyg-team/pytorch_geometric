@@ -1,10 +1,12 @@
 import hydra
 from omegaconf import DictConfig
 
-import torch_geometric.graphgym.config_store  # noqa
+from torch_geometric.graphgym.config_store import fill_config_store
 
 
 def test_config_store():
+    fill_config_store()
+
     with hydra.initialize(config_path='.'):
         cfg = hydra.compose(config_name='my_config')
 
