@@ -1,4 +1,5 @@
 import inspect
+import re
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -127,6 +128,17 @@ def to_dataclass(
 
 
 config_store = ConfigStore.instance()
+
+
+def register(cls: Any, group: str, base: Optional[Any] = None, **kwargs):
+    cls = to_dataclass(cls, base, **kwargs)
+
+    name = cls.__name__
+    config_store.store(name, cls, group)
+
+    pattern = re.compile(group, re.IGNORECASE)
+    if pattern.search(name):
+        config_store.store(pattern.sub('', name), cls, group)
 
 
 @dataclass  # Register `torch_geometric.transforms` ###########################
