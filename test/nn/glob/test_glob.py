@@ -14,15 +14,27 @@ def test_global_pool():
     assert out[0].tolist() == x[:4].sum(dim=0).tolist()
     assert out[1].tolist() == x[4:].sum(dim=0).tolist()
 
+    out = global_add_pool(x, None)
+    assert out.size() == (1, 4)
+    assert out.tolist() == x.sum(dim=0, keepdim=True).tolist()
+
     out = global_mean_pool(x, batch)
     assert out.size() == (2, 4)
     assert out[0].tolist() == x[:4].mean(dim=0).tolist()
     assert out[1].tolist() == x[4:].mean(dim=0).tolist()
 
+    out = global_mean_pool(x, None)
+    assert out.size() == (1, 4)
+    assert out.tolist() == x.mean(dim=0, keepdim=True).tolist()
+
     out = global_max_pool(x, batch)
     assert out.size() == (2, 4)
     assert out[0].tolist() == x[:4].max(dim=0)[0].tolist()
     assert out[1].tolist() == x[4:].max(dim=0)[0].tolist()
+
+    out = global_max_pool(x, None)
+    assert out.size() == (1, 4)
+    assert out.tolist() == x.max(dim=0, keepdim=True)[0].tolist()
 
 
 def test_permuted_global_pool():

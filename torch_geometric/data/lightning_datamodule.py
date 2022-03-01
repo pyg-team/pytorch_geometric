@@ -262,7 +262,7 @@ class LightningNodeData(LightningDataModule):
     def prepare_data(self):
         """"""
         if self.loader == 'full':
-            if self.trainer.num_processes != 1 or self.trainer.num_gpus != 1:
+            if self.trainer.num_processes > 1 or self.trainer.num_gpus > 1:
                 raise ValueError(f"'{self.__class__.__name__}' with loader="
                                  f"'full' requires training on a single GPU")
         super().prepare_data()

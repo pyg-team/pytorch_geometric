@@ -6,7 +6,8 @@ from typing import Callable, Dict, List, Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, InMemoryDataset, extract_zip
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import sort_edge_index
 
@@ -33,7 +34,7 @@ class DBP15K(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
     file_id = '1dYJtj1_J4nYJdrDY95ucGLCuZXDXI7PL'
 
     def __init__(self, root: str, pair: str,
@@ -53,10 +54,7 @@ class DBP15K(InMemoryDataset):
         return f'{self.pair}.pt'
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        path = osp.join(self.root, 'raw.zip')
-        gdd.download_file_from_google_drive(self.file_id, path)
+        path = download_url(self.url.format(self.file_id), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)

@@ -12,10 +12,17 @@ def test_homophily():
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(5, 5))
 
-    assert pytest.approx(homophily(edge_index, y, method='edge')) == 0.75
-    assert pytest.approx(homophily(adj, y, method='edge')) == 0.75
-    assert homophily(edge_index, y, batch, method='edge').tolist() == [1., 0.]
+    method = 'edge'
+    assert pytest.approx(homophily(edge_index, y, method=method)) == 0.75
+    assert pytest.approx(homophily(adj, y, method=method)) == 0.75
+    assert homophily(edge_index, y, batch, method).tolist() == [1., 0.]
 
-    assert pytest.approx(homophily(edge_index, y, method='node')) == 0.6
-    assert pytest.approx(homophily(adj, y, method='node')) == 0.6
-    assert homophily(edge_index, y, batch, method='node').tolist() == [1., 0.]
+    method = 'node'
+    assert pytest.approx(homophily(edge_index, y, method=method)) == 0.6
+    assert pytest.approx(homophily(adj, y, method=method)) == 0.6
+    assert homophily(edge_index, y, batch, method).tolist() == [1., 0.]
+
+    method = 'edge_insensitive'
+    assert pytest.approx(homophily(edge_index, y, method=method)) == 0.0999999
+    assert pytest.approx(homophily(adj, y, method=method)) == 0.0999999
+    assert homophily(edge_index, y, batch, method).tolist() == [0., 0.]

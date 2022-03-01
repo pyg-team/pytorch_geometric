@@ -57,10 +57,9 @@ class NeighborSampler:
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
 
-    def __call__(self, indices: List[int]):
-        if not isinstance(indices, Tensor):
-            index = torch.tensor(indices)
-        assert index.dtype == torch.int64
+    def __call__(self, index: Union[List[int], Tensor]):
+        if not isinstance(index, torch.LongTensor):
+            index = torch.LongTensor(index)
 
         if issubclass(self.data_cls, Data):
             sample_fn = torch.ops.torch_sparse.neighbor_sample

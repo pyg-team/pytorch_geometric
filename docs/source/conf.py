@@ -36,7 +36,8 @@ doctest_default_flags = doctest.NORMALIZE_WHITESPACE
 autodoc_member_order = 'bysource'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    # TODO "unknown or unsupported inventory version" error for numpy doc.
+    # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
     'torch': ('https://pytorch.org/docs/master', None),
 }

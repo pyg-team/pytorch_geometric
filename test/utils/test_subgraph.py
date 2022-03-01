@@ -1,6 +1,23 @@
 import torch
 
-from torch_geometric.utils import k_hop_subgraph, subgraph
+from torch_geometric.nn import GCNConv, Linear
+from torch_geometric.utils import get_num_hops, k_hop_subgraph, subgraph
+
+
+def test_get_num_hops():
+    class GNN(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.conv1 = GCNConv(3, 16, normalize=False)
+            self.conv2 = GCNConv(16, 16, normalize=False)
+            self.lin = Linear(16, 2)
+
+        def forward(self, x, edge_index):
+            x = torch.F.relu(self.conv1(x, edge_index))
+            x = self.conv2(x, edge_index)
+            return self.lin(x)
+
+    assert get_num_hops(GNN()) == 2
 
 
 def test_subgraph():
