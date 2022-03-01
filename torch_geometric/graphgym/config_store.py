@@ -62,7 +62,7 @@ def to_dataclass(
 
     params = inspect.signature(cls.__init__).parameters
 
-    if strict:  # Check that keys in map_args or exlcude_args are present.
+    if strict:  # Check that keys in map_args or exclude_args are present.
         args = set() if map_args is None else set(map_args.keys())
         if exclude_args is not None:
             args |= set([arg for arg in exclude_args if isinstance(arg, str)])
@@ -97,6 +97,9 @@ def to_dataclass(
                 annotation = Optional[Any]
             elif origin == Union and type(None) not in args:
                 annotation = Any
+            elif origin == list:
+                if getattr(args[0], '__origin__', None) == Union:
+                    annotation = List[Any]
         else:
             if default != inspect.Parameter.empty:
                 annotation = Optional[Any]
