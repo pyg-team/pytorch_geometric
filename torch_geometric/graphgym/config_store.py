@@ -100,6 +100,9 @@ def to_dataclass(
             elif origin == list:
                 if getattr(args[0], '__origin__', None) == Union:
                     annotation = List[Any]
+            elif origin == dict:
+                if getattr(args[1], '__origin__', None) == Union:
+                    annotation = Dict[args[0], Any]
         else:
             if default != inspect.Parameter.empty:
                 annotation = Optional[Any]
