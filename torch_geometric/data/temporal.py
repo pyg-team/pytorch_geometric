@@ -249,7 +249,7 @@ class TemporalData(BaseData):
 
     def train_val_test_split(self, val_ratio: float = 0.15,
                              test_ratio: float = 0.15):
-        r"""Split the data in 3 parts: training, validation and test.
+        r"""Split the data in three parts: training, validation and test.
 
         Args:
             val_ratio (float, optional): The proportion (in percents) of the
