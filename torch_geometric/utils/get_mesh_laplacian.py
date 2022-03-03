@@ -5,15 +5,16 @@ from torch_geometric.utils import add_self_loops
 
 
 def get_mesh_laplacian(pos, face):
-    """ Computes the mesh Laplacian of the mesh given by :obj:`pos`
-    and :obj:`face`.
-    It is computed as :math:`\mathbf{L}_{ij} = \begin{cases} 
-        \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2 a_{ij}} &
-        \mbox{if } i, j \mbox{ is an edge,} \\
-        \sum_{j \in N(i)}{L_{ij}} &
-        \mbox{if } i \mbox{ is in the diagonal,} \\
-        0 \mbox{ otherwise.}
-    \end{cases}` where :math:`a_{ij}` is the local area element,
+    """ Computes the mesh Laplacian of the mesh given by
+    :obj:`pos` and :obj:`face`. It is computed as
+    :math:` \mathbf{L}_{ij} = \begin{cases} 
+    \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2 a_{ij}} &
+    \mbox{if } i, j \mbox{ is an edge,} \\
+    \sum_{j \in N(i)}{L_{ij}} &
+    \mbox{if } i \mbox{ is in the diagonal,} \\
+    0 \mbox{ otherwise.}
+    \end{cases}`
+    where :math:`a_{ij}` is the local area element,
     i.e. one-third of the neighbouring triangle's area.
 
     Args:
