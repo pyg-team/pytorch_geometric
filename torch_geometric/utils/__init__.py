@@ -11,6 +11,7 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import get_num_hops, subgraph, k_hop_subgraph
 from .homophily import homophily
 from .get_laplacian import get_laplacian
+from .get_mesh_laplacian import get_mesh_laplacian
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import dense_to_sparse
@@ -52,6 +53,7 @@ __all__ = [
     'k_hop_subgraph',
     'homophily',
     'get_laplacian',
+    'get_mesh_laplacian',
     'to_dense_batch',
     'to_dense_adj',
     'dense_to_sparse',
