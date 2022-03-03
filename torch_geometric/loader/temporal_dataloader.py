@@ -23,7 +23,7 @@ class TemporalDataLoader(DataLoader):
     :class:`torch_geometric.data.TemporalData` to a mini-batch.
 
     Args:
-        dataset (TemporalData): The :obj:`temporalData` from which to load
+        data (TemporalData): The :obj:`~torch_geometric.data.TemporalData` from which to load
             the data.
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
