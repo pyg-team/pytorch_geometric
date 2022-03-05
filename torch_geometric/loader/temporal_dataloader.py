@@ -1,25 +1,12 @@
-from torch.utils.data import _utils
-from torch.utils.data.dataloader import _BaseDataLoaderIter
+from typing import List
 
-from torch_geometric.loader import DataLoader
+import torch
 
-
-class _SingleProcessTemporalDataLoaderIter(_BaseDataLoaderIter):
-    def __init__(self, loader):
-        super(_SingleProcessTemporalDataLoaderIter, self).__init__(loader)
-        assert self._timeout == 0
-        assert self._num_workers == 0
-
-    def _next_data(self):
-        index = self._next_index()  # may raise StopIteration
-        data = self._dataset[index]
-        if self._pin_memory:
-            data = _utils.pin_memory.pin_memory(data)
-        return data
+from torch_geometric.data import TemporalData
 
 
-class TemporalDataLoader(DataLoader):
-    r"""A data loader which merges data objects from a
+class TemporalDataLoader(torch.utils.data.DataLoader):
+    r"""A data loader which merges succesive events of a
     :class:`torch_geometric.data.TemporalData` to a mini-batch.
 
     Args:
@@ -30,11 +17,21 @@ class TemporalDataLoader(DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
-    def __init__(self, data, batch_size, **kwargs):
-        super().__init__(data, batch_size=batch_size, shuffle=False, **kwargs)
+    def __init__(self, data: TemporalData, batch_size: int = 1, **kwargs):
+        if 'collate_fn' in kwargs:
+            del kwargs['collate_fn']
+        if 'shuffle' in kwargs:
+            del kwargs['shuffle']
 
-    def __iter__(self) -> '_BaseDataLoaderIter':
-        if self.num_workers == 0:
-            return _SingleProcessTemporalDataLoaderIter(self)
+        self.data = data
+        self.events_per_batch = batch_size
+
+        if kwargs.get('drop_last', False) and len(data) % batch_size != 0:
+            arange = range(0, len(data) - batch_size, batch_size)
         else:
-            return super().__iter__()
+            arange = range(0, len(data), batch_size)
+
+        super().__init__(arange, 1, shuffle=False, collate_fn=self, **kwargs)
+
+    def __call__(self, arange: List[int]) -> TemporalData:
+        return self.data[arange[0]:arange[0] + self.events_per_batch]

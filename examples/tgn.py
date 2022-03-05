@@ -29,7 +29,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0]
 
-# For small datasets, we can put the whole dataset on GPU and thus avoids
+# For small datasets, we can put the whole dataset on GPU and thus avoid
 # expensive memory transfer costs for mini-batches:
 data = data.to(device)
 
