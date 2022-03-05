@@ -9,6 +9,7 @@ from .random_node_sampler import RandomNodeSampler
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
 from .neighbor_sampler import NeighborSampler
+from .temporal_dataloader import TemporalDataLoader
 
 __all__ = [
     'DataLoader',
@@ -25,6 +26,7 @@ __all__ = [
     'DataListLoader',
     'DenseDataLoader',
     'NeighborSampler',
+    'TemporalDataLoader',
 ]
 
 classes = __all__
