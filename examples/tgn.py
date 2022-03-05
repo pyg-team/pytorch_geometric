@@ -27,7 +27,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
-data = dataset.data
+data = dataset[0]
+
+# For small datasets, we can put the whole dataset on GPU and thus avoids
+# expensive memory transfer costs for mini-batches:
+data = data.to(device)
 
 # Ensure to only sample actual destination nodes as negatives.
 min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
@@ -145,7 +149,7 @@ def train():
 
 
 @torch.no_grad()
-def test(inference_data_loader):
+def test(loader):
     memory.eval()
     gnn.eval()
     link_pred.eval()
@@ -153,7 +157,7 @@ def test(inference_data_loader):
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    for batch in inference_data_loader:
+    for batch in loader:
         batch = batch.to(device)
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
 
@@ -187,8 +191,8 @@ def test(inference_data_loader):
 
 for epoch in range(1, 51):
     loss = train()
-    print(f'  Epoch: {epoch:02d}, Loss: {loss:.4f}')
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     val_ap, val_auc = test(val_loader)
     test_ap, test_auc = test(test_loader)
-    print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
+    print(f'Val AP: {val_ap:.4f}, Val AUC: {val_auc:.4f}')
     print(f'Test AP: {test_ap:.4f}, Test AUC: {test_auc:.4f}')
