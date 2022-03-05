@@ -41,6 +41,3 @@ class AddSelfLoops(BaseTransform):
             setattr(store, self.attr, edge_weight)
 
         return data
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'

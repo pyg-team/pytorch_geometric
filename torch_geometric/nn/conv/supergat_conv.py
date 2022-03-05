@@ -109,6 +109,13 @@ class SuperGATConv(MessagePassing):
             when negative sampling is performed. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})`
     """
     att_x: OptTensor
     att_y: OptTensor

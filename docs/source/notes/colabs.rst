@@ -10,6 +10,10 @@ We have prepared a list of colab notebooks that practically introduces you to th
 5. `Point Cloud Classification with Graph Neural Networks <https://colab.research.google.com/drive/1D45E5bUK3gQ40YpZo65ozs7hg5l-eo_U?usp=sharing>`__
 6. `Explaining GNN Model Predictions using Captum <https://colab.research.google.com/drive/1fLJbFPz0yMCQg81DdCP5I8jXw9LoggKO?usp=sharing>`__
 
+The `Stanford CS224W <http://web.stanford.edu/class/cs224w/>`__ course collects a set of `graph machine learning tutorial blog posts <https://medium.com/stanford-cs224w>`__, fully realized with **PyG**.
+Students worked on projects spanning all kinds of tasks, model architectures and applications.
+All tutorials also link to a Google Colab with the code in the tutorial for you to follow along with as you read it!
+
 The `PyTorch Geometric Tutorial <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__ project provides further **video tutorials and Colab notebooks** for a variety of different methods in **PyG**:
 
 1. Introduction [`Video <https://www.youtube.com/watch?v=JtDgmmQ60x8>`__, `Notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial1/Tutorial1.ipynb>`__]

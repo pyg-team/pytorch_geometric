@@ -28,7 +28,6 @@ full_install_requires = [
     'scikit-image',
     'pytorch-memlab',
     'class-resolver>=0.3.2',
-    'googledrivedownloader',
 ]
 
 test_requires = [
