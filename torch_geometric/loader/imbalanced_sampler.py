@@ -7,6 +7,40 @@ from torch_geometric.data import Data, Dataset, InMemoryDataset
 
 
 class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
+    r"""A weighted random sampler that randomly samples elements according to
+    class distribution.
+    It consists of removing samples from the majority class (under-sampling) or
+    adding more examples from the minority class (over-sampling):
+
+    .. code-block:: python
+        from torch_geometric.loader import DataLoader, ImbalancedSampler
+
+        sampler = ImbalancedSampler(dataset)
+        loader = DataLoader(dataset, batch_size=64, sampler=sampler, ...)
+
+    .. code-block:: python
+        from torch_geometric.loader import NeighborLoader, ImbalancedSampler
+
+        sampler = ImbalancedSampler(data, input_nodes=data.train_mask)
+        loader = NeighborLoader(data, input_nodes=data.train_mask,
+                                batch_size=64, num_neighbors=[-1, -1],
+                                sampler=sampler, ...)
+
+    Args:
+        dataset (Dataset): The dataset from which to sample the data, either
+            given as a :class:`~torch_geometric.data.Dataset` or
+            :class:`~torch_geometric.data.Data` object.
+        input_nodes (Tensor, optional): The indices of nodes that are used by
+            the corresponding loader, *e.g.*,
+            :class:`~torch_geometric.loader.NeighborLoader`.
+            If set to :obj:`None`, all nodes will be considered.
+            This argument should only be set for node-level loaders and does
+            not have any effect when operating on a set of graphs as given by
+            :class:`~torch_geometric.data.Dataset`. (default: :obj:`None`)
+        num_samples (int, optional): The number of samples to draw for a single
+            epoch. If set to :obj:`None`, will sample as much elements as there
+            exists in the underlying data. (default: :obj:`None`)
+    """
     def __init__(
         self,
         dataset: Union[Data, Dataset, List[Data]],
