@@ -96,7 +96,7 @@ class TemporalData(BaseData):
     def index_select(self, idx: Any) -> 'TemporalData':
         idx = prepare_idx(idx)
         data = copy.copy(self)
-        for key, value in data:
+        for key, value in data._store.items():
             if value.size(0) == self.num_events:
                 data[key] = value[idx]
         return data
