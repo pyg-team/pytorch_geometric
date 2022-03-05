@@ -133,8 +133,8 @@ class TemporalData(BaseData):
         for i in range(self.num_events):
             yield self[i]
 
-    def __len__(self):
-        return len(self.src)
+    def __len__(self) -> int:
+        return self.num_events
 
     def __call__(self, *args: List[str]) -> Iterable:
         for key, value in self._store.items(*args):
@@ -211,7 +211,12 @@ class TemporalData(BaseData):
         return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        return 0
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif key in ['src', 'dst']:
+            return self.num_nodes
+        else:
+            return 0
 
     def __repr__(self) -> str:
         cls = self.__class__.__name__
@@ -222,13 +227,15 @@ class TemporalData(BaseData):
 
     def train_val_test_split(self, val_ratio: float = 0.15,
                              test_ratio: float = 0.15):
-        r"""Split the data in three parts: training, validation and test.
+        r"""Splits the data in training, validation and test sets according to
+        time.
 
         Args:
             val_ratio (float, optional): The proportion (in percents) of the
-                dataset to include in the validation split. (default: `0.15`)
+                dataset to include in the validation split.
+                (default: :obj:`0.15`)
             test_ratio (float, optional): The proportion (in percents) of the
-                dataset to include in the test split. (default: `0.15`)
+                dataset to include in the test split. (default: :obj:`0.15`)
         """
         val_time, test_time = np.quantile(
             self.t.cpu().numpy(),
