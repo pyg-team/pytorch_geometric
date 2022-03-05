@@ -32,7 +32,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
             either given as a :class:`~torch_geometric.data.Dataset` or
             :class:`~torch_geometric.data.Data` object.
         input_nodes (Tensor, optional): The indices of nodes that are used by
-            the corresponding loader, *e.g.*,
+            the corresponding loader, *e.g.*, by
             :class:`~torch_geometric.loader.NeighborLoader`.
             If set to :obj:`None`, all nodes will be considered.
             This argument should only be set for node-level loaders and does
