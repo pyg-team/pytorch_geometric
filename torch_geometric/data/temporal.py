@@ -93,53 +93,26 @@ class TemporalData(BaseData):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @staticmethod
-    def __prepare_non_str_idx(idx):
-        if isinstance(idx, int):
-            idx = torch.tensor([idx])
-        if isinstance(idx, (list, tuple)):
-            idx = torch.tensor(idx)
-        elif isinstance(idx, slice):
-            pass
-        elif isinstance(idx, torch.Tensor) and (idx.dtype == torch.long
-                                                or idx.dtype == torch.bool):
-            pass
-        else:
-            raise IndexError(
-                f'Only strings, integers, slices (`:`), list, tuples, and '
-                f'long or bool tensors are valid indices (got '
-                f'{type(idx).__name__}).')
-        return idx
-
-    def __generate_item(self, idx):
-        data = {}
-        num_events = self.num_events
-        for key, item in self._store.items():
-            if item.size(0) == num_events:
-                data[key] = item[idx]
-        return TemporalData(**data)
+    def index_select(self, idx: Any) -> 'TemporalData':
+        idx = prepare_idx(idx)
+        data = copy.copy(self)
+        for key, value in data:
+            if value.size(0) == self.num_events:
+                data[key] = value[idx]
+        return data
 
     def __getitem__(self, idx: Any) -> Any:
         if isinstance(idx, str):
             return self._store[idx]
-
-        prepared_idx = self.__prepare_non_str_idx(idx)
-
-        return self.__generate_item(prepared_idx)
+        return self.index_select(idx)
 
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         self._store[key] = value
 
     def __delitem__(self, idx):
-        if isinstance(idx, str) and idx in self._store:
+        if idx in self._store:
             del self._store[idx]
-
-        prepared_idx = self.__prepare_non_str_idx(idx)
-
-        for key, item in self._store.items():
-            if item.shape[0] == self.num_events:
-                del item[prepared_idx]
 
     def __getattr__(self, key: str) -> Any:
         if '_store' not in self.__dict__:
@@ -282,3 +255,23 @@ class TemporalData(BaseData):
 
     def is_directed(self) -> bool:
         raise NotImplementedError
+
+
+###############################################################################
+
+
+def prepare_idx(idx):
+    if isinstance(idx, int):
+        return torch.tensor([idx])
+    if isinstance(idx, (list, tuple)):
+        return torch.tensor(idx)
+    elif isinstance(idx, slice):
+        return idx
+    elif isinstance(idx, torch.Tensor) and idx.dtype == torch.long:
+        return idx
+    elif isinstance(idx, torch.Tensor) and idx.dtype == torch.bool:
+        return idx
+
+    raise IndexError(
+        f"Only strings, integers, slices (`:`), list, tuples, and long or "
+        f"bool tensors are valid indices (got '{type(idx).__name__}')")
