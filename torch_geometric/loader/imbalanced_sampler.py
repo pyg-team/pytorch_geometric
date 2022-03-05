@@ -28,8 +28,8 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
                                 sampler=sampler, ...)
 
     Args:
-        dataset (Dataset): The dataset from which to sample the data, either
-            given as a :class:`~torch_geometric.data.Dataset` or
+        dataset (Dataset or Data): The dataset from which to sample the data,
+            either given as a :class:`~torch_geometric.data.Dataset` or
             :class:`~torch_geometric.data.Data` object.
         input_nodes (Tensor, optional): The indices of nodes that are used by
             the corresponding loader, *e.g.*,
