@@ -11,15 +11,21 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
     class distribution.
     As such, it will either remove samples from the majority class
     (under-sampling) or add more examples from the minority class
-    (over-sampling):
+    (over-sampling).
+
+    **Graph-level sampling:**
 
     .. code-block:: python
+
         from torch_geometric.loader import DataLoader, ImbalancedSampler
 
         sampler = ImbalancedSampler(dataset)
         loader = DataLoader(dataset, batch_size=64, sampler=sampler, ...)
 
+    **Node-level sampling:**
+
     .. code-block:: python
+
         from torch_geometric.loader import NeighborLoader, ImbalancedSampler
 
         sampler = ImbalancedSampler(data, input_nodes=data.train_mask)
