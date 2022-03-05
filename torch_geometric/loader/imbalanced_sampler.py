@@ -9,8 +9,9 @@ from torch_geometric.data import Data, Dataset, InMemoryDataset
 class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
     r"""A weighted random sampler that randomly samples elements according to
     class distribution.
-    It consists of removing samples from the majority class (under-sampling) or
-    adding more examples from the minority class (over-sampling):
+    As such, it will either remove samples from the majority class
+    (under-sampling) or add more examples from the minority class
+    (over-sampling):
 
     .. code-block:: python
         from torch_geometric.loader import DataLoader, ImbalancedSampler
