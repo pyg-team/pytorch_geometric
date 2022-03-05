@@ -106,13 +106,13 @@ class TemporalData(BaseData):
             return self._store[idx]
         return self.index_select(idx)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         self._store[key] = value
 
-    def __delitem__(self, idx):
-        if idx in self._store:
-            del self._store[idx]
+    def __delitem__(self, key: str):
+        if key in self._store:
+            del self._store[key]
 
     def __getattr__(self, key: str) -> Any:
         if '_store' not in self.__dict__:
@@ -130,8 +130,8 @@ class TemporalData(BaseData):
         delattr(self._store, key)
 
     def __iter__(self) -> Iterable:
-        for idx, _ in enumerate(self.src):
-            yield self.__generate_item(torch.tensor([idx]))
+        for i in range(self.num_events):
+            yield self[i]
 
     def __len__(self):
         return len(self.src)
@@ -262,7 +262,7 @@ class TemporalData(BaseData):
 
 def prepare_idx(idx):
     if isinstance(idx, int):
-        return torch.tensor([idx])
+        return slice(idx, idx + 1)
     if isinstance(idx, (list, tuple)):
         return torch.tensor(idx)
     elif isinstance(idx, slice):
