@@ -70,7 +70,6 @@ class MaskLabel(torch.nn.Module):
         num_classes (int): Size of the number of classes for the labels
         out_channels (int): Size of each output sample.
     """
-
     def __init__(self, num_classes, out_channels):
         super().__init__()
 
@@ -84,20 +83,13 @@ class MaskLabel(torch.nn.Module):
 
 
 class UnimpNet(torch.nn.Module):
-    def __init__(
-        self,
-        feature_size: int,
-        num_classes: int,
-        inner_dim: int,
-        heads: int
-    ):
+    def __init__(self, feature_size: int, num_classes: int, inner_dim: int,
+                 heads: int):
         super().__init__()
 
         self.label_embedding = MaskLabel(num_classes, feature_size)
-        self.conv = TransformerConv(
-            feature_size,
-            inner_dim // heads,
-            heads=heads)
+        self.conv = TransformerConv(feature_size, inner_dim // heads,
+                                    heads=heads)
         self.linear = torch.nn.Linear(inner_dim, num_classes)
 
     def forward(
@@ -120,17 +112,10 @@ class UnimpNet(torch.nn.Module):
              mask: torch.Tensor):
         return torch.nn.functional.cross_entropy(out[mask], labels[mask])
 
-    def accuracy(
-        self,
-        out:
-        torch.Tensor,
-        labels: torch.Tensor,
-        mask: torch.Tensor
-    ):
-        return (
-            (self.predictions(out[mask]) == labels[mask]).sum().float()
-            / float(labels[mask].size(0))
-        )
+    def accuracy(self, out: torch.Tensor, labels: torch.Tensor,
+                 mask: torch.Tensor):
+        return ((self.predictions(out[mask]) == labels[mask]).sum().float() /
+                float(labels[mask].size(0)))
 
 
 def train(model, optim, epochs=20, label_rate=0.9):
