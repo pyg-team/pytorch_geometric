@@ -180,8 +180,7 @@ def train(model, optim, epochs=20, label_rate=0.9):
             train loss = {loss_train}, train acc = {100*accuracy_train:.2f}%
             valid loss = {loss_valid}, valid acc = {100*accuracy_valid:.2f}%
             test loss = {loss_test}, test acc = {100*accuracy_test:.2f}%
-            """
-        )
+            """)
 
 
 model = UnimpNet(data.x.shape[1], num_classes, inner_dim, heads)
