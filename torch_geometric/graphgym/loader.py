@@ -18,6 +18,8 @@ from torch_geometric.loader import (ClusterLoader, DataLoader,
 from torch_geometric.utils import (index_to_mask, negative_sampling,
                                    to_undirected)
 
+index2mask = index_to_mask  # TODO Backward compatibility
+
 
 def planetoid_dataset(name: str) -> Callable:
     return lambda root: Planetoid(root, name)
