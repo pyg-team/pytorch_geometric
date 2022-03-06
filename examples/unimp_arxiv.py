@@ -23,9 +23,9 @@ num_classes = 40
 
 # Form masks for labels: mask gives labels being predicted
 split_idx = dataset.get_idx_split()
-train_mask = mask_util.index_to_mask(split_idx["train"])
-valid_mask = mask_util.index_to_mask(split_idx["valid"])
-test_mask = mask_util.index_to_mask(split_idx["test"])
+train_mask = mask_util.index_to_mask(split_idx["train"], size=data.num_nodes)
+valid_mask = mask_util.index_to_mask(split_idx["valid"], size=data.num_nodes)
+test_mask = mask_util.index_to_mask(split_idx["test"], size=data.num_nodes)
 
 # Model parameters
 inner_dim = 16
