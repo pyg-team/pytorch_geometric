@@ -5,6 +5,7 @@ import torch
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
+import torch_geometric.utils.mask as mask_util
 from torch_geometric.nn import TransformerConv
 
 logger = logging.getLogger(__file__)
@@ -22,14 +23,9 @@ num_classes = 40
 
 # Form masks for labels: mask gives labels being predicted
 split_idx = dataset.get_idx_split()
-train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-train_mask[split_idx["train"]] = True
-
-valid_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-valid_mask[split_idx["valid"]] = True
-
-test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-test_mask[split_idx["test"]] = True
+train_mask = mask_util.index_to_mask(split_idx["train"])
+valid_mask = mask_util.index_to_mask(split_idx["valid"])
+test_mask = mask_util.index_to_mask(split_idx["test"])
 
 # Model parameters
 inner_dim = 16
