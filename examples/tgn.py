@@ -18,6 +18,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 from torch.nn import Linear
 
 from torch_geometric.datasets import JODIEDataset
+from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn import TGNMemory, TransformerConv
 from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
                                            LastNeighborLoader)
@@ -26,13 +27,20 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
-data = dataset[0].to(device)
+data = dataset[0]
+
+# For small datasets, we can put the whole dataset on GPU and thus avoid
+# expensive memory transfer costs for mini-batches:
+data = data.to(device)
 
 # Ensure to only sample actual destination nodes as negatives.
 min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
-
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
+
+train_loader = TemporalDataLoader(train_data, batch_size=200)
+val_loader = TemporalDataLoader(val_data, batch_size=200)
+test_loader = TemporalDataLoader(test_data, batch_size=200)
 
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
@@ -103,7 +111,8 @@ def train():
     neighbor_loader.reset_state()  # Start with an empty graph.
 
     total_loss = 0
-    for batch in train_data.seq_batches(batch_size=200):
+    for batch in train_loader:
+        batch = batch.to(device)
         optimizer.zero_grad()
 
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
@@ -118,7 +127,8 @@ def train():
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, edge_index, data.t[e_id], data.msg[e_id])
+        z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
+                data.msg[e_id].to(device))
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -139,7 +149,7 @@ def train():
 
 
 @torch.no_grad()
-def test(inference_data):
+def test(loader):
     memory.eval()
     gnn.eval()
     link_pred.eval()
@@ -147,7 +157,8 @@ def test(inference_data):
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    for batch in inference_data.seq_batches(batch_size=200):
+    for batch in loader:
+        batch = batch.to(device)
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
 
         neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
@@ -158,7 +169,8 @@ def test(inference_data):
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, edge_index, data.t[e_id], data.msg[e_id])
+        z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
+                data.msg[e_id].to(device))
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -179,8 +191,8 @@ def test(inference_data):
 
 for epoch in range(1, 51):
     loss = train()
-    print(f'  Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    val_ap, val_auc = test(val_data)
-    test_ap, test_auc = test(test_data)
-    print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
+    val_ap, val_auc = test(val_loader)
+    test_ap, test_auc = test(test_loader)
+    print(f'Val AP: {val_ap:.4f}, Val AUC: {val_auc:.4f}')
     print(f'Test AP: {test_ap:.4f}, Test AUC: {test_auc:.4f}')
