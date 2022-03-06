@@ -140,7 +140,7 @@ def train(model, optim, epochs=20, label_rate=0.9):
         model.train()
 
         # create epoc training mask that chooses subset of train to remove
-        epoc_mask = torch.rand(data.x.shape[0]) > label_rate
+        epoc_mask = ratio_mask(train_mask, 1 - label_rate)
 
         # label mask is a mask to give what labels are allowed
         label_mask = ~(epoc_mask | test_mask | valid_mask)
