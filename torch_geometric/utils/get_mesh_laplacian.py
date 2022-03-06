@@ -12,7 +12,6 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
     :obj:`pos` and :obj:`face`. It is computed as
     
     .. math::
-    
     \mathbf{L}_{ij} = \begin{cases} 
       \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2 a_{ij}} &
       \mbox{if } i, j \mbox{ is an edge,} \\
@@ -54,19 +53,16 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
     area_weight = torch.cat(
         [area_201, area_201, area_012, area_012, area_120, area_120])
     edge_index = torch.cat([
-        torch.stack([face[2], face[1]], dim=1),
-        torch.stack([face[1], face[2]], dim=1),
-        torch.stack([face[0], face[2]], dim=1),
-        torch.stack([face[2], face[0]], dim=1),
-        torch.stack([face[1], face[0]], dim=1),
-        torch.stack([face[0], face[1]], dim=1)
-    ])
+        torch.stack([face[2], face[1]], dim=0),
+        torch.stack([face[1], face[2]], dim=0),
+        torch.stack([face[0], face[2]], dim=0),
+        torch.stack([face[2], face[0]], dim=0),
+        torch.stack([face[1], face[0]], dim=0),
+        torch.stack([face[0], face[1]], dim=0)
+    ], dim=1)
 
-    cot_edge_index, cot_weight = coalesce(edge_index.t(), cot_weight)
-    area_edge_index, area_weight = coalesce(edge_index.t(), area_weight)
-
-    assert torch.all(cot_edge_index == area_edge_index)
-    edge_index = cot_edge_index
+    _, cot_weight = coalesce(edge_index, cot_weight)
+    edge_index, area_weight = coalesce(edge_index, area_weight)
 
     # compute the diagonal part
     row, col = edge_index
