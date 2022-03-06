@@ -8,9 +8,11 @@ from .shadow import ShaDowKHopSampler
 from .random_node_sampler import RandomNodeSampler
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
+from .temporal_dataloader import TemporalDataLoader
 from .neighbor_sampler import NeighborSampler
+from .imbalanced_sampler import ImbalancedSampler
 
-__all__ = [
+__all__ = classes = [
     'DataLoader',
     'NeighborLoader',
     'HGTLoader',
@@ -24,7 +26,7 @@ __all__ = [
     'RandomNodeSampler',
     'DataListLoader',
     'DenseDataLoader',
+    'TemporalDataLoader',
     'NeighborSampler',
+    'ImbalancedSampler',
 ]
-
-classes = __all__
