@@ -1,10 +1,11 @@
-import os
-import torch
 import logging
+import os
+
+import torch
+from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.nn import TransformerConv
-from ogb.nodeproppred import PygNodePropPredDataset
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -36,11 +37,13 @@ heads = 2
 
 
 class UnimpNet(torch.nn.Module):
-    def __init__(self, feature_size: int, label_vocab: int, inner_dim: int, heads: int):
+    def __init__(self, feature_size: int, label_vocab: int, inner_dim: int,
+                 heads: int):
         super().__init__()
 
         self.label_embedding = torch.nn.Embedding(label_vocab, feature_size)
-        self.conv = TransformerConv(feature_size, inner_dim // heads, heads=heads)
+        self.conv = TransformerConv(feature_size, inner_dim // heads,
+                                    heads=heads)
         self.linear = torch.nn.Linear(inner_dim, label_vocab)
 
     def forward(
@@ -51,7 +54,8 @@ class UnimpNet(torch.nn.Module):
         label_mask: torch.Tensor,
     ):
         x = torch.clone(x)
-        x[~label_mask] = x[~label_mask] + self.label_embedding(y.squeeze()[~label_mask])
+        x[~label_mask] = x[~label_mask] + self.label_embedding(
+            y.squeeze()[~label_mask])
         x = self.conv(x, edge_index)
         out = self.linear(x)
         return out
@@ -60,13 +64,14 @@ class UnimpNet(torch.nn.Module):
         probs = torch.nn.functional.softmax(out, dim=1)
         return probs.argmax(dim=1)
 
-    def loss(self, out: torch.Tensor, labels: torch.Tensor, mask: torch.Tensor):
+    def loss(self, out: torch.Tensor, labels: torch.Tensor,
+             mask: torch.Tensor):
         return torch.nn.functional.cross_entropy(out[mask], labels[mask])
 
-    def accuracy(self, out: torch.Tensor, labels: torch.Tensor, mask: torch.Tensor):
-        return (self.predictions(out[mask]) == labels[mask]).sum().float() / float(
-            labels[mask].size(0)
-        )
+    def accuracy(self, out: torch.Tensor, labels: torch.Tensor,
+                 mask: torch.Tensor):
+        return (self.predictions(out[mask])
+                == labels[mask]).sum().float() / float(labels[mask].size(0))
 
 
 def train(model, optim, epochs=20, label_rate=0.9):
@@ -82,7 +87,8 @@ def train(model, optim, epochs=20, label_rate=0.9):
         label_mask = epoc_mask | test_mask | valid_mask
 
         # forward pass
-        out_train = model(data.x, data.y.squeeze(), data.edge_index, label_mask)
+        out_train = model(data.x, data.y.squeeze(), data.edge_index,
+                          label_mask)
 
         optim.zero_grad()
 
@@ -110,14 +116,12 @@ def train(model, optim, epochs=20, label_rate=0.9):
             accuracy_test = model.accuracy(out_test, y, test_mask)
 
         # log info
-        logger.info(
-            f"""
+        logger.info(f"""
             epoch = {epoch}:
             train loss = {loss_train}, train accuracy = {100*accuracy_train:.2f}%
             valid loss = {loss_valid}, valid accuracy = {100*accuracy_valid:.2f}%
             test loss = {loss_test}, test accuracy = {100*accuracy_test:.2f}%
-            """
-        )
+            """)
 
 
 model = UnimpNet(data.x.shape[1], y_vocab_size, inner_dim, heads)
