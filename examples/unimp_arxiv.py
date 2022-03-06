@@ -1,10 +1,11 @@
-import os
-import torch
 import logging
+import os
+
+import torch
+from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.nn import TransformerConv
-from ogb.nodeproppred import PygNodePropPredDataset
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -115,7 +116,8 @@ class UnimpNet(torch.nn.Module):
         probs = torch.nn.functional.softmax(out, dim=1)
         return probs.argmax(dim=1)
 
-    def loss(self, out: torch.Tensor, labels: torch.Tensor, mask: torch.Tensor):
+    def loss(self, out: torch.Tensor, labels: torch.Tensor,
+             mask: torch.Tensor):
         return torch.nn.functional.cross_entropy(out[mask], labels[mask])
 
     def accuracy(
@@ -144,7 +146,8 @@ def train(model, optim, epochs=20, label_rate=0.9):
         label_mask = ~(epoc_mask | test_mask | valid_mask)
 
         # forward pass
-        out_train = model(data.x, data.y.squeeze(), data.edge_index, label_mask)
+        out_train = model(data.x, data.y.squeeze(), data.edge_index,
+                          label_mask)
 
         optim.zero_grad()
 
@@ -172,8 +175,7 @@ def train(model, optim, epochs=20, label_rate=0.9):
             accuracy_test = model.accuracy(out_test, y, test_mask)
 
         # log info
-        logger.info(
-            f"""
+        logger.info(f"""
             epoch = {epoch}:
             train loss = {loss_train}, train acc = {100*accuracy_train:.2f}%
             valid loss = {loss_valid}, valid acc = {100*accuracy_valid:.2f}%
