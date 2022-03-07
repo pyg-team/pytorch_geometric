@@ -1,11 +1,7 @@
 import glob
 import os
-<<<<<<< HEAD
 from pathlib import Path
 import glob
-=======
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 
@@ -107,20 +103,12 @@ class SHREC2016(InMemoryDataset):
 
     def process(self):
         ref_data = read_off(
-<<<<<<< HEAD
-            osp.join(self.raw_paths[0], 'null', f'{self.cat}.off'))
-
-        train_list = []
-        name = f'{self.part}_{self.cat}_*.off'
-        paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
-=======
             Path.joinpath(Path(self.raw_paths[0]), 'null',
                                 '{}.off'.format(self.cat)))
 
         train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = Path.joinpath(Path(self.raw_paths[0]), self.part).rglob(name)
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
@@ -132,13 +120,8 @@ class SHREC2016(InMemoryDataset):
             train_list.append(data)
 
         test_list = []
-<<<<<<< HEAD
-        name = f'{self.part}_{self.cat}_*.off'
-        paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
-=======
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = Path.joinpath(Path(self.raw_paths[1]), self.part).rglob(name)
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 

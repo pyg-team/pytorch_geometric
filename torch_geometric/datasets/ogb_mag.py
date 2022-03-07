@@ -1,13 +1,7 @@
 import os
-<<<<<<< HEAD
-import shutil
-# import os.path as osp
-from pathlib import Path
-=======
-import os.path as osp
-import shutil
 from typing import Callable, List, Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
+import shutil
+from pathlib import Path
 
 import numpy as np
 import torch

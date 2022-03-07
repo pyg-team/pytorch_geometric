@@ -1,13 +1,7 @@
-<<<<<<< HEAD
 import sys
-# import os.path as osp
-from pathlib import Path
-=======
 import bz2
 import gzip
-import os.path as osp
-import sys
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
+from pathlib import Path
 import tarfile
 import zipfile
 

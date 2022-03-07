@@ -1,17 +1,13 @@
 import functools
 import inspect
 import logging
-<<<<<<< HEAD
-from pathlib import Path
-from yacs.config import CfgNode as CN
-=======
 import os
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import shutil
 import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
+from pathlib import Path
 
 import torch_geometric.graphgym.register as register
 from torch_geometric.data.makedirs import makedirs
@@ -489,12 +485,8 @@ def dump_cfg(cfg):
         cfg (CfgNode): Configuration node
 
     """
-<<<<<<< HEAD
     makedirs(cfg.out_dir)
-    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
-=======
     cfg_file = Path.joinpath(Path(cfg.out_dir), cfg.cfg_dest)
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
@@ -514,9 +506,9 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if Path(dir).is_dir():
+    if Path(dir).isdir():
         shutil.rmtree(dir)
-    Path.mkdir(dir, exist_ok=True)
+    os.makedirs(dir, exist_ok=True)
 
 
 def get_fname(fname):
@@ -543,18 +535,11 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-<<<<<<< HEAD
     fname = get_fname(fname)
-    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
-=======
-    fname = fname.split('/')[-1]
-    if fname.endswith('.yaml'):
-        fname = fname[:-5]
     cfg.run_dir = Path.joinpath(Path(out_dir), fname, str(cfg.seed))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
     # Make output directory
     if cfg.train.auto_resume:
-        Path.mkdir(cfg.run_dir, exist_ok=True)
+        os.makedirs(cfg.run_dir, exist_ok=True)
     else:
         makedirs_rm_exist(cfg.run_dir)
 
@@ -569,15 +554,8 @@ def set_agg_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-<<<<<<< HEAD
     fname = get_fname(fname)
-    return os.path.join(out_dir, fname)
-=======
-    fname = fname.split('/')[-1]
-    if fname.endswith('.yaml'):
-        fname = fname[:-5]
     return Path.joinpath(Path(out_dir), fname)
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 
 
 set_cfg(cfg)

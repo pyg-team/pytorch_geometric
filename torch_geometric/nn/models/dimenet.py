@@ -1,14 +1,7 @@
 import os
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
 from math import sqrt, pi as PI
-=======
-import os.path as osp
-from math import pi as PI
-from math import sqrt
 from typing import Callable
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import numpy as np
 import torch

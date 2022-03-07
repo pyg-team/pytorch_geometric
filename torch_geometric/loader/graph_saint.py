@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 from typing import Optional
-
 from pathlib import Path
-=======
-import os.path as osp
-from typing import Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 from torch_sparse import SparseTensor

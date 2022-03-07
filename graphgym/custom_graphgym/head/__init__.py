@@ -1,4 +1,3 @@
-# from os.path import dirname, basename, is_file, join
 froom pathlib import Path
 
 modules = Path(__file__).parent.rglob('*.py')

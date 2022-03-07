@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 from typing import Optional, Callable, List, Dict, Tuple
-
 from pathlib import Path
-=======
-import os
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import shutil
 from typing import Callable, Dict, List, Optional, Tuple
 

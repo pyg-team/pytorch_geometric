@@ -1,10 +1,6 @@
 import argparse
-<<<<<<< HEAD
 from pathlib import Path
-=======
 import copy
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 from sklearn.linear_model import LogisticRegression

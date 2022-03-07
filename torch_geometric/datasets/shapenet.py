@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import pathlib
-from pathlib import Path
-=======
 import json
-import os
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
+from pathlib import Path
 import shutil
 
 import torch
@@ -141,11 +136,7 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-<<<<<<< HEAD
-            osp.join(f'{cats}_{split}.pt')
-=======
             Path.joinpath(Path('{}_{}.pt'.format(cats, split)))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             for split in ['train', 'val', 'test', 'trainval']
         ]
 

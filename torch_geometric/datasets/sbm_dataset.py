@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Callable, List, Optional, Union
 
 import torch
@@ -71,7 +71,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.__class__.__name__, 'processed')
+        return Path.joinpath(Path(self.root), self.__class__.__name__, 'processed')
 
     @property
     def processed_file_names(self) -> str:

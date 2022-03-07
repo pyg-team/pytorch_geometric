@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 from typing import Optional
-
 import warnings
 from pathlib import Path
-=======
-import os
-import os.path as osp
-import warnings
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from math import pi as PI
 from typing import Optional
 

@@ -1,13 +1,6 @@
-<<<<<<< HEAD
-# import os.path as osp
+import glob
 import pathlib
 from pathlib import Path
-
-=======
-import glob
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
-
 import numpy as np
 import torch
 from torch_scatter import scatter_add
@@ -39,16 +32,9 @@ class TrackMLParticleTrackingDataset(Dataset):
     url = 'https://www.kaggle.com/c/trackml-particle-identification'
 
     def __init__(self, root, transform=None):
-<<<<<<< HEAD
-        super().__init__(root, transform)
-        events = glob.glob(osp.join(self.raw_dir, 'event*-hits.csv'))
-        events = [e.split(osp.sep)[-1].split('-')[0][5:] for e in events]
-=======
         super(TrackMLParticleTrackingDataset, self).__init__(root, transform)
         events = Path(self.raw_dir).rglob('event*-hits.csv')
-        # events = glob.glob(Path.joinpath(Path(self.raw_dir), 'event*-hits.csv'))
         events = [e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events]
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         self.events = sorted(events)
 
     @property

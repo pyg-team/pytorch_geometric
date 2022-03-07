@@ -1,4 +1,3 @@
-# import os.path as osp
 from pathlib import Path
 import shutil
 from itertools import chain
@@ -142,11 +141,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             filename = '_'.join(name.split('/')[1].split('_')[:-1])
             idx = int(name.split('_')[-1].split('.')[0]) - 1
 
-<<<<<<< HEAD
-            path = osp.join(info_path, f'{filename}.xml')
-=======
             path = Path.joinpath(Path(info_path), '{}.xml'.format(filename))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             obj = minidom.parse(path).getElementsByTagName('object')[idx]
 
             trunc = obj.getElementsByTagName('truncated')[0].firstChild.data
@@ -194,11 +189,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
             pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
-<<<<<<< HEAD
-            path = osp.join(image_path, f'{filename}.jpg')
-=======
             path = Path.joinpath(Path(image_path), '{}.jpg'.format(filename))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             with open(path, 'rb') as f:
                 img = Image.open(f).convert('RGB').crop(box)
                 img = img.resize((256, 256), resample=Image.BICUBIC)

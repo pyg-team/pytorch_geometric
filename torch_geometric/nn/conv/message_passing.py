@@ -1,15 +1,8 @@
 import inspect
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
-=======
-import os
-import os.path as osp
-import re
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain

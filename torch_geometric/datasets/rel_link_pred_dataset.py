@@ -1,15 +1,7 @@
-<<<<<<< HEAD
 from typing import Optional, Callable, List
-
 from pathlib import Path
-=======
-import os
-import os.path as osp
-from typing import Callable, List, Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
-
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 

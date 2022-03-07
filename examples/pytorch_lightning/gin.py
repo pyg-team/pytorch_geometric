@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import pytorch_lightning as pl
 import torch
@@ -60,7 +60,7 @@ class Model(pl.LightningModule):
 def main():
     seed_everything(42)
 
-    root = osp.join('data', 'TUDataset')
+    root = Path.joinpath(Path('data'),'TUDataset')
     dataset = TUDataset(root, 'IMDB-BINARY', pre_transform=T.OneHotDegree(135))
 
     dataset = dataset.shuffle()

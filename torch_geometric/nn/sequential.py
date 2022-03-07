@@ -1,14 +1,5 @@
-<<<<<<< HEAD
 from typing import List, Union, Tuple, Callable
-
-# import os
-# import os.path as osp
 from pathlib import Path
-=======
-import os
-import os.path as osp
-from typing import Callable, List, Tuple, Union
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from uuid import uuid1
 
 import torch
@@ -100,7 +91,6 @@ def Sequential(
 
         calls.append((name, module, in_desc, out_desc))
 
-    # root = os.path.dirname(osp.realpath(__file__))
     root = Path(__file__).resolve().parent
     with open(Path.joinpath(root, 'sequential.jinja'), 'r') as f:
         template = Template(f.read())

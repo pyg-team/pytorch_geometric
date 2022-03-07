@@ -1,5 +1,4 @@
-import os.path as osp
-
+from pathlib import Path
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
@@ -58,7 +57,7 @@ class Model(pl.LightningModule):
 def main():
     seed_everything(42)
 
-    dataset = Reddit(osp.join('data', 'Reddit'))
+    dataset = Reddit(Path.joinpath(Path('data'), 'Reddit'))
     data = dataset[0]
 
     datamodule = LightningNodeData(data, data.train_mask, data.val_mask,

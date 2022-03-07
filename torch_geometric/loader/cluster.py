@@ -1,10 +1,5 @@
 import copy
-<<<<<<< HEAD
 from pathlib import Path
-=======
-import os.path as osp
-import sys
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from typing import Optional
 
 import torch

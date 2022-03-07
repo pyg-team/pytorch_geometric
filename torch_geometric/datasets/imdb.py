@@ -1,5 +1,4 @@
 import os
-# import os.path as osp
 from pathlib import Path
 from itertools import product
 from typing import Callable, List, Optional

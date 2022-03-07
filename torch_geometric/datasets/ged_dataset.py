@@ -1,11 +1,6 @@
 import glob
 import os
-<<<<<<< HEAD
 from pathlib import Path
-import glob
-=======
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import pickle
 from typing import Callable, List, Optional
 
@@ -108,12 +103,7 @@ class GEDDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-<<<<<<< HEAD
-        # Returns, e.g., ['LINUX/train', 'LINUX/test']
-        return [osp.join(self.name, s) for s in ['train', 'test']]
-=======
         return [Path.joinpath(Path(self.name), s) for s in ['train', 'test']]
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -138,28 +128,16 @@ class GEDDataset(InMemoryDataset):
         ids, Ns = [], []
         # Iterating over paths for raw and processed data (train + test):
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
-<<<<<<< HEAD
-            # Find the paths of all raw graphs:
-            names = glob.glob(osp.join(r_path, '*.gexf'))
-            # Get sorted graph IDs given filename: 123.gexf -> 123
-=======
             names = Path(r_path).rglob('*.gexf')
             # names = glob.glob(Path.joinpath(Path(r_path), '*.gexf'))
             # Get the graph IDs given by the file name:
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
-<<<<<<< HEAD
-                # Reading the raw `*.gexf` graph:
-                G = nx.read_gexf(osp.join(r_path, f'{idx}.gexf'))
-                # Mapping of nodes in `G` to a contiguous number:
-=======
                 G = nx.read_gexf(Path.joinpath(Path(r_path), f'{idx}.gexf'))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
@@ -194,13 +172,7 @@ class GEDDataset(InMemoryDataset):
         assoc = {idx: i for i, idx in enumerate(ids[0])}
         assoc.update({idx: i + len(ids[0]) for i, idx in enumerate(ids[1])})
 
-<<<<<<< HEAD
-        # Extracting ground-truth GEDs from the GED pickle file
-        path = osp.join(self.raw_dir, self.name, 'ged.pickle')
-        # Initialize GEDs as float('inf'):
-=======
         path = Path.joinpath(Path(self.raw_dir), self.name, 'ged.pickle')
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         mat = torch.full((len(assoc), len(assoc)), float('inf'))
         with open(path, 'rb') as f:
             obj = pickle.load(f)

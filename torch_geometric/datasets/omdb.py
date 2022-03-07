@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -56,8 +56,8 @@ class OMDB(InMemoryDataset):
         from ase.io import read
 
         extract_tar(self.raw_paths[0], self.raw_dir, log=False)
-        materials = read(osp.join(self.raw_dir, 'structures.xyz'), index=':')
-        bandgaps = np.loadtxt(osp.join(self.raw_dir, 'bandgaps.csv'))
+        materials = read(Path.joinpath(Path(self.raw_dir), 'structures.xyz'), index=':')
+        bandgaps = np.loadtxt(Path.joinpath(Path(self.raw_dir), 'bandgaps.csv'))
 
         data_list = []
         for material, bandgap in zip(materials, bandgaps):

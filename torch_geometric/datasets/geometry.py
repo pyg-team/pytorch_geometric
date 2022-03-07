@@ -1,13 +1,7 @@
 import glob
 import os
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
-import glob
-=======
-import os.path as osp
 from typing import Callable, List, Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 
@@ -81,14 +75,9 @@ class GeometricShapes(InMemoryDataset):
 
         data_list = []
         for target, category in enumerate(categories):
-<<<<<<< HEAD
-            folder = osp.join(self.raw_dir, category, dataset)
-            paths = glob.glob(f'{folder}/*.off')
-=======
             folder = Path.joinpath(Path(self.raw_dir), category, dataset)
             paths = Path(folder).rglob('*.off')
             # paths = glob.glob('{}/*.off'.format(folder))
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             for path in paths:
                 data = read_off(path)
                 data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)

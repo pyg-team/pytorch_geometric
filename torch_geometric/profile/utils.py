@@ -1,11 +1,7 @@
 import gc
 import os
-import os.path as osp
-<<<<<<< HEAD
 from pathlib import Path
-=======
 import random
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import subprocess as sp
 import sys
 from collections.abc import Mapping, Sequence

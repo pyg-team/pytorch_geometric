@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 from pathlib import Path
-=======
 import argparse
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 import torch.nn.functional as F

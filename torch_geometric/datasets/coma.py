@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 from typing import Optional, Callable, List
-
-# import os.path as osp
 from pathlib import Path
-=======
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from glob import glob
-from typing import Callable, List, Optional
 
 import torch
 

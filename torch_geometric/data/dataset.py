@@ -1,15 +1,8 @@
 import copy
-<<<<<<< HEAD
 import warnings
-import numpy as np
-from pathlib import Path
-# import os.path as osp
-=======
-import os.path as osp
 import re
 import sys
-import warnings
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
+from pathlib import Path
 from collections.abc import Sequence
 from typing import Any, Callable, List, Optional, Tuple, Union
 

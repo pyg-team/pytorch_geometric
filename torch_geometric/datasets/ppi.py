@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 from itertools import product
 from pathlib import Path
 import json
-=======
-import json
-import os
-import os.path as osp
-from itertools import product
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import numpy as np
 import torch
@@ -95,20 +88,6 @@ class PPI(InMemoryDataset):
         from networkx.readwrite import json_graph
 
         for s, split in enumerate(['train', 'valid', 'test']):
-<<<<<<< HEAD
-            path = osp.join(self.raw_dir, f'{split}_graph.json')
-            with open(path, 'r') as f:
-                G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
-
-            x = np.load(osp.join(self.raw_dir, f'{split}_feats.npy'))
-            x = torch.from_numpy(x).to(torch.float)
-
-            y = np.load(osp.join(self.raw_dir, f'{split}_labels.npy'))
-            y = torch.from_numpy(y).to(torch.float)
-
-            data_list = []
-            path = osp.join(self.raw_dir, f'{split}_graph_id.npy')
-=======
             path = Path.joinpath(Path(self.raw_dir), '{}_graph.json').format(split)
             with open(path, 'r') as f:
                 G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
@@ -121,7 +100,6 @@ class PPI(InMemoryDataset):
 
             data_list = []
             path = Path.joinpath(Path(self.raw_dir), '{}_graph_id.npy').format(split)
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
             idx = torch.from_numpy(np.load(path)).to(torch.long)
             idx = idx - idx.min()
 

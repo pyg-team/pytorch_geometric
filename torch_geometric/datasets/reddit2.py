@@ -1,11 +1,5 @@
 import json
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
-=======
-import os
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import numpy as np
 import scipy.sparse as sp
@@ -72,33 +66,17 @@ class Reddit2(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-<<<<<<< HEAD
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        path = Path.joinpath(Path(self.raw_dir), 'adj_full.npz')
-        gdd.download_file_from_google_drive(self.adj_full_id, path)
-
-        path = Path.joinpath(Path(self.raw_dir), 'feats.npy')
-        gdd.download_file_from_google_drive(self.feats_id, path)
-
-        path = Path.joinpath(Path(self.raw_dir), 'class_map.json')
-        gdd.download_file_from_google_drive(self.class_map_id, path)
-
-        path = Path.joinpath(Path(self.raw_dir), 'role.json')
-        gdd.download_file_from_google_drive(self.role_id, path)
-=======
         path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
 
         path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'feats.npy'))
 
         path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'class_map.json'))
 
         path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'role.json'))
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'role.json'))
 
     def process(self):
         f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))

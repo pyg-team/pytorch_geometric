@@ -1,11 +1,6 @@
 import os
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
 import shutil
-=======
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import pickle
 import shutil
 
@@ -67,13 +62,8 @@ class ZINC(InMemoryDataset):
                  pre_transform=None, pre_filter=None):
         self.subset = subset
         assert split in ['train', 'val', 'test']
-<<<<<<< HEAD
-        super().__init__(root, transform, pre_transform, pre_filter)
-        path = osp.join(self.processed_dir, f'{split}.pt')
-=======
         super(ZINC, self).__init__(root, transform, pre_transform, pre_filter)
         path = Path.joinpath(Path(self.processed_dir), f'{split}.pt')
->>>>>>> f1c34427cce0562cd57fc797231077e4eab06ff1
         self.data, self.slices = torch.load(path)
 
     @property

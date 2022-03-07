@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 from typing import Dict, List, Union
 
 import torch
@@ -9,7 +9,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import HANConv
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
+path = Path.joinpath(Path(__file__).resolve().parent.parent.parent,'data', 'Flickr')
 metapaths = [[('movie', 'actor'), ('actor', 'movie')],
              [('movie', 'director'), ('director', 'movie')]]
 transform = T.AddMetaPaths(metapaths=metapaths, drop_orig_edges=True,

@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 from point_transformer_classification import TransitionDown, TransformerBlock
 from point_transformer_classification import MLP
 
 from pathlib import Path
-=======
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 import torch.nn.functional as F

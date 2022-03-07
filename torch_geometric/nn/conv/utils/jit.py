@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 import sys
-# import os.path as osp
 from pathlib import Path
-=======
-import os.path as osp
-import sys
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from getpass import getuser
 from importlib.util import module_from_spec, spec_from_file_location
 from tempfile import NamedTemporaryFile as TempFile

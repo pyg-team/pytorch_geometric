@@ -1,15 +1,7 @@
-<<<<<<< HEAD
 from typing import Optional, Callable, List
-
 import sys
 from pathlib import Path
 from tqdm import tqdm
-=======
-import os
-import os.path as osp
-import sys
-from typing import Callable, List, Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 import torch.nn.functional as F

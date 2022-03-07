@@ -1,5 +1,5 @@
 import os
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -42,8 +42,8 @@ class MovieLens(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return [
-            osp.join('ml-latest-small', 'movies.csv'),
-            osp.join('ml-latest-small', 'ratings.csv'),
+            Path.joinpath(Path('ml-latest-small'), 'movies.csv'),
+            Path.joinpath(Path('ml-latest-small'), 'ratings.csv'),
         ]
 
     @property

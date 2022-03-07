@@ -1,11 +1,5 @@
 import logging
-<<<<<<< HEAD
-# import os.path as osp
 from pathlib import Path
-=======
-import os
-import os.path as osp
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from collections import Counter
 from typing import Callable, List, Optional
 

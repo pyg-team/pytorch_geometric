@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 import shutil
 from pathlib import Path
-=======
-import os
-import os.path as osp
-import shutil
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 

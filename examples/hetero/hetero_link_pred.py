@@ -1,5 +1,5 @@
 import argparse
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
+path = Path.joinpath(Path(__file__).resolve().parent.parent.parent,'data', 'MovieLens')
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 

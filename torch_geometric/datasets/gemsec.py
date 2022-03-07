@@ -1,12 +1,5 @@
-<<<<<<< HEAD
 from typing import Optional, Callable
-
-# import os.path as osp
 from pathlib import Path
-=======
-import os.path as osp
-from typing import Callable, Optional
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import numpy as np
 import torch
