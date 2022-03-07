@@ -7,6 +7,8 @@ from ogb.nodeproppred import PygNodePropPredDataset
 import torch_geometric.transforms as T
 import torch_geometric.utils.mask as mask_util
 from torch_geometric.nn import TransformerConv
+from torch_geometric.nn import MaskLabel
+
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -30,52 +32,6 @@ test_mask = mask_util.index_to_mask(split_idx["test"], size=data.num_nodes)
 # Model parameters
 inner_dim = 16
 heads = 2
-
-
-def ratio_mask(mask: torch.Tensor, ratio: float, shuffle: bool = False):
-    r"""Modifies the existing :obj:`mask` by additioning setting :obj:`ratio`
-    of the :obj:`True` entries to :obj:`False`. Does not operate inplace.
-
-    If shuffle is required the masking proportion is not exact.
-
-    Args:
-        mask (torch.Tensor): The mask to re-mask.
-        ratio (float): The ratio of entries to remove.
-        shuffle (bool): Whether or not the mask is pre-shuffled, if so there is
-            no need to randomize which entires are set to :obj:`False`.
-    """
-    n = int(mask.count_nonzero().item())
-    new_mask = torch.ones(len(mask), dtype=torch.bool)
-    if not shuffle:
-        new_mask[mask] = (torch.rand(n) < ratio).type(torch.bool)
-    else:
-        new_mask[mask] = (torch.arange(0, n) < int(ratio * n)).type(torch.bool)
-    return mask & new_mask
-
-
-class MaskLabel(torch.nn.Module):
-    r"""A label embedding layer that replicates the label masking from `"Masked
-    Label Prediction: Unified Message Passing Model for Semi-Supervised
-    Classification" <https://arxiv.org/abs/2009.03509>`_ paper.
-
-    In the forward pass both the labels, and a mask corresponding to which
-    labels should be kept is provided. All entires that are not true in the
-    mask are returned as zero.
-
-    Args:
-        num_classes (int): Size of the number of classes for the labels
-        out_channels (int): Size of each output sample.
-    """
-    def __init__(self, num_classes, out_channels):
-        super().__init__()
-
-        self.emb = torch.nn.Embedding(num_classes, out_channels)
-        self.out_channels = out_channels
-
-    def forward(self, y: torch.Tensor, mask: torch.Tensor):
-        out = torch.zeros(y.shape[0], self.out_channels, dtype=torch.float)
-        out[mask] = self.emb(y[mask])
-        return out
 
 
 class UnimpNet(torch.nn.Module):
@@ -120,11 +76,11 @@ def train(model, optim, epochs=20, label_rate=0.9):
     for epoch in range(epochs):
         model.train()
 
-        # create epoc training mask that chooses subset of train to remove
-        epoc_mask = ratio_mask(train_mask, 1 - label_rate)
+        # create epoch training mask that chooses subset of train to remove
+        epoch_mask = MaskLabel.ratio_mask(train_mask, 1 - label_rate)
 
         # label mask is a mask to give what labels are allowed
-        label_mask = ~(epoc_mask | test_mask | valid_mask)
+        label_mask = ~(epoch_mask | test_mask | valid_mask)
 
         # forward pass
         out_train = model(data.x, data.y.squeeze(), data.edge_index,
@@ -133,7 +89,7 @@ def train(model, optim, epochs=20, label_rate=0.9):
         optim.zero_grad()
 
         # get loss and accuracy
-        loss_train = model.loss(out_train, y, ~epoc_mask)
+        loss_train = model.loss(out_train, y, ~epoch_mask)
 
         # apply gradients
         loss_train.backward()
@@ -151,7 +107,7 @@ def train(model, optim, epochs=20, label_rate=0.9):
             loss_valid = model.loss(out_valid, y, valid_mask)
             loss_test = model.loss(out_test, y, test_mask)
 
-            accuracy_train = model.accuracy(out_train, y, epoc_mask)
+            accuracy_train = model.accuracy(out_train, y, epoch_mask)
             accuracy_valid = model.accuracy(out_valid, y, valid_mask)
             accuracy_test = model.accuracy(out_test, y, test_mask)
 
