@@ -12,13 +12,13 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
     :obj:`pos` and :obj:`face`. It is computed as
     
     .. math::
-    \mathbf{L}_{ij} = \begin{cases} 
-      \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2 a_{ij}} &
-      \mbox{if } i, j \mbox{ is an edge,} \\
-      \sum_{j \in N(i)}{L_{ij}} &
-      \mbox{if } i \mbox{ is in the diagonal,} \\
-      0 \mbox{ otherwise.}
-    \end{cases}
+      \mathbf{L}_{ij} = \begin{cases}
+        \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2 a_{ij}} &
+        \mbox{if } i, j \mbox{ is an edge,} \\
+        \sum_{j \in N(i)}{L_{ij}} &
+        \mbox{if } i \mbox{ is in the diagonal,} \\
+        0 \mbox{ otherwise.}
+      \end{cases}
 
     where :math:`a_{ij}` is the local area element,
     i.e. one-third of the neighbouring triangle's area.
@@ -52,6 +52,7 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
         [cot_201, cot_201, cot_012, cot_012, cot_120, cot_120])
     area_weight = torch.cat(
         [area_201, area_201, area_012, area_012, area_120, area_120])
+
     edge_index = torch.cat([
         torch.stack([face[2], face[1]], dim=0),
         torch.stack([face[1], face[2]], dim=0),
