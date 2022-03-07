@@ -1,11 +1,12 @@
 from typing import Dict, List, Optional, Tuple
-from torch_geometric.typing import NodeType, EdgeType, OptTensor
 
 import torch
 from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
+
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 EPS = 1e-15
 

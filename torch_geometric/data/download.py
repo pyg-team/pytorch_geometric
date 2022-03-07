@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import sys
 import ssl
 # import os.path as osp
 from pathlib import Path
 from six.moves import urllib
+=======
+import os.path as osp
+import ssl
+import sys
+import urllib
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 from .makedirs import makedirs
 

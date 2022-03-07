@@ -1,14 +1,14 @@
 import warnings
-from typing import Union, Tuple, List
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
+from typing import List, Tuple, Union
 
 import torch
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
 from torch.nn import Parameter
-from torch_geometric.utils.repeat import repeat
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform, zeros
 

@@ -1,19 +1,18 @@
-from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
-                    Tuple, NamedTuple)
-from torch_geometric.typing import NodeType, EdgeType
-
 import copy
-import weakref
 import warnings
+import weakref
 from collections import namedtuple
-from collections.abc import Sequence, Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, coalesce
 
-from torch_geometric.utils import is_undirected
-from torch_geometric.data.view import KeysView, ValuesView, ItemsView
+from torch_geometric.data.view import ItemsView, KeysView, ValuesView
+from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.utils import contains_isolated_nodes, is_undirected
 
 
 class BaseStorage(MutableMapping):
@@ -44,6 +43,9 @@ class BaseStorage(MutableMapping):
         return len(self._mapping)
 
     def __getattr__(self, key: str) -> Any:
+        if key == '_mapping':
+            self._mapping = {}
+            return self._mapping
         try:
             return self[key]
         except KeyError:
@@ -254,7 +256,7 @@ class NodeStorage(BaseStorage):
                 return value.size(self._parent().__cat_dim__(key, value, self))
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
-        if 'adj_t' in self and isinstance(self.adj, SparseTensor):
+        if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
@@ -403,7 +405,10 @@ class EdgeStorage(BaseStorage):
         edge_index, num_nodes = self.edge_index, self.size(1)
         if num_nodes is None:
             raise NameError("Unable to infer 'num_nodes'")
-        return torch.unique(edge_index[1]).numel() < num_nodes
+        if self.is_bipartite():
+            return torch.unique(edge_index[1]).numel() < num_nodes
+        else:
+            return contains_isolated_nodes(edge_index, num_nodes)
 
     def has_self_loops(self) -> bool:
         if self.is_bipartite():
@@ -461,13 +466,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
-        num_nodes, num_edges = self.num_nodes, self.num_edges
+        num_edges = self.num_edges
         if not isinstance(value, Tensor):
             return False
         if value.size(cat_dim) != num_edges:
             return False
-        if num_nodes != num_edges:
-            return True
         return 'edge' in key
 
 

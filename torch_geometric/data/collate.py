@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union, Any
-
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -85,7 +84,8 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
-            device = value.device if isinstance(value, Tensor) else device
+            if isinstance(value, Tensor) and value.is_cuda:
+                device = value.device
 
             out_store[attr] = value
             if key is not None:

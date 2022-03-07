@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import (GraphConv, TopKPooling, global_mean_pool,
-                                JumpingKnowledge)
+
+from torch_geometric.nn import (GraphConv, JumpingKnowledge, TopKPooling,
+                                global_mean_pool)
 
 
 class TopK(torch.nn.Module):

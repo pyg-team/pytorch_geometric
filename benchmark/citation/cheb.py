@@ -1,9 +1,10 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import ChebConv
-
 from citation import get_planetoid_dataset, random_planetoid_splits, run
+
+from torch_geometric.nn import ChebConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)

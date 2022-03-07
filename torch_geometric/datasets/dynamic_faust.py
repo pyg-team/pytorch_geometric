@@ -1,9 +1,9 @@
-from typing import Optional, Callable, List
-
 from itertools import product
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class DynamicFAUST(InMemoryDataset):

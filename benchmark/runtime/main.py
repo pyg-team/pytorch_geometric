@@ -2,12 +2,12 @@ from pathlib import Path
 from itertools import product
 
 import torch
-from torch_geometric.datasets import Planetoid, Entities
-
-from runtime.gcn import GCN
 from runtime.gat import GAT
+from runtime.gcn import GCN
 from runtime.rgcn import RGCN
 from runtime.train import train_runtime
+
+from torch_geometric.datasets import Entities, Planetoid
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 root = Path.joinpath(Path(__file__).resolve().parent.parent,'data')

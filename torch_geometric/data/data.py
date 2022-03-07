@@ -1,19 +1,18 @@
-from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
-                    NamedTuple, Callable)
-from torch_geometric.typing import OptTensor, NodeType, EdgeType
-from torch_geometric.deprecation import deprecated
-
 import copy
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
+from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
+                    Tuple, Union)
 
-import torch
 import numpy as np
+import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
+                                          GlobalStorage, NodeStorage)
+from torch_geometric.deprecation import deprecated
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import subgraph
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage, GlobalStorage)
 
 
 class BaseData(object):
@@ -186,10 +185,6 @@ class BaseData(object):
         r"""Returns :obj:`True` if graph edges are directed."""
         return not self.is_undirected()
 
-    def clone(self):
-        r"""Performs a deep-copy of the data object."""
-        return copy.deepcopy(self)
-
     def apply_(self, func: Callable, *args: List[str]):
         r"""Applies the in-place function :obj:`func`, either to all attributes
         or only the ones given in :obj:`*args`."""
@@ -203,6 +198,11 @@ class BaseData(object):
         for store in self.stores:
             store.apply(func, *args)
         return self
+
+    def clone(self, *args: List[str]):
+        r"""Performs cloning of tensors, either for all attributes or only the
+        ones given in :obj:`*args`."""
+        return copy.copy(self).apply(lambda x: x.clone(), *args)
 
     def contiguous(self, *args: List[str]):
         r"""Ensures a contiguous memory layout, either for all attributes or

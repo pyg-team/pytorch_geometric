@@ -413,3 +413,17 @@ Finally, we can evaluate our model on the test nodes:
 This is all it takes to implement your first graph neural network.
 The easiest way to learn more about Graph Neural Networks is to study the examples in the :obj:`examples/` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!
+
+Exercises
+---------
+
+1. What does :obj:`edge_index.t().contiguous()` do?
+
+2. Load the :obj:`"IMDB-BINARY"` dataset from the :class:`~torch_geometric.datasets.TUDataset` benchmark suite and randomly split it into 80%/10%/10% training, validation and test graphs.
+
+3. What does each number of the following output mean?
+
+   .. code-block:: python
+
+       print(batch)
+       >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])

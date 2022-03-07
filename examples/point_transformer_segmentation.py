@@ -1,19 +1,26 @@
+<<<<<<< HEAD
 from point_transformer_classification import TransitionDown, TransformerBlock
 from point_transformer_classification import MLP
 
 from pathlib import Path
+=======
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from point_transformer_classification import (MLP, TransformerBlock,
+                                              TransitionDown)
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+from torch_cluster import knn_graph
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.utils import intersection_and_union as i_and_u
 from torch_geometric.nn.unpool import knn_interpolate
-
-from torch_cluster import knn_graph
+from torch_geometric.utils import intersection_and_union as i_and_u
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'ShapeNet')

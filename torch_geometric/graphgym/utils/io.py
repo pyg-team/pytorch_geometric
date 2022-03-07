@@ -1,8 +1,8 @@
+import ast
 import json
 # import os
 from pathlib import Path
 import shutil
-import ast
 
 
 def string_to_python(string):

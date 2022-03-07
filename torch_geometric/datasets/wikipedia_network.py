@@ -1,13 +1,18 @@
+<<<<<<< HEAD
 from typing import Optional, Callable
 
 # import os.path as osp
 from pathlib import Path
+=======
+import os.path as osp
+from typing import Callable, Optional
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
-import torch
 import numpy as np
-
+import torch
 from torch_sparse import coalesce
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class WikipediaNetwork(InMemoryDataset):

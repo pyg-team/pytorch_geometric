@@ -2,8 +2,9 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
+
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, DeepGraphInfomax
+from torch_geometric.nn import DeepGraphInfomax, GCNConv
 
 dataset = 'Cora'
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)

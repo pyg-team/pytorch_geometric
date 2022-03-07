@@ -1,15 +1,20 @@
 import argparse
+<<<<<<< HEAD
 from pathlib import Path
 from tqdm import tqdm
+=======
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
-from torch.nn import ReLU
 import torch.nn.functional as F
+from torch.nn import ReLU
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
-from torch_geometric.loader import NeighborLoader, HGTLoader
-from torch_geometric.nn import Sequential, SAGEConv, Linear, to_hetero
+from torch_geometric.loader import HGTLoader, NeighborLoader
+from torch_geometric.nn import Linear, SAGEConv, Sequential, to_hetero
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')

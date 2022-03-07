@@ -1,15 +1,24 @@
+from typing import Optional, Tuple
+
 import torch
-from torch_sparse import coalesce
+from torch import Tensor
 
-from .num_nodes import maybe_num_nodes
+from torch_geometric.typing import OptTensor
 
 
-def filter_adj(row, col, edge_attr, mask):
+def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,
+               mask: Tensor) -> Tuple[Tensor, Tensor, OptTensor]:
     return row[mask], col[mask], None if edge_attr is None else edge_attr[mask]
 
 
-def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
-                num_nodes=None, training=True):
+def dropout_adj(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    p: float = 0.5,
+    force_undirected: bool = False,
+    num_nodes: Optional[int] = None,
+    training: bool = True,
+) -> Tuple[Tensor, OptTensor]:
     r"""Randomly drops edges from the adjacency matrix
     :obj:`(edge_index, edge_attr)` with probability :obj:`p` using samples from
     a Bernoulli distribution.
@@ -35,14 +44,12 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
     if not training or p == 0.0:
         return edge_index, edge_attr
 
-    N = maybe_num_nodes(edge_index, num_nodes)
     row, col = edge_index
 
-    if force_undirected:
-        row, col, edge_attr = filter_adj(row, col, edge_attr, row < col)
+    mask = torch.rand(row.size(0), device=edge_index.device) >= p
 
-    mask = edge_index.new_full((row.size(0), ), 1 - p, dtype=torch.float)
-    mask = torch.bernoulli(mask).to(torch.bool)
+    if force_undirected:
+        mask[row > col] = False
 
     row, col, edge_attr = filter_adj(row, col, edge_attr, mask)
 
@@ -52,7 +59,6 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
              torch.cat([col, row], dim=0)], dim=0)
         if edge_attr is not None:
             edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
     else:
         edge_index = torch.stack([row, col], dim=0)
 

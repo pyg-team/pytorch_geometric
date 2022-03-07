@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import torch
+
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 

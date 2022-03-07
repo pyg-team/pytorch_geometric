@@ -1,7 +1,8 @@
 import torch
-from torch_geometric.utils import (accuracy, true_positive, true_negative,
-                                   false_positive, false_negative, precision,
-                                   recall, f1_score, mean_iou)
+
+from torch_geometric.utils import (accuracy, f1_score, false_negative,
+                                   false_positive, mean_iou, precision, recall,
+                                   true_negative, true_positive)
 
 
 def test_metric():

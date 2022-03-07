@@ -1,13 +1,13 @@
 from typing import Optional, Union
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
-from torch.nn import ModuleList, Embedding
 
 from torch_geometric.nn.conv import LGConv
+from torch_geometric.typing import Adj, OptTensor
 
 
 class LightGCN(torch.nn.Module):
@@ -83,7 +83,7 @@ class LightGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.embedding.reset_parameters()
+        torch.nn.init.xavier_uniform_(self.embedding.weight)
         for conv in self.convs:
             conv.reset_parameters()
 

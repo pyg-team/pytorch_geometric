@@ -1,11 +1,11 @@
 from pathlib import Path
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import Planetoid
-import torch_geometric.transforms as T
-from torch_geometric.nn import GCNConv
-
 from torch.utils.tensorboard import SummaryWriter
+
+import torch_geometric.transforms as T
+from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)

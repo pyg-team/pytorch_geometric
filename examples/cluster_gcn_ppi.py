@@ -2,14 +2,18 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import PPI
-from torch_geometric.nn import SAGEConv, BatchNorm
-from torch_geometric.data import Batch
-from torch_geometric.loader import DataLoader
-from torch_geometric.loader import ClusterData, ClusterLoader
 from sklearn.metrics import f1_score
 
+<<<<<<< HEAD
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PPI')
+=======
+from torch_geometric.data import Batch
+from torch_geometric.datasets import PPI
+from torch_geometric.loader import ClusterData, ClusterLoader, DataLoader
+from torch_geometric.nn import BatchNorm, SAGEConv
+
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 train_dataset = PPI(path, split='train')
 val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')

@@ -1,11 +1,17 @@
 import json
+<<<<<<< HEAD
 # import os.path as osp
 from pathlib import Path
+=======
+import os
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
-import torch
 import numpy as np
 import scipy.sparse as sp
-from torch_geometric.data import InMemoryDataset, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Reddit2(InMemoryDataset):
@@ -31,7 +37,22 @@ class Reddit2(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 232,965
+              - 23,213,838
+              - 602
+              - 41
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     adj_full_id = '1sncK996BM5lpuDf75lDFqCiDZyErc1c2'
     feats_id = '1ZsHaJ0ussP1W722krmEIp_8pwKAoi5b3'
@@ -51,6 +72,7 @@ class Reddit2(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
+<<<<<<< HEAD
         from google_drive_downloader import GoogleDriveDownloader as gdd
 
         path = Path.joinpath(Path(self.raw_dir), 'adj_full.npz')
@@ -64,6 +86,19 @@ class Reddit2(InMemoryDataset):
 
         path = Path.joinpath(Path(self.raw_dir), 'role.json')
         gdd.download_file_from_google_drive(self.role_id, path)
+=======
+        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
+
+        path = download_url(self.url.format(self.feats_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
+
+        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
+
+        path = download_url(self.url.format(self.role_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'role.json'))
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
     def process(self):
         f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))

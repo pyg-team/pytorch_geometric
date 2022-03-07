@@ -1,12 +1,13 @@
+import glob
 import os
 # import os.path as osp
 from pathlib import Path
 import shutil
-import glob
 
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 
@@ -79,10 +80,10 @@ class WILLOWObjectClass(InMemoryDataset):
                                                             Path(self.raw_dir))
 
     def process(self):
+        import torchvision.models as models
+        import torchvision.transforms as T
         from PIL import Image
         from scipy.io import loadmat
-        import torchvision.transforms as T
-        import torchvision.models as models
 
         category = self.category.capitalize()
         names = Path.joinpath(Path(self.raw_dir), category).rglob('*.png')

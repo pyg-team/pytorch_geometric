@@ -1,15 +1,16 @@
 import copy
 from typing import Tuple, Union
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
-from torch_sparse.matmul import spmm
 from torch_sparse import SparseTensor
+from torch_sparse.matmul import spmm
+
 from torch_geometric.nn import MessagePassing
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
 class MyConv(MessagePassing):
@@ -154,7 +155,10 @@ class MyEdgeConv(MessagePassing):
         super().__init__(aggr='add')
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        # edge_updater_types: (x: Tensor)
         edge_attr = self.edge_updater(edge_index, x=x)
+
+        # propagate_type: (edge_attr: Tensor)
         return self.propagate(edge_index, edge_attr=edge_attr,
                               size=(x.size(0), x.size(0)))
 
@@ -166,7 +170,6 @@ class MyEdgeConv(MessagePassing):
 
 
 def test_my_edge_conv():
-
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
@@ -179,6 +182,14 @@ def test_my_edge_conv():
     assert out.size() == (4, 16)
     assert torch.allclose(out, expected)
     assert torch.allclose(conv(x, adj.t()), out)
+
+    t = '(Tensor, Tensor) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert torch.allclose(jit(x, edge_index), expected)
+
+    t = '(Tensor, SparseTensor) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert torch.allclose(jit(x, adj.t()), expected)
 
 
 num_pre_hook_calls = 0

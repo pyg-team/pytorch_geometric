@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
+from torch_geometric.datasets import Planetoid
 
 
 def get_planetoid_dataset(name, normalize_features=False, transform=None):

@@ -2,9 +2,9 @@ from pathlib import Path
 
 import torch
 
-from torch_geometric.nn import SchNet
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import QM9
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import SchNet
 
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'QM9')
 dataset = QM9(path)
