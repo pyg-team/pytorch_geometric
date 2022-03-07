@@ -33,8 +33,8 @@ heads = 2
 
 
 def ratio_mask(mask: torch.Tensor, ratio: float, shuffle: bool = False):
-    r"""Modifies the existing :obj:`mask` by additioning setting :obj:`ratio` of
-    the :obj:`True` entries to :obj:`False`. Does not operate inplace.
+    r"""Modifies the existing :obj:`mask` by additioning setting :obj:`ratio`
+    of the :obj:`True` entries to :obj:`False`. Does not operate inplace.
 
     If shuffle is required the masking proportion is not exact.
 
@@ -59,8 +59,8 @@ class MaskLabel(torch.nn.Module):
     Classification" <https://arxiv.org/abs/2009.03509>`_ paper.
 
     In the forward pass both the labels, and a mask corresponding to which
-    labels should be kept is provided. All entires that are not true in the mask
-    are returned as zero.
+    labels should be kept is provided. All entires that are not true in the
+    mask are returned as zero.
 
     Args:
         num_classes (int): Size of the number of classes for the labels
@@ -110,8 +110,8 @@ class UnimpNet(torch.nn.Module):
 
     def accuracy(self, out: torch.Tensor, labels: torch.Tensor,
                  mask: torch.Tensor):
-        return ((self.predictions(out[mask]) == labels[mask]).sum().float() /
-                float(labels[mask].size(0)))
+        return ((self.predictions(out[mask]) == labels[mask]).sum().float()
+                / float(labels[mask].size(0)))
 
 
 def train(model, optim, epochs=20, label_rate=0.9):
