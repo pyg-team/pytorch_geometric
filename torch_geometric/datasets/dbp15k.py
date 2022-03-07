@@ -54,14 +54,7 @@ class DBP15K(InMemoryDataset):
         return f'{self.pair}.pt'
 
     def download(self):
-<<<<<<< HEAD
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        path = Path.joinpath(Path(self.root), 'raw.zip')
-        gdd.download_file_from_google_drive(self.file_id, path)
-=======
         path = download_url(self.url.format(self.file_id), self.root)
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
         extract_zip(path, self.root)
         Path(path).unlink()
         shutil.rmtree(self.raw_dir)

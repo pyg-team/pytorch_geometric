@@ -1,8 +1,6 @@
 import inspect
 from pathlib import Path
-from uuid import uuid1
-from itertools import chain
-from inspect import Parameter
+import re
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain

@@ -107,18 +107,9 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
-<<<<<<< HEAD
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        gdd.download_file_from_google_drive(
-            self.ids[self.name], Path.joinpath(Path(self.raw_dir),
-                                                f'{self.name}.zip'),unzip=True)
-        Path.joinpath(Path(self.raw_dir), f'{self.name}.zip').unlink()
-=======
         path = download_url(self.url.format(self.ids[self.name]), self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
->>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
     def process(self):
         x = sp.load_npz(

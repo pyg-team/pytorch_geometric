@@ -506,7 +506,7 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if Path(dir).isdir():
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
     os.makedirs(dir, exist_ok=True)
 
@@ -536,7 +536,7 @@ def set_run_dir(out_dir, fname):
 
     """
     fname = get_fname(fname)
-    cfg.run_dir = Path.joinpath(Path(out_dir), fname, str(cfg.seed))
+    cfg.run_dir = str(Path.joinpath(Path(out_dir), fname, str(cfg.seed)))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)

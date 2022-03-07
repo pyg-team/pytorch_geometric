@@ -62,7 +62,7 @@ class AmazonProducts(InMemoryDataset):
 
     def download(self):
         path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, Path.joinpath(Path(self.raw_dir), 'adj_full.npz')
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
 
         path = download_url(self.url.format(self.feats_id), self.raw_dir)
         os.rename(path,  Path.joinpath(Path(self.raw_dir), 'feats.npy'))
