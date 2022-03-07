@@ -68,11 +68,11 @@ def clean_ckpt():
 
 
 def get_ckpt_dir() -> str:
-    return Path.joinpath(Path(cfg.run_dir), 'ckpt')
+    return str(Path.joinpath(Path(cfg.run_dir), 'ckpt'))
 
 
 def get_ckpt_path(epoch: Union[int, str]) -> str:
-    return Path.joinpath(Path(get_ckpt_dir()), f'{epoch}.ckpt')
+    return str(Path.joinpath(Path(get_ckpt_dir()), f'{epoch}.ckpt'))
 
 
 def get_ckpt_epochs() -> List[int]:
