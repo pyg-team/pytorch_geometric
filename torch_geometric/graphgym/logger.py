@@ -42,7 +42,7 @@ class Logger(object):
         self._time_total = 0  # won't be reset
 
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
-        Path.mkdir(self.out_dir, exist_ok=True)
+        makedirs(self.out_dir)
         if cfg.tensorboard_each_run:
             from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
