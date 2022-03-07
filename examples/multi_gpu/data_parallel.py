@@ -2,10 +2,11 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
+
+import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
-import torch_geometric.transforms as T
-from torch_geometric.nn import SplineConv, global_mean_pool, DataParallel
+from torch_geometric.nn import DataParallel, SplineConv, global_mean_pool
 
 path = Path.joinpath(Path(__file__).resolve().parent, '../../data', 'MNIST')
 dataset = MNISTSuperpixels(path, transform=T.Cartesian()).shuffle()

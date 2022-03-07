@@ -1,7 +1,7 @@
 import torch
 
-from torch_geometric.transforms import AddMetaPaths
 from torch_geometric.data import HeteroData
+from torch_geometric.transforms import AddMetaPaths
 
 
 def test_add_metapaths():

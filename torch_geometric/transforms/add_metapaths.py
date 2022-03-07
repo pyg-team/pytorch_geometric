@@ -1,11 +1,11 @@
 from typing import List
 
 import torch
-
-from torch_geometric.typing import EdgeType
-from torch_geometric.data import HeteroData
 from torch_sparse import SparseTensor
+
+from torch_geometric.data import HeteroData
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import EdgeType
 
 
 class AddMetaPaths(BaseTransform):

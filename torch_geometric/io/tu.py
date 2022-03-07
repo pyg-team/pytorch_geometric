@@ -1,13 +1,20 @@
+<<<<<<< HEAD
 import pathlib
 from pathlib import Path
+=======
+import glob
+import os
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
 from torch_sparse import coalesce
+
+from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import remove_self_loops
-from torch_geometric.data import Data
 
 names = [
     'A', 'graph_indicator', 'node_labels', 'node_attributes'

@@ -1,10 +1,9 @@
-from typing import Union, List, Optional
-
 import re
+from typing import List, Optional, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_scatter import scatter_add, scatter_mean
 
 import torch_geometric

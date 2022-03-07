@@ -1,16 +1,19 @@
-from typing import Optional, Callable, List
-
-import os
 import logging
+<<<<<<< HEAD
 # import os.path as osp
 from pathlib import Path
+=======
+import os
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from collections import Counter
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.data import InMemoryDataset, Data
-from torch_geometric.data import download_url, extract_tar
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar)
 
 
 class Entities(InMemoryDataset):
@@ -83,6 +86,7 @@ class Entities(InMemoryDataset):
 
     def process(self):
         import gzip
+
         import pandas as pd
         import rdflib as rdf
 

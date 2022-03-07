@@ -1,24 +1,43 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 __version__ = '2.0.4'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
-    'numpy',
     'tqdm',
+    'numpy',
     'scipy',
-    'networkx',
-    'scikit-learn',
-    'requests',
     'pandas',
-    'rdflib',
-    'googledrivedownloader',
     'jinja2',
+    'requests',
     'pyparsing',
-    'yacs',
-    'PyYAML',
+    'scikit-learn',
 ]
-tests_require = ['pytest', 'pytest-cov', 'mock']
+
+full_install_requires = [
+    'h5py',
+    'yacs',
+    'numba',
+    'captum',
+    'rdflib',
+    'trimesh',
+    'networkx',
+    'tabulate',
+    'hydra-core',
+    'matplotlib',
+    'scikit-image',
+    'pytorch-memlab',
+    'class-resolver>=0.3.2',
+]
+
+test_requires = [
+    'pytest',
+    'pytest-cov',
+]
+
+dev_requires = test_requires + [
+    'pre-commit',
+]
 
 setup(
     name='torch_geometric',
@@ -35,9 +54,13 @@ setup(
         'graph-neural-networks',
         'graph-convolutional-networks',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=install_requires,
-    extras_require={'test': tests_require},
+    extras_require={
+        'full': full_install_requires,
+        'test': test_requires,
+        'dev': dev_requires,
+    },
     packages=find_packages(),
     include_package_data=True,
 )

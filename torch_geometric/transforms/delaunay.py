@@ -1,5 +1,5 @@
-import torch
 import scipy.spatial
+import torch
 
 from torch_geometric.transforms import BaseTransform
 

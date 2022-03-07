@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 from typing import Optional
 
 from pathlib import Path
+=======
+import os.path as osp
+from typing import Optional
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
-from tqdm import tqdm
 from torch_sparse import SparseTensor
+from tqdm import tqdm
 
 
 class GraphSAINTSampler(torch.utils.data.DataLoader):

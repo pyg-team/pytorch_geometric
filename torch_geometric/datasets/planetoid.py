@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 from typing import Optional, Callable, List
 
 # import os.path as osp
 from pathlib import Path
+=======
+import os.path as osp
+from typing import Callable, List, Optional
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
 
@@ -46,6 +52,32 @@ class Planetoid(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - Cora
+              - 2,708
+              - 10,556
+              - 1,433
+              - 7
+            * - CiteSeer
+              - 3,327
+              - 9,104
+              - 3,703
+              - 6
+            * - PubMed
+              - 19,717
+              - 88,648
+              - 500
+              - 3
     """
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'

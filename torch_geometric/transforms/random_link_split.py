@@ -1,15 +1,14 @@
-from typing import Union, Optional, List
-from torch_geometric.typing import EdgeType
-
 from copy import copy
+from typing import List, Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.utils import negative_sampling
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import EdgeType
+from torch_geometric.utils import negative_sampling
 
 
 class RandomLinkSplit(BaseTransform):

@@ -1,6 +1,9 @@
 import torch
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-from torch_geometric.nn import GINConv, DenseGINConv
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+
+from torch_geometric.nn import DenseGINConv, GINConv
 
 
 def test_dense_sage_conv():

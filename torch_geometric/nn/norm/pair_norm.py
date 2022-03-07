@@ -1,8 +1,8 @@
-from torch_geometric.typing import OptTensor
-
 import torch
 from torch import Tensor
 from torch_scatter import scatter
+
+from torch_geometric.typing import OptTensor
 
 
 class PairNorm(torch.nn.Module):

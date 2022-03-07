@@ -1,14 +1,15 @@
-import yaml
-import os
 import argparse
-import csv
-import random
 import copy
-import numpy as np
+import csv
+import os
+import random
 
-from torch_geometric.graphgym.utils.io import makedirs_rm_exist, \
-    string_to_python
+import numpy as np
+import yaml
+
 from torch_geometric.graphgym.utils.comp_budget import match_baseline_cfg
+from torch_geometric.graphgym.utils.io import (makedirs_rm_exist,
+                                               string_to_python)
 
 random.seed(123)
 

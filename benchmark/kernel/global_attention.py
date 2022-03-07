@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import SAGEConv, GlobalAttention
+
+from torch_geometric.nn import GlobalAttention, SAGEConv
 
 
 class GlobalAttentionNet(torch.nn.Module):

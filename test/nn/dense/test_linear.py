@@ -1,12 +1,12 @@
 import copy
-import pytest
 from itertools import product
 
+import pytest
 import torch
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-from torch_geometric.nn import Linear, HeteroLinear
+from torch_geometric.nn import HeteroLinear, Linear
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]

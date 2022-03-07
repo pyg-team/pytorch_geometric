@@ -1,13 +1,17 @@
-from typing import Optional, Callable, List
-
 import os
+<<<<<<< HEAD
 # import os.path as osp
 from pathlib import Path
+=======
+import os.path as osp
+from typing import Callable, List, Optional
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
-                                  Data)
+import torch
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 
 
 class MD17(InMemoryDataset):

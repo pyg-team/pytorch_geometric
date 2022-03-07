@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 from typing import Optional, Callable, List
 
 from pathlib import Path
+=======
+import os
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 from torch_sparse import coalesce, transpose
-from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
+
+from torch_geometric.data import (HeteroData, InMemoryDataset, download_url,
                                   extract_zip)
 
 

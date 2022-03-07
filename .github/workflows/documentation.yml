@@ -1,6 +1,6 @@
 name: Documentation
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master

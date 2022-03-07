@@ -1,13 +1,28 @@
+import functools
+import inspect
 import logging
+<<<<<<< HEAD
 from pathlib import Path
 from yacs.config import CfgNode as CN
+=======
+import os
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import shutil
+import warnings
+from collections.abc import Iterable
+from dataclasses import asdict
+from typing import Any
 
-from torch_geometric.data.makedirs import makedirs
 import torch_geometric.graphgym.register as register
+from torch_geometric.data.makedirs import makedirs
 
-# Global config object
-cfg = CN()
+try:  # Define global config object
+    from yacs.config import CfgNode as CN
+    cfg = CN()
+except ImportError:
+    cfg = None
+    warnings.warn("Could not define global config object. Please install "
+                  "'yacs' for using the GraphGym experiment manager.")
 
 
 def set_cfg(cfg):
@@ -20,6 +35,8 @@ def set_cfg(cfg):
 
     :return: configuration use by the experiment.
     '''
+    if cfg is None:
+        return cfg
 
     # ----------------------------------------------------------------------- #
     # Basic options
@@ -36,6 +53,9 @@ def set_cfg(cfg):
 
     # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
+
+    # Names of registered custom metric funcs to be used (use defaults if none)
+    cfg.custom_metrics = []
 
     # Random seed
     cfg.seed = 0
@@ -229,8 +249,14 @@ def set_cfg(cfg):
     # Evaluate model on test data every eval period epochs
     cfg.train.eval_period = 10
 
+    # Option to skip training epoch evaluation
+    cfg.train.skip_train_eval = False
+
     # Save model checkpoint every checkpoint period epochs
     cfg.train.ckpt_period = 100
+
+    # Enabling checkpoint, set False to disable and save I/O
+    cfg.train.enable_ckpt = True
 
     # Resume training from the latest checkpoint in the output directory
     cfg.train.auto_resume = False
@@ -555,3 +581,30 @@ def set_agg_dir(out_dir, fname):
 
 
 set_cfg(cfg)
+
+
+def from_config(func):
+    if inspect.isclass(func):
+        params = list(inspect.signature(func.__init__).parameters.values())[1:]
+    else:
+        params = list(inspect.signature(func).parameters.values())
+
+    arg_names = [p.name for p in params]
+    has_defaults = [p.default != inspect.Parameter.empty for p in params]
+
+    @functools.wraps(func)
+    def wrapper(*args, cfg: Any = None, **kwargs):
+        if cfg is not None:
+            cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
+
+            iterator = zip(arg_names[len(args):], has_defaults[len(args):])
+            for arg_name, has_default in iterator:
+                if arg_name in kwargs:
+                    continue
+                elif arg_name in cfg:
+                    kwargs[arg_name] = cfg[arg_name]
+                elif not has_default:
+                    raise ValueError(f"'cfg.{arg_name}' undefined")
+        return func(*args, **kwargs)
+
+    return wrapper

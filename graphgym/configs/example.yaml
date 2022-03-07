@@ -5,7 +5,7 @@ dataset:
   name: Cora
   task: node
   task_type: classification
-  transductive: True
+  transductive: true
   split: [0.8, 0.2]
   transform: none
 train:
@@ -24,11 +24,11 @@ gnn:
   dim_inner: 256
   layer_type: generalconv
   stage_type: stack
-  batchnorm: True
+  batchnorm: true
   act: prelu
   dropout: 0.0
   agg: add
-  normalize_adj: False
+  normalize_adj: false
 optim:
   optimizer: adam
   base_lr: 0.01

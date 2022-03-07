@@ -1,28 +1,35 @@
-from typing import List, Optional, Set, Callable, get_type_hints
-from torch_geometric.typing import Adj, Size
-
-import os
-import re
 import inspect
+<<<<<<< HEAD
 # import os.path as osp
 from pathlib import Path
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
+=======
+import os
+import os.path as osp
+import re
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from collections import OrderedDict
+from inspect import Parameter
+from itertools import chain
+from typing import Callable, List, Optional, Set, get_type_hints
+from uuid import uuid1
 
 import torch
-from torch import Tensor
 from jinja2 import Template
+from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import Adj, Size
 
 from .utils.helpers import expand_left
+from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
-from .utils.typing import (sanitize, split_types_repr, parse_types,
-                           resolve_types)
-from .utils.inspector import Inspector, func_header_repr, func_body_repr
+from .utils.typing import (parse_types, resolve_types, sanitize,
+                           split_types_repr)
 
 
 class MessagePassing(torch.nn.Module):
@@ -112,9 +119,10 @@ class MessagePassing(torch.nn.Module):
         self.fuse = self.inspector.implements('message_and_aggregate')
 
         # Support for GNNExplainer.
-        self.__explain__ = False
-        self.__edge_mask__ = None
-        self.__loop_mask__ = None
+        self._explain = False
+        self._edge_mask = None
+        self._loop_mask = None
+        self._apply_sigmoid = True
 
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
@@ -188,7 +196,7 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
-                dim = 0 if arg[-2:] == '_j' else 1
+                dim = j if arg[-2:] == '_j' else i
                 data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
@@ -199,8 +207,7 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, Tensor):
                     self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index,
-                                         j if arg[-2:] == '_j' else i)
+                    data = self.__lift__(data, edge_index, dim)
 
                 out[arg] = data
 
@@ -261,7 +268,7 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
+        decomposed_layers = 1 if self._explain else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
@@ -272,7 +279,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self.__explain__):
+                and not self._explain):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -324,12 +331,14 @@ class MessagePassing(torch.nn.Module):
                 # For `GNNExplainer`, we require a separate message and
                 # aggregate procedure since this allows us to inject the
                 # `edge_mask` into the message passing computation scheme.
-                if self.__explain__:
-                    edge_mask = self.__edge_mask__.sigmoid()
+                if self._explain:
+                    edge_mask = self._edge_mask
+                    if self._apply_sigmoid:
+                        edge_mask = edge_mask.sigmoid()
                     # Some ops add self-loops to `edge_index`. We need to do
                     # the same for `edge_mask` (but do not train those).
                     if out.size(self.node_dim) != edge_mask.size(0):
-                        edge_mask = edge_mask[self.__loop_mask__]
+                        edge_mask = edge_mask[self._loop_mask]
                         loop = edge_mask.new_ones(size[0])
                         edge_mask = torch.cat([edge_mask, loop], dim=0)
                     assert out.size(self.node_dim) == edge_mask.size(0)
@@ -593,6 +602,8 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        source = inspect.getsource(self.__class__)
+
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
         if hasattr(self, 'propagate_type'):
             prop_types = {
@@ -600,7 +611,6 @@ class MessagePassing(torch.nn.Module):
                 for k, v in self.propagate_type.items()
             }
         else:
-            source = inspect.getsource(self.__class__)
             match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
             if match is None:
                 raise TypeError(
@@ -613,14 +623,47 @@ class MessagePassing(torch.nn.Module):
             prop_types = split_types_repr(match.group(1))
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
+        # Find and parse `edge_updater` types to format `{arg1: type1, ...}`.
+        if 'edge_update' in self.__class__.__dict__.keys():
+            if hasattr(self, 'edge_updater_type'):
+                edge_updater_types = {
+                    k: sanitize(str(v))
+                    for k, v in self.edge_updater.items()
+                }
+            else:
+                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
+                                  source)
+                if match is None:
+                    raise TypeError(
+                        'TorchScript support requires the definition of the '
+                        'types passed to `edge_updater()`. Please specificy '
+                        'them via\n\n edge_updater_types = {"arg1": type1, '
+                        '"arg2": type2, ... }\n\n or via\n\n'
+                        '# edge_updater_types: (arg1: type1, arg2: type2, ...)'
+                        '\n\ninside the `MessagePassing` module.')
+                edge_updater_types = split_types_repr(match.group(1))
+                edge_updater_types = dict(
+                    [re.split(r'\s*:\s*', t) for t in edge_updater_types])
+        else:
+            edge_updater_types = {}
+
         type_hints = get_type_hints(self.__class__.update)
         prop_return_type = type_hints.get('return', 'Tensor')
         if str(prop_return_type)[:6] == '<class':
             prop_return_type = prop_return_type.__name__
 
+        type_hints = get_type_hints(self.__class__.edge_update)
+        edge_updater_return_type = type_hints.get('return', 'Tensor')
+        if str(edge_updater_return_type)[:6] == '<class':
+            edge_updater_return_type = edge_updater_return_type.__name__
+
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
+
+        # Parse `__collect__()` types to format `{arg:1, type1, ...}`,
+        # specific to the argument used for edge updates.
+        edge_collect_types = self.inspector.types(['edge_update'])
 
         # Collect `forward()` header, body and @overload types.
         forward_types = parse_types(self.forward)
@@ -653,6 +696,7 @@ class MessagePassing(torch.nn.Module):
             fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
+            edge_user_args=self.__edge_user_args__,
             forward_header=forward_header,
             forward_types=forward_types,
             forward_body=forward_body,
@@ -660,16 +704,18 @@ class MessagePassing(torch.nn.Module):
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
             update_args=self.inspector.keys(['update']),
+            edge_collect_types=edge_collect_types,
+            edge_update_args=self.inspector.keys(['edge_update']),
+            edge_updater_types=edge_updater_types,
+            edge_updater_return_type=edge_updater_return_type,
             check_input=inspect.getsource(self.__check_input__)[:-1],
             lift=inspect.getsource(self.__lift__)[:-1],
         )
-
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
         module.jittable = None
-
         return module
 
     def __repr__(self) -> str:

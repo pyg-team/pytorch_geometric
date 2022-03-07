@@ -4,8 +4,9 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 from torch.utils.data import DataLoader
-from torch_geometric.datasets import Flickr
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import Flickr
 
 K = 2
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Flickr')

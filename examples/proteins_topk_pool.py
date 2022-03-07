@@ -2,10 +2,12 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GraphConv, TopKPooling
-from torch_geometric.nn import global_mean_pool as gap, global_max_pool as gmp
+from torch_geometric.nn import global_max_pool as gmp
+from torch_geometric.nn import global_mean_pool as gap
 
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS')

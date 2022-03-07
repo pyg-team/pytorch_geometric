@@ -1,10 +1,16 @@
+<<<<<<< HEAD
 import pickle
 # import os.path as osp
 from pathlib import Path
+=======
+import os.path as osp
+import pickle
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
-import torch
 import numpy as np
-from torch_geometric.data import (InMemoryDataset, Data, download_url)
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class MixHopSyntheticDataset(InMemoryDataset):

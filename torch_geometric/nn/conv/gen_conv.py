@@ -1,17 +1,17 @@
-from typing import Optional, List, Union
-from torch_geometric.typing import OptPairTensor, Adj, Size, OptTensor
+from typing import List, Optional, Union
 
 import torch
-from torch import Tensor
-from torch.nn import Parameter
 import torch.nn.functional as F
-from torch.nn import Sequential, ReLU, Dropout
-from torch.nn import BatchNorm1d, LayerNorm, InstanceNorm1d
-from torch_sparse import SparseTensor
+from torch import Tensor
+from torch.nn import (BatchNorm1d, Dropout, InstanceNorm1d, LayerNorm,
+                      Parameter, ReLU, Sequential)
 from torch_scatter import scatter, scatter_softmax
+from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 from ..inits import reset
 
@@ -89,6 +89,16 @@ class GENConv(MessagePassing):
             function. (default: :obj:`1e-7`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{t})`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: int, out_channels: int,
                  aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,

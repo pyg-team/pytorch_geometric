@@ -1,14 +1,19 @@
-from typing import Optional, Callable, List
-
+import glob
 import os
+<<<<<<< HEAD
 from pathlib import Path
 import glob
+=======
+import os.path as osp
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 import pickle
+from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip, extract_tar)
+
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar, extract_zip)
 from torch_geometric.utils import to_undirected
 
 

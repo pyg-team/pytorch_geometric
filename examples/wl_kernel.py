@@ -1,14 +1,19 @@
-import warnings
 import argparse
+<<<<<<< HEAD
 from pathlib import Path
+=======
+import os.path as osp
+import warnings
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 
 import torch
-from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score
 from sklearn.exceptions import ConvergenceWarning
-from torch_geometric.nn import WLConv
+from sklearn.metrics import accuracy_score
+from sklearn.svm import LinearSVC
+
 from torch_geometric.data import Batch
 from torch_geometric.datasets import TUDataset
+from torch_geometric.nn import WLConv
 
 warnings.filterwarnings('ignore', category=ConvergenceWarning)
 

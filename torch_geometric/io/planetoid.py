@@ -1,10 +1,17 @@
+<<<<<<< HEAD
 import sys
 # import os.path as osp
 from pathlib import Path
+=======
+import os.path as osp
+import sys
+>>>>>>> 4557254c849eda62ce1860a56370eb4a54aa76dd
 from itertools import repeat
 
 import torch
-from torch_sparse import coalesce as coalesce_fn, SparseTensor
+from torch_sparse import SparseTensor
+from torch_sparse import coalesce as coalesce_fn
+
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import remove_self_loops
