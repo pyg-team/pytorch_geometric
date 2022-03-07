@@ -6,9 +6,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 import torch_geometric.utils.mask as mask_util
-from torch_geometric.nn import TransformerConv
-from torch_geometric.nn import MaskLabel
-
+from torch_geometric.nn import MaskLabel, TransformerConv
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
