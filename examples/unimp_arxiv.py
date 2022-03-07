@@ -66,8 +66,8 @@ class UnimpNet(torch.nn.Module):
 
     def accuracy(self, out: torch.Tensor, labels: torch.Tensor,
                  mask: torch.Tensor):
-        return ((self.predictions(out[mask]) == labels[mask]).sum().float()
-                / float(labels[mask].size(0)))
+        return ((self.predictions(out[mask]) == labels[mask]).sum().float() /
+                float(labels[mask].size(0)))
 
 
 def train(model, optim, epochs=20, label_rate=0.9):
