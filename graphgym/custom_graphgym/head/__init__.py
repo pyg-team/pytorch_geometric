@@ -1,4 +1,4 @@
-froom pathlib import Path
+from pathlib import Path
 
 modules = Path(__file__).parent.rglob('*.py')
 __all__ = [
