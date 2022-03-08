@@ -1,6 +1,7 @@
 import torch
 from torch.testing import assert_allclose
 
+
 from torch_geometric.nn import MaskLabel
 
 
