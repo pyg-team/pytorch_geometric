@@ -17,7 +17,8 @@ args = parser.parse_args()
 if args.dataset in ['AIFB', 'MUTAG']:
     RGCNConv = FastRGCNConv
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Entities')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Entities')
 dataset = Entities(path, args.dataset)
 data = dataset[0]
 

@@ -19,7 +19,8 @@ class HandleNodeAttention(object):
         return data
 
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'COLORS-3')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'COLORS-3')
 dataset = TUDataset(path, 'COLORS-3', use_node_attr=True,
                     transform=HandleNodeAttention())
 

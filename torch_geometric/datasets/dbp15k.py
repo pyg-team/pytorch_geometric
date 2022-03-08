@@ -61,7 +61,8 @@ class DBP15K(InMemoryDataset):
 
     def process(self):
         embs = {}
-        with open(Path.joinpath(Path(self.raw_dir), 'sub.glove.300d'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'sub.glove.300d'),
+                  'r') as f:
             for i, line in enumerate(f):
                 info = line.strip().split(' ')
                 if len(info) > 300:
@@ -79,10 +80,12 @@ class DBP15K(InMemoryDataset):
         x2, edge_index2, rel2, assoc2 = self.process_graph(
             g2_path, x2_path, embs)
 
-        train_path = Path.joinpath(Path(self.raw_dir), self.pair, 'train.examples.20')
+        train_path = Path.joinpath(Path(self.raw_dir), self.pair,
+                                   'train.examples.20')
         train_y = self.process_y(train_path, assoc1, assoc2)
 
-        test_path = Path.joinpath(Path(self.raw_dir), self.pair, 'test.examples.1000')
+        test_path = Path.joinpath(Path(self.raw_dir), self.pair,
+                                  'test.examples.1000')
         test_y = self.process_y(test_path, assoc1, assoc2)
 
         data = Data(x1=x1, edge_index1=edge_index1, rel1=rel1, x2=x2,

@@ -16,7 +16,8 @@ parser.add_argument('--use_hgt_loader', action='store_true')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-path = Path.joinpath(Path(__file__).resolve().parent.parent.parent,'data', 'OGB')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent.parent, 'data', 'OGB')
 transform = T.ToUndirected(merge=True)
 dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
 

@@ -17,7 +17,8 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn.pool import knn
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)

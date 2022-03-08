@@ -93,7 +93,7 @@ class UPFD(InMemoryDataset):
     @property
     def processed_dir(self):
         return Path.joinpath(Path(self.root), self.name, 'processed',
-                                                            self.feature)
+                             self.feature)
 
     @property
     def raw_file_names(self):
@@ -114,11 +114,11 @@ class UPFD(InMemoryDataset):
     def process(self):
         x = sp.load_npz(
             Path.joinpath(Path(self.raw_dir),
-                                f'new_{self.feature}_feature.npz'))
+                          f'new_{self.feature}_feature.npz'))
         x = torch.from_numpy(x.todense()).to(torch.float)
 
         edge_index = read_txt_array(Path.joinpath(Path(self.raw_dir), 'A.txt'),
-                                    sep=',',dtype=torch.long).t()
+                                    sep=',', dtype=torch.long).t()
         edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
 
         y = np.load(Path.joinpath(Path(self.raw_dir), 'graph_labels.npy'))

@@ -66,7 +66,8 @@ class Reddit(InMemoryDataset):
         y = torch.from_numpy(data['label']).to(torch.long)
         split = torch.from_numpy(data['node_types'])
 
-        adj = sp.load_npz(Path.joinpath(Path(self.raw_dir), 'reddit_graph.npz'))
+        adj = sp.load_npz(Path.joinpath(Path(self.raw_dir),
+                                        'reddit_graph.npz'))
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)

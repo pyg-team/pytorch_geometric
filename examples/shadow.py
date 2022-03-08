@@ -7,7 +7,7 @@ from torch_geometric.datasets import Flickr
 from torch_geometric.loader import ShaDowKHopSampler
 from torch_geometric.nn import SAGEConv, global_mean_pool
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]
 

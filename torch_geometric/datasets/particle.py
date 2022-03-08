@@ -35,7 +35,9 @@ class TrackMLParticleTrackingDataset(Dataset):
     def __init__(self, root, transform=None):
         super(TrackMLParticleTrackingDataset, self).__init__(root, transform)
         events = Path(self.raw_dir).rglob('event*-hits.csv')
-        events = [e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events]
+        events = [
+            e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events
+        ]
         self.events = sorted(events)
 
     @property

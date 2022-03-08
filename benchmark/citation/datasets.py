@@ -5,7 +5,7 @@ from torch_geometric.datasets import Planetoid
 
 
 def get_planetoid_dataset(name, normalize_features=False, transform=None):
-    path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', name)
+    path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', name)
     dataset = Planetoid(path, name)
 
     if transform is not None and normalize_features:
