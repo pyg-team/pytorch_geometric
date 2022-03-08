@@ -1,8 +1,7 @@
 import os
-from pathlib import Path
-import shutil
 import pickle
 import shutil
+from pathlib import Path
 
 import torch
 from tqdm import tqdm
@@ -94,13 +93,15 @@ class ZINC(InMemoryDataset):
 
     def process(self):
         for split in ['train', 'val', 'test']:
-            with open(Path.joinpath(Path(self.raw_dir), f'{split}.pickle'), 'rb') as f:
+            with open(Path.joinpath(Path(self.raw_dir), f'{split}.pickle'),
+                      'rb') as f:
                 mols = pickle.load(f)
 
             indices = range(len(mols))
 
             if self.subset:
-                with open(Path.joinpath(Path(self.raw_dir), f'{split}.index'), 'r') as f:
+                with open(Path.joinpath(Path(self.raw_dir), f'{split}.index'),
+                          'r') as f:
                     indices = [int(x) for x in f.read()[:-1].split(',')]
 
             pbar = tqdm(total=len(indices))

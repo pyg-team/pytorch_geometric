@@ -1,7 +1,7 @@
 import glob
 import os
-from pathlib import Path
 import pickle
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -98,7 +98,8 @@ class GEDDataset(InMemoryDataset):
         self.data, self.slices = torch.load(path)
         path = Path.joinpath(Path(self.processed_dir), f'{self.name}_ged.pt')
         self.ged = torch.load(path)
-        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_norm_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir),
+                             f'{self.name}_norm_ged.pt')
         self.norm_ged = torch.load(path)
 
     @property
@@ -120,7 +121,8 @@ class GEDDataset(InMemoryDataset):
         # Downloads the pickle file containing pre-computed GEDs:
         name = self.datasets[self.name]['pickle']
         path = download_url(self.url.format(name), self.raw_dir)
-        Path(path).rename(Path.joinpath(Path(self.raw_dir), self.name, 'ged.pickle'))
+        Path(path).rename(
+            Path.joinpath(Path(self.raw_dir), self.name, 'ged.pickle'))
 
     def process(self):
         import networkx as nx
@@ -194,7 +196,8 @@ class GEDDataset(InMemoryDataset):
         N = torch.tensor(Ns, dtype=torch.float)
         norm_mat = mat / (0.5 * (N.view(-1, 1) + N.view(1, -1)))
 
-        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_norm_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir),
+                             f'{self.name}_norm_ged.pt')
         torch.save(norm_mat, path)
 
     def __repr__(self) -> str:

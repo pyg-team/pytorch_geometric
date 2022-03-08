@@ -1,6 +1,7 @@
 # This script shows how to use Quiver in an existing PyG example:
 # https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py
 from pathlib import Path
+
 import quiver
 import torch
 import torch.nn.functional as F
@@ -10,7 +11,7 @@ from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'Reddit')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Reddit')
 dataset = Reddit(path)
 data = dataset[0]
 

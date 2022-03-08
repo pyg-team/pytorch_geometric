@@ -1,6 +1,7 @@
 import os
+from math import pi as PI
+from math import sqrt
 from pathlib import Path
-from math import sqrt, pi as PI
 from typing import Callable
 
 import numpy as np
@@ -330,7 +331,8 @@ class DimeNet(torch.nn.Module):
         assert target >= 0 and target <= 12 and not target == 4
 
         root = Path.home(Path(root).resolve())
-        path = Path.joinpath(Path(root), 'pretrained_dimenet', qm9_target_dict[target])
+        path = Path.joinpath(Path(root), 'pretrained_dimenet',
+                             qm9_target_dict[target])
         makedirs(path)
         url = f'{DimeNet.url}/{qm9_target_dict[target]}'
         if not Path.joinpath(path, 'checkpoint').exists():

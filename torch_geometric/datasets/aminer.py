@@ -1,5 +1,5 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -70,7 +70,7 @@ class AMiner(InMemoryDataset):
                              index_col=1)
 
         path = Path.joinpath(Path(self.raw_dir), 'label',
-                        'googlescholar.8area.author.label.txt')
+                             'googlescholar.8area.author.label.txt')
         df = pd.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(author, on='name')
 
@@ -82,7 +82,7 @@ class AMiner(InMemoryDataset):
         venue = pd.read_csv(path, sep='\t', names=['idx', 'name'], index_col=1)
 
         path = Path.joinpath(Path(self.raw_dir), 'label',
-                        'googlescholar.8area.venue.label.txt')
+                             'googlescholar.8area.venue.label.txt')
         df = pd.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(venue, on='name')
 

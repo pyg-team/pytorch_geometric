@@ -1,6 +1,6 @@
 import argparse
-from pathlib import Path
 import warnings
+from pathlib import Path
 
 import torch
 from sklearn.exceptions import ConvergenceWarning

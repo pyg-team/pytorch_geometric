@@ -38,7 +38,8 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
     @property
     def processed_dir(self):
-        return Path.joinpath(Path(self.root), self.group, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.group, self.name,
+                             'processed')
 
     @property
     def raw_file_names(self):

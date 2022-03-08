@@ -45,7 +45,10 @@ class MalNetTiny(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         folders = ['addisplay', 'adware', 'benign', 'downloader', 'trojan']
-        return [Path.joinpath(Path('malnet-graphs-tiny'), folder) for folder in folders]
+        return [
+            Path.joinpath(Path('malnet-graphs-tiny'), folder)
+            for folder in folders
+        ]
 
     @property
     def processed_file_names(self) -> str:

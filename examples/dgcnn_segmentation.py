@@ -10,7 +10,8 @@ from torch_geometric.nn import MLP, DynamicEdgeConv
 from torch_geometric.utils import intersection_and_union as i_and_u
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
-path =  Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'ShapeNet')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'ShapeNet')
 transform = T.Compose([
     T.RandomTranslate(0.01),
     T.RandomRotate(15, axis=0),

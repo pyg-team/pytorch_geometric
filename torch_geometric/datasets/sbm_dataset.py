@@ -71,7 +71,8 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return Path.joinpath(Path(self.root), self.__class__.__name__, 'processed')
+        return Path.joinpath(Path(self.root), self.__class__.__name__,
+                             'processed')
 
     @property
     def processed_file_names(self) -> str:

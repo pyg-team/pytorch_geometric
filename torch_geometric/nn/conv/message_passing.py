@@ -1,9 +1,9 @@
 import inspect
-from pathlib import Path
 import re
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain
+from pathlib import Path
 from typing import Callable, List, Optional, Set, get_type_hints
 from uuid import uuid1
 

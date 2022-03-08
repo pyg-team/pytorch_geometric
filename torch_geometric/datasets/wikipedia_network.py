@@ -1,5 +1,5 @@
-from typing import Optional, Callable
 from pathlib import Path
+from typing import Callable, Optional
 
 import numpy as np
 import torch
@@ -65,7 +65,7 @@ class WikipediaNetwork(InMemoryDataset):
     def processed_dir(self) -> str:
         if self.geom_gcn_preprocess:
             return Path.joinpath(Path(self.root), self.name, 'geom_gcn',
-                                    'processed')
+                                 'processed')
         else:
             return Path.joinpath(Path(self.root), self.name, 'processed')
 

@@ -10,7 +10,8 @@ from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCN2Conv
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'GCN2_PPI')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'GCN2_PPI')
 pre_transform = T.Compose([T.GCNNorm(), T.ToSparseTensor()])
 train_dataset = PPI(path, split='train', pre_transform=pre_transform)
 val_dataset = PPI(path, split='val', pre_transform=pre_transform)

@@ -1,7 +1,7 @@
 import sys
-from pathlib import Path
 from getpass import getuser
 from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 from tempfile import NamedTemporaryFile as TempFile
 from tempfile import gettempdir
 

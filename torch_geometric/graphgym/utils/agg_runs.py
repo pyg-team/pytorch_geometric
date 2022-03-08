@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+
 import numpy as np
 
 from torch_geometric.graphgym.config import cfg
@@ -243,7 +244,8 @@ def agg_batch(dir, metric_best='auto'):
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = Path.joinpath(Path(dir_out), '{}_bestepoch.csv'.format(key))
+            fname = Path.joinpath(Path(dir_out),
+                                  '{}_bestepoch.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
     print('Results aggregated across models saved in {}'.format(dir_out))

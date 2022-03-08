@@ -11,7 +11,8 @@ from tqdm import tqdm
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import GATConv
 
-root =  Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'products')
+root = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')

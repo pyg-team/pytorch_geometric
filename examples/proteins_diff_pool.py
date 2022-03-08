@@ -1,5 +1,5 @@
-from pathlib import Path
 from math import ceil
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -17,8 +17,8 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data',
-                'PROTEINS_dense')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'PROTEINS_dense')
 dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
                     pre_filter=MyFilter())
 dataset = dataset.shuffle()

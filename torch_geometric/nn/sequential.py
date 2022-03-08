@@ -1,5 +1,5 @@
-from typing import List, Union, Tuple, Callable
 from pathlib import Path
+from typing import Callable, List, Tuple, Union
 from uuid import uuid1
 
 import torch

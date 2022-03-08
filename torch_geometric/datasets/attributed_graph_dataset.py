@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import scipy.sparse as sp
@@ -80,7 +80,8 @@ class AttributedGraphDataset(InMemoryDataset):
         if self.name == 'mag':
             path = Path.joinpath(Path(self.raw_dir), self.name)
         for name in self.raw_file_names:
-            os.rename(Path.joinpath(path, name), Path.joinpath(Path(self.raw_dir), name))
+            os.rename(Path.joinpath(path, name),
+                      Path.joinpath(Path(self.raw_dir), name))
         shutil.rmtree(path)
 
     def process(self):

@@ -1,7 +1,7 @@
 import glob
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -58,7 +58,7 @@ class WILLOWObjectClass(InMemoryDataset):
     @property
     def processed_dir(self):
         return Path.joinpath(Path(self.root), self.category.capitalize(),
-                                'processed')
+                             'processed')
 
     @property
     def raw_file_names(self):
@@ -75,8 +75,8 @@ class WILLOWObjectClass(InMemoryDataset):
         Path.joinpath(Path(self.root), 'README').unlink()
         Path.joinpath(Path(self.root), 'demo_showAnno.m').unlink()
         shutil.rmtree(self.raw_dir)
-        Path.joinpath(Path(self.root), 'WILLOW-ObjectClass').rename(
-                                                            Path(self.raw_dir))
+        Path.joinpath(Path(self.root),
+                      'WILLOW-ObjectClass').rename(Path(self.raw_dir))
 
     def process(self):
         import torchvision.models as models

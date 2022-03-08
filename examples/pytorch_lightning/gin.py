@@ -60,7 +60,7 @@ class Model(pl.LightningModule):
 def main():
     seed_everything(42)
 
-    root = Path.joinpath(Path('data'),'TUDataset')
+    root = Path.joinpath(Path('data'), 'TUDataset')
     dataset = TUDataset(root, 'IMDB-BINARY', pre_transform=T.OneHotDegree(135))
 
     dataset = dataset.shuffle()

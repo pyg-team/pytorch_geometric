@@ -1,7 +1,6 @@
-from typing import Optional
 import warnings
-from pathlib import Path
 from math import pi as PI
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -161,7 +160,7 @@ class SchNet(torch.nn.Module):
 
         name = f'qm9_{qm9_target_dict[target]}'
         path = Path.joinpath(Path(root), 'trained_schnet_models', name,
-                            'split.npz')
+                             'split.npz')
 
         split = np.load(path)
         train_idx = split['train_idx']
@@ -178,7 +177,7 @@ class SchNet(torch.nn.Module):
         test_idx = assoc[test_idx[np.isin(test_idx, idx)]]
 
         path = Path.joinpath(Path(root), 'trained_schnet_models', name,
-                            'best_model')
+                             'best_model')
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')

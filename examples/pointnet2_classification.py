@@ -85,8 +85,8 @@ def test(loader):
 
 
 if __name__ == '__main__':
-    path = Path.joinpath(Path(__file__).resolve().parent.parent,
-                                        'data','ModelNet10')
+    path = Path.joinpath(
+        Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
     pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
     train_dataset = ModelNet(path, '10', True, transform, pre_transform)
     test_dataset = ModelNet(path, '10', False, transform, pre_transform)

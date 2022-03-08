@@ -7,7 +7,6 @@ Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
 from pathlib import Path
-from tqdm import tqdm
 
 import torch
 import torch.nn.functional as F

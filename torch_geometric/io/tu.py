@@ -18,7 +18,9 @@ names = [
 
 def read_tu_data(folder, prefix):
     files = Path(folder).rglob('{}_*.txt'.format(prefix))
-    names = [str(f).split(pathlib.os.sep)[-1][len(prefix) + 1:-4] for f in files]
+    names = [
+        str(f).split(pathlib.os.sep)[-1][len(prefix) + 1:-4] for f in files
+    ]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1

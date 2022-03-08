@@ -9,7 +9,8 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import IMDB
 from torch_geometric.nn import HANConv
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent.parent,'data', 'Flickr')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent.parent, 'data', 'Flickr')
 metapaths = [[('movie', 'actor'), ('actor', 'movie')],
              [('movie', 'director'), ('director', 'movie')]]
 transform = T.AddMetaPaths(metapaths=metapaths, drop_orig_edges=True,

@@ -21,7 +21,8 @@ class HandleNodeAttention(object):
 
 
 transform = T.Compose([HandleNodeAttention(), T.OneHotDegree(max_degree=14)])
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'TRIANGLES')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'TRIANGLES')
 dataset = TUDataset(path, name='TRIANGLES', use_node_attr=True,
                     transform=transform)
 

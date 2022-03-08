@@ -1,6 +1,5 @@
-from typing import Optional, Callable, List, Dict, Tuple
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch

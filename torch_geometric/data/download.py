@@ -1,7 +1,7 @@
-import sys
-from pathlib import Path
 import ssl
+import sys
 import urllib
+from pathlib import Path
 
 from .makedirs import makedirs
 

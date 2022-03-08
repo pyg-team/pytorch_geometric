@@ -1,7 +1,6 @@
-from typing import Optional, Callable, List
 import sys
 from pathlib import Path
-from tqdm import tqdm
+from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
@@ -171,7 +170,7 @@ class QM9(InMemoryDataset):
 
             file_path = download_url(self.raw_url2, self.raw_dir)
             Path.joinpath(Path(self.raw_dir), '3195404').rename(
-                    Path.joinpath(Path(self.raw_dir), 'uncharacterized.txt'))
+                Path.joinpath(Path(self.raw_dir), 'uncharacterized.txt'))
         except ImportError:
             path = download_url(self.processed_url, self.raw_dir)
             extract_zip(path, self.raw_dir)

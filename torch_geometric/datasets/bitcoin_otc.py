@@ -1,7 +1,5 @@
-from typing import Optional, Callable
-from pathlib import Path
-
 import datetime
+from pathlib import Path
 from typing import Callable, Optional
 
 import torch

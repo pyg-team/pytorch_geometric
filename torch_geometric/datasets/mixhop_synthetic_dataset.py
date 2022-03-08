@@ -43,11 +43,13 @@ class MixHopSyntheticDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return Path.joinpath(Path(self.root), f'{self.homophily:0.1f}'[::2], 'raw')
+        return Path.joinpath(Path(self.root), f'{self.homophily:0.1f}'[::2],
+                             'raw')
 
     @property
     def processed_dir(self):
-        return Path.joinpath(Path(self.root), f'{self.homophily:0.1f}'[::2], 'processed')
+        return Path.joinpath(Path(self.root), f'{self.homophily:0.1f}'[::2],
+                             'processed')
 
     @property
     def raw_file_names(self):
