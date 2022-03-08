@@ -1,5 +1,5 @@
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 
 import torch
 from runtime.gat import GAT
@@ -10,7 +10,7 @@ from runtime.train import train_runtime
 from torch_geometric.datasets import Entities, Planetoid
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-root = Path.joinpath(Path(__file__).resolve().parent.parent,'data')
+root = Path.joinpath(Path(__file__).resolve().parent.parent, 'data')
 Cora = Planetoid(str(root.joinpath('Cora')), 'Cora')
 CiteSeer = Planetoid(str(root.joinpath('CiteSeer')), 'CiteSeer')
 PubMed = Planetoid(str(root.join('PubMed')), 'PubMed')

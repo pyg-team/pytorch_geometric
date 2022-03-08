@@ -3,11 +3,11 @@ from pathlib import Path
 import torch
 import torch.nn.functional as F
 from sklearn.metrics import f1_score
+
 from torch_geometric.data import Batch
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import ClusterData, ClusterLoader, DataLoader
 from torch_geometric.nn import BatchNorm, SAGEConv
-
 
 path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PPI')
 train_dataset = PPI(path, split='train')

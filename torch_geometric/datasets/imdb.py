@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -62,13 +62,15 @@ class IMDB(InMemoryDataset):
 
         node_types = ['movie', 'director', 'actor']
         for i, node_type in enumerate(node_types):
-            x = sp.load_npz(Path.joinpath(Path(self.raw_dir), f'features_{i}.npz'))
+            x = sp.load_npz(
+                Path.joinpath(Path(self.raw_dir), f'features_{i}.npz'))
             data[node_type].x = torch.from_numpy(x.todense()).to(torch.float)
 
         y = np.load(Path.joinpath(Path(self.raw_dir), 'labels.npy'))
         data['movie'].y = torch.from_numpy(y).to(torch.long)
 
-        split = np.load(Path.joinpath(Path(self.raw_dir), 'train_val_test_idx.npz'))
+        split = np.load(
+            Path.joinpath(Path(self.raw_dir), 'train_val_test_idx.npz'))
         for name in ['train', 'val', 'test']:
             idx = split[f'{name}_idx']
             idx = torch.from_numpy(idx).to(torch.long)

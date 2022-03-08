@@ -59,7 +59,9 @@ def read_ego(files, name):
             x_all = torch.zeros(x.size(0), len(all_featnames))
             with open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
-                featnames = [' '.join(str(x).split(' ')[1:]) for x in featnames]
+                featnames = [
+                    ' '.join(str(x).split(' ')[1:]) for x in featnames
+                ]
             indices = [all_featnames[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
@@ -221,10 +223,12 @@ class SNAPDataset(InMemoryDataset):
     def process(self):
         raw_dir = self.raw_dir
         filenames = list(Path(self.raw_dir).iterdir())
-        if len(filenames) == 1 and Path.joinpath(Path(raw_dir), filenames[0]).is_dir():
+        if len(filenames) == 1 and Path.joinpath(Path(raw_dir),
+                                                 filenames[0]).is_dir():
             raw_dir = Path.joinpath(Path(raw_dir), filenames[0])
 
-        raw_files = sorted([Path.joinpath(Path(raw_dir), f) for f in Path(raw_dir).iterdir()])
+        raw_files = sorted(
+            [Path.joinpath(Path(raw_dir), f) for f in Path(raw_dir).iterdir()])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

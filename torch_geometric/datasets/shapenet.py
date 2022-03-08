@@ -1,7 +1,7 @@
-import pathlib
 import json
-from pathlib import Path
+import pathlib
 import shutil
+from pathlib import Path
 
 import torch
 
@@ -175,7 +175,7 @@ class ShapeNet(InMemoryDataset):
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
             path = Path.joinpath(Path(self.raw_dir), 'train_test_split',
-                            f'shuffled_{split}_file_list.json')
+                                 f'shuffled_{split}_file_list.json')
             with open(path, 'r') as f:
                 filenames = [
                     pathlib.os.sep.join(str(name).split('/')[1:]) + '.txt'

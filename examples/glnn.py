@@ -18,7 +18,8 @@ args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'Planetoid')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora', transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
 

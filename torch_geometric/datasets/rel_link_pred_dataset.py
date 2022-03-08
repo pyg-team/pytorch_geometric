@@ -1,7 +1,8 @@
-from typing import Optional, Callable, List
 from pathlib import Path
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
@@ -65,17 +66,20 @@ class RelLinkPredDataset(InMemoryDataset):
             download_url(f'{self.urls[self.name]}/{file_name}', self.raw_dir)
 
     def process(self):
-        with open(Path.joinpath(Path(self.raw_dir), 'entities.dict'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'entities.dict'),
+                  'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             entities_dict = {key: int(value) for value, key in lines}
 
-        with open(Path.joinpath(Path(self.raw_dir), 'relations.dict'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'relations.dict'),
+                  'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             relations_dict = {key: int(value) for value, key in lines}
 
         kwargs = {}
         for split in ['train', 'valid', 'test']:
-            with open(Path.joinpath(Path(self.raw_dir), f'{split}.txt'), 'r') as f:
+            with open(Path.joinpath(Path(self.raw_dir), f'{split}.txt'),
+                      'r') as f:
                 lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
                 src = [entities_dict[row[0]] for row in lines]
                 rel = [relations_dict[row[1]] for row in lines]

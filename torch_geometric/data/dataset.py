@@ -1,9 +1,9 @@
 import copy
-import warnings
 import re
 import sys
-from pathlib import Path
+import warnings
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import numpy as np

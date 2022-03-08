@@ -6,8 +6,8 @@ import shutil
 import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 import torch_geometric.graphgym.register as register
 from torch_geometric.data.makedirs import makedirs

@@ -1,7 +1,7 @@
 import glob
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import torch
 
@@ -66,7 +66,7 @@ class PascalPF(InMemoryDataset):
         extract_zip(path, self.root)
         shutil.rmtree(self.raw_dir)
         Path.joinpath(Path(self.root),
-                            'PF-dataset-PASCAL').rename(Path(self.raw_dir))
+                      'PF-dataset-PASCAL').rename(Path(self.raw_dir))
 
     def process(self):
         from scipy.io import loadmat
@@ -99,9 +99,10 @@ class PascalPF(InMemoryDataset):
             names.append(name)
             data_list.append(data)
 
-        pairs = loadmat(Path.joinpath(Path(self.raw_dir, 'parsePascalVOC.mat')))
+        pairs = loadmat(Path.joinpath(Path(self.raw_dir,
+                                           'parsePascalVOC.mat')))
         pairs = pairs['PascalVOC']['pair'][0, 0][
-                0, self.categories.index(self.category)]
+            0, self.categories.index(self.category)]
 
         pairs = [(names.index(x[0][0]), names.index(x[1][0])) for x in pairs]
 

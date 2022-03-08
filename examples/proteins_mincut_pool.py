@@ -1,5 +1,5 @@
-from pathlib import Path
 from math import ceil
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -10,7 +10,8 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import DenseGraphConv, GCNConv, dense_mincut_pool
 from torch_geometric.utils import to_dense_adj, to_dense_batch
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'PROTEINS')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
 average_nodes = int(dataset.data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10

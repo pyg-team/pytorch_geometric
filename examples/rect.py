@@ -1,6 +1,6 @@
 import argparse
-from pathlib import Path
 import copy
+from pathlib import Path
 
 import torch
 from sklearn.linear_model import LogisticRegression

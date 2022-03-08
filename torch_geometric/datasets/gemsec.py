@@ -1,5 +1,5 @@
-from typing import Optional, Callable
 from pathlib import Path
+from typing import Callable, Optional
 
 import numpy as np
 import torch
@@ -56,7 +56,8 @@ class GemsecDeezer(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        download_url(Path.joinpath(Path(self.url), self.name + '.npz'), self.raw_dir)
+        download_url(Path.joinpath(Path(self.url), self.name + '.npz'),
+                     self.raw_dir)
 
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)

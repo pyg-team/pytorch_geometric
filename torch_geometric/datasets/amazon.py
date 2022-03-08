@@ -1,5 +1,5 @@
-from typing import Optional, Callable
 from pathlib import Path
+from typing import Callable, Optional
 
 import torch
 
@@ -67,7 +67,8 @@ class Amazon(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return Path.joinpath(Path(self.root), self.name.capitalize(), 'processed')
+        return Path.joinpath(Path(self.root), self.name.capitalize(),
+                             'processed')
 
     @property
     def raw_file_names(self) -> str:

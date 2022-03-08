@@ -1,6 +1,6 @@
-from typing import Optional, Callable, List
 import shutil
 from pathlib import Path
+from typing import Callable, List, Optional
 
 import torch
 
@@ -69,7 +69,8 @@ class FAUST(InMemoryDataset):
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
 
-        path = Path.joinpath(Path(self.raw_dir), 'MPI-FAUST', 'training', 'registrations')
+        path = Path.joinpath(Path(self.raw_dir), 'MPI-FAUST', 'training',
+                             'registrations')
         path = Path.joinpath(path, 'tr_reg_{0:03d}.ply')
         data_list = []
         for i in range(100):

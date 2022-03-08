@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np

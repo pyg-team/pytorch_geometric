@@ -65,13 +65,13 @@ class AmazonProducts(InMemoryDataset):
         os.rename(path, Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
 
         path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path,  Path.joinpath(Path(self.raw_dir), 'feats.npy'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'feats.npy'))
 
         path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path,  Path.joinpath(Path(self.raw_dir), 'class_map.json'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'class_map.json'))
 
         path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path,  Path.joinpath(Path(self.raw_dir), 'role.json'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'role.json'))
 
     def process(self):
         f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))

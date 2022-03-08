@@ -10,7 +10,8 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import Explainer, GCNConv, to_captum
 
 dataset = 'Cora'
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 

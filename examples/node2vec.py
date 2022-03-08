@@ -10,7 +10,8 @@ from torch_geometric.nn import Node2Vec
 
 def main():
     dataset = 'Cora'
-    path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
+    path = Path.joinpath(
+        Path(__file__).resolve().parent.parent, 'data', dataset)
     dataset = Planetoid(path, dataset)
     data = dataset[0]
 

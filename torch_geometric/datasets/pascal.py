@@ -1,6 +1,6 @@
-from pathlib import Path
 import shutil
 from itertools import chain
+from pathlib import Path
 from xml.dom import minidom
 
 import numpy as np
@@ -79,7 +79,8 @@ class PascalVOCKeypoints(InMemoryDataset):
 
     @property
     def processed_dir(self):
-        return Path.joinpath(Path(self.root), self.category.capitalize(), 'processed')
+        return Path.joinpath(Path(self.root), self.category.capitalize(),
+                             'processed')
 
     @property
     def raw_file_names(self):
@@ -93,7 +94,8 @@ class PascalVOCKeypoints(InMemoryDataset):
         path = download_url(self.image_url, self.raw_dir)
         extract_tar(path, self.raw_dir, mode='r')
         Path(path).unlink()
-        image_path = Path.joinpath(Path(self.raw_dir), 'TrainVal', 'VOCdevkit', 'VOC2011')
+        image_path = Path.joinpath(Path(self.raw_dir), 'TrainVal', 'VOCdevkit',
+                                   'VOC2011')
         image_path.rename(Path.joinpath(Path(self.raw_dir), 'images'))
         shutil.rmtree(Path.joinpath(Path(self.raw_dir), 'TrainVal'))
 
@@ -109,8 +111,8 @@ class PascalVOCKeypoints(InMemoryDataset):
         import torchvision.transforms as T
         from PIL import Image
 
-        splits = np.load(Path(self.raw_dir).joinpath('splits.npz'),
-                         allow_pickle=True)
+        splits = np.load(
+            Path(self.raw_dir).joinpath('splits.npz'), allow_pickle=True)
         category_idx = self.categories.index(self.category)
         train_split = list(splits['train'])[category_idx]
         test_split = list(splits['test'])[category_idx]

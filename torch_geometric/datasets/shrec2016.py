@@ -1,7 +1,6 @@
 import glob
 import os
 from pathlib import Path
-import glob
 
 import torch
 
@@ -91,20 +90,21 @@ class SHREC2016(InMemoryDataset):
         path = download_url(self.train_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         Path(path).unlink()
-        path = Path.joinpath(Path(self.raw_dir), 'shrec2016_PartialDeformableShapes')
+        path = Path.joinpath(Path(self.raw_dir),
+                             'shrec2016_PartialDeformableShapes')
         path.rename(Path.joinpath(Path(self.raw_dir), 'training'))
 
         path = download_url(self.test_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         Path(path).unlink()
         path = Path.joinpath(Path(self.raw_dir),
-                        'shrec2016_PartialDeformableShapes_TestSet')
+                             'shrec2016_PartialDeformableShapes_TestSet')
         path.rename(Path.joinpath(Path(self.raw_dir), 'test'))
 
     def process(self):
         ref_data = read_off(
             Path.joinpath(Path(self.raw_paths[0]), 'null',
-                                '{}.off'.format(self.cat)))
+                          '{}.off'.format(self.cat)))
 
         train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)

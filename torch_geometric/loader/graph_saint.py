@@ -1,5 +1,5 @@
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 import torch
 from torch_sparse import SparseTensor
@@ -75,7 +75,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         if self.sample_coverage > 0:
             p = save_dir or ''
             path = Path.joinpath(Path(p), self.__filename__)
-            if save_dir is not None and Path(path).exists():  # pragma: no cover
+            if save_dir is not None and Path(
+                    path).exists():  # pragma: no cover
                 self.node_norm, self.edge_norm = torch.load(path)
             else:
                 self.node_norm, self.edge_norm = self.__compute_norm__()

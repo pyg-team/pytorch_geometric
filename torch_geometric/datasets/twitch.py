@@ -1,5 +1,5 @@
-from typing import Optional, Callable
 from pathlib import Path
+from typing import Callable, Optional
 
 import numpy as np
 import torch

@@ -1,5 +1,7 @@
 from pathlib import Path
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
+
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+
 import torch_geometric.transforms as T
 from torch_geometric.nn import LabelPropagation
 
