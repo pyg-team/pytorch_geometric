@@ -14,7 +14,6 @@ class DenseSAGEConv(torch.nn.Module):
         use :class:`torch_geometric.nn.dense.DenseGraphConv` instead.
 
     """
-
     def __init__(self, in_channels, out_channels, normalize=False, bias=True):
         super().__init__()
 

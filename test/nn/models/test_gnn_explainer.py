@@ -7,7 +7,6 @@ from torch_geometric.nn import GATConv, GCNConv, GNNExplainer, global_add_pool
 
 
 class GCN(torch.nn.Module):
-
     def __init__(self):
         super().__init__()
         self.conv1 = GCNConv(3, 16)
@@ -21,7 +20,6 @@ class GCN(torch.nn.Module):
 
 
 class GAT(torch.nn.Module):
-
     def __init__(self):
         super().__init__()
         self.conv1 = GATConv(3, 16, heads=2, concat=True)
@@ -35,7 +33,6 @@ class GAT(torch.nn.Module):
 
 
 class GNN(torch.nn.Module):
-
     def __init__(self):
         super().__init__()
         self.conv1 = GCNConv(3, 16)

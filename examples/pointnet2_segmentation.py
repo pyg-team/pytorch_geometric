@@ -31,7 +31,6 @@ test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
 
 
 class FPModule(torch.nn.Module):
-
     def __init__(self, k, nn):
         super().__init__()
         self.k = k
@@ -46,7 +45,6 @@ class FPModule(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
-
     def __init__(self, num_classes):
         super().__init__()
 

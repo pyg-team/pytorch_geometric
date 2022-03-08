@@ -15,7 +15,6 @@ class LinearTransformation(BaseTransform):
         matrix (Tensor): Tensor with shape :obj:`[D, D]` where :obj:`D`
             corresponds to the dimensionality of node positions.
     """
-
     def __init__(self, matrix: Tensor):
         if not isinstance(matrix, Tensor):
             matrix = torch.tensor(matrix)

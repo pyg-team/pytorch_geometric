@@ -43,7 +43,6 @@ class HeteroConv(Module):
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`None`). (default: :obj:`"sum"`)
     """
-
     def __init__(self, convs: Dict[EdgeType, Module],
                  aggr: Optional[str] = "sum"):
         super().__init__()

@@ -24,7 +24,6 @@ args = parser.parse_args()
 
 
 class Net(torch.nn.Module):
-
     def __init__(self, dataset):
         super().__init__()
         self.lin1 = Linear(dataset.num_features, args.hidden)

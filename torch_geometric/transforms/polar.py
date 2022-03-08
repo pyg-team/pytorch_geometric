@@ -18,7 +18,6 @@ class Polar(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
         self.max = max_value

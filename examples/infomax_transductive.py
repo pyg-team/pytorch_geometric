@@ -12,7 +12,6 @@ dataset = Planetoid(path, dataset)
 
 
 class Encoder(nn.Module):
-
     def __init__(self, in_channels, hidden_channels):
         super().__init__()
         self.conv = GCNConv(in_channels, hidden_channels, cached=True)

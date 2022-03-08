@@ -153,7 +153,6 @@ def test_batching_with_new_dimension():
     torch_geometric.set_debug(True)
 
     class MyData(Data):
-
         def __cat_dim__(self, key, value, *args, **kwargs):
             if key == 'foo':
                 return None
@@ -345,9 +344,7 @@ def test_hetero_batch():
 
 
 def test_pair_data_batching():
-
     class PairData(Data):
-
         def __inc__(self, key, value, *args, **kwargs):
             if key == 'edge_index_s':
                 return self.x_s.size(0)

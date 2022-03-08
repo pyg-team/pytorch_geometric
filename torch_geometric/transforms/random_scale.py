@@ -21,7 +21,6 @@ class RandomScale(BaseTransform):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
-
     def __init__(self, scales):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales

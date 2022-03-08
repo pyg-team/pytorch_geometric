@@ -17,7 +17,6 @@ from ..inits import reset
 
 
 class MLP(Sequential):
-
     def __init__(self, channels: List[int], norm: Optional[str] = None,
                  bias: bool = True, dropout: float = 0.):
         m = []
@@ -101,7 +100,6 @@ class GENConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-
     def __init__(self, in_channels: int, out_channels: int,
                  aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,
                  p: float = 1.0, learn_p: bool = False, msg_norm: bool = False,

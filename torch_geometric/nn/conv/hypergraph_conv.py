@@ -68,7 +68,6 @@ class HypergraphConv(MessagePassing):
           hyperedge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
                  concat=True, negative_slope=0.2, dropout=0, bias=True,
                  **kwargs):

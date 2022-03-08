@@ -14,7 +14,6 @@ class Constant(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing node
             features will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, value: float = 1.0, cat: bool = True):
         self.value = value
         self.cat = cat

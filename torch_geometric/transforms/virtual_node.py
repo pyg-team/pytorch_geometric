@@ -19,7 +19,6 @@ class VirtualNode(BaseTransform):
     Furthermore, special edge types will be added both for in-coming and
     out-going information to and from the virtual node.
     """
-
     def __call__(self, data: Data) -> Data:
         num_nodes, (row, col) = data.num_nodes, data.edge_index
         edge_type = data.get('edge_type', torch.zeros_like(row))

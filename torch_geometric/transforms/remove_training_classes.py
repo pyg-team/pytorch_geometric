@@ -11,7 +11,6 @@ class RemoveTrainingClasses(BaseTransform):
     Args:
         classes (List[int]): The classes to remove from the training set.
     """
-
     def __init__(self, classes: List[int]):
         self.classes = classes
 

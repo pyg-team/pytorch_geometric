@@ -14,7 +14,6 @@ data = dataset[0]
 
 
 class Net(torch.nn.Module):
-
     def __init__(self):
         super().__init__()
         pool_ratios = [2000 / data.num_nodes, 0.5]

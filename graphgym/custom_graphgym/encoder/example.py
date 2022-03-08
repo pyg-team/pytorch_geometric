@@ -13,7 +13,6 @@ class ExampleNodeEncoder(torch.nn.Module):
         Parameters:
         num_classes - the number of classes for the embedding mapping to learn
     """
-
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
 
@@ -29,7 +28,6 @@ class ExampleNodeEncoder(torch.nn.Module):
 
 @register_edge_encoder('example')
 class ExampleEdgeEncoder(torch.nn.Module):
-
     def __init__(self, emb_dim):
         super().__init__()
 

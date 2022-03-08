@@ -32,7 +32,6 @@ class ToSLIC(BaseTransform):
             <https://scikit-image.org/docs/dev/api/skimage.segmentation.html
             #skimage.segmentation.slic>`_ for an overview.
     """
-
     def __init__(self, add_seg=False, add_img=False, **kwargs):
         self.add_seg = add_seg
         self.add_img = add_img

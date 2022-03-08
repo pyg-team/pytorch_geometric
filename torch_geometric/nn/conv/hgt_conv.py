@@ -58,7 +58,6 @@ class HGTConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(
         self,
         in_channels: Union[int, Dict[str, int]],

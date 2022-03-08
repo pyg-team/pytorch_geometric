@@ -57,7 +57,6 @@ class HEATConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     def __init__(self, in_channels: int, out_channels: int,
                  num_node_types: int, num_edge_types: int,
                  edge_type_emb_dim: int, edge_dim: int, edge_attr_emb_dim: int,

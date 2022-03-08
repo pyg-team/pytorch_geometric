@@ -13,7 +13,6 @@ class LargestConnectedComponents(BaseTransform):
         num_components (int, optional): Number of largest components to keep
             (default: :obj:`1`)
     """
-
     def __init__(self, num_components: int = 1):
         self.num_components = num_components
 

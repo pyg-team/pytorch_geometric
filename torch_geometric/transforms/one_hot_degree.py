@@ -16,7 +16,6 @@ class OneHotDegree(BaseTransform):
         cat (bool, optional): Concat node degrees to node features instead
             of replacing them. (default: :obj:`True`)
     """
-
     def __init__(self, max_degree, in_degree=False, cat=True):
         self.max_degree = max_degree
         self.in_degree = in_degree

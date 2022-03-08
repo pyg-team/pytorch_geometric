@@ -17,7 +17,6 @@ class RadiusGraph(BaseTransform):
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
     """
-
     def __init__(
         self,
         r: float,

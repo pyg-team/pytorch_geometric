@@ -49,7 +49,6 @@ class RandomNodeSplit(BaseTransform):
             labels. By default, will only add node-level splits for node-level
             storages in which :obj:`key` is present. (default: :obj:`"y"`).
     """
-
     def __init__(
         self,
         split: str = "train_rest",

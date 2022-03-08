@@ -45,7 +45,6 @@ class PDNConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  hidden_channels: int, add_self_loops: bool = True,
                  normalize: bool = True, bias: bool = True, **kwargs):

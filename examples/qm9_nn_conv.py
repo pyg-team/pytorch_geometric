@@ -15,7 +15,6 @@ dim = 64
 
 
 class MyTransform(object):
-
     def __call__(self, data):
         # Specify target.
         data.y = data.y[:, target]
@@ -23,7 +22,6 @@ class MyTransform(object):
 
 
 class Complete(object):
-
     def __call__(self, data):
         device = data.edge_index.device
 
@@ -69,7 +67,6 @@ train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 
 
 class Net(torch.nn.Module):
-
     def __init__(self):
         super().__init__()
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)

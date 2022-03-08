@@ -19,7 +19,6 @@ except (ImportError, ModuleNotFoundError):
 
 
 class LightningDataModule(PLLightningDataModule):
-
     def __init__(self, has_val: bool, has_test: bool, **kwargs):
         super().__init__()
 
@@ -100,7 +99,6 @@ class LightningDataset(LightningDataModule):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.DataLoader`.
     """
-
     def __init__(
         self,
         train_dataset: Dataset,
@@ -193,7 +191,6 @@ class LightningNodeData(LightningDataModule):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.NeighborLoader`.
     """
-
     def __init__(
         self,
         data: Union[Data, HeteroData],

@@ -31,7 +31,6 @@ class BatchNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
     """
-
     def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=True,
                  track_running_stats=True):
         super().__init__()

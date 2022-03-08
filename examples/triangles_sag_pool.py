@@ -14,7 +14,6 @@ from torch_geometric.nn import GCNConv, GINConv, SAGPooling, global_max_pool
 
 
 class HandleNodeAttention(object):
-
     def __call__(self, data):
         data.attn = torch.softmax(data.x, dim=0).flatten()
         data.x = None
@@ -33,7 +32,6 @@ test_loader = DataLoader(dataset[35000:], batch_size=60)
 
 
 class Net(torch.nn.Module):
-
     def __init__(self, in_channels):
         super().__init__()
 

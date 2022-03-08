@@ -19,7 +19,6 @@ class KNNGraph(BaseTransform):
             exactly :math:`k` source nodes pointing to it.
             (default: :obj:`"source_to_target"`)
     """
-
     def __init__(self, k=6, loop=False, force_undirected=False,
                  flow='source_to_target'):
 

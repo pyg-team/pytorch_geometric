@@ -6,7 +6,6 @@ from torch_geometric.graphgym.register import register_head
 @register_head('head')
 class ExampleNodeHead(nn.Module):
     '''Head of GNN, node prediction'''
-
     def __init__(self, dim_in, dim_out):
         super().__init__()
         self.layer_post_mp = nn.Linear(dim_in, dim_out, bias=True)

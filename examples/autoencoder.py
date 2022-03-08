@@ -29,7 +29,6 @@ train_data, val_data, test_data = dataset[0]
 
 
 class GCNEncoder(torch.nn.Module):
-
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
@@ -41,7 +40,6 @@ class GCNEncoder(torch.nn.Module):
 
 
 class VariationalGCNEncoder(torch.nn.Module):
-
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
@@ -54,7 +52,6 @@ class VariationalGCNEncoder(torch.nn.Module):
 
 
 class LinearEncoder(torch.nn.Module):
-
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv = GCNConv(in_channels, out_channels)
@@ -64,7 +61,6 @@ class LinearEncoder(torch.nn.Module):
 
 
 class VariationalLinearEncoder(torch.nn.Module):
-
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv_mu = GCNConv(in_channels, out_channels)

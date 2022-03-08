@@ -224,7 +224,6 @@ class BaseStorage(MutableMapping):
 
 
 class NodeStorage(BaseStorage):
-
     @property
     def _key(self) -> NodeType:
         key = self.__dict__.get('_key', None)
@@ -315,7 +314,6 @@ class EdgeStorage(BaseStorage):
       This is the most efficient one for graph-based deep learning models as
       indices are sorted based on target nodes.
     """
-
     @property
     def _key(self) -> EdgeType:
         key = self.__dict__.get('_key', None)
@@ -437,7 +435,6 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-
     @property
     def _key(self) -> Any:
         return None

@@ -46,7 +46,6 @@ neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
 
 class GraphAttentionEmbedding(torch.nn.Module):
-
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
         super().__init__()
         self.time_enc = time_enc
@@ -62,7 +61,6 @@ class GraphAttentionEmbedding(torch.nn.Module):
 
 
 class LinkPredictor(torch.nn.Module):
-
     def __init__(self, in_channels):
         super().__init__()
         self.lin_src = Linear(in_channels, in_channels)

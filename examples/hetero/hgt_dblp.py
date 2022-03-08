@@ -16,7 +16,6 @@ data['conference'].x = torch.ones(data['conference'].num_nodes, 1)
 
 
 class HGT(torch.nn.Module):
-
     def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
         super().__init__()
 

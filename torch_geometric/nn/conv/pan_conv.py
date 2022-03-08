@@ -41,7 +41,6 @@ class PANConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     def __init__(self, in_channels: int, out_channels: int, filter_size: int,
                  **kwargs):
 

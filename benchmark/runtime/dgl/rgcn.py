@@ -7,7 +7,6 @@ from torch_geometric.nn.inits import uniform
 
 
 class RGCNConv(torch.nn.Module):
-
     def __init__(self, g, in_channels, out_channels, num_relations, num_bases):
         super().__init__()
 
@@ -68,7 +67,6 @@ class RGCNConv(torch.nn.Module):
 
 
 class RGCN(torch.nn.Module):
-
     def __init__(self, g, in_channels, out_channels, num_relations):
         super().__init__()
         self.conv1 = RGCNConv(g, in_channels, 16, num_relations, num_bases=30)
@@ -81,7 +79,6 @@ class RGCN(torch.nn.Module):
 
 
 class RGCNSPMVConv(torch.nn.Module):
-
     def __init__(self, g, in_channels, out_channels, num_relations, num_bases):
         super().__init__()
 
@@ -139,7 +136,6 @@ class RGCNSPMVConv(torch.nn.Module):
 
 
 class RGCNSPMV(torch.nn.Module):
-
     def __init__(self, g, in_channels, out_channels, num_relations):
         super().__init__()
         self.conv1 = RGCNSPMVConv(g, in_channels, 16, num_relations,

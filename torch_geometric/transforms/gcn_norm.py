@@ -13,7 +13,6 @@ class GCNNorm(BaseTransform):
 
     where :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij} + 1`.
     """
-
     def __init__(self, add_self_loops: bool = True):
         self.add_self_loops = add_self_loops
 

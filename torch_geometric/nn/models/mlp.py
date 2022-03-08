@@ -61,7 +61,6 @@ class MLP(torch.nn.Module):
         relu_first (bool, optional): Deprecated in favor of :obj:`act_first`.
             (default: :obj:`False`)
     """
-
     def __init__(
         self,
         channel_list: Optional[Union[List[int], int]] = None,

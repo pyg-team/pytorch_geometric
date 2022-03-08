@@ -48,7 +48,6 @@ class GINConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
@@ -131,7 +130,6 @@ class GINEConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  edge_dim: Optional[int] = None, **kwargs):
         kwargs.setdefault('aggr', 'add')

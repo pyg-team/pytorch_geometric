@@ -46,7 +46,6 @@ def test_neighbor_sampler_on_cora():
                              node_idx=batch, batch_size=10)
 
     class SAGE(torch.nn.Module):
-
         def __init__(self, in_channels, out_channels):
             super().__init__()
 
@@ -74,7 +73,6 @@ def test_neighbor_sampler_on_cora():
     assert torch.allclose(out1, out2)
 
     class GAT(torch.nn.Module):
-
         def __init__(self, in_channels, out_channels):
             super().__init__()
 

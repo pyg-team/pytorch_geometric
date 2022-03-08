@@ -25,7 +25,6 @@ class LaplacianLambdaMax(BaseTransform):
             expects undirected graphs as input, and can hence speed up the
             computation of the largest eigenvalue. (default: :obj:`False`)
     """
-
     def __init__(self, normalization=None, is_undirected=False):
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
         self.normalization = normalization

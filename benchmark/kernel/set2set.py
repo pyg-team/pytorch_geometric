@@ -6,7 +6,6 @@ from torch_geometric.nn import SAGEConv, Set2Set
 
 
 class Set2SetNet(torch.nn.Module):
-
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)

@@ -5,9 +5,7 @@ from torch_geometric.utils import get_num_hops, k_hop_subgraph, subgraph
 
 
 def test_get_num_hops():
-
     class GNN(torch.nn.Module):
-
         def __init__(self):
             super().__init__()
             self.conv1 = GCNConv(3, 16, normalize=False)

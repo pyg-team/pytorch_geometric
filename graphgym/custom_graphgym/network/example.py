@@ -11,7 +11,6 @@ from torch_geometric.graphgym.register import register_network
 
 @register_network('example')
 class ExampleGNN(torch.nn.Module):
-
     def __init__(self, dim_in, dim_out, num_layers=2, model_type='GCN'):
         super().__init__()
         conv_model = self.build_conv_model(model_type)

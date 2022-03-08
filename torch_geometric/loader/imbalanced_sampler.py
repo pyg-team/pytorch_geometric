@@ -48,7 +48,6 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
             epoch. If set to :obj:`None`, will sample as much elements as there
             exists in the underlying data. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         dataset: Union[Data, Dataset, List[Data]],

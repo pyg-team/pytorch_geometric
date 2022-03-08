@@ -23,7 +23,6 @@ class SignedGCN(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-
     def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
                  bias=True):
         super().__init__()

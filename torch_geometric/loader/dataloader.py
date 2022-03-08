@@ -9,7 +9,6 @@ from torch_geometric.data.data import BaseData
 
 
 class Collater:
-
     def __init__(self, follow_batch, exclude_keys):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
@@ -59,7 +58,6 @@ class DataLoader(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
-
     def __init__(
         self,
         dataset: Union[Dataset, List[BaseData]],

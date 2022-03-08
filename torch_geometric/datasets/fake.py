@@ -39,7 +39,6 @@ class FakeDataset(InMemoryDataset):
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
-
     def __init__(
         self,
         num_graphs: int = 1,
@@ -136,7 +135,6 @@ class FakeHeteroDataset(InMemoryDataset):
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
-
     def __init__(
         self,
         num_graphs: int = 1,

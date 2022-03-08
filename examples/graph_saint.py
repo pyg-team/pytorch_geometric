@@ -26,7 +26,6 @@ loader = GraphSAINTRandomWalkSampler(data, batch_size=6000, walk_length=2,
 
 
 class Net(torch.nn.Module):
-
     def __init__(self, hidden_channels):
         super().__init__()
         in_channels = dataset.num_node_features

@@ -41,7 +41,6 @@ class DynamicInheritance(type):
 
 
 class DynamicInheritanceGetter(object):
-
     def __call__(self, cls, base_cls):
         return cls(_base_cls=base_cls)
 
@@ -54,7 +53,6 @@ class Batch(metaclass=DynamicInheritance):
     In addition, single graphs can be identified via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-
     @classmethod
     def from_data_list(cls, data_list: List[BaseData],
                        follow_batch: Optional[List[str]] = None,

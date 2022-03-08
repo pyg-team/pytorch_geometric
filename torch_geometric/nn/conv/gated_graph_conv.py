@@ -46,7 +46,6 @@ class GatedGraphConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
 
     """
-
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
                  bias: bool = True, **kwargs):
         super().__init__(aggr=aggr, **kwargs)

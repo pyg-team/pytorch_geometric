@@ -27,7 +27,6 @@ layer_num = 4
 
 
 class Breadth(torch.nn.Module):
-
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.gatconv = GATConv(in_dim, out_dim, heads=1)
@@ -38,7 +37,6 @@ class Breadth(torch.nn.Module):
 
 
 class Depth(torch.nn.Module):
-
     def __init__(self, in_dim, hidden):
         super().__init__()
         self.lstm = torch.nn.LSTM(in_dim, hidden, 1, bias=False)
@@ -49,7 +47,6 @@ class Depth(torch.nn.Module):
 
 
 class GeniePathLayer(torch.nn.Module):
-
     def __init__(self, in_dim):
         super().__init__()
         self.breadth_func = Breadth(in_dim, dim)
@@ -64,7 +61,6 @@ class GeniePathLayer(torch.nn.Module):
 
 
 class GeniePath(torch.nn.Module):
-
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.lin1 = torch.nn.Linear(in_dim, dim)
@@ -83,7 +79,6 @@ class GeniePath(torch.nn.Module):
 
 
 class GeniePathLazy(torch.nn.Module):
-
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.lin1 = torch.nn.Linear(in_dim, dim)

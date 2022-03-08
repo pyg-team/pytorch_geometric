@@ -46,7 +46,6 @@ class Linear(torch.nn.Module):
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
     """
-
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
                  weight_initializer: Optional[str] = None,
                  bias_initializer: Optional[str] = None):
@@ -184,7 +183,6 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
-
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
                  **kwargs):
         super().__init__()

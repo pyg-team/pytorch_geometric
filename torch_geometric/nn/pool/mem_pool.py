@@ -37,7 +37,6 @@ class MemPooling(torch.nn.Module):
         num_clusters (int): number of clusters :math:`K` per head.
         tau (int, optional): The temperature :math:`\tau`. (default: :obj:`1.`)
     """
-
     def __init__(self, in_channels: int, out_channels: int, heads: int,
                  num_clusters: int, tau: float = 1.):
         super().__init__()

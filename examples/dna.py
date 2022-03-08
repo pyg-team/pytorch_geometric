@@ -27,7 +27,6 @@ data = gen_uniform_20_20_60_split(data)
 
 
 class Net(torch.nn.Module):
-
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  heads=1, groups=1):
         super().__init__()

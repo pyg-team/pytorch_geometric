@@ -168,7 +168,6 @@ class Entities(InMemoryDataset):
 
 
 class hide_stdout(object):
-
     def __enter__(self):
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)

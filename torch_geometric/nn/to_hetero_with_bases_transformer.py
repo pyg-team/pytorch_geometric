@@ -134,7 +134,6 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
 
 
 class ToHeteroWithBasesTransformer(Transformer):
-
     def __init__(
         self,
         module: Module,

@@ -29,7 +29,6 @@ class ToSparseTensor(BaseTransform):
         fill_cache (bool, optional): If set to :obj:`False`, will not fill the
             underlying :obj:`SparseTensor` cache. (default: :obj:`True`)
     """
-
     def __init__(self, attr: Optional[str] = 'edge_weight',
                  remove_edge_index: bool = True, fill_cache: bool = True):
         self.attr = attr

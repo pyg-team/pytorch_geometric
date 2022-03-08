@@ -56,7 +56,6 @@ class GNNStackStage(nn.Module):
         dim_out (int): Output dimension
         num_layers (int): Number of GNN layers
     """
-
     def __init__(self, dim_in, dim_out, num_layers):
         super().__init__()
         self.num_layers = num_layers
@@ -90,7 +89,6 @@ class FeatureEncoder(nn.Module):
     Args:
         dim_in (int): Input feature dimension
     """
-
     def __init__(self, dim_in):
         super().__init__()
         self.dim_in = dim_in
@@ -131,7 +129,6 @@ class GNN(nn.Module):
         dim_out (int): Output dimension
         **kwargs (optional): Optional additional args
     """
-
     def __init__(self, dim_in, dim_out, **kwargs):
         super().__init__()
         GNNStage = register.stage_dict[cfg.gnn.stage_type]

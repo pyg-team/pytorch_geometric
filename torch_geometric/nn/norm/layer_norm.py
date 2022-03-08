@@ -30,7 +30,6 @@ class LayerNorm(torch.nn.Module):
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
     """
-
     def __init__(self, in_channels, eps=1e-5, affine=True):
         super().__init__()
 

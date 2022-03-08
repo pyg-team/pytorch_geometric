@@ -32,7 +32,6 @@ class TGNMemory(torch.nn.Module):
             which aggregates messages to the same destination into a single
             representation.
     """
-
     def __init__(self, num_nodes: int, raw_msg_dim: int, memory_dim: int,
                  time_dim: int, message_module: Callable,
                  aggregator_module: Callable):
@@ -174,7 +173,6 @@ class TGNMemory(torch.nn.Module):
 
 
 class IdentityMessage(torch.nn.Module):
-
     def __init__(self, raw_msg_dim: int, memory_dim: int, time_dim: int):
         super().__init__()
         self.out_channels = raw_msg_dim + 2 * memory_dim + time_dim
@@ -184,7 +182,6 @@ class IdentityMessage(torch.nn.Module):
 
 
 class LastAggregator(torch.nn.Module):
-
     def forward(self, msg, index, t, dim_size):
         _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
@@ -194,13 +191,11 @@ class LastAggregator(torch.nn.Module):
 
 
 class MeanAggregator(torch.nn.Module):
-
     def forward(self, msg, index, t, dim_size):
         return scatter(msg, index, dim=0, dim_size=dim_size, reduce='mean')
 
 
 class TimeEncoder(torch.nn.Module):
-
     def __init__(self, out_channels):
         super().__init__()
         self.out_channels = out_channels
@@ -214,7 +209,6 @@ class TimeEncoder(torch.nn.Module):
 
 
 class LastNeighborLoader(object):
-
     def __init__(self, num_nodes: int, size: int, device=None):
         self.size = size
 

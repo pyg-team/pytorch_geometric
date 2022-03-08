@@ -28,7 +28,6 @@ class ToUndirected(BaseTransform):
             :class:`~torch_geometric.data.HeteroData` graph data.
             (default: :obj:`True`)
     """
-
     def __init__(self, reduce: str = "add", merge: bool = True):
         self.reduce = reduce
         self.merge = merge

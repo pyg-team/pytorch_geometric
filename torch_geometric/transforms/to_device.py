@@ -17,7 +17,6 @@ class ToDevice(BaseTransform):
             values are in pinned memory, the copy will be asynchronous with
             respect to the host. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         device: Union[int, str],

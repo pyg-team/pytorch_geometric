@@ -6,7 +6,6 @@ from torch_sparse import SparseTensor
 
 
 class RandomIndexSampler(torch.utils.data.Sampler):
-
     def __init__(self, num_nodes: int, num_parts: int, shuffle: bool = False):
         self.N = num_nodes
         self.num_parts = num_parts
@@ -48,7 +47,6 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`num_workers`.
     """
-
     def __init__(self, data, num_parts: int, shuffle: bool = False, **kwargs):
         assert data.edge_index is not None
 

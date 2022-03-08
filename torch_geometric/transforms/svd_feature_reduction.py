@@ -12,7 +12,6 @@ class SVDFeatureReduction(BaseTransform):
         out_channels (int): The dimensionlity of node features after
             reduction.
     """
-
     def __init__(self, out_channels):
         self.out_channels = out_channels
 

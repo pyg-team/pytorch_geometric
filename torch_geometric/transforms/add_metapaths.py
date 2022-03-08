@@ -81,7 +81,6 @@ class AddMetaPaths(BaseTransform):
         drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
             node types not connected by any edge type. (default: :obj:`False`)
     """
-
     def __init__(self, metapaths: List[List[EdgeType]],
                  drop_orig_edges: bool = False,
                  keep_same_node_type: bool = False,

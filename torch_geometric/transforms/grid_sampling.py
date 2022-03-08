@@ -27,7 +27,6 @@ class GridSampling(BaseTransform):
             maximum coordinates found in :obj:`data.pos`.
             (default: :obj:`None`)
     """
-
     def __init__(self, size: Union[float, List[float], Tensor],
                  start: Optional[Union[float, List[float], Tensor]] = None,
                  end: Optional[Union[float, List[float], Tensor]] = None):

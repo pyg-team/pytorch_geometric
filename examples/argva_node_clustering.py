@@ -25,7 +25,6 @@ train_data, val_data, test_data = dataset[0]
 
 
 class Encoder(torch.nn.Module):
-
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
@@ -38,7 +37,6 @@ class Encoder(torch.nn.Module):
 
 
 class Discriminator(torch.nn.Module):
-
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.lin1 = Linear(in_channels, hidden_channels)
