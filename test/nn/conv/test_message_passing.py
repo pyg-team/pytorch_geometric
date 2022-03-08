@@ -15,8 +15,8 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 class MyConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int):
-        super().__init__(aggr='add')
+                 out_channels: int, aggr: str = 'add'):
+        super().__init__(aggr=aggr)
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -105,6 +105,17 @@ def test_my_conv():
     assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
     assert jit((x1, None), adj.t()).tolist() == out2.tolist()
     jit.fuse = True
+
+
+@pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])
+def test_my_conv_aggr(aggr):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_weight = torch.randn(edge_index.size(1))
+
+    conv = MyConv(8, 32, aggr=aggr)
+    out = conv(x, edge_index, edge_weight)
+    assert out.size() == (4, 32)
 
 
 def test_my_static_graph_conv():
