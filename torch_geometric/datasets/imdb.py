@@ -1,4 +1,3 @@
-import os
 from itertools import product
 from pathlib import Path
 from typing import Callable, List, Optional

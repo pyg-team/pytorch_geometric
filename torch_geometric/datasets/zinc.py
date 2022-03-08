@@ -1,4 +1,3 @@
-import os
 import pickle
 import shutil
 from pathlib import Path

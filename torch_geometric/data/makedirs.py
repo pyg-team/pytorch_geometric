@@ -1,5 +1,4 @@
 import errno
-import os
 from pathlib import Path
 
 

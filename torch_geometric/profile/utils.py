@@ -1,5 +1,4 @@
 import gc
-import os
 import random
 import subprocess as sp
 import sys

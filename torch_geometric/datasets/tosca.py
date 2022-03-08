@@ -81,7 +81,6 @@ class TOSCA(InMemoryDataset):
         data_list = []
         for cat in self.categories:
             paths = Path(self.raw_dir).rglob('{}*.tri'.format(cat))
-            # paths = glob.glob(Path.joinpath(Path(self.raw_dir), '{}*.tri'.format(cat)))
             paths = [path[:-4] for path in paths]
             paths = sorted(paths, key=lambda e: (len(e), e))
 

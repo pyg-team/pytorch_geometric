@@ -1,5 +1,3 @@
-import glob
-import os
 import shutil
 from pathlib import Path
 
@@ -86,7 +84,6 @@ class WILLOWObjectClass(InMemoryDataset):
 
         category = self.category.capitalize()
         names = Path.joinpath(Path(self.raw_dir), category).rglob('*.png')
-        # names = glob.glob(Path.joinpath(Path(self.raw_dir), category, '*.png'))
         names = sorted([name[:-4] for name in names])
 
         vgg16_outputs = []

@@ -1,4 +1,3 @@
-import glob
 import pathlib
 from pathlib import Path
 

@@ -1,6 +1,5 @@
 # from os.path import dirname, basename, is_file, join
 from pathlib import Path
-import glob
 
 modules = Path(__file__).parent.rglob('*.py')
 __all__ = [
