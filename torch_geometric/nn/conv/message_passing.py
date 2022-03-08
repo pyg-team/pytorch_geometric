@@ -33,16 +33,16 @@ class MessagePassing(torch.nn.Module):
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
     where :math:`\square` denotes a differentiable, permutation invariant
-    function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
-    and :math:`\phi_{\mathbf{\Theta}}` denote differentiable functions such as
-    MLPs.
+    function, *e.g.*, sum, mean, min, max or mul, and
+    :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
+    differentiable functions such as MLPs.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
         aggr (string, optional): The aggregation scheme to use
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"` or :obj:`None`).
-            (default: :obj:`"add"`)
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+            :obj:`"mul"` or :obj:`None`). (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -85,7 +85,7 @@ class MessagePassing(torch.nn.Module):
         super().__init__()
 
         self.aggr = aggr
-        assert self.aggr in ['add', 'mean', 'max', None]
+        assert self.aggr in ['add', 'sum', 'mean', 'min', 'max', 'mul', None]
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -417,8 +417,8 @@ class MessagePassing(torch.nn.Module):
         argument which was initially passed to :meth:`propagate`.
 
         By default, this function will delegate its call to scatter functions
-        that support "add", "mean" and "max" operations as specified in
-        :meth:`__init__` by the :obj:`aggr` argument.
+        that support "add", "mean", "min", "max" and "mul" operations as
+        specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
         if ptr is not None:
             ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
