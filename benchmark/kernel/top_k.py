@@ -7,6 +7,7 @@ from torch_geometric.nn import (GraphConv, JumpingKnowledge, TopKPooling,
 
 
 class TopK(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, ratio=0.8):
         super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')

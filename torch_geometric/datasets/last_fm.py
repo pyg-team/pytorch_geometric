@@ -59,7 +59,8 @@ class LastFM(InMemoryDataset):
     def process(self):
         data = HeteroData()
 
-        node_type_idx = np.load(Path.joinpath(Path(self.raw_dir), 'node_types.npy'))
+        node_type_idx = np.load(
+            Path.joinpath(Path(self.raw_dir), 'node_types.npy'))
         node_type_idx = torch.from_numpy(node_type_idx).to(torch.long)
 
         node_types = ['user', 'artist', 'tag']
@@ -67,9 +68,11 @@ class LastFM(InMemoryDataset):
             data[node_type].num_nodes = int((node_type_idx == i).sum())
 
         pos_split = np.load(
-            Path.joinpath(Path(self.raw_dir), 'train_val_test_pos_user_artist.npz'))
+            Path.joinpath(Path(self.raw_dir),
+                          'train_val_test_pos_user_artist.npz'))
         neg_split = np.load(
-            Path.joinpath(Path(self.raw_dir), 'train_val_test_neg_user_artist.npz'))
+            Path.joinpath(Path(self.raw_dir),
+                          'train_val_test_neg_user_artist.npz'))
 
         for name in ['train', 'val', 'test']:
             if name != 'train':

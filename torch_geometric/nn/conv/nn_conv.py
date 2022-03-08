@@ -59,6 +59,7 @@ class NNConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
+
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, nn: Callable, aggr: str = 'add',
                  root_weight: bool = True, bias: bool = True, **kwargs):

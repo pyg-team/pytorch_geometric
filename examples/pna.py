@@ -33,6 +33,7 @@ for data in train_dataset:
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
 

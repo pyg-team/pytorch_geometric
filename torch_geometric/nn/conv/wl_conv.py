@@ -25,6 +25,7 @@ class WLConv(torch.nn.Module):
           edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node coloring :math:`(|\mathcal{V}|)` *(integer-based)*
     """
+
     def __init__(self):
         super().__init__()
         self.hashmap = {}

@@ -37,6 +37,7 @@ class KarateClub(InMemoryDataset):
               - 34
               - 4
     """
+
     def __init__(self, transform: Optional[Callable] = None):
         super().__init__('.', transform)
 

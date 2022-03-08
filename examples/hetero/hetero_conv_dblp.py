@@ -16,6 +16,7 @@ data['conference'].x = torch.ones(data['conference'].num_nodes, 1)
 
 
 class HeteroGNN(torch.nn.Module):
+
     def __init__(self, metadata, hidden_channels, out_channels, num_layers):
         super().__init__()
 

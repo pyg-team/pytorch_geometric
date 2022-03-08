@@ -36,6 +36,7 @@ class DenseDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`drop_last` or
             :obj:`num_workers`.
     """
+
     def __init__(self, dataset: Union[Dataset, List[Data]],
                  batch_size: int = 1, shuffle: bool = False, **kwargs):
         if 'collate_fn' in kwargs:

@@ -26,6 +26,7 @@ class GraphUNet(torch.nn.Module):
         act (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.nn.functional.relu`)
     """
+
     def __init__(self, in_channels, hidden_channels, out_channels, depth,
                  pool_ratios=0.5, sum_res=True, act=F.relu):
         super().__init__()

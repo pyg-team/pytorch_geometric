@@ -4,6 +4,7 @@ from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
+
     def __init__(self, data_list):
         super().__init__('/tmp/MyTestDataset')
         self.data, self.slices = self.collate(data_list)
@@ -43,7 +44,9 @@ def test_in_memory_dataset():
 
 
 def test_collate_with_new_dimension():
+
     class MyData(Data):
+
         def __cat_dim__(self, key, value, *args, **kwargs):
             if key == 'foo':
                 return None

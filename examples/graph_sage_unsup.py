@@ -20,6 +20,7 @@ data = dataset[0]
 
 
 class NeighborSampler(RawNeighborSampler):
+
     def sample(self, batch):
         batch = torch.tensor(batch)
         row, col, _ = self.adj_t.coo()
@@ -41,6 +42,7 @@ train_loader = NeighborSampler(data.edge_index, sizes=[10, 10], batch_size=256,
 
 
 class SAGE(nn.Module):
+
     def __init__(self, in_channels, hidden_channels, num_layers):
         super().__init__()
         self.num_layers = num_layers

@@ -18,6 +18,7 @@ class RandomRotate(BaseTransform):
             \mathrm{degrees}]`.
         axis (int, optional): The rotation axis. (default: :obj:`0`)
     """
+
     def __init__(self, degrees, axis=0):
         if isinstance(degrees, numbers.Number):
             degrees = (-abs(degrees), abs(degrees))

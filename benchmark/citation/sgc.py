@@ -20,6 +20,7 @@ args = parser.parse_args()
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, dataset):
         super().__init__()
         self.conv1 = SGConv(dataset.num_features, dataset.num_classes,

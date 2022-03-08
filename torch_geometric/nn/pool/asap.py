@@ -50,6 +50,7 @@ class ASAPooling(torch.nn.Module):
             - **perm** (*Tensor*): The top-:math:`k` node indices of nodes
               which are kept after pooling.
     """
+
     def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
                  GNN: Optional[Callable] = None, dropout: float = 0.0,
                  negative_slope: float = 0.2, add_self_loops: bool = False,

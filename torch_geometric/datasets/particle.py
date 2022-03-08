@@ -10,6 +10,7 @@ from torch_geometric.data import Data, Dataset
 
 
 class TrackingData(Data):
+
     def __inc__(self, key, value, *args, **kwargs):
         if key == 'y_index':
             return torch.tensor([value[0].max().item() + 1, self.num_nodes])
@@ -35,7 +36,9 @@ class TrackMLParticleTrackingDataset(Dataset):
     def __init__(self, root, transform=None):
         super(TrackMLParticleTrackingDataset, self).__init__(root, transform)
         events = Path(self.raw_dir).rglob('event*-hits.csv')
-        events = [e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events]
+        events = [
+            e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events
+        ]
         self.events = sorted(events)
 
     @property

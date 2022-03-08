@@ -32,6 +32,7 @@ subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
 
 class SAGE(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.convs = torch.nn.ModuleList()

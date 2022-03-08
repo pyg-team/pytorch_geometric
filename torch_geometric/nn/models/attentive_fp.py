@@ -13,6 +13,7 @@ from ..inits import glorot, zeros
 
 
 class GATEConv(MessagePassing):
+
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  dropout: float = 0.0):
         super().__init__(aggr='add', node_dim=0)
@@ -73,6 +74,7 @@ class AttentiveFP(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
 
     """
+
     def __init__(self, in_channels: int, hidden_channels: int,
                  out_channels: int, edge_dim: int, num_layers: int,
                  num_timesteps: int, dropout: float = 0.0):

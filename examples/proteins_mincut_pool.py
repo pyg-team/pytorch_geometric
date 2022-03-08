@@ -24,6 +24,7 @@ train_loader = DataLoader(train_dataset, batch_size=20)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels, hidden_channels=32):
         super().__init__()
 

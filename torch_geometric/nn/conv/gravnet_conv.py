@@ -54,6 +54,7 @@ class GravNetConv(MessagePassing):
 
 
     """
+
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,
                  num_workers: int = 1, **kwargs):

@@ -26,6 +26,7 @@ class GraphNorm(torch.nn.Module):
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
     """
+
     def __init__(self, in_channels: int, eps: float = 1e-5):
         super().__init__()
 

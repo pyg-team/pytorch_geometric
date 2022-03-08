@@ -20,6 +20,7 @@ class RandomShear(BaseTransform):
         shear (float or int): maximum shearing factor defining the range
             :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
     """
+
     def __init__(self, shear):
         self.shear = abs(shear)
 

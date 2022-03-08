@@ -22,12 +22,14 @@ transform = T.Compose([
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,
                       split_labels=True, add_negative_train_samples=False),
 ])
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=transform)
 train_data, val_data, test_data = dataset[0]
 
 
 class GCNEncoder(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
@@ -39,6 +41,7 @@ class GCNEncoder(torch.nn.Module):
 
 
 class VariationalGCNEncoder(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
@@ -51,6 +54,7 @@ class VariationalGCNEncoder(torch.nn.Module):
 
 
 class LinearEncoder(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv = GCNConv(in_channels, out_channels)
@@ -60,6 +64,7 @@ class LinearEncoder(torch.nn.Module):
 
 
 class VariationalLinearEncoder(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv_mu = GCNConv(in_channels, out_channels)

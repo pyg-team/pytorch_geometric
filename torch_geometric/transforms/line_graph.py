@@ -30,6 +30,7 @@ class LineGraph(BaseTransform):
         force_directed (bool, optional): If set to :obj:`True`, the graph will
             be always treated as a directed graph. (default: :obj:`False`)
     """
+
     def __init__(self, force_directed: bool = False):
         self.force_directed = force_directed
 

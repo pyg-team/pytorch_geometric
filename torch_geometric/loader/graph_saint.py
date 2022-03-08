@@ -41,6 +41,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size` or
             :obj:`num_workers`.
     """
+
     def __init__(self, data, batch_size: int, num_steps: int = 1,
                  sample_coverage: int = 0, save_dir: Optional[str] = None,
                  log: bool = True, **kwargs):
@@ -166,6 +167,7 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
     r"""The GraphSAINT node sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
+
     def __sample_nodes__(self, batch_size):
         edge_sample = torch.randint(0, self.E, (batch_size, self.batch_size),
                                     dtype=torch.long)
@@ -177,6 +179,7 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     r"""The GraphSAINT edge sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
+
     def __sample_nodes__(self, batch_size):
         row, col, _ = self.adj.coo()
 
@@ -202,6 +205,7 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     Args:
         walk_length (int): The length of each random walk.
     """
+
     def __init__(self, data, batch_size: int, walk_length: int,
                  num_steps: int = 1, sample_coverage: int = 0,
                  save_dir: Optional[str] = None, log: bool = True, **kwargs):

@@ -21,6 +21,7 @@ print(data)
 
 
 class HAN(nn.Module):
+
     def __init__(self, in_channels: Union[int, Dict[str, int]],
                  out_channels: int, hidden_channels=128, heads=8):
         super().__init__()

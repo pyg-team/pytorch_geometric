@@ -6,6 +6,7 @@ from torch_geometric.nn import JumpingKnowledge, SAGEConv, global_mean_pool
 
 
 class GraphSAGE(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)
@@ -38,6 +39,7 @@ class GraphSAGE(torch.nn.Module):
 
 
 class GraphSAGEWithJK(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)

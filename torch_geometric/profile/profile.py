@@ -46,7 +46,9 @@ def profileit():
 
         loss, stats = train(model, x, edge_index, y)
     """
+
     def decorator(func):
+
         def wrapper(*args, **kwargs) -> Tuple[Any, Stats]:
             from pytorch_memlab import LineProfiler
 
@@ -101,7 +103,9 @@ def timeit():
 
         z, time = test(model, x, edge_index)
     """
+
     def decorator(func):
+
         def wrapper(*args, **kwargs) -> Tuple[Any, float]:
             start = torch.cuda.Event(enable_timing=True)
             end = torch.cuda.Event(enable_timing=True)

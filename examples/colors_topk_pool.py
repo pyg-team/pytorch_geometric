@@ -13,13 +13,15 @@ from torch_geometric.nn import GINConv, TopKPooling, global_add_pool
 
 
 class HandleNodeAttention(object):
+
     def __call__(self, data):
         data.attn = torch.softmax(data.x[:, 0], dim=0)
         data.x = data.x[:, 1:]
         return data
 
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'COLORS-3')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'COLORS-3')
 dataset = TUDataset(path, 'COLORS-3', use_node_attr=True,
                     transform=HandleNodeAttention())
 
@@ -29,6 +31,7 @@ test_loader = DataLoader(dataset[3000:], batch_size=60)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels):
         super().__init__()
 

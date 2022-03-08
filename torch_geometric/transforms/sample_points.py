@@ -14,6 +14,7 @@ class SamplePoints(BaseTransform):
         include_normals (bool, optional): If set to :obj:`True`, then compute
             normals for each sampled point. (default: :obj:`False`)
     """
+
     def __init__(self, num, remove_faces=True, include_normals=False):
         self.num = num
         self.remove_faces = remove_faces

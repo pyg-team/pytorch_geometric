@@ -6,6 +6,7 @@ from torch_geometric.transforms import BaseTransform
 
 class Delaunay(BaseTransform):
     r"""Computes the delaunay triangulation of a set of points."""
+
     def __call__(self, data):
         if data.pos.size(0) < 2:
             data.edge_index = torch.tensor([], dtype=torch.long,

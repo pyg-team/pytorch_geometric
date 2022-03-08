@@ -38,7 +38,9 @@ def test_meta_layer():
 
 
 def test_meta_layer_example():
+
     class EdgeModel(torch.nn.Module):
+
         def __init__(self):
             super().__init__()
             self.edge_mlp = Seq(Lin(2 * 10 + 5 + 20, 5), ReLU(), Lin(5, 5))
@@ -53,6 +55,7 @@ def test_meta_layer_example():
             return self.edge_mlp(out)
 
     class NodeModel(torch.nn.Module):
+
         def __init__(self):
             super().__init__()
             self.node_mlp_1 = Seq(Lin(15, 10), ReLU(), Lin(10, 10))
@@ -73,6 +76,7 @@ def test_meta_layer_example():
             return self.node_mlp_2(out)
 
     class GlobalModel(torch.nn.Module):
+
         def __init__(self):
             super().__init__()
             self.global_mlp = Seq(Lin(20 + 10, 20), ReLU(), Lin(20, 20))

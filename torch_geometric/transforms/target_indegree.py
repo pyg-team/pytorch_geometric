@@ -17,6 +17,7 @@ class TargetIndegree(BaseTransform):
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
     """
+
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
         self.max = max_value

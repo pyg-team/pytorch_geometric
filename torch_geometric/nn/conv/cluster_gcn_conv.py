@@ -40,6 +40,7 @@ class ClusterGCNConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+
     def __init__(self, in_channels: int, out_channels: int,
                  diag_lambda: float = 0., add_self_loops: bool = True,
                  bias: bool = True, **kwargs):

@@ -7,7 +7,7 @@ from torch_geometric.datasets import Flickr
 from torch_geometric.loader import ShaDowKHopSampler
 from torch_geometric.nn import SAGEConv, global_mean_pool
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent,'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]
 
@@ -21,6 +21,7 @@ test_loader = ShaDowKHopSampler(data, depth=2, num_neighbors=5,
 
 
 class GNN(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = SAGEConv(in_channels, hidden_channels)

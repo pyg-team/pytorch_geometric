@@ -11,6 +11,7 @@ class ToDense(BaseTransform):
         num_nodes (int): The number of nodes. If set to :obj:`None`, the number
             of nodes will get automatically inferred. (default: :obj:`None`)
     """
+
     def __init__(self, num_nodes=None):
         self.num_nodes = num_nodes
 

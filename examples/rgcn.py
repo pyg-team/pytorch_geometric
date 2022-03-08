@@ -17,7 +17,8 @@ args = parser.parse_args()
 if args.dataset in ['AIFB', 'MUTAG']:
     RGCNConv = FastRGCNConv
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Entities')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Entities')
 dataset = Entities(path, args.dataset)
 data = dataset[0]
 
@@ -37,6 +38,7 @@ data.test_idx = mapping[data.train_idx.size(0):]
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = RGCNConv(data.num_nodes, 16, dataset.num_relations,

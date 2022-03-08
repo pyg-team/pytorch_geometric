@@ -17,7 +17,8 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn.pool import knn
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)
@@ -26,6 +27,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 
 class TransformerBlock(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.lin_in = Lin(in_channels, in_channels)
@@ -51,6 +53,7 @@ class TransitionDown(torch.nn.Module):
         Samples the input point cloud by a ratio percentage to reduce
         cardinality and uses an mlp to augment features dimensionnality
     '''
+
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
         super().__init__()
         self.k = k
@@ -89,6 +92,7 @@ def MLP(channels, batch_norm=True):
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
         self.k = k

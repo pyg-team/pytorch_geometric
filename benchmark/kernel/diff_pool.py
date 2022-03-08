@@ -8,6 +8,7 @@ from torch_geometric.nn import DenseSAGEConv, JumpingKnowledge, dense_diff_pool
 
 
 class Block(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels, mode='cat'):
         super().__init__()
 
@@ -31,6 +32,7 @@ class Block(torch.nn.Module):
 
 
 class DiffPool(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, ratio=0.25):
         super().__init__()
 

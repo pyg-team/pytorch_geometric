@@ -9,7 +9,8 @@ from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, DynamicEdgeConv, global_max_pool
 
-path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data','ModelNet10')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)
@@ -20,6 +21,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, out_channels, k=20, aggr='max'):
         super().__init__()
 

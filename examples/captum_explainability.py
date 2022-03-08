@@ -17,6 +17,7 @@ data = dataset[0]
 
 
 class GCN(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = GCNConv(dataset.num_features, 16)

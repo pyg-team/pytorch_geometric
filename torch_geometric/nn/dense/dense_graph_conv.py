@@ -5,6 +5,7 @@ from torch.nn import Linear
 class DenseGraphConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GraphConv`.
     """
+
     def __init__(self, in_channels, out_channels, aggr='add', bias=True):
         assert aggr in ['add', 'mean', 'max']
         super().__init__()

@@ -15,6 +15,7 @@ from ..inits import kaiming_uniform, uniform
 
 
 class Linear(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels, groups=1, bias=True):
         super().__init__()
         assert in_channels % groups == 0 and out_channels % groups == 0
@@ -70,6 +71,7 @@ def restricted_softmax(src, dim: int = -1, margin: float = 0.):
 
 
 class Attention(torch.nn.Module):
+
     def __init__(self, dropout=0):
         super().__init__()
         self.dropout = dropout
@@ -100,6 +102,7 @@ class Attention(torch.nn.Module):
 
 
 class MultiHead(Attention):
+
     def __init__(self, in_channels, out_channels, heads=1, groups=1, dropout=0,
                  bias=True):
         super().__init__(dropout)

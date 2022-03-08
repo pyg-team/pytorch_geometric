@@ -277,6 +277,7 @@ class SchNet(torch.nn.Module):
 
 
 class InteractionBlock(torch.nn.Module):
+
     def __init__(self, hidden_channels, num_gaussians, num_filters, cutoff):
         super().__init__()
         self.mlp = Sequential(
@@ -308,6 +309,7 @@ class InteractionBlock(torch.nn.Module):
 
 
 class CFConv(MessagePassing):
+
     def __init__(self, in_channels, out_channels, num_filters, nn, cutoff):
         super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
@@ -336,6 +338,7 @@ class CFConv(MessagePassing):
 
 
 class GaussianSmearing(torch.nn.Module):
+
     def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
@@ -348,6 +351,7 @@ class GaussianSmearing(torch.nn.Module):
 
 
 class ShiftedSoftplus(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.shift = torch.log(torch.tensor(2.0)).item()
