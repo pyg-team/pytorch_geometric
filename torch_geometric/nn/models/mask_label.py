@@ -13,8 +13,8 @@ class MaskLabel(torch.nn.Module):
     Args:
         num_classes (int): Size of the number of classes for the labels
         out_channels (int): Size of each output sample.
-        method (str): "add" if embedding should be added to the input and 
-            "concat" if they should be concattenated. Note that if "add" is 
+        method (str): "add" if embedding should be added to the input and
+            "concat" if they should be concattenated. Note that if "add" is
             used then "out_channels" needs to be equal to the input dims.
     """
     def __init__(self, num_classes, out_channels, method="add"):
