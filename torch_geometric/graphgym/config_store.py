@@ -24,6 +24,7 @@ def get_config_store() -> Any:
 def to_dataclass(
     cls: Any,
     base: Optional[Any] = None,
+    with_target: bool = True,
     map_args: Optional[Dict[str, Tuple]] = None,
     exclude_args: Optional[List[str]] = None,
     strict: bool = False,
@@ -48,10 +49,12 @@ def to_dataclass(
 
     Args:
         cls (Any): The class to generate a schema for.
-        base: (Any, optional): The base class of the schema.
+        base (Any, optional): The base class of the schema.
             (default: :obj:`None`)
+        with_target (bool, optional): If set to :obj:`False`, will not a
+            :obj:`_target_` attribute to the schema. (default: :obj:`True`)
         map_args (Dict[str, Tuple], optional): Arguments for which annotation
-            and default values should be overriden. (default: :obj:`None`)
+            and default values should be overridden. (default: :obj:`None`)
         exclude_args (List[str or int], optional): Arguments to exclude.
             (default: :obj:`None`)
         strict (bool, optional): If set to :obj:`True`, ensures that all
@@ -128,8 +131,9 @@ def to_dataclass(
 
         fields.append((name, annotation, default))
 
-    full_cls_name = f'{cls.__module__}.{cls.__qualname__}'
-    fields.append(('_target_', str, field(default=full_cls_name)))
+    if with_target:
+        full_cls_name = f'{cls.__module__}.{cls.__qualname__}'
+        fields.append(('_target_', str, field(default=full_cls_name)))
 
     return make_dataclass(cls.__qualname__, fields=fields,
                           bases=() if base is None else (base, ))
