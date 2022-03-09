@@ -76,7 +76,7 @@ def train(model, optim, epochs=200, label_rate=0.95):
 
         # create epoch training mask that chooses subset of train to remove
         epoch_mask = MaskLabel.ratio_mask(train_mask, 1 - label_rate, True)
-        
+
         # label mask is a mask to give what labels are allowed
         label_mask = train_mask ^ epoch_mask
 
