@@ -30,7 +30,7 @@ class MaskLabel(torch.nn.Module):
         if self.method == "concat":
             out = torch.zeros(y.shape[0], self.out_channels, dtype=torch.float)
             out[mask] = self.emb(y[mask])
-            return torch.concat([x, out], dim=1)
+            return torch.cat([x, out], dim=1)
         else:
             x = torch.clone(x)
             x[mask] = self.emb(y[mask])
