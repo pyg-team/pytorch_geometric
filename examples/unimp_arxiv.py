@@ -104,7 +104,7 @@ def train(model, optim, epochs=200, label_rate=0.95):
             loss_valid = model.loss(out_valid, y, valid_mask)
             loss_test = model.loss(out_test, y, test_mask)
 
-            accuracy_train = model.accuracy(out_train, y, epoch_mask)
+            accuracy_train = model.accuracy(out_train, y, label_mask)
             accuracy_valid = model.accuracy(out_valid, y, valid_mask)
             accuracy_test = model.accuracy(out_test, y, test_mask)
 
