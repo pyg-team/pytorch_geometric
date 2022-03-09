@@ -28,5 +28,9 @@ test_acc = evaluator.eval({
     'y_true': data.y[split_idx['test']],
     'y_pred': y_pred[split_idx['test']],
 })['acc']
+test_acc = evaluator.eval({
+    'y_true': data.y[split_idx['train']],
+    'y_pred': y_pred[split_idx['train']],
+})['acc']
 
 print(f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')

@@ -68,26 +68,26 @@ class UnimpNet(torch.nn.Module):
                 float(labels[mask].size(0)))
 
 
-def train(model, optim, epochs=50, label_rate=0.9):
+def train(model, optim, epochs=200, label_rate=0.95):
 
     y = data.y.squeeze()
     for epoch in range(epochs):
         model.train()
 
         # create epoch training mask that chooses subset of train to remove
-        epoch_mask = MaskLabel.ratio_mask(train_mask, 1 - label_rate)
-
+        epoch_mask = MaskLabel.ratio_mask(train_mask, 1 - label_rate, True)
+        
         # label mask is a mask to give what labels are allowed
-        label_mask = ~(epoch_mask | test_mask | valid_mask)
+        label_mask = train_mask ^ epoch_mask
 
         # forward pass
         out_train = model(data.x, data.y.squeeze(), data.edge_index,
-                          label_mask)
+                          epoch_mask)
 
         optim.zero_grad()
 
         # get loss and accuracy
-        loss_train = model.loss(out_train, y, ~epoch_mask)
+        loss_train = model.loss(out_train, y, label_mask)
 
         # apply gradients
         loss_train.backward()
@@ -95,12 +95,11 @@ def train(model, optim, epochs=50, label_rate=0.9):
 
         # no grad ops
         with torch.no_grad():
-            model.eval()
-            label_mask_valid = ~(test_mask | valid_mask)
-            label_mask_test = ~test_mask
+            epoc_mask_valid = train_mask
+            epoch_mask_test = train_mask | valid_mask
 
-            out_test = model(data.x, y, data.edge_index, label_mask_test)
-            out_valid = model(data.x, y, data.edge_index, label_mask_valid)
+            out_test = model(data.x, y, data.edge_index, epoch_mask_test)
+            out_valid = model(data.x, y, data.edge_index, epoc_mask_valid)
 
             loss_valid = model.loss(out_valid, y, valid_mask)
             loss_test = model.loss(out_test, y, test_mask)
