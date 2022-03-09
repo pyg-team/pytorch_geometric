@@ -49,7 +49,7 @@ class UnimpNet(torch.nn.Module):
         edge_index: torch.Tensor,
         label_mask: torch.Tensor,
     ):
-        x = x + self.label_embedding(y, label_mask)
+        x = x + self.label_embedding(x, y, label_mask)
         x = self.conv(x, edge_index)
         out = self.linear(x)
         return out
@@ -68,7 +68,7 @@ class UnimpNet(torch.nn.Module):
                 float(labels[mask].size(0)))
 
 
-def train(model, optim, epochs=20, label_rate=0.9):
+def train(model, optim, epochs=50, label_rate=0.9):
 
     y = data.y.squeeze()
     for epoch in range(epochs):
