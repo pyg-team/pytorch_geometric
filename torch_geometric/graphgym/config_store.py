@@ -1,12 +1,12 @@
+import copy
 import inspect
 import re
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
+from hydra.core.config_store import ConfigNode, ConfigStore
 from omegaconf import MISSING
-
-from torch_geometric.typing import map_annotation
 
 EXCLUDE = {'self', 'args', 'kwargs'}
 
@@ -15,16 +15,32 @@ MAPPING = {
 }
 
 
-def get_config_store() -> Any:
-    r"""Return the global configuration store."""
-    from hydra.core.config_store import ConfigStore
-    return ConfigStore.instance()
+def map_annotation(
+    annotation: Any,
+    mapping: Optional[Dict[Any, Any]] = None,
+) -> Any:
+
+    origin = getattr(annotation, '__origin__', None)
+    args = getattr(annotation, '__args__', [])
+    if origin == Union or origin == list or origin == dict:
+        annotation = copy.copy(annotation)
+        annotation.__args__ = tuple(map_annotation(a, mapping) for a in args)
+        return annotation
+
+    if annotation in mapping or {}:
+        return mapping[annotation]
+
+    out = dataclass_from_class(annotation)
+    if out is not None:
+        return out
+
+    return annotation
 
 
 def to_dataclass(
     cls: Any,
-    base: Optional[Any] = None,
-    with_target: bool = True,
+    base_cls: Optional[Any] = None,
+    with_target: Optional[bool] = None,
     map_args: Optional[Dict[str, Tuple]] = None,
     exclude_args: Optional[List[str]] = None,
     strict: bool = False,
@@ -49,16 +65,18 @@ def to_dataclass(
 
     Args:
         cls (Any): The class to generate a schema for.
-        base (Any, optional): The base class of the schema.
+        base_cls (Any, optional): The base class of the schema.
             (default: :obj:`None`)
-        with_target (bool, optional): If set to :obj:`False`, will not a
-            :obj:`_target_` attribute to the schema. (default: :obj:`True`)
+        with_target (bool, optional): If set to :obj:`False`, will not add the
+            :obj:`_target_` attribute to the schema. If set to :obj:`None`,
+            will only add the :obj:`_target_` in case :obj:`base_cls` is given.
+            (default: :obj:`None`)
         map_args (Dict[str, Tuple], optional): Arguments for which annotation
             and default values should be overridden. (default: :obj:`None`)
         exclude_args (List[str or int], optional): Arguments to exclude.
             (default: :obj:`None`)
         strict (bool, optional): If set to :obj:`True`, ensures that all
-            arguments in either :obj:`map_args` and :obj:`exclude_args` are
+            arguments in both :obj:`map_args` and :obj:`exclude_args` are
             present in the input parameters. (default: :obj:`False`)
     """
     fields = []
@@ -80,8 +98,8 @@ def to_dataclass(
         if exclude_args is not None:
             if name in exclude_args or i in exclude_args:
                 continue
-        if base is not None:
-            if name in base.__dataclass_fields__:
+        if base_cls is not None:
+            if name in base_cls.__dataclass_fields__:
                 continue
 
         if map_args is not None and name in map_args:
@@ -107,10 +125,7 @@ def to_dataclass(
                 if getattr(args[1], '__origin__', None) == Union:
                     annotation = Dict[args[0], Any]
         else:
-            if default != inspect.Parameter.empty:
-                annotation = Optional[Any]
-            else:
-                annotation = Any
+            annotation = Any
 
         if str(default) == "<required parameter>":
             # Fix `torch.optim.SGD.lr = _RequiredParameter()`:
@@ -131,45 +146,99 @@ def to_dataclass(
 
         fields.append((name, annotation, default))
 
+    with_target = base_cls is not None if with_target is None else with_target
     if with_target:
         full_cls_name = f'{cls.__module__}.{cls.__qualname__}'
         fields.append(('_target_', str, field(default=full_cls_name)))
 
     return make_dataclass(cls.__qualname__, fields=fields,
-                          bases=() if base is None else (base, ))
+                          bases=() if base_cls is None else (base_cls, ))
+
+
+def get_config_store() -> Any:
+    r"""Returns the global configuration store."""
+    return ConfigStore.instance()
+
+
+def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
+    if not isinstance(cls, str) and cls.__module__ in {'builtins', 'typing'}:
+        return None
+
+    def _recursive_get_node(repo: Dict[str, Any]) -> Optional[ConfigNode]:
+        for key, value in repo.items():
+            if isinstance(value, dict):
+                out = _recursive_get_node(value)
+                if out is not None:
+                    return out
+            elif isinstance(cls, str) and key == f'{cls}.yaml':
+                return value.node
+            elif getattr(value.node._metadata, 'object_type', None) == cls:
+                return value.node
+            elif getattr(value.node._metadata, 'orig_type', None) == cls:
+                return value.node
+
+    return _recursive_get_node(get_config_store().repo)
+
+
+def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
+    r"""Returns the :obj:`dataclass` of a class registered in the global
+    configuration store."""
+    node = get_node(cls)
+    return node._metadata.object_type if node is not None else None
+
+
+def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
+    r"""Returns the original class of a :obj:`dataclass` registered in the
+    global configuration store."""
+    node = get_node(cls)
+    return node._metadata.orig_type if node is not None else None
 
 
 def register(
-    group: str,
     cls: Optional[Any] = None,
+    data_cls: Optional[Any] = None,
+    group: Optional[str] = None,
     **kwargs,
-) -> Optional[Callable]:
+) -> Union[Any, Callable]:
     r"""Registers a class in the global configuration store.
 
     Args:
-        group (str): The group of the config
-        cls (cls, optional): The class to register. If set to :obj:`None`, will
+        cls (Any, optional): The class to register. If set to :obj:`None`, will
             return a decorator. (default: :obj:`None`)
+        data_cls (Any, optional): The data class to register. If set to
+            :obj:`None`, will dynamically create the data class according to
+            :class:`~torch_geometric.graphgym.config_store.to_dataclass`.
+            (default: :obj:`None`)
+        group (str, optional): The group in the global configuration store.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`~torch_geometric.graphgym.config_store.to_dataclass`.
     """
-
     if cls is not None:
         name = cls.__name__
-        cls = to_dataclass(cls, **kwargs)
 
-        get_config_store().store(name, cls, group)
+        if data_cls is None:
+            data_cls = to_dataclass(cls, **kwargs)
 
-        pattern = re.compile(group, re.IGNORECASE)
-        if pattern.search(name):
-            get_config_store().store(pattern.sub('', name), cls, group)
-        return None
+        get_config_store().store(name, data_cls, group)
+        get_node(name)._metadata.orig_type = cls
 
-    def bounded_register(cls: Any) -> Any:  # Other-wise, use it as a decorator
-        register(group, cls, **kwargs)
+        pattern = re.compile(group or '', re.IGNORECASE)
+        if group is not None and pattern.search(name):
+            name = pattern.sub('', name)
+            get_config_store().store(name, data_cls, group)
+            get_node(name)._metadata.orig_type = cls
+
+        return data_cls
+
+    def bounded_register(cls: Any) -> Any:  # Other-wise, return a decorator:
+        register(cls=cls, data_cls=data_cls, group=group, **kwargs)
         return cls
 
     return bounded_register
+
+
+###############################################################################
 
 
 @dataclass
@@ -218,7 +287,7 @@ def fill_config_store():
             'LinearTransformation',
             'AddMetaPaths',  # TODO
     ]):
-        cls = to_dataclass(getattr(transforms, cls_name), base=Transform)
+        cls = to_dataclass(getattr(transforms, cls_name), base_cls=Transform)
         # We use an explicit additional nesting level inside each config to
         # allow for applying multiple transformations.
         # See: hydra.cc/docs/patterns/select_multiple_configs_from_config_group
@@ -232,7 +301,7 @@ def fill_config_store():
     }
 
     for cls_name in set(datasets.__all__) - set([]):
-        cls = to_dataclass(getattr(datasets, cls_name), base=Dataset,
+        cls = to_dataclass(getattr(datasets, cls_name), base_cls=Dataset,
                            map_args=map_dataset_args,
                            exclude_args=['pre_filter'])
         config_store.store(cls_name, group='dataset', node=cls)
@@ -240,7 +309,7 @@ def fill_config_store():
     # Register `torch_geometric.models` #######################################
     models = torch_geometric.nn.models.basic_gnn
     for cls_name in set(models.__all__) - set([]):
-        cls = to_dataclass(getattr(models, cls_name), base=Model)
+        cls = to_dataclass(getattr(models, cls_name), base_cls=Model)
         config_store.store(cls_name, group='model', node=cls)
 
     # Register `torch.optim.Optimizer` ########################################
@@ -250,7 +319,7 @@ def fill_config_store():
     ]) - set([
             'Optimizer',
     ]):
-        cls = to_dataclass(getattr(torch.optim, cls_name), base=Optimizer,
+        cls = to_dataclass(getattr(torch.optim, cls_name), base_cls=Optimizer,
                            exclude_args=['params'])
         config_store.store(cls_name, group='optimizer', node=cls)
 
@@ -266,7 +335,7 @@ def fill_config_store():
             'ChainedScheduler',
     ]):
         cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
-                           base=LRScheduler, exclude_args=['optimizer'])
+                           base_cls=LRScheduler, exclude_args=['optimizer'])
         config_store.store(cls_name, group='lr_scheduler', node=cls)
 
     # Register global schema ##################################################
