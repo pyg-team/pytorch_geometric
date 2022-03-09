@@ -28,7 +28,7 @@ __all__ = [
     'ARGA', 'ARGVA', 'SignedGCN', 'RENet', 'GraphUNet', 'SchNet', 'DimeNet',
     'Explainer', 'to_captum', 'GNNExplainer', 'MetaPath2Vec', 'DeepGCNLayer',
     'TGNMemory', 'LabelPropagation', 'CorrectAndSmooth', 'AttentiveFP',
-    'RECT_L', 'LINKX', 'LightGCN', 'MaskLabel'
+    'RECT_L', 'LINKX', 'LightGCN', 'MaskLabel',
 ]
 
 classes = __all__
