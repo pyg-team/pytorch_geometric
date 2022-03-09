@@ -13,17 +13,28 @@ class MaskLabel(torch.nn.Module):
     Args:
         num_classes (int): Size of the number of classes for the labels
         out_channels (int): Size of each output sample.
+        method (str): "add" if embedding should be added to the input and 
+            "concat" if they should be concattenated. Note that if "add" is 
+            used then "out_channels" needs to be equal to the input dims.
     """
-    def __init__(self, num_classes, out_channels):
+    def __init__(self, num_classes, out_channels, method="add"):
         super().__init__()
 
         self.emb = torch.nn.Embedding(num_classes, out_channels)
         self.out_channels = out_channels
+        if method not in ("add", "concat"):
+            raise NotImplementedError("method must be 'add' or 'concat")
+        self.method = method
 
-    def forward(self, y: torch.Tensor, mask: torch.Tensor):
-        out = torch.zeros(y.shape[0], self.out_channels, dtype=torch.float)
-        out[mask] = self.emb(y[mask])
-        return out
+    def forward(self, x: torch.Tensor, y: torch.Tensor, mask: torch.Tensor):
+        if self.method == "concat":
+            out = torch.zeros(y.shape[0], self.out_channels, dtype=torch.float)
+            out[mask] = self.emb(y[mask])
+            return torch.concat([x, out], dim=1)
+        else:
+            x = torch.clone(x)
+            x[mask] = self.emb(y[mask])
+            return x
 
     @staticmethod
     def ratio_mask(mask: torch.Tensor, ratio: float, shuffle: bool = False):
