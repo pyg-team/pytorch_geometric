@@ -49,7 +49,7 @@ class UnimpNet(torch.nn.Module):
         edge_index: torch.Tensor,
         label_mask: torch.Tensor,
     ):
-        x = x + self.label_embedding(x, y, label_mask)
+        x = self.label_embedding(x, y, label_mask)
         x = self.conv(x, edge_index)
         out = self.linear(x)
         return out
