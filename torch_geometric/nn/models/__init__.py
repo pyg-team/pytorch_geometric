@@ -26,7 +26,8 @@ __all__ = [
     'MLP',
     'GCN',
     'GraphSAGE',
-    'GIN', 'GAT',
+    'GIN',
+    'GAT',
     'PNA',
     'JumpingKnowledge',
     'Node2Vec',
@@ -53,7 +54,7 @@ __all__ = [
     'RECT_L',
     'LINKX',
     'LightGCN',
-    'MaskLabel'
+    'MaskLabel',
 ]
 
 classes = __all__
