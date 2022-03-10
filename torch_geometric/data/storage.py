@@ -43,6 +43,9 @@ class BaseStorage(MutableMapping):
         return len(self._mapping)
 
     def __getattr__(self, key: str) -> Any:
+        if key == '_mapping':
+            self._mapping = {}
+            return self._mapping
         try:
             return self[key]
         except KeyError:
