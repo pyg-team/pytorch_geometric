@@ -23,6 +23,6 @@ def test_homophily():
     assert homophily(edge_index, y, batch, method).tolist() == [1., 0.]
 
     method = 'edge_insensitive'
-    assert pytest.approx(homophily(edge_index, y, method=method)) == 0.0999999
-    assert pytest.approx(homophily(adj, y, method=method)) == 0.0999999
+    assert pytest.approx(homophily(edge_index, y, method=method)) == 0.1999999
+    assert pytest.approx(homophily(adj, y, method=method)) == 0.1999999
     assert homophily(edge_index, y, batch, method).tolist() == [0., 0.]
