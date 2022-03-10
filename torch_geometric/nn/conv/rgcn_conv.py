@@ -66,12 +66,11 @@ class RGCNConv(MessagePassing):
             correspond to the number of nodes in your graph.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
-        num_bases (int, optional): If set to not :obj:`None`, this layer will
-            use the basis-decomposition regularization scheme where
-            :obj:`num_bases` denotes the number of bases to use.
-            (default: :obj:`None`)
-        num_blocks (int, optional): If set to not :obj:`None`, this layer will
-            use the block-diagonal-decomposition regularization scheme where
+        num_bases (int, optional): If set, this layer will use the
+            basis-decomposition regularization scheme where :obj:`num_bases`
+            denotes the number of bases to use. (default: :obj:`None`)
+        num_blocks (int, optional): If set, this layer will use the
+            block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
         aggr (string, optional): The aggregation scheme to use
@@ -97,7 +96,8 @@ class RGCNConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-        super().__init__(aggr=aggr, node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', aggr)
+        super().__init__(node_dim=0, **kwargs)
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '
@@ -160,6 +160,7 @@ class RGCNConv(MessagePassing):
                 are treated as trainable node embeddings).
                 Furthermore, :obj:`x` can be of type :obj:`tuple` denoting
                 source and destination node features.
+            edge_index (LongTensor or SparseTensor): The edge indices.
             edge_type: The one-dimensional relation type/index for each edge in
                 :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type

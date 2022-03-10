@@ -153,8 +153,3 @@ class GNN(nn.Module):
         for module in self.children():
             batch = module(batch)
         return batch
-
-    if cfg.benchmark:
-        # register to measure the forward pass
-        from torch_geometric.graphgym.benchmark import global_line_profiler
-        global_line_profiler.add_function(forward)

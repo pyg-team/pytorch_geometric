@@ -1,11 +1,12 @@
 import json
+import os
 import os.path as osp
 
 import numpy as np
 import scipy.sparse as sp
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Yelp(InMemoryDataset):
@@ -38,6 +39,7 @@ class Yelp(InMemoryDataset):
               - 300
               - 100
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     adj_full_id = '1Juwx8HtDwSzmVIJ31ooVa1WljI4U5JnA'
     feats_id = '1Zy6BZH_zLEjKlEFSduKE5tV9qqA_8VtM'
@@ -57,19 +59,17 @@ class Yelp(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
+        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
 
-        path = osp.join(self.raw_dir, 'adj_full.npz')
-        gdd.download_file_from_google_drive(self.adj_full_id, path)
+        path = download_url(self.url.format(self.feats_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
 
-        path = osp.join(self.raw_dir, 'feats.npy')
-        gdd.download_file_from_google_drive(self.feats_id, path)
+        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
 
-        path = osp.join(self.raw_dir, 'class_map.json')
-        gdd.download_file_from_google_drive(self.class_map_id, path)
-
-        path = osp.join(self.raw_dir, 'role.json')
-        gdd.download_file_from_google_drive(self.role_id, path)
+        path = download_url(self.url.format(self.role_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'role.json'))
 
     def process(self):
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
