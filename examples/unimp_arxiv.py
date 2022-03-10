@@ -50,34 +50,18 @@ class UnimpNet(torch.nn.Module):
 
         self.label_embedding = MaskLabel(num_classes, feature_size)
 
-        self.conv1 = TransformerConv(
-            feature_size,
-            inner_dim // heads,
-            heads=heads,
-            dropout=dropout,
-            beta=True,
-            concat=True
-        )
+        self.conv1 = TransformerConv(feature_size, inner_dim // heads,
+                                     heads=heads, dropout=dropout, beta=True,
+                                     concat=True)
         self.norm1 = torch.nn.LayerNorm(inner_dim)
 
-        self.conv2 = TransformerConv(
-            inner_dim,
-            inner_dim // heads,
-            heads=heads,
-            dropout=dropout,
-            beta=True,
-            concat=True
-        )
+        self.conv2 = TransformerConv(inner_dim, inner_dim // heads,
+                                     heads=heads, dropout=dropout, beta=True,
+                                     concat=True)
         self.norm2 = torch.nn.LayerNorm(inner_dim)
 
-        self.conv3 = TransformerConv(
-            inner_dim,
-            num_classes,
-            heads=heads,
-            dropout=dropout,
-            beta=True,
-            concat=False
-        )
+        self.conv3 = TransformerConv(inner_dim, num_classes, heads=heads,
+                                     dropout=dropout, beta=True, concat=False)
 
     def forward(
         self,
@@ -106,8 +90,8 @@ class UnimpNet(torch.nn.Module):
 
     def accuracy(self, out: torch.Tensor, labels: torch.Tensor,
                  mask: torch.Tensor):
-        return ((self.predictions(out[mask]) == labels[mask]).sum().float()
-                / float(labels[mask].size(0)))
+        return ((self.predictions(out[mask]) == labels[mask]).sum().float() /
+                float(labels[mask].size(0)))
 
 
 def train(model, optim, epochs=500, label_rate=0.65):
@@ -164,6 +148,5 @@ model = UnimpNet(data.x.shape[1], num_classes, inner_dim, heads)
 model.to(device)
 
 optim = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0005)
-
 
 train(model, optim)
