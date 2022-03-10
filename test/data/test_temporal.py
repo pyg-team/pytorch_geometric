@@ -3,12 +3,13 @@ import torch
 import torch_geometric
 from torch_geometric.data import TemporalData
 
+
 def _generate_temporal_data(num_events: int = 3, num_msg_features: int = 2):
 
     params = {
         'src': torch.arange(num_events),
-        'dst': torch.arange(num_events, num_events*2),
-        't': torch.arange(0, num_events*1000, step=1000),
+        'dst': torch.arange(num_events, num_events * 2),
+        't': torch.arange(0, num_events * 1000, step=1000),
         'msg': torch.randint(0, 2, (num_events, num_msg_features)),
         'y': torch.randint(0, 2, (num_events, )),
     }
@@ -77,10 +78,11 @@ def test_train_val_test_split():
     num_events = 100
     data = _generate_temporal_data(num_events)
 
-    train, val, test = data.train_val_test_split(val_ratio=0.2, test_ratio=0.15)
-    assert len(train) == num_events*0.65
-    assert len(val) == num_events*0.2
-    assert len(test) == num_events*0.15
+    train, val, test = data.train_val_test_split(val_ratio=0.2,
+                                                 test_ratio=0.15)
+    assert len(train) == num_events * 0.65
+    assert len(val) == num_events * 0.2
+    assert len(test) == num_events * 0.15
 
     assert max(train.t) < min(val.t)
     assert max(val.t) < min(test.t)
@@ -118,8 +120,8 @@ def test_temporal_get_item():
     assert torch.all(item.msg == data.msg[0::4])
     assert torch.all(item.t == data.t[0::4])
 
-    item = data[(True, False, True, False, True,
-                 False, True, False, True, False)]
+    item = data[(True, False, True, False, True, False, True, False, True,
+                 False)]
     assert type(item) == TemporalData
     assert len(item) == 5
     assert torch.all(item.src == data.src[0::2])
