@@ -15,7 +15,7 @@ data = dataset[0]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = MLP([dataset.num_features, 200, 200, dataset.num_classes], dropout=0.5,
-            batch_norm=True, relu_first=True).to(device)
+            batch_norm=True, act_first=True).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 criterion = torch.nn.CrossEntropyLoss()
 

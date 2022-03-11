@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import LGConv
+from torch_geometric.testing import is_full_test
 
 
 def test_lg_conv():
@@ -21,12 +22,13 @@ def test_lg_conv():
     assert out2.size() == (4, 8)
     assert torch.allclose(conv(x, adj2.t()), out2)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index), out1)
-    assert torch.allclose(jit(x, edge_index, value), out2)
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, edge_index), out1)
+        assert torch.allclose(jit(x, edge_index, value), out2)
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj1.t()), out1)
-    assert torch.allclose(jit(x, adj2.t()), out2)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj1.t()), out1)
+        assert torch.allclose(jit(x, adj2.t()), out2)
