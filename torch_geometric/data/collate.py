@@ -84,7 +84,8 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
-            device = value.device if isinstance(value, Tensor) else device
+            if isinstance(value, Tensor) and value.is_cuda:
+                device = value.device
 
             out_store[attr] = value
             if key is not None:

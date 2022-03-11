@@ -93,49 +93,26 @@ class TemporalData(BaseData):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    @staticmethod
-    def __prepare_non_str_idx(idx):
-        if isinstance(idx, int):
-            idx = torch.tensor([idx])
-        if isinstance(idx, (list, tuple)):
-            idx = torch.tensor(idx)
-        elif isinstance(idx, slice):
-            pass
-        elif isinstance(idx, torch.Tensor) and (idx.dtype == torch.long
-                                                or idx.dtype == torch.bool):
-            pass
-        else:
-            raise IndexError(
-                f'Only strings, integers, slices (`:`), list, tuples, and '
-                f'long or bool tensors are valid indices (got '
-                f'{type(idx).__name__}).')
-        return idx
+    def index_select(self, idx: Any) -> 'TemporalData':
+        idx = prepare_idx(idx)
+        data = copy.copy(self)
+        for key, value in data._store.items():
+            if value.size(0) == self.num_events:
+                data[key] = value[idx]
+        return data
 
     def __getitem__(self, idx: Any) -> Any:
         if isinstance(idx, str):
             return self._store[idx]
+        return self.index_select(idx)
 
-        prepared_idx = self.__prepare_non_str_idx(idx)
-
-        data = copy.copy(self)
-        for key, item in data:
-            if item.size(0) == self.num_events:
-                data[key] = item[prepared_idx]
-        return data
-
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         self._store[key] = value
 
-    def __delitem__(self, idx):
-        if isinstance(idx, str) and idx in self._store:
-            del self._store[idx]
-
-        prepared_idx = self.__prepare_non_str_idx(idx)
-
-        for key, item in self:
-            if item.shape[0] == self.num_events:
-                del item[prepared_idx]
+    def __delitem__(self, key: str):
+        if key in self._store:
+            del self._store[key]
 
     def __getattr__(self, key: str) -> Any:
         if '_store' not in self.__dict__:
@@ -153,8 +130,11 @@ class TemporalData(BaseData):
         delattr(self._store, key)
 
     def __iter__(self) -> Iterable:
-        for key, value in self._store.items():
-            yield key, value
+        for i in range(self.num_events):
+            yield self[i]
+
+    def __len__(self) -> int:
+        return self.num_events
 
     def __call__(self, *args: List[str]) -> Iterable:
         for key, value in self._store.items(*args):
@@ -247,6 +227,16 @@ class TemporalData(BaseData):
 
     def train_val_test_split(self, val_ratio: float = 0.15,
                              test_ratio: float = 0.15):
+        r"""Splits the data in training, validation and test sets according to
+        time.
+
+        Args:
+            val_ratio (float, optional): The proportion (in percents) of the
+                dataset to include in the validation split.
+                (default: :obj:`0.15`)
+            test_ratio (float, optional): The proportion (in percents) of the
+                dataset to include in the test split. (default: :obj:`0.15`)
+        """
         val_time, test_time = np.quantile(
             self.t.cpu().numpy(),
             [1. - val_ratio - test_ratio, 1. - test_ratio])
@@ -255,10 +245,6 @@ class TemporalData(BaseData):
         test_idx = int((self.t <= test_time).sum())
 
         return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
-
-    def seq_batches(self, batch_size: int):
-        for start in range(0, self.num_events, batch_size):
-            yield self[start:start + batch_size]
 
     ###########################################################################
 
@@ -276,3 +262,23 @@ class TemporalData(BaseData):
 
     def is_directed(self) -> bool:
         raise NotImplementedError
+
+
+###############################################################################
+
+
+def prepare_idx(idx):
+    if isinstance(idx, int):
+        return slice(idx, idx + 1)
+    if isinstance(idx, (list, tuple)):
+        return torch.tensor(idx)
+    elif isinstance(idx, slice):
+        return idx
+    elif isinstance(idx, torch.Tensor) and idx.dtype == torch.long:
+        return idx
+    elif isinstance(idx, torch.Tensor) and idx.dtype == torch.bool:
+        return idx
+
+    raise IndexError(
+        f"Only strings, integers, slices (`:`), list, tuples, and long or "
+        f"bool tensors are valid indices (got '{type(idx).__name__}')")

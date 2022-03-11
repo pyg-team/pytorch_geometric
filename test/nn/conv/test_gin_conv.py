@@ -5,6 +5,7 @@ from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GINConv, GINEConv
+from torch_geometric.testing import is_full_test
 
 
 def test_gin_conv():
@@ -27,14 +28,15 @@ def test_gin_conv():
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
 
-    t = '(Tensor, Tensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index).tolist() == out.tolist()
-    assert jit(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index).tolist() == out.tolist()
+        assert jit(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t()).tolist() == out.tolist()
+        t = '(Tensor, SparseTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
     out1 = conv((x1, x2), edge_index)
@@ -45,16 +47,18 @@ def test_gin_conv():
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, Tensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index).tolist() == out1.tolist()
-    assert jit((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
-    assert jit((x1, None), edge_index, size=(4, 2)).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(OptPairTensor, Tensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index).tolist() == out1.tolist()
+        assert jit((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
+        assert jit((x1, None), edge_index,
+                   size=(4, 2)).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, SparseTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+        t = '(OptPairTensor, SparseTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+        assert jit((x1, None), adj.t()).tolist() == out2.tolist()
 
 
 def test_gine_conv():
@@ -78,14 +82,15 @@ def test_gine_conv():
     assert conv(x1, edge_index, value, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
 
-    t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index, value).tolist() == out.tolist()
-    assert jit(x1, edge_index, value, size=(4, 4)).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index, value).tolist() == out.tolist()
+        assert jit(x1, edge_index, value, size=(4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t()).tolist() == out.tolist()
+        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
     out1 = conv((x1, x2), edge_index, value)
@@ -96,18 +101,19 @@ def test_gine_conv():
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
-    assert jit((x1, x2), edge_index, value,
-               size=(4, 2)).tolist() == out1.tolist()
-    assert jit((x1, None), edge_index, value,
-               size=(4, 2)).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
+        assert jit((x1, x2), edge_index, value,
+                   size=(4, 2)).tolist() == out1.tolist()
+        assert jit((x1, None), edge_index, value,
+                   size=(4, 2)).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+        t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+        assert jit((x1, None), adj.t()).tolist() == out2.tolist()
 
 
 def test_gine_conv_edge_dim():

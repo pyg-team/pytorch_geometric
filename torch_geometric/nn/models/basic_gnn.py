@@ -1,5 +1,5 @@
 import copy
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -11,12 +11,6 @@ from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 from torch_geometric.typing import Adj
-
-ACTS = {
-    'relu': torch.nn.ReLU(inplace=True),
-    'elu': torch.nn.ELU(inplace=True),
-    'leaky_relu': torch.nn.LeakyReLU(inplace=True),
-}
 
 
 class BasicGNN(torch.nn.Module):
@@ -34,25 +28,50 @@ class BasicGNN(torch.nn.Module):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Union[str, Callable, None] = "relu",
-                 norm: Optional[torch.nn.Module] = None, jk: str = "last",
-                 **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        out_channels: Optional[int] = None,
+        dropout: float = 0.0,
+        act: Union[str, Callable, None] = "relu",
+        norm: Optional[torch.nn.Module] = None,
+        jk: Optional[str] = None,
+        act_first: bool = False,
+        act_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ):
         super().__init__()
+
+        from class_resolver.contrib.torch import activation_resolver
+
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
+
         self.dropout = dropout
-        self.act = ACTS[act] if isinstance(act, str) else act
+        self.act = activation_resolver.make(act, act_kwargs)
         self.jk_mode = jk
-        self.has_out_channels = out_channels is not None
+        self.act_first = act_first
+
+        if out_channels is not None:
+            self.out_channels = out_channels
+        else:
+            self.out_channels = hidden_channels
 
         self.convs = ModuleList()
         self.convs.append(
@@ -60,7 +79,7 @@ class BasicGNN(torch.nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, **kwargs))
-        if self.has_out_channels and self.jk_mode == 'last':
+        if out_channels is not None and jk is None:
             self.convs.append(
                 self.init_conv(hidden_channels, out_channels, **kwargs))
         else:
@@ -72,23 +91,18 @@ class BasicGNN(torch.nn.Module):
             self.norms = ModuleList()
             for _ in range(num_layers - 1):
                 self.norms.append(copy.deepcopy(norm))
-            if not (self.has_out_channels and self.jk_mode == 'last'):
+            if jk is not None:
                 self.norms.append(copy.deepcopy(norm))
 
-        if self.jk_mode != 'last':
+        if jk is not None and jk != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
 
-        if self.has_out_channels:
-            self.out_channels = out_channels
-            if self.jk_mode == 'cat':
-                self.lin = Linear(num_layers * hidden_channels, out_channels)
-            elif self.jk_mode in {'max', 'lstm'}:
-                self.lin = Linear(hidden_channels, out_channels)
-        else:
-            self.out_channels = hidden_channels
-            if self.jk_mode == 'cat':
-                self.lin = Linear(num_layers * hidden_channels,
-                                  hidden_channels)
+        if jk is not None:
+            if jk == 'cat':
+                in_channels = num_layers * hidden_channels
+            else:
+                in_channels = hidden_channels
+            self.lin = Linear(in_channels, self.out_channels)
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -109,12 +123,13 @@ class BasicGNN(torch.nn.Module):
         xs: List[Tensor] = []
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, *args, **kwargs)
-            if (i == self.num_layers - 1 and self.has_out_channels
-                    and self.jk_mode == 'last'):
+            if i == self.num_layers - 1 and self.jk_mode is None:
                 break
+            if self.act_first:
+                x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
-            if self.act is not None:
+            if not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if hasattr(self, 'jk'):
@@ -150,6 +165,11 @@ class GCN(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
@@ -178,6 +198,11 @@ class GraphSAGE(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
@@ -206,6 +231,11 @@ class GIN(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
@@ -235,6 +265,11 @@ class GAT(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv`.
     """
@@ -271,6 +306,11 @@ class PNA(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """

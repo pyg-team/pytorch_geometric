@@ -5,6 +5,7 @@ import sys
 import torch
 
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
@@ -163,14 +164,25 @@ class Logger(object):
     def write_epoch(self, cur_epoch):
         basic_stats = self.basic()
 
-        if self.task_type == 'regression':
-            task_stats = self.regression()
-        elif self.task_type == 'classification_binary':
-            task_stats = self.classification_binary()
-        elif self.task_type == 'classification_multi':
-            task_stats = self.classification_multi()
-        else:
-            raise ValueError('Task has to be regression or classification')
+        # Try to load customized metrics
+        task_stats = {}
+        for custom_metric in cfg.custom_metrics:
+            func = register.metric_dict.get(custom_metric)
+            if not func:
+                raise ValueError(
+                    f'Unknown custom metric function name: {custom_metric}')
+            custom_metric_score = func(self._true, self._pred, self.task_type)
+            task_stats[custom_metric] = custom_metric_score
+
+        if not task_stats:  # use default metrics if no matching custom metric
+            if self.task_type == 'regression':
+                task_stats = self.regression()
+            elif self.task_type == 'classification_binary':
+                task_stats = self.classification_binary()
+            elif self.task_type == 'classification_multi':
+                task_stats = self.classification_multi()
+            else:
+                raise ValueError('Task has to be regression or classification')
 
         epoch_stats = {'epoch': cur_epoch}
         eta_stats = {'eta': round(self.eta(cur_epoch), cfg.round)}

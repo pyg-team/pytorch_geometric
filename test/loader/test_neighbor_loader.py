@@ -269,4 +269,7 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
 
-    shutil.rmtree(root)
+    try:
+        shutil.rmtree(root)
+    except PermissionError:
+        pass

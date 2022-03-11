@@ -33,16 +33,16 @@ class MessagePassing(torch.nn.Module):
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
     where :math:`\square` denotes a differentiable, permutation invariant
-    function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
-    and :math:`\phi_{\mathbf{\Theta}}` denote differentiable functions such as
-    MLPs.
+    function, *e.g.*, sum, mean, min, max or mul, and
+    :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
+    differentiable functions such as MLPs.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
         aggr (string, optional): The aggregation scheme to use
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"` or :obj:`None`).
-            (default: :obj:`"add"`)
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+            :obj:`"mul"` or :obj:`None`). (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -85,7 +85,7 @@ class MessagePassing(torch.nn.Module):
         super().__init__()
 
         self.aggr = aggr
-        assert self.aggr in ['add', 'mean', 'max', None]
+        assert self.aggr in ['add', 'sum', 'mean', 'min', 'max', 'mul', None]
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -111,9 +111,10 @@ class MessagePassing(torch.nn.Module):
         self.fuse = self.inspector.implements('message_and_aggregate')
 
         # Support for GNNExplainer.
-        self.__explain__ = False
-        self.__edge_mask__ = None
-        self.__loop_mask__ = None
+        self._explain = False
+        self._edge_mask = None
+        self._loop_mask = None
+        self._apply_sigmoid = True
 
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
@@ -223,8 +224,8 @@ class MessagePassing(torch.nn.Module):
 
         out['index'] = out['edge_index_i']
         out['size'] = size
-        out['size_i'] = size[1] or size[0]
-        out['size_j'] = size[0] or size[1]
+        out['size_i'] = size[1] if size[1] is not None else size[0]
+        out['size_j'] = size[0] if size[0] is not None else size[1]
         out['dim_size'] = out['size_i']
 
         return out
@@ -259,7 +260,7 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
+        decomposed_layers = 1 if self._explain else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
@@ -270,7 +271,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self.__explain__):
+                and not self._explain):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -322,12 +323,14 @@ class MessagePassing(torch.nn.Module):
                 # For `GNNExplainer`, we require a separate message and
                 # aggregate procedure since this allows us to inject the
                 # `edge_mask` into the message passing computation scheme.
-                if self.__explain__:
-                    edge_mask = self.__edge_mask__.sigmoid()
+                if self._explain:
+                    edge_mask = self._edge_mask
+                    if self._apply_sigmoid:
+                        edge_mask = edge_mask.sigmoid()
                     # Some ops add self-loops to `edge_index`. We need to do
                     # the same for `edge_mask` (but do not train those).
                     if out.size(self.node_dim) != edge_mask.size(0):
-                        edge_mask = edge_mask[self.__loop_mask__]
+                        edge_mask = edge_mask[self._loop_mask]
                         loop = edge_mask.new_ones(size[0])
                         edge_mask = torch.cat([edge_mask, loop], dim=0)
                     assert out.size(self.node_dim) == edge_mask.size(0)
@@ -414,8 +417,8 @@ class MessagePassing(torch.nn.Module):
         argument which was initially passed to :meth:`propagate`.
 
         By default, this function will delegate its call to scatter functions
-        that support "add", "mean" and "max" operations as specified in
-        :meth:`__init__` by the :obj:`aggr` argument.
+        that support "add", "mean", "min", "max" and "mul" operations as
+        specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
         if ptr is not None:
             ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())

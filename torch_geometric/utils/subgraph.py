@@ -6,6 +6,17 @@ from torch import Tensor
 from .num_nodes import maybe_num_nodes
 
 
+def get_num_hops(model: torch.nn.Module) -> int:
+    r"""Returns the number of hops the model is aggregating information
+    from."""
+    from torch_geometric.nn.conv import MessagePassing
+    num_hops = 0
+    for module in model.modules():
+        if isinstance(module, MessagePassing):
+            num_hops += 1
+    return num_hops
+
+
 def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
              edge_attr: Optional[Tensor] = None, relabel_nodes: bool = False,
              num_nodes: Optional[int] = None, return_edge_mask: bool = False):
