@@ -1,13 +1,14 @@
+import copy
 import math
 import os.path as osp
-import copy
-import torch_geometric.transforms as T
+
 import numpy as np
 import torch
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from torch.nn import Parameter
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import GATConv, GCNConv
 
@@ -130,15 +131,14 @@ class HeteroUnsupervised(torch.nn.Module):
         pos_mean = torch.stack(pos_embeds).mean(dim=0)
         neg_mean = torch.stack(neg_embeds).mean(dim=0)
         # consensus regularizer
-        pos_reg_loss = ((self.Z - pos_mean) ** 2).sum()
-        neg_reg_loss = ((self.Z - neg_mean) ** 2).sum()
+        pos_reg_loss = ((self.Z - pos_mean)**2).sum()
+        neg_reg_loss = ((self.Z - neg_mean)**2).sum()
         reg_loss = pos_reg_loss - neg_reg_loss
         total_loss += reg_loss
         return total_loss
 
 
 model = HeteroUnsupervised(out_channels=FEATURE_DIM, in_channels=FEATURE_DIM)
-
 
 data, model = data.to(device), model.to(device)
 
