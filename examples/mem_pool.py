@@ -2,11 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, LeakyReLU, BatchNorm1d
+from torch.nn import BatchNorm1d, LeakyReLU, Linear
 
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import TUDataset
-from torch_geometric.nn import GATConv, MemPooling, DeepGCNLayer
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import DeepGCNLayer, GATConv, MemPooling
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TUD')
 dataset = TUDataset(path, name="PROTEINS_full", use_node_attr=True)

@@ -1,8 +1,12 @@
 import torch
 import torch.nn.functional as F
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+
 from torch_geometric.nn import PPFConv
+from torch_geometric.testing import is_full_test
 
 
 def test_ppf_conv():
@@ -30,13 +34,14 @@ def test_ppf_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, pos1, n1, adj.t()), out, atol=1e-6)
 
-    t = '(OptTensor, Tensor, Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, pos1, n1, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(OptTensor, Tensor, Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, pos1, n1, edge_index).tolist() == out.tolist()
 
-    t = '(OptTensor, Tensor, Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, pos1, n1, adj.t()), out, atol=1e-6)
+        t = '(OptTensor, Tensor, Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x1, pos1, n1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
     out = conv(x1, (pos1, pos2), (n1, n2), edge_index)
@@ -48,12 +53,13 @@ def test_ppf_conv():
     assert torch.allclose(conv((x1, None), (pos1, pos2), (n1, n2), adj.t()),
                           out, atol=1e-6)
 
-    t = '(PairOptTensor, PairTensor, PairTensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, None), (pos1, pos2), (n1, n2),
-               edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(PairOptTensor, PairTensor, PairTensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, None), (pos1, pos2), (n1, n2),
+                   edge_index).tolist() == out.tolist()
 
-    t = '(PairOptTensor, PairTensor, PairTensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, None), (pos1, pos2), (n1, n2), adj.t()),
-                          out, atol=1e-6)
+        t = '(PairOptTensor, PairTensor, PairTensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit((x1, None), (pos1, pos2), (n1, n2), adj.t()),
+                              out, atol=1e-6)

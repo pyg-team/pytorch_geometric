@@ -1,14 +1,14 @@
 from typing import Callable, Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch import nn
-from torch import Tensor
-from torch.nn import Parameter, ReLU
 import torch.nn.functional as F
+from torch import Tensor, nn
+from torch.nn import Parameter, ReLU
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 
@@ -50,6 +50,13 @@ class ARMAConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_stacks: int = 1, num_layers: int = 1,

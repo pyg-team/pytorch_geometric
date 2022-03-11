@@ -1,16 +1,14 @@
-from typing import Optional, Union
-
 import warnings
+from typing import Optional, Union
 
 import torch
 
-from torch_geometric.typing import InputNodes
-from torch_geometric.data import Data, HeteroData, Dataset
-
+from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.neighbor_loader import (NeighborSampler,
-                                                    NeighborLoader,
+from torch_geometric.loader.neighbor_loader import (NeighborLoader,
+                                                    NeighborSampler,
                                                     get_input_node_type)
+from torch_geometric.typing import InputNodes
 
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
@@ -50,8 +48,8 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
-        from pytorch_lightning.plugins import SingleDevicePlugin
-        from pytorch_lightning.plugins import DDPSpawnPlugin
+        from pytorch_lightning.plugins import (DDPSpawnPlugin,
+                                               SingleDevicePlugin)
         plugin = self.trainer.training_type_plugin
         if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
             raise NotImplementedError(
@@ -250,12 +248,11 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
-            self.sampler = NeighborSampler(
+            self.neighbor_sampler = NeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
                 directed=kwargs.get('directed', True),
-                transform=kwargs.get('transform', None),
                 input_node_type=get_input_node_type(input_train_nodes),
             )
         self.input_train_nodes = input_train_nodes
@@ -265,7 +262,7 @@ class LightningNodeData(LightningDataModule):
     def prepare_data(self):
         """"""
         if self.loader == 'full':
-            if self.trainer.num_processes != 1 or self.trainer.num_gpus != 1:
+            if self.trainer.num_processes > 1 or self.trainer.num_gpus > 1:
                 raise ValueError(f"'{self.__class__.__name__}' with loader="
                                  f"'full' requires training on a single GPU")
         super().prepare_data()
@@ -280,7 +277,8 @@ class LightningNodeData(LightningDataModule):
 
         if self.loader == 'neighbor':
             warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
-            return NeighborLoader(self.sampler, input_nodes=input_nodes,
+            return NeighborLoader(self.data, input_nodes=input_nodes,
+                                  neighbor_sampler=self.neighbor_sampler,
                                   shuffle=True, **self.kwargs)
 
         raise NotImplementedError

@@ -1,9 +1,10 @@
 import torch
 import torch.nn.functional as F
 from torch_sparse import spspmm
-from torch_geometric.nn import TopKPooling, GCNConv
-from torch_geometric.utils import (add_self_loops, sort_edge_index,
-                                   remove_self_loops)
+
+from torch_geometric.nn import GCNConv, TopKPooling
+from torch_geometric.utils import (add_self_loops, remove_self_loops,
+                                   sort_edge_index)
 from torch_geometric.utils.repeat import repeat
 
 

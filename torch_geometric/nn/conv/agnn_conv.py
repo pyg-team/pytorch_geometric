@@ -1,13 +1,14 @@
 from typing import Optional
-from torch_geometric.typing import Adj, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_sparse import SparseTensor, set_diag
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class AGNNConv(MessagePassing):
@@ -34,6 +35,12 @@ class AGNNConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
     def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
                  **kwargs):

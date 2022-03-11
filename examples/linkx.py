@@ -3,8 +3,8 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.nn import LINKX
 from torch_geometric.datasets import LINKXDataset
+from torch_geometric.nn import LINKX
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

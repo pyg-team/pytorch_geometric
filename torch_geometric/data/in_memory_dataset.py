@@ -1,15 +1,14 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
-
 import copy
 from collections.abc import Mapping
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.collate import collate
-from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import Dataset, IndexType
+from torch_geometric.data.separate import separate
 
 
 class InMemoryDataset(Dataset):
@@ -126,13 +125,13 @@ class InMemoryDataset(Dataset):
         :obj:`np.ndarray` of type long or bool.
         """
         if idx is None:
-            data_list = [self.get(i) for i in range(len(self))]
+            data_list = [self.get(i) for i in self.indices()]
         else:
             data_list = [self.get(i) for i in self.index_select(idx).indices()]
 
         dataset = copy.copy(self)
         dataset._indices = None
-        dataset._data_list = data_list
+        dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
 

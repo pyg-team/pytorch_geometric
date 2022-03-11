@@ -1,13 +1,12 @@
-from typing import List, Optional, Callable, Union, Any, Tuple
-
-import sys
-import re
 import copy
-import warnings
-import numpy as np
 import os.path as osp
+import re
+import sys
+import warnings
 from collections.abc import Sequence
+from typing import Any, Callable, List, Optional, Tuple, Union
 
+import numpy as np
 import torch.utils.data
 from torch import Tensor
 

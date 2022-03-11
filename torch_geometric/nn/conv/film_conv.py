@@ -1,12 +1,13 @@
 import copy
-from typing import Union, Tuple, Optional, Callable
-from torch_geometric.typing import PairTensor, Adj, OptTensor
+from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import ModuleList, ReLU
 from torch_sparse import SparseTensor, masked_select_nnz
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 from ..inits import reset
 
@@ -52,6 +53,16 @@ class FiLMConv(MessagePassing):
             (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge types :math:`(|\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(
             self,

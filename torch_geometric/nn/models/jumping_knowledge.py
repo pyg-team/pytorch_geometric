@@ -1,5 +1,5 @@
 import torch
-from torch.nn import Linear, LSTM
+from torch.nn import LSTM, Linear
 
 
 class JumpingKnowledge(torch.nn.Module):

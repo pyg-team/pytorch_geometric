@@ -1,14 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch_geometric.nn as pyg_nn
 
-from torch_geometric.graphgym.config import cfg
 import torch_geometric.graphgym.models.head  # noqa, register module
 import torch_geometric.graphgym.register as register
+import torch_geometric.nn as pyg_nn
+from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.register import register_network
 
 
+@register_network('example')
 class ExampleGNN(torch.nn.Module):
     def __init__(self, dim_in, dim_out, num_layers=2, model_type='GCN'):
         super().__init__()
@@ -44,6 +45,3 @@ class ExampleGNN(torch.nn.Module):
         batch = self.post_mp(batch)
 
         return batch
-
-
-register_network('example', ExampleGNN)
