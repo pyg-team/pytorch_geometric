@@ -46,7 +46,7 @@ class KarateClub(InMemoryDataset):
 
         x = torch.eye(G.number_of_nodes(), dtype=torch.float)
 
-        if hasattr(nx, 'to_scip_sparse_array'):
+        if hasattr(nx, 'to_scipy_sparse_array'):
             adj = nx.to_scipy_sparse_array(G).tocoo()
         else:
             adj = nx.to_scipy_sparse_matrix(G).tocoo()
