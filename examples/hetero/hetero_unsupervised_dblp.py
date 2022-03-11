@@ -12,8 +12,8 @@ from torch_geometric.datasets import DBLP
 from torch_geometric.nn import GATConv, GCNConv
 
 EPS = 1e-15
-FEATURE_DIM=64
-EMBED_DIM=32
+FEATURE_DIM = 64
+EMBED_DIM = 32
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), 'data/DBLP')
@@ -22,12 +22,14 @@ data = dataset[0]
 print(data)
 
 # Initialize author node features
-author_len=data['author'].num_nodes
+author_len = data['author'].num_nodes
 data['author'].x = torch.ones(data['author'].num_nodes, FEATURE_DIM)
 # Select metapath APCPA and APA as example metapaths.
-metapaths = [[("author", "paper"), ("paper", "conference"),("conference",'paper'),('paper','author')],
-                [("author", "paper"), ("paper", "author")]]
+metapaths = [[("author", "paper"), ("paper", "conference"),
+             ("conference", 'paper'), ('paper', 'author')],
+             [("author", "paper"), ("paper", "author")]]
 data = T.AddMetaPaths(metapaths)(data)
+
 
 def uniform(size, tensor):
     if tensor is not None:
@@ -44,6 +46,7 @@ class GATEncoder(torch.nn.Module):
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor):
         return self.activation(self.conv(x, edge_index))
 
+
 class GCNEncoder(torch.nn.Module):
     def __init__(self, in_channels: int, out_channels: int):
         super(GCNEncoder, self).__init__()
@@ -59,22 +62,23 @@ class HeteroUnsupervised(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 
-        self.Z=torch.nn.Parameter(torch.Tensor(author_len,out_channels))
+        self.Z = torch.nn.Parameter(torch.Tensor(author_len, out_channels))
         # for discriminator
         self.embed_size = out_channels
         self.weight = Parameter(torch.Tensor(out_channels, out_channels))
         self.reset_parameters()
 
         # for encoders
-        # each encoder corresponds to each metapath subgraph, here we used APA and APCPA.
-        self.encoders=[GCNEncoder(in_channels, out_channels).to(device) for _ in range(2)]
-
+        # each encoder corresponds to each metapath subgraph,
+        # here we used APA and APCPA.
+        self.encoders = [GCNEncoder(in_channels, out_channels).to(device)
+                         for _ in range(2)]
 
     def forward(self, x_dict, edge_index_dict):
         target_embeds = x_dict['author']
 
-        edge_index_a = edge_index_dict['author','metapath_0','author']
-        edge_index_b = edge_index_dict['author','metapath_1','author'] 
+        edge_index_a = edge_index_dict['author', 'metapath_0', 'author']
+        edge_index_b = edge_index_dict['author', 'metapath_1', 'author'] 
 
         mp_edge_pairs = [edge_index_a, edge_index_b]
 
@@ -84,7 +88,8 @@ class HeteroUnsupervised(torch.nn.Module):
         pos_embeds = []
         neg_embeds = []
         summaries = []
-        for encoder, pos_feat, edge_index in zip(self.encoders, pos_feats, mp_edge_pairs):
+        for encoder, pos_feat, edge_index in \
+                zip(self.encoders, pos_feats, mp_edge_pairs):
             # shuffle feature corruption
             shuffle_idx = np.random.permutation(pos_feat.shape[0])
             corrupted_feat = pos_feat[shuffle_idx]
@@ -101,7 +106,6 @@ class HeteroUnsupervised(torch.nn.Module):
 
     def embed(self):
         return self.Z
-
 
     def discriminate(self, z, summary, sigmoid=True):
         value = torch.matmul(z, torch.matmul(self.weight, summary))
@@ -123,18 +127,17 @@ class HeteroUnsupervised(torch.nn.Module):
                 neg_embed, summary, sigmoid=True) + EPS).mean()
             total_loss += (pos_loss + neg_loss)
 
-        pos_mean=torch.stack(pos_embeds).mean(dim=0)
-        neg_mean=torch.stack(neg_embeds).mean(dim=0)
+        pos_mean = torch.stack(pos_embeds).mean(dim=0)
+        neg_mean = torch.stack(neg_embeds).mean(dim=0)
         # consensus regularizer
         pos_reg_loss = ((self.Z - pos_mean) ** 2).sum()
         neg_reg_loss = ((self.Z - neg_mean) ** 2).sum()
         reg_loss = pos_reg_loss - neg_reg_loss
-        total_loss+=reg_loss
+        total_loss += reg_loss
         return total_loss
 
 
-model = HeteroUnsupervised(out_channels=FEATURE_DIM,in_channels=FEATURE_DIM)
-
+model = HeteroUnsupervised(out_channels=FEATURE_DIM, in_channels=FEATURE_DIM)
 
 
 data, model = data.to(device), model.to(device)
@@ -172,8 +175,8 @@ def test():
     labels = data['author'].y[mask]
 
     valid_embed = pos_embed[mask]
-    valid_embed=valid_embed.cpu().numpy()
-    labels=labels.cpu().numpy()
+    valid_embed = valid_embed.cpu().numpy()
+    labels = labels.cpu().numpy()
 
     train_z, test_z, train_y, test_y = \
         train_test_split(valid_embed, labels, train_size=0.8)
@@ -185,8 +188,8 @@ def test():
     labels = data['author'].y[mask]
 
     test_embed = pos_embed[mask]
-    test_embed=test_embed.cpu().numpy()
-    labels=labels.cpu().numpy()
+    test_embed = test_embed.cpu().numpy()
+    labels = labels.cpu().numpy()
 
     train_z, test_z, train_y, test_y = \
         train_test_split(test_embed, labels, train_size=0.8)
