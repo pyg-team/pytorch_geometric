@@ -3,6 +3,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import AGNNConv
+from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('requires_grad', [True, False])
@@ -18,10 +19,11 @@ def test_agnn_conv(requires_grad):
     assert out.size() == (4, 16)
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)

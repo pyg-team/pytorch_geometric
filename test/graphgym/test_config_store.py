@@ -52,13 +52,15 @@ def test_config_store():
     assert cfg.model.act_kwargs is None
 
     # Check `cfg.optimizer`:
-    assert len(cfg.optimizer) == 6
+    assert len(cfg.optimizer) in {6, 7}  # Arguments changed across 1.10/1.11
     assert cfg.optimizer._target_.split('.')[-1] == 'Adam'
     assert cfg.optimizer.lr == 0.001
     assert cfg.optimizer.betas == [0.9, 0.999]
     assert cfg.optimizer.eps == 1e-08
     assert cfg.optimizer.weight_decay == 0
     assert not cfg.optimizer.amsgrad
+    if hasattr(cfg.optimizer, 'maximize'):
+        assert not cfg.optimizer.maximize
 
     # Check `cfg.lr_scheduler`:
     assert len(cfg.lr_scheduler) == 10
