@@ -138,7 +138,7 @@ class SignedConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: PairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
+        adj_t = adj_t.set_value(None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:

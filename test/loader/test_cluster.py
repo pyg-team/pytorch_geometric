@@ -6,7 +6,9 @@ from torch_geometric.loader import ClusterData, ClusterLoader
 from torch_geometric.utils import to_dense_adj
 
 try:
-    torch.ops.torch_sparse.partition
+    rowptr = torch.tensor([0, 1])
+    col = torch.tensor([0])
+    torch.ops.torch_sparse.partition(rowptr, col, None, 1)
     with_metis = True
 except RuntimeError:
     with_metis = False

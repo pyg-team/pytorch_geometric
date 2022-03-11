@@ -187,5 +187,5 @@ class HGTConv(MessagePassing):
         return out.view(-1, self.out_channels)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.out_channels}, '
+        return (f'{self.__class__.__name__}(-1, {self.out_channels}, '
                 f'heads={self.heads})')

@@ -1,10 +1,8 @@
-name: Testing
+name: Full Testing
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    branches:
-      - master
-  pull_request:
+  schedule:
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11pm PST
 
 jobs:
 
@@ -16,12 +14,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: [3.7, 3.9]
-        torch-version: [1.10.0, 1.11.0]
+        torch-version: [1.10.0]
         include:
           - torch-version: 1.10.0
             torchvision-version: 0.11.1
-          - torch-version: 1.11.0
-            torchvision-version: 0.12.0
 
     steps:
       - uses: actions/checkout@v2
@@ -47,7 +43,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov --cov-report=xml
+          FULL_TEST=1 pytest --cov --cov-report=xml
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2
