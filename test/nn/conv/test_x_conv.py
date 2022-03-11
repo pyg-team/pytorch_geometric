@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import XConv
+from torch_geometric.testing import is_full_test
 
 
 def test_x_conv():
@@ -19,10 +20,11 @@ def test_x_conv():
     out2 = conv(x, pos, batch)
     assert out2.size() == (8, 32)
 
-    jit = torch.jit.script(conv)
+    if is_full_test():
+        jit = torch.jit.script(conv)
 
-    torch.manual_seed(12345)
-    assert jit(x, pos).tolist() == out1.tolist()
+        torch.manual_seed(12345)
+        assert jit(x, pos).tolist() == out1.tolist()
 
-    torch.manual_seed(12345)
-    assert jit(x, pos, batch).tolist() == out2.tolist()
+        torch.manual_seed(12345)
+        assert jit(x, pos, batch).tolist() == out2.tolist()
