@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import MLP
+from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('batch_norm,act_first',
@@ -17,8 +18,9 @@ def test_mlp(batch_norm, act_first):
     out = mlp(x)
     assert out.size() == (4, 64)
 
-    jit = torch.jit.script(mlp)
-    assert torch.allclose(jit(x), out)
+    if is_full_test():
+        jit = torch.jit.script(mlp)
+        assert torch.allclose(jit(x), out)
 
     torch.manual_seed(12345)
     mlp = MLP(16, hidden_channels=32, out_channels=64, num_layers=3,

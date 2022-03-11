@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import InstanceNorm
+from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('conf', [True, False])
@@ -14,7 +15,9 @@ def test_instance_norm(conf):
     norm1 = InstanceNorm(16, affine=conf, track_running_stats=conf)
     norm2 = InstanceNorm(16, affine=conf, track_running_stats=conf)
     assert norm1.__repr__() == 'InstanceNorm(16)'
-    torch.jit.script(norm1)
+
+    if is_full_test():
+        torch.jit.script(norm1)
 
     out1 = norm1(x1)
     out2 = norm2(x1, batch)

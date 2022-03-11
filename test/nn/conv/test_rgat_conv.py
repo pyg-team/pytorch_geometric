@@ -3,6 +3,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import RGATConv
+from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('mod', [
@@ -51,7 +52,8 @@ def test_rgat_conv_jittable():
     assert out.size() == (4, 40)
     assert torch.allclose(conv(x, adj.t(), edge_type), out)
 
-    t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index, edge_type),
-                          conv(x, edge_index, edge_type))
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, edge_index, edge_type),
+                              conv(x, edge_index, edge_type))
