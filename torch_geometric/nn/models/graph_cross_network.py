@@ -1,13 +1,14 @@
+from typing import List, Optional, Union
+
 import torch
 import torch.nn
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
+
 from torch_geometric.data import Batch
-from torch_geometric.utils import subgraph
 from torch_geometric.nn.conv import GCNConv
 from torch_geometric.nn.glob import global_sort_pool
-
-from typing import List, Optional, Union
+from torch_geometric.utils import subgraph
 
 
 class GCNConvWithDropout(torch.nn.Module):

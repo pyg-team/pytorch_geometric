@@ -1,16 +1,16 @@
-import sys
 import argparse
+import sys
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.utils.data import random_split
 
 from torch_geometric.data import Dataset
-from torch_geometric.nn import GraphCrossNet
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import TUDataset
-from torch_geometric.utils import degree, add_remaining_self_loops
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GraphCrossNet
+from torch_geometric.utils import add_remaining_self_loops, degree
 
 
 class process_dataset(Dataset):
