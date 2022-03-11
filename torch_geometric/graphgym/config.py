@@ -3,17 +3,21 @@ import inspect
 import logging
 import os
 import shutil
+import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
 
-from yacs.config import CfgNode as CN
-
 import torch_geometric.graphgym.register as register
 from torch_geometric.data.makedirs import makedirs
 
-# Global config object
-cfg = CN()
+try:  # Define global config object
+    from yacs.config import CfgNode as CN
+    cfg = CN()
+except ImportError:
+    cfg = None
+    warnings.warn("Could not define global config object. Please install "
+                  "'yacs' for using the GraphGym experiment manager.")
 
 
 def set_cfg(cfg):
@@ -26,6 +30,8 @@ def set_cfg(cfg):
 
     :return: configuration use by the experiment.
     '''
+    if cfg is None:
+        return cfg
 
     # ----------------------------------------------------------------------- #
     # Basic options

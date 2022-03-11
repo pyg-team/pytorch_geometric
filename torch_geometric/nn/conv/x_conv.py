@@ -58,6 +58,14 @@ class XConv(torch.nn.Module):
         num_workers (int): Number of workers to use for k-NN computation.
             Has no effect in case :obj:`batch` is not :obj:`None`, or the input
             lies on the GPU. (default: :obj:`1`)
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          positions :math:`(|\mathcal{V}|, D)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
+        - **output:**
+          node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, dim: int,
                  kernel_size: int, hidden_channels: Optional[int] = None,

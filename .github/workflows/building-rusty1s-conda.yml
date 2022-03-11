@@ -10,21 +10,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-latest]
-        python-version: [3.7, 3.8, 3.9]
-        torch-version: [1.9.0, 1.10.0]
-        cuda-version: ['cpu', 'cu102', 'cu111', 'cu113']
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+        torch-version: [1.10.0, 1.11.0]
+        cuda-version: ['cpu', 'cu102', 'cu113', 'cu115']
         exclude:
-          - torch-version: 1.9.0
-            cuda-version: 'cu113'
           - torch-version: 1.10.0
-            cuda-version: 'cu111'
+            cuda-version: 'cu115'
+          - torch-version: 1.10.0
+            python-version: '3.10'
+          - os: windows-2019
+            torch-version: 1.11.0
+            cuda-version: 'cu102'
           - os: macos-10.15
             cuda-version: 'cu102'
           - os: macos-10.15
-            cuda-version: 'cu111'
-          - os: macos-10.15
             cuda-version: 'cu113'
+          - os: macos-10.15
+            cuda-version: 'cu115'
+          # There is a weird `glibc=2.27` bug going on for this combination:
+          - os: ubuntu-18.04
+            python-version: '3.10'
+          - os: ubuntu-18.04
+            cuda-version: 'cu115'
 
     steps:
       - uses: actions/checkout@v2

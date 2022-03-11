@@ -47,6 +47,7 @@ from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .add_metapaths import AddMetaPaths
 from .largest_connected_components import LargestConnectedComponents
+from .virtual_node import VirtualNode
 
 __all__ = [
     'BaseTransform',
@@ -98,6 +99,7 @@ __all__ = [
     'RandomLinkSplit',
     'AddMetaPaths',
     'LargestConnectedComponents',
+    'VirtualNode',
 ]
 
 classes = __all__

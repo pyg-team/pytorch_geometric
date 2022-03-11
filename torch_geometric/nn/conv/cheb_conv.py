@@ -52,8 +52,6 @@ class ChebConv(MessagePassing):
             3. :obj:`"rw"`: Random-walk normalization
             :math:`\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1} \mathbf{A}`
 
-            You need to pass :obj:`lambda_max` to the :meth:`forward` method of
-            this operator in case the normalization is non-symmetric.
             :obj:`\lambda_max` should be a :class:`torch.Tensor` of size
             :obj:`[num_graphs]` in a mini-batch scenario and a
             scalar/zero-dimensional tensor when operating on single graphs.
@@ -104,7 +102,7 @@ class ChebConv(MessagePassing):
 
     def __norm__(self, edge_index, num_nodes: Optional[int],
                  edge_weight: OptTensor, normalization: Optional[str],
-                 lambda_max, dtype: Optional[int] = None,
+                 lambda_max: OptTensor = None, dtype: Optional[int] = None,
                  batch: OptTensor = None):
 
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
@@ -112,6 +110,13 @@ class ChebConv(MessagePassing):
         edge_index, edge_weight = get_laplacian(edge_index, edge_weight,
                                                 normalization, dtype,
                                                 num_nodes)
+
+        if lambda_max is None:
+            lambda_max = 2.0 * edge_weight.max()
+        elif not isinstance(lambda_max, torch.Tensor):
+            lambda_max = torch.tensor(lambda_max, dtype=dtype,
+                                      device=edge_index.device)
+        assert lambda_max is not None
 
         if batch is not None and lambda_max.numel() > 1:
             lambda_max = lambda_max[batch[edge_index[0]]]
@@ -130,17 +135,6 @@ class ChebConv(MessagePassing):
                 edge_weight: OptTensor = None, batch: OptTensor = None,
                 lambda_max: OptTensor = None):
         """"""
-        if self.normalization != 'sym' and lambda_max is None:
-            raise ValueError('You need to pass `lambda_max` to `forward() in`'
-                             'case the normalization is non-symmetric.')
-
-        if lambda_max is None:
-            lambda_max = torch.tensor(2.0, dtype=x.dtype, device=x.device)
-        if not isinstance(lambda_max, torch.Tensor):
-            lambda_max = torch.tensor(lambda_max, dtype=x.dtype,
-                                      device=x.device)
-        assert lambda_max is not None
-
         edge_index, norm = self.__norm__(edge_index, x.size(self.node_dim),
                                          edge_weight, self.normalization,
                                          lambda_max, dtype=x.dtype,

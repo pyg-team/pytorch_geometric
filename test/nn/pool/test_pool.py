@@ -4,8 +4,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn import radius_graph
+from torch_geometric.testing import onlyFullTest
 
 
+@onlyFullTest
 def test_radius_graph_jit():
     class Net(torch.nn.Module):
         def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
