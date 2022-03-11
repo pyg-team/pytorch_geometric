@@ -85,13 +85,12 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
     node_attrs, edge_attrs = node_attrs or [], edge_attrs or []
 
     values = {}
-    for key, item in data(*(node_attrs + edge_attrs)):
-        if torch.is_tensor(item):
-            values[key] = item.squeeze().tolist()
+    for key, value in data(*(node_attrs + edge_attrs)):
+        if torch.is_tensor(value):
+            value = value if value.dim() <= 1 else value.squeeze(-1)
+            values[key] = value.tolist()
         else:
-            values[key] = item
-        if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
-            values[key] = item[0]
+            values[key] = value
 
     to_undirected = "upper" if to_undirected is True else to_undirected
     to_undirected_upper = True if to_undirected == "upper" else False

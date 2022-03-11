@@ -125,13 +125,13 @@ class InMemoryDataset(Dataset):
         :obj:`np.ndarray` of type long or bool.
         """
         if idx is None:
-            data_list = [self.get(i) for i in range(len(self))]
+            data_list = [self.get(i) for i in self.indices()]
         else:
             data_list = [self.get(i) for i in self.index_select(idx).indices()]
 
         dataset = copy.copy(self)
         dataset._indices = None
-        dataset._data_list = data_list
+        dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
 

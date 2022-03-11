@@ -3,6 +3,7 @@ from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import PointTransformerConv
+from torch_geometric.testing import is_full_test
 
 
 def test_point_transformer_conv():
@@ -21,13 +22,14 @@ def test_point_transformer_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, pos1, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, pos1, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, pos1, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, pos1, adj.t()), out, atol=1e-6)
+        t = '(Tensor, Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x1, pos1, adj.t()), out, atol=1e-6)
 
     pos_nn = Sequential(Linear(3, 16), ReLU(), Linear(16, 32))
     attn_nn = Sequential(Linear(32, 32), ReLU(), Linear(32, 32))
@@ -45,10 +47,12 @@ def test_point_transformer_conv():
     assert torch.allclose(conv((x1, x2), (pos1, pos2), adj.t()), out,
                           atol=1e-6)
 
-    t = '(PairTensor, PairTensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), (pos1, pos2), edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(PairTensor, PairTensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), (pos1, pos2), edge_index).tolist() == out.tolist()
 
-    t = '(PairTensor, PairTensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), (pos1, pos2), adj.t()), out, atol=1e-6)
+        t = '(PairTensor, PairTensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit((x1, x2), (pos1, pos2), adj.t()), out,
+                              atol=1e-6)
