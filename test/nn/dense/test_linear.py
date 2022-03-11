@@ -7,6 +7,7 @@ from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
 from torch_geometric.nn import HeteroLinear, Linear
+from torch_geometric.testing import is_full_test
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -102,5 +103,6 @@ def test_hetero_linear():
     out = lin(x, node_type)
     assert out.size() == (3, 32)
 
-    jit = torch.jit.script(lin)
-    assert torch.allclose(jit(x, node_type), out)
+    if is_full_test():
+        jit = torch.jit.script(lin)
+        assert torch.allclose(jit(x, node_type), out)
