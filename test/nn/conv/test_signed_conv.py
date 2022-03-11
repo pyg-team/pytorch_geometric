@@ -46,15 +46,13 @@ def test_signed_conv():
     assert torch.allclose(conv2((out1, out1[:2]), adj.t(), adj.t()), out2[:2],
                           atol=1e-6)
 
-    major, minor = torch.__version__.split('.')[:2]
-    if int(major) != 1 or int(minor) != 11:  # TODO PyTorch 1.11 bug
-        t = '(PairTensor, Tensor, Tensor) -> Tensor'
-        jit1 = torch.jit.script(conv1.jittable(t))
-        jit2 = torch.jit.script(conv2.jittable(t))
-        assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index),
-                              out1[:2], atol=1e-6)
-        assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
-                              out2[:2], atol=1e-6)
+    t = '(PairTensor, Tensor, Tensor) -> Tensor'
+    jit1 = torch.jit.script(conv1.jittable(t))
+    jit2 = torch.jit.script(conv2.jittable(t))
+    assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index), out1[:2],
+                          atol=1e-6)
+    assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
+                          out2[:2], atol=1e-6)
 
     t = '(PairTensor, SparseTensor, SparseTensor) -> Tensor'
     jit1 = torch.jit.script(conv1.jittable(t))

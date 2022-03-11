@@ -43,15 +43,12 @@ def test_gmm_conv(separate_gaussians):
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
 
-    major, minor = torch.__version__.split('.')[:2]
-    if int(major) != 1 or int(minor) != 11:  # TODO PyTorch 1.11 bug
-        t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), edge_index, value), out1)
-        assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
-                              out1)
-        assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
-                              out2)
+    t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert torch.allclose(jit((x1, x2), edge_index, value), out1)
+    assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)), out1)
+    assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
+                          out2)
 
     t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
