@@ -27,7 +27,7 @@ author_len = data['author'].num_nodes
 data['author'].x = torch.ones(data['author'].num_nodes, FEATURE_DIM)
 # Select metapath APCPA and APA as example metapaths.
 metapaths = [[("author", "paper"), ("paper", "conference"),
-             ("conference", 'paper'), ('paper', 'author')],
+              ("conference", 'paper'), ('paper', 'author')],
              [("author", "paper"), ("paper", "author")]]
 data = T.AddMetaPaths(metapaths)(data)
 
@@ -72,14 +72,15 @@ class HeteroUnsupervised(torch.nn.Module):
         # for encoders
         # each encoder corresponds to each metapath subgraph,
         # here we used APA and APCPA.
-        self.encoders = [GCNEncoder(in_channels, out_channels).to(device)
-                         for _ in range(2)]
+        self.encoders = [
+            GCNEncoder(in_channels, out_channels).to(device) for _ in range(2)
+        ]
 
     def forward(self, x_dict, edge_index_dict):
         target_embeds = x_dict['author']
 
         edge_index_a = edge_index_dict['author', 'metapath_0', 'author']
-        edge_index_b = edge_index_dict['author', 'metapath_1', 'author'] 
+        edge_index_b = edge_index_dict['author', 'metapath_1', 'author']
 
         mp_edge_pairs = [edge_index_a, edge_index_b]
 
