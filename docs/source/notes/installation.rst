@@ -19,7 +19,7 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 
 .. code-block:: none
 
-    conda install pyg -c pyg -c conda-forge
+    conda install pyg -c pyg
 
 Installation via Pip Wheels
 ---------------------------

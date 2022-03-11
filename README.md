@@ -342,7 +342,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started/locally/), simply run
 
 ```
-conda install pyg -c pyg -c conda-forge
+conda install pyg -c pyg
 ```
 
 ### Pip Wheels
