@@ -1,11 +1,12 @@
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
+
 from torch_geometric.typing import PairTensor
 
-from .num_nodes import maybe_num_nodes
 from .mask import index_to_mask
+from .num_nodes import maybe_num_nodes
 
 
 def get_num_hops(model: torch.nn.Module) -> int:
