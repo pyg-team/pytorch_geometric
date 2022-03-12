@@ -58,15 +58,15 @@ def test_enzymes(get_dataset):
         assert list(data.y.size()) == [600, 1]
 
 
-@withDataset(name='ENZYMES', use_node_attr=True)
+@withDataset(name='ENZYMES')
 def test_enzymes_with_node_attr(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(use_node_attr=True)
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0
 
 
-@withDataset(name='ENZYMES', cleaned=True)
+@withDataset(name='ENZYMES')
 def test_cleaned_enzymes(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(cleaned=True)
     assert len(dataset) == 595

@@ -19,6 +19,7 @@ def onlyFullTest(func: Callable) -> Callable:
 
 
 def get_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
+    r"""Returns a variety of datasets according to :obj:`name`."""
     if name.lower() in ['karate']:
         from torch_geometric.datasets import KarateClub
         return KarateClub(*args, **kwargs)
@@ -50,15 +51,14 @@ def get_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     raise NotImplementedError
 
 
-def withDataset(name: str, *args, **kwargs) -> Callable:
-    r"""A decorator to load (and re-use) a variety of datasets during
-    testing."""
+def withDataset(name: str) -> Callable:
+    r"""A decorator to load (and re-use) a variety of datasets for testing."""
     root = osp.join('/', 'tmp', 'pyg_test_datasets', '2')
 
     def decorator(func):
         import pytest
 
-        def wrapper():
+        def wrapper(*args, **kwargs):
             return get_dataset(root, name, *args, **kwargs)
 
         return pytest.mark.parametrize('get_dataset', [wrapper])(func)

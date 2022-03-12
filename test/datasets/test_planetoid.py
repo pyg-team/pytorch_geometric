@@ -31,9 +31,9 @@ def test_citeseer(get_dataset):
         assert data.is_undirected()
 
 
-@withDataset(name='CiteSeer', split='full')
+@withDataset(name='CiteSeer')
 def test_citeseer_with_full_split(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(split='full')
     data = dataset[0]
     assert data.val_mask.sum() == 500
     assert data.test_mask.sum() == 1000
@@ -41,10 +41,10 @@ def test_citeseer_with_full_split(get_dataset):
     assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
 
 
-@withDataset(name='CiteSeer', split='random', num_train_per_class=11,
-             num_val=29, num_test=41)
+@withDataset(name='CiteSeer')
 def test_citeseer_with_random_split(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(split='random', num_train_per_class=11, num_val=29,
+                          num_test=41)
     data = dataset[0]
     assert data.train_mask.sum() == dataset.num_classes * 11
     assert data.val_mask.sum() == 29
