@@ -1,9 +1,5 @@
-from torch_geometric.testing import withDataset
-
-
-@withDataset(name='Karate')
 def test_karate(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(name='KarateClub')
     assert str(dataset) == 'KarateClub()'
     assert len(dataset) == 1
     assert dataset.num_features == 34

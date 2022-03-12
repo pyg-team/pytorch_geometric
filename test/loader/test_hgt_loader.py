@@ -5,7 +5,6 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import withDataset
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -127,9 +126,8 @@ def test_hgt_loader():
         assert torch.cat([row, col]).unique().numel() == 60
 
 
-@withDataset(name='Cora')
 def test_hgt_loader_on_cora(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 

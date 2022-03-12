@@ -3,7 +3,6 @@ import torch
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
-from torch_geometric.testing import withDataset
 from torch_geometric.utils import erdos_renyi_graph
 
 
@@ -31,9 +30,8 @@ def test_neighbor_sampler():
     assert len(out) == 3
 
 
-@withDataset(name='Cora')
 def test_neighbor_sampler_on_cora(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
 
     batch = torch.arange(10)

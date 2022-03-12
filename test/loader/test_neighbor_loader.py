@@ -6,7 +6,6 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import withDataset
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -167,9 +166,8 @@ def test_heterogeneous_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-@withDataset(name='Cora')
 def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
-    dataset = get_dataset()
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
     data.edge_weight = torch.rand(data.num_edges)
@@ -211,9 +209,8 @@ def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-@withDataset(name='Cora')
 def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
-    dataset = get_dataset()
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 

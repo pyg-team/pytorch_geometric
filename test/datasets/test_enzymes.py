@@ -2,13 +2,11 @@ import pytest
 import torch
 
 from torch_geometric.loader import DataListLoader, DataLoader, DenseDataLoader
-from torch_geometric.testing import withDataset
 from torch_geometric.transforms import ToDense
 
 
-@withDataset(name='ENZYMES')
 def test_enzymes(get_dataset):
-    dataset = get_dataset()
+    dataset = get_dataset(name='ENZYMES')
     assert len(dataset) == 600
     assert dataset.num_features == 3
     assert dataset.num_classes == 6
@@ -58,15 +56,13 @@ def test_enzymes(get_dataset):
         assert list(data.y.size()) == [600, 1]
 
 
-@withDataset(name='ENZYMES')
 def test_enzymes_with_node_attr(get_dataset):
-    dataset = get_dataset(use_node_attr=True)
+    dataset = get_dataset(name='ENZYMES', use_node_attr=True)
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0
 
 
-@withDataset(name='ENZYMES')
 def test_cleaned_enzymes(get_dataset):
-    dataset = get_dataset(cleaned=True)
+    dataset = get_dataset(name='ENZYMES', cleaned=True)
     assert len(dataset) == 595
