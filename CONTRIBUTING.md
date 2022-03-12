@@ -80,11 +80,19 @@ Everytime you send a Pull Request, your commit will be built and checked against
 
    If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
-2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
+2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code:
 
    ```bash
    pytest --cov
    ```
+
+   or
+
+   ```bash
+   FULL_TEST=1 pytest --cov
+   ```
+
+   for running the full test suite.
 
 ## Building Documentation
 
