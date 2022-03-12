@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -74,7 +74,12 @@ class DMoNPooling(torch.nn.Module):
     def reset_parameters(self):
         self.mlp.reset_parameters()
 
-    def forward(self, x: Tensor, adj: Tensor, mask=None):
+    def forward(
+        self,
+        x: Tensor,
+        adj: Tensor,
+        mask: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in
