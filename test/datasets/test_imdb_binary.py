@@ -1,15 +1,8 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
-from torch_geometric.datasets import TUDataset
+from torch_geometric.testing import withDataset
 
 
-def test_imdb_binary():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, 'IMDB-BINARY')
-
+@withDataset(name='IMDB-BINARY')
+def test_imdb_binary(dataset):
     assert len(dataset) == 1000
     assert dataset.num_features == 0
     assert dataset.num_classes == 2
@@ -20,5 +13,3 @@ def test_imdb_binary():
     assert data.edge_index.size() == (2, 146)
     assert data.y.size() == (1, )
     assert data.num_nodes == 20
-
-    shutil.rmtree(root)
