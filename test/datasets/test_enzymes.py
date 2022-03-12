@@ -7,7 +7,8 @@ from torch_geometric.transforms import ToDense
 
 
 @withDataset(name='ENZYMES')
-def test_enzymes(dataset):
+def test_enzymes(get_dataset):
+    dataset = get_dataset()
     assert len(dataset) == 600
     assert dataset.num_features == 3
     assert dataset.num_classes == 6
@@ -58,12 +59,14 @@ def test_enzymes(dataset):
 
 
 @withDataset(name='ENZYMES', use_node_attr=True)
-def test_enzymes_with_node_attr(dataset):
+def test_enzymes_with_node_attr(get_dataset):
+    dataset = get_dataset()
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0
 
 
 @withDataset(name='ENZYMES', cleaned=True)
-def test_cleaned_enzymes(dataset):
+def test_cleaned_enzymes(get_dataset):
+    dataset = get_dataset()
     assert len(dataset) == 595

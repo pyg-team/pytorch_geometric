@@ -2,7 +2,8 @@ from torch_geometric.testing import withDataset
 
 
 @withDataset(name='IMDB-BINARY')
-def test_imdb_binary(dataset):
+def test_imdb_binary(get_dataset):
+    dataset = get_dataset()
     assert len(dataset) == 1000
     assert dataset.num_features == 0
     assert dataset.num_classes == 2

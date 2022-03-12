@@ -9,7 +9,8 @@ from torch_geometric.testing import withDataset
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @withDataset(name='PubMed')
-def test_profile(dataset):
+def test_profile(get_dataset):
+    dataset = get_dataset()
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).cuda()

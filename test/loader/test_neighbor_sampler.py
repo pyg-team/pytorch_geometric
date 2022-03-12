@@ -32,7 +32,8 @@ def test_neighbor_sampler():
 
 
 @withDataset(name='Cora')
-def test_neighbor_sampler_on_cora(dataset):
+def test_neighbor_sampler_on_cora(get_dataset):
+    dataset = get_dataset()
     data = dataset[0]
 
     batch = torch.arange(10)

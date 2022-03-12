@@ -168,7 +168,8 @@ def test_heterogeneous_neighbor_loader(directed):
 
 @pytest.mark.parametrize('directed', [True, False])
 @withDataset(name='Cora')
-def test_homogeneous_neighbor_loader_on_cora(dataset, directed):
+def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
+    dataset = get_dataset()
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
     data.edge_weight = torch.rand(data.num_edges)
@@ -211,7 +212,8 @@ def test_homogeneous_neighbor_loader_on_cora(dataset, directed):
 
 @pytest.mark.parametrize('directed', [True, False])
 @withDataset(name='Cora')
-def test_heterogeneous_neighbor_loader_on_cora(dataset, directed):
+def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
+    dataset = get_dataset()
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 

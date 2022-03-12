@@ -3,7 +3,8 @@ from torch_geometric.testing import withDataset
 
 
 @withDataset(name='CiteSeer')
-def test_citeseer(dataset):
+def test_citeseer(get_dataset):
+    dataset = get_dataset()
     loader = DataLoader(dataset, batch_size=len(dataset))
 
     assert len(dataset) == 1
@@ -31,7 +32,8 @@ def test_citeseer(dataset):
 
 
 @withDataset(name='CiteSeer', split='full')
-def test_citeseer_with_full_split(dataset):
+def test_citeseer_with_full_split(get_dataset):
+    dataset = get_dataset()
     data = dataset[0]
     assert data.val_mask.sum() == 500
     assert data.test_mask.sum() == 1000
@@ -41,7 +43,8 @@ def test_citeseer_with_full_split(dataset):
 
 @withDataset(name='CiteSeer', split='random', num_train_per_class=11,
              num_val=29, num_test=41)
-def test_citeseer_with_random_split(dataset):
+def test_citeseer_with_random_split(get_dataset):
+    dataset = get_dataset()
     data = dataset[0]
     assert data.train_mask.sum() == dataset.num_classes * 11
     assert data.val_mask.sum() == 29

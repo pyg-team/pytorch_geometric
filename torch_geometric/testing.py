@@ -53,11 +53,14 @@ def get_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 def withDataset(name: str, *args, **kwargs) -> Callable:
     r"""A decorator to load (and re-use) a variety of datasets during
     testing."""
-    root = osp.join('/', 'tmp', 'pyg_test_datasets')
+    root = osp.join('/', 'tmp', 'pyg_test_datasets', '2')
 
     def decorator(func):
         import pytest
-        dataset = get_dataset(root, name, *args, **kwargs)
-        return pytest.mark.parametrize('dataset', [dataset])(func)
+
+        def wrapper():
+            return get_dataset(root, name, *args, **kwargs)
+
+        return pytest.mark.parametrize('get_dataset', [wrapper])(func)
 
     return decorator

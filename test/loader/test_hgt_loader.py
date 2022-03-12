@@ -128,7 +128,8 @@ def test_hgt_loader():
 
 
 @withDataset(name='Cora')
-def test_hgt_loader_on_cora(dataset):
+def test_hgt_loader_on_cora(get_dataset):
+    dataset = get_dataset()
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 

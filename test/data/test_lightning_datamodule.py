@@ -58,10 +58,10 @@ class LinearGraphModule(LightningModule):
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
 @withDataset(name='MUTAG')
-def test_lightning_dataset(dataset, strategy):
+def test_lightning_dataset(get_dataset, strategy):
     import pytorch_lightning as pl
 
-    dataset = dataset.shuffle()
+    dataset = get_dataset().shuffle()
     train_dataset = dataset[:50]
     val_dataset = dataset[50:80]
     test_dataset = dataset[80:90]
@@ -142,9 +142,10 @@ class LinearNodeModule(LightningModule):
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
 @withDataset(name='Cora')
-def test_lightning_node_data(dataset, strategy, loader):
+def test_lightning_node_data(get_dataset, strategy, loader):
     import pytorch_lightning as pl
 
+    dataset = get_dataset()
     data = dataset[0]
     data_repr = ('Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], '
                  'train_mask=[2708], val_mask=[2708], test_mask=[2708])')
@@ -231,9 +232,10 @@ class LinearHeteroNodeModule(LightningModule):
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @withDataset(name='DBLP')
-def test_lightning_hetero_node_data(dataset):
+def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 
+    dataset = get_dataset()
     data = dataset[0]
 
     model = LinearHeteroNodeModule(data['author'].num_features,
