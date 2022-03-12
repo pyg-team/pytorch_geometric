@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
+from .mask import index_to_mask
 
 
 def get_num_hops(model: torch.nn.Module) -> int:
@@ -46,27 +47,20 @@ def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
         subset = torch.tensor(subset, dtype=torch.long, device=device)
 
     if subset.dtype == torch.bool or subset.dtype == torch.uint8:
-        node_mask = subset
-        num_nodes = node_mask.size(0)
-
-        if relabel_nodes:
-            node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
-                                   device=device)
-            node_idx[subset] = torch.arange(subset.sum().item(), device=device)
+        num_nodes = subset.size(0)
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        node_mask = torch.zeros(num_nodes, dtype=torch.bool, device=device)
-        node_mask[subset] = 1
+        subset = index_to_mask(subset, size=num_nodes)
 
-        if relabel_nodes:
-            node_idx = torch.zeros(num_nodes, dtype=torch.long, device=device)
-            node_idx[subset] = torch.arange(subset.size(0), device=device)
-
+    node_mask = subset
     edge_mask = node_mask[edge_index[0]] & node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
+        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
+                               device=device)
+        node_idx[subset] = torch.arange(subset.sum().item(), device=device)
         edge_index = node_idx[edge_index]
 
     if return_edge_mask:
