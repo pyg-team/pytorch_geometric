@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from torch_geometric.data import LightningDataset, LightningNodeData
 from torch_geometric.datasets import DBLP, TUDataset
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.testing import withDataset
 
 try:
     from pytorch_lightning import LightningModule
