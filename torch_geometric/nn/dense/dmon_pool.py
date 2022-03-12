@@ -1,14 +1,17 @@
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
+
+from torch_geometric.nn.dense.mincut_pool import _rank3_trace
 
 EPS = 1e-15
 
 
-class DMonPooling(torch.nn.Module):
-    r"""Spectral modularity pooling operator from the `"Graph Clustering with
-    Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
+class DMoNPooling(torch.nn.Module):
+    r"""The spectral modularity pooling operator from the `"Graph Clustering
+    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -19,9 +22,9 @@ class DMonPooling(torch.nn.Module):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns learned cluster assignment matrix, pooled node feature matrix,
-    coarsened symmetrically normalized adjacency matrix, and two auxiliary
-    objectives: (1) The spectral loss
+    Returns the learned cluster assignment matrix, the pooled node feature
+    matrix, the coarsened symmetrically normalized adjacency matrix, and three
+    auxiliary objectives: (1) The spectral loss
 
     .. math::
         \mathcal{L}_s = - \frac{1}{2m}
@@ -43,16 +46,16 @@ class DMonPooling(torch.nn.Module):
 
     .. note::
 
-        For an example of using :class:`DMonPooling`, see
+        For an example of using :class:`DMoNPooling`, see
         `examples/proteins_dmon_pool.py
         <https://github.com/pyg-team/pytorch_geometric/blob
         /master/examples/proteins_dmon_pool.py>`_.
 
     Args:
-        channels (List[int]): List of input and intermediate channels in order
-            to construct an MLP.
+        channels (int or List[int]): Size of each input sample. If given as a
+            list, will construct an MLP based on the given feature sizes.
         k (int): The number of clusters.
-        dropout (float, optional): Dropout probability. (default: :obj:`0`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
     def __init__(self, channels: Union[int, List[int]], k: int,
                  dropout: float = 0.0):
@@ -63,6 +66,7 @@ class DMonPooling(torch.nn.Module):
 
         from torch_geometric.nn.models.mlp import MLP
         self.mlp = MLP(channels + [k], act='selu', batch_norm=False)
+
         self.dropout = dropout
 
         self.reset_parameters()
@@ -70,31 +74,35 @@ class DMonPooling(torch.nn.Module):
     def reset_parameters(self):
         self.mlp.reset_parameters()
 
-    def forward(self, x, adj, mask=None):
+    def forward(
+        self,
+        x: Tensor,
+        adj: Tensor,
+        mask: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in
                 \mathbb{R}^{B \times N \times F}` with batch-size
                 :math:`B`, (maximum) number of nodes :math:`N` for each graph,
-                and feature dimension :math:`F`. Since the cluster assignment
-                matrix :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}`
-                is being created within this method, the MLP and softmax do
-                not have to be applied beforehand.
-            adj (Tensor): Symmetrically normalized adjacency tensor
+                and feature dimension :math:`F`.
+                Note that the cluster assignment matrix
+                :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
+                being created within this method.
+            adj (Tensor): Adjacency tensor
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
             mask (BoolTensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
+
         :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
             :class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
         """
-
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
 
         s = self.mlp(x)
         s = F.dropout(s, self.dropout, training=self.training)
-
         s = torch.softmax(s, dim=-1)
 
         (batch_size, num_nodes, _), k = x.size(), s.size(-1)
@@ -103,10 +111,10 @@ class DMonPooling(torch.nn.Module):
             mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
             x, s = x * mask, s * mask
 
-        out = torch.matmul(s.transpose(1, 2), x)
-        out = F.selu(out)
+        out = F.selu(torch.matmul(s.transpose(1, 2), x))
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
+        # Spectral loss:
         degrees = torch.einsum('ijk->ik', adj).transpose(0, 1)
         m = torch.einsum('ij->', degrees)
 
@@ -115,10 +123,10 @@ class DMonPooling(torch.nn.Module):
 
         normalizer = torch.matmul(ca, cb) / 2 / m
         decompose = out_adj - normalizer
-        spectral_loss = -self._rank3_trace(decompose) / 2 / m
+        spectral_loss = -_rank3_trace(decompose) / 2 / m
         spectral_loss = torch.mean(spectral_loss)
 
-        # Orthogonality regularization.
+        # Orthogonality regularization:
         ss = torch.matmul(s.transpose(1, 2), s)
         i_s = torch.eye(k).type_as(ss)
         ortho_loss = torch.norm(
@@ -126,10 +134,11 @@ class DMonPooling(torch.nn.Module):
             i_s / torch.norm(i_s), dim=(-1, -2))
         ortho_loss = torch.mean(ortho_loss)
 
+        # Cluster loss:
         cluster_loss = torch.norm(torch.einsum(
             'ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
 
-        # Fix and normalize coarsened adjacency matrix.
+        # Fix and normalize coarsened adjacency matrix:
         ind = torch.arange(k, device=out_adj.device)
         out_adj[:, ind, ind] = 0
         d = torch.einsum('ijk->ij', out_adj)
@@ -138,5 +147,6 @@ class DMonPooling(torch.nn.Module):
 
         return s, out, out_adj, spectral_loss, ortho_loss, cluster_loss
 
-    def _rank3_trace(self, x):
-        return torch.einsum('ijj->i', x)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.mlp.in_channels}, '
+                f'num_clusters={self.mlp.out_channels})')

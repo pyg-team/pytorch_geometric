@@ -1,15 +1,16 @@
 import torch
 
-from torch_geometric.nn import DMonPooling
+from torch_geometric.nn import DMoNPooling
 
 
-def test_dense_dmon_pool():
+def test_dmon_pooling():
     batch_size, num_nodes, channels, num_clusters = (2, 20, 16, 10)
     x = torch.randn((batch_size, num_nodes, channels))
     adj = torch.ones((batch_size, num_nodes, num_nodes))
     mask = torch.randint(0, 2, (batch_size, num_nodes), dtype=torch.bool)
 
-    pool = DMonPooling([channels, channels], num_clusters)
+    pool = DMoNPooling([channels, channels], num_clusters)
+    assert str(pool) == 'DMoNPooling(16, num_clusters=10)'
 
     s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(x, adj, mask)
     assert s.size() == (2, 20, 10)
