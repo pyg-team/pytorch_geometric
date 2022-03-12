@@ -1,8 +1,4 @@
 import math
-import os.path as osp
-import random
-import shutil
-import sys
 import warnings
 
 import pytest
@@ -10,7 +6,6 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import LightningDataset, LightningNodeData
-from torch_geometric.datasets import DBLP, TUDataset
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.testing import withDataset
 
@@ -62,15 +57,14 @@ class LinearGraphModule(LightningModule):
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_dataset(strategy):
+@withDataset(name='MUTAG')
+def test_lightning_dataset(dataset, strategy):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, name='MUTAG').shuffle()
+    dataset = dataset.shuffle()
     train_dataset = dataset[:50]
     val_dataset = dataset[50:80]
     test_dataset = dataset[80:90]
-    shutil.rmtree(root)
 
     gpus = 1 if strategy is None else torch.cuda.device_count()
     if strategy == 'ddp_spawn':
@@ -236,13 +230,11 @@ class LinearHeteroNodeModule(LightningModule):
 
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_lightning_hetero_node_data():
+@withDataset(name='DBLP')
+def test_lightning_hetero_node_data(dataset):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = DBLP(root)
     data = dataset[0]
-    shutil.rmtree(root)
 
     model = LinearHeteroNodeModule(data['author'].num_features,
                                    int(data['author'].y.max()) + 1)
