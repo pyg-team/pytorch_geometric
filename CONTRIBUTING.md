@@ -94,7 +94,7 @@ Everytime you send a Pull Request, your commit will be built and checked against
    FULL_TEST=1 pytest --cov
    ```
 
-   (which runs a set of additional but more time-consuming tests) dependening on your needs.
+   (which runs a set of additional but time-consuming tests) dependening on your needs.
 
 ## Building Documentation
 
