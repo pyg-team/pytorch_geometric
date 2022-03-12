@@ -1,3 +1,7 @@
+from torch_geometric.testing import onlyFullTest
+
+
+@onlyFullTest
 def test_imdb_binary(get_dataset):
     dataset = get_dataset(name='IMDB-BINARY')
     assert len(dataset) == 1000
