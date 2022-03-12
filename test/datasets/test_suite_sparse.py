@@ -1,16 +1,15 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
-from torch_geometric.datasets import SuiteSparseMatrixCollection
+from torch_geometric.testing import withDataset
 
 
-def test_suite_sparse_dataset():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+@withDataset(name='DIMACS10/citationCiteseer')
+def test_suite_sparse_dataset(dataset):
+    assert str(dataset) == ('SuiteSparseMatrixCollection('
+                            'group=DIMACS10, name=citationCiteseer)')
+    assert len(dataset) == 1
 
-    for group, name in [('DIMACS10', 'citationCiteseer'), ('HB', 'illc1850')]:
-        dataset = SuiteSparseMatrixCollection(root, group, name)
-        assert len(dataset) == 1
 
-    shutil.rmtree(root)
+@withDataset(name='HB/illc1850')
+def test_illc1850_suite_sparse_dataset(dataset):
+    assert str(dataset) == ('SuiteSparseMatrixCollection('
+                            'group=HB, name=illc1850)')
+    assert len(dataset) == 1

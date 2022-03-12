@@ -19,14 +19,27 @@ def withDataset(name: str, *args, **kwargs) -> Callable:
     r"""A decorator to load (and re-use) a variety of datasets during
     testing."""
     def decorator(func: Callable) -> Callable:
-        if name.lower() in ['cora', 'citeseer', 'pubmed']:
+        if name.lower() in ['karate']:
+            from torch_geometric.datasets import KarateClub
+            dataset = KarateClub(*args, **kwargs)
+        elif name.lower() in ['cora', 'citeseer', 'pubmed']:
             from torch_geometric.datasets import Planetoid
             dataset = Planetoid('/tmp/Planetoid', name, *args, **kwargs)
         elif name in ['BZR', 'ENZYMES', 'IMDB-BINARY', 'MUTAG']:
             from torch_geometric.datasets import TUDataset
             dataset = TUDataset('/tmp/TU', name, *args, **kwargs)
+        elif name in ['ego-facebook', 'soc-Slashdot0811', 'wiki-vote']:
+            from torch_geometric.datasets import SNAPDataset
+            dataset = SNAPDataset('/tmp/SNAP', name, *args, **kwargs)
+        elif name in ['DIMACS10/citationCiteseer', 'HB/illc1850']:
+            from torch_geometric.datasets import SuiteSparseMatrixCollection
+            group, value = name.split('/')
+            dataset = SuiteSparseMatrixCollection('/tmp/SSMC', group, value,
+                                                  *args, **kwargs)
+        elif name.lower() in ['bashapes']:
+            from torch_geometric.datasets import BAShapes
+            dataset = BAShapes(*args, **kwargs)
         else:
-            print("FAIL", name)
             raise NotImplementedError
 
         import pytest

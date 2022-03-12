@@ -66,7 +66,7 @@ def read_ego(files, name):
             x = x_all
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
-                          usecols=[0], squeeze=True)
+                          usecols=[0]).squeeze()
 
         idx_assoc = {}
         for i, j in enumerate(idx):
@@ -84,9 +84,9 @@ def read_ego(files, name):
 
         try:
             row = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[0], squeeze=True)
+                              usecols=[0]).squeeze()
             col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[1], squeeze=True)
+                              usecols=[1]).squeeze()
         except:  # noqa
             continue
 
