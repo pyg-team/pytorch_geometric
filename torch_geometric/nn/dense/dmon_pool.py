@@ -4,6 +4,8 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
+from torch_geometric.nn.dense.mincut_pool import _rank3_trace
+
 EPS = 1e-15
 
 
@@ -20,7 +22,7 @@ class DMoNPooling(torch.nn.Module):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns the learned cluster assignment matrix, pthe ooled node feature
+    Returns the learned cluster assignment matrix, the pooled node feature
     matrix, the coarsened symmetrically normalized adjacency matrix, and three
     auxiliary objectives: (1) The spectral loss
 
@@ -79,10 +81,9 @@ class DMoNPooling(torch.nn.Module):
                 \mathbb{R}^{B \times N \times F}` with batch-size
                 :math:`B`, (maximum) number of nodes :math:`N` for each graph,
                 and feature dimension :math:`F`.
-                Since the cluster assignment matrix
+                Note that the cluster assignment matrix
                 :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
-                being created within this method, the MLP and softmax do not
-                have to be applied beforehand.
+                being created within this method.
             adj (Tensor): Adjacency tensor
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
             mask (BoolTensor, optional): Mask matrix
@@ -97,7 +98,6 @@ class DMoNPooling(torch.nn.Module):
 
         s = self.mlp(x)
         s = F.dropout(s, self.dropout, training=self.training)
-
         s = torch.softmax(s, dim=-1)
 
         (batch_size, num_nodes, _), k = x.size(), s.size(-1)
@@ -106,10 +106,10 @@ class DMoNPooling(torch.nn.Module):
             mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
             x, s = x * mask, s * mask
 
-        out = torch.matmul(s.transpose(1, 2), x)
-        out = F.selu(out)
+        out = F.selu(torch.matmul(s.transpose(1, 2), x))
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
+        # Spectral loss:
         degrees = torch.einsum('ijk->ik', adj).transpose(0, 1)
         m = torch.einsum('ij->', degrees)
 
@@ -118,10 +118,10 @@ class DMoNPooling(torch.nn.Module):
 
         normalizer = torch.matmul(ca, cb) / 2 / m
         decompose = out_adj - normalizer
-        spectral_loss = -self._rank3_trace(decompose) / 2 / m
+        spectral_loss = -_rank3_trace(decompose) / 2 / m
         spectral_loss = torch.mean(spectral_loss)
 
-        # Orthogonality regularization.
+        # Orthogonality regularization:
         ss = torch.matmul(s.transpose(1, 2), s)
         i_s = torch.eye(k).type_as(ss)
         ortho_loss = torch.norm(
@@ -129,10 +129,11 @@ class DMoNPooling(torch.nn.Module):
             i_s / torch.norm(i_s), dim=(-1, -2))
         ortho_loss = torch.mean(ortho_loss)
 
+        # Cluster loss:
         cluster_loss = torch.norm(torch.einsum(
             'ijk->ij', ss)) / adj.size(1) * torch.norm(i_s) - 1
 
-        # Fix and normalize coarsened adjacency matrix.
+        # Fix and normalize coarsened adjacency matrix:
         ind = torch.arange(k, device=out_adj.device)
         out_adj[:, ind, ind] = 0
         d = torch.einsum('ijk->ij', out_adj)
@@ -141,5 +142,6 @@ class DMoNPooling(torch.nn.Module):
 
         return s, out, out_adj, spectral_loss, ortho_loss, cluster_loss
 
-    def _rank3_trace(self, x):
-        return torch.einsum('ijj->i', x)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.mlp.in_channels}, '
+                f'num_clusters={self.mlp.out_channels})')

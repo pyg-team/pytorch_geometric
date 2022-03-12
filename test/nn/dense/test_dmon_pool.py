@@ -10,6 +10,7 @@ def test_dmon_pooling():
     mask = torch.randint(0, 2, (batch_size, num_nodes), dtype=torch.bool)
 
     pool = DMoNPooling([channels, channels], num_clusters)
+    assert str(pool) == 'DMoNPooling(16, num_clusters=10)'
 
     s, x, adj, spectral_loss, ortho_loss, cluster_loss = pool(x, adj, mask)
     assert s.size() == (2, 20, 10)
