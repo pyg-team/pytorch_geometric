@@ -79,15 +79,15 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
     containing the nodes in :obj:`subset`, for a bipartite graph.
 
     Args:
-        subset (PairTensor or Tuple([int],[int])): The nodes to keep.
+        subset (PairTensor or tuple([int],[int])): The nodes to keep.
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
         relabel_nodes (bool, optional): If set to :obj:`True`, the resulting
             :obj:`edge_index` will be relabeled to hold consecutive indices
             starting from zero. (default: :obj:`False`)
-        num_nodes (tuple, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        num_nodes (tuple, optional): The number of nodes.
+            (default: :obj:`None`)
         return_edge_mask (bool, optional): If set to :obj:`True`, will return
             the edge mask to filter out additional edge features.
             (default: :obj:`False`)
