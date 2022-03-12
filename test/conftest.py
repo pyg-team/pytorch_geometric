@@ -14,7 +14,7 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         return KarateClub(*args, **kwargs)
     if name.lower() in ['cora', 'citeseer', 'pubmed']:
         from torch_geometric.datasets import Planetoid
-        path = osp.join(root, 'Planetoid')
+        path = osp.join(root, 'Planetoid', name)
         return Planetoid(path, name, *args, **kwargs)
     if name in ['BZR', 'ENZYMES', 'IMDB-BINARY', 'MUTAG']:
         from torch_geometric.datasets import TUDataset
@@ -43,5 +43,5 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 def get_dataset():
     root = osp.join('/', 'tmp', 'pyg_test_datasets')
     yield functools.partial(load_dataset, root)
-    shutil.rmtree(root)
-    print("CLEANED UP")
+    if osp.exists(root):
+        shutil.rmtree(root)
