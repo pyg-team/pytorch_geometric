@@ -1,7 +1,8 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
-from torch_geometric.utils import get_num_hops, k_hop_subgraph, subgraph
+from torch_geometric.utils import (get_num_hops, k_hop_subgraph, subgraph,
+                                   bipartite_subgraph)
 
 
 def test_get_num_hops():
@@ -39,6 +40,27 @@ def test_subgraph():
         out = subgraph(subset, edge_index, edge_attr, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert out[1].tolist() == [7, 8, 9, 10]
+
+
+def test_bipartite_subgraph():
+    edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
+                               [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
+    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+    idx = (torch.tensor([2, 3, 5], dtype=torch.long),
+           torch.tensor([2, 3], dtype=torch.long))
+    mask = (torch.tensor([0, 0, 1, 1, 0, 1, 0], dtype=torch.bool),
+            torch.tensor([0, 0, 1, 1], dtype=torch.bool))
+    indices = ([2, 3, 5], [2, 3])
+
+    for subset in [idx, mask, indices]:
+        out = bipartite_subgraph(subset, edge_index, edge_attr)
+        assert out[0].tolist() == [[2, 3, 5, 5], [3, 2, 2, 3]]
+        assert out[1].tolist() == [3, 4, 9, 10]
+
+        out = bipartite_subgraph(subset, edge_index, edge_attr,
+                                 relabel_nodes=True)
+        assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
+        assert out[1].tolist() == [3, 4, 9, 10]
 
 
 def test_k_hop_subgraph():
