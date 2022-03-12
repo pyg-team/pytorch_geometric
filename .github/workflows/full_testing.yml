@@ -7,13 +7,14 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
+    if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: [3.7, 3.9]
+        python-version: [3.7, 3.8, 3.9, 3.10]
         torch-version: [1.10.0]
         include:
           - torch-version: 1.10.0
@@ -44,6 +45,8 @@ jobs:
       - name: Run tests
         run: |
           FULL_TEST=1 pytest --cov --cov-report=xml
+        shell:
+          bash
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2
