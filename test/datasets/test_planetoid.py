@@ -1,9 +1,3 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
-from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import withDataset
 

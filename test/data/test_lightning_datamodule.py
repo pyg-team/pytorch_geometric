@@ -10,7 +10,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import LightningDataset, LightningNodeData
-from torch_geometric.datasets import DBLP, Planetoid, TUDataset
+from torch_geometric.datasets import DBLP, TUDataset
 from torch_geometric.nn import global_mean_pool
 
 try:
@@ -146,15 +146,13 @@ class LinearNodeModule(LightningModule):
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_node_data(strategy, loader):
+@withDataset(name='Cora')
+def test_lightning_node_data(dataset, strategy, loader):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, name='Cora')
     data = dataset[0]
     data_repr = ('Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], '
                  'train_mask=[2708], val_mask=[2708], test_mask=[2708])')
-    shutil.rmtree(root)
 
     model = LinearNodeModule(dataset.num_features, dataset.num_classes)
 
