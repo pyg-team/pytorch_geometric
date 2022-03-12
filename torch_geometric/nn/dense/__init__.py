@@ -5,7 +5,7 @@ from .dense_graph_conv import DenseGraphConv
 from .dense_gin_conv import DenseGINConv
 from .diff_pool import dense_diff_pool
 from .mincut_pool import dense_mincut_pool
-from .dense_dmon_pool import DMoNPooling
+from .dmon_pool import DMoNPooling
 
 __all__ = [
     'Linear',
