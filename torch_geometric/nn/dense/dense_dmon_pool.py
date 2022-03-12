@@ -2,13 +2,14 @@ from typing import List, Union
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 EPS = 1e-15
 
 
-class DMonPooling(torch.nn.Module):
-    r"""Spectral modularity pooling operator from the `"Graph Clustering with
-    Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
+class DMoNPooling(torch.nn.Module):
+    r"""The spectral modularity pooling operator from the `"Graph Clustering
+    with Graph Neural Networks" <https://arxiv.org/abs/2006.16904>`_ paper
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -19,9 +20,9 @@ class DMonPooling(torch.nn.Module):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns learned cluster assignment matrix, pooled node feature matrix,
-    coarsened symmetrically normalized adjacency matrix, and two auxiliary
-    objectives: (1) The spectral loss
+    Returns the learned cluster assignment matrix, pthe ooled node feature
+    matrix, the coarsened symmetrically normalized adjacency matrix, and three
+    auxiliary objectives: (1) The spectral loss
 
     .. math::
         \mathcal{L}_s = - \frac{1}{2m}
@@ -43,16 +44,16 @@ class DMonPooling(torch.nn.Module):
 
     .. note::
 
-        For an example of using :class:`DMonPooling`, see
+        For an example of using :class:`DMoNPooling`, see
         `examples/proteins_dmon_pool.py
         <https://github.com/pyg-team/pytorch_geometric/blob
         /master/examples/proteins_dmon_pool.py>`_.
 
     Args:
-        channels (List[int]): List of input and intermediate channels in order
-            to construct an MLP.
+        channels (int or List[int]): Size of each input sample. If given as a
+            list, will construct an MLP based on the given feature sizes.
         k (int): The number of clusters.
-        dropout (float, optional): Dropout probability. (default: :obj:`0`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
     def __init__(self, channels: Union[int, List[int]], k: int,
                  dropout: float = 0.0):
@@ -63,6 +64,7 @@ class DMonPooling(torch.nn.Module):
 
         from torch_geometric.nn.models.mlp import MLP
         self.mlp = MLP(channels + [k], act='selu', batch_norm=False)
+
         self.dropout = dropout
 
         self.reset_parameters()
@@ -70,25 +72,26 @@ class DMonPooling(torch.nn.Module):
     def reset_parameters(self):
         self.mlp.reset_parameters()
 
-    def forward(self, x, adj, mask=None):
+    def forward(self, x: Tensor, adj: Tensor, mask=None):
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in
                 \mathbb{R}^{B \times N \times F}` with batch-size
                 :math:`B`, (maximum) number of nodes :math:`N` for each graph,
-                and feature dimension :math:`F`. Since the cluster assignment
-                matrix :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}`
-                is being created within this method, the MLP and softmax do
-                not have to be applied beforehand.
-            adj (Tensor): Symmetrically normalized adjacency tensor
+                and feature dimension :math:`F`.
+                Since the cluster assignment matrix
+                :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}` is
+                being created within this method, the MLP and softmax do not
+                have to be applied beforehand.
+            adj (Tensor): Adjacency tensor
                 :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
             mask (BoolTensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
+
         :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
             :class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
         """
-
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
 
