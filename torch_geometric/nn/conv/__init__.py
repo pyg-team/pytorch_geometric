@@ -40,6 +40,7 @@ from .pan_conv import PANConv
 from .wl_conv import WLConv
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
+from .mesh_conv import MeshConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
 from .pdn_conv import PDNConv
@@ -98,6 +99,7 @@ __all__ = [
     'WLConv',
     'FiLMConv',
     'SuperGATConv',
+    'MeshConv',
     'FAConv',
     'EGConv',
     'PDNConv',

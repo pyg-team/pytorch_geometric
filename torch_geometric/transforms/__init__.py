@@ -41,6 +41,7 @@ from .gdc import GDC
 from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
+from .mesh_prepare import MeshCNNPrepare
 from .svd_feature_reduction import SVDFeatureReduction
 from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
@@ -93,6 +94,7 @@ __all__ = [
     'SIGN',
     'GridSampling',
     'GCNNorm',
+    'MeshCNNPrepare',
     'SVDFeatureReduction',
     'RemoveTrainingClasses',
     'RandomNodeSplit',

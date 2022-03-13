@@ -33,6 +33,8 @@ from .train_test_split_edges import train_test_split_edges
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
                      intersection_and_union, mean_iou)
+from .mesh_features import (mesh_extract_features, set_edge_lengths, dihedral_angle, symmetric_opposite_angles,
+                            get_normals, get_opposite_angles, symmetric_ratios, get_ratios)
 
 __all__ = [
     'degree',
@@ -88,6 +90,14 @@ __all__ = [
     'f1_score',
     'intersection_and_union',
     'mean_iou',
+    'mesh_extract_features',
+    'set_edge_lengths',
+    'dihedral_angle',
+    'symmetric_opposite_angles',
+    'get_normals',
+    'get_opposite_angles',
+    'symmetric_ratios',
+    'get_ratios',
 ]
 
 classes = __all__

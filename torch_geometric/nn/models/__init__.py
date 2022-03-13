@@ -16,6 +16,7 @@ from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
+from .mesh_models import MeshConvNet, MeshEncoderDecoder
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .linkx import LINKX
@@ -49,6 +50,8 @@ __all__ = [
     'TGNMemory',
     'LabelPropagation',
     'CorrectAndSmooth',
+    'MeshConvNet',
+    'MeshEncoderDecoder',
     'AttentiveFP',
     'RECT_L',
     'LINKX',

@@ -57,6 +57,7 @@ from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
+from .mesh_cnn_datasets import MeshShrech16Dataset, MeshCubesDataset, MeshHumanSegDataset, MeshCoSegDataset
 from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
@@ -140,6 +141,10 @@ __all__ = [
     'HGBDataset',
     'JODIEDataset',
     'MixHopSyntheticDataset',
+    'MeshShrech16Dataset',
+    'MeshCubesDataset',
+    'MeshHumanSegDataset',
+    'MeshCoSegDataset',
     'UPFD',
     'GitHub',
     'FacebookPagePage',

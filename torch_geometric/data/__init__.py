@@ -8,6 +8,7 @@ from .lightning_datamodule import LightningDataset, LightningNodeData
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
+from .meshcnnhandler import MeshCNNHandler, MeshCNNData
 
 __all__ = [
     'Data',
@@ -24,6 +25,8 @@ __all__ = [
     'extract_zip',
     'extract_bz2',
     'extract_gz',
+    'MeshCNNHandler',
+    'MeshCNNData',
 ]
 
 classes = __all__
