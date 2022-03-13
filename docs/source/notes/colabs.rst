@@ -23,7 +23,7 @@ All tutorials also link to a Google Colab with the code in the tutorial for you 
 
 **PyTorch Geometric Tutorial Project:**
 
-The `PyTorch Geometric Tutorial project <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__ provides **video tutorials and Colab notebooks** for a variety of different methods in **PyG**:
+The `PyTorch Geometric Tutorial <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__ project provides **video tutorials and Colab notebooks** for a variety of different methods in **PyG**:
 
 1. Introduction [`Video <https://www.youtube.com/watch?v=JtDgmmQ60x8>`__, `Notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial1/Tutorial1.ipynb>`__]
 2. PyTorch basics [`Video <https://www.youtube.com/watch?v=UHrhp2l_knU>`__, `Notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial2/Tutorial2.ipynb>`__]
