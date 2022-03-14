@@ -72,8 +72,8 @@ def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
 
 def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
                        edge_index: Tensor, edge_attr: Optional[Tensor] = None,
-                       relabel_nodes: bool = False,
-                       num_nodes: Tuple[int, int] = None,
+                       relabel_nodes: bool = False, size: Tuple[int,
+                                                                int] = None,
                        return_edge_mask: bool = False):
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`, for a bipartite graph.
@@ -86,7 +86,7 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
         relabel_nodes (bool, optional): If set to :obj:`True`, the resulting
             :obj:`edge_index` will be relabeled to hold consecutive indices
             starting from zero. (default: :obj:`False`)
-        num_nodes (tuple, optional): The number of nodes.
+        size (tuple, optional): The number of nodes.
             (default: :obj:`None`)
         return_edge_mask (bool, optional): If set to :obj:`True`, will return
             the edge mask to filter out additional edge features.
@@ -102,13 +102,13 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
                   torch.tensor(subset[1], dtype=torch.long, device=device))
 
     if subset[0].dtype == torch.bool or subset[0].dtype == torch.uint8:
-        num_nodes = subset[0].size(0), subset[1].size(0)
+        size = subset[0].size(0), subset[1].size(0)
     else:
-        if num_nodes is None:
-            num_nodes = (maybe_num_nodes(edge_index[0]),
-                         maybe_num_nodes(edge_index[1]))
-        subset = (index_to_mask(subset[0], size=num_nodes[0]),
-                  index_to_mask(subset[1], size=num_nodes[1]))
+        if size is None:
+            size = (maybe_num_nodes(edge_index[0]),
+                    maybe_num_nodes(edge_index[1]))
+        subset = (index_to_mask(subset[0], size=size[0]),
+                  index_to_mask(subset[1], size=size[1]))
 
     node_mask_i, node_mask_j = subset[0], subset[1]
     edge_mask = node_mask_i[edge_index[0]] & node_mask_j[edge_index[1]]
