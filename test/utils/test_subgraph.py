@@ -33,9 +33,10 @@ def test_subgraph():
     indices = idx.tolist()
 
     for subset in [idx, mask, indices]:
-        out = subgraph(subset, edge_index, edge_attr)
+        out = subgraph(subset, edge_index, edge_attr, return_edge_mask=True)
         assert out[0].tolist() == [[3, 4, 4, 5], [4, 3, 5, 4]]
         assert out[1].tolist() == [7, 8, 9, 10]
+        assert out[2].tolist() == [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0]
 
         out = subgraph(subset, edge_index, edge_attr, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
@@ -52,9 +53,11 @@ def test_bipartite_subgraph():
     indices = (idx[0].tolist(), idx[1].tolist())
 
     for subset in [idx, mask, indices]:
-        out = bipartite_subgraph(subset, edge_index, edge_attr)
+        out = bipartite_subgraph(subset, edge_index, edge_attr,
+                                 return_edge_mask=True)
         assert out[0].tolist() == [[2, 3, 5, 5], [3, 2, 2, 3]]
         assert out[1].tolist() == [3, 4, 9, 10]
+        assert out[2].tolist() == [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0]
 
         out = bipartite_subgraph(subset, edge_index, edge_attr,
                                  relabel_nodes=True)
