@@ -112,15 +112,15 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
         subset = (index_to_mask(subset[0], size=size[0]),
                   index_to_mask(subset[1], size=size[1]))
 
-    node_mask_i, node_mask_j = subset[0], subset[1]
-    edge_mask = node_mask_i[edge_index[0]] & node_mask_j[edge_index[1]]
+    node_mask = subset[0], subset[1]
+    edge_mask = node_mask[0][edge_index[0]] & node_mask[1][edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = torch.zeros(node_mask_i.size(0), dtype=torch.long,
+        node_idx_i = torch.zeros(node_mask[0].size(0), dtype=torch.long,
                                  device=device)
-        node_idx_j = torch.zeros(node_mask_j.size(0), dtype=torch.long,
+        node_idx_j = torch.zeros(node_mask[1].size(0), dtype=torch.long,
                                  device=device)
         node_idx_i[subset[0]] = torch.arange(subset[0].sum().item(),
                                              device=device)
