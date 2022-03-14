@@ -1,4 +1,5 @@
 import sys
+import warnings
 from itertools import repeat
 from pathlib import Path
 
@@ -95,6 +96,7 @@ def read_file(folder, prefix, name):
 
     with open(path, 'rb') as f:
         if sys.version_info > (3, 0):
+            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
             out = pickle.load(f, encoding='latin1')
         else:
             out = pickle.load(f)

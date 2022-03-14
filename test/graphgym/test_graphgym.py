@@ -41,7 +41,8 @@ def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
     load_cfg(cfg, args)
     cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
+
     dump_cfg(cfg)
     set_printing()
 
@@ -95,4 +96,3 @@ def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
     agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
 
     shutil.rmtree(cfg.out_dir)
-    shutil.rmtree(cfg.dataset.dir)

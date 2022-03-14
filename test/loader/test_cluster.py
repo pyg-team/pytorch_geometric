@@ -8,7 +8,7 @@ from torch_geometric.utils import to_dense_adj
 try:
     rowptr = torch.tensor([0, 1])
     col = torch.tensor([0])
-    torch.ops.torch_sparse.partition(rowptr, col, None, 1)
+    torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
     with_metis = True
 except RuntimeError:
     with_metis = False
