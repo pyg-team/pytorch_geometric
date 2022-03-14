@@ -1,11 +1,12 @@
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
+
 from torch_geometric.typing import PairTensor
 
-from .num_nodes import maybe_num_nodes
 from .mask import index_to_mask
+from .num_nodes import maybe_num_nodes
 
 
 def get_num_hops(model: torch.nn.Module) -> int:
@@ -75,11 +76,12 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
                        relabel_nodes: bool = False, size: Tuple[int,
                                                                 int] = None,
                        return_edge_mask: bool = False):
-    r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
-    containing the nodes in :obj:`subset`, for a bipartite graph.
+    r"""Returns the induced subgraph of the bipartite graph
+    :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
     Args:
-        subset (PairTensor or tuple([int],[int])): The nodes to keep.
+        subset (Tuple[Tensor, Tensor] or tuple([int],[int])): The nodes
+            to keep.
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
