@@ -80,7 +80,7 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
     containing the nodes in :obj:`subset`.
 
     Args:
-        subset (PairTensor or tuple([int],[int])): The nodes to keep.
+        subset (Tuple[Tensor, Tensor] or tuple([int],[int])): The nodes to keep.
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
