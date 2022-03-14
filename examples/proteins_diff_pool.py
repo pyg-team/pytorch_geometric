@@ -61,14 +61,14 @@ class GNN(torch.nn.Module):
         batch_size, num_nodes, in_channels = x.size()
 
         x0 = x
-        x1 = self.bn(1, F.relu(self.conv1(x0, adj, mask)))
-        x2 = self.bn(2, F.relu(self.conv2(x1, adj, mask)))
-        x3 = self.bn(3, F.relu(self.conv3(x2, adj, mask)))
+        x1 = self.bn(1, self.conv1(x0, adj, mask).relu())
+        x2 = self.bn(2, self.conv2(x1, adj, mask).relu())
+        x3 = self.bn(3, self.conv3(x2, adj, mask).relu())
 
         x = torch.cat([x1, x2, x3], dim=-1)
 
         if self.lin is not None:
-            x = F.relu(self.lin(x))
+            x = self.lin(x).relu()
 
         return x
 
@@ -104,7 +104,7 @@ class Net(torch.nn.Module):
         x = self.gnn3_embed(x, adj)
 
         x = x.mean(dim=1)
-        x = F.relu(self.lin1(x))
+        x = self.lin1(x).relu()
         x = self.lin2(x)
         return F.log_softmax(x, dim=-1), l1 + l2, e1 + e2
 
@@ -124,7 +124,7 @@ def train(epoch):
         output, _, _ = model(data.x, data.adj, data.mask)
         loss = F.nll_loss(output, data.y.view(-1))
         loss.backward()
-        loss_all += data.y.size(0) * loss.item()
+        loss_all += data.y.size(0) * float(loss)
         optimizer.step()
     return loss_all / len(train_dataset)
 
@@ -137,7 +137,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         pred = model(data.x, data.adj, data.mask)[0].max(dim=1)[1]
-        correct += pred.eq(data.y.view(-1)).sum().item()
+        correct += int(pred.eq(data.y.view(-1)).sum())
     return correct / len(loader.dataset)
 
 
