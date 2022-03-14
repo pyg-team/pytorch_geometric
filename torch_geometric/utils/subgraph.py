@@ -76,7 +76,7 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
                        relabel_nodes: bool = False,
                        num_nodes: Tuple[int, int] = None,
                        return_edge_mask: bool = False):
-    r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
+    r"""Returns the induced subgraph of the bipartite graph :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`, for a bipartite graph.
 
     Args:
