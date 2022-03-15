@@ -3,6 +3,7 @@ from typing import Callable, Optional, Tuple
 
 import torch
 from google_drive_downloader import GoogleDriveDownloader as gdd
+from torch.nn.functional import one_hot
 
 from torch_geometric.data import Data, Dataset, InMemoryDataset
 from torch_geometric.io.metrla import MetrLaIo
@@ -78,8 +79,7 @@ class MetrLa(Dataset):
     n_readings = 34272
 
     def __init__(self, root: Optional[str], n_previous_steps: int,
-                 n_future_steps: int, add_time_of_day: bool = False,
-                 add_day_of_week: bool = False, normalized_k: float = .1,
+                 n_future_steps: int, normalized_k: float = .1,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None) -> None:
         self.name = 'MetrLa'
@@ -266,22 +266,21 @@ class MetrLaInMemory(InMemoryDataset):
     n_readings = 34272
 
     def __init__(self, root: Optional[str], n_previous_steps: int,
-                 n_future_steps: int, add_time_of_day: bool = False,
-                 add_day_of_week: bool = False, normalized_k: float = .1,
+                 n_future_steps: int, normalized_k: float = .1,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None) -> None:
         self.name = 'MetrLa'
         self.io = MetrLaIo(n_readings=self.n_readings,
                            n_previous_steps=n_previous_steps,
                            n_future_steps=n_future_steps,
-                           add_time_of_day=add_time_of_day,
-                           add_day_of_week=add_day_of_week,
                            normalized_k=normalized_k)
         super().__init__(root, transform, pre_transform)
 
-        self.x, self.y = torch.load(self.processed_paths[0])
-        self.edge_index = torch.load(self.processed_paths[1])
-        self.edge_attr = torch.load(self.processed_paths[2])
+        print('retrieving')
+        self.x = torch.load(self.processed_paths[0])
+        self.y = torch.load(self.processed_paths[1])
+        self.edge_index = torch.load(self.processed_paths[2])
+        self.edge_attr = torch.load(self.processed_paths[3])
 
     @property
     def raw_file_names(self) -> str:
@@ -293,7 +292,7 @@ class MetrLaInMemory(InMemoryDataset):
     def processed_file_names(self) -> str:
         r"""The name of the files in the :obj:`self.processed_dir`
         folder that must be present in order to skip processing."""
-        return ["data.pt", "edge_index.pt", "edge_attr.pt"]
+        return ["data_x.pt", "data_y.pt", "edge_index.pt", "edge_attr.pt"]
 
     def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
@@ -314,9 +313,11 @@ class MetrLaInMemory(InMemoryDataset):
 
         edge_index, edge_attr = dense_to_sparse(adjacency_matrix)
 
-        torch.save((x, y), self.processed_paths[0])
-        torch.save(edge_index, self.processed_paths[1])
-        torch.save(edge_attr, self.processed_paths[2])
+        print('saving')
+        torch.save(x, self.processed_paths[0])
+        torch.save(y, self.processed_paths[1])
+        torch.save(edge_index, self.processed_paths[2])
+        torch.save(edge_attr, self.processed_paths[3])
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
@@ -324,8 +325,10 @@ class MetrLaInMemory(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
+
         x_ = torch.tensor(data=self.x[idx, ...], dtype=torch.float32)
         y_ = torch.tensor(data=self.y[idx, ...], dtype=torch.float32)
+
         return x_, y_
 
     def get_adjacency_matrix(self) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -335,8 +338,8 @@ class MetrLaInMemory(InMemoryDataset):
         Returns: A tuple consisting of the index and attributes of the edges
         in COO format.
         """
-        edge_index = torch.load(self.processed_paths[1])
-        edge_attr = torch.load(self.processed_paths[2])
+        edge_index = torch.load(self.processed_paths[2])
+        edge_attr = torch.load(self.processed_paths[3])
         return edge_index, edge_attr
 
     def __repr__(self) -> str:

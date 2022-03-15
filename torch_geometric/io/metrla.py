@@ -15,24 +15,15 @@ class MetrLaIo:
             building the predictor variable.
         n_future_steps: The number of next time steps to consdier when
             building the target variable.
-        add_time_of_day: Whether to inject day of week information in
-            the features.
-        add_day_of_week: Whether to inject time of day information in
-            the features.
         normalized_k:  The threshold for constructing the adjacency matrix
             based on the thresholded Gaussian kernel.
     """
     def __init__(self, n_readings: int, n_previous_steps: int,
-                 n_future_steps: int, add_time_of_day: bool = False,
-                 add_day_of_week: bool = False,
-                 normalized_k: float = .1) -> None:
+                 n_future_steps: int, normalized_k: float = .1) -> None:
 
         self.n_readings = n_readings
         self.n_previous_steps = n_previous_steps
         self.n_future_steps = n_future_steps
-
-        self.add_time_of_day = add_time_of_day
-        self.add_day_of_week = add_day_of_week
 
         self.normalized_k = normalized_k
 
@@ -86,20 +77,19 @@ class MetrLaIo:
         _, n_nodes = data_df.shape
         data = np.expand_dims(a=data_df.values, axis=-1)
 
-        data = [data]
-        if self.add_time_of_day:
-            time_idx = (data_df.index.values -
-                        data_df.index.values.astype("datetime64[D]")
-                        ) / np.timedelta(1, "D")
+        data_mean = np.mean(data)
+        data_std = np.std(data)
+        data = (data - data_mean) / data_std
 
-            time_of_day = np.tile(time_idx, [1, n_nodes, 1]).transpose(
-                (2, 1, 0))
-            data.append(time_of_day)
-        if self.add_day_of_week:
-            day_of_week = np.zeros(shape=(self.n_readings, n_nodes, 7))
-            day_of_week[np.arange(stop=self.n_readings), :,
-                        data_df.index.dayofweek] = 1
-            data.append(day_of_week)
+        data = [data]
+        indices = (data_df.index.values.astype("datetime64") - data_df.index.values.astype("datetime64[D]")) / \
+                      np.timedelta64(1, "D")
+        hour_of_day = np.tile(indices, [1, n_nodes, 1]).transpose((2, 1, 0))
+        data.append(hour_of_day)
+
+        values = data_df.index.astype("datetime64[ns]").dayofweek / 7
+        day_of_week = np.tile(values, [1, n_nodes, 1]).transpose((2, 1, 0))
+        data.append(day_of_week)
 
         data = np.concatenate(data, axis=-1)
         x, y = [], []
@@ -110,6 +100,8 @@ class MetrLaIo:
 
         x = np.stack(arrays=x, axis=0)
         y = np.stack(arrays=y, axis=0)
+        print(f"x shape {x.shape}")
+        print(f"y shape {y.shape}")
         return x, y
 
     def generate_adjacency_matrix(
