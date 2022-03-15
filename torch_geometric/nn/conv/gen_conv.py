@@ -89,6 +89,16 @@ class GENConv(MessagePassing):
             function. (default: :obj:`1e-7`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{t})`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: int, out_channels: int,
                  aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,

@@ -1,0 +1,45 @@
+name: Minimal Installation
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  import:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.9]
+        torch-version: [1.10.0]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
+        run: |
+          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+      - name: Install internal dependencies
+        run: |
+          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+
+      - name: Install main package
+        run: |
+          pip install .
+
+      - name: Test imports
+        run: |
+          python -c "import torch_geometric"
+          python -c "import torch_geometric.datasets"
+          python -c "import torch_geometric.nn"
+          python -c "import torch_geometric.graphgym"

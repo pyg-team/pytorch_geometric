@@ -3,17 +3,21 @@ import inspect
 import logging
 import os
 import shutil
+import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
 
-from yacs.config import CfgNode as CN
-
 import torch_geometric.graphgym.register as register
 from torch_geometric.data.makedirs import makedirs
 
-# Global config object
-cfg = CN()
+try:  # Define global config object
+    from yacs.config import CfgNode as CN
+    cfg = CN()
+except ImportError:
+    cfg = None
+    warnings.warn("Could not define global config object. Please install "
+                  "'yacs' for using the GraphGym experiment manager.")
 
 
 def set_cfg(cfg):
@@ -26,6 +30,8 @@ def set_cfg(cfg):
 
     :return: configuration use by the experiment.
     '''
+    if cfg is None:
+        return cfg
 
     # ----------------------------------------------------------------------- #
     # Basic options
@@ -42,6 +48,9 @@ def set_cfg(cfg):
 
     # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
+
+    # Names of registered custom metric funcs to be used (use defaults if none)
+    cfg.custom_metrics = []
 
     # Random seed
     cfg.seed = 0
@@ -235,8 +244,14 @@ def set_cfg(cfg):
     # Evaluate model on test data every eval period epochs
     cfg.train.eval_period = 10
 
+    # Option to skip training epoch evaluation
+    cfg.train.skip_train_eval = False
+
     # Save model checkpoint every checkpoint period epochs
     cfg.train.ckpt_period = 100
+
+    # Enabling checkpoint, set False to disable and save I/O
+    cfg.train.enable_ckpt = True
 
     # Resume training from the latest checkpoint in the output directory
     cfg.train.auto_resume = False
