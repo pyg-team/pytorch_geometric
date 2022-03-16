@@ -11,10 +11,10 @@ from torch_geometric.datasets import Entities, Planetoid
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 root = Path.joinpath(Path(__file__).resolve().parent.parent, 'data')
-Cora = Planetoid(str(root.joinpath('Cora')), 'Cora')
-CiteSeer = Planetoid(str(root.joinpath('CiteSeer')), 'CiteSeer')
-PubMed = Planetoid(str(root.join('PubMed')), 'PubMed')
-MUTAG = Entities(str(root.joinpath('EntitiesMUTAG')), 'MUTAG')
+Cora = Planetoid(root.joinpath('Cora'), 'Cora')
+CiteSeer = Planetoid(root.joinpath('CiteSeer'), 'CiteSeer')
+PubMed = Planetoid(root.joinpath('PubMed'), 'PubMed')
+MUTAG = Entities(root.joinpath('EntitiesMUTAG'), 'MUTAG')
 
 # One training run before we start tracking duration to warm up GPU.
 model = GCN(Cora.num_features, Cora.num_classes)
