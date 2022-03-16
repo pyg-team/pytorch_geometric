@@ -308,8 +308,8 @@ class ToHeteroTransformer(Transformer):
                 if out is not None:
                     return out
                 elif isinstance(key, tuple) and key[0] == key[-1]:
-                    return self.find_by_name(
-                        f'{value.name}__{key2str(key[0])}')
+                    name = f'{value.name}__{key2str(key[0])}'
+                    return self.find_by_name(name)
                 elif isinstance(key, tuple) and key[0] != key[-1]:
                     return (
                         self.find_by_name(f'{value.name}__{key2str(key[0])}'),
