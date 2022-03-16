@@ -2,14 +2,14 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, ReLU, Sequential, LayerNorm
+from torch.nn import LayerNorm, Parameter, ReLU, Sequential
 from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, fill_diag, matmul, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.inits import zeros, uniform
+from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -152,8 +152,7 @@ class GCNConv(MessagePassing):
 
         if self.explain:
             self.convert = Linear(in_channels, out_channels)
-            self.process_message = Sequential(LayerNorm(out_channels),
-                                              ReLU())
+            self.process_message = Sequential(LayerNorm(out_channels), ReLU())
 
         self.reset_parameters()
 
@@ -167,8 +166,8 @@ class GCNConv(MessagePassing):
             self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None,
-                message_scale=None, message_replacement=None) -> Tensor:
+                edge_weight: OptTensor = None, message_scale=None,
+                message_replacement=None) -> Tensor:
         """"""
 
         if self.normalize:

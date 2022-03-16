@@ -3,15 +3,16 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Parameter, ReLU, Sequential, LayerNorm
+from torch.nn import LayerNorm
+from torch.nn import Parameter
 from torch.nn import Parameter as Param
+from torch.nn import ReLU, Sequential
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
-
 from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor
 
 
 @torch.jit._overload
@@ -144,8 +145,7 @@ class RGCNConv(MessagePassing):
             self.register_parameter('bias', None)
 
         if self.explain:
-            self.process_message = Sequential(LayerNorm(out_channels),
-                                              ReLU())
+            self.process_message = Sequential(LayerNorm(out_channels), ReLU())
 
         self.reset_parameters()
 
@@ -183,13 +183,9 @@ class RGCNConv(MessagePassing):
         if self.explain:
             size = [x.shape[0], x.shape[0]]
 
-            res = self.propagate(
-                edge_index,
-                x=x,
-                edge_type=edge_type,
-                size=size,
-                message_scale=message_scale,
-                message_replacement=message_replacement)
+            res = self.propagate(edge_index, x=x, edge_type=edge_type,
+                                 size=size, message_scale=message_scale,
+                                 message_replacement=message_replacement)
 
             return res
 

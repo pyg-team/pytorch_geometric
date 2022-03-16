@@ -1,17 +1,17 @@
+import math
+from inspect import signature
+from math import sqrt
 from typing import Optional
 
-import math
-from math import sqrt
-from inspect import signature
-import numpy as np
-import networkx as nx
 import matplotlib.pyplot as plt
-
+import networkx as nx
+import numpy as np
 import torch
-from torch.nn import Linear, LayerNorm, ReLU, Parameter, init
 import torch.nn.functional as F
 from torch import sigmoid
+from torch.nn import LayerNorm, Linear, Parameter, ReLU, init
 from tqdm import tqdm
+
 from torch_geometric.data import Data
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import k_hop_subgraph, to_networkx
@@ -107,30 +107,16 @@ class GraphMaskExplainer(torch.nn.Module):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(
-            self,
-            in_channels,
-            out_channels,
-            num_layers,
-            num_relations=None,
-            num_bases=None,
-            num_blocks=None,
-            model_to_explain=None,
-            epochs: int = 5,
-            lr: float = 0.01,
-            pooling='add',
-            num_hops: Optional[int] = None,
-            return_type: str = 'log_prob',
-            penalty_scaling: int = 5,
-            lambda_optimizer_lr: int = 1e-2,
-            init_lambda: int = 0.55,
-            allowance: int = 0.03,
-            feat_mask_type: str = 'scalar',
-            type_task: str = 'heterogeneous',
-            allow_multiple_explanations: bool = False,
-            allow_edge_mask: bool = True,
-            log: bool = True,
-            **kwargs):
+    def __init__(self, in_channels, out_channels, num_layers,
+                 num_relations=None, num_bases=None, num_blocks=None,
+                 model_to_explain=None, epochs: int = 5, lr: float = 0.01,
+                 pooling='add', num_hops: Optional[int] = None,
+                 return_type: str = 'log_prob', penalty_scaling: int = 5,
+                 lambda_optimizer_lr: int = 1e-2, init_lambda: int = 0.55,
+                 allowance: int = 0.03, feat_mask_type: str = 'scalar',
+                 type_task: str = 'heterogeneous',
+                 allow_multiple_explanations: bool = False,
+                 allow_edge_mask: bool = True, log: bool = True, **kwargs):
         super().__init__()
         assert return_type in ['log_prob', 'prob', 'raw', 'regression']
         assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
@@ -178,27 +164,19 @@ class GraphMaskExplainer(torch.nn.Module):
         self.coeffs.update(kwargs)
 
     # function to compute hard_concrete_distribution to drop edges
-    def __hard_concrete__(
-            self,
-            input_element,
-            summarize_penalty=True,
-            beta=1 / 3,
-            gamma=-0.2,
-            zeta=1.2,
-            loc_bias=2,
-            min_val=0,
-            max_val=1,
-            training=True):
+    def __hard_concrete__(self, input_element, summarize_penalty=True,
+                          beta=1 / 3, gamma=-0.2, zeta=1.2, loc_bias=2,
+                          min_val=0, max_val=1, training=True):
         input_element = input_element + loc_bias
 
         if training:
             u = torch.empty_like(input_element).uniform_(1e-6, 1.0 - 1e-6)
 
-            s = sigmoid((torch.log(u) - torch.log(1 - u) + input_element) /
-                        beta)
+            s = sigmoid(
+                (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
-            penalty = sigmoid(input_element - beta *
-                              np.math.log(-gamma / zeta))
+            penalty = sigmoid(input_element -
+                              beta * np.math.log(-gamma / zeta))
         else:
             s = sigmoid(input_element)
             penalty = torch.zeros_like(input_element)
@@ -251,10 +229,9 @@ class GraphMaskExplainer(torch.nn.Module):
             self.output_layer = Linear(h_dim, 1)
 
             gate = [
-                self.transforms,
-                self.layer_norms,
-                self.non_linear,
-                self.output_layer]
+                self.transforms, self.layer_norms, self.non_linear,
+                self.output_layer
+            ]
             self.gates.extend(gate)
 
             baseline = torch.FloatTensor(m_dim)
@@ -310,14 +287,8 @@ class GraphMaskExplainer(torch.nn.Module):
                 return module.flow
         return 'source_to_target'
 
-    def __subgraph__(
-            self,
-            node_idx,
-            x,
-            edge_index,
-            edge_type=None,
-            edge_weight=None,
-            **kwargs):
+    def __subgraph__(self, node_idx, x, edge_index, edge_type=None,
+                     edge_weight=None, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
@@ -336,27 +307,13 @@ class GraphMaskExplainer(torch.nn.Module):
                 item = item[edge_mask]
             kwargs[key] = item
 
-        return (
-            x,
-            edge_index,
-            edge_type,
-            mapping,
-            edge_mask,
-            subset,
-            kwargs) if edge_type is not None else (
-            x,
-            edge_index,
-            edge_weight,
-            mapping,
-            edge_mask,
-            subset,
-            kwargs) if edge_weight is not None else (
-            x,
-            edge_index,
-            mapping,
-            edge_mask,
-            subset,
-            kwargs)
+        return (x, edge_index, edge_type, mapping, edge_mask, subset,
+                kwargs) if edge_type is not None else (
+                    x, edge_index, edge_weight, mapping, edge_mask, subset,
+                    kwargs) if edge_weight is not None else (x, edge_index,
+                                                             mapping,
+                                                             edge_mask, subset,
+                                                             kwargs)
 
     def __loss__(self, node_idx, log_logits, pred_label, penalty):
         if self.return_type == 'regression':
@@ -403,14 +360,8 @@ class GraphMaskExplainer(torch.nn.Module):
             self.injected_message_replacement = [message_replacement]
         self.injected_message_replacement = None
 
-    def __train_node_explainer__(
-            self,
-            node_idx,
-            x1,
-            edge_index1,
-            edge_type1=None,
-            edge_weight1=None,
-            **kwargs):
+    def __train_node_explainer__(self, node_idx, x1, edge_index1,
+                                 edge_type1=None, edge_weight1=None, **kwargs):
         r"""Learns a node feature mask and an edge mask and returns only the
         learned node feature mask that plays a crucial role to explain the
         prediction made by the GNN for node(s) :attr:`node_idx`.
@@ -541,17 +492,16 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.model_to_explain.eval()
                 with torch.no_grad():
                     if self.type_task == 'heterogeneous':
-                        out = self.model_to_explain(
-                            x=x, edge_index=edge_index, edge_type=edge_type)
+                        out = self.model_to_explain(x=x, edge_index=edge_index,
+                                                    edge_type=edge_type)
                     elif self.type_task == 'homogeneous' and \
                             not all(v is None for v in edge_weight1):
-                        out = self.model_to_explain(
-                            x=x, edge_index=edge_index, edge_weight=e_weights)
+                        out = self.model_to_explain(x=x, edge_index=edge_index,
+                                                    edge_weight=e_weights)
                     elif self.type_task == 'homogeneous' and \
                             all(v is None for v in edge_weight1):
-                        out = self.model_to_explain(
-                            x=x, edge_index=edge_index,
-                            edge_weight=edge_weight1)
+                        out = self.model_to_explain(x=x, edge_index=edge_index,
+                                                    edge_weight=edge_weight1)
                     if self.return_type == 'regression':
                         prediction = out
                     else:
@@ -559,27 +509,33 @@ class GraphMaskExplainer(torch.nn.Module):
                         pred_label = log_logits.argmax(dim=-1)
                 self.model_to_explain.train()
                 gates, total_penalty = [], 0
-                latest_source_embeddings = [layer.get_latest_source_embeddings(
-                ) for layer in self.model_to_explain.gnn_layers]
-                latest_messages = [layer.get_latest_messages()
-                                   for layer in
-                                   self.model_to_explain.gnn_layers]
-                latest_target_embeddings = [layer.get_latest_target_embeddings(
-                ) for layer in self.model_to_explain.gnn_layers]
+                latest_source_embeddings = [
+                    layer.get_latest_source_embeddings()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
+                latest_messages = [
+                    layer.get_latest_messages()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
+                latest_target_embeddings = [
+                    layer.get_latest_target_embeddings()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
                 gate_input = [
-                    latest_source_embeddings,
-                    latest_messages,
-                    latest_target_embeddings]
+                    latest_source_embeddings, latest_messages,
+                    latest_target_embeddings
+                ]
                 for i in range(self.model_to_explain.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
                         partial = self.gates[i * 4][j](gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
-                    relu_output = self.gates[(
-                        i * 4) + 2](output / len(gate_input))
-                    sampling_weights = self.gates[(
-                        i * 4) + 3](relu_output).squeeze(dim=-1)
+                    relu_output = self.gates[(i * 4) + 2](output /
+                                                          len(gate_input))
+                    sampling_weights = self.gates[(i * 4) +
+                                                  3](relu_output).squeeze(
+                                                      dim=-1)
                     sampling_weights, penalty = self.__hard_concrete__(
                         sampling_weights)
                     gates.append(sampling_weights)
@@ -588,8 +544,8 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.__inject_message_scale__(gates)
                 self.__inject_message_replacement__(self.baselines)
 
-                self.lambda_op = torch.tensor(
-                    self.init_lambda, requires_grad=True)
+                self.lambda_op = torch.tensor(self.init_lambda,
+                                              requires_grad=True)
                 optimizer_lambda = torch.optim.RMSprop(
                     [self.lambda_op], lr=self.lambda_optimizer_lr,
                     centered=True)
@@ -620,12 +576,12 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.__inject_message_replacement__(self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
-                        mapping, new_out, prediction, total_penalty)
+                    loss = self.__loss__(mapping, new_out, prediction,
+                                         total_penalty)
                 else:
                     log_logits = self.__to_log_prob__(new_out)
-                    loss = self.__loss__(
-                        mapping, log_logits, pred_label, total_penalty)
+                    loss = self.__loss__(mapping, log_logits, pred_label,
+                                         total_penalty)
                 loss.backward()
                 optimizer.step()
                 self.lambda_op.grad *= -1
@@ -688,16 +644,22 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.__subgraph__(node_idx[0], x, edge_index, **kwargs)
 
         with torch.no_grad():
-            latest_source_embeddings = [layer.get_latest_source_embeddings(
-            ) for layer in self.model_to_explain.gnn_layers]
-            latest_messages = [layer.get_latest_messages()
-                               for layer in self.model_to_explain.gnn_layers]
-            latest_target_embeddings = [layer.get_latest_target_embeddings(
-            ) for layer in self.model_to_explain.gnn_layers]
+            latest_source_embeddings = [
+                layer.get_latest_source_embeddings()
+                for layer in self.model_to_explain.gnn_layers
+            ]
+            latest_messages = [
+                layer.get_latest_messages()
+                for layer in self.model_to_explain.gnn_layers
+            ]
+            latest_target_embeddings = [
+                layer.get_latest_target_embeddings()
+                for layer in self.model_to_explain.gnn_layers
+            ]
             gate_input = [
-                latest_source_embeddings,
-                latest_messages,
-                latest_target_embeddings]
+                latest_source_embeddings, latest_messages,
+                latest_target_embeddings
+            ]
             if self.log:  # pragma: no cover
                 pbar = tqdm(total=self.model_to_explain.num_layers)
             for i in range(self.model_to_explain.num_layers):
@@ -712,8 +674,8 @@ class GraphMaskExplainer(torch.nn.Module):
                     result = self.gates[(i * 4) + 1][j](partial)
                     output = output + result
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
-                sampling_weights = self.gates[(
-                    i * 4) + 3](relu_output).squeeze(dim=-1)
+                sampling_weights = self.gates[(i * 4) +
+                                              3](relu_output).squeeze(dim=-1)
                 sampling_weights, penalty = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
@@ -725,19 +687,15 @@ class GraphMaskExplainer(torch.nn.Module):
         if self.log:  # pragma: no cover
             pbar.close()
 
-        edge_mask = edge_weight.view(-1, edge_weight.size(0) //
-                                     self.model_to_explain.num_layers)
+        edge_mask = edge_weight.view(
+            -1,
+            edge_weight.size(0) // self.model_to_explain.num_layers)
         edge_mask = torch.mean(edge_mask, 0)
 
         return edge_mask
 
-    def __train_graph_explainer__(
-            self,
-            graph_idx,
-            x,
-            edge_index,
-            edge_type=None,
-            edge_weight=None):
+    def __train_graph_explainer__(self, graph_idx, x, edge_index,
+                                  edge_type=None, edge_weight=None):
         r"""Learns a node feature mask and an edge mask and returns only the
         learned node feature mask that plays a crucial role to explain the
         prediction made by the GNN for graph :attr:`graph_idx`.
@@ -793,21 +751,17 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.model_to_explain.eval()
                 with torch.no_grad():
                     if self.type_task == 'heterogeneous':
-                        out = self.model_to_explain(
-                            x=x,
-                            edge_index=edge_index,
-                            edge_type=edge_type,
-                            batch=batch,
-                            pooling=self.pooling,
-                            task='graph')
+                        out = self.model_to_explain(x=x, edge_index=edge_index,
+                                                    edge_type=edge_type,
+                                                    batch=batch,
+                                                    pooling=self.pooling,
+                                                    task='graph')
                     elif self.type_task == 'homogeneous':
-                        out = self.model_to_explain(
-                            x=x,
-                            edge_index=edge_index,
-                            edge_weight=edge_weight,
-                            batch=batch,
-                            pooling=self.pooling,
-                            task='graph')
+                        out = self.model_to_explain(x=x, edge_index=edge_index,
+                                                    edge_weight=edge_weight,
+                                                    batch=batch,
+                                                    pooling=self.pooling,
+                                                    task='graph')
                     if self.return_type == 'regression':
                         prediction = out
                     else:
@@ -815,27 +769,33 @@ class GraphMaskExplainer(torch.nn.Module):
                         pred_label = log_logits.argmax(dim=-1)
                 self.model_to_explain.train()
                 gates, total_penalty = [], 0
-                latest_source_embeddings = [layer.get_latest_source_embeddings(
-                ) for layer in self.model_to_explain.gnn_layers]
-                latest_messages = [layer.get_latest_messages()
-                                   for layer in
-                                   self.model_to_explain.gnn_layers]
-                latest_target_embeddings = [layer.get_latest_target_embeddings(
-                ) for layer in self.model_to_explain.gnn_layers]
+                latest_source_embeddings = [
+                    layer.get_latest_source_embeddings()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
+                latest_messages = [
+                    layer.get_latest_messages()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
+                latest_target_embeddings = [
+                    layer.get_latest_target_embeddings()
+                    for layer in self.model_to_explain.gnn_layers
+                ]
                 gate_input = [
-                    latest_source_embeddings,
-                    latest_messages,
-                    latest_target_embeddings]
+                    latest_source_embeddings, latest_messages,
+                    latest_target_embeddings
+                ]
                 for i in range(self.model_to_explain.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
                         partial = self.gates[i * 4][j](gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
-                    relu_output = self.gates[(
-                        i * 4) + 2](output / len(gate_input))
-                    sampling_weights = self.gates[(
-                        i * 4) + 3](relu_output).squeeze(dim=-1)
+                    relu_output = self.gates[(i * 4) + 2](output /
+                                                          len(gate_input))
+                    sampling_weights = self.gates[(i * 4) +
+                                                  3](relu_output).squeeze(
+                                                      dim=-1)
                     sampling_weights, penalty = self.__hard_concrete__(
                         sampling_weights)
                     gates.append(sampling_weights)
@@ -844,8 +804,8 @@ class GraphMaskExplainer(torch.nn.Module):
                 self.__inject_message_scale__(gates)
                 self.__inject_message_replacement__(self.baselines)
 
-                self.lambda_op = torch.tensor(
-                    self.init_lambda, requires_grad=True)
+                self.lambda_op = torch.tensor(self.init_lambda,
+                                              requires_grad=True)
                 optimizer_lambda = torch.optim.RMSprop(
                     [self.lambda_op], lr=self.lambda_optimizer_lr,
                     centered=True)
@@ -856,35 +816,27 @@ class GraphMaskExplainer(torch.nn.Module):
                 h = x * self.node_feat_mask.sigmoid()
                 if self.type_task == 'heterogeneous':
                     new_out = self.model_to_explain(
-                        x=h,
-                        edge_index=edge_index,
-                        edge_type=edge_type,
+                        x=h, edge_index=edge_index, edge_type=edge_type,
                         message_scale=self.injected_message_scale,
                         message_replacement=self.injected_message_replacement,
-                        batch=batch,
-                        pooling=self.pooling,
-                        task='graph')
+                        batch=batch, pooling=self.pooling, task='graph')
                 elif self.type_task == 'homogeneous':
                     new_out = self.model_to_explain(
-                        x=h,
-                        edge_index=edge_index,
-                        edge_weight=edge_weight,
+                        x=h, edge_index=edge_index, edge_weight=edge_weight,
                         message_scale=self.injected_message_scale,
                         message_replacement=self.injected_message_replacement,
-                        batch=batch,
-                        pooling=self.pooling,
-                        task='graph')
+                        batch=batch, pooling=self.pooling, task='graph')
 
                 self.__inject_message_scale__(gates, True)
                 self.__inject_message_replacement__(self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
-                        [-1], new_out, prediction, total_penalty)
+                    loss = self.__loss__([-1], new_out, prediction,
+                                         total_penalty)
                 else:
                     log_logits = self.__to_log_prob__(new_out)
-                    loss = self.__loss__(
-                        [-1], log_logits, pred_label, total_penalty)
+                    loss = self.__loss__([-1], log_logits, pred_label,
+                                         total_penalty)
                 loss.backward()
                 optimizer.step()
                 self.lambda_op.grad *= -1
@@ -924,16 +876,22 @@ class GraphMaskExplainer(torch.nn.Module):
         self.model_to_explain.eval()
 
         with torch.no_grad():
-            latest_source_embeddings = [layer.get_latest_source_embeddings(
-            ) for layer in self.model_to_explain.gnn_layers]
-            latest_messages = [layer.get_latest_messages()
-                               for layer in self.model_to_explain.gnn_layers]
-            latest_target_embeddings = [layer.get_latest_target_embeddings(
-            ) for layer in self.model_to_explain.gnn_layers]
+            latest_source_embeddings = [
+                layer.get_latest_source_embeddings()
+                for layer in self.model_to_explain.gnn_layers
+            ]
+            latest_messages = [
+                layer.get_latest_messages()
+                for layer in self.model_to_explain.gnn_layers
+            ]
+            latest_target_embeddings = [
+                layer.get_latest_target_embeddings()
+                for layer in self.model_to_explain.gnn_layers
+            ]
             gate_input = [
-                latest_source_embeddings,
-                latest_messages,
-                latest_target_embeddings]
+                latest_source_embeddings, latest_messages,
+                latest_target_embeddings
+            ]
             if self.log:  # pragma: no cover
                 pbar = tqdm(total=self.model_to_explain.num_layers)
                 pbar.set_description(f'Explain graph {graph_idx[0]}')
@@ -944,8 +902,8 @@ class GraphMaskExplainer(torch.nn.Module):
                     result = self.gates[(i * 4) + 1][j](partial)
                     output = output + result
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
-                sampling_weights = self.gates[(
-                    i * 4) + 3](relu_output).squeeze(dim=-1)
+                sampling_weights = self.gates[(i * 4) +
+                                              3](relu_output).squeeze(dim=-1)
                 sampling_weights, penalty = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
@@ -957,23 +915,16 @@ class GraphMaskExplainer(torch.nn.Module):
         if self.log:  # pragma: no cover
             pbar.close()
 
-        edge_mask = edge_weight.view(-1, edge_weight.size(0) //
-                                     self.model_to_explain.num_layers)
+        edge_mask = edge_weight.view(
+            -1,
+            edge_weight.size(0) // self.model_to_explain.num_layers)
         edge_mask = torch.mean(edge_mask, 0)
 
         return edge_mask
 
-    def visualize_subgraph(
-            self,
-            node_idx,
-            edge_index,
-            edge_mask,
-            y=None,
-            edge_y=None,
-            node_alpha=None,
-            seed=10,
-            task='node',
-            **kwargs):
+    def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
+                           edge_y=None, node_alpha=None, seed=10, task='node',
+                           **kwargs):
         r"""Visualizes the subgraph given an edge mask :attr:`edge_mask`.
 
         Args:
@@ -1003,8 +954,8 @@ class GraphMaskExplainer(torch.nn.Module):
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
 
-        if (self.feat_mask_type == 'feature' or self.feat_mask_type ==
-                'individual_feature') and node_alpha is not None:
+        if (self.feat_mask_type == 'feature' or self.feat_mask_type
+                == 'individual_feature') and node_alpha is not None:
             raise ValueError(
                 'Visualizing explainable subgraph with feature mask type as '
                 'either individual_feature or feature is not supported. '
@@ -1075,19 +1026,13 @@ class GraphMaskExplainer(torch.nn.Module):
             edge_color = np.array(edge_color)
 
         if task == 'graph':
-            data = Data(
-                edge_index=edge_index,
-                att=edge_mask,
-                edge_color=edge_color,
-                y=y,
-                num_nodes=y.size(0)).to('cpu')
+            data = Data(edge_index=edge_index, att=edge_mask,
+                        edge_color=edge_color, y=y,
+                        num_nodes=y.size(0)).to('cpu')
         else:
-            data = Data(
-                edge_index=edge_index,
-                att=edge_mask,
-                edge_color=edge_color,
-                y=y,
-                num_nodes=y.size(0)).to('cpu')
+            data = Data(edge_index=edge_index, att=edge_mask,
+                        edge_color=edge_color, y=y,
+                        num_nodes=y.size(0)).to('cpu')
 
         G = to_networkx(data, node_attrs=['y'],
                         edge_attrs=['att', 'edge_color'])
