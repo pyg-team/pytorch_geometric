@@ -86,7 +86,8 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         pred = model(data).argmax(dim=1)
-        iou = jaccard_index(pred, data.y, num_classes=loader.dataset.num_classes)
+        iou = jaccard_index(pred, data.y,
+                            num_classes=loader.dataset.num_classes)
         # Find and filter the relevant classes for each category.
         for iou, category in zip(iou.unbind(), data.category.unbind()):
             ious[category.item()].append(iou[y_mask[category]])

@@ -2,8 +2,6 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torchmetrics.functional import jaccard_index
-
 from point_transformer_classification import (
     MLP,
     TransformerBlock,
@@ -13,6 +11,7 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 from torch_cluster import knn_graph
+from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
@@ -204,7 +203,8 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         pred = model(data.x, data.pos, data.batch).argmax(dim=1)
-        iou = jaccard_index(pred, data.y, num_classes=loader.dataset.num_classes)
+        iou = jaccard_index(pred, data.y,
+                            num_classes=loader.dataset.num_classes)
         # Find and filter the relevant classes for each category.
         for iou, category in zip(iou.unbind(), data.category.unbind()):
             ious[category.item()].append(iou[y_mask[category]])
