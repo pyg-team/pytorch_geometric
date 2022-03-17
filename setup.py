@@ -12,6 +12,8 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
+    'pyDeprecate==0.3.*',
+    'torchmetrics>=0.7',
 ]
 
 full_install_requires = [
