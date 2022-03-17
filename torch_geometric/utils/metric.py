@@ -65,7 +65,7 @@ def f1_score(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
                 "pred": "preds",
                 "batch": None,
                 "omitnans": None
-            }, args_extra={"reduction": "none"})
+            })
 def mean_iou(pred: Tensor, target: Tensor, num_classes: int,
              batch: Optional[Tensor] = None, omitnans: bool = False) -> Tensor:
     r"""Computes the mean intersection over union score of predictions.
