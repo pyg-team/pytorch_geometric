@@ -3,13 +3,9 @@ import torch
 from torch_geometric.utils import (
     accuracy,
     f1_score,
-    false_negative,
-    false_positive,
     mean_iou,
     precision,
     recall,
-    true_negative,
-    true_positive,
 )
 
 
@@ -18,10 +14,6 @@ def test_metric():
     target = torch.tensor([0, 1, 0, 1])
 
     assert accuracy(pred, target) == 0.5
-    assert true_positive(pred, target, num_classes=2).tolist() == [1, 1]
-    assert true_negative(pred, target, num_classes=2).tolist() == [1, 1]
-    assert false_positive(pred, target, num_classes=2).tolist() == [1, 1]
-    assert false_negative(pred, target, num_classes=2).tolist() == [1, 1]
     assert precision(pred, target, num_classes=2).tolist() == [0.5, 0.5]
     assert recall(pred, target, num_classes=2).tolist() == [0.5, 0.5]
     assert f1_score(pred, target, num_classes=2).tolist() == [0.5, 0.5]

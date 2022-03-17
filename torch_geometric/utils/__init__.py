@@ -81,14 +81,9 @@ __all__ = [
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
     'accuracy',
-    'true_positive',
-    'true_negative',
-    'false_positive',
-    'false_negative',
     'precision',
     'recall',
     'f1_score',
-    'intersection_and_union',
     'mean_iou',
 ]
 
