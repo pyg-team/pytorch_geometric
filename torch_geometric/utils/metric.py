@@ -5,7 +5,8 @@ from deprecate import deprecated
 from torch import Tensor
 
 
-@deprecated(tm_func.accuracy, args_mapping={"pred": "preds"})
+@deprecated(tm_func.accuracy, deprecated_in="v2.0", remove_in="v3.0",
+            args_mapping={"pred": "preds"})
 def accuracy(pred: Tensor, target: Tensor) -> float:
     r"""Computes the accuracy of predictions.
 
@@ -17,7 +18,8 @@ def accuracy(pred: Tensor, target: Tensor) -> float:
     """
 
 
-@deprecated(tm_func.precision, args_mapping={"pred": "preds"})
+@deprecated(tm_func.precision, deprecated_in="v2.0", remove_in="v3.0",
+            args_mapping={"pred": "preds"}, args_extra={"average": None})
 def precision(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     r"""Computes the precision of predictions.
 
@@ -30,7 +32,8 @@ def precision(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     """
 
 
-@deprecated(tm_func.recall, args_mapping={"pred": "preds"})
+@deprecated(tm_func.recall, deprecated_in="v2.0", remove_in="v3.0",
+            args_mapping={"pred": "preds"}, args_extra={"average": None})
 def recall(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     r"""Computes the recall of predictions.
 
@@ -43,7 +46,8 @@ def recall(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     """
 
 
-@deprecated(tm_func.f1_score, args_mapping={"pred": "preds"})
+@deprecated(tm_func.f1_score, deprecated_in="v2.0", remove_in="v3.0",
+            args_mapping={"pred": "preds"}, args_extra={"average": None})
 def f1_score(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     r"""Computes the :math:`F_1` score of predictions.
 
@@ -56,11 +60,12 @@ def f1_score(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     """
 
 
-@deprecated(tm_func.jaccard_index, args_mapping={
-    "pred": "preds",
-    "batch": None,
-    "omitnans": None
-})
+@deprecated(tm_func.jaccard_index, deprecated_in="v2.0", remove_in="v3.0",
+            args_mapping={
+                "pred": "preds",
+                "batch": None,
+                "omitnans": None
+            }, args_extra={"average": None})
 def mean_iou(pred: Tensor, target: Tensor, num_classes: int,
              batch: Optional[Tensor] = None, omitnans: bool = False) -> Tensor:
     r"""Computes the mean intersection over union score of predictions.
