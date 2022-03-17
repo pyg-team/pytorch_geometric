@@ -31,9 +31,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
-from .metric import (accuracy, true_positive, true_negative, false_positive,
-                     false_negative, precision, recall, f1_score,
-                     intersection_and_union, mean_iou)
+from .metric import (accuracy, precision, recall, f1_score, mean_iou)
 
 __all__ = [
     'degree',
