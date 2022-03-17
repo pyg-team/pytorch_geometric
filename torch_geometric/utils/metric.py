@@ -1,11 +1,14 @@
 from typing import Optional, Tuple
 
 import torch
+import torchmetrics.functional as tm_func
 import torch.nn.functional as F
+from deprecate import deprecated
 from torch import Tensor
 from torch_scatter import scatter_add
 
 
+@deprecated(tm_func.accuracy, args_mapping={"pred": "preds"})
 def accuracy(pred: Tensor, target: Tensor) -> float:
     r"""Computes the accuracy of predictions.
 
@@ -15,7 +18,6 @@ def accuracy(pred: Tensor, target: Tensor) -> float:
 
     :rtype: float
     """
-    return int((pred == target).sum()) / target.numel()
 
 
 def true_positive(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
@@ -32,7 +34,7 @@ def true_positive(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     for i in range(num_classes):
         out.append(((pred == i) & (target == i)).sum())
 
-    return torch.tensor(out, device=pred.device)
+    return tm_func.confusion_matrix()
 
 
 def true_negative(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
@@ -86,9 +88,9 @@ def false_negative(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
     return torch.tensor(out, device=pred.device)
 
 
+@deprecated(tm_func.precision, args_mapping={"pred": "preds"})
 def precision(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
-    r"""Computes the precision
-    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}` of predictions.
+    r"""Computes the precision of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -97,18 +99,11 @@ def precision(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
 
     :rtype: :class:`Tensor`
     """
-    tp = true_positive(pred, target, num_classes).to(torch.float)
-    fp = false_positive(pred, target, num_classes).to(torch.float)
-
-    out = tp / (tp + fp)
-    out[torch.isnan(out)] = 0
-
-    return out
 
 
+@deprecated(tm_func.recall, args_mapping={"pred": "preds"})
 def recall(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
-    r"""Computes the recall
-    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}` of predictions.
+    r"""Computes the recall of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -117,19 +112,11 @@ def recall(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
 
     :rtype: :class:`Tensor`
     """
-    tp = true_positive(pred, target, num_classes).to(torch.float)
-    fn = false_negative(pred, target, num_classes).to(torch.float)
-
-    out = tp / (tp + fn)
-    out[torch.isnan(out)] = 0
-
-    return out
 
 
+@deprecated(tm_func.f1_score, args_mapping={"pred": "preds"})
 def f1_score(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
-    r"""Computes the :math:`F_1` score
-    :math:`2 \cdot \frac{\mathrm{precision} \cdot \mathrm{recall}}
-    {\mathrm{precision}+\mathrm{recall}}` of predictions.
+    r"""Computes the :math:`F_1` score of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -138,13 +125,6 @@ def f1_score(pred: Tensor, target: Tensor, num_classes: int) -> Tensor:
 
     :rtype: :class:`Tensor`
     """
-    prec = precision(pred, target, num_classes)
-    rec = recall(pred, target, num_classes)
-
-    score = 2 * (prec * rec) / (prec + rec)
-    score[torch.isnan(score)] = 0
-
-    return score
 
 
 def intersection_and_union(
@@ -173,6 +153,7 @@ def intersection_and_union(
     return i, u
 
 
+@deprecated(tm_func.jaccard_index, args_mapping={"pred": "preds", "batch": None, "omitnans": None})
 def mean_iou(pred: Tensor, target: Tensor, num_classes: int,
              batch: Optional[Tensor] = None, omitnans: bool = False) -> Tensor:
     r"""Computes the mean intersection over union score of predictions.
@@ -189,13 +170,3 @@ def mean_iou(pred: Tensor, target: Tensor, num_classes: int,
 
     :rtype: :class:`Tensor`
     """
-    i, u = intersection_and_union(pred, target, num_classes, batch)
-    iou = i.to(torch.float) / u.to(torch.float)
-
-    if omitnans:
-        iou = iou[~iou.isnan()].mean()
-    else:
-        iou[torch.isnan(iou)] = 1.
-        iou = iou.mean(dim=-1)
-
-    return iou

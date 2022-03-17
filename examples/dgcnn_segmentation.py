@@ -2,12 +2,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, DynamicEdgeConv
-from torch_geometric.utils import intersection_and_union as i_and_u
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -86,11 +86,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         pred = model(data).argmax(dim=1)
-
-        i, u = i_and_u(pred, data.y, loader.dataset.num_classes, data.batch)
-        iou = i.cpu().to(torch.float) / u.cpu().to(torch.float)
-        iou[torch.isnan(iou)] = 1
-
+        iou = jaccard_index(pred, data.y, num_classes=loader.dataset.num_classes)
         # Find and filter the relevant classes for each category.
         for iou, category in zip(iou.unbind(), data.category.unbind()):
             ious[category.item()].append(iou[y_mask[category]])
