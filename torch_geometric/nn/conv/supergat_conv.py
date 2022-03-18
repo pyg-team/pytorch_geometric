@@ -9,10 +9,16 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import (add_self_loops, batched_negative_sampling,
-                                   dropout_adj, is_undirected,
-                                   negative_sampling, remove_self_loops,
-                                   softmax, to_undirected)
+from torch_geometric.utils import (
+    add_self_loops,
+    batched_negative_sampling,
+    dropout_adj,
+    is_undirected,
+    negative_sampling,
+    remove_self_loops,
+    softmax,
+    to_undirected,
+)
 
 from ..inits import glorot, zeros
 
