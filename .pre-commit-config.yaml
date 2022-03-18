@@ -2,6 +2,23 @@ ci:
   autoupdate_schedule: quarterly
 
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      #- id: check-docstring-first
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      #- id: check-case-conflict
+
+  - repo: https://github.com/regebro/pyroma
+    rev: "3.2"
+    hooks:
+      - id: pyroma
+        args: ["--min=10"]
+
   - repo: https://github.com/pre-commit/mirrors-yapf
     rev: v0.31.0
     hooks:
@@ -13,3 +30,9 @@ repos:
     hooks:
       - id: isort
         name: Sort imports
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        name: Check PEP8
