@@ -86,6 +86,7 @@ class BasicGNN(torch.nn.Module):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, **kwargs))
         if out_channels is not None and jk is None:
+            self._is_conv_to_out = True
             self.convs.append(
                 self.init_conv(hidden_channels, out_channels, **kwargs))
         else:
@@ -282,14 +283,24 @@ class GAT(BasicGNN):
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
 
-        kwargs = copy.copy(kwargs)
-        if 'heads' in kwargs and out_channels % kwargs['heads'] != 0:
-            kwargs['heads'] = 1
-        if 'concat' not in kwargs or kwargs['concat']:
-            out_channels = out_channels // kwargs.get('heads', 1)
+        heads = kwargs.pop('heads', 1)
+        concat = kwargs.pop('concat', True)
 
-        return GATConv(in_channels, out_channels, dropout=self.dropout,
-                       **kwargs)
+        # Do not use concatenation in case the layer `GATConv` layer maps to
+        # the desired output channels (out_channels != None and jk != None):
+        if getattr(self, '_is_conv_to_out', False):
+            concat = False
+
+        if concat and out_channels % heads != 0:
+            raise ValueError(f"Ensure that the number of output channels of "
+                             f"'GATConv' (got '{out_channels}') is divisible "
+                             f"by the number of heads (got '{heads}')")
+
+        if concat:
+            out_channels = out_channels // heads
+
+        return GATConv(in_channels, out_channels, heads=heads, concat=concat,
+                       dropout=self.dropout, **kwargs)
 
 
 class PNA(BasicGNN):
