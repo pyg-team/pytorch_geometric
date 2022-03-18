@@ -18,6 +18,7 @@ repos:
     rev: "3.2"
     hooks:
       - id: pyroma
+        name: Check packaging
         args: [--min=10, .]
 
   - repo: https://github.com/pre-commit/mirrors-yapf
