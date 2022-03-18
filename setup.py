@@ -12,8 +12,6 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
-    'pyDeprecate==0.3.*',
-    'torchmetrics>=0.7',
 ]
 
 full_install_requires = [
@@ -30,6 +28,7 @@ full_install_requires = [
     'scikit-image',
     'pytorch-memlab',
     'class-resolver>=0.3.2',
+    'torchmetrics>=0.7',
 ]
 
 test_requires = [
