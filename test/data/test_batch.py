@@ -17,7 +17,6 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 
 def test_batch():
-    return
     torch_geometric.set_debug(True)
 
     x1 = torch.tensor([1, 2, 3], dtype=torch.float)
@@ -151,7 +150,6 @@ def test_batch():
 
 
 def test_batching_with_new_dimension():
-    return
     torch_geometric.set_debug(True)
 
     class MyData(Data):
@@ -194,7 +192,6 @@ def test_batching_with_new_dimension():
 
 
 def test_pickling():
-    return
     data = Data(x=torch.randn(5, 16))
     batch = Batch.from_data_list([data, data, data, data])
     assert id(batch._store._parent()) == id(batch)
@@ -216,7 +213,6 @@ def test_pickling():
 
 
 def test_recursive_batch():
-    return
     data1 = Data(
         x={
             '1': torch.randn(10, 32),
@@ -266,7 +262,6 @@ def test_recursive_batch():
 
 
 def test_batching_of_batches():
-    return
     data = Data(x=torch.randn(2, 16))
     batch = Batch.from_data_list([data, data])
 
@@ -280,7 +275,6 @@ def test_batching_of_batches():
 
 
 def test_hetero_batch():
-    return
     e1 = ('p', 'a')
     e2 = ('a', 'p')
     data1 = HeteroData()
@@ -350,8 +344,6 @@ def test_hetero_batch():
 
 
 def test_pair_data_batching():
-    return
-
     class PairData(Data):
         def __inc__(self, key, value, *args, **kwargs):
             if key == 'edge_index_s':
