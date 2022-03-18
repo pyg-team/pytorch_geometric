@@ -7,16 +7,12 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      #- id: check-docstring-first
-      - id: check-json
       - id: check-yaml
         exclude: |
           (?x)^(
               conda/pytorch-geometric/meta.yaml|
               conda/pyg/meta.yaml
           )$
-      - id: check-toml
-      #- id: check-case-conflict
 
   - repo: https://github.com/regebro/pyroma
     rev: "3.2"
