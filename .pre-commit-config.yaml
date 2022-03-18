@@ -10,6 +10,11 @@ repos:
       #- id: check-docstring-first
       - id: check-json
       - id: check-yaml
+        exclude: |
+          (?x)^(
+              conda/pytorch-geometric/meta.yaml|
+              conda/pyg/meta.yaml
+          )$
       - id: check-toml
       #- id: check-case-conflict
 
@@ -17,7 +22,7 @@ repos:
     rev: "3.2"
     hooks:
       - id: pyroma
-        args: ["--min=10"]
+        args: [--min=10, .]
 
   - repo: https://github.com/pre-commit/mirrors-yapf
     rev: v0.31.0
