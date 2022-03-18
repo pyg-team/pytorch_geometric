@@ -66,7 +66,7 @@ ENV NVIDIA_REQUIRE_CUDA "cuda>=10.0 brand=tesla,driver>=384,driver<385 brand=tes
 
 # PyTorch (Geometric) installation
 RUN rm /etc/apt/sources.list.d/cuda.list && \
-    rm /etc/apt/sources.list.d/nvidia-ml.list 
+    rm /etc/apt/sources.list.d/nvidia-ml.list
 
 RUN apt-get update &&  apt-get install -y \
     curl \
