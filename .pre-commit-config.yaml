@@ -14,6 +14,12 @@ repos:
               conda/pyg/meta.yaml
           )$
 
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.17.0
+    hooks:
+      - id: yamllint
+        args: [-c=.yamllint.yml]
+
   - repo: https://github.com/regebro/pyroma
     rev: "3.2"
     hooks:
