@@ -77,10 +77,6 @@ class MetrLaIo:
         _, n_nodes = data_df.shape
         data = np.expand_dims(a=data_df.values, axis=-1)
 
-        data_mean = np.mean(data)
-        data_std = np.std(data)
-        data = (data - data_mean) / data_std
-
         data = [data]
         indices = (data_df.index.values.astype("datetime64") - data_df.index.values.astype("datetime64[D]")) / \
                       np.timedelta64(1, "D")
@@ -100,8 +96,7 @@ class MetrLaIo:
 
         x = np.stack(arrays=x, axis=0)
         y = np.stack(arrays=y, axis=0)
-        print(f"x shape {x.shape}")
-        print(f"y shape {y.shape}")
+
         return x, y
 
     def generate_adjacency_matrix(
