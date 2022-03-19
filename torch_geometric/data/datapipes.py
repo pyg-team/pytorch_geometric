@@ -1,3 +1,6 @@
+from typing import Optional
+
+import torch
 import torchdata
 from torchdata.datapipes.iter import IterDataPipe
 
@@ -23,12 +26,31 @@ class Batcher(torchdata.datapipes.iter.Batcher):
 
 @torchdata.datapipes.functional_datapipe('parse_smiles')
 class SMILESParser(IterDataPipe):
-    def __init__(self, dp: IterDataPipe):
+    def __init__(
+        self,
+        dp: IterDataPipe,
+        smiles_key: str = 'smiles',
+        target_key: Optional[str] = None,
+    ):
+        super().__init__()
         self.dp = dp
+        self.smiles_key = smiles_key
+        self.target_key = target_key
 
     def __iter__(self):
         for d in self.dp:
-            # TODO: str -> from_smiles
-            # TODO: Dict -> from_smiles(data['smiles']
-            # TODO: NAN values?
-            yield from_smiles(d['smiles'])
+            if isinstance(d, str):
+                data = from_smiles(d)
+            elif isinstance(d, dict):
+                data = from_smiles(d[self.smiles_key])
+                if self.target_key is not None:
+                    y = d.get(self.target_key, None)
+                    if y is not None:
+                        y = float(y) if len(y) > 0 else float('NaN')
+                        data.y = torch.tensor([y], dtype=torch.float)
+            else:
+                raise ValueError(
+                    f"'{self.__class__.__name__}' expected either a string or "
+                    f"a dict as input (got '{type(d)}')")
+
+            yield data
