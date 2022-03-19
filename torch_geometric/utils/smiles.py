@@ -1,7 +1,5 @@
 import torch
 
-from torch_geometric.data import Data
-
 x_map = {
     'atomic_num':
     list(range(0, 119)),
@@ -54,7 +52,7 @@ e_map = {
 
 
 def from_smiles(smiles: str, with_hydrogen: bool = False,
-                kekulize: bool = False) -> Data:
+                kekulize: bool = False):
     r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
     instance.
 
@@ -65,8 +63,9 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
-
     from rdkit import Chem
+
+    from torch_geometric.data import Data
 
     mol = Chem.MolFromSmiles(smiles)
 
