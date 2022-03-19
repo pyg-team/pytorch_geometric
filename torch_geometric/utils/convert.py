@@ -6,8 +6,6 @@ import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
-import torch_geometric.data
-
 from .num_nodes import maybe_num_nodes
 
 
@@ -138,6 +136,8 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     """
     import networkx as nx
 
+    from torch_geometric.data import Data
+
     G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
 
@@ -180,7 +180,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
             pass
 
     data['edge_index'] = edge_index.view(2, -1)
-    data = torch_geometric.data.Data.from_dict(data)
+    data = Data.from_dict(data)
 
     if group_node_attrs is all:
         group_node_attrs = list(node_attrs)
@@ -231,10 +231,12 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
     """
+    from torch_geometric.data import Data
+
     pos = torch.from_numpy(mesh.vertices).to(torch.float)
     face = torch.from_numpy(mesh.faces).t().contiguous()
 
-    return torch_geometric.data.Data(pos=pos, face=face)
+    return Data(pos=pos, face=face)
 
 
 def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
