@@ -4,7 +4,7 @@
 # (implemented in `torch_geometric.data.datapipes`):
 # * parse_smiles: Converts a SMILES string (and an optional target) into a
 #   molecular graph representation of PyG.
-# * batch_graphs: Batches muliple PyG data objects together.
+# * batch_graphs: Batches multiple PyG data objects together.
 
 import os.path as osp
 
