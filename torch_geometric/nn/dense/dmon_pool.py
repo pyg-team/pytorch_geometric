@@ -57,6 +57,7 @@ class DMoNPooling(torch.nn.Module):
         k (int): The number of clusters.
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
+
     def __init__(self, channels: Union[int, List[int]], k: int,
                  dropout: float = 0.0):
         super().__init__()

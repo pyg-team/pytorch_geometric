@@ -17,6 +17,7 @@ class LocalDegreeProfile(BaseTransform):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
+
     def __call__(self, data):
         row, col = data.edge_index
         N = data.num_nodes

@@ -3,6 +3,7 @@ from torch import Tensor
 
 
 class Reshape(torch.nn.Module):
+
     def __init__(self, *shape):
         super().__init__()
         self.shape = shape

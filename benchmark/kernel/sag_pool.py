@@ -11,6 +11,7 @@ from torch_geometric.nn import (
 
 
 class SAGPool(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, ratio=0.8):
         super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')

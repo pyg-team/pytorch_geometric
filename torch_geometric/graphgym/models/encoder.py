@@ -16,6 +16,7 @@ class IntegerFeatureEncoder(torch.nn.Module):
         num_classes (int): the number of classes for the
         embedding mapping to learn from
     """
+
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
 
@@ -39,6 +40,7 @@ class AtomEncoder(torch.nn.Module):
         emb_dim (int): Output embedding dimension
         num_classes: None
     """
+
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
 
@@ -69,6 +71,7 @@ class BondEncoder(torch.nn.Module):
     Args:
         emb_dim (int): Output edge embedding dimension
     """
+
     def __init__(self, emb_dim):
         super().__init__()
 

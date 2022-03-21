@@ -8,6 +8,7 @@ from torch_geometric.nn.inits import zeros
 class DenseGCNConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GCNConv`.
     """
+
     def __init__(self, in_channels, out_channels, improved=False, bias=True):
         super().__init__()
 

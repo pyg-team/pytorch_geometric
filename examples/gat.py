@@ -14,6 +14,7 @@ data = dataset[0]
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
 

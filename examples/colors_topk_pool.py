@@ -13,6 +13,7 @@ from torch_geometric.nn import GINConv, TopKPooling, global_add_pool
 
 
 class HandleNodeAttention(object):
+
     def __call__(self, data):
         data.attn = torch.softmax(data.x[:, 0], dim=0)
         data.x = data.x[:, 1:]
@@ -29,6 +30,7 @@ test_loader = DataLoader(dataset[3000:], batch_size=60)
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels):
         super().__init__()
 

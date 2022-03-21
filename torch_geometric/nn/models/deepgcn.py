@@ -48,6 +48,7 @@ class DeepGCNLayer(torch.nn.Module):
             memory. Set this to :obj:`True` in case you encounter out-of-memory
             errors while going deep. (default: :obj:`False`)
     """
+
     def __init__(self, conv=None, norm=None, act=None, block='res+',
                  dropout=0., ckpt_grad=False):
         super().__init__()

@@ -30,6 +30,7 @@ test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False,
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, out_channels, k=30, aggr='max'):
         super().__init__()
 

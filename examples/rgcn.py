@@ -37,6 +37,7 @@ data.test_idx = mapping[data.train_idx.size(0):]
 
 
 class Net(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = RGCNConv(data.num_nodes, 16, dataset.num_relations,

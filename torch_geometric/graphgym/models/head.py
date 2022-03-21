@@ -20,6 +20,7 @@ class GNNNodeHead(nn.Module):
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
+
     def __init__(self, dim_in, dim_out):
         super().__init__()
         self.layer_post_mp = MLP(
@@ -47,6 +48,7 @@ class GNNEdgeHead(nn.Module):
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
+
     def __init__(self, dim_in, dim_out):
         super().__init__()
         # module to decode edges from node embeddings
@@ -100,6 +102,7 @@ class GNNGraphHead(nn.Module):
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
     """
+
     def __init__(self, dim_in, dim_out):
         super().__init__()
         self.layer_post_mp = MLP(

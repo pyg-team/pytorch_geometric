@@ -35,6 +35,7 @@ class InMemoryDataset(Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
+
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError

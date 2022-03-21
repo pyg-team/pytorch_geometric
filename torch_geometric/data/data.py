@@ -29,6 +29,7 @@ from torch_geometric.utils import subgraph
 
 
 class BaseData(object):
+
     def __getattr__(self, key: str) -> Any:
         raise NotImplementedError
 
@@ -345,6 +346,7 @@ class Data(BaseData):
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
+
     def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
                  edge_attr: OptTensor = None, y: OptTensor = None,
                  pos: OptTensor = None, **kwargs):

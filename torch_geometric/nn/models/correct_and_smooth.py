@@ -63,6 +63,7 @@ class CorrectAndSmooth(torch.nn.Module):
         scale (float, optional): The scaling factor :math:`\gamma`, in case
             :obj:`autoscale = False`. (default: :obj:`1.0`)
     """
+
     def __init__(self, num_correction_layers: int, correction_alpha: float,
                  num_smoothing_layers: int, smoothing_alpha: float,
                  autoscale: bool = True, scale: float = 1.0):

@@ -74,6 +74,7 @@ class ChebConv(MessagePassing):
           maximum :obj:`lambda` value :math:`(|\mathcal{G}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+
     def __init__(self, in_channels: int, out_channels: int, K: int,
                  normalization: Optional[str] = 'sym', bias: bool = True,
                  **kwargs):

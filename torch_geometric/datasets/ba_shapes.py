@@ -30,6 +30,7 @@ class BAShapes(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
+
     def __init__(self, connection_distribution: str = "random",
                  transform: Optional[Callable] = None):
         super().__init__('.', transform)

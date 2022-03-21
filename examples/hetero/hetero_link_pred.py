@@ -52,6 +52,7 @@ def weighted_mse_loss(pred, target, weight=None):
 
 
 class GNNEncoder(torch.nn.Module):
+
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = SAGEConv((-1, -1), hidden_channels)
@@ -64,6 +65,7 @@ class GNNEncoder(torch.nn.Module):
 
 
 class EdgeDecoder(torch.nn.Module):
+
     def __init__(self, hidden_channels):
         super().__init__()
         self.lin1 = Linear(2 * hidden_channels, hidden_channels)
@@ -79,6 +81,7 @@ class EdgeDecoder(torch.nn.Module):
 
 
 class Model(torch.nn.Module):
+
     def __init__(self, hidden_channels):
         super().__init__()
         self.encoder = GNNEncoder(hidden_channels, hidden_channels)

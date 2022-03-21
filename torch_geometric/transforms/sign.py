@@ -28,6 +28,7 @@ class SIGN(BaseTransform):
     Args:
         K (int): The number of hops/layer.
     """
+
     def __init__(self, K):
         self.K = K
 

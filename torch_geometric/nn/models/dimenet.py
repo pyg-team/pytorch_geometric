@@ -33,6 +33,7 @@ qm9_target_dict = {
 
 
 class Envelope(torch.nn.Module):
+
     def __init__(self, exponent):
         super().__init__()
         self.p = exponent + 1
@@ -49,6 +50,7 @@ class Envelope(torch.nn.Module):
 
 
 class BesselBasisLayer(torch.nn.Module):
+
     def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5):
         super().__init__()
         self.cutoff = cutoff
@@ -67,6 +69,7 @@ class BesselBasisLayer(torch.nn.Module):
 
 
 class SphericalBasisLayer(torch.nn.Module):
+
     def __init__(self, num_spherical, num_radial, cutoff=5.0,
                  envelope_exponent=5):
         super().__init__()
@@ -114,6 +117,7 @@ class SphericalBasisLayer(torch.nn.Module):
 
 
 class EmbeddingBlock(torch.nn.Module):
+
     def __init__(self, num_radial, hidden_channels, act=swish):
         super().__init__()
         self.act = act
@@ -136,6 +140,7 @@ class EmbeddingBlock(torch.nn.Module):
 
 
 class ResidualLayer(torch.nn.Module):
+
     def __init__(self, hidden_channels, act=swish):
         super().__init__()
         self.act = act
@@ -155,6 +160,7 @@ class ResidualLayer(torch.nn.Module):
 
 
 class InteractionBlock(torch.nn.Module):
+
     def __init__(self, hidden_channels, num_bilinear, num_spherical,
                  num_radial, num_before_skip, num_after_skip, act=swish):
         super().__init__()
@@ -217,6 +223,7 @@ class InteractionBlock(torch.nn.Module):
 
 
 class OutputBlock(torch.nn.Module):
+
     def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
                  act=swish):
         super().__init__()

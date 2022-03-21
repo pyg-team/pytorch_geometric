@@ -23,6 +23,7 @@ class BaseTransform:
         data = TUDataset(path, name='MUTAG')[0]
         data = transform(data)  # Explicitly transform data.
     """
+
     def __call__(self, data: Any) -> Any:
         raise NotImplementedError
 

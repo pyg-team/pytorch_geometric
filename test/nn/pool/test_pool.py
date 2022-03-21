@@ -9,7 +9,9 @@ from torch_geometric.testing import onlyFullTest
 
 @onlyFullTest
 def test_radius_graph_jit():
+
     class Net(torch.nn.Module):
+
         def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
             return radius_graph(x, r=2.5, batch=batch, loop=False)
 

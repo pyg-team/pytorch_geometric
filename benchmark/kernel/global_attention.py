@@ -6,6 +6,7 @@ from torch_geometric.nn import GlobalAttention, SAGEConv
 
 
 class GlobalAttentionNet(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)

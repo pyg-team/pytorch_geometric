@@ -121,6 +121,7 @@ class CoraFull(CitationFull):
               - 8,710
               - 70
     """
+
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, 'cora', transform, pre_transform)

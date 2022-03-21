@@ -40,6 +40,7 @@ class RENet(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
+
     def __init__(self, num_nodes, num_rels, hidden_channels, seq_len,
                  num_layers=1, dropout=0., bias=True):
         super().__init__()
@@ -82,7 +83,9 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
+
         class PreTransform(object):
+
             def __init__(self, seq_len):
                 self.seq_len = seq_len
                 self.inc = 5000

@@ -17,6 +17,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
+
     def __init__(self, data: TemporalData, batch_size: int = 1, **kwargs):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']

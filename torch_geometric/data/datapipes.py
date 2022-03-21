@@ -10,6 +10,7 @@ from torch_geometric.utils import from_smiles
 
 @torchdata.datapipes.functional_datapipe('batch_graphs')
 class Batcher(torchdata.datapipes.iter.Batcher):
+
     def __init__(
         self,
         datapipe: IterDataPipe,
@@ -26,6 +27,7 @@ class Batcher(torchdata.datapipes.iter.Batcher):
 
 @torchdata.datapipes.functional_datapipe('parse_smiles')
 class SMILESParser(IterDataPipe):
+
     def __init__(
         self,
         dp: IterDataPipe,

@@ -15,6 +15,7 @@ from torch_geometric.nn import (
 
 
 class Net1(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(16, 32)
@@ -27,6 +28,7 @@ class Net1(torch.nn.Module):
 
 
 class Net2(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(16, 16)
@@ -41,6 +43,7 @@ class Net2(torch.nn.Module):
 
 
 class Net3(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(8, 16)
@@ -53,6 +56,7 @@ class Net3(torch.nn.Module):
 
 
 class Net4(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.conv1 = SAGEConv(16, 16)
@@ -66,6 +70,7 @@ class Net4(torch.nn.Module):
 
 
 class Net5(torch.nn.Module):
+
     def __init__(self, num_layers):
         super().__init__()
         self.lins = torch.nn.ModuleList()
@@ -81,6 +86,7 @@ class Net5(torch.nn.Module):
 
 
 class Net6(torch.nn.Module):
+
     def __init__(self, num_layers):
         super().__init__()
         self.lins = torch.nn.ModuleDict()
@@ -96,6 +102,7 @@ class Net6(torch.nn.Module):
 
 
 class Net7(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         self.mlp1 = Sequential(Linear(16, 16), ReLU(), Linear(16, 16))
@@ -197,6 +204,7 @@ def test_to_hetero_with_bases():
 
 
 class GraphConv(MessagePassing):
+
     def __init__(self, in_channels, out_channels):
         super().__init__(aggr='add')
         self.lin = Linear(in_channels, out_channels, bias=False)
@@ -211,6 +219,7 @@ class GraphConv(MessagePassing):
 
 
 class RGCN(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.conv = GraphConv(in_channels, out_channels)

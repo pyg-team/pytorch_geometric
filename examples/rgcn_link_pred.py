@@ -22,6 +22,7 @@ data = dataset[0]
 
 
 class RGCNEncoder(torch.nn.Module):
+
     def __init__(self, num_nodes, hidden_channels, num_relations):
         super().__init__()
         self.node_emb = Parameter(torch.Tensor(num_nodes, hidden_channels))
@@ -45,6 +46,7 @@ class RGCNEncoder(torch.nn.Module):
 
 
 class DistMultDecoder(torch.nn.Module):
+
     def __init__(self, num_relations, hidden_channels):
         super().__init__()
         self.rel_emb = Parameter(torch.Tensor(num_relations, hidden_channels))

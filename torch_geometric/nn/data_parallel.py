@@ -38,6 +38,7 @@ class DataParallel(torch.nn.DataParallel):
         exclude_keys (list or tuple, optional): Will exclude each key in the
             list. (default: :obj:`[]`)
     """
+
     def __init__(self, module, device_ids=None, output_device=None,
                  follow_batch=[], exclude_keys=[]):
         super().__init__(module, device_ids, output_device)

@@ -41,6 +41,7 @@ class GlobalAttention(torch.nn.Module):
           graph features :math:`(|\mathcal{G}|, F)` where
           :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
+
     def __init__(self, gate_nn: torch.nn.Module,
                  nn: Optional[torch.nn.Module] = None):
         super().__init__()

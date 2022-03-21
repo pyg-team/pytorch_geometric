@@ -18,6 +18,7 @@ except (ImportError, ModuleNotFoundError):
 
 
 class LinearGraphModule(LightningModule):
+
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         from torchmetrics import Accuracy
@@ -103,6 +104,7 @@ def test_lightning_dataset(get_dataset, strategy):
 
 
 class LinearNodeModule(LightningModule):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         from torchmetrics import Accuracy
@@ -195,6 +197,7 @@ def test_lightning_node_data(get_dataset, strategy, loader):
 
 
 class LinearHeteroNodeModule(LightningModule):
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         from torchmetrics import Accuracy

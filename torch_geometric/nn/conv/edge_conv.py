@@ -45,6 +45,7 @@ class EdgeConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
+
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super().__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -98,6 +99,7 @@ class DynamicEdgeConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
+
     def __init__(self, nn: Callable, k: int, aggr: str = 'max',
                  num_workers: int = 1, **kwargs):
         super().__init__(aggr=aggr, flow='source_to_target', **kwargs)

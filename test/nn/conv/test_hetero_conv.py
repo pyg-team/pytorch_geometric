@@ -51,6 +51,7 @@ def test_hetero_conv(aggr):
 
 
 class CustomConv(MessagePassing):
+
     def __init__(self, out_channels):
         super().__init__(aggr='add')
         self.lin = Linear(-1, out_channels)

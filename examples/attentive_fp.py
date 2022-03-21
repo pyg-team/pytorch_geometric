@@ -11,6 +11,7 @@ from torch_geometric.nn.models import AttentiveFP
 
 
 class GenFeatures(object):
+
     def __init__(self):
         self.symbols = [
             'B', 'C', 'N', 'O', 'F', 'Si', 'P', 'S', 'Cl', 'As', 'Se', 'Br',

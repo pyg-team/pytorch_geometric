@@ -80,6 +80,7 @@ class GeneralLayer(nn.Module):
         has_l2norm (bool): Wheter has L2 normalization after the layer
         **kwargs (optional): Additional args
     """
+
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.has_l2norm = layer_config.has_l2norm
@@ -125,6 +126,7 @@ class GeneralMultiLayer(nn.Module):
         final_act (bool): Whether has activation after the layer stack
         **kwargs (optional): Additional args
     """
+
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
         dim_inner = layer_config.dim_out \
@@ -163,6 +165,7 @@ class Linear(nn.Module):
         bias (bool): Whether has bias term
         **kwargs (optional): Additional args
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = Linear_pyg(layer_config.dim_in, layer_config.dim_out,
@@ -183,6 +186,7 @@ class BatchNorm1dNode(nn.Module):
     Args:
         dim_in (int): Input dimension
     """
+
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
         self.bn = nn.BatchNorm1d(layer_config.dim_in, eps=layer_config.bn_eps,
@@ -200,6 +204,7 @@ class BatchNorm1dEdge(nn.Module):
     Args:
         dim_in (int): Input dimension
     """
+
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
         self.bn = nn.BatchNorm1d(layer_config.dim_in, eps=layer_config.bn_eps,
@@ -224,6 +229,7 @@ class MLP(nn.Module):
         num_layers (int): Number of layers in the stack
         **kwargs (optional): Additional args
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         dim_inner = layer_config.dim_in \
@@ -256,6 +262,7 @@ class GCNConv(nn.Module):
     """
     Graph Convolutional Network (GCN) layer
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.GCNConv(layer_config.dim_in, layer_config.dim_out,
@@ -271,6 +278,7 @@ class SAGEConv(nn.Module):
     """
     GraphSAGE Conv layer
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.SAGEConv(layer_config.dim_in, layer_config.dim_out,
@@ -286,6 +294,7 @@ class GATConv(nn.Module):
     """
     Graph Attention Network (GAT) layer
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.GATConv(layer_config.dim_in, layer_config.dim_out,
@@ -301,6 +310,7 @@ class GINConv(nn.Module):
     """
     Graph Isomorphism Network (GIN) layer
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         gin_nn = nn.Sequential(
@@ -318,6 +328,7 @@ class SplineConv(nn.Module):
     """
     SplineCNN layer
     """
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = pyg.nn.SplineConv(layer_config.dim_in,
@@ -333,6 +344,7 @@ class SplineConv(nn.Module):
 @register_layer('generalconv')
 class GeneralConv(nn.Module):
     """A general GNN layer"""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralConvLayer(layer_config.dim_in,
@@ -347,6 +359,7 @@ class GeneralConv(nn.Module):
 @register_layer('generaledgeconv')
 class GeneralEdgeConv(nn.Module):
     """A general GNN layer that supports edge features as well"""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralEdgeConvLayer(layer_config.dim_in,
@@ -363,6 +376,7 @@ class GeneralEdgeConv(nn.Module):
 @register_layer('generalsampleedgeconv')
 class GeneralSampleEdgeConv(nn.Module):
     """A general GNN layer that supports edge features and edge sampling"""
+
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         self.model = GeneralEdgeConvLayer(layer_config.dim_in,

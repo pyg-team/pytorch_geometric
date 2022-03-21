@@ -37,6 +37,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
             :meth:`sklearn.datasets.make_classification` method for drawing
             node features.
     """
+
     def __init__(
         self,
         root: str,
@@ -146,6 +147,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
             to :meth:`sklearn.datasets.make_classification` method in
             drawing node features.
     """
+
     def __init__(self, root, num_classes: int, num_nodes_per_class: int,
                  node_homophily_ratio: float, average_degree: float,
                  num_channels: Optional[int] = None,

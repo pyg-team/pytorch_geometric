@@ -13,6 +13,7 @@ data.x = torch.randn(data.num_nodes, 16)
 
 
 class RGAT(torch.nn.Module):
+
     def __init__(self, in_channels, hidden_channels, out_channels,
                  num_relations):
         super().__init__()

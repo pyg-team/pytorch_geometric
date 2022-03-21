@@ -41,6 +41,7 @@ class TransitionUp(torch.nn.Module):
         Reduce features dimensionnality and interpolate back to higher
         resolution and cardinality
     '''
+
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.mlp_sub = MLP([in_channels, out_channels])
@@ -60,6 +61,7 @@ class TransitionUp(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
+
     def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
         self.k = k

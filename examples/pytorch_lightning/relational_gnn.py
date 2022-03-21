@@ -17,6 +17,7 @@ from torch_geometric.typing import EdgeType, NodeType
 
 
 class DataModule(LightningDataModule):
+
     def __init__(self, root: str):
         super().__init__()
         self.root = root
@@ -58,6 +59,7 @@ class DataModule(LightningDataModule):
 
 
 class GNN(torch.nn.Module):
+
     def __init__(self, hidden_channels: int, out_channels: int,
                  dropout: float):
         super().__init__()
@@ -76,6 +78,7 @@ class GNN(torch.nn.Module):
 
 
 class RelationalGNN(LightningModule):
+
     def __init__(
         self,
         metadata: Tuple[List[NodeType], List[EdgeType]],

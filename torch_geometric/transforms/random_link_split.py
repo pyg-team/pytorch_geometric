@@ -79,6 +79,7 @@ class RandomLinkSplit(BaseTransform):
             Can be :obj:`None` in case no reverse connection exists.
             (default: :obj:`None`)
     """
+
     def __init__(
         self,
         num_val: Union[int, float] = 0.1,

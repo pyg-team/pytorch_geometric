@@ -9,6 +9,7 @@ from torch_geometric.nn import GINConv, global_mean_pool
 
 
 class GIN(torch.nn.Module):
+
     def __init__(self, in_channels: int, hidden_channels: int,
                  out_channels: int, num_layers: int):
         super().__init__()

@@ -41,6 +41,7 @@ class TAGConv(MessagePassing):
           edge_weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
+
     def __init__(self, in_channels: int, out_channels: int, K: int = 3,
                  bias: bool = True, normalize: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')

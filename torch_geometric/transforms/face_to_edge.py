@@ -12,6 +12,7 @@ class FaceToEdge(BaseTransform):
         remove_faces (bool, optional): If set to :obj:`False`, the face tensor
             will not be removed.
     """
+
     def __init__(self, remove_faces=True):
         self.remove_faces = remove_faces
 

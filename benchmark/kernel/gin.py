@@ -7,6 +7,7 @@ from torch_geometric.nn import GINConv, JumpingKnowledge, global_mean_pool
 
 
 class GIN0(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = GINConv(
@@ -54,6 +55,7 @@ class GIN0(torch.nn.Module):
 
 
 class GIN0WithJK(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super().__init__()
         self.conv1 = GINConv(
@@ -109,6 +111,7 @@ class GIN0WithJK(torch.nn.Module):
 
 
 class GIN(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = GINConv(
@@ -156,6 +159,7 @@ class GIN(torch.nn.Module):
 
 
 class GINWithJK(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super().__init__()
         self.conv1 = GINConv(

@@ -86,6 +86,7 @@ class TemporalData(BaseData):
         The shape of :obj:`src`, :obj:`dst`, :obj:`t` and the first dimension
         of :obj`msg` should be the same (:obj:`num_events`).
     """
+
     def __init__(
         self,
         src: Optional[Tensor] = None,

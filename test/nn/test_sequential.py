@@ -89,7 +89,9 @@ def test_sequential_jittable():
 
 
 def symbolic_trace(module):
+
     class Tracer(torch.fx.Tracer):
+
         def is_leaf_module(self, module, *args, **kwargs) -> bool:
             return (isinstance(module, MessagePassing)
                     or super().is_leaf_module(module, *args, **kwargs))

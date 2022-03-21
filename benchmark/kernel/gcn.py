@@ -6,6 +6,7 @@ from torch_geometric.nn import GCNConv, JumpingKnowledge, global_mean_pool
 
 
 class GCN(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden):
         super().__init__()
         self.conv1 = GCNConv(dataset.num_features, hidden)
@@ -38,6 +39,7 @@ class GCN(torch.nn.Module):
 
 
 class GCNWithJK(torch.nn.Module):
+
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super().__init__()
         self.conv1 = GCNConv(dataset.num_features, hidden)

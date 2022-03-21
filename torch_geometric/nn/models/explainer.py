@@ -36,6 +36,7 @@ def clear_masks(model: torch.nn.Module):
 
 
 class CaptumModel(torch.nn.Module):
+
     def __init__(self, model: torch.nn.Module, mask_type: str = "edge",
                  output_idx: Optional[int] = None):
         super().__init__()
@@ -177,6 +178,7 @@ class Explainer(torch.nn.Module):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
+
     def __init__(self, model: torch.nn.Module, lr: Optional[float] = None,
                  epochs: Optional[int] = None, num_hops: Optional[int] = None,
                  return_type: str = 'log_prob', log: bool = False):
