@@ -11,6 +11,7 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 from torch_cluster import knn_graph
+from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
@@ -197,17 +198,32 @@ def train():
 def test(loader):
     model.eval()
 
-    iou = 0
+    ious, categories = [], []
+    y_map = torch.empty(loader.dataset.num_classes, device=device).long()
     for data in loader:
         data = data.to(device)
-        out = model(data.x, data.pos, data.batch).argmax(dim=1)
+        outs = model(data.x, data.pos, data.batch).argmax(dim=1)
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
-        for pred, y in zip(out.split(sizes), data.y.split(sizes)):
-            iou += float(
-                jaccard_index(pred, y, num_classes=loader.dataset.num_classes))
+        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
+                                    data.category.tolist()):
+            category = list(ShapeNet.seg_classes.keys())[category]
+            part = ShapeNet.seg_classes[category]
+            part = torch.tensor(part, device=device)
 
-    return iou / len(loader.dataset)
+            y_map[part] = torch.arange(part.size(0), device=device)
+
+            iou = jaccard_index(out[:, part].argmax(dim=-1), y_map[y],
+                                num_classes=part.size(0), absent_score=1.0)
+            ious.append(iou)
+
+        categories.append(data.category)
+
+    iou = torch.tensor(ious, device=device)
+    category = torch.cat(categories, dim=0)
+
+    mean_iou = scatter(iou, category, reduce='mean')  # Per-category IoU.
+    return float(mean_iou.mean())  # Global IoU.
 
 
 for epoch in range(1, 100):
