@@ -204,7 +204,8 @@ def test(loader):
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
         for pred, y in zip(out.split(sizes), data.y.split(sizes)):
-            iou += float(jaccard_index(pred, y, num_classes=loader.dataset.num_classes))
+            iou += float(
+                jaccard_index(pred, y, num_classes=loader.dataset.num_classes))
 
     return iou / len(loader.dataset)
 
