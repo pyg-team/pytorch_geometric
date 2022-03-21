@@ -4,7 +4,6 @@ project(hello-world)
 # The first thing do is to tell cmake to find the TorchScatter
 # and TorchSparse libraries. The package pulls in all the necessary
 # torch libraries, so there is no need to add `find_package(Torch)`.
-# find_package(Torch REQUIRED)
 find_package(TorchScatter REQUIRED)
 find_package(TorchSparse REQUIRED)
 

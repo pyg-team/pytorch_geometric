@@ -26,3 +26,8 @@ Once both dependencies are sorted, we can start the CMake fun:
 
 That's it!
 You should now have a `hello-world` executable in your `build` folder.
+Run it via:
+
+```
+./hello-world ../model.pt
+```
