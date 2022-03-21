@@ -8,7 +8,7 @@ For this, we need to add `TorchLib` to the `-DCMAKE_PREFIX_PATH` (*e.g.*, it may
 Then, *e.g.*, to install `TorchScatter`, run:
 
 ```
-https://github.com/rusty1s/pytorch_scatter.git
+git clone https://github.com/rusty1s/pytorch_scatter.git
 cd pytorch_scatter
 mkdir build && cd build
 cmake -DWITH_CUDA=on -DCMAKE_PREFIX_PATH="..." ..
