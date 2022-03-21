@@ -2,8 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from point_transformer_classification import (MLP, TransformerBlock,
-                                              TransitionDown)
+from point_transformer_classification import (
+    MLP,
+    TransformerBlock,
+    TransitionDown,
+)
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq

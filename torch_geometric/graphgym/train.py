@@ -3,12 +3,18 @@ import time
 
 import torch
 
-from torch_geometric.graphgym.checkpoint import (clean_ckpt, load_ckpt,
-                                                 save_ckpt)
+from torch_geometric.graphgym.checkpoint import (
+    clean_ckpt,
+    load_ckpt,
+    save_ckpt,
+)
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.loss import compute_loss
-from torch_geometric.graphgym.utils.epoch import (is_ckpt_epoch, is_eval_epoch,
-                                                  is_train_eval_epoch)
+from torch_geometric.graphgym.utils.epoch import (
+    is_ckpt_epoch,
+    is_eval_epoch,
+    is_train_eval_epoch,
+)
 
 
 def train_epoch(logger, loader, model, optimizer, scheduler):

@@ -1,8 +1,13 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
-from torch_geometric.utils import (bipartite_subgraph, get_num_hops,
-                                   index_to_mask, k_hop_subgraph, subgraph)
+from torch_geometric.utils import (
+    bipartite_subgraph,
+    get_num_hops,
+    index_to_mask,
+    k_hop_subgraph,
+    subgraph,
+)
 
 
 def test_get_num_hops():

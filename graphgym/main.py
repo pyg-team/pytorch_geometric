@@ -6,8 +6,13 @@ import torch
 
 from torch_geometric import seed_everything
 from torch_geometric.graphgym.cmd_args import parse_args
-from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
-                                             set_agg_dir, set_run_dir)
+from torch_geometric.graphgym.config import (
+    cfg,
+    dump_cfg,
+    load_cfg,
+    set_agg_dir,
+    set_run_dir,
+)
 from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import create_logger, set_printing
 from torch_geometric.graphgym.model_builder import create_model
