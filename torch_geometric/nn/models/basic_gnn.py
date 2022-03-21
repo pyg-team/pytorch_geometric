@@ -144,6 +144,7 @@ class BasicGNN(torch.nn.Module):
 
         x = self.jk(xs) if hasattr(self, 'jk') else x
         x = self.lin(x) if hasattr(self, 'lin') else x
+
         return x
 
     def __repr__(self) -> str:
