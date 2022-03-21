@@ -105,10 +105,12 @@ class PNAConv(MessagePassing):
         self.F_out = self.out_channels // towers
 
         deg = deg.to(torch.float)
+        total_no_vertices = deg.sum()
+        bin_degrees = torch.arange(len(deg))
         self.avg_deg: Dict[str, float] = {
-            'lin': deg.mean().item(),
-            'log': (deg + 1).log().mean().item(),
-            'exp': deg.exp().mean().item(),
+            'lin': ((bin_degrees * deg).sum() / total_no_vertices).item(),
+            'log': (((bin_degrees + 1).log() * deg).sum() / total_no_vertices).item(),
+            'exp': ((bin_degrees.exp() * deg).sum() / total_no_vertices).item(),
         }
 
         if self.edge_dim is not None:
