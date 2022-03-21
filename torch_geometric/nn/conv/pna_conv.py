@@ -109,8 +109,10 @@ class PNAConv(MessagePassing):
         bin_degrees = torch.arange(len(deg))
         self.avg_deg: Dict[str, float] = {
             'lin': ((bin_degrees * deg).sum() / total_no_vertices).item(),
-            'log': (((bin_degrees + 1).log() * deg).sum() / total_no_vertices).item(),
-            'exp': ((bin_degrees.exp() * deg).sum() / total_no_vertices).item(),
+            'log':
+            (((bin_degrees + 1).log() * deg).sum() / total_no_vertices).item(),
+            'exp':
+            ((bin_degrees.exp() * deg).sum() / total_no_vertices).item(),
         }
 
         if self.edge_dim is not None:
