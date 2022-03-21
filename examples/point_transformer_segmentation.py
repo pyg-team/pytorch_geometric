@@ -197,21 +197,16 @@ def train():
 def test(loader):
     model.eval()
 
-    y_mask = loader.dataset.y_mask
-    ious = [[] for _ in range(len(loader.dataset.categories))]
-
+    iou = 0
     for data in loader:
         data = data.to(device)
-        pred = model(data.x, data.pos, data.batch).argmax(dim=1)
-        iou = jaccard_index(pred, data.y,
-                            num_classes=loader.dataset.num_classes)
-        # Find and filter the relevant classes for each category.
-        for iou, category in zip(iou.unbind(), data.category.unbind()):
-            ious[category.item()].append(iou[y_mask[category]])
+        out = model(data.x, data.pos, data.batch).argmax(dim=1)
 
-    # Compute mean IoU.
-    ious = [torch.stack(iou).mean(0).mean(0) for iou in ious]
-    return torch.tensor(ious).mean().item()
+        sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
+        for pred, y in zip(out.split(sizes), data.y.split(sizes)):
+            iou += float(jaccard_index(pred, y))
+
+    return iou / len(loader.dataset)
 
 
 for epoch in range(1, 100):
