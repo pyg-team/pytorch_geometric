@@ -1,5 +1,6 @@
 from torch_geometric.datasets.elliptic import EllipticBitcoinDataset
 
+
 def test_elliptic():
     dataset = EllipticBitcoinDataset('./')
     assert str(dataset) == 'EllipticBitcoinDataset()'
@@ -11,4 +12,4 @@ def test_elliptic():
     assert dataset[0].x.size() == (203769, 165)
     assert dataset[0].y.size() == (203769, )
     assert dataset[0].train_mask.size() == (203769, )
-    assert dataset[0].train_mask.sum().item() == (3462,)
+    assert dataset[0].train_mask.sum().item() == (3462, )
