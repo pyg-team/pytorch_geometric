@@ -202,7 +202,7 @@ def test(loader):
     y_map = torch.empty(loader.dataset.num_classes, device=device).long()
     for data in loader:
         data = data.to(device)
-        outs = model(data.x, data.pos, data.batch).argmax(dim=1)
+        outs = model(data.x, data.pos, data.batch)
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
         for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
