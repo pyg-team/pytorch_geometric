@@ -1,5 +1,5 @@
-import glob
-import os.path as osp
+import pathlib
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -32,9 +32,11 @@ class TrackMLParticleTrackingDataset(Dataset):
     url = 'https://www.kaggle.com/c/trackml-particle-identification'
 
     def __init__(self, root, transform=None):
-        super().__init__(root, transform)
-        events = glob.glob(osp.join(self.raw_dir, 'event*-hits.csv'))
-        events = [e.split(osp.sep)[-1].split('-')[0][5:] for e in events]
+        super(TrackMLParticleTrackingDataset, self).__init__(root, transform)
+        events = Path(self.raw_dir).rglob('event*-hits.csv')
+        events = [
+            e.split(pathlib.os.sep)[-1].split('-')[0][5:] for e in events
+        ]
         self.events = sorted(events)
 
     @property
@@ -53,7 +55,7 @@ class TrackMLParticleTrackingDataset(Dataset):
             f'all *.csv files to {self.raw_dir}')
 
     def len(self):
-        return len(glob.glob(osp.join(self.raw_dir, 'event*-hits.csv')))
+        return len(Path(self.raw_dir).rglob('event*-hits.csv'))
 
     def get(self, idx):
         import pandas as pd
@@ -61,12 +63,12 @@ class TrackMLParticleTrackingDataset(Dataset):
         idx = self.events[idx]
 
         # Get hit positions.
-        hits_path = osp.join(self.raw_dir, f'event{idx}-hits.csv')
+        hits_path = Path.joinpath(Path(self.raw_dir), f'event{idx}-hits.csv')
         pos = pd.read_csv(hits_path, usecols=['x', 'y', 'z'], dtype=np.float32)
         pos = torch.from_numpy(pos.values).div_(1000.)
 
         # Get hit features.
-        cells_path = osp.join(self.raw_dir, f'event{idx}-cells.csv')
+        cells_path = Path.joinpath(Path(self.raw_dir), f'event{idx}-cells.csv')
         cell = pd.read_csv(cells_path, usecols=['hit_id', 'value'])
         hit_id = torch.from_numpy(cell['hit_id'].values).to(torch.long).sub_(1)
         value = torch.from_numpy(cell['value'].values).to(torch.float)
@@ -76,7 +78,7 @@ class TrackMLParticleTrackingDataset(Dataset):
         x = torch.stack([num_cells, value], dim=-1)
 
         # Get ground-truth hit assignments.
-        truth_path = osp.join(self.raw_dir, f'event{idx}-truth.csv')
+        truth_path = Path.joinpath(Path(self.raw_dir), f'event{idx}-truth.csv')
         y = pd.read_csv(truth_path,
                         usecols=['hit_id', 'particle_id', 'weight'])
         hit_id = torch.from_numpy(y['hit_id'].values).to(torch.long).sub_(1)

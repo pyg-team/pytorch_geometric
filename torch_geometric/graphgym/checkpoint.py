@@ -1,6 +1,6 @@
 import glob
 import os
-import os.path as osp
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import torch
@@ -22,7 +22,7 @@ def load_ckpt(
     epoch = get_ckpt_epoch(epoch)
     path = get_ckpt_path(epoch)
 
-    if not osp.exists(path):
+    if not Path(path).exists():
         return 0
 
     ckpt = torch.load(path)
@@ -68,16 +68,16 @@ def clean_ckpt():
 
 
 def get_ckpt_dir() -> str:
-    return osp.join(cfg.run_dir, 'ckpt')
+    return str(Path.joinpath(Path(cfg.run_dir), 'ckpt'))
 
 
 def get_ckpt_path(epoch: Union[int, str]) -> str:
-    return osp.join(get_ckpt_dir(), f'{epoch}.ckpt')
+    return str(Path.joinpath(Path(get_ckpt_dir()), f'{epoch}.ckpt'))
 
 
 def get_ckpt_epochs() -> List[int]:
     paths = glob.glob(get_ckpt_path('*'))
-    return sorted([int(osp.basename(path).split('.')[0]) for path in paths])
+    return sorted([int(Path(path).name.split('.')[0]) for path in paths])
 
 
 def get_ckpt_epoch(epoch: int) -> int:

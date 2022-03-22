@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch_geometric.nn import GraphUNet
 from torch_geometric.utils import dropout_adj
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
 dataset = Planetoid(path, dataset)
 data = dataset[0]
 

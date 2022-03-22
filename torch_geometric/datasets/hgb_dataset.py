@@ -1,7 +1,7 @@
 import json
 import os
-import os.path as osp
 from collections import defaultdict
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -61,16 +61,16 @@ class HGBDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
         x = ['info.dat', 'node.dat', 'link.dat', 'label.dat', 'label.dat.test']
-        return [osp.join(self.names[self.name], f) for f in x]
+        return [Path.joinpath(Path(self.names[self.name]), f) for f in x]
 
     @property
     def processed_file_names(self) -> str:

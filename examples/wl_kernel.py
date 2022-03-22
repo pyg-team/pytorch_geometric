@@ -1,6 +1,6 @@
 import argparse
-import os.path as osp
 import warnings
+from pathlib import Path
 
 import torch
 from sklearn.exceptions import ConvergenceWarning
@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 torch.manual_seed(42)
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'TU')
 dataset = TUDataset(path, name='ENZYMES')
 data = Batch.from_data_list(dataset)
 

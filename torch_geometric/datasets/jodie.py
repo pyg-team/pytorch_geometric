@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 
@@ -18,11 +18,11 @@ class JODIEDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self):

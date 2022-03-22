@@ -1,7 +1,6 @@
 import logging
-import os
-import os.path as osp
 from collections import Counter
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -51,11 +50,11 @@ class Entities(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def num_relations(self) -> int:
@@ -81,7 +80,7 @@ class Entities(InMemoryDataset):
     def download(self):
         path = download_url(self.url.format(self.name), self.root)
         extract_tar(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         import gzip

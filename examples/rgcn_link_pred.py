@@ -6,7 +6,7 @@ Implements the link prediction task on the FB15k237 datasets according to the
 Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -16,7 +16,7 @@ from tqdm import tqdm
 from torch_geometric.datasets import RelLinkPredDataset
 from torch_geometric.nn import GAE, RGCNConv
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'RLPD')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'RLPD')
 dataset = RelLinkPredDataset(path, 'FB15k-237')
 data = dataset[0]
 

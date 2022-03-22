@@ -1,5 +1,5 @@
 import argparse
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -19,7 +19,7 @@ parser.add_argument('--model', type=str, default='GCN',
                     choices=['GCN', 'GAT', 'SAGE'])
 args = parser.parse_args()
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'UPFD')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'UPFD')
 train_dataset = UPFD(path, args.dataset, args.feature, 'train', ToUndirected())
 val_dataset = UPFD(path, args.dataset, args.feature, 'val', ToUndirected())
 test_dataset = UPFD(path, args.dataset, args.feature, 'test', ToUndirected())

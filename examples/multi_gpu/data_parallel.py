@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
 from torch_geometric.nn import DataParallel, SplineConv, global_mean_pool
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data', 'MNIST')
+path = Path.joinpath(Path(__file__).resolve().parent, '../../data', 'MNIST')
 dataset = MNISTSuperpixels(path, transform=T.Cartesian()).shuffle()
 loader = DataListLoader(dataset, batch_size=1024, shuffle=True)
 

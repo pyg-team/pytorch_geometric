@@ -1,5 +1,5 @@
-import os.path as osp
 from math import sqrt
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -95,7 +95,7 @@ class GenFeatures(object):
         return data
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'AFP_Mol')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'AFP_Mol')
 dataset = MoleculeNet(path, name='ESOL', pre_transform=GenFeatures()).shuffle()
 
 N = len(dataset) // 10

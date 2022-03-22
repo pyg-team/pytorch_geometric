@@ -1,6 +1,5 @@
-import os
-import os.path as osp
 from itertools import product
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -59,20 +58,22 @@ class IMDB(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.remove(path)
+        Path(path).unlink()
 
     def process(self):
         data = HeteroData()
 
         node_types = ['movie', 'director', 'actor']
         for i, node_type in enumerate(node_types):
-            x = sp.load_npz(osp.join(self.raw_dir, f'features_{i}.npz'))
+            x = sp.load_npz(
+                Path.joinpath(Path(self.raw_dir), f'features_{i}.npz'))
             data[node_type].x = torch.from_numpy(x.todense()).to(torch.float)
 
-        y = np.load(osp.join(self.raw_dir, 'labels.npy'))
+        y = np.load(Path.joinpath(Path(self.raw_dir), 'labels.npy'))
         data['movie'].y = torch.from_numpy(y).to(torch.long)
 
-        split = np.load(osp.join(self.raw_dir, 'train_val_test_idx.npz'))
+        split = np.load(
+            Path.joinpath(Path(self.raw_dir), 'train_val_test_idx.npz'))
         for name in ['train', 'val', 'test']:
             idx = split[f'{name}_idx']
             idx = torch.from_numpy(idx).to(torch.long)
@@ -88,7 +89,7 @@ class IMDB(InMemoryDataset):
         s['director'] = (N_m, N_m + N_d)
         s['actor'] = (N_m + N_d, N_m + N_d + N_a)
 
-        A = sp.load_npz(osp.join(self.raw_dir, 'adjM.npz'))
+        A = sp.load_npz(Path.joinpath(Path(self.raw_dir), 'adjM.npz'))
         for src, dst in product(node_types, node_types):
             A_sub = A[s[src][0]:s[src][1], s[dst][0]:s[dst][1]].tocoo()
             if A_sub.nnz > 0:

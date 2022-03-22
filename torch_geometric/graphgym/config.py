@@ -6,6 +6,7 @@ import shutil
 import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 import torch_geometric.graphgym.register as register
@@ -485,7 +486,7 @@ def dump_cfg(cfg):
 
     """
     makedirs(cfg.out_dir)
-    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
+    cfg_file = Path.joinpath(Path(cfg.out_dir), cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
@@ -505,7 +506,7 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if os.path.isdir(dir):
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
     os.makedirs(dir, exist_ok=True)
 
@@ -535,7 +536,7 @@ def set_run_dir(out_dir, fname):
 
     """
     fname = get_fname(fname)
-    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
+    cfg.run_dir = str(Path.joinpath(Path(out_dir), fname, str(cfg.seed)))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)
@@ -554,7 +555,7 @@ def set_agg_dir(out_dir, fname):
 
     """
     fname = get_fname(fname)
-    return os.path.join(out_dir, fname)
+    return Path.joinpath(Path(out_dir), fname)
 
 
 set_cfg(cfg)

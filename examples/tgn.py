@@ -11,7 +11,7 @@
 # decided to present this version here as it is more realsitic and a better
 # test bed for future methods.
 
-import os.path as osp
+from pathlib import Path
 
 import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
@@ -28,7 +28,7 @@ from torch_geometric.nn.models.tgn import (
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0]
 

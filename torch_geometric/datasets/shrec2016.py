@@ -1,6 +1,4 @@
-import glob
-import os
-import os.path as osp
+from pathlib import Path
 
 import torch
 
@@ -89,24 +87,26 @@ class SHREC2016(InMemoryDataset):
     def download(self):
         path = download_url(self.train_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
-        path = osp.join(self.raw_dir, 'shrec2016_PartialDeformableShapes')
-        os.rename(path, osp.join(self.raw_dir, 'training'))
+        Path(path).unlink()
+        path = Path.joinpath(Path(self.raw_dir),
+                             'shrec2016_PartialDeformableShapes')
+        path.rename(Path.joinpath(Path(self.raw_dir), 'training'))
 
         path = download_url(self.test_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
-        path = osp.join(self.raw_dir,
-                        'shrec2016_PartialDeformableShapes_TestSet')
-        os.rename(path, osp.join(self.raw_dir, 'test'))
+        Path(path).unlink()
+        path = Path.joinpath(Path(self.raw_dir),
+                             'shrec2016_PartialDeformableShapes_TestSet')
+        path.rename(Path.joinpath(Path(self.raw_dir), 'test'))
 
     def process(self):
         ref_data = read_off(
-            osp.join(self.raw_paths[0], 'null', f'{self.cat}.off'))
+            Path.joinpath(Path(self.raw_paths[0]), 'null',
+                          '{}.off'.format(self.cat)))
 
         train_list = []
-        name = f'{self.part}_{self.cat}_*.off'
-        paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
+        name = '{}_{}_*.off'.format(self.part, self.cat)
+        paths = Path.joinpath(Path(self.raw_paths[0]), self.part).rglob(name)
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
@@ -118,8 +118,8 @@ class SHREC2016(InMemoryDataset):
             train_list.append(data)
 
         test_list = []
-        name = f'{self.part}_{self.cat}_*.off'
-        paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
+        name = '{}_{}_*.off'.format(self.part, self.cat)
+        paths = Path.joinpath(Path(self.raw_paths[1]), self.part).rglob(name)
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 

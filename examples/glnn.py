@@ -2,7 +2,7 @@
 # Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation
 
 import argparse
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -18,7 +18,8 @@ args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora', transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
 

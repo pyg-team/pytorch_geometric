@@ -1,6 +1,6 @@
 import os
-import os.path as osp
 import shutil
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -67,11 +67,11 @@ class OGB_MAG(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, 'mag', 'raw')
+        return Path.joinpath(Path(self.root), 'mag', 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, 'mag', 'processed')
+        return Path.joinpath(Path(self.root), 'mag', 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -93,18 +93,20 @@ class OGB_MAG(InMemoryDataset):
             return 'data.pt'
 
     def download(self):
-        if not all([osp.exists(f) for f in self.raw_paths[:5]]):
+        if not all([Path(f).exists() for f in self.raw_paths[:5]]):
             path = download_url(self.url, self.raw_dir)
             extract_zip(path, self.raw_dir)
             for file_name in ['node-feat', 'node-label', 'relations']:
-                path = osp.join(self.raw_dir, 'mag', 'raw', file_name)
+                path = Path.joinpath(Path(self.raw_dir), 'mag', 'raw',
+                                     file_name)
                 shutil.move(path, self.raw_dir)
-            path = osp.join(self.raw_dir, 'mag', 'split')
+            path = Path.joinpath(Path(self.raw_dir), 'mag', 'split')
             shutil.move(path, self.raw_dir)
-            path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')
+            path = Path.joinpath(Path(self.raw_dir), 'mag', 'raw',
+                                 'num-node-dict.csv.gz')
             shutil.move(path, self.raw_dir)
-            shutil.rmtree(osp.join(self.raw_dir, 'mag'))
-            os.remove(osp.join(self.raw_dir, 'mag.zip'))
+            shutil.rmtree(Path.joinpath(Path(self.raw_dir), 'mag'))
+            os.remove(Path.joinpath(Path(self.raw_dir), 'mag.zip'))
         if self.preprocess is not None:
             path = download_url(self.urls[self.preprocess], self.raw_dir)
             extract_zip(path, self.raw_dir)
@@ -115,24 +117,26 @@ class OGB_MAG(InMemoryDataset):
 
         data = HeteroData()
 
-        path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node-feat.csv.gz')
+        path = Path.joinpath(Path(self.raw_dir), 'node-feat', 'paper',
+                             'node-feat.csv.gz')
         x_paper = pd.read_csv(path, compression='gzip', header=None,
                               dtype=np.float32).values
         data['paper'].x = torch.from_numpy(x_paper)
 
-        path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node_year.csv.gz')
+        path = Path.joinpath(Path(self.raw_dir), 'node-feat', 'paper',
+                             'node_year.csv.gz')
         year_paper = pd.read_csv(path, compression='gzip', header=None,
                                  dtype=np.int64).values
         data['paper'].year = torch.from_numpy(year_paper).view(-1)
 
-        path = osp.join(self.raw_dir, 'node-label', 'paper',
-                        'node-label.csv.gz')
+        path = Path.joinpath(Path(self.raw_dir), 'node-label', 'paper',
+                             'node-label.csv.gz')
         y_paper = pd.read_csv(path, compression='gzip', header=None,
                               dtype=np.int64).values.flatten()
         data['paper'].y = torch.from_numpy(y_paper)
 
         if self.preprocess is None:
-            path = osp.join(self.raw_dir, 'num-node-dict.csv.gz')
+            path = Path.joinpath(Path(self.raw_dir), 'num-node-dict.csv.gz')
             num_nodes_df = pd.read_csv(path, compression='gzip')
             for node_type in ['author', 'institution', 'field_of_study']:
                 data[node_type].num_nodes = num_nodes_df[node_type].tolist()[0]
@@ -148,15 +152,16 @@ class OGB_MAG(InMemoryDataset):
                           ('paper', 'has_topic', 'field_of_study')]:
 
             f = '___'.join(edge_type)
-            path = osp.join(self.raw_dir, 'relations', f, 'edge.csv.gz')
+            path = Path.joinpath(Path(self.raw_dir), 'relations', f,
+                                 'edge.csv.gz')
             edge_index = pd.read_csv(path, compression='gzip', header=None,
                                      dtype=np.int64).values
             edge_index = torch.from_numpy(edge_index).t().contiguous()
             data[edge_type].edge_index = edge_index
 
         for f, v in [('train', 'train'), ('valid', 'val'), ('test', 'test')]:
-            path = osp.join(self.raw_dir, 'split', 'time', 'paper',
-                            f'{f}.csv.gz')
+            path = Path.joinpath(Path(self.raw_dir), 'split', 'time', 'paper',
+                                 f'{f}.csv.gz')
             idx = pd.read_csv(path, compression='gzip', header=None,
                               dtype=np.int64).values.flatten()
             idx = torch.from_numpy(idx)

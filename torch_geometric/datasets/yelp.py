@@ -1,6 +1,6 @@
 import json
 import os
-import os.path as osp
+from pathlib import Path
 
 import numpy as np
 import scipy.sparse as sp
@@ -60,36 +60,36 @@ class Yelp(InMemoryDataset):
 
     def download(self):
         path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
 
         path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'feats.npy'))
 
         path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'class_map.json'))
 
         path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'role.json'))
+        os.rename(path, Path.joinpath(Path(self.raw_dir), 'role.json'))
 
     def process(self):
-        f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
+        f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        x = np.load(osp.join(self.raw_dir, 'feats.npy'))
+        x = np.load(Path.joinpath(Path(self.raw_dir), 'feats.npy'))
         x = torch.from_numpy(x).to(torch.float)
 
         ys = [-1] * x.size(0)
-        with open(osp.join(self.raw_dir, 'class_map.json')) as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'class_map.json')) as f:
             class_map = json.load(f)
             for key, item in class_map.items():
                 ys[int(key)] = item
         y = torch.tensor(ys)
 
-        with open(osp.join(self.raw_dir, 'role.json')) as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'role.json')) as f:
             role = json.load(f)
 
         train_mask = torch.zeros(x.size(0), dtype=torch.bool)

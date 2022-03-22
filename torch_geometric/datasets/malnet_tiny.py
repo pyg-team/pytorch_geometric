@@ -1,6 +1,6 @@
 import glob
 import os
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -48,7 +48,10 @@ class MalNetTiny(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         folders = ['addisplay', 'adware', 'benign', 'downloader', 'trojan']
-        return [osp.join('malnet-graphs-tiny', folder) for folder in folders]
+        return [
+            Path.joinpath(Path('malnet-graphs-tiny'), folder)
+            for folder in folders
+        ]
 
     @property
     def processed_file_names(self) -> str:
@@ -63,8 +66,8 @@ class MalNetTiny(InMemoryDataset):
         data_list = []
 
         for y, raw_path in enumerate(self.raw_paths):
-            raw_path = osp.join(raw_path, os.listdir(raw_path)[0])
-            filenames = glob.glob(osp.join(raw_path, '*.edgelist'))
+            raw_path = Path.joinpath(Path(raw_path), os.listdir(raw_path)[0])
+            filenames = glob.glob(Path.joinpath(raw_path, '*.edgelist'))
 
             for filename in filenames:
                 with open(filename, 'r') as f:

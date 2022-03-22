@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import DNAConv
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', dataset)
 dataset = Planetoid(path, dataset)
 data = dataset[0]
 data.train_mask = data.val_mask = data.test_mask = None

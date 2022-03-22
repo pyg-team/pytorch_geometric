@@ -1,5 +1,5 @@
-import os.path as osp
 from glob import glob
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -81,15 +81,17 @@ class CoMA(InMemoryDataset):
             f"'{self.url}' and move it to '{self.raw_dir}'")
 
     def process(self):
-        folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
+        folders = sorted(glob(Path.joinpath(Path(self.raw_dir), 'FaceTalk_*')))
         if len(folders) == 0:
             extract_zip(self.raw_paths[0], self.raw_dir, log=False)
-            folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
+            folders = sorted(
+                glob(Path.joinpath(Path(self.raw_dir), 'FaceTalk_*')))
 
         train_data_list, test_data_list = [], []
         for folder in folders:
             for i, category in enumerate(self.categories):
-                files = sorted(glob(osp.join(folder, category, '*.ply')))
+                files = sorted(
+                    glob(Path.joinpath(Path(folder), category, '*.ply')))
                 for j, f in enumerate(files):
                     data = read_ply(f)
                     data.y = torch.tensor([i], dtype=torch.long)

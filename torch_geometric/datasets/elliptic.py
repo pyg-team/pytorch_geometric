@@ -1,5 +1,5 @@
 import os
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -67,11 +67,14 @@ class EllipticBitcoinDataset(InMemoryDataset):
 
     def download(self):
         download_url('https://tinyurl.com/9b7f8efe', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, '9b7f8efe'), self.raw_paths[0])
+        os.rename(Path.joinpath(Path(self.raw_dir), '9b7f8efe'),
+                  self.raw_paths[0])
         download_url('https://tinyurl.com/mr3v9d3f', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, 'mr3v9d3f'), self.raw_paths[1])
+        os.rename(Path.joinpath(Path(self.raw_dir), 'mr3v9d3f'),
+                  self.raw_paths[1])
         download_url('https://tinyurl.com/2p8up25z', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, '2p8up25z'), self.raw_paths[2])
+        os.rename(Path.joinpath(Path(self.raw_dir), '2p8up25z'),
+                  self.raw_paths[2])
 
     def process(self):
         import pandas as pd

@@ -1,6 +1,6 @@
 import os
-import os.path as osp
 import shutil
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import scipy.sparse as sp
@@ -61,11 +61,11 @@ class AttributedGraphDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -80,11 +80,12 @@ class AttributedGraphDataset(InMemoryDataset):
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
-        path = osp.join(self.raw_dir, f'{self.name}.attr')
+        path = Path.joinpath(Path(self.raw_dir), f'{self.name}.attr')
         if self.name == 'mag':
-            path = osp.join(self.raw_dir, self.name)
+            path = Path.joinpath(Path(self.raw_dir), self.name)
         for name in self.raw_file_names:
-            os.rename(osp.join(path, name), osp.join(self.raw_dir, name))
+            os.rename(Path.joinpath(path, name),
+                      Path.joinpath(Path(self.raw_dir), name))
         shutil.rmtree(path)
 
     def process(self):

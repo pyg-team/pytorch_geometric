@@ -1,7 +1,7 @@
 import json
-import os
-import os.path as osp
+import pathlib
 import shutil
+from pathlib import Path
 
 import torch
 
@@ -140,17 +140,17 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            osp.join(f'{cats}_{split}.pt')
+            Path.joinpath(Path('{}_{}.pt'.format(cats, split)))
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.unlink(path)
+        Path(path).unlink()
         shutil.rmtree(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
-        os.rename(osp.join(self.root, name), self.raw_dir)
+        Path.joinpath(Path(self.root), name).rename(Path(self.raw_dir))
 
     def process_filenames(self, filenames):
         data_list = []
@@ -158,11 +158,11 @@ class ShapeNet(InMemoryDataset):
         cat_idx = {categories_ids[i]: i for i in range(len(categories_ids))}
 
         for name in filenames:
-            cat = name.split(osp.sep)[0]
+            cat = name.split(pathlib.os.sep)[0]
             if cat not in categories_ids:
                 continue
 
-            data = read_txt_array(osp.join(self.raw_dir, name))
+            data = read_txt_array(Path.joinpath(Path(self.raw_dir), name))
             pos = data[:, :3]
             x = data[:, 3:6]
             y = data[:, -1].type(torch.long)
@@ -178,11 +178,11 @@ class ShapeNet(InMemoryDataset):
     def process(self):
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
-            path = osp.join(self.raw_dir, 'train_test_split',
-                            f'shuffled_{split}_file_list.json')
+            path = Path.joinpath(Path(self.raw_dir), 'train_test_split',
+                                 f'shuffled_{split}_file_list.json')
             with open(path, 'r') as f:
                 filenames = [
-                    osp.sep.join(name.split('/')[1:]) + '.txt'
+                    pathlib.os.sep.join(str(name).split('/')[1:]) + '.txt'
                     for name in json.load(f)
                 ]  # Removing first directory.
             data_list = self.process_filenames(filenames)

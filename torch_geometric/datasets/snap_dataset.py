@@ -1,5 +1,4 @@
-import os
-import os.path as osp
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -30,14 +29,14 @@ def read_ego(files, name):
 
     all_featnames = []
     files = [
-        x for x in files if x.split('.')[-1] in
+        x for x in files if str(x).split('.')[-1] in
         ['circles', 'edges', 'egofeat', 'feat', 'featnames']
     ]
     for i in range(4, len(files), 5):
         featnames_file = files[i]
         with open(featnames_file, 'r') as f:
             featnames = f.read().split('\n')[:-1]
-            featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
+            featnames = [' '.join(str(x).split(' ')[1:]) for x in featnames]
             all_featnames += featnames
     all_featnames = sorted(list(set(all_featnames)))
     all_featnames = {key: i for i, key in enumerate(all_featnames)}
@@ -65,7 +64,9 @@ def read_ego(files, name):
             x_all = torch.zeros(x.size(0), len(all_featnames))
             with open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
-                featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
+                featnames = [
+                    ' '.join(str(x).split(' ')[1:]) for x in featnames
+                ]
             indices = [all_featnames[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
@@ -198,18 +199,18 @@ class SNAPDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def _download(self):
-        if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
+        if Path.is_dir(self.raw_dir) and len(Path(self.raw_dir).iterdir()) > 0:
             return
 
         makedirs(self.raw_dir)
@@ -222,15 +223,17 @@ class SNAPDataset(InMemoryDataset):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         raw_dir = self.raw_dir
-        filenames = os.listdir(self.raw_dir)
-        if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
-            raw_dir = osp.join(raw_dir, filenames[0])
+        filenames = list(Path(self.raw_dir).iterdir())
+        if len(filenames) == 1 and Path.joinpath(Path(raw_dir),
+                                                 filenames[0]).is_dir():
+            raw_dir = Path.joinpath(Path(raw_dir), filenames[0])
 
-        raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
+        raw_files = sorted(
+            [Path.joinpath(Path(raw_dir), f) for f in Path(raw_dir).iterdir()])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

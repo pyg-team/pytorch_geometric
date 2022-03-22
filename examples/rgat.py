@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -6,7 +6,8 @@ import torch.nn.functional as F
 from torch_geometric.datasets import Entities
 from torch_geometric.nn import RGATConv
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Entities')
 dataset = Entities(path, 'AIFB')
 data = dataset[0]
 data.x = torch.randn(data.num_nodes, 16)

@@ -1,7 +1,7 @@
 import os
-import os.path as osp
 from math import pi as PI
 from math import sqrt
+from pathlib import Path
 from typing import Callable
 
 import numpy as np
@@ -332,17 +332,18 @@ class DimeNet(torch.nn.Module):
 
         assert target >= 0 and target <= 12 and not target == 4
 
-        root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
+        root = Path.home(Path(root).resolve())
+        path = Path.joinpath(Path(root), 'pretrained_dimenet',
+                             qm9_target_dict[target])
         makedirs(path)
         url = f'{DimeNet.url}/{qm9_target_dict[target]}'
-        if not osp.exists(osp.join(path, 'checkpoint')):
+        if not Path.joinpath(path, 'checkpoint').exists():
             download_url(f'{url}/checkpoint', path)
             download_url(f'{url}/ckpt.data-00000-of-00002', path)
             download_url(f'{url}/ckpt.data-00001-of-00002', path)
             download_url(f'{url}/ckpt.index', path)
 
-        path = osp.join(path, 'ckpt')
+        path = Path.joinpath(Path(path), 'ckpt')
         reader = tf.train.load_checkpoint(path)
 
         model = DimeNet(hidden_channels=128, out_channels=1, num_blocks=6,

@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import torch
@@ -9,7 +9,9 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv, GNNExplainer
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 transform = T.Compose([T.GCNNorm(), T.NormalizeFeatures()])
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]

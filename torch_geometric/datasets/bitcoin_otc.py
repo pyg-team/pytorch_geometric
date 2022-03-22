@@ -1,5 +1,5 @@
 import datetime
-import os
+from pathlib import Path
 from typing import Callable, Optional
 
 import torch
@@ -57,7 +57,7 @@ class BitcoinOTC(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_gz(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         with open(self.raw_paths[0], 'r') as f:

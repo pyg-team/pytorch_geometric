@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch_geometric.datasets import FAUST
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'FAUST')
 pre_transform = T.Compose([T.FaceToEdge(), T.Constant(value=1)])
 train_dataset = FAUST(path, True, T.Cartesian(), pre_transform)
 test_dataset = FAUST(path, False, T.Cartesian(), pre_transform)

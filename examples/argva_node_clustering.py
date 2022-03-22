@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import torch
@@ -21,7 +21,8 @@ transform = T.Compose([
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,
                       split_labels=True, add_negative_train_samples=False),
 ])
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = Path.joinpath(
+    Path(__file__).resolve().parent.parent, 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora', transform=transform)
 train_data, val_data, test_data = dataset[0]
 

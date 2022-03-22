@@ -1,9 +1,9 @@
 import bz2
 import gzip
-import os.path as osp
 import sys
 import tarfile
 import zipfile
+from pathlib import Path
 
 
 def maybe_log(path, log=True):
@@ -50,9 +50,12 @@ def extract_bz2(path: str, folder: str, log: bool = True):
             console. (default: :obj:`True`)
     """
     maybe_log(path, log)
-    path = osp.abspath(path)
+    # path = osp.abspath(path)
+    path = Path(path).resolve()
     with bz2.open(path, 'r') as r:
-        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+        with open(
+                Path.joinpath(Path(folder),
+                              '.'.join(str(path).split('.')[:-1])), 'wb') as w:
             w.write(r.read())
 
 
@@ -66,7 +69,10 @@ def extract_gz(path: str, folder: str, log: bool = True):
             console. (default: :obj:`True`)
     """
     maybe_log(path, log)
-    path = osp.abspath(path)
+    # path = osp.abspath(path)
+    path = Path(path).resolve()
     with gzip.open(path, 'r') as r:
-        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+        with open(
+                Path.joinpath(Path(folder),
+                              '.'.join(str(path).split('.')[:-1])), 'wb') as w:
             w.write(r.read())

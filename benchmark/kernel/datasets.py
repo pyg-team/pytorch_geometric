@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 
@@ -20,7 +20,7 @@ class NormalizedDegree(object):
 
 
 def get_dataset(name, sparse=True, cleaned=False):
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
+    path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', name)
     dataset = TUDataset(path, name, cleaned=cleaned)
     dataset.data.edge_attr = None
 

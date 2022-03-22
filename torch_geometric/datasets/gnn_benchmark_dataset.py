@@ -1,7 +1,6 @@
 import logging
-import os
-import os.path as osp
 import pickle
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -138,11 +137,11 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -165,7 +164,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
     def download(self):
         path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         if self.name == 'CSL':

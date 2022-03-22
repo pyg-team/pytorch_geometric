@@ -1,11 +1,11 @@
-import os.path as osp
+from pathlib import Path
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 
 
 def get_planetoid_dataset(name, normalize_features=False, transform=None):
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
+    path = Path(__file__).parent / '..' / 'data'
     dataset = Planetoid(path, name)
 
     if transform is not None and normalize_features:

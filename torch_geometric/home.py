@@ -1,9 +1,9 @@
 import os
-import os.path as osp
+from pathlib import Path
 from typing import Optional
 
 ENV_PYG_HOME = 'PYG_HOME'
-DEFAULT_CACHE_DIR = osp.join('~', '.cache', 'pyg')
+DEFAULT_CACHE_DIR = Path.joinpath(Path('~'), '.cache', 'pyg')
 
 _home_dir: Optional[str] = None
 
@@ -18,7 +18,8 @@ def get_home_dir() -> str:
         return _home_dir
 
     home_dir = os.getenv(ENV_PYG_HOME, DEFAULT_CACHE_DIR)
-    home_dir = osp.expanduser(home_dir)
+    home_dir = Path.home(home_dir)
+    # home_dir = osp.expanduser(home_dir)
     return home_dir
 
 

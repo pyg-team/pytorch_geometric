@@ -1,5 +1,4 @@
-import os
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -145,12 +144,12 @@ class MD17(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return osp.join(self.root, name, 'raw')
+        return Path.joinpath(Path(self.root), name, 'raw')
 
     @property
     def processed_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return osp.join(self.root, name, 'processed')
+        return Path.joinpath(Path(self.root), name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -170,7 +169,7 @@ class MD17(InMemoryDataset):
         path = download_url(url, self.raw_dir)
         if url[-4:] == '.zip':
             extract_zip(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         it = zip(self.raw_paths, self.processed_paths)

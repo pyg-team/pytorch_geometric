@@ -1,7 +1,8 @@
 import ast
 import json
-import os
 import shutil
+# import os
+from pathlib import Path
 
 
 def string_to_python(string):
@@ -76,7 +77,7 @@ def dict_list_to_tb(dict_list, writer):
 
 
 def makedirs(dir):
-    os.makedirs(dir, exist_ok=True)
+    Path(dir).mkdir(exist_ok=True)
 
 
 def makedirs_rm_exist(dir):
@@ -89,6 +90,6 @@ def makedirs_rm_exist(dir):
     Returns:
 
     '''
-    if os.path.isdir(dir):
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
-    os.makedirs(dir, exist_ok=True)
+    Path(dir).mkdir(exist_ok=True)

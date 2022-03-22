@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Flickr
 
 K = 2
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
+path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', 'Flickr')
 transform = T.Compose([T.NormalizeFeatures(), T.SIGN(K)])
 dataset = Flickr(path, transform=transform)
 data = dataset[0]

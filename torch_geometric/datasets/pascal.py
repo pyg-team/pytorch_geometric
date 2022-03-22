@@ -1,7 +1,6 @@
-import os
-import os.path as osp
 import shutil
 from itertools import chain
+from pathlib import Path
 from xml.dom import minidom
 
 import numpy as np
@@ -80,11 +79,12 @@ class PascalVOCKeypoints(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, 'raw')
+        return Path.joinpath(Path(self.root), 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.category.capitalize(), 'processed')
+        return Path.joinpath(Path(self.root), self.category.capitalize(),
+                             'processed')
 
     @property
     def raw_file_names(self):
@@ -97,32 +97,33 @@ class PascalVOCKeypoints(InMemoryDataset):
     def download(self):
         path = download_url(self.image_url, self.raw_dir)
         extract_tar(path, self.raw_dir, mode='r')
-        os.unlink(path)
-        image_path = osp.join(self.raw_dir, 'TrainVal', 'VOCdevkit', 'VOC2011')
-        os.rename(image_path, osp.join(self.raw_dir, 'images'))
-        shutil.rmtree(osp.join(self.raw_dir, 'TrainVal'))
+        Path(path).unlink()
+        image_path = Path.joinpath(Path(self.raw_dir), 'TrainVal', 'VOCdevkit',
+                                   'VOC2011')
+        image_path.rename(Path.joinpath(Path(self.raw_dir), 'images'))
+        shutil.rmtree(Path.joinpath(Path(self.raw_dir), 'TrainVal'))
 
         path = download_url(self.annotation_url, self.raw_dir)
         extract_tar(path, self.raw_dir, mode='r')
-        os.unlink(path)
+        Path(path).unlink()
 
         path = download_url(self.split_url, self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'splits.npz'))
+        Path(path).rename(Path.joinpath(Path(self.raw_dir), 'splits.npz'))
 
     def process(self):
         import torchvision.models as models
         import torchvision.transforms as T
         from PIL import Image
 
-        splits = np.load(osp.join(self.raw_dir, 'splits.npz'),
-                         allow_pickle=True)
+        splits = np.load(
+            Path(self.raw_dir).joinpath('splits.npz'), allow_pickle=True)
         category_idx = self.categories.index(self.category)
         train_split = list(splits['train'])[category_idx]
         test_split = list(splits['test'])[category_idx]
 
-        image_path = osp.join(self.raw_dir, 'images', 'JPEGImages')
-        info_path = osp.join(self.raw_dir, 'images', 'Annotations')
-        annotation_path = osp.join(self.raw_dir, 'annotations')
+        image_path = Path.joinpath(Path(self.raw_dir), 'images', 'JPEGImages')
+        info_path = Path.joinpath(Path(self.raw_dir), 'images', 'Annotations')
+        annotation_path = Path.joinpath(Path(self.raw_dir), 'annotations')
 
         labels = {}
 
@@ -146,7 +147,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             filename = '_'.join(name.split('/')[1].split('_')[:-1])
             idx = int(name.split('_')[-1].split('.')[0]) - 1
 
-            path = osp.join(info_path, f'{filename}.xml')
+            path = Path.joinpath(Path(info_path), '{}.xml'.format(filename))
             obj = minidom.parse(path).getElementsByTagName('object')[idx]
 
             trunc = obj.getElementsByTagName('truncated')[0].firstChild.data
@@ -166,7 +167,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             ymax = float(obj.getElementsByTagName('ymax')[0].firstChild.data)
             box = (xmin, ymin, xmax, ymax)
 
-            dom = minidom.parse(osp.join(annotation_path, name))
+            dom = minidom.parse(Path.joinpath(Path(annotation_path), name))
             keypoints = dom.getElementsByTagName('keypoint')
             poss, ys = [], []
             for keypoint in keypoints:
@@ -194,7 +195,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
             pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
-            path = osp.join(image_path, f'{filename}.jpg')
+            path = Path.joinpath(Path(image_path), '{}.jpg'.format(filename))
             with open(path, 'rb') as f:
                 img = Image.open(f).convert('RGB').crop(box)
                 img = img.resize((256, 256), resample=Image.BICUBIC)

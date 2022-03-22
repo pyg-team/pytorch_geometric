@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
@@ -6,7 +6,7 @@ from torch_geometric.datasets import ModelNet
 
 def get_dataset(num_points):
     name = 'ModelNet10'
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
+    path = Path.joinpath(Path(__file__).resolve().parent.parent, 'data', name)
     pre_transform = T.NormalizeScale()
     transform = T.SamplePoints(num_points)
 

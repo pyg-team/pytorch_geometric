@@ -1,5 +1,4 @@
-import os
-import os.path as osp
+from pathlib import Path
 from typing import Callable, List, Optional
 
 import torch
@@ -45,11 +44,11 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:
@@ -67,17 +66,20 @@ class RelLinkPredDataset(InMemoryDataset):
             download_url(f'{self.urls[self.name]}/{file_name}', self.raw_dir)
 
     def process(self):
-        with open(osp.join(self.raw_dir, 'entities.dict'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'entities.dict'),
+                  'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             entities_dict = {key: int(value) for value, key in lines}
 
-        with open(osp.join(self.raw_dir, 'relations.dict'), 'r') as f:
+        with open(Path.joinpath(Path(self.raw_dir), 'relations.dict'),
+                  'r') as f:
             lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
             relations_dict = {key: int(value) for value, key in lines}
 
         kwargs = {}
         for split in ['train', 'valid', 'test']:
-            with open(osp.join(self.raw_dir, f'{split}.txt'), 'r') as f:
+            with open(Path.joinpath(Path(self.raw_dir), f'{split}.txt'),
+                      'r') as f:
                 lines = [row.split('\t') for row in f.read().split('\n')[:-1]]
                 src = [entities_dict[row[0]] for row in lines]
                 rel = [relations_dict[row[1]] for row in lines]

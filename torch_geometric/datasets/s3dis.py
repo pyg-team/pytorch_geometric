@@ -1,6 +1,5 @@
-import os
-import os.path as osp
 import shutil
+from pathlib import Path
 
 import torch
 
@@ -61,10 +60,10 @@ class S3DIS(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.unlink(path)
+        Path(path).unlink()
         shutil.rmtree(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
-        os.rename(osp.join(self.root, name), self.raw_dir)
+        Path.joinpath(Path(self.root), name).rename(Path(self.raw_dir))
 
     def process(self):
         import h5py
@@ -77,7 +76,7 @@ class S3DIS(InMemoryDataset):
 
         xs, ys = [], []
         for filename in filenames:
-            f = h5py.File(osp.join(self.raw_dir, filename))
+            f = h5py.File(Path.joinpath(Path(self.raw_dir), filename))
             xs += torch.from_numpy(f['data'][:]).unbind(0)
             ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
 

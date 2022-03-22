@@ -1,6 +1,5 @@
-import glob
-import os
-import os.path as osp
+import pathlib
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -18,8 +17,10 @@ names = [
 
 
 def read_tu_data(folder, prefix):
-    files = glob.glob(osp.join(folder, f'{prefix}_*.txt'))
-    names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
+    files = Path(folder).rglob('{}_*.txt'.format(prefix))
+    names = [
+        str(f).split(pathlib.os.sep)[-1][len(prefix) + 1:-4] for f in files
+    ]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
@@ -69,7 +70,7 @@ def read_tu_data(folder, prefix):
 
 
 def read_file(folder, prefix, name, dtype=None):
-    path = osp.join(folder, f'{prefix}_{name}.txt')
+    path = Path.joinpath(Path(folder), '{}_{}.txt'.format(prefix, name))
     return read_txt_array(path, sep=',', dtype=dtype)
 
 
