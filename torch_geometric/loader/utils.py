@@ -105,7 +105,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             if edge_attr is not None:
                 index = index.to(edge_attr.device)
                 edge_attr = edge_attr[index]
-            sparse_sizes = store.size()[::-1]
+            sparse_sizes = out_store.size()[::-1]
             out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
                                            sparse_sizes=sparse_sizes,
                                            is_sorted=True)
