@@ -1,3 +1,4 @@
 [style]
 based_on_style=pep8
 split_before_named_assigns=False
+blank_line_before_nested_class_or_def=False
