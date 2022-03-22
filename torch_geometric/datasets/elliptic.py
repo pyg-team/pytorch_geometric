@@ -1,10 +1,14 @@
 import os
-import os.path as osp
 from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class EllipticBitcoinDataset(InMemoryDataset):
@@ -48,6 +52,8 @@ class EllipticBitcoinDataset(InMemoryDataset):
               - 165
               - 2
     """
+    url = 'https://data.pyg.org/datasets/elliptic'
+
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
@@ -66,12 +72,10 @@ class EllipticBitcoinDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        download_url('https://tinyurl.com/9b7f8efe', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, '9b7f8efe'), self.raw_paths[0])
-        download_url('https://tinyurl.com/mr3v9d3f', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, 'mr3v9d3f'), self.raw_paths[1])
-        download_url('https://tinyurl.com/2p8up25z', self.raw_dir)
-        os.rename(osp.join(self.raw_dir, '2p8up25z'), self.raw_paths[2])
+        for file_name in self.raw_file_names:
+            path = download_url(f'{self.url}/{file_name}.zip', self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            os.remove(path)
 
     def process(self):
         import pandas as pd
@@ -98,8 +102,8 @@ class EllipticBitcoinDataset(InMemoryDataset):
         # Timestamp based split:
         # train_mask: 1 - 34 time_step, test_mask: 35-49 time_step
         time_step = torch.from_numpy(df_features['time_step'].values)
-        train_mask = (time_step) < 35 & (y != 2)
-        test_mask = (time_step) >= 35 & (y != 2)
+        train_mask = (time_step < 35) & (y != 2)
+        test_mask = (time_step >= 35) & (y != 2)
 
         data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask,
                     test_mask=test_mask)
