@@ -108,7 +108,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             sparse_sizes = out_store.size()[::-1]
             out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
                                            sparse_sizes=sparse_sizes,
-                                           is_sorted=True)
+                                           is_sorted=True, trust_data=True)
 
         elif store.is_edge_attr(key):
             if perm is None:

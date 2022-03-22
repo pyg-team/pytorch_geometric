@@ -60,7 +60,7 @@ class ToSparseTensor(BaseTransform):
                 row=store.edge_index[1], col=store.edge_index[0],
                 value=None if self.attr is None or self.attr not in store else
                 store[self.attr], sparse_sizes=store.size()[::-1],
-                is_sorted=True)
+                is_sorted=True, trust_data=True)
 
             if self.remove_edge_index:
                 del store['edge_index']
