@@ -20,5 +20,8 @@ def test_elliptic_bitcoin_dataset(get_dataset):
     assert data.test_mask.size() == (203769, )
     assert data.test_mask.sum() > 0
     assert data.train_mask.sum() + data.test_mask.sum() == 4545 + 42019
+    assert data.y[data.train_mask].sum() == 3462
+    assert data.y[data.test_mask].sum() == 1083
+    assert data.y[data.train_mask].sum() + data.y[data.test_mask].sum() == 4545
     assert data.y[data.test_mask | data.train_mask].min() == 0
     assert data.y[data.test_mask | data.train_mask].max() == 1
