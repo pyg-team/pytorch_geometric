@@ -392,6 +392,7 @@ class HeteroData(BaseData):
         return out
 
     def rename(self, name: NodeType, new_name: NodeType) -> 'HeteroData':
+        r"""Renames the node type :obj:`name` to :obj:`new_name` in-place."""
         node_store = self._node_store_dict.pop(name)
         node_store._key = new_name
         self._node_store_dict[new_name] = node_store
