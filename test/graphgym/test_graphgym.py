@@ -42,7 +42,7 @@ def trivial_metric(true, pred, task_type):
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
-def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
+def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
