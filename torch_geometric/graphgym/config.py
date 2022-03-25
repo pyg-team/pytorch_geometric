@@ -543,7 +543,7 @@ def set_out_dir(out_dir, fname):
         makedirs_rm_exist(cfg.out_dir)
 
 
-def set_run_dir(out_dir, fname):
+def set_run_dir(out_dir):
     r"""
     Create the directory for each random seed experiment run
 
@@ -552,7 +552,6 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-    fname = get_fname(fname)
     cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
