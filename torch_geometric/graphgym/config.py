@@ -525,6 +525,24 @@ def get_fname(fname):
     return fname
 
 
+def set_out_dir(out_dir, fname):
+    r"""
+    Create the directory for full experiment run
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
+    fname = get_fname(fname)
+    cfg.out_dir = os.path.join(out_dir, fname)
+    # Make output directory
+    if cfg.train.auto_resume:
+        os.makedirs(cfg.out_dir, exist_ok=True)
+    else:
+        makedirs_rm_exist(cfg.out_dir)
+
+
 def set_run_dir(out_dir, fname):
     r"""
     Create the directory for each random seed experiment run
@@ -535,7 +553,7 @@ def set_run_dir(out_dir, fname):
 
     """
     fname = get_fname(fname)
-    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
+    cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)
