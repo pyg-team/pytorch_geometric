@@ -52,3 +52,10 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: false
+
+      - name: Run examples
+        run: |
+          python examples/gcn.py
+          python examples/gat.py
+          python examples/mutag_gin.py
+          python examples/gnn_explainer.py
