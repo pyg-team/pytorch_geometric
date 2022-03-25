@@ -78,12 +78,12 @@ class MetrLaIo:
         data = np.expand_dims(a=data_df.values, axis=-1)
 
         data = [data]
-        indices = (data_df.index.values.astype("datetime64") - data_df.index.values.astype("datetime64[D]")) / \
-                      np.timedelta64(1, "D")
+        indices = ((data_df.index.values.astype("datetime64") - data_df.index.values.astype("datetime64[D]")) / \
+                  3600).astype(int) % 24
         hour_of_day = np.tile(indices, [1, n_nodes, 1]).transpose((2, 1, 0))
         data.append(hour_of_day)
 
-        values = data_df.index.astype("datetime64[ns]").dayofweek / 7
+        values = data_df.index.astype("datetime64[ns]").dayofweek
         day_of_week = np.tile(values, [1, n_nodes, 1]).transpose((2, 1, 0))
         data.append(day_of_week)
 
