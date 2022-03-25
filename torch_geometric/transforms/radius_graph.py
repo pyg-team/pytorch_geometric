@@ -37,6 +37,7 @@ class RadiusGraph(BaseTransform):
     def __call__(self, data):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
+
         data.edge_index = torch_geometric.nn.radius_graph(
             data.pos,
             self.r,
@@ -46,6 +47,7 @@ class RadiusGraph(BaseTransform):
             flow=self.flow,
             num_workers=self.num_workers,
         )
+
         return data
 
     def __repr__(self) -> str:

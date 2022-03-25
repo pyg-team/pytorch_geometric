@@ -44,6 +44,7 @@ class KNNGraph(BaseTransform):
     def __call__(self, data):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
+
         edge_index = torch_geometric.nn.knn_graph(
             data.pos,
             self.k,
