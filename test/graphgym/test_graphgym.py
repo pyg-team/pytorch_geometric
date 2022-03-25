@@ -39,6 +39,7 @@ def trivial_metric(true, pred, task_type):
     return 1
 
 
+@pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
 def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
@@ -50,6 +51,7 @@ def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
     cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
+    cfg.train.auto_resume = auto_resume
 
     set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
