@@ -7,6 +7,7 @@
 # * batch_graphs: Batches multiple PyG data objects together.
 
 import os.path as osp
+import time
 
 import torchdata
 
@@ -22,8 +23,21 @@ path = download_url(url, root)
 datapipe = torchdata.datapipes.iter.FileOpener([path])
 datapipe = datapipe.parse_csv_as_dict()
 datapipe = datapipe.parse_smiles(target_key='HIV_active')
+datapipe = datapipe.cache()  # Cache pre-processed graph instances in-memory.
 datapipe = datapipe.shuffle()
 datapipe = datapipe.batch_graphs(batch_size=128)
 
+print('Example output:')
+print(next(iter(datapipe)))
+
+print('Iterating over all data...')
+t = time.perf_counter()
 for batch in datapipe:
-    print(batch)
+    pass
+print(f'Done! [{time.perf_counter() - t:.2f}s]')
+
+print('Iterating over all data a second time...')
+t = time.perf_counter()
+for batch in datapipe:
+    pass
+print(f'Done! [{time.perf_counter() - t:.2f}s]')

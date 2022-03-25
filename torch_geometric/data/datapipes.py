@@ -12,16 +12,36 @@ from torch_geometric.utils import from_smiles
 class Batcher(torchdata.datapipes.iter.Batcher):
     def __init__(
         self,
-        datapipe: IterDataPipe,
+        dp: IterDataPipe,
         batch_size: int,
         drop_last: bool = False,
     ):
         super().__init__(
-            datapipe,
-            batch_size,
-            drop_last,
+            dp,
+            batch_size=batch_size,
+            drop_last=drop_last,
             wrapper_class=Batch.from_data_list,
         )
+
+
+@torchdata.datapipes.functional_datapipe('cache')
+class Cacher(IterDataPipe):
+    def __init__(self, dp: IterDataPipe):
+        super().__init__()
+        self.dp = dp
+        self.cache_list = []
+        self.cache_full = False
+
+    def __iter__(self):
+        if self.cache_full:
+            for d in self.cache_list:
+                yield d
+        else:
+            self.cache_list = []
+            for d in self.dp:
+                self.cache_list.append(d)
+                yield d
+            self.cache_full = True
 
 
 @torchdata.datapipes.functional_datapipe('parse_smiles')
