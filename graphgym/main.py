@@ -10,7 +10,6 @@ from torch_geometric.graphgym.config import (
     cfg,
     dump_cfg,
     load_cfg,
-    set_agg_dir,
     set_out_dir,
     set_run_dir,
 )
@@ -59,7 +58,7 @@ if __name__ == '__main__':
             train_dict[cfg.train.mode](loggers, loaders, model, optimizer,
                                        scheduler)
     # Aggregate results from different seeds
-    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+    agg_runs(cfg.out_dir, cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done
     if args.mark_done:
         os.rename(args.cfg_file, f'{args.cfg_file}_done')

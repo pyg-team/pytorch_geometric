@@ -561,20 +561,6 @@ def set_run_dir(out_dir, fname):
         makedirs_rm_exist(cfg.run_dir)
 
 
-def set_agg_dir(out_dir, fname):
-    r"""
-    Create the directory for aggregated results over
-    all the random seeds
-
-    Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
-    """
-    fname = get_fname(fname)
-    return os.path.join(out_dir, fname)
-
-
 set_cfg(cfg)
 
 

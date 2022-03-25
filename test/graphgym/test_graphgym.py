@@ -14,7 +14,7 @@ from torch_geometric.graphgym.config import (
     cfg,
     dump_cfg,
     load_cfg,
-    set_agg_dir,
+    set_out_dir,
     set_run_dir,
 )
 from torch_geometric.graphgym.loader import create_loader
@@ -51,12 +51,13 @@ def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
+    set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
     set_printing()
 
     seed_everything(cfg.seed)
     auto_select_device()
-    set_run_dir(cfg.out_dir, args.cfg_file)
+    set_run_dir(cfg.out_dir)
 
     cfg.train.skip_train_eval = skip_train_eval
     cfg.train.enable_ckpt = use_trivial_metric and skip_train_eval
@@ -101,6 +102,6 @@ def test_run_single_graphgym(skip_train_eval, use_trivial_metric):
 
     assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
-    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+    agg_runs(cfg.out_dir, cfg.metric_best)
 
     shutil.rmtree(cfg.out_dir)
