@@ -18,21 +18,42 @@ class KNNGraph(BaseTransform):
             If set to :obj:`"source_to_target"`, every target node will have
             exactly :math:`k` source nodes pointing to it.
             (default: :obj:`"source_to_target"`)
+        cosine (boolean, optional): If :obj:`True`, will use the cosine
+            distance instead of euclidean distance to find nearest neighbors.
+            (default: :obj:`False`)
+        num_workers (int): Number of workers to use for computation. Has no
+            effect in case :obj:`batch` is not :obj:`None`, or the input lies
+            on the GPU. (default: :obj:`1`)
     """
-    def __init__(self, k=6, loop=False, force_undirected=False,
-                 flow='source_to_target'):
-
+    def __init__(
+        self,
+        k=6,
+        loop=False,
+        force_undirected=False,
+        flow='source_to_target',
+        cosine: bool = False,
+        num_workers: int = 1,
+    ):
         self.k = k
         self.loop = loop
         self.force_undirected = force_undirected
         self.flow = flow
+        self.cosine = cosine
+        self.num_workers = num_workers
 
     def __call__(self, data):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
-        edge_index = torch_geometric.nn.knn_graph(data.pos, self.k, batch,
-                                                  loop=self.loop,
-                                                  flow=self.flow)
+
+        edge_index = torch_geometric.nn.knn_graph(
+            data.pos,
+            self.k,
+            batch,
+            loop=self.loop,
+            flow=self.flow,
+            cosine=self.cosine,
+            num_workers=self.num_workers,
+        )
 
         if self.force_undirected:
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
