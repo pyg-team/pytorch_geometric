@@ -1,10 +1,8 @@
 name: CodeQL
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    branches:
-      - master
-  pull_request:
+  schedule:
+    - cron: "0 8 * * *"  # Everyday at 8:00am UTC/0:00am PST
 
 jobs:
 

@@ -2,7 +2,7 @@ name: Full Testing
 
 on:  # yamllint disable-line rule:truthy
   schedule:
-    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11pm PST
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
 
 jobs:
 
