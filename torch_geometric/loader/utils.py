@@ -106,9 +106,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                 index = index.to(edge_attr.device)
                 edge_attr = edge_attr[index]
             sparse_sizes = out_store.size()[::-1]
+            # TODO Currently, we set `is_sorted=False`, see:
+            # https://github.com/pyg-team/pytorch_geometric/issues/4346
             out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
                                            sparse_sizes=sparse_sizes,
-                                           is_sorted=True, trust_data=True)
+                                           is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
             if perm is None:
