@@ -285,7 +285,8 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self._explain and isinstance(self.aggr, str)):
+                and not self._explain
+                and not isinstance(self.aggr, (tuple, list))):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -356,7 +357,7 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         aggr_kwargs = res[0] if isinstance(res, tuple) else res
 
-                if isinstance(self.aggr, str):
+                if not isinstance(self.aggr, (tuple, list)):
                     out = self.aggregate(out, **aggr_kwargs)
                 else:
                     aggrs = self.aggr
