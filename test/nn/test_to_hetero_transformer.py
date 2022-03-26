@@ -234,7 +234,6 @@ def test_to_hetero_with_gcn():
 
     model = GCN()
     model = to_hetero(model, metadata, debug=False)
-    print(model)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 1
     assert out['paper'].size() == (100, 64)
