@@ -1,3 +1,4 @@
+import copy
 from typing import Optional
 
 import torch
@@ -24,24 +25,15 @@ class Batcher(torchdata.datapipes.iter.Batcher):
         )
 
 
-@torchdata.datapipes.functional_datapipe('cache')
-class Cacher(IterDataPipe):
+@torchdata.datapipes.functional_datapipe('copy')
+class Copier(IterDataPipe):
     def __init__(self, dp: IterDataPipe):
         super().__init__()
         self.dp = dp
-        self.cache_list = []
-        self.cache_full = False
 
     def __iter__(self):
-        if self.cache_full:
-            for d in self.cache_list:
-                yield d
-        else:
-            self.cache_list = []
-            for d in self.dp:
-                self.cache_list.append(d)
-                yield d
-            self.cache_full = True
+        for d in self.dp:
+            yield copy.copy(d)
 
 
 @torchdata.datapipes.functional_datapipe('parse_smiles')
