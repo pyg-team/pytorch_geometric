@@ -1,8 +1,4 @@
 import math
-import os.path as osp
-import random
-import shutil
-import sys
 import warnings
 
 import pytest
@@ -10,8 +6,8 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import LightningDataset, LightningNodeData
-from torch_geometric.datasets import DBLP, Planetoid, TUDataset
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.testing import onlyFullTest
 
 try:
     from pytorch_lightning import LightningModule
@@ -58,18 +54,17 @@ class LinearGraphModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_dataset(strategy):
+def test_lightning_dataset(get_dataset, strategy):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, name='MUTAG').shuffle()
+    dataset = get_dataset(name='MUTAG').shuffle()
     train_dataset = dataset[:50]
     val_dataset = dataset[50:80]
     test_dataset = dataset[80:90]
-    shutil.rmtree(root)
 
     gpus = 1 if strategy is None else torch.cuda.device_count()
     if strategy == 'ddp_spawn':
@@ -142,19 +137,18 @@ class LinearNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_node_data(strategy, loader):
+def test_lightning_node_data(get_dataset, strategy, loader):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, name='Cora')
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data_repr = ('Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], '
                  'train_mask=[2708], val_mask=[2708], test_mask=[2708])')
-    shutil.rmtree(root)
 
     model = LinearNodeModule(dataset.num_features, dataset.num_classes)
 
@@ -235,15 +229,14 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_lightning_hetero_node_data():
+def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = DBLP(root)
+    dataset = get_dataset(name='DBLP')
     data = dataset[0]
-    shutil.rmtree(root)
 
     model = LinearHeteroNodeModule(data['author'].num_features,
                                    int(data['author'].y.max()) + 1)

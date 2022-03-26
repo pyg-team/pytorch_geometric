@@ -1,18 +1,22 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
-import pytest
-
-from torch_geometric.datasets import SNAPDataset
+from torch_geometric.testing import onlyFullTest
 
 
-@pytest.mark.skipif(True, reason="'https://snap.stanford.edu' not available")
-def test_snap_dataset():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+@onlyFullTest
+def test_ego_facebook_snap_dataset(get_dataset):
+    dataset = get_dataset(name='ego-facebook')
+    assert str(dataset) == 'SNAP-ego-facebook(10)'
+    assert len(dataset) == 10
 
-    for name in ['ego-facebook', 'soc-Slashdot0811', 'wiki-vote']:
-        SNAPDataset(root, name)
 
-    shutil.rmtree(root)
+@onlyFullTest
+def test_soc_slashdot_snap_dataset(get_dataset):
+    dataset = get_dataset(name='soc-Slashdot0811')
+    assert str(dataset) == 'SNAP-soc-slashdot0811(1)'
+    assert len(dataset) == 1
+
+
+@onlyFullTest
+def test_wiki_vote_snap_dataset(get_dataset):
+    dataset = get_dataset(name='wiki-vote')
+    assert str(dataset) == 'SNAP-wiki-vote(1)'
+    assert len(dataset) == 1
