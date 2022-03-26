@@ -15,14 +15,14 @@ import time
 import torchdata
 
 import torch_geometric.data.datapipes  # noqa: Register functional datapipes.
-from torch_geometric.data import download_url
+from torch_geometric.data import download_url, extract_zip
 
 
 def molecule_datapipe(batch_size: int = 128):
-    # Download HIV dataset from 'https://moleculenet.org':
-    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/HIV.csv'
-    root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
-    path = download_url(url, root)
+    # Download HIV dataset from MoleculeNet:
+    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets'
+    root_dir = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+    path = download_url(f'{url}/HIV.csv', root_dir)
 
     datapipe = torchdata.datapipes.iter.FileOpener([path])
     datapipe = datapipe.parse_csv_as_dict()
@@ -34,13 +34,17 @@ def molecule_datapipe(batch_size: int = 128):
     return datapipe
 
 
-def pointcloud_datapipe(batch_size: int = 128):
-    pass
+def mesh_datapipe(batch_size: int = 128):
+    # Download ModelNet10 dataset from Princeton:
+    url = 'http://vision.princeton.edu/projects/2014/3DShapeNets'
+    root_dir = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+    path = download_url(f'{url}/ModelNet10.zip', root_dir)
+    extract_zip(path, root_dir)
 
 
 DATAPIPES = {
     'molecule': molecule_datapipe,
-    'pointcloud': pointcloud_datapipe,
+    'mesh': mesh_datapipe,
 }
 
 if __name__ == '__main__':
