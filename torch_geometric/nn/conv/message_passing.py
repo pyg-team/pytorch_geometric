@@ -5,7 +5,7 @@ import re
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain
-from typing import Callable, List, Optional, Set, get_type_hints
+from typing import Callable, List, Optional, Set, Union, get_type_hints
 from uuid import uuid1
 
 import torch
@@ -27,6 +27,8 @@ from .utils.typing import (
     split_types_repr,
 )
 
+AGGRS = {'add', 'sum', 'mean', 'min', 'max', 'mul'}
+
 
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers of the form
@@ -44,9 +46,11 @@ class MessagePassing(torch.nn.Module):
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string, optional): The aggregation scheme to use
+        aggr (string or list, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"` or :obj:`None`). (default: :obj:`"add"`)
+            :obj:`"mul"` or :obj:`None`). If given as a list, will make use of
+            multiple aggregations in which its outputs will be concatenated in
+            the last dimension. (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -82,14 +86,17 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
-    def __init__(self, aggr: Optional[str] = "add",
+    def __init__(self, aggr: Optional[Union[str, List[str]]] = "add",
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
 
         super().__init__()
 
+        if isinstance(aggr, str):
+            assert aggr is None or aggr in AGGRS
+        elif isinstance(aggr, (tuple, list)):
+            assert len(set(aggr) | AGGRS) == len(AGGRS)
         self.aggr = aggr
-        assert self.aggr in ['add', 'sum', 'mean', 'min', 'max', 'mul', None]
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
