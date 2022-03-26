@@ -86,17 +86,23 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
+    aggr: str
+    aggrs: List[str]
+
     def __init__(self, aggr: Optional[Union[str, List[str]]] = "add",
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
 
         super().__init__()
 
-        self.aggr = aggr
         if aggr is None or isinstance(aggr, str):
             assert aggr is None or aggr in AGGRS
+            self.aggr: str = aggr
+            self.aggrs: List[str] = []
         elif isinstance(aggr, (tuple, list)):
             assert len(set(aggr) | AGGRS) == len(AGGRS)
+            self.aggr: str = 'undefined'
+            self.aggrs: List[str] = aggr
         else:
             raise ValueError(f"Only strings, list and tuples are valid "
                              f"aggregation schemes (got '{type(aggr)}')")
@@ -110,6 +116,7 @@ class MessagePassing(torch.nn.Module):
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
+        self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
         self.inspector.inspect(self.edge_update)
@@ -285,8 +292,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self._explain
-                and not isinstance(self.aggr, (tuple, list))):
+                and not self._explain and len(self.aggrs) == 0):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -357,15 +363,13 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         aggr_kwargs = res[0] if isinstance(res, tuple) else res
 
-                if not isinstance(self.aggr, (tuple, list)):
+                if len(self.aggrs) == 0:
                     out = self.aggregate(out, **aggr_kwargs)
                 else:
-                    aggrs = self.aggr
                     outs = []
-                    for aggr in aggrs:
-                        self.aggr = aggr
-                        outs.append(self.aggregate(out, **aggr_kwargs))
-                    self.aggr = aggrs
+                    for aggr in self.aggrs:
+                        tmp = self.aggregate(out, aggr=aggr, **aggr_kwargs)
+                        outs.append(tmp)
                     out = self.combine(outs)
 
                 for hook in self._aggregate_forward_hooks.values():
@@ -434,8 +438,8 @@ class MessagePassing(torch.nn.Module):
         return x_j
 
     def aggregate(self, inputs: Tensor, index: Tensor,
-                  ptr: Optional[Tensor] = None,
-                  dim_size: Optional[int] = None) -> Tensor:
+                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                  aggr: Optional[str] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -446,12 +450,16 @@ class MessagePassing(torch.nn.Module):
         that support "add", "mean", "min", "max" and "mul" operations as
         specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
+        if aggr is None or aggr == 'undefined':
+            aggr = self.aggr
+        # aggr = self.aggr if aggr is None else aggr
+        # assert aggr is not None
         if ptr is not None:
             ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
-            return segment_csr(inputs, ptr, reduce=self.aggr)
+            return segment_csr(inputs, ptr, reduce=aggr)
         else:
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce=self.aggr)
+                           reduce=aggr)
 
     def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
@@ -718,6 +726,7 @@ class MessagePassing(torch.nn.Module):
             prop_types=prop_types,
             prop_return_type=prop_return_type,
             fuse=self.fuse,
+            single_aggr=len(self.aggrs) == 0,
             collect_types=collect_types,
             user_args=self.__user_args__,
             edge_user_args=self.__edge_user_args__,
