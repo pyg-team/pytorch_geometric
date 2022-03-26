@@ -93,7 +93,7 @@ class MessagePassing(torch.nn.Module):
         super().__init__()
 
         self.aggr = aggr
-        if isinstance(aggr, str):
+        if aggr is None or isinstance(aggr, str):
             assert aggr is None or aggr in AGGRS
         elif isinstance(aggr, (tuple, list)):
             assert len(set(aggr) | AGGRS) == len(AGGRS)
@@ -466,6 +466,7 @@ class MessagePassing(torch.nn.Module):
         r"""Combines the outputs from multiple aggregations into a single
         representation. Will only get called in case :obj:`aggr` holds a list
         of aggregation schemes to use."""
+        assert len(inputs) > 0
         return torch.cat(inputs, dim=-1) if len(inputs) > 1 else inputs[0]
 
     def update(self, inputs: Tensor) -> Tensor:
