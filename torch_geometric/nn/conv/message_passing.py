@@ -359,7 +359,8 @@ class MessagePassing(torch.nn.Module):
                 if isinstance(self.aggr, str):
                     out = self.aggregate(out, **aggr_kwargs)
                 else:
-                    aggrs, outs = self.aggr, []
+                    aggrs = self.aggr
+                    outs = []
                     for aggr in aggrs:
                         self.aggr = aggr
                         outs.append(self.aggregate(out, **aggr_kwargs))
