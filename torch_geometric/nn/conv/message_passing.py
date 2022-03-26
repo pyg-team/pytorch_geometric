@@ -49,8 +49,8 @@ class MessagePassing(torch.nn.Module):
         aggr (string or list, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"` or :obj:`None`). If given as a list, will make use of
-            multiple aggregations in which its outputs will be concatenated in
-            the last dimension. (default: :obj:`"add"`)
+            multiple aggregations in which different outputs will get
+            concatenated in the last dimension. (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -282,7 +282,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self._explain):
+                and not self._explain and isinstance(self.aggr, str)):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -352,7 +352,17 @@ class MessagePassing(torch.nn.Module):
                     res = hook(self, (aggr_kwargs, ))
                     if res is not None:
                         aggr_kwargs = res[0] if isinstance(res, tuple) else res
-                out = self.aggregate(out, **aggr_kwargs)
+
+                if isinstance(self.aggr, str):
+                    out = self.aggregate(out, **aggr_kwargs)
+                else:
+                    aggrs, outs = self.aggr, []
+                    for aggr in aggrs:
+                        self.aggr = aggr
+                        outs.append(self.aggregate(out, **aggr_kwargs))
+                    self.aggr = aggrs
+                    out = self.combine(outs)
+
                 for hook in self._aggregate_forward_hooks.values():
                     res = hook(self, (aggr_kwargs, ), out)
                     if res is not None:
