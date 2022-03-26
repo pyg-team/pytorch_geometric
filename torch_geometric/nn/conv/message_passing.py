@@ -448,6 +448,12 @@ class MessagePassing(torch.nn.Module):
         """
         raise NotImplementedError
 
+    def combine(self, inputs: List[Tensor]) -> Tensor:
+        r"""Combines the outputs from multiple aggregations into a single
+        representation. Will only get called in case :obj:`aggr` holds a list
+        of aggregation schemes to use."""
+        return torch.cat(inputs, dim=-1) if len(inputs) > 1 else inputs[0]
+
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
         :math:`\gamma_{\mathbf{\Theta}}` for each node
