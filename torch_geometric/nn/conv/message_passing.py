@@ -86,9 +86,6 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
-    aggr: str
-    aggrs: List[str]
-
     def __init__(self, aggr: Optional[Union[str, List[str]]] = "add",
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
@@ -97,11 +94,11 @@ class MessagePassing(torch.nn.Module):
 
         if aggr is None or isinstance(aggr, str):
             assert aggr is None or aggr in AGGRS
-            self.aggr: str = aggr
+            self.aggr: Optional[str] = aggr
             self.aggrs: List[str] = []
         elif isinstance(aggr, (tuple, list)):
             assert len(set(aggr) | AGGRS) == len(AGGRS)
-            self.aggr: str = 'undefined'
+            self.aggr: Optional[str] = None
             self.aggrs: List[str] = aggr
         else:
             raise ValueError(f"Only strings, list and tuples are valid "
@@ -450,10 +447,8 @@ class MessagePassing(torch.nn.Module):
         that support "add", "mean", "min", "max" and "mul" operations as
         specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
-        if aggr is None or aggr == 'undefined':
-            aggr = self.aggr
-        # aggr = self.aggr if aggr is None else aggr
-        # assert aggr is not None
+        aggr = self.aggr if aggr is None else aggr
+        assert aggr is not None
         if ptr is not None:
             ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
             return segment_csr(inputs, ptr, reduce=aggr)
