@@ -611,7 +611,7 @@ class MessagePassing(torch.nn.Module):
             if match is None:
                 raise TypeError(
                     'TorchScript support requires the definition of the types '
-                    'passed to `propagate()`. Please specificy them via\n\n'
+                    'passed to `propagate()`. Please specify them via\n\n'
                     'propagate_type = {"arg1": type1, "arg2": type2, ... }\n\n'
                     'or via\n\n'
                     '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
@@ -627,15 +627,14 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
-                                  source)
+                match = re.search(r'#\s*edge_updater_type:\s*\((.*)\)', source)
                 if match is None:
                     raise TypeError(
                         'TorchScript support requires the definition of the '
-                        'types passed to `edge_updater()`. Please specificy '
-                        'them via\n\n edge_updater_types = {"arg1": type1, '
+                        'types passed to `edge_updater()`. Please specify '
+                        'them via\n\n edge_updater_type = {"arg1": type1, '
                         '"arg2": type2, ... }\n\n or via\n\n'
-                        '# edge_updater_types: (arg1: type1, arg2: type2, ...)'
+                        '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
                 edge_updater_types = split_types_repr(match.group(1))
                 edge_updater_types = dict(

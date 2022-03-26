@@ -166,7 +166,7 @@ class MyEdgeConv(MessagePassing):
         super().__init__(aggr='add')
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        # edge_updater_types: (x: Tensor)
+        # edge_updater_type: (x: Tensor)
         edge_attr = self.edge_updater(edge_index, x=x)
 
         # propagate_type: (edge_attr: Tensor)
