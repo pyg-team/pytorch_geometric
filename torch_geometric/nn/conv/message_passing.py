@@ -92,14 +92,17 @@ class MessagePassing(torch.nn.Module):
 
         super().__init__()
 
+        self.aggr = aggr
         if isinstance(aggr, str):
             assert aggr is None or aggr in AGGRS
         elif isinstance(aggr, (tuple, list)):
             assert len(set(aggr) | AGGRS) == len(AGGRS)
-        self.aggr = aggr
+        else:
+            raise ValueError(f"Only strings, list and tuples are valid "
+                             f"aggregation schemes (got '{type(aggr)}')")
 
         self.flow = flow
-        assert self.flow in ['source_to_target', 'target_to_source']
+        assert flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
         self.decomposed_layers = decomposed_layers
