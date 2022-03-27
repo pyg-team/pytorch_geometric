@@ -7,6 +7,7 @@ import torch.nn.functional as F
 
 from torch_geometric.data import LightningDataset, LightningNodeData
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.testing import onlyFullTest
 
 try:
     from pytorch_lightning import LightningModule
@@ -53,6 +54,7 @@ class LinearGraphModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
@@ -135,6 +137,7 @@ class LinearNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
@@ -226,6 +229,7 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 def test_lightning_hetero_node_data(get_dataset):

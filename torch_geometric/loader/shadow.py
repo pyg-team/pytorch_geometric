@@ -75,7 +75,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
         adj_t = SparseTensor(rowptr=rowptr, col=col,
                              value=value[e_id] if value is not None else None,
                              sparse_sizes=(n_id.numel(), n_id.numel()),
-                             is_sorted=True)
+                             is_sorted=True, trust_data=True)
 
         batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()),
                       ptr=ptr)

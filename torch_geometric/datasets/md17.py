@@ -5,8 +5,12 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class MD17(InMemoryDataset):
@@ -50,9 +54,9 @@ class MD17(InMemoryDataset):
     +----------------+-----------------+------------------------------+-----------+
     | Uracil         | DFT             | :obj:`uracil`                | 133,770   |
     +----------------+-----------------+------------------------------+-----------+
-    | Naphthalene    | DFT             | :obj:`naphthalene`           | 326,250   |
+    | Naphthalene    | DFT             | :obj:`napthalene`            | 326,250   |
     +----------------+-----------------+------------------------------+-----------+
-    | Aspirin        | DFT             | :obj:`aspirin`               | 627,983   |
+    | Aspirin        | DFT             | :obj:`aspirin`               | 211,762   |
     +----------------+-----------------+------------------------------+-----------+
     | Aspirin        | CCSD            | :obj:`aspirin CCSD`          | 1,500     |
     +----------------+-----------------+------------------------------+-----------+
