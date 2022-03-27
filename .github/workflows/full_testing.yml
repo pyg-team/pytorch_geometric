@@ -54,6 +54,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Run examples
+        if: ${{ runner.os == 'Linux' }}
         run: |
           python examples/gcn.py
           python examples/gat.py
