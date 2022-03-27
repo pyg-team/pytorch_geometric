@@ -14,7 +14,6 @@ from torch_geometric.datasets import IMDB
 from torch_geometric.nn import GCNConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/IMDB')
-path = '/data/datasets/IMDB'  # TODO
 dataset = IMDB(path)
 
 metapaths = [
@@ -103,7 +102,7 @@ def test():
     val_y = data['movie'].y[data['movie'].val_mask].cpu()
     test_y = data['movie'].y[data['movie'].test_mask].cpu()
 
-    clf = LogisticRegression(max_iter=1000000).fit(train_emb, train_y)
+    clf = LogisticRegression().fit(train_emb, train_y)
     return clf.score(val_emb, val_y), clf.score(test_emb, test_y)
 
 
