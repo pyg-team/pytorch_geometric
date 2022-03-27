@@ -310,12 +310,9 @@ class GAT(BasicGNN):
         if concat:
             out_channels = out_channels // heads
 
-        if not gat_v2:
-            return GATConv(in_channels, out_channels, heads=heads, concat=concat,
-                           dropout=self.dropout, **kwargs)
-        else:
-            return GATv2Conv(in_channels, out_channels, heads=heads, concat=concat,
-                             dropout=self.dropout, **kwargs)
+        conv = GATConv if not gat_v2 else GATv2Conv
+        return conv(in_channels, out_channels, heads=heads, concat=concat,
+                    dropout=self.dropout, **kwargs)
 
 
 class PNA(BasicGNN):
