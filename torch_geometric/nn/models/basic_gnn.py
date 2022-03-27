@@ -48,20 +48,19 @@ class BasicGNN(torch.nn.Module):
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
-
     def __init__(
-            self,
-            in_channels: int,
-            hidden_channels: int,
-            num_layers: int,
-            out_channels: Optional[int] = None,
-            dropout: float = 0.0,
-            act: Union[str, Callable, None] = "relu",
-            norm: Optional[torch.nn.Module] = None,
-            jk: Optional[str] = None,
-            act_first: bool = False,
-            act_kwargs: Optional[Dict[str, Any]] = None,
-            **kwargs,
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        out_channels: Optional[int] = None,
+        dropout: float = 0.0,
+        act: Union[str, Callable, None] = "relu",
+        norm: Optional[torch.nn.Module] = None,
+        jk: Optional[str] = None,
+        act_first: bool = False,
+        act_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
     ):
         super().__init__()
 
@@ -182,7 +181,6 @@ class GCN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
-
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return GCNConv(in_channels, out_channels, **kwargs)
@@ -216,7 +214,6 @@ class GraphSAGE(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
-
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return SAGEConv(in_channels, out_channels, **kwargs)
@@ -250,7 +247,6 @@ class GIN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
-
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
@@ -289,7 +285,6 @@ class GAT(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv`.
     """
-
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
 
@@ -343,7 +338,6 @@ class PNA(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
-
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return PNAConv(in_channels, out_channels, **kwargs)
