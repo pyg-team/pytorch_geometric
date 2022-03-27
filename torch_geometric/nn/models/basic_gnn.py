@@ -8,6 +8,7 @@ from torch.nn import Linear, ModuleList
 
 from torch_geometric.nn.conv import (
     GATConv,
+    GATv2Conv,
     GCNConv,
     GINConv,
     MessagePassing,
@@ -47,19 +48,20 @@ class BasicGNN(torch.nn.Module):
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
+
     def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
-        out_channels: Optional[int] = None,
-        dropout: float = 0.0,
-        act: Union[str, Callable, None] = "relu",
-        norm: Optional[torch.nn.Module] = None,
-        jk: Optional[str] = None,
-        act_first: bool = False,
-        act_kwargs: Optional[Dict[str, Any]] = None,
-        **kwargs,
+            self,
+            in_channels: int,
+            hidden_channels: int,
+            num_layers: int,
+            out_channels: Optional[int] = None,
+            dropout: float = 0.0,
+            act: Union[str, Callable, None] = "relu",
+            norm: Optional[torch.nn.Module] = None,
+            jk: Optional[str] = None,
+            act_first: bool = False,
+            act_kwargs: Optional[Dict[str, Any]] = None,
+            **kwargs,
     ):
         super().__init__()
 
@@ -180,6 +182,7 @@ class GCN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return GCNConv(in_channels, out_channels, **kwargs)
@@ -213,6 +216,7 @@ class GraphSAGE(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return SAGEConv(in_channels, out_channels, **kwargs)
@@ -246,6 +250,7 @@ class GIN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
@@ -253,9 +258,11 @@ class GIN(BasicGNN):
 
 
 class GAT(BasicGNN):
-    r"""The Graph Neural Network from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper, using the
-    :class:`~torch_geometric.nn.GATConv` operator for message passing.
+    r"""The Graph Neural Network from `"Graph Attention Networks"
+    <https://arxiv.org/abs/1710.10903>`_ or `"How Attentive are Graph Attention
+    Networks?" <https://arxiv.org/abs/2105.14491>`_ paper, using the
+    :class:`~torch_geometric.nn.GATConv` or
+    :class:`~torch_geometric.nn.GATv2Conv` operator for message passing.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -264,6 +271,8 @@ class GAT(BasicGNN):
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
+        gat_v2 (bool, optional): If set to :obj:`True`, GATv2 operator is used.
+            (default: :obj:`False`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
@@ -280,11 +289,13 @@ class GAT(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv`.
     """
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
 
         heads = kwargs.pop('heads', 1)
         concat = kwargs.pop('concat', True)
+        gat_v2 = kwargs.pop('gat_v2', False)
 
         # Do not use concatenation in case the layer `GATConv` layer maps to
         # the desired output channels (out_channels != None and jk != None):
@@ -299,8 +310,12 @@ class GAT(BasicGNN):
         if concat:
             out_channels = out_channels // heads
 
-        return GATConv(in_channels, out_channels, heads=heads, concat=concat,
-                       dropout=self.dropout, **kwargs)
+        if not gat_v2:
+            return GATConv(in_channels, out_channels, heads=heads, concat=concat,
+                           dropout=self.dropout, **kwargs)
+        else:
+            return GATv2Conv(in_channels, out_channels, heads=heads, concat=concat,
+                             dropout=self.dropout, **kwargs)
 
 
 class PNA(BasicGNN):
@@ -331,6 +346,7 @@ class PNA(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return PNAConv(in_channels, out_channels, **kwargs)
