@@ -271,6 +271,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[DimeNet](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DimeNet)** from Klicpera *et al.*: [Directional Message Passing for Molecular Graphs](https://arxiv.org/abs/2003.03123) (ICLR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/qm9_pretrained_dimenet.py)]
 * **[Node2Vec](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.Node2Vec)** from Grover and Leskovec: [node2vec: Scalable Feature Learning for Networks](https://arxiv.org/abs/1607.00653) (KDD 2016) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/node2vec.py)]
 * **[Deep Graph Infomax](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_transductive.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_inductive.py)]
+* **Deep Multiplex Graph Infomax** from Park *et al.*: [Unsupervised Attributed Multiplex Network Embedding](https://arxiv.org/abs/1911.06750) (AAAI 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/dmgi_unsup.py)]
 
 <details>
 <summary><b>Expand to see all implemented GNN models...</b></summary>
