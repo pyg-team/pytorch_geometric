@@ -69,8 +69,18 @@ def test_gat(out_dim, dropout, act, norm, jk):
     assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
 
+    model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=True,
+                dropout=dropout, act=act, norm=norm, jk=jk)
+    assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
     model = GAT(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk, heads=4)
+    assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+    model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=True,
+                dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
     assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
 

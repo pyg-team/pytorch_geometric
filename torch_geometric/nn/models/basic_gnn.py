@@ -256,9 +256,10 @@ class GIN(BasicGNN):
 class GAT(BasicGNN):
     r"""The Graph Neural Network from `"Graph Attention Networks"
     <https://arxiv.org/abs/1710.10903>`_ or `"How Attentive are Graph Attention
-    Networks?" <https://arxiv.org/abs/2105.14491>`_ paper, using the
+    Networks?" <https://arxiv.org/abs/2105.14491>`_ papers, using the
     :class:`~torch_geometric.nn.GATConv` or
-    :class:`~torch_geometric.nn.GATv2Conv` operator for message passing.
+    :class:`~torch_geometric.nn.GATv2Conv` operator for message passing,
+    respectively.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -267,8 +268,9 @@ class GAT(BasicGNN):
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
-        gat_v2 (bool, optional): If set to :obj:`True`, GATv2 operator is used.
-            (default: :obj:`False`)
+        v2 (bool, optional): If set to :obj:`True`, will make use of
+            :class:`~torch_geometric.nn.conv.GATv2Conv` rather than
+            :class:`~torch_geometric.nn.conv.GATConv`. (default: :obj:`False`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
@@ -283,14 +285,15 @@ class GAT(BasicGNN):
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
-            :class:`torch_geometric.nn.conv.GATConv`.
+            :class:`torch_geometric.nn.conv.GATConv` or
+            :class:`torch_geometric.nn.conv.GATv2Conv`.
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
 
+        v2 = kwargs.pop('v2', False)
         heads = kwargs.pop('heads', 1)
         concat = kwargs.pop('concat', True)
-        gat_v2 = kwargs.pop('gat_v2', False)
 
         # Do not use concatenation in case the layer `GATConv` layer maps to
         # the desired output channels (out_channels != None and jk != None):
@@ -305,8 +308,8 @@ class GAT(BasicGNN):
         if concat:
             out_channels = out_channels // heads
 
-        conv = GATConv if not gat_v2 else GATv2Conv
-        return conv(in_channels, out_channels, heads=heads, concat=concat,
+        Conv = GATConv if not v2 else GATv2Conv
+        return Conv(in_channels, out_channels, heads=heads, concat=concat,
                     dropout=self.dropout, **kwargs)
 
 
