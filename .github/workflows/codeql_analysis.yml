@@ -1,4 +1,4 @@
-name: CodeQL
+name: Code Scanning
 
 on:  # yamllint disable-line rule:truthy
   schedule:
@@ -6,12 +6,10 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  analyze:
-    name: Analyze
+  codeql:
     runs-on: ubuntu-latest
+
     permissions:
-      actions: read
-      contents: read
       security-events: write
 
     strategy:
