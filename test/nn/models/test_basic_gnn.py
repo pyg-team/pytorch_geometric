@@ -64,15 +64,16 @@ def test_gat(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GAT(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk)
-    assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
-    assert model(x, edge_index).size() == (3, out_channels)
+    for v2 in [False, True]:
+        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
+                    dropout=dropout, act=act, norm=norm, jk=jk)
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+        assert model(x, edge_index).size() == (3, out_channels)
 
-    model = GAT(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk, heads=4)
-    assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
-    assert model(x, edge_index).size() == (3, out_channels)
+        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
+                    dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+        assert model(x, edge_index).size() == (3, out_channels)
 
 
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
