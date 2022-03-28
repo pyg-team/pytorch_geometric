@@ -71,7 +71,6 @@ class MetrLa(Dataset):
 
     gdrive_ids = {
         'distances.csv': '19Td6JafGnF8CD2H64jWCBV7k5GyFix2H',
-        'locations.csv': '1FnioVF2jZuOl_St1ssLnvQgSHuEuDzvL',
         'sensors.txt': '1235bXBxe4X73dJk3zwRzaIQ-8A7K_OEV',
         'sensor-readings.csv': '1QZpu2GAeH6veewwF1WZXX-ErDoGxk7uF'
     }
@@ -125,11 +124,11 @@ class MetrLa(Dataset):
     def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
 
-        x, y = self.io.get_metrla_data(data_path=self.raw_paths[3])
+        x, y = self.io.get_metrla_data(data_path=self.raw_paths[2])
 
         adjacency_matrix = self.io.generate_adjacency_matrix(
             distances_path=self.raw_paths[0],
-            sensor_ids_path=self.raw_paths[2])
+            sensor_ids_path=self.raw_paths[1])
 
         adjacency_matrix = torch.from_numpy(adjacency_matrix)
 
@@ -258,7 +257,6 @@ class MetrLaInMemory(InMemoryDataset):
 
     gdrive_ids = {
         'distances.csv': '19Td6JafGnF8CD2H64jWCBV7k5GyFix2H',
-        'locations.csv': '1FnioVF2jZuOl_St1ssLnvQgSHuEuDzvL',
         'sensors.txt': '1235bXBxe4X73dJk3zwRzaIQ-8A7K_OEV',
         'sensor-readings.csv': '1QZpu2GAeH6veewwF1WZXX-ErDoGxk7uF'
     }
@@ -276,7 +274,6 @@ class MetrLaInMemory(InMemoryDataset):
                            normalized_k=normalized_k)
         super().__init__(root, transform, pre_transform)
 
-        print('retrieving')
         self.x = torch.load(self.processed_paths[0])
         self.y = torch.load(self.processed_paths[1])
         self.edge_index = torch.load(self.processed_paths[2])
@@ -303,17 +300,16 @@ class MetrLaInMemory(InMemoryDataset):
     def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
 
-        x, y = self.io.get_metrla_data(data_path=self.raw_paths[3])
+        x, y = self.io.get_metrla_data(data_path=self.raw_paths[2])
 
         adjacency_matrix = self.io.generate_adjacency_matrix(
             distances_path=self.raw_paths[0],
-            sensor_ids_path=self.raw_paths[2])
+            sensor_ids_path=self.raw_paths[1])
 
         adjacency_matrix = torch.from_numpy(adjacency_matrix)
 
         edge_index, edge_attr = dense_to_sparse(adjacency_matrix)
 
-        print('saving')
         torch.save(x, self.processed_paths[0])
         torch.save(y, self.processed_paths[1])
         torch.save(edge_index, self.processed_paths[2])
@@ -326,10 +322,10 @@ class MetrLaInMemory(InMemoryDataset):
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
 
-        x_ = torch.tensor(data=self.x[idx, ...], dtype=torch.float32)
-        y_ = torch.tensor(data=self.y[idx, ...], dtype=torch.float32)
+        x = torch.tensor(data=self.x[idx, ...], dtype=torch.float32)
+        y = torch.tensor(data=self.y[idx, ...], dtype=torch.float32)
 
-        return x_, y_
+        return x, y
 
     def get_adjacency_matrix(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """
