@@ -4,6 +4,7 @@ import re
 import numpy as np
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 

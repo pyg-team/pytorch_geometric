@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_add
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 

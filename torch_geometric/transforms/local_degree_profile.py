@@ -1,6 +1,7 @@
 import torch
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_std
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
 

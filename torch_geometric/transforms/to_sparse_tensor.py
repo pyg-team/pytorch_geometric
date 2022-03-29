@@ -3,6 +3,7 @@ from typing import Optional, Union
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import sort_edge_index
 

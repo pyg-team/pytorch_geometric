@@ -1,5 +1,6 @@
 from scipy.sparse.linalg import eigs, eigsh
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 

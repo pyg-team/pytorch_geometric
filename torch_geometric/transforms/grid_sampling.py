@@ -8,6 +8,7 @@ from torch_scatter import scatter_add, scatter_mean
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 

@@ -1,4 +1,5 @@
 import torch_geometric
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
