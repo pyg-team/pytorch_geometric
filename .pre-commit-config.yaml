@@ -18,7 +18,7 @@ repos:
         args: [-c=.yamllint.yml]
 
   - repo: https://github.com/regebro/pyroma
-    rev: "4.0b1"
+    rev: "3.3"
     hooks:
       - id: pyroma
         name: Check packaging
