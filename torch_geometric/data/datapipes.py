@@ -2,11 +2,18 @@ import copy
 from typing import Any, Callable, Optional
 
 import torch
-from torch.utils.data import IterDataPipe, functional_datapipe
-from torch.utils.data.datapipes.iter import Batcher as IterBatcher
 
 from torch_geometric.data import Batch
 from torch_geometric.utils import from_smiles
+
+try:
+    from torch.utils.data import IterDataPipe, functional_datapipe
+    from torch.utils.data.datapipes.iter import Batcher as IterBatcher
+except ImportError:
+    IterDataPipe = IterBatcher = object
+
+    def functional_datapipe(name: str) -> Callable:
+        return lambda cls: cls
 
 
 @functional_datapipe('batch_graphs')

@@ -14,7 +14,6 @@ import os.path as osp
 import time
 
 import torch
-import torchdata
 from torchdata.datapipes.iter import FileLister, FileOpener, IterDataPipe
 
 from torch_geometric.data import Data, download_url, extract_zip
@@ -34,7 +33,7 @@ def molecule_datapipe() -> IterDataPipe:
     return datapipe
 
 
-@torchdata.datapipes.functional_datapipe('read_mesh')
+@torch.utils.data.functional_datapipe('read_mesh')
 class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
     def __init__(self, dp: IterDataPipe):
