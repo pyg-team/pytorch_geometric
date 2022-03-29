@@ -12,10 +12,12 @@ from torch_geometric.typing import EdgeType
 from torch_geometric.utils import negative_sampling
 
 
+@functional_transform('random_link_split')
 class RandomLinkSplit(BaseTransform):
     r"""Performs an edge-level random split into training, validation and test
     sets of a :class:`~torch_geometric.data.Data` or a
-    :class:`~torch_geometric.data.HeteroData` object.
+    :class:`~torch_geometric.data.HeteroData` object
+    (functional name: :obj:`random_link_split`).
     The split is performed such that the training split does not include edges
     in validation and test splits; and the validation split does not include
     edges in the test split.

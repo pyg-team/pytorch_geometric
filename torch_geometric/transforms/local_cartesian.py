@@ -5,10 +5,11 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('local_cartesian')
 class LocalCartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
     attributes. Each coordinate gets *neighborhood-normalized* to the
-    interval :math:`{[0, 1]}^D`.
+    interval :math:`{[0, 1]}^D` (functional name: :obj:`local_cartesian`).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be

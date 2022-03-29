@@ -10,7 +10,7 @@ from torch_geometric.utils import to_scipy_sparse_matrix
 class LargestConnectedComponents(BaseTransform):
     r"""Selects the subgraph that corresponds to the
     largest connected components in the graph
-    (functional name: :obj:`largest_connected_components`)
+    (functional name: :obj:`largest_connected_components`).
 
     Args:
         num_components (int, optional): Number of largest components to keep

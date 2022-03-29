@@ -7,7 +7,7 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('distance')
 class Distance(BaseTransform):
     r"""Saves the Euclidean distance of linked nodes in its edge attributes
-    (functional name: :obj:`distance`)
+    (functional name: :obj:`distance`).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be

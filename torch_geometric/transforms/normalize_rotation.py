@@ -5,10 +5,11 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('normalize_rotation')
 class NormalizeRotation(BaseTransform):
     r"""Rotates all points according to the eigenvectors of the point cloud.
     If the data additionally holds normals saved in :obj:`data.normal`, these
-    will be rotated accordingly.
+    will be rotated accordingly (functional name: :obj:`normalize_rotation`).
 
     Args:
         max_points (int, optional): If set to a value greater than :obj:`0`,
