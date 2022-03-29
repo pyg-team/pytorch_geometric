@@ -69,7 +69,8 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
     datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
-    datapipe = datapipe.sample_points(1024)  # Use PyG transforms.
+    datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
+    datapipe = datapipe.knn_graph(k=8)
 
     return datapipe
 
