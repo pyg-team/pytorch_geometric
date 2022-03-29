@@ -7,8 +7,10 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('constant')
 class Constant(BaseTransform):
-    r"""Adds a constant value to each node feature :obj:`x`.
+    r"""Adds a constant value to each node feature :obj:`x`
+    (functional name: :obj:`constant`).
 
     Args:
         value (float, optional): The value to add. (default: :obj:`1.0`)

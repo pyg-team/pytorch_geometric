@@ -5,9 +5,10 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
+@functional_transform('face_to_edge')
 class FaceToEdge(BaseTransform):
     r"""Converts mesh faces :obj:`[3, num_faces]` to edge indices
-    :obj:`[2, num_edges]`.
+    :obj:`[2, num_edges]` (functional name: :obj:`face_to_edge`).
 
     Args:
         remove_faces (bool, optional): If set to :obj:`False`, the face tensor

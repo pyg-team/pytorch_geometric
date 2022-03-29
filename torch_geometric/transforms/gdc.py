@@ -9,10 +9,11 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 
 
+@functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
     `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
-    paper.
+    paper (functional name: :obj:`gdc`).
 
     .. note::
 

@@ -12,10 +12,11 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('grid_sampling')
 class GridSampling(BaseTransform):
     r"""Clusters points into voxels with size :attr:`size`.
     Each cluster returned is a new point based on the mean of all points
-    inside the given cluster.
+    inside the given cluster (functional name: :obj:`grid_sampling`).
 
     Args:
         size (float or [float] or Tensor): Size of a voxel (in each dimension).
