@@ -14,11 +14,8 @@ import os.path as osp
 import time
 
 import torch
-import torchdata
 from torchdata.datapipes.iter import FileLister, FileOpener, IterDataPipe
 
-import torch_geometric.data.datapipes  # noqa: Register functional datapipes.
-import torch_geometric.transforms as T
 from torch_geometric.data import Data, download_url, extract_zip
 
 
@@ -36,7 +33,7 @@ def molecule_datapipe() -> IterDataPipe:
     return datapipe
 
 
-@torchdata.datapipes.functional_datapipe('read_mesh')
+@torch.utils.data.functional_datapipe('read_mesh')
 class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
     def __init__(self, dp: IterDataPipe):
@@ -72,8 +69,8 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
     datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
-    datapipe = datapipe.copy()  # Copy in order to use in-place transforms.
-    datapipe = datapipe.map(T.SamplePoints(num=1024))  # Use PyG transforms.
+    datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
+    datapipe = datapipe.knn_graph(k=8)
 
     return datapipe
 
