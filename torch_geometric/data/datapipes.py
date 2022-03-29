@@ -71,7 +71,7 @@ class SMILESParser(IterDataPipe):
 def functional_datapipe(name: str) -> Callable:
     def wrapper(cls: Any) -> Any:  # Other-wise, return a decorator:
         @torchdata.datapipes.functional_datapipe(name)
-        class Mapper(IterDataPipe):
+        class DynamicMapper(IterDataPipe):
             def __init__(self, dp: IterDataPipe, *args, **kwargs):
                 super().__init__()
                 self.dp = dp
@@ -79,7 +79,7 @@ def functional_datapipe(name: str) -> Callable:
 
             def __iter__(self):
                 for data in self.dp:
-                    yield from self.fn(copy.copy(data))
+                    yield self.fn(copy.copy(data))
 
         return cls
 
