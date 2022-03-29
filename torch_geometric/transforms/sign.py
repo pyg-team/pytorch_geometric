@@ -9,7 +9,7 @@ from torch_geometric.transforms import BaseTransform
 class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
-    <https://arxiv.org/abs/2004.11198>`_ paper (functional name: :obj:`sign),
+    <https://arxiv.org/abs/2004.11198>`_ paper (functional name: :obj:`sign`),
     which precomputes the fixed representations
 
     .. math::

@@ -16,7 +16,7 @@ class AddMetaPaths(BaseTransform):
     type and the destination node type of a given :obj:`metapath`, as described
     in the `"Heterogenous Graph Attention Networks"
     <https://arxiv.org/abs/1903.07293>`_ paper
-    (functional name: :obj:`add_metapaths).
+    (functional name: :obj:`add_metapaths`).
     Meta-path based neighbors can exploit different aspects of structure
     information in heterogeneous graphs.
     Formally, a metapath is a path of the form
