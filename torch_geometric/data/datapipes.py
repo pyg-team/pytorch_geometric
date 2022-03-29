@@ -2,15 +2,15 @@ import copy
 from typing import Any, Callable, Optional
 
 import torch
-import torchdata
-from torchdata.datapipes.iter import IterDataPipe
+from torch.utils.data import IterDataPipe, functional_datapipe
+from torch.utils.data.datapipes.iter import Batcher as IterBatcher
 
 from torch_geometric.data import Batch
 from torch_geometric.utils import from_smiles
 
 
-@torchdata.datapipes.functional_datapipe('batch_graphs')
-class Batcher(torchdata.datapipes.iter.Batcher):
+@functional_datapipe('batch_graphs')
+class Batcher(IterBatcher):
     def __init__(
         self,
         dp: IterDataPipe,
@@ -25,18 +25,7 @@ class Batcher(torchdata.datapipes.iter.Batcher):
         )
 
 
-@torchdata.datapipes.functional_datapipe('copy')
-class Copier(IterDataPipe):
-    def __init__(self, dp: IterDataPipe):
-        super().__init__()
-        self.dp = dp
-
-    def __iter__(self):
-        for d in self.dp:
-            yield copy.copy(d)
-
-
-@torchdata.datapipes.functional_datapipe('parse_smiles')
+@functional_datapipe('parse_smiles')
 class SMILESParser(IterDataPipe):
     def __init__(
         self,
@@ -68,9 +57,9 @@ class SMILESParser(IterDataPipe):
             yield data
 
 
-def functional_datapipe(name: str) -> Callable:
+def functional_transform(name: str) -> Callable:
     def wrapper(cls: Any) -> Any:
-        @torchdata.datapipes.functional_datapipe(name)
+        @functional_datapipe(name)
         class DynamicMapper(IterDataPipe):
             def __init__(self, dp: IterDataPipe, *args, **kwargs):
                 super().__init__()
