@@ -9,12 +9,13 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
+@functional_transform('to_undirected')
 class ToUndirected(BaseTransform):
     r"""Converts a homogeneous or heterogeneous graph to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge
     :math:`(i,j) \in \mathcal{E}`.
     In heterogeneous graphs, will add "reverse" connections for *all* existing
-    edge types.
+    edge types (functional name: :obj:`to_undirected`).
 
     Args:
         reduce (string, optional): The reduce operation to use for merging edge
