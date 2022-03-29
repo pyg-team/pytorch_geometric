@@ -1,5 +1,5 @@
 import copy
-from typing import Optional
+from typing import Any, Callable, Optional
 
 import torch
 import torchdata
@@ -66,3 +66,21 @@ class SMILESParser(IterDataPipe):
                     f"a dict as input (got '{type(d)}')")
 
             yield data
+
+
+def functional_datapipe(name: str) -> Callable:
+    def wrapper(cls: Any) -> Any:  # Other-wise, return a decorator:
+        @torchdata.datapipes.functional_datapipe(name)
+        class Mapper(IterDataPipe):
+            def __init__(self, dp: IterDataPipe, *args, **kwargs):
+                super().__init__()
+                self.dp = dp
+                self.fn = cls(*args, **kwargs)
+
+            def __iter__(self):
+                for data in self.dp:
+                    yield from self.fn(copy.copy(data))
+
+        return cls
+
+    return wrapper
