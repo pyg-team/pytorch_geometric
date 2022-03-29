@@ -8,7 +8,7 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('normalize_features')
 class NormalizeFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
-    (functional name: :obj:`normalize_features`)
+    (functional name: :obj:`normalize_features`).
 
     Args:
         attrs (List[str]): The names of attributes to normalize.
