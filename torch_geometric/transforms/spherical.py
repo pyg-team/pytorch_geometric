@@ -2,11 +2,14 @@ from math import pi as PI
 
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('spherical')
 class Spherical(BaseTransform):
-    r"""Saves the spherical coordinates of linked nodes in its edge attributes.
+    r"""Saves the spherical coordinates of linked nodes in its edge attributes
+    (functional name: :obj:`spherical`).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be

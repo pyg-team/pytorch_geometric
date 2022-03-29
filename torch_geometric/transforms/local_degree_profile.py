@@ -1,14 +1,17 @@
 import torch
 from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_std
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
 
 
+@functional_transform('local_degree_profile')
 class LocalDegreeProfile(BaseTransform):
     r"""Appends the Local Degree Profile (LDP) from the `"A Simple yet
     Effective Baseline for Non-attribute Graph Classification"
     <https://arxiv.org/abs/1811.03508>`_ paper
+    (functional name: :obj:`local_degree_profile`)
 
     .. math::
         \mathbf{x}_i = \mathbf{x}_i \, \Vert \, (\deg(i), \min(DN(i)),

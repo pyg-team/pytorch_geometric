@@ -6,8 +6,8 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('knn_graph')
 class KNNGraph(BaseTransform):
-    r"""Creates a k-NN graph based on node positions :obj:`pos` (functional
-    name: :obj:`knn_graph`).
+    r"""Creates a k-NN graph based on node positions :obj:`pos`
+    (functional name: :obj:`knn_graph`).
 
     Args:
         k (int, optional): The number of neighbors. (default: :obj:`6`)

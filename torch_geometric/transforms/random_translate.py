@@ -3,13 +3,16 @@ from itertools import repeat
 
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('random_translate')
 class RandomTranslate(BaseTransform):
     r"""Translates node positions by randomly sampled translation values
-    within a given interval. In contrast to other random transformations,
-    translation is applied separately at each position.
+    within a given interval (functional name: :obj:`random_translate`).
+    In contrast to other random transformations,
+    translation is applied separately at each position
 
     Args:
         translate (sequence or float or int): Maximum translation in each

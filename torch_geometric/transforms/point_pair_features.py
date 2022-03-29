@@ -1,11 +1,14 @@
 import torch
 
 import torch_geometric
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('point_pair_features')
 class PointPairFeatures(BaseTransform):
     r"""Computes the rotation-invariant Point Pair Features
+    (functional name: :obj:`point_pair_features`)
 
     .. math::
         \left( \| \mathbf{d_{j,i}} \|, \angle(\mathbf{n}_i, \mathbf{d_{j,i}}),
