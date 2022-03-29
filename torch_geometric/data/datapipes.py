@@ -69,7 +69,7 @@ class SMILESParser(IterDataPipe):
 
 
 def functional_datapipe(name: str) -> Callable:
-    def wrapper(cls: Any) -> Any:  # Other-wise, return a decorator:
+    def wrapper(cls: Any) -> Any:
         @torchdata.datapipes.functional_datapipe(name)
         class DynamicMapper(IterDataPipe):
             def __init__(self, dp: IterDataPipe, *args, **kwargs):
