@@ -8,7 +8,7 @@ import numpy as np
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
 from torch_geometric.utils import remove_self_loops
-
+from collections import Counter
 
 class PPI(InMemoryDataset):
     r"""The protein-protein interaction networks from the `"Predicting
@@ -36,15 +36,14 @@ class PPI(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://www.dropbox.com/s/fzxpoxb1k8m9jrg/ppi.zip?dl=1'
+    url = 'https://www.dropbox.com/s/6g7035d8vcrupgh/ota.zip?dl=1'
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
+    def __init__(self, root, split='train',multi=False, transform=None, pre_transform=None,
                  pre_filter=None):
 
         assert split in ['train', 'val', 'test']
-
+        self.multi = multi
         super().__init__(root, transform, pre_transform, pre_filter)
-
         if split == 'train':
             self.data, self.slices = torch.load(self.processed_paths[0])
         elif split == 'val':
@@ -95,11 +94,19 @@ class PPI(InMemoryDataset):
                 edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
                 edge_index = edge_index - edge_index.min()
                 edge_index, _ = remove_self_loops(edge_index)
+                # edge_weight = torch.tensor(
+                #     [Counter(bin(data['weight']))['1'] for _, _, data in G_s.edges(data=True)],
+                #     dtype=torch.float)
+                def binary(x, bits=4):
+                    mask = 2**torch.arange(bits).to(x.device, x.dtype)
+                    return x.unsqueeze(-1).bitwise_and(mask).ne(0).byte()
                 edge_weight = torch.tensor(
-                    [data['weight'] for _, _, data in G_s.edges(data=True)], 
+                    [data['weight'] for _, _, data in G_s.edges(data=True)],
                     dtype=torch.float)
-
-                data = Data(edge_index=edge_index, x=x[mask], y=y[mask], 
+                if self.multi==True:
+                    edge_weight = torch.tensor(binary(edge_weight.int()), dtype=torch.float)
+                print(edge_weight)
+                data = Data(edge_index=edge_index, x=x[mask], y=y[mask],
                             edge_weight=edge_weight)
 
                 if self.pre_filter is not None and not self.pre_filter(data):

@@ -7,15 +7,25 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GATConv
 from sklearn.metrics import f1_score
 import csv
+import numpy as np
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI_GANA')
-train_dataset = PPI(path, split='train')
-val_dataset = PPI(path, split='val')
-test_dataset = PPI(path, split='test')
+train_dataset = PPI(path, split='train', multi=True)
+val_dataset = PPI(path, split='val', multi=True)
+test_dataset = PPI(path, split='test', multi=True)
+# def binary(x, bits=4):
+#     mask = 2**torch.arange(bits).to(x.device, x.dtype)
+#     return x.unsqueeze(-1).bitwise_and(mask).ne(0).byte()
+# print(binary(torch.tensor([0,1,2,4,8])))
+
+# for data_type in ['train', 'val', 'test']:
+#     data = PPI(path, split=data_type)
+#     locals()[data_type+'_dataset'] = data
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
-
+print(val_dataset[0].edge_weight)
+exit()
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -88,7 +98,7 @@ def debug(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
-for epoch in range(1, 201):
+for epoch in range(1, 2):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)

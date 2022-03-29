@@ -40,30 +40,33 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
 class Net(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, num_layers, hidden_channels):
         super(Net, self).__init__()
-        self.conv1 = GCNConv(train_dataset.num_features, 16, cached=False,
-                             normalize=not args.use_gdc)
-        self.conv2 = GCNConv(16, 16, cached=False,
-                             normalize=not args.use_gdc)
-        self.conv3 = GCNConv(16, 16, cached=False,
-                             normalize=not args.use_gdc)
-        self.conv4 = GCNConv(16, train_dataset.num_classes, cached=False,
-                             normalize=not args.use_gdc)
+        self.convs = torch.nn.ModuleList()
+        self.convs.append(
+            GCNConv(train_dataset.num_features, hidden_channels, cached=False,
+                     normalize=not args.use_gdc))
+        for _ in range(num_layers - 2):
+            self.convs.append(
+                GCNConv(hidden_channels, hidden_channels, cached=False,
+                         normalize=not args.use_gdc))
+        self.convs.append(GCNConv(hidden_channels, train_dataset.num_classes, cached=False,
+                                  normalize = not args.use_gdc))
+        print(
+            f"number of layers k:{len(self.convs)} hidden layersize :{hidden_channels}")
+
+
     def forward(self, x, edge_index):
-        x = F.relu(self.conv1(x, edge_index))
-        x = F.dropout(x, training=self.training)
-        x = F.relu(self.conv2(x, edge_index))
-        x = F.dropout(x, training=self.training)
-        x = F.relu(self.conv3(x, edge_index))
-        x = F.dropout(x, training=self.training)
-        x = self.conv4(x, edge_index)
+        for conv in self.convs:            
+            x1 = conv(x, edge_index)
+            x = F.relu(x1)
+            x = F.dropout(x, training=self.training)
         
-        return x
+        return x1
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+model = Net(2, 16).to(device)
 loss_op = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
@@ -114,7 +117,7 @@ def debug(loader):
     y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
-for epoch in range(1, 201):
+for epoch in range(1, 41):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
