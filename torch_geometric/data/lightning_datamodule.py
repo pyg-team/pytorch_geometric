@@ -98,7 +98,8 @@ class LightningDataset(LightningDataModule):
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+                                 devices=4)
             trainer.fit(model, datamodule)
 
     Args:
@@ -182,7 +183,8 @@ class LightningNodeData(LightningDataModule):
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+                                 devices=4)
             trainer.fit(model, datamodule)
 
     Args:
