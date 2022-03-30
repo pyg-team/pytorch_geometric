@@ -3,6 +3,8 @@ From: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
 
 %post
   CURDIR=$(pwd)
+
+  # Set timezone to Etc/UTC for tzdata. See issue #4365 for more details.
   TZ=Etc/UTC && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
