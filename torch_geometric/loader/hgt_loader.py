@@ -119,10 +119,10 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
             data, device='cpu')
 
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample_fn,
+        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
                          **kwargs)
 
-    def sample_fn(self, indices: List[int]) -> HeteroData:
+    def sample(self, indices: List[int]) -> HeteroData:
         input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
         node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
             self.colptr_dict,
