@@ -7,7 +7,7 @@ class MaskLabel(torch.nn.Module):
     Classification" <https://arxiv.org/abs/2009.03509>`_ paper.
 
     In the forward pass both the labels, and a mask corresponding to which
-    labels should be kept is provided. All entires that are not true in the
+    labels should be kept is provided. All entries that are not true in the
     mask are returned as zero.
 
     Args:
@@ -33,7 +33,7 @@ class MaskLabel(torch.nn.Module):
             return torch.cat([x, out], dim=1)
         else:
             x = torch.clone(x)
-            x[mask] = self.emb(y[mask])
+            x[mask] += self.emb(y[mask])
             return x
 
     @staticmethod
