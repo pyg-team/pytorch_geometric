@@ -1,5 +1,4 @@
 import math
-import warnings
 
 import pytest
 import torch
@@ -57,8 +56,8 @@ class LinearGraphModule(LightningModule):
 @onlyFullTest
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-@pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_dataset(get_dataset, strategy):
+@pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
+def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
 
     dataset = get_dataset(name='MUTAG').shuffle()
@@ -66,14 +65,16 @@ def test_lightning_dataset(get_dataset, strategy):
     val_dataset = dataset[50:80]
     test_dataset = dataset[80:90]
 
-    gpus = 1 if strategy is None else torch.cuda.device_count()
-    if strategy == 'ddp_spawn':
-        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+    devices = 1 if strategy_type is None else torch.cuda.device_count()
+    if strategy_type == 'ddp_spawn':
+        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    else:
+        strategy = None
 
     model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
 
-    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=1,
-                         log_every_n_steps=1)
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+                         max_epochs=1, log_every_n_steps=1)
     datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
                                   batch_size=5, num_workers=3)
     old_x = train_dataset.data.x.clone()
@@ -84,22 +85,28 @@ def test_lightning_dataset(get_dataset, strategy):
                                'persistent_workers=True)')
     trainer.fit(model, datamodule)
     new_x = train_dataset.data.x
-    offset = 10 + 6 + 2 * gpus  # `train_steps` + `val_steps` + `sanity`
+    offset = 10 + 6 + 2 * devices  # `train_steps` + `val_steps` + `sanity`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
-    assert trainer._data_connector._val_dataloader_source.is_defined()
-    assert trainer._data_connector._test_dataloader_source.is_defined()
+    if strategy_type is None:
+        assert trainer._data_connector._val_dataloader_source.is_defined()
+        assert trainer._data_connector._test_dataloader_source.is_defined()
 
     # Test with `val_dataset=None` and `test_dataset=None`:
-    warnings.filterwarnings('ignore', '.*Skipping val loop.*')
-    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=1,
-                         log_every_n_steps=1)
+    if strategy_type == 'ddp_spawn':
+        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    else:
+        strategy = None
+
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+                         max_epochs=1, log_every_n_steps=1)
     datamodule = LightningDataset(train_dataset, batch_size=5, num_workers=3)
     assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
                                'batch_size=5, num_workers=3, '
                                'pin_memory=True, persistent_workers=True)')
     trainer.fit(model, datamodule)
-    assert not trainer._data_connector._val_dataloader_source.is_defined()
-    assert not trainer._data_connector._test_dataloader_source.is_defined()
+    if strategy_type is None:
+        assert not trainer._data_connector._val_dataloader_source.is_defined()
+        assert not trainer._data_connector._test_dataloader_source.is_defined()
 
 
 class LinearNodeModule(LightningModule):
@@ -141,8 +148,8 @@ class LinearNodeModule(LightningModule):
 @pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
-@pytest.mark.parametrize('strategy', [None, 'ddp_spawn'])
-def test_lightning_node_data(get_dataset, strategy, loader):
+@pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
+def test_lightning_node_data(get_dataset, strategy_type, loader):
     import pytorch_lightning as pl
 
     dataset = get_dataset(name='Cora')
@@ -152,16 +159,18 @@ def test_lightning_node_data(get_dataset, strategy, loader):
 
     model = LinearNodeModule(dataset.num_features, dataset.num_classes)
 
-    if strategy is None or loader == 'full':
-        gpus = 1
+    if strategy_type is None or loader == 'full':
+        devices = 1
     else:
-        gpus = torch.cuda.device_count()
+        devices = torch.cuda.device_count()
 
-    if strategy == 'ddp_spawn' and loader == 'full':
+    if strategy_type == 'ddp_spawn' and loader == 'full':
         data = data.cuda()  # This is necessary to test sharing of data.
 
-    if strategy == 'ddp_spawn':
-        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+    if strategy_type == 'ddp_spawn':
+        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    else:
+        strategy = None
 
     batch_size = 1 if loader == 'full' else 32
     num_workers = 0 if loader == 'full' else 3
@@ -170,8 +179,8 @@ def test_lightning_node_data(get_dataset, strategy, loader):
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
 
-    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=5,
-                         log_every_n_steps=1)
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+                         max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
     old_x = data.x.clone().cpu()
@@ -186,12 +195,13 @@ def test_lightning_node_data(get_dataset, strategy, loader):
         offset = 5 + 5 + 1  # `train_steps` + `val_steps` + `sanity`
     else:
         offset = 0
-        offset += gpus * 2  # `sanity`
-        offset += 5 * gpus * math.ceil(140 / (gpus * batch_size))  # `train`
-        offset += 5 * gpus * math.ceil(500 / (gpus * batch_size))  # `val`
+        offset += devices * 2  # `sanity`
+        offset += 5 * devices * math.ceil(140 / (devices * batch_size))
+        offset += 5 * devices * math.ceil(500 / (devices * batch_size))
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
-    assert trainer._data_connector._val_dataloader_source.is_defined()
-    assert trainer._data_connector._test_dataloader_source.is_defined()
+    if strategy_type is None:
+        assert trainer._data_connector._val_dataloader_source.is_defined()
+        assert trainer._data_connector._test_dataloader_source.is_defined()
 
 
 class LinearHeteroNodeModule(LightningModule):
@@ -241,20 +251,18 @@ def test_lightning_hetero_node_data(get_dataset):
     model = LinearHeteroNodeModule(data['author'].num_features,
                                    int(data['author'].y.max()) + 1)
 
-    gpus = torch.cuda.device_count()
-    strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+    devices = torch.cuda.device_count()
+    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
 
-    trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=5,
-                         log_every_n_steps=1)
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+                         max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
     old_x = data['author'].x.clone()
     trainer.fit(model, datamodule)
     new_x = data['author'].x
     offset = 0
-    offset += gpus * 2  # `sanity`
-    offset += 5 * gpus * math.ceil(400 / (gpus * 32))  # `train`
-    offset += 5 * gpus * math.ceil(400 / (gpus * 32))  # `val`
+    offset += devices * 2  # `sanity`
+    offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
+    offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
-    assert trainer._data_connector._val_dataloader_source.is_defined()
-    assert trainer._data_connector._test_dataloader_source.is_defined()
