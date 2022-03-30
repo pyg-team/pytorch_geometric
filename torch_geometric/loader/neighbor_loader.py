@@ -236,6 +236,8 @@ class NeighborLoader(BaseDataLoader):
                                 collate_fn=self.neighbor_sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
+        data = None
+
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
             data = filter_data(self.data, node, row, col, edge,
@@ -248,6 +250,8 @@ class NeighborLoader(BaseDataLoader):
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
             data[self.neighbor_sampler.input_node_type].batch_size = batch_size
+
+        assert data is not None
 
         return data if self.transform is None else self.transform(data)
 
