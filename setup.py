@@ -49,7 +49,7 @@ setup(
     url=URL,
     download_url=f'{URL}/archive/{__version__}.tar.gz',
     keywords=[
-        'deep-learning'
+        'deep-learning',
         'pytorch',
         'geometric-deep-learning',
         'graph-neural-networks',

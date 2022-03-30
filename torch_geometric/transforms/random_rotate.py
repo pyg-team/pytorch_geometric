@@ -4,12 +4,14 @@ import random
 
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
+@functional_transform('random_rotate')
 class RandomRotate(BaseTransform):
     r"""Rotates node positions around a specific axis by a randomly sampled
-    factor within a given interval.
+    factor within a given interval (functional name: :obj:`random_rotate`).
 
     Args:
         degrees (tuple or float): Rotation interval from which the rotation

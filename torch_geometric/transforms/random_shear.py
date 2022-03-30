@@ -1,11 +1,14 @@
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
+@functional_transform('random_shear')
 class RandomShear(BaseTransform):
     r"""Shears node positions by randomly sampled factors :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
+    (functional name: :obj:`random_shear`)
 
     .. math::
         \begin{bmatrix}

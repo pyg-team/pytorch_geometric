@@ -4,12 +4,14 @@ import re
 import numpy as np
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('fixed_points')
 class FixedPoints(BaseTransform):
     r"""Samples a fixed number of :obj:`num` points and features from a point
-    cloud.
+    cloud (functional name: :obj:`fixed_points`).
 
     Args:
         num (int): The number of points to sample.

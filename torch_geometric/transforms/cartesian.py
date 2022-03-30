@@ -1,11 +1,13 @@
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('cartesian')
 class Cartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
-    attributes.
+    attributes (functional name: :obj:`cartesian`).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be

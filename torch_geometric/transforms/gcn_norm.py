@@ -1,11 +1,13 @@
 import torch_geometric
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('gcn_norm')
 class GCNNorm(BaseTransform):
     r"""Applies the GCN normalization from the `"Semi-supervised Classification
     with Graph Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_
-    paper.
+    paper (functional name: :obj:`gcn_norm`).
 
     .. math::
         \mathbf{\hat{A}} = \mathbf{\hat{D}}^{-1/2} (\mathbf{A} + \mathbf{I})
