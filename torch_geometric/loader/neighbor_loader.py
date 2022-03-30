@@ -5,7 +5,6 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.base import BaseDataLoader
 from torch_geometric.loader.utils import (
     edge_type_to_str,
     filter_data,
@@ -93,7 +92,7 @@ class NeighborSampler:
             return node_dict, row_dict, col_dict, edge_dict, index.numel()
 
 
-class NeighborLoader(BaseDataLoader):
+class NeighborLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
@@ -217,8 +216,9 @@ class NeighborLoader(BaseDataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        # Save for PyTorch Lightning:
         self.data = data
+
+        # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
         self.input_nodes = input_nodes
         self.replace = replace
@@ -232,11 +232,11 @@ class NeighborLoader(BaseDataLoader):
                                                     replace, directed,
                                                     input_node_type)
 
-        return super().__init__(get_input_node_indices(self.data, input_nodes),
-                                collate_fn=self.neighbor_sampler, **kwargs)
+        return super().__init__(get_input_node_indices(data, input_nodes),
+                                collate_fn=self.sample_fn, **kwargs)
 
-    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        data = None
+    def sample_fn(self, index: Any) -> Union[Data, HeteroData]:
+        out = self.neighbor_sampler(index)
 
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
@@ -250,8 +250,6 @@ class NeighborLoader(BaseDataLoader):
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
             data[self.neighbor_sampler.input_node_type].batch_size = batch_size
-
-        assert data is not None
 
         return data if self.transform is None else self.transform(data)
 
