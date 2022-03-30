@@ -281,7 +281,14 @@ class LightningNodeData(LightningDataModule):
     def prepare_data(self):
         """"""
         if self.loader == 'full':
-            if self.trainer.num_devices > 1:
+            try:
+                num_devices = self.trainer.num_devices
+            except AttributeError:
+                # PyTorch Lightning < 1.6 backward compatibility:
+                num_devices = self.trainer.num_processes
+                num_devices = max(num_devices, self.trainer.num_gpus)
+
+            if num_devices > 1:
                 raise ValueError(
                     f"'{self.__class__.__name__}' with loader='full' requires "
                     f"training on a single device")
