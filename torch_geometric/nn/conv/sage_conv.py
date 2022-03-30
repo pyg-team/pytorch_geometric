@@ -3,7 +3,6 @@ from typing import Tuple, Union
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
-
 from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
@@ -55,10 +54,10 @@ class SAGEConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, aggregator_type: str = 'mean', 
-                 normalize: bool = False, root_weight: bool = True, 
-                 bias: bool = True, **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int,
+                                                     int]], out_channels: int,
+                 aggregator_type: str = 'mean', normalize: bool = False,
+                 root_weight: bool = True, bias: bool = True, **kwargs):
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -66,23 +65,25 @@ class SAGEConv(MessagePassing):
         self.normalize = normalize
         self.root_weight = root_weight
         self.aggregator_type = aggregator_type
-        
+
         assert self.aggregator_type in ['mean', 'max', 'lstm', 'gcn', None]
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
-            
+
         if self.aggregator_type == 'gcn':
-            # Convolutional aggregator does not concatenate the root node 
+            # Convolutional aggregator does not concatenate the root node
             # i.e it doesn't concatenate the nodes previous layer
-            self.root_weight = False 
+            self.root_weight = False
 
         if self.aggregator_type == 'lstm':
             self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
 
-        self.lin_l = Linear(in_channels[0], out_channels, bias=bias) # neighbours
+        self.lin_l = Linear(in_channels[0], out_channels,
+                            bias=bias)  # neighbours
         if self.root_weight:
-            self.lin_r = Linear(in_channels[1], out_channels, bias=False) # root
+            self.lin_r = Linear(in_channels[1], out_channels,
+                                bias=False)  # root
 
         self.reset_parameters()
 
@@ -118,8 +119,8 @@ class SAGEConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor, edge_index_j, edge_index_i) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor,
+                              edge_index_j, edge_index_i) -> Tensor:
         """
             Performs both message passing and aggregation of messages from neighbours using the aggregator_type
         """
@@ -129,9 +130,8 @@ class SAGEConv(MessagePassing):
 
         elif self.aggregator_type == 'max':
             return matmul(adj_t, x[0], reduce='max')
-            
+
         elif self.aggregator_type == 'lstm':
             x_j = x[0][edge_index_j]
             x, mask = to_dense_batch(x_j, edge_index_i)
             return self.lstm(x)
-        
