@@ -68,7 +68,7 @@ def test_lightning_dataset(get_dataset, strategy):
 
     gpus = 1 if strategy is None else torch.cuda.device_count()
     if strategy == 'ddp_spawn':
-        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
 
     model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
 
@@ -161,7 +161,7 @@ def test_lightning_node_data(get_dataset, strategy, loader):
         data = data.cuda()  # This is necessary to test sharing of data.
 
     if strategy == 'ddp_spawn':
-        strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
 
     batch_size = 1 if loader == 'full' else 32
     num_workers = 0 if loader == 'full' else 3
@@ -242,7 +242,7 @@ def test_lightning_hetero_node_data(get_dataset):
                                    int(data['author'].y.max()) + 1)
 
     gpus = torch.cuda.device_count()
-    strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
+    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
 
     trainer = pl.Trainer(strategy=strategy, gpus=gpus, max_epochs=5,
                          log_every_n_steps=1)

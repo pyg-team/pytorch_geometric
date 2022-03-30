@@ -50,17 +50,28 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
-        from pytorch_lightning.plugins import (
-            DDPSpawnPlugin,
-            SingleDevicePlugin,
-        )
-        plugin = self.trainer.training_type_plugin
-        if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
+        try:
+            from pytorch_lightning.strategies import (
+                DDPSpawnStrategy,
+                SingleDeviceStrategy,
+            )
+            strategy = self.trainer.strategy
+        except ImportError:
+            # PyTorch Lightning < 1.6 backward compatibility:
+            from pytorch_lightning.plugins import (
+                DDPSpawnPlugin,
+                SingleDevicePlugin,
+            )
+            DDPSpawnStrategy = DDPSpawnPlugin
+            SingleDeviceStrategy = SingleDevicePlugin
+            strategy = self.trainer.training_type_plugin
+
+        if not isinstance(strategy, (SingleDeviceStrategy, DDPSpawnStrategy)):
             raise NotImplementedError(
                 f"'{self.__class__.__name__}' currently only supports "
-                f"'{SingleDevicePlugin.__name__}' and "
-                f"'{DDPSpawnPlugin.__name__}' training type plugins of "
-                f"'pytorch_lightning' (got '{plugin.__class__.__name__}')")
+                f"'{SingleDeviceStrategy.__name__}' and "
+                f"'{DDPSpawnStrategy.__name__}' training strategies of "
+                f"'pytorch_lightning' (got '{strategy.__class__.__name__}')")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._kwargs_repr(**self.kwargs)})'
@@ -77,11 +88,12 @@ class LightningDataset(LightningDataModule):
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
-        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
-        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported in order to correctly
-        share data across all devices/processes:
+        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
+        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        strategies of `PyTorch Lightning
+        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`__ are supported in order to correctly share data across
+        all devices/processes:
 
         .. code-block::
 
@@ -160,11 +172,12 @@ class LightningNodeData(LightningDataModule):
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
-        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
-        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported in order to correctly
-        share data across all devices/processes:
+        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
+        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        strategies of `PyTorch Lightning
+        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`__ are supported in order to correctly share data across
+        all devices/processes:
 
         .. code-block::
 
