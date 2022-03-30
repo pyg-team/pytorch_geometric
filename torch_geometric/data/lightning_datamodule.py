@@ -50,17 +50,28 @@ class LightningDataModule(PLLightningDataModule):
         self.kwargs = kwargs
 
     def prepare_data(self):
-        from pytorch_lightning.plugins import (
-            DDPSpawnPlugin,
-            SingleDevicePlugin,
-        )
-        plugin = self.trainer.training_type_plugin
-        if not isinstance(plugin, (SingleDevicePlugin, DDPSpawnPlugin)):
+        try:
+            from pytorch_lightning.strategies import (
+                DDPSpawnStrategy,
+                SingleDeviceStrategy,
+            )
+            strategy = self.trainer.strategy
+        except ImportError:
+            # PyTorch Lightning < 1.6 backward compatibility:
+            from pytorch_lightning.plugins import (
+                DDPSpawnPlugin,
+                SingleDevicePlugin,
+            )
+            DDPSpawnStrategy = DDPSpawnPlugin
+            SingleDeviceStrategy = SingleDevicePlugin
+            strategy = self.trainer.training_type_plugin
+
+        if not isinstance(strategy, (SingleDeviceStrategy, DDPSpawnStrategy)):
             raise NotImplementedError(
                 f"'{self.__class__.__name__}' currently only supports "
-                f"'{SingleDevicePlugin.__name__}' and "
-                f"'{DDPSpawnPlugin.__name__}' training type plugins of "
-                f"'pytorch_lightning' (got '{plugin.__class__.__name__}')")
+                f"'{SingleDeviceStrategy.__name__}' and "
+                f"'{DDPSpawnStrategy.__name__}' training strategies of "
+                f"'pytorch_lightning' (got '{strategy.__class__.__name__}')")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self._kwargs_repr(**self.kwargs)})'
@@ -77,16 +88,18 @@ class LightningDataset(LightningDataModule):
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
-        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
-        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported in order to correctly
-        share data across all devices/processes:
+        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
+        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        strategies of `PyTorch Lightning
+        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`__ are supported in order to correctly share data across
+        all devices/processes:
 
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+                                 devices=4)
             trainer.fit(model, datamodule)
 
     Args:
@@ -160,16 +173,18 @@ class LightningNodeData(LightningDataModule):
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.plugins.SingleDevicePlugin` and
-        :class:`pytorch_lightning.plugins.DDPSpawnPlugin` training type plugins
-        of `PyTorch Lightning <https://pytorch-lightning.readthedocs.io/en/
-        latest/guides/speed.html>`__ are supported in order to correctly
-        share data across all devices/processes:
+        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
+        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        strategies of `PyTorch Lightning
+        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`__ are supported in order to correctly share data across
+        all devices/processes:
 
         .. code-block::
 
             import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", gpus=4)
+            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+                                 devices=4)
             trainer.fit(model, datamodule)
 
     Args:
@@ -266,12 +281,20 @@ class LightningNodeData(LightningDataModule):
     def prepare_data(self):
         """"""
         if self.loader == 'full':
-            if self.trainer.num_processes > 1 or self.trainer.num_gpus > 1:
-                raise ValueError(f"'{self.__class__.__name__}' with loader="
-                                 f"'full' requires training on a single GPU")
+            try:
+                num_devices = self.trainer.num_devices
+            except AttributeError:
+                # PyTorch Lightning < 1.6 backward compatibility:
+                num_devices = self.trainer.num_processes
+                num_devices = max(num_devices, self.trainer.num_gpus)
+
+            if num_devices > 1:
+                raise ValueError(
+                    f"'{self.__class__.__name__}' with loader='full' requires "
+                    f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes) -> DataLoader:
+    def dataloader(self, input_nodes: InputNodes, shuffle: bool) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -280,24 +303,23 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
-            warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
-            return NeighborLoader(self.data, input_nodes=input_nodes,
+            return NeighborLoader(data=self.data, input_nodes=input_nodes,
                                   neighbor_sampler=self.neighbor_sampler,
-                                  shuffle=True, **self.kwargs)
+                                  shuffle=shuffle, **self.kwargs)
 
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_train_nodes)
+        return self.dataloader(self.input_train_nodes, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_val_nodes)
+        return self.dataloader(self.input_val_nodes, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_test_nodes)
+        return self.dataloader(self.input_test_nodes, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
