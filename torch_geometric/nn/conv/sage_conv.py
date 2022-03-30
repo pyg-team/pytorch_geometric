@@ -66,6 +66,8 @@ class SAGEConv(MessagePassing):
         self.normalize = normalize
         self.root_weight = root_weight
         self.aggregator_type = aggregator_type
+        
+        assert self.aggregator_type in ['mean', 'max', 'lstm', 'gcn', None]
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
