@@ -1,15 +1,14 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.loader.base import BaseDataLoader
 from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
 from torch_geometric.typing import NodeType
 
 
-class HGTLoader(BaseDataLoader):
+class HGTLoader(torch.utils.data.DataLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -120,10 +119,10 @@ class HGTLoader(BaseDataLoader):
         self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
             data, device='cpu')
 
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
+        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample_fn,
                          **kwargs)
 
-    def sample(self, indices: List[int]) -> HeteroData:
+    def sample_fn(self, indices: List[int]) -> HeteroData:
         input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
         node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
             self.colptr_dict,
@@ -132,13 +131,10 @@ class HGTLoader(BaseDataLoader):
             self.num_samples,
             self.num_hops,
         )
-        return node_dict, row_dict, col_dict, edge_dict, len(indices)
 
-    def transform_fn(self, out: Any) -> HeteroData:
-        node_dict, row_dict, col_dict, edge_dict, batch_size = out
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                   edge_dict, self.perm_dict)
-        data[self.input_nodes[0]].batch_size = batch_size
+        data[self.input_nodes[0]].batch_size = len(indices)
 
         return data if self.transform is None else self.transform(data)
 

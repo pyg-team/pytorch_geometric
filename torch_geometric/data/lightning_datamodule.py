@@ -279,12 +279,13 @@ class LightningNodeData(LightningDataModule):
     def prepare_data(self):
         """"""
         if self.loader == 'full':
-            if self.trainer.num_processes > 1 or self.trainer.num_gpus > 1:
-                raise ValueError(f"'{self.__class__.__name__}' with loader="
-                                 f"'full' requires training on a single GPU")
+            if self.trainer.num_devices > 1:
+                raise ValueError(
+                    f"'{self.__class__.__name__}' with loader='full' requires "
+                    f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes) -> DataLoader:
+    def dataloader(self, input_nodes: InputNodes, shuffle: bool) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -293,24 +294,23 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
-            warnings.filterwarnings('ignore', '.*has `shuffle=True`.*')
-            return NeighborLoader(self.data, input_nodes=input_nodes,
+            return NeighborLoader(data=self.data, input_nodes=input_nodes,
                                   neighbor_sampler=self.neighbor_sampler,
-                                  shuffle=True, **self.kwargs)
+                                  shuffle=shuffle, **self.kwargs)
 
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_train_nodes)
+        return self.dataloader(self.input_train_nodes, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_val_nodes)
+        return self.dataloader(self.input_val_nodes, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_test_nodes)
+        return self.dataloader(self.input_test_nodes, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
