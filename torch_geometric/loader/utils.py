@@ -33,30 +33,45 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
+    share_memory: bool = False,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
     # `perm` vector that denotes the permutation of edges.
     # Since no permutation of edges is applied when using `SparseTensor`,
     # `perm` can be of type `None`.
+    perm: Optional[Tensor] = None
+
     if hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
-        return colptr.to(device), row.to(device), None
 
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
         size = data.size()
         perm = (col * size[0]).add_(row).argsort()
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        return colptr.to(device), row[perm].to(device), perm.to(device)
+        row = row[perm]
+    else:
+        raise AttributeError("Data object does not contain attributes "
+                             "'adj_t' or 'edge_index'")
 
-    raise AttributeError(
-        "Data object does not contain attributes 'adj_t' or 'edge_index'")
+    colptr = colptr.to(device)
+    row = row.to(device)
+    perm = perm if perm is not None else perm.to(device)
+
+    if not colptr.is_cuda and share_memory:
+        colptr.share_memory_()
+        row.share_memory_()
+        if perm is not None:
+            perm.share_memory_()
+
+    return colptr, row, perm
 
 
 def to_hetero_csc(
     data: HeteroData,
     device: Optional[torch.device] = None,
+    share_memory: bool = False,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -68,7 +83,8 @@ def to_hetero_csc(
 
     for store in data.edge_stores:
         key = edge_type_to_str(store._key)
-        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store, device)
+        out = to_csc(store, device, share_memory)
+        colptr_dict[key], row_dict[key], perm_dict[key] = out
 
     return colptr_dict, row_dict, perm_dict
 
