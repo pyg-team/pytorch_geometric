@@ -1,11 +1,11 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.base import BaseDataLoader
+from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
     filter_data,
@@ -95,7 +95,7 @@ class NeighborSampler:
             return node_dict, row_dict, col_dict, edge_dict, index.numel()
 
 
-class NeighborLoader(BaseDataLoader):
+class NeighborLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
@@ -253,6 +253,9 @@ class NeighborLoader(BaseDataLoader):
             data[self.neighbor_sampler.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
+
+    def _get_iterator(self) -> Iterator:
+        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

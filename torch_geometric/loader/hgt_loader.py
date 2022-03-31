@@ -1,15 +1,15 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.loader.base import BaseDataLoader
+from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
 from torch_geometric.typing import NodeType
 
 
-class HGTLoader(BaseDataLoader):
+class HGTLoader(torch.utils.data.DataLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -142,6 +142,9 @@ class HGTLoader(BaseDataLoader):
         data[self.input_nodes[0]].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
+
+    def _get_iterator(self) -> Iterator:
+        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
