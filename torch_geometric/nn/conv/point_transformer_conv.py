@@ -54,7 +54,8 @@ class PointTransformerConv(MessagePassing):
             :math:`\gamma_\mathbf{\Theta}` which maps transformed
             node features of shape :obj:`[-1, out_channels]`
             to shape :obj:`[-1, out_channels // share_planes]`.
-            (default::obj:`None`)
+            Will default to a :class:`torch.nn.Linear` transformation if not
+            further specified. (default::obj:`None`)
         add_self_loops (bool, optional) : If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
         share_planes (int, optional) : Specify how much planes will share the

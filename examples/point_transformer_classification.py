@@ -86,7 +86,7 @@ class TransitionDown(torch.nn.Module):
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
+        x_out, _ = scatter_max(x, id_k_neighbor[0],
                                dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
