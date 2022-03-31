@@ -1,36 +1,52 @@
 import torch
+from torch import Tensor
 
 
 class MaskLabel(torch.nn.Module):
-    r"""A label embedding layer that replicates the label masking from `"Masked
-    Label Prediction: Unified Message Passing Model for Semi-Supervised
-    Classification" <https://arxiv.org/abs/2009.03509>`_ paper.
+    r"""The label embedding and masking layer from the `"Masked Label Prediction:
+    Unified Message Passing Model for Semi-Supervised Classification"
+    <https://arxiv.org/abs/2009.03509>`_ paper.
 
-    In the forward pass both the labels, and a mask corresponding to which
-    labels should be kept is provided. All entries that are not true in the
-    mask are returned as zero.
+    Here, node labels :obj:`y` are merged to the initial node features :obj:`x`
+    for a subset of their nodes according to :obj:`mask`.
+
+    .. note::
+
+        For an example of using :class:`MaskLabel`, see
+        `examples/unimp_arxiv.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/unimp_arxiv.py>`_.
+
 
     Args:
-        num_classes (int): Size of the number of classes for the labels
+        num_classes (int): The number of classes.
         out_channels (int): Size of each output sample.
-        method (str): "add" if embedding should be added to the input and
-            "concat" if they should be concattenated. Note that if "add" is
-            used then "out_channels" needs to be equal to the input dims.
+        method (str, optional): If set to :obj:`"add"`, label embeddings are
+            added to the input. If set to :obj:`"concat"`, label embeddings are
+            concatenated. In case :obj:`method="add"`, then :obj:`out_channels`
+            needs to be identical to the input dimensionality of node features.
+            (default: :obj:`"add"`)
     """
-    def __init__(self, num_classes, out_channels, method="add"):
+    def __init__(self, num_classes: int, out_channels: int,
+                 method: str = "add"):
         super().__init__()
 
-        self.emb = torch.nn.Embedding(num_classes, out_channels)
-        self.out_channels = out_channels
-        if method not in ("add", "concat"):
-            raise NotImplementedError("method must be 'add' or 'concat")
         self.method = method
+        if method not in ["add", "concat"]:
+            raise ValueError(
+                f"'method' must be either 'add' or 'concat' (got '{method}')")
 
-    def forward(self, x: torch.Tensor, y: torch.Tensor, mask: torch.Tensor):
+        self.emb = torch.nn.Embedding(num_classes, out_channels)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.emb.reset_parameters()
+
+    def forward(self, x: Tensor, y: Tensor, mask: Tensor) -> Tensor:
+        """"""
         if self.method == "concat":
-            out = torch.zeros(y.shape[0], self.out_channels, dtype=torch.float)
+            out = x.new_zeros(y.size(0), self.out_channels)
             out[mask] = self.emb(y[mask])
-            return torch.cat([x, out], dim=1)
+            return torch.cat([x, out], dim=-1)
         else:
             x = torch.clone(x)
             x[mask] += self.emb(y[mask])
@@ -38,22 +54,22 @@ class MaskLabel(torch.nn.Module):
 
     @staticmethod
     def ratio_mask(mask: torch.Tensor, ratio: float, shuffle: bool = False):
-        r"""Modifies the existing :obj:`mask` by additionally setting
-        :obj:`ratio` of the :obj:`True` entries to :obj:`False`. Does not
-        operate inplace.
-
-        If shuffle is required the masking proportion is not exact.
+        r"""Modifies :obj:`mask` by setting :obj:`ratio` of :obj:`True`
+        entries to :obj:`False`. Does not operate in-place.
 
         Args:
             mask (torch.Tensor): The mask to re-mask.
             ratio (float): The ratio of entries to remove.
-            shuffle (bool): Whether or not to randomize which elements
-                to change to :obj:`False`.
+            shuffle (bool, optional): Whether to randomize which elements to
+                change to :obj:`False`. (default: :obj:`False`)
         """
         n = int(mask.sum())
         mask = torch.clone(mask)
         new_mask = torch.arange(1, n + 1) > ratio * n
         if shuffle:
             new_mask = new_mask[torch.randperm(n)]
-        mask[mask == 1] = new_mask
+        mask[mask] = new_mask
         return mask
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__()}'
