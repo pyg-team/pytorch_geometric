@@ -72,8 +72,10 @@ class SphericalBasisLayer(torch.nn.Module):
         super().__init__()
         import sympy as sym
 
-        from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
-                                                             real_sph_harm)
+        from torch_geometric.nn.models.dimenet_utils import (
+            bessel_basis,
+            real_sph_harm,
+        )
 
         assert num_radial <= 64
         self.num_spherical = num_spherical

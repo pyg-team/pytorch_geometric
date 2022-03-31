@@ -1,8 +1,12 @@
 import torch
 
-from torch_geometric.utils import (add_remaining_self_loops, add_self_loops,
-                                   contains_self_loops, remove_self_loops,
-                                   segregate_self_loops)
+from torch_geometric.utils import (
+    add_remaining_self_loops,
+    add_self_loops,
+    contains_self_loops,
+    remove_self_loops,
+    segregate_self_loops,
+)
 
 
 def test_contains_self_loops():

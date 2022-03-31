@@ -4,8 +4,11 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
-from torch_geometric.loader import (DataLoader, ImbalancedSampler,
-                                    NeighborLoader)
+from torch_geometric.loader import (
+    DataLoader,
+    ImbalancedSampler,
+    NeighborLoader,
+)
 
 
 def test_dataloader_with_imbalanced_sampler():

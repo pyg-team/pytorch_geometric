@@ -4,10 +4,14 @@ from torch.nn import Linear
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
-from torch_geometric.profile import (count_parameters, get_cpu_memory_from_gc,
-                                     get_data_size, get_gpu_memory_from_gc,
-                                     get_gpu_memory_from_nvidia_smi,
-                                     get_model_size)
+from torch_geometric.profile import (
+    count_parameters,
+    get_cpu_memory_from_gc,
+    get_data_size,
+    get_gpu_memory_from_gc,
+    get_gpu_memory_from_nvidia_smi,
+    get_model_size,
+)
 
 
 def test_count_parameters():

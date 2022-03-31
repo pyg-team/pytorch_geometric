@@ -20,8 +20,11 @@ from torch.nn import Linear
 from torch_geometric.datasets import JODIEDataset
 from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn import TGNMemory, TransformerConv
-from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
-                                           LastNeighborLoader)
+from torch_geometric.nn.models.tgn import (
+    IdentityMessage,
+    LastAggregator,
+    LastNeighborLoader,
+)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

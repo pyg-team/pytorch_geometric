@@ -3,8 +3,15 @@ from typing import List, Optional, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import (BatchNorm1d, Dropout, InstanceNorm1d, LayerNorm,
-                      Parameter, ReLU, Sequential)
+from torch.nn import (
+    BatchNorm1d,
+    Dropout,
+    InstanceNorm1d,
+    LayerNorm,
+    Parameter,
+    ReLU,
+    Sequential,
+)
 from torch_scatter import scatter, scatter_softmax
 from torch_sparse import SparseTensor
 

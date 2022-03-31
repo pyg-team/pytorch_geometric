@@ -4,16 +4,19 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType
 
 
+@functional_transform('add_metapaths')
 class AddMetaPaths(BaseTransform):
     r""" Adds additional edge types to a
     :class:`~torch_geometric.data.HeteroData` object between the source node
     type and the destination node type of a given :obj:`metapath`, as described
     in the `"Heterogenous Graph Attention Networks"
-    <https://arxiv.org/abs/1903.07293>`_ paper.
+    <https://arxiv.org/abs/1903.07293>`_ paper
+    (functional name: :obj:`add_metapaths`).
     Meta-path based neighbors can exploit different aspects of structure
     information in heterogeneous graphs.
     Formally, a metapath is a path of the form

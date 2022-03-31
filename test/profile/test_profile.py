@@ -1,22 +1,14 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
 import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile import get_stats_summary, profileit, timeit
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_profile():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-
-    dataset = Planetoid(root, 'PubMed')
+def test_profile(get_dataset):
+    dataset = get_dataset(name='PubMed')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).cuda()
@@ -64,5 +56,3 @@ def test_profile():
     assert stats_summary.max_active_cuda > 0
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
-
-    shutil.rmtree(root)

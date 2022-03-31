@@ -3,9 +3,15 @@ import scipy.sparse
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.utils import (from_networkx, from_scipy_sparse_matrix,
-                                   from_trimesh, subgraph, to_networkx,
-                                   to_scipy_sparse_matrix, to_trimesh)
+from torch_geometric.utils import (
+    from_networkx,
+    from_scipy_sparse_matrix,
+    from_trimesh,
+    subgraph,
+    to_networkx,
+    to_scipy_sparse_matrix,
+    to_trimesh,
+)
 
 
 def test_to_scipy_sparse_matrix():

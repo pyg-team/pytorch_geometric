@@ -7,8 +7,12 @@ import scipy.sparse as sp
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class AttributedGraphDataset(InMemoryDataset):

@@ -181,7 +181,7 @@ def _collate(
         return value_dict, slice_dict, inc_dict
 
     elif (isinstance(elem, Sequence) and not isinstance(elem, str)
-          and isinstance(elem[0], (Tensor, SparseTensor))):
+          and len(elem) > 0 and isinstance(elem[0], (Tensor, SparseTensor))):
         # Recursively collate elements of lists.
         value_list, slice_list, inc_list = [], [], []
         for i in range(len(elem)):

@@ -391,6 +391,24 @@ class HeteroData(BaseData):
             self._edge_store_dict[key] = out
         return out
 
+    def rename(self, name: NodeType, new_name: NodeType) -> 'HeteroData':
+        r"""Renames the node type :obj:`name` to :obj:`new_name` in-place."""
+        node_store = self._node_store_dict.pop(name)
+        node_store._key = new_name
+        self._node_store_dict[new_name] = node_store
+
+        for edge_type in self.edge_types:
+            src, rel, dst = edge_type
+            if src == name or dst == name:
+                edge_store = self._edge_store_dict.pop(edge_type)
+                src = new_name if src == name else src
+                dst = new_name if dst == name else dst
+                edge_type = (src, rel, dst)
+                edge_store._key = edge_type
+                self._edge_store_dict[edge_type] = edge_store
+
+        return self
+
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
                        add_node_type: bool = True,

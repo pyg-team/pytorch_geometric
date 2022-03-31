@@ -5,7 +5,7 @@ import re
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain
-from typing import Callable, List, Optional, Set, get_type_hints
+from typing import Callable, List, Optional, Set, Union, get_type_hints
 from uuid import uuid1
 
 import torch
@@ -20,8 +20,14 @@ from torch_geometric.typing import Adj, Size
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
-from .utils.typing import (parse_types, resolve_types, sanitize,
-                           split_types_repr)
+from .utils.typing import (
+    parse_types,
+    resolve_types,
+    sanitize,
+    split_types_repr,
+)
+
+AGGRS = {'add', 'sum', 'mean', 'min', 'max', 'mul'}
 
 
 class MessagePassing(torch.nn.Module):
@@ -40,9 +46,11 @@ class MessagePassing(torch.nn.Module):
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string, optional): The aggregation scheme to use
+        aggr (string or list, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"` or :obj:`None`). (default: :obj:`"add"`)
+            :obj:`"mul"` or :obj:`None`). If given as a list, will make use of
+            multiple aggregations in which different outputs will get
+            concatenated in the last dimension. (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -78,17 +86,26 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
-    def __init__(self, aggr: Optional[str] = "add",
+    def __init__(self, aggr: Optional[Union[str, List[str]]] = "add",
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
 
         super().__init__()
 
-        self.aggr = aggr
-        assert self.aggr in ['add', 'sum', 'mean', 'min', 'max', 'mul', None]
+        if aggr is None or isinstance(aggr, str):
+            assert aggr is None or aggr in AGGRS
+            self.aggr: Optional[str] = aggr
+            self.aggrs: List[str] = []
+        elif isinstance(aggr, (tuple, list)):
+            assert len(set(aggr) | AGGRS) == len(AGGRS)
+            self.aggr: Optional[str] = None
+            self.aggrs: List[str] = aggr
+        else:
+            raise ValueError(f"Only strings, list and tuples are valid "
+                             f"aggregation schemes (got '{type(aggr)}')")
 
         self.flow = flow
-        assert self.flow in ['source_to_target', 'target_to_source']
+        assert flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
         self.decomposed_layers = decomposed_layers
@@ -96,6 +113,7 @@ class MessagePassing(torch.nn.Module):
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
+        self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
         self.inspector.inspect(self.edge_update)
@@ -271,7 +289,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self._explain):
+                and not self._explain and len(self.aggrs) == 0):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -341,7 +359,16 @@ class MessagePassing(torch.nn.Module):
                     res = hook(self, (aggr_kwargs, ))
                     if res is not None:
                         aggr_kwargs = res[0] if isinstance(res, tuple) else res
-                out = self.aggregate(out, **aggr_kwargs)
+
+                if len(self.aggrs) == 0:
+                    out = self.aggregate(out, **aggr_kwargs)
+                else:
+                    outs = []
+                    for aggr in self.aggrs:
+                        tmp = self.aggregate(out, aggr=aggr, **aggr_kwargs)
+                        outs.append(tmp)
+                    out = self.combine(outs)
+
                 for hook in self._aggregate_forward_hooks.values():
                     res = hook(self, (aggr_kwargs, ), out)
                     if res is not None:
@@ -408,8 +435,8 @@ class MessagePassing(torch.nn.Module):
         return x_j
 
     def aggregate(self, inputs: Tensor, index: Tensor,
-                  ptr: Optional[Tensor] = None,
-                  dim_size: Optional[int] = None) -> Tensor:
+                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                  aggr: Optional[str] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -420,12 +447,14 @@ class MessagePassing(torch.nn.Module):
         that support "add", "mean", "min", "max" and "mul" operations as
         specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
+        aggr = self.aggr if aggr is None else aggr
+        assert aggr is not None
         if ptr is not None:
             ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
-            return segment_csr(inputs, ptr, reduce=self.aggr)
+            return segment_csr(inputs, ptr, reduce=aggr)
         else:
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce=self.aggr)
+                           reduce=aggr)
 
     def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
@@ -436,6 +465,13 @@ class MessagePassing(torch.nn.Module):
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`.
         """
         raise NotImplementedError
+
+    def combine(self, inputs: List[Tensor]) -> Tensor:
+        r"""Combines the outputs from multiple aggregations into a single
+        representation. Will only get called in case :obj:`aggr` holds a list
+        of aggregation schemes to use."""
+        assert len(inputs) > 0
+        return torch.cat(inputs, dim=-1) if len(inputs) > 1 else inputs[0]
 
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
@@ -607,7 +643,7 @@ class MessagePassing(torch.nn.Module):
             if match is None:
                 raise TypeError(
                     'TorchScript support requires the definition of the types '
-                    'passed to `propagate()`. Please specificy them via\n\n'
+                    'passed to `propagate()`. Please specify them via\n\n'
                     'propagate_type = {"arg1": type1, "arg2": type2, ... }\n\n'
                     'or via\n\n'
                     '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
@@ -623,15 +659,14 @@ class MessagePassing(torch.nn.Module):
                     for k, v in self.edge_updater.items()
                 }
             else:
-                match = re.search(r'#\s*edge_updater_types:\s*\((.*)\)',
-                                  source)
+                match = re.search(r'#\s*edge_updater_type:\s*\((.*)\)', source)
                 if match is None:
                     raise TypeError(
                         'TorchScript support requires the definition of the '
-                        'types passed to `edge_updater()`. Please specificy '
-                        'them via\n\n edge_updater_types = {"arg1": type1, '
+                        'types passed to `edge_updater()`. Please specify '
+                        'them via\n\n edge_updater_type = {"arg1": type1, '
                         '"arg2": type2, ... }\n\n or via\n\n'
-                        '# edge_updater_types: (arg1: type1, arg2: type2, ...)'
+                        '# edge_updater_type: (arg1: type1, arg2: type2, ...)'
                         '\n\ninside the `MessagePassing` module.')
                 edge_updater_types = split_types_repr(match.group(1))
                 edge_updater_types = dict(
@@ -686,6 +721,7 @@ class MessagePassing(torch.nn.Module):
             prop_types=prop_types,
             prop_return_type=prop_return_type,
             fuse=self.fuse,
+            single_aggr=len(self.aggrs) == 0,
             collect_types=collect_types,
             user_args=self.__user_args__,
             edge_user_args=self.__edge_user_args__,

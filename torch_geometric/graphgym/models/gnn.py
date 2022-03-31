@@ -5,10 +5,12 @@ import torch.nn.functional as F
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.init import init_weights
-from torch_geometric.graphgym.models.layer import (BatchNorm1dNode,
-                                                   GeneralLayer,
-                                                   GeneralMultiLayer,
-                                                   new_layer_config)
+from torch_geometric.graphgym.models.layer import (
+    BatchNorm1dNode,
+    GeneralLayer,
+    GeneralMultiLayer,
+    new_layer_config,
+)
 from torch_geometric.graphgym.register import register_stage
 
 

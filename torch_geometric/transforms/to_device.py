@@ -1,13 +1,15 @@
 from typing import List, Optional, Union
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('to_device')
 class ToDevice(BaseTransform):
     r"""Performs tensor device conversion, either for all attributes of the
     :obj:`~torch_geometric.data.Data` object or only the ones given by
-    :obj:`attrs`.
+    :obj:`attrs` (functional name: :obj:`to_device`).
 
     Args:
         device (torch.device): The destination device.

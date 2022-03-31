@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
@@ -27,6 +27,7 @@ full_install_requires = [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'torchmetrics>=0.7',
     'class-resolver>=0.3.2',
 ]
 
@@ -48,7 +49,7 @@ setup(
     url=URL,
     download_url=f'{URL}/archive/{__version__}.tar.gz',
     keywords=[
-        'deep-learning'
+        'deep-learning',
         'pytorch',
         'geometric-deep-learning',
         'graph-neural-networks',
