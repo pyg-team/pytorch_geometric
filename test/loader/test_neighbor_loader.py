@@ -25,7 +25,6 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader(directed):
-    return
     torch.manual_seed(12345)
 
     data = Data()
@@ -60,7 +59,6 @@ def test_homogeneous_neighbor_loader(directed):
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader(directed):
-    return
     torch.manual_seed(12345)
 
     data = HeteroData()
@@ -182,38 +180,36 @@ def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert len(loader) == 1
 
     batch = next(iter(loader))
-    print(batch.__class__)
-    # batch_size = batch.batch_size
+    batch_size = batch.batch_size
 
-    # if not directed:
-    #     n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
-    #                                         edge_index=data.edge_index,
-    #                                         num_nodes=data.num_nodes)
+    if not directed:
+        n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
+                                            edge_index=data.edge_index,
+                                            num_nodes=data.num_nodes)
 
-    #     assert n_id.sort()[0].tolist() == batch.n_id.sort()[0].tolist()
-    #     assert batch.num_edges == int(e_mask.sum())
+        assert n_id.sort()[0].tolist() == batch.n_id.sort()[0].tolist()
+        assert batch.num_edges == int(e_mask.sum())
 
-    # class GNN(torch.nn.Module):
-    #     def __init__(self, in_channels, hidden_channels, out_channels):
-    #         super().__init__()
-    #         self.conv1 = GraphConv(in_channels, hidden_channels)
-    #         self.conv2 = GraphConv(hidden_channels, out_channels)
+    class GNN(torch.nn.Module):
+        def __init__(self, in_channels, hidden_channels, out_channels):
+            super().__init__()
+            self.conv1 = GraphConv(in_channels, hidden_channels)
+            self.conv2 = GraphConv(hidden_channels, out_channels)
 
-    #     def forward(self, x, edge_index, edge_weight):
-    #         x = self.conv1(x, edge_index, edge_weight).relu()
-    #         x = self.conv2(x, edge_index, edge_weight).relu()
-    #         return x
+        def forward(self, x, edge_index, edge_weight):
+            x = self.conv1(x, edge_index, edge_weight).relu()
+            x = self.conv2(x, edge_index, edge_weight).relu()
+            return x
 
-    # model = GNN(dataset.num_features, 16, dataset.num_classes)
+    model = GNN(dataset.num_features, 16, dataset.num_classes)
 
-    # out1 = model(data.x, data.edge_index, data.edge_weight)[split_idx]
-    # out2 = model(batch.x, batch.edge_index, batch.edge_weight)[:batch_size]
-    # assert torch.allclose(out1, out2, atol=1e-6)
+    out1 = model(data.x, data.edge_index, data.edge_weight)[split_idx]
+    out2 = model(batch.x, batch.edge_index, batch.edge_weight)[:batch_size]
+    assert torch.allclose(out1, out2, atol=1e-6)
 
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
-    return
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
