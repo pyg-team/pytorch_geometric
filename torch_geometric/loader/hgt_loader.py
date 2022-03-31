@@ -1,9 +1,10 @@
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
+from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
 from torch_geometric.typing import NodeType
 
@@ -117,7 +118,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         # NOTE: Since C++ cannot take dictionaries with tuples as key as
         # input, edge type triplets are converted into single strings.
         self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
-            data, device='cpu')
+            data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
 
         super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
                          **kwargs)
@@ -131,12 +132,19 @@ class HGTLoader(torch.utils.data.DataLoader):
             self.num_samples,
             self.num_hops,
         )
+        return node_dict, row_dict, col_dict, edge_dict, len(indices)
+
+    def transform_fn(self, out: Any) -> HeteroData:
+        node_dict, row_dict, col_dict, edge_dict, batch_size = out
 
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                   edge_dict, self.perm_dict)
-        data[self.input_nodes[0]].batch_size = len(indices)
+        data[self.input_nodes[0]].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
+
+    def _get_iterator(self) -> Iterator:
+        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
