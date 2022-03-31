@@ -44,7 +44,7 @@ class MaskLabel(torch.nn.Module):
     def forward(self, x: Tensor, y: Tensor, mask: Tensor) -> Tensor:
         """"""
         if self.method == "concat":
-            out = x.new_zeros(y.size(0), self.out_channels)
+            out = x.new_zeros(y.size(0), self.emb.weight.size(-1))
             out[mask] = self.emb(y[mask])
             return torch.cat([x, out], dim=-1)
         else:
@@ -68,8 +68,8 @@ class MaskLabel(torch.nn.Module):
         new_mask = torch.arange(1, n + 1) > ratio * n
         if shuffle:
             new_mask = new_mask[torch.randperm(n)]
-        mask[mask] = new_mask
+        mask[mask == 1] = new_mask
         return mask
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__()}'
+        return f'{self.__class__.__name__}()'
