@@ -1,6 +1,6 @@
-from typing import Any, Callable, Iterator
+from typing import Any, Callable
 
-from torch.utils.data.dataloader import DataLoader, _BaseDataLoaderIter
+from torch.utils.data.dataloader import _BaseDataLoaderIter
 
 
 class DataLoaderIterator(object):
@@ -19,15 +19,3 @@ class DataLoaderIterator(object):
 
     def __next__(self) -> Any:
         return self.transform_fn(next(self.iterator))
-
-
-class BaseDataLoader(DataLoader):
-    r"""Extends the :class:`torch.utils.data.DataLoader` by integrating a
-    custom :meth:`self.transform_fn` function to allow transformation of a
-    returned mini-batch directly inside the main process.
-    """
-    def _get_iterator(self) -> Iterator:
-        iterator = super()._get_iterator()
-        if hasattr(self, 'transform_fn'):
-            iterator = DataLoaderIterator(iterator, self.transform_fn)
-        return iterator

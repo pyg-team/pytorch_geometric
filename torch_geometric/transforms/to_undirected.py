@@ -4,14 +4,16 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
 
 
+@functional_transform('to_undirected')
 class ToUndirected(BaseTransform):
     r"""Converts a homogeneous or heterogeneous graph to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge
-    :math:`(i,j) \in \mathcal{E}`.
+    :math:`(i,j) \in \mathcal{E}` (functional name: :obj:`to_undirected`).
     In heterogeneous graphs, will add "reverse" connections for *all* existing
     edge types.
 

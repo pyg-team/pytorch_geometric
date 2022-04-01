@@ -63,9 +63,11 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
-    from rdkit import Chem
+    from rdkit import Chem, RDLogger
 
     from torch_geometric.data import Data
+
+    RDLogger.DisableLog('rdApp.*')
 
     mol = Chem.MolFromSmiles(smiles)
 

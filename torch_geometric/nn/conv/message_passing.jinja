@@ -235,7 +235,7 @@ class {{cls_name}}({{parent_cls_name}}):
         the_size = self.__check_input__(edge_index, size)
         in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
-        {% if fuse %}
+        {% if fuse and single_aggr %}
         if isinstance(edge_index, SparseTensor):
             out = self.message_and_aggregate(edge_index{% for k in msg_and_aggr_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
             return self.update(out{% for k in update_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
@@ -243,7 +243,14 @@ class {{cls_name}}({{parent_cls_name}}):
 
         kwargs = self.__collect__(edge_index, the_size, in_kwargs)
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
+        {% if single_aggr %}
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
+        {% else %}
+        outs: List[Tensor] = []
+        for aggr in self.aggrs:
+            outs.append(self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %}, aggr=aggr))
+        out = self.combine(outs)
+        {% endif %}
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
 
 {% if edge_updater_types|length > 0 %}
