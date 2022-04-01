@@ -55,21 +55,23 @@ class SAGEConv(MessagePassing):
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(
-        self, 
+        self,
         in_channels: Union[int, Tuple[int, int]],
-        out_channels: int, 
-        aggr: str = 'mean', 
-        normalize: bool = False, 
-        root_weight: bool = True, 
-        bias: bool = True, **kwargs,):
-        
+        out_channels: int,
+        aggr: str = 'mean',
+        normalize: bool = False,
+        root_weight: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
+
         kwargs.setdefault("aggr", aggr if aggr != 'lstm' else 'mean')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalize = normalize
-        self.root_weight = root_weight 
+        self.root_weight = root_weight
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -79,9 +81,11 @@ class SAGEConv(MessagePassing):
         else:
             self.lstm = None
 
-        self.lin_l = Linear(in_channels[0], out_channels, bias=bias) # neighbours
+        self.lin_l = Linear(in_channels[0], out_channels,
+                            bias=bias)  # neighbours
         if self.root_weight:
-            self.lin_r = Linear(in_channels[1], out_channels, bias=False) # root
+            self.lin_r = Linear(in_channels[1], out_channels,
+                                bias=False)  # root
 
         self.reset_parameters()
 
@@ -118,7 +122,7 @@ class SAGEConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor, 
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor,
                               edge_index_j, edge_index_i) -> Tensor:
         """
             Performs both message passing and aggregation of messages from neighbours using the aggregator_type
@@ -130,7 +134,7 @@ class SAGEConv(MessagePassing):
             _, (rst, _) = self.lstm(x)
             out = rst.squeeze(0)
             return out
-    
+
         elif self.aggr == 'mean':
             return matmul(adj_t, x[0], reduce=self.aggr)
 
