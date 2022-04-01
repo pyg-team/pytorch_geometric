@@ -103,7 +103,7 @@ class SAGEConv(MessagePassing):
             x: OptPairTensor = (x, x)
 
         # propagate_type: (x: OptPairTensor)
-        # propagate internally calls message_and_aggregate() if edge_index is a SparseTensor 
+        # propagate internally calls message_and_aggregate() if edge_index is a SparseTensor
         # or if message_and_aggregate() is implemented
         # otherwise it calls message(), aggregate() separately if edge_index is a Tensor
         out = self.propagate(edge_index, x=x, size=size)
