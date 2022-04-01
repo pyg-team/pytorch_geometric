@@ -1,4 +1,5 @@
 import argparse
+import random
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -11,12 +12,6 @@ from torch.nn.utils import rnn as rnnutils
 import torch_geometric
 from torch_geometric import data, transforms as T, loader
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--plot", action="store_true", help="Whether to plot graphs."
-)
-args = parser.parse_args()
-
 
 class EncodeGraphRNNFeature(T.BaseTransform):
     def __init__(self, M):
@@ -25,12 +20,12 @@ class EncodeGraphRNNFeature(T.BaseTransform):
     @staticmethod
     def extract_bands(adj, M):
         """
-        Uses stride tricks to extract the M bands above the diagonal of the
+        Uses stride tricks to extract M-long bands above the diagonal of the
         given square matrix.
 
-        :param adj: dimension N x N
-        :param M: number of bands above the diagonal to return
-        :returns: dimension (N - 1) x M; the M bands above the diagonal
+        :param adj: Dimension N x N
+        :param M: Length of a band above the diagonal to return.
+        :returns: Dimension (N - 1) x M; the M bands above the diagonal.
         """
         N = adj.shape[1]
         adj = adj.reshape(N, N)
@@ -133,16 +128,8 @@ class CyclesDataset(data.InMemoryDataset):
         self.data, self.slices = self.collate(graphs)
 
 
-# The maximum size of a BFS queue on our dataset.
-# Can be estimated emperically by running many BFS.
-# Denoted M as in the paper.
-M = 15
-# The maximum number of nodes that the sampler can generate per graph.
-SAMPLER_MAX_NUM_NODES = 100
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-dataset = CyclesDataset(transform=GraphRNNTransform(M=M), min_n=3, max_n=50)
-dataloader = loader.DataLoader(dataset, batch_size=32, shuffle=True)
+def is_cycle(graph):
+    return len(nx.cycle_basis(graph)) == 1
 
 
 def plot_4_graphs(graphs, title):
@@ -154,22 +141,11 @@ def plot_4_graphs(graphs, title):
     plt.show()
 
 
-if args.plot:
-    plot_4_graphs(
-        [
-            torch_geometric.utils.to_networkx(graph, to_undirected=True)
-            for graph in dataset
-        ][:4],
-        "Train graphs",
-    )
-
-
 class GraphRNN_S(nn.Module):
     def __init__(
         self,
         *,
         adjacency_size: int,
-        embed_first: bool,
         adjacency_embedding_size: int,
         hidden_size: int,
         num_layers: int,
@@ -177,10 +153,8 @@ class GraphRNN_S(nn.Module):
     ):
         """
         @param adjacency_size: Size of an adjacency vector. M in the paper.
-        @param embed_first: Whether to transform the adjacency vectors before
-        feeding them to the RNN cell.
-        @param adjacency_embedding_size: If embed_first, then Size of the
-        embedding of the adjacency vectors before feeding it to the RNN cell.
+        @param adjacency_embedding_size: Size of the embedding
+            of the adjacency vectors before feeding it to the RNN cell.
         @param hidden_size: Size of the hidden vectors of the RNN cell.
         @param num_layers: Number of stacked RNN layers
         @param output_embedding_size: Size of the embedding of the edge_level
@@ -192,23 +166,16 @@ class GraphRNN_S(nn.Module):
         self.hidden_size = hidden_size
         self.hidden = None
 
-        if embed_first:
-            self.embedding = nn.Sequential(
-                nn.Linear(adjacency_size, adjacency_embedding_size),
-                nn.ReLU(),
-            )
-            input_to_rnn_size = adjacency_embedding_size
-        else:
-            self.embedding = nn.Identity()
-            input_to_rnn_size = adjacency_size
-
+        self.embedding = nn.Sequential(
+            nn.Linear(adjacency_size, adjacency_embedding_size),
+            nn.ReLU(),
+        )
         self.rnn = nn.RNN(
-            input_size=input_to_rnn_size,
+            input_size=adjacency_embedding_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
             batch_first=True,
         )
-
         self.adjacency_mlp = nn.Sequential(
             nn.Linear(hidden_size, output_embedding_size),
             nn.ReLU(),
@@ -228,11 +195,10 @@ class GraphRNN_S(nn.Module):
     def forward(self, input_sequences, input_length, sampling=False):
         """
         @param input_sequences: (batch_size, max_num_nodes, adjacency_size=M)
-        For each graph in the batch, the sequence of adjacency vectors
-        (including the first SOS).
+            For each graph in the batch, the sequence of adjacency vectors
+            (including the first SOS).
         @param input_length: (batch_size,)
-            num_nodes for each graph in the batch. Because graph-sequences
-            where padded to max_num_nodes.
+            num_nodes for each graph in the batch.
         """
         input_sequences = self.embedding(input_sequences)
 
@@ -262,20 +228,9 @@ class GraphRNN_S(nn.Module):
     def sample(self, batch_size, device, max_num_nodes):
         """
         Sample a batch of graph sequences.
+        Assumes that learned/generated graphs are connected, as in the paper.
         @return: Tensor of size (batch_size, max_num_node, self.adjacency_size)
-        in the same device as the model.
-
-        Note: In the original implementation a max_num_node is used as a
-        placeholder for the generated graphs.  This makes the assumption that
-        the largest generated graph will have max_num_nodes.
-
-        Instead, this implementation makes the assumption that generated graphs
-        are connected.  This assumption is implicit in the original codebase.
-
-        In any case one of the above assumptions has to be made to know when
-        the sampler is done generating a graph.  The disconnected graph
-        assumption can be dropped by adding an SOS flag to the model rather
-        than an SOS token which can be confused with a disconnected node.
+            in the same device as the model.
         """
         input_sequence = torch.ones(
             batch_size, 1, self.adjacency_size, device=device
@@ -284,7 +239,8 @@ class GraphRNN_S(nn.Module):
 
         sequences = torch.zeros(batch_size, max_num_nodes, self.adjacency_size)
         seq_lengths = torch.zeros(batch_size, dtype=torch.long)
-        # Id of the node to be added to the sequence. Node 0 is not added.
+        # Id of the node whose adjacency vector will be sampled.
+        # Node 0 is not included.
         node_id = 0
         with torch.no_grad():
             self.hidden = torch.zeros(
@@ -301,8 +257,7 @@ class GraphRNN_S(nn.Module):
                 mask = torch.rand_like(output_sequence_probs)
                 output_sequence = torch.gt(output_sequence_probs, mask)
 
-                # Identify the EOS sequences and persist them even if model
-                # says otherwise.
+                # Identify the EOS sequences.
                 is_not_eos *= output_sequence.any(dim=-1).squeeze().cpu()
                 seq_lengths += is_not_eos
 
@@ -310,17 +265,41 @@ class GraphRNN_S(nn.Module):
                 input_sequence = output_sequence.float()
 
         # Clean irrelevant bits and enforce creation of connected graph.
-        # Pack to seq_lengths to include empty sequences. Pack does not support
-        # empty sequences.
+        # Pack to 1 + seq_lengths to include empty sequences
         self.mask_out_bits_after_length(sequences, seq_lengths + 1)
         sequences = sequences.tril()
 
         return sequences[:, : seq_lengths.max()], seq_lengths
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--plot", action="store_true", help="Whether to plot graphs."
+)
+args = parser.parse_args()
+
+# The maximum size of a BFS queue on our dataset.
+# Can be estimated empirically by running many BFS.
+# Denoted M as in the paper.
+M = 25
+# The maximum number of nodes that the sampler can generate per graph.
+SAMPLER_MAX_NUM_NODES = 100
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+dataset = CyclesDataset(transform=GraphRNNTransform(M=M), min_n=3, max_n=50)
+dataloader = loader.DataLoader(dataset, batch_size=32, shuffle=True)
+
+if args.plot:
+    plot_4_graphs(
+        [
+            torch_geometric.utils.to_networkx(graph, to_undirected=True)
+            for graph in dataset[random.sample(range(len(dataset)), 4)]
+        ],
+        "Train graphs",
+    )
+
 model = GraphRNN_S(
     adjacency_size=M,
-    embed_first=True,
     adjacency_embedding_size=64,
     hidden_size=128,
     num_layers=4,
@@ -353,44 +332,27 @@ for epoch in range(1001):
         loss.backward()
         optimizer.step()
 
-        if epoch % 100 == 0:
-            # Compute the epoch NLL. Can be refactored.
-            if batch_idx == 0:
-                epoch_nll = 0
-            with torch.no_grad():
-                # Only leave relevant bits.
-                # (In rows i < M, remove bits before i).
-                output_sequences *= output_sequences.tril()
-                epoch_nll += (
-                    F.binary_cross_entropy(
-                        output_sequences, y_padded, reduction="sum"
-                    ).item()
-                    / batch.num_graphs
+        if epoch % 100 == 0 and batch_idx == 0:
+            # Sample some graphs and evaluate them.
+            output_sequences, lengths = model.sample(
+                64, device, SAMPLER_MAX_NUM_NODES
+            )
+            adjs = [
+                EncodeGraphRNNFeature.inverse(sequence[:length])
+                for sequence, length in zip(output_sequences, lengths)
+            ]
+            graphs = [nx.from_numpy_array(adj.numpy()) for adj in adjs]
+
+            if args.plot:
+                plot_4_graphs(
+                    graphs[:4], "Sampled graphs at epoch {}".format(epoch)
                 )
 
-            if batch_idx == 0:
-                # sample some graphs and evaluate them
-                output_sequences, lengths = model.sample(
-                    64, device, SAMPLER_MAX_NUM_NODES
-                )
-                adjs = [
-                    EncodeGraphRNNFeature.inverse(sequence[:length])
-                    for sequence, length in zip(output_sequences, lengths)
-                ]
-                graphs = [nx.from_numpy_array(adj.numpy()) for adj in adjs]
-
-                if args.plot:
-                    plot_4_graphs(
-                        graphs[:4], "Sampled graphs at epoch {}".format(epoch)
-                    )
-
-                # check if the generated graphs are cycles
-                def is_cycle(G):
-                    return len(list(nx.cycle_basis(G))) == 1
-                percentage_are_cycles = sum(map(is_cycle, graphs)) / len(
-                    graphs
-                )
-                print(
-                    "Percentage of generated graphs that are cycles at epoch "
-                    f"{epoch}: {percentage_are_cycles}"
-                )
+            # Check if the generated graphs are cycles.
+            percentage_are_cycles = sum(map(is_cycle, graphs)) / len(
+                graphs
+            )
+            print(
+                "Percentage of generated graphs that are cycles at epoch "
+                f"{epoch}: {percentage_are_cycles}"
+            )
