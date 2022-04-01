@@ -57,7 +57,7 @@ class SAGEConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int,
                                                      int]], out_channels: int,
                  aggregator_type: str = 'mean', normalize: bool = False,
-                 root_weight: bool = True, bias: bool = True, **kwargs):
+                 root_weight: bool = True, bias: bool = True, **kwargs,):
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
