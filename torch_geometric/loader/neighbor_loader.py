@@ -1,10 +1,11 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
     filter_data,
@@ -25,6 +26,7 @@ class NeighborSampler:
         replace: bool = False,
         directed: bool = True,
         input_node_type: Optional[str] = None,
+        share_memory: bool = False,
     ):
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
@@ -33,14 +35,15 @@ class NeighborSampler:
 
         if isinstance(data, Data):
             # Convert the graph data into a suitable format for sampling.
-            self.colptr, self.row, self.perm = to_csc(data, device='cpu')
+            out = to_csc(data, device='cpu', share_memory=share_memory)
+            self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
         elif isinstance(data, HeteroData):
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu')
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory)
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
@@ -228,16 +231,14 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         if neighbor_sampler is None:
             input_node_type = get_input_node_type(input_nodes)
-            self.neighbor_sampler = NeighborSampler(data, num_neighbors,
-                                                    replace, directed,
-                                                    input_node_type)
+            self.neighbor_sampler = NeighborSampler(
+                data, num_neighbors, replace, directed, input_node_type,
+                share_memory=kwargs.get('num_workers', 0) > 0)
 
         return super().__init__(get_input_node_indices(data, input_nodes),
-                                collate_fn=self.sample_fn, **kwargs)
+                                collate_fn=self.neighbor_sampler, **kwargs)
 
-    def sample_fn(self, index: Any) -> Union[Data, HeteroData]:
-        out = self.neighbor_sampler(index)
-
+    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
             data = filter_data(self.data, node, row, col, edge,
@@ -252,6 +253,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
             data[self.neighbor_sampler.input_node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
+
+    def _get_iterator(self) -> Iterator:
+        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
