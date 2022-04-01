@@ -46,10 +46,12 @@ class FixedPoints(BaseTransform):
             ], dim=0)[:self.num]
 
         for key, item in data:
-            if bool(re.search('edge', key)):
+            if key == 'num_nodes':
+                data.num_nodes = choice.size(0)
+            elif bool(re.search('edge', key)):
                 continue
-            if (torch.is_tensor(item) and item.size(0) == num_nodes
-                    and item.size(0) != 1):
+            elif (torch.is_tensor(item) and item.size(0) == num_nodes
+                  and item.size(0) != 1):
                 data[key] = item[choice]
 
         return data
