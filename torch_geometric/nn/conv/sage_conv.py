@@ -25,7 +25,7 @@ class SAGEConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggregator_type (str): ['mean', 'max', 'gcn', 'lstm'], mean by default
+        aggr (str): ['mean', 'max', 'lstm'], mean by default
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
             :math:`\frac{\mathbf{x}^{\prime}_i}
@@ -55,41 +55,33 @@ class SAGEConv(MessagePassing):
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(
-        self,
+        self, 
         in_channels: Union[int, Tuple[int, int]],
-        out_channels: int,
-        aggregator_type: str = 'mean',
-        normalize: bool = False,
-        root_weight: bool = True,
-        bias: bool = True,
-        **kwargs,
-    ):
+        out_channels: int, 
+        aggr: str = 'mean', 
+        normalize: bool = False, 
+        root_weight: bool = True, 
+        bias: bool = True, **kwargs,):
+        
+        kwargs.setdefault("aggr", aggr if aggr != 'lstm' else 'mean')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalize = normalize
-        self.root_weight = root_weight
-        self.aggregator_type = aggregator_type
-
-        assert self.aggregator_type in ['mean', 'max', 'lstm', 'gcn', None]
+        self.root_weight = root_weight 
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        if self.aggregator_type == 'gcn':
-            # Convolutional aggregator does not concatenate the root node
-            # i.e it doesn't concatenate the nodes previous layer
-            self.root_weight = False
-
-        if self.aggregator_type == 'lstm':
+        if aggr == 'lstm':
             self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
+        else:
+            self.lstm = None
 
-        self.lin_l = Linear(in_channels[0], out_channels,
-                            bias=bias)  # neighbours
+        self.lin_l = Linear(in_channels[0], out_channels, bias=bias) # neighbours
         if self.root_weight:
-            self.lin_r = Linear(in_channels[1], out_channels,
-                                bias=False)  # root
+            self.lin_r = Linear(in_channels[1], out_channels, bias=False) # root
 
         self.reset_parameters()
 
@@ -97,7 +89,7 @@ class SAGEConv(MessagePassing):
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()
-        if self.aggregator_type == 'lstm':
+        if self.lstm is not None:
             self.lstm.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -107,7 +99,8 @@ class SAGEConv(MessagePassing):
             x: OptPairTensor = (x, x)
 
         # propagate_type: (x: OptPairTensor)
-        # propagate internally calls message_and_aggregate()
+        # propagate internally calls message_and_aggregate() if edge_index is a SparseTensor
+        # otherwise it calls message(), aggregate() separately if edge_index is a Tensor
         out = self.propagate(edge_index, x=x, size=size)
         out = self.lin_l(out)
 
@@ -125,19 +118,21 @@ class SAGEConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor,
+    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor, 
                               edge_index_j, edge_index_i) -> Tensor:
         """
             Performs both message passing and aggregation of messages from neighbours using the aggregator_type
         """
         adj_t = adj_t.set_value(None, layout=None)
-        if self.aggregator_type == 'mean' or self.aggregator_type == 'gcn':
-            return matmul(adj_t, x[0], reduce='mean')
-
-        elif self.aggregator_type == 'max':
-            return matmul(adj_t, x[0], reduce='max')
-
-        elif self.aggregator_type == 'lstm':
+        if self.lstm is not None:
             x_j = x[0][edge_index_j]
             x, mask = to_dense_batch(x_j, edge_index_i)
-            return self.lstm(x)
+            _, (rst, _) = self.lstm(x)
+            out = rst.squeeze(0)
+            return out
+    
+        elif self.aggr == 'mean':
+            return matmul(adj_t, x[0], reduce=self.aggr)
+
+        elif self.aggr == 'max':
+            return matmul(adj_t, x[0], reduce=self.aggr)
