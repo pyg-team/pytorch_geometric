@@ -48,7 +48,6 @@ class LinkNeighborLoader(BaseDataLoader):
         replace: bool = False,
         directed: bool = True,
         transform: Callable = None,
-        negative_sampling: bool = False,
         **kwargs,
     ):
 
@@ -82,7 +81,8 @@ class LinkNeighborLoader(BaseDataLoader):
         data = data if self.transform is None else self.transform(data)
 
         labels = self.get_input_edge_labels()[index]
-        return (data, labels)
+        edges = self.data.edge_index.T[torch.Tensor(self.get_input_edge_idx()).type(torch.long)[index]]
+        return (data, edges, labels)
 
     def get_input_edge_idx(self):
         if self.input_edge_idx is None:

@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.utils.mask import mask_to_index
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.base import BaseDataLoader
 from torch_geometric.loader.utils import (
@@ -13,10 +14,7 @@ from torch_geometric.loader.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.typing import EdgeType, InputNodes
-
-NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
-
+from torch_geometric.typing import NodeType, InputNodes, NumNeighbors
 
 class NeighborSampler:
     def __init__(
@@ -258,7 +256,7 @@ class NeighborLoader(BaseDataLoader):
 ###############################################################################
 
 
-def get_input_node_type(input_nodes: InputNodes) -> Optional[str]:
+def get_input_node_type(input_nodes: InputNodes) -> Optional[NodeType]:
     if isinstance(input_nodes, str):
         return input_nodes
     if isinstance(input_nodes, (list, tuple)):
@@ -283,7 +281,7 @@ def get_input_node_indices(data: Union[Data, HeteroData],
 
     if isinstance(input_nodes, Tensor):
         if input_nodes.dtype == torch.bool:
-            input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
+            input_nodes = mask_to_index(input_nodes)
         input_nodes = input_nodes.tolist()
 
     assert isinstance(input_nodes, Sequence)
