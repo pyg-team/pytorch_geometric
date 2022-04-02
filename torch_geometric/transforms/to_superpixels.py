@@ -2,14 +2,17 @@ import torch
 from torch_scatter import scatter_mean
 
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('to_slic')
 class ToSLIC(BaseTransform):
     r"""Converts an image to a superpixel representation using the
     :meth:`skimage.segmentation.slic` algorithm, resulting in a
     :obj:`torch_geometric.data.Data` object holding the centroids of
-    superpixels in :obj:`pos` and their mean color in :obj:`x`.
+    superpixels in :obj:`pos` and their mean color in :obj:`x`
+    (functional name: :obj:`to_slic`).
 
     This transform can be used with any :obj:`torchvision` dataset.
 

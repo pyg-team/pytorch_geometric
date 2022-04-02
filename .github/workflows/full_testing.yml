@@ -1,8 +1,9 @@
 name: Full Testing
 
 on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11pm PST
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
 
 jobs:
 
@@ -52,3 +53,11 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: false
+
+      - name: Run examples
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          python examples/gcn.py
+          python examples/gat.py
+          python examples/mutag_gin.py
+          python examples/gnn_explainer.py

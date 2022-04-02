@@ -23,6 +23,8 @@ from torch_geometric.data.view import ItemsView, KeysView, ValuesView
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import contains_isolated_nodes, is_undirected
 
+N_KEYS = {'x', 'feat', 'pos', 'batch'}
+
 
 class BaseStorage(MutableMapping):
     # This class wraps a Python dictionary and extends it as follows:
@@ -260,8 +262,7 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if (isinstance(value, Tensor)
-                    and (key in {'x', 'pos', 'batch'} or 'node' in key)):
+            if isinstance(value, Tensor) and (key in N_KEYS or 'node' in key):
                 return value.size(self._parent().__cat_dim__(key, value, self))
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
@@ -475,11 +476,13 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
-        num_edges = self.num_edges
+        num_nodes, num_edges = self.num_nodes, self.num_edges
         if not isinstance(value, Tensor):
             return False
         if value.size(cat_dim) != num_edges:
             return False
+        if num_nodes != num_edges:
+            return True
         return 'edge' in key
 
 

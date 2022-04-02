@@ -17,7 +17,6 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
-    - pytorch-spline-conv
     - networkx>=2.4
     - tqdm
     - jinja2

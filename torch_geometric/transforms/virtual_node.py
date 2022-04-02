@@ -2,13 +2,16 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('virtual_node')
 class VirtualNode(BaseTransform):
     r"""Appends a virtual node to the given homogeneous graph that is connected
     to all other nodes, as described in the `"Neural Message Passing for
-    Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
+    Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper
+    (functional name: :obj:`virtual_node`).
     The virtual node serves as a global scratch space that each node both reads
     from and writes to in every step of message passing.
     This allows information to travel long distances during the propagation

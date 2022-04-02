@@ -4,12 +4,14 @@ import re
 import numpy as np
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('fixed_points')
 class FixedPoints(BaseTransform):
     r"""Samples a fixed number of :obj:`num` points and features from a point
-    cloud.
+    cloud (functional name: :obj:`fixed_points`).
 
     Args:
         num (int): The number of points to sample.
@@ -44,10 +46,12 @@ class FixedPoints(BaseTransform):
             ], dim=0)[:self.num]
 
         for key, item in data:
-            if bool(re.search('edge', key)):
+            if key == 'num_nodes':
+                data.num_nodes = choice.size(0)
+            elif bool(re.search('edge', key)):
                 continue
-            if (torch.is_tensor(item) and item.size(0) == num_nodes
-                    and item.size(0) != 1):
+            elif (torch.is_tensor(item) and item.size(0) == num_nodes
+                  and item.size(0) != 1):
                 data[key] = item[choice]
 
         return data

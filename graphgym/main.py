@@ -10,7 +10,7 @@ from torch_geometric.graphgym.config import (
     cfg,
     dump_cfg,
     load_cfg,
-    set_agg_dir,
+    set_out_dir,
     set_run_dir,
 )
 from torch_geometric.graphgym.loader import create_loader
@@ -28,12 +28,13 @@ if __name__ == '__main__':
     args = parse_args()
     # Load config file
     load_cfg(cfg, args)
+    set_out_dir(cfg.out_dir, args.cfg_file)
     # Set Pytorch environment
     torch.set_num_threads(cfg.num_threads)
     dump_cfg(cfg)
     # Repeat for different random seeds
     for i in range(args.repeat):
-        set_run_dir(cfg.out_dir, args.cfg_file)
+        set_run_dir(cfg.out_dir)
         set_printing()
         # Set configurations for each run
         cfg.seed = cfg.seed + 1
@@ -57,7 +58,7 @@ if __name__ == '__main__':
             train_dict[cfg.train.mode](loggers, loaders, model, optimizer,
                                        scheduler)
     # Aggregate results from different seeds
-    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+    agg_runs(cfg.out_dir, cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done
     if args.mark_done:
         os.rename(args.cfg_file, f'{args.cfg_file}_done')

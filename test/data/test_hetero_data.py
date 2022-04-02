@@ -113,6 +113,27 @@ def test_hetero_data_functions():
     assert len(data.to_namedtuple().paper) == 1
 
 
+def test_hetero_data_rename():
+    data = HeteroData()
+    data['paper'].x = x_paper
+    data['author'].x = x_author
+    data['paper', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'author'].edge_index = edge_index_paper_author
+    data['author', 'paper'].edge_index = edge_index_author_paper
+
+    data = data.rename('paper', 'article')
+    assert data.node_types == ['author', 'article']
+    assert data.edge_types == [
+        ('article', 'to', 'article'),
+        ('article', 'to', 'author'),
+        ('author', 'to', 'article'),
+    ]
+
+    assert data['article'].x.tolist() == x_paper.tolist()
+    edge_index = data['article', 'article'].edge_index
+    assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
 def test_copy_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
