@@ -3,16 +3,15 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import LayerNorm
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
-from torch.nn import ReLU, Sequential
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor
+
+from ..inits import glorot, zeros
 
 
 @torch.jit._overload
@@ -78,9 +77,6 @@ class RGCNConv(MessagePassing):
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        explain (bool, optional): If set to :obj:`True`, the layer will be
-            used in explanation of predictions of node-level and graph-level
-            tasks. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -94,7 +90,6 @@ class RGCNConv(MessagePassing):
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
-        explain: bool = False,
         **kwargs,
     ):
         kwargs.setdefault('aggr', aggr)
@@ -109,7 +104,6 @@ class RGCNConv(MessagePassing):
         self.num_relations = num_relations
         self.num_bases = num_bases
         self.num_blocks = num_blocks
-        self.explain = explain
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -144,20 +138,13 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
-        if self.explain:
-            self.process_message = Sequential(LayerNorm(out_channels), ReLU())
-
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self.explain:
-            glorot(self.weight)
-            glorot(self.comp)
-        else:
-            glorot(self.weight)
-            glorot(self.comp)
-            glorot(self.root)
-            zeros(self.bias)
+        glorot(self.weight)
+        glorot(self.comp)
+        glorot(self.root)
+        zeros(self.bias)
 
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
                 edge_index: Adj, edge_type: OptTensor = None,
@@ -179,16 +166,6 @@ class RGCNConv(MessagePassing):
         """
 
         # Convert input features to a pair of node features or node indices.
-
-        if self.explain:
-            size = [x.shape[0], x.shape[0]]
-
-            res = self.propagate(edge_index, x=x, edge_type=edge_type,
-                                 size=size, message_scale=message_scale,
-                                 message_replacement=message_replacement)
-
-            return res
-
         x_l: OptTensor = None
         if isinstance(x, tuple):
             x_l = x[0]
@@ -223,7 +200,9 @@ class RGCNConv(MessagePassing):
 
             for i in range(self.num_relations):
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                h = self.propagate(tmp, x=x_l, size=size)
+                h = self.propagate(tmp, x=x_l, size=size,
+                                   message_scale=message_scale,
+                                   message_replacement=message_replacement)
                 h = h.view(-1, weight.size(1), weight.size(2))
                 h = torch.einsum('abc,bcd->abd', h, weight[i])
                 out += h.contiguous().view(-1, self.out_channels)
@@ -235,7 +214,9 @@ class RGCNConv(MessagePassing):
                 if x_l.dtype == torch.long:
                     out += self.propagate(tmp, x=weight[i, x_l], size=size)
                 else:
-                    h = self.propagate(tmp, x=x_l, size=size)
+                    h = self.propagate(tmp, x=x_l, size=size,
+                                       message_scale=message_scale,
+                                       message_replacement=message_replacement)
                     out = out + (h @ weight[i])
 
         root = self.root
@@ -247,69 +228,12 @@ class RGCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, x_i: Tensor, edge_type: Tensor,
-                edge_index: Tensor, message_scale,
-                message_replacement) -> Tensor:
-
-        if self.explain:
-            weight = self.weight
-            if self.num_bases is not None:  # Basis-decomposition ============
-                weight = (self.comp @ weight.view(self.num_bases, -1)).view(
-                    self.num_relations, self.in_channels_l, self.out_channels)
-
-            if self.num_blocks is not None:  # Block-diagonal-decomposition ==
-                if x_j.dtype == torch.long:
-                    raise ValueError('Block-diagonal decomposition not '
-                                     'supported for non-continuous input '
-                                     'features.')
-
-                weight = weight[edge_type].view(-1, weight.size(2),
-                                                weight.size(3))
-                basis_messages = torch.bmm(x_j.view(-1, 1, weight.size(1)),
-                                           weight).view(-1, self.out_channels)
-
-            else:  # No regularization/Basis-decomposition ===================
-                basis_messages = torch.bmm(x_j.unsqueeze(-2),
-                                           weight[edge_type]).squeeze(-2)
-
-            basis_messages = self.process_message(basis_messages)
-
-            if message_scale is not None:
-                basis_messages = basis_messages * message_scale.unsqueeze(-1)
-
-                if message_replacement is not None:
-                    if basis_messages.shape == message_replacement.shape:
-                        basis_messages = basis_messages + \
-                                         (1 - message_scale).unsqueeze(
-                                             -1) * message_replacement
-                    else:
-                        basis_messages = basis_messages + \
-                                         ((1 - message_scale).unsqueeze(-1) *
-                                          message_replacement.unsqueeze(0))
-
-            self.latest_messages = basis_messages
-            self.latest_source_embeddings = x_j
-            self.latest_target_embeddings = x_i
-
-            return basis_messages
-
+    def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
         return matmul(adj_t, x, reduce=self.aggr)
-
-    # functions (get_latest_source_embeddings, get_latest_target_embeddings,
-    # and get_latest_messages) are necessary to compute edge_weights
-    # through hard_concrete_distribution
-    def get_latest_source_embeddings(self):
-        return self.latest_source_embeddings
-
-    def get_latest_target_embeddings(self):
-        return self.latest_target_embeddings
-
-    def get_latest_messages(self):
-        return self.latest_messages
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
@@ -319,7 +243,8 @@ class RGCNConv(MessagePassing):
 class FastRGCNConv(RGCNConv):
     r"""See :class:`RGCNConv`."""
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
-                edge_index: Adj, edge_type: OptTensor = None):
+                edge_index: Adj, edge_type: OptTensor = None,
+                message_scale=None, message_replacement=None):
         """"""
         self.fuse = False
         assert self.aggr in ['add', 'sum', 'mean']
@@ -340,7 +265,10 @@ class FastRGCNConv(RGCNConv):
         size = (x_l.size(0), x_r.size(0))
 
         # propagate_type: (x: Tensor, edge_type: OptTensor)
-        out = self.propagate(edge_index, x=x_l, edge_type=edge_type, size=size)
+        out = self.propagate(edge_index, x=x_l, edge_type=edge_type,
+                             message_scale=message_scale,
+                             message_replacement=message_replacement,
+                             size=size)
 
         root = self.root
         if root is not None:
