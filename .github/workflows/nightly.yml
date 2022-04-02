@@ -1,4 +1,4 @@
-name: Full Testing
+name: Nightly Build
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  sdist:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +28,7 @@ jobs:
           sed -i "s/2.0.5/2.0.5.$TODAY/" setup.py
           sed -i "s/2.0.5/2.0.5.$TODAY/" torch_geometric/__init__.py
         env:
-          TODAY: date '+%Y%m%d'
+          TODAY: $(date '+%Y%m%d')
 
       - name: Build package
         run: python setup.py sdist
