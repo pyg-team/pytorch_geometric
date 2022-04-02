@@ -51,10 +51,12 @@ class DeepGraphInfomax(torch.nn.Module):
 
         Args:
             z (Tensor): The latent space.
+            summary (Tensor): The summary vector.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)
         """
+        summary = summary.t() if summary.dim() > 1 else summary
         value = torch.matmul(z, torch.matmul(self.weight, summary))
         return torch.sigmoid(value) if sigmoid else value
 
