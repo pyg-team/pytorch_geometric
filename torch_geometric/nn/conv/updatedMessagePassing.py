@@ -120,8 +120,8 @@ class MessagePassing(torch.nn.Module):
 
         # Support for GraphMask###########################
         self.__user_args__ = self.inspector.keys(
-            ['message', 'explain_message', 'aggregate', 'update']).difference(
-            self.special_args)
+            ['message', 'explain_message', 'aggregate',
+             'update']).difference(self.special_args)
         # block ended#####################################
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
@@ -334,8 +334,8 @@ class MessagePassing(torch.nn.Module):
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
                 # Support for GraphMask###########################
-                explain_kwargs = self.inspector.distribute('explain_message',
-                                                           coll_dict)
+                explain_kwargs = self.inspector.distribute(
+                    'explain_message', coll_dict)
                 # block ended#####################################
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
@@ -462,8 +462,8 @@ class MessagePassing(torch.nn.Module):
             if message_replacement is not None:
                 if basis_messages.shape == message_replacement.shape:
                     basis_messages = (basis_messages +
-                                      (1 - message_scale).unsqueeze(
-                                         -1) * message_replacement)
+                                      (1 - message_scale).unsqueeze(-1) *
+                                      message_replacement)
                 else:
                     basis_messages = (basis_messages +
                                       ((1 - message_scale).unsqueeze(-1) *
@@ -474,6 +474,7 @@ class MessagePassing(torch.nn.Module):
         self.latest_target_embeddings = x_i
 
         return basis_messages
+
     # block ended#####################################
 
     def aggregate(self, inputs: Tensor, index: Tensor,
