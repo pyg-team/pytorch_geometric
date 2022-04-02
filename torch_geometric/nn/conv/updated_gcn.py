@@ -155,8 +155,8 @@ class GCNConv(MessagePassing):
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None,
-                message_scale=None, message_replacement=None) -> Tensor:
+                edge_weight: OptTensor = None, message_scale=None,
+                message_replacement=None) -> Tensor:
         """"""
 
         if self.normalize:
