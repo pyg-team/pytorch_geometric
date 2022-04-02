@@ -1,18 +1,17 @@
-from typing import Callable, List, Any, Tuple
+from typing import Any, Callable, List, Tuple
 
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.mask import mask_to_index
 from torch_geometric.data import Data
 from torch_geometric.loader.base import BaseDataLoader
 from torch_geometric.loader.neighbor_loader import NeighborSampler
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 from torch_geometric.loader.utils import filter_data
+from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.utils.mask import mask_to_index
 
 
 class LinkNeighborSampler(NeighborSampler):
-
     def __init__(
         self,
         data: Data,
@@ -22,9 +21,9 @@ class LinkNeighborSampler(NeighborSampler):
     ):
         super().__init__(data, num_neighbors, replace, directed)
         self.data = data
-    
+
     def __call__(self, index: List[Tensor]):
-        
+
         batch_size = len(index)
 
         # take start and end node from each edge then deduplicate
@@ -38,7 +37,6 @@ class LinkNeighborSampler(NeighborSampler):
 
 
 class LinkNeighborLoader(BaseDataLoader):
-
     def __init__(
         self,
         data: Data,
@@ -66,22 +64,22 @@ class LinkNeighborLoader(BaseDataLoader):
         self.directed = directed
         self.transform = transform
         self.neighbor_sampler = LinkNeighborSampler(data, num_neighbors,
-                                                replace, directed)
+                                                    replace, directed)
 
-        return super().__init__(
-            self.get_input_edge_idx(), 
-            collate_fn=self.neighbor_sampler, **kwargs)
+        return super().__init__(self.get_input_edge_idx(),
+                                collate_fn=self.neighbor_sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Tuple[Data, torch.Tensor]:
         node, row, col, edge, batch_size, index = out
         data = filter_data(self.data, node, row, col, edge,
-                            self.neighbor_sampler.perm)
+                           self.neighbor_sampler.perm)
 
         data.batch_size = batch_size
         data = data if self.transform is None else self.transform(data)
 
         labels = self.get_input_edge_labels()[index]
-        edges = self.data.edge_index.T[torch.Tensor(self.get_input_edge_idx()).type(torch.long)[index]]
+        edges = self.data.edge_index.T[torch.Tensor(
+            self.get_input_edge_idx()).type(torch.long)[index]]
         return (data, edges, labels)
 
     def get_input_edge_idx(self):

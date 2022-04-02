@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.mask import mask_to_index
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.base import BaseDataLoader
 from torch_geometric.loader.utils import (
@@ -14,7 +13,9 @@ from torch_geometric.loader.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.typing import NodeType, InputNodes, NumNeighbors
+from torch_geometric.typing import InputNodes, NodeType, NumNeighbors
+from torch_geometric.utils.mask import mask_to_index
+
 
 class NeighborSampler:
     def __init__(
