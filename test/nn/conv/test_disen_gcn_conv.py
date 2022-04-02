@@ -17,7 +17,8 @@ def test_gcn_conv():
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(6, batch_size))
 
     conv = DisenConv(in_channels, out_channels, K=num_factors)
-    repr_str = f'DisenConv({in_channels}, {out_channels}, [{num_factors}]disentangled_channels=[2, 2, 3])'
+    repr_str = f"DisenConv({in_channels}, {out_channels}, " \
+               f"[{num_factors}]disentangled_channels=[2, 2, 3])"
     assert conv.__repr__() == repr_str
 
     out1 = conv(x, edge_index, batch_size)
