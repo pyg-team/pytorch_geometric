@@ -19,6 +19,12 @@ jobs:
           python-version: 3.9
 
       - name: Customize build version
+        run: |
+          sed -i "s/name='torch_geometric'/name='pyg-nightly'/" setup.py
+          sed -i "s/2.0.5/2.0.5.$TODAY/" setup.py
+          sed -i "s/2.0.5/2.0.5.$TODAY/" torch_geometric/__init__.py
+        env:
+          TODAY: date '+%Y%m%d'
 
       - name: Build package
         run: python setup.py sdist
