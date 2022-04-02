@@ -2,14 +2,14 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import LayerNorm, Parameter, ReLU, Sequential
+from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, fill_diag, matmul, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.inits import uniform, zeros
+from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -107,9 +107,6 @@ class GCNConv(MessagePassing):
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        explain (bool, optional): If set to :obj:`True`, the layer will be
-            used in explanation of predictions of node-level and graph-level
-            tasks. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     Shapes:
@@ -126,7 +123,7 @@ class GCNConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  improved: bool = False, cached: bool = False,
                  add_self_loops: bool = True, normalize: bool = True,
-                 bias: bool = True, explain: bool = False, **kwargs):
+                 bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -137,7 +134,6 @@ class GCNConv(MessagePassing):
         self.cached = cached
         self.add_self_loops = add_self_loops
         self.normalize = normalize
-        self.explain = explain
 
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -150,24 +146,17 @@ class GCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
-        if self.explain:
-            self.convert = Linear(in_channels, out_channels)
-            self.process_message = Sequential(LayerNorm(out_channels), ReLU())
-
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self.explain:
-            uniform(self.in_channels, self.convert)
-        else:
-            self.lin.reset_parameters()
-            zeros(self.bias)
-            self._cached_edge_index = None
-            self._cached_adj_t = None
+        self.lin.reset_parameters()
+        zeros(self.bias)
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, message_scale=None,
-                message_replacement=None) -> Tensor:
+                edge_weight: OptTensor = None,
+                message_scale=None, message_replacement=None) -> Tensor:
         """"""
 
         if self.normalize:
@@ -193,8 +182,7 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        if not self.explain:
-            x = self.lin(x)
+        x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -202,52 +190,13 @@ class GCNConv(MessagePassing):
                              message_replacement=message_replacement,
                              size=None)
 
-        if self.bias is not None and not False and not self.explain:
+        if self.bias is not None:
             out += self.bias
 
         return out
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_index: Tensor,
-                edge_weight: OptTensor, message_scale,
-                message_replacement) -> Tensor:
-        if self.explain:
-            basis_messages = x_j if edge_weight is None else edge_weight.view(
-                -1, 1) * x_j
-            basis_messages = self.convert(basis_messages)
-            basis_messages = self.process_message(basis_messages)
-
-            if message_scale is not None:
-                basis_messages = basis_messages * message_scale.unsqueeze(-1)
-
-                if message_replacement is not None:
-                    if basis_messages.shape == message_replacement.shape:
-                        basis_messages = basis_messages + \
-                                         (1 - message_scale).unsqueeze(
-                                             -1) * message_replacement
-                    else:
-                        basis_messages = basis_messages + \
-                                         ((1 - message_scale).unsqueeze(-1) *
-                                          message_replacement.unsqueeze(0))
-
-            self.latest_messages = basis_messages
-            self.latest_source_embeddings = x_j
-            self.latest_target_embeddings = x_i
-
-            return basis_messages
-
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
-
-    # functions (get_latest_source_embeddings, get_latest_target_embeddings,
-    # and get_latest_messages) are necessary to compute edge_weights
-    # through hard_concrete_distribution
-    def get_latest_source_embeddings(self):
-        return self.latest_source_embeddings
-
-    def get_latest_target_embeddings(self):
-        return self.latest_target_embeddings
-
-    def get_latest_messages(self):
-        return self.latest_messages
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
