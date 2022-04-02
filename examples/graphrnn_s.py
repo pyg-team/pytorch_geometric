@@ -1,16 +1,16 @@
 import argparse
 import random
 
-import networkx as nx
 import matplotlib.pyplot as plt
-
+import networkx as nx
 import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.nn.utils import rnn as rnnutils
 
 import torch_geometric
-from torch_geometric import data, transforms as T, loader
+from torch_geometric import data, loader
+from torch_geometric import transforms as T
 
 
 class EncodeGraphRNNFeature(T.BaseTransform):
@@ -41,9 +41,8 @@ class EncodeGraphRNNFeature(T.BaseTransform):
         adj = adj.reshape(N, N)
         padded_adj = torch.zeros((N + M - 1, N))
         padded_adj[M - 1:, :] = adj
-        return padded_adj.as_strided(
-            size=(N - 1, M), stride=(N + 1, N), storage_offset=1
-        )
+        return padded_adj.as_strided(size=(N - 1, M), stride=(N + 1, N),
+                                     storage_offset=1)
 
     @staticmethod
     def bands_to_matrix(bands):
@@ -58,9 +57,8 @@ class EncodeGraphRNNFeature(T.BaseTransform):
         M = bands.shape[1]
         N = bands.shape[0] + 1
         padded_adj = torch.zeros((N + M - 1, N))
-        view = padded_adj.as_strided(
-            size=(N - 1, M), stride=(N + 1, N), storage_offset=1
-        )
+        view = padded_adj.as_strided(size=(N - 1, M), stride=(N + 1, N),
+                                     storage_offset=1)
         view[:, :] = bands
         return padded_adj[M - 1:, :]
 
@@ -84,8 +82,8 @@ class EncodeGraphRNNFeature(T.BaseTransform):
 
         # Add SOS (row of ones) and EOS (row of zeros).
         sequences = torch.cat(
-            [torch.ones(1, self.M), sequences, torch.zeros(1, self.M)], dim=0
-        )
+            [torch.ones(1, self.M), sequences,
+             torch.zeros(1, self.M)], dim=0)
 
         data.length = data.num_nodes
 
@@ -98,32 +96,27 @@ class BFS(T.BaseTransform):
     r"""Start a breath first search from a random node and reorder the edge
     list so that the node indices correspond to the breadth-first search order.
     """
-
     def __call__(self, data):
         x = data.x
         edge_index = data.edge_index
-        assert (
-            data.is_undirected()
-        ), "Transform only works for undirected graphs."
+        assert (data.is_undirected()
+                ), "Transform only works for undirected graphs."
         G = torch_geometric.utils.to_networkx(
-            data, to_undirected=data.is_undirected()
-        )
+            data, to_undirected=data.is_undirected())
 
-        start_node = torch.randint(0, data.num_nodes, (1,)).item()
+        start_node = torch.randint(0, data.num_nodes, (1, )).item()
 
         # Get the breadth-first search order.
         bfs_order = [start_node] + [n for _, n in nx.bfs_edges(G, start_node)]
         perm = torch.tensor(bfs_order).argsort()
-        return torch_geometric.data.Data(
-            x=x, edge_index=perm[edge_index], num_nodes=data.num_nodes
-        )
+        return torch_geometric.data.Data(x=x, edge_index=perm[edge_index],
+                                         num_nodes=data.num_nodes)
 
 
 class GraphRNNTransform(T.Compose):
     def __init__(self, M):
-        super(GraphRNNTransform, self).__init__(
-            [BFS(), EncodeGraphRNNFeature(M=M)]
-        )
+        super(GraphRNNTransform,
+              self).__init__([BFS(), EncodeGraphRNNFeature(M=M)])
 
 
 class CyclesDataset(data.InMemoryDataset):
@@ -133,7 +126,6 @@ class CyclesDataset(data.InMemoryDataset):
         min_n (int): The minimum number of nodes in the graphs.
         max_n (int): The maximum number of nodes in the graphs.
     """
-
     def __init__(self, min_n, max_n, transform):
         super().__init__(".", transform)
         graphs = [
@@ -203,12 +195,11 @@ class GraphRNN_S(nn.Module):
         )
 
     def mask_out_bits_after_length(self, sequences, lengths):
-        sequences = rnnutils.pack_padded_sequence(
-            sequences, lengths, batch_first=True, enforce_sorted=False
-        )
-        sequences = rnnutils.pad_packed_sequence(sequences, batch_first=True)[
-            0
-        ]
+        sequences = rnnutils.pack_padded_sequence(sequences, lengths,
+                                                  batch_first=True,
+                                                  enforce_sorted=False)
+        sequences = rnnutils.pad_packed_sequence(sequences,
+                                                 batch_first=True)[0]
         return sequences
 
     def forward(self, input_sequences, input_length, sampling=False):
@@ -231,15 +222,13 @@ class GraphRNN_S(nn.Module):
             enforce_sorted=False,
         )
         if sampling:
-            output_sequences, self.hidden = self.rnn(
-                input_sequences, self.hidden
-            )
+            output_sequences, self.hidden = self.rnn(input_sequences,
+                                                     self.hidden)
         else:
             output_sequences, self.hidden = self.rnn(input_sequences)
         # Unpack RNN output.
         output_sequences, output_length = rnnutils.pad_packed_sequence(
-            output_sequences, batch_first=True
-        )
+            output_sequences, batch_first=True)
 
         # MLP to get adjacency vectors.
         output_sequences = self.adjacency_mlp(output_sequences)
@@ -258,9 +247,8 @@ class GraphRNN_S(nn.Module):
 
         :rtype Tensor:
         """
-        input_sequence = torch.ones(
-            batch_size, 1, self.adjacency_size, device=device
-        )  # SOS.
+        input_sequence = torch.ones(batch_size, 1, self.adjacency_size,
+                                    device=device)  # SOS.
         is_not_eos = torch.ones(batch_size, dtype=torch.long)
 
         sequences = torch.zeros(batch_size, max_num_nodes, self.adjacency_size)
@@ -269,17 +257,16 @@ class GraphRNN_S(nn.Module):
         # Node 0 is not included.
         node_id = 0
         with torch.no_grad():
-            self.hidden = torch.zeros(
-                self.num_layers, batch_size, self.hidden_size, device=device
-            )
+            self.hidden = torch.zeros(self.num_layers, batch_size,
+                                      self.hidden_size, device=device)
             while is_not_eos.any():
                 node_id += 1
                 if node_id == max_num_nodes:
                     break
 
-                output_sequence_probs = self.forward(
-                    input_sequence, torch.ones(batch_size), sampling=True
-                )
+                output_sequence_probs = self.forward(input_sequence,
+                                                     torch.ones(batch_size),
+                                                     sampling=True)
                 mask = torch.rand_like(output_sequence_probs)
                 output_sequence = torch.gt(output_sequence_probs, mask)
 
@@ -295,13 +282,12 @@ class GraphRNN_S(nn.Module):
         self.mask_out_bits_after_length(sequences, seq_lengths + 1)
         sequences = sequences.tril()
 
-        return sequences[:, : seq_lengths.max()], seq_lengths
+        return sequences[:, :seq_lengths.max()], seq_lengths
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--plot", action="store_true", help="Whether to plot graphs."
-)
+parser.add_argument("--plot", action="store_true",
+                    help="Whether to plot graphs.")
 args = parser.parse_args()
 
 # The maximum size of a BFS queue on our dataset.
@@ -345,12 +331,10 @@ for epoch in range(1001):
         # dimensions (B, L, M), where L is max_num_nodes in the batch.
         lengths = batch.length.cpu()  # torch.split needs a tuple of ints.
         lengths_tuple = tuple(lengths.tolist())
-        x_padded = rnnutils.pad_sequence(
-            torch.split(batch.x, lengths_tuple), batch_first=True
-        )
-        y_padded = rnnutils.pad_sequence(
-            torch.split(batch.y, lengths_tuple), batch_first=True
-        )
+        x_padded = rnnutils.pad_sequence(torch.split(batch.x, lengths_tuple),
+                                         batch_first=True)
+        y_padded = rnnutils.pad_sequence(torch.split(batch.y, lengths_tuple),
+                                         batch_first=True)
 
         output_sequences = model(x_padded, lengths)
 
@@ -360,9 +344,8 @@ for epoch in range(1001):
 
         if epoch % 100 == 0 and batch_idx == 0:
             # Sample some graphs and evaluate them.
-            output_sequences, lengths = model.sample(
-                64, device, SAMPLER_MAX_NUM_NODES
-            )
+            output_sequences, lengths = model.sample(64, device,
+                                                     SAMPLER_MAX_NUM_NODES)
             adjs = [
                 EncodeGraphRNNFeature.inverse(sequence[:length])
                 for sequence, length in zip(output_sequences, lengths)
@@ -370,15 +353,10 @@ for epoch in range(1001):
             graphs = [nx.from_numpy_array(adj.numpy()) for adj in adjs]
 
             if args.plot:
-                plot_4_graphs(
-                    graphs[:4], "Sampled graphs at epoch {}".format(epoch)
-                )
+                plot_4_graphs(graphs[:4],
+                              "Sampled graphs at epoch {}".format(epoch))
 
             # Check if the generated graphs are cycles.
-            percentage_are_cycles = sum(map(is_cycle, graphs)) / len(
-                graphs
-            )
-            print(
-                "Percentage of generated graphs that are cycles at epoch "
-                f"{epoch}: {percentage_are_cycles}"
-            )
+            percentage_are_cycles = sum(map(is_cycle, graphs)) / len(graphs)
+            print("Percentage of generated graphs that are cycles at epoch "
+                  f"{epoch}: {percentage_are_cycles}")
