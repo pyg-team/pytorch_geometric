@@ -14,18 +14,28 @@ from torch_geometric import data, transforms as T, loader
 
 
 class EncodeGraphRNNFeature(T.BaseTransform):
+    r"""Encode the graph adjacency matrix into a sequence of adjacency vectors
+    of length :obj:`M`.
+    This is the approach described in the "GraphRNN: Generating Realistic
+    Graphs with Deep Auto-regressive Models"
+    <https://arxiv.org/pdf/1802.08773>`_ paper.
+
+    Args:
+        M (int): The length of the adjacency vectors.
+    """
     def __init__(self, M):
         self.M = M
 
     @staticmethod
     def extract_bands(adj, M):
-        """
-        Uses stride tricks to extract M-long bands above the diagonal of the
-        given square matrix.
+        r"""Uses stride tricks to extract :obj:`M`-long bands above the
+        diagonal of the given square matrix.
 
-        :param adj: Dimension N x N
-        :param M: Length of a band above the diagonal to return.
-        :returns: Dimension (N - 1) x M; the M bands above the diagonal.
+        Args:
+            adj (Tensor): The adjacency matrix of shape :obj:`(N, N)`.
+            M (int): The number of bands to extract.
+
+        :rtype: Tensor
         """
         N = adj.shape[1]
         adj = adj.reshape(N, N)
@@ -37,12 +47,13 @@ class EncodeGraphRNNFeature(T.BaseTransform):
 
     @staticmethod
     def bands_to_matrix(bands):
-        """
-        Given M bands above the diagonal of a square matrix, return the full
-        matrix.
+        r"""Given M bands above the diagonal of a square matrix, return the
+        full matrix.
 
-        :param bands: dimension N x M; the M bands above the diagonal
-        :returns: the corresponding matrix of dimension N x N
+        Args:
+            bands (Tensor): The M bands of shape :obj:`(N, M)`.
+
+        :rtype: Tensor
         """
         M = bands.shape[1]
         N = bands.shape[0] + 1
@@ -55,11 +66,13 @@ class EncodeGraphRNNFeature(T.BaseTransform):
 
     @staticmethod
     def inverse(y):
-        """
-        Inverse of the __call__ method, given the encoded sequence y
+        r"""Inverse of the :obj:`__call__` method: given the encoded sequence
+        y, return the adjacency matrix.
 
-        :param y: encoded sequence, without the SOS and EOS tokens
-        :returns: the corresponding adjacency matrix
+        Args:
+            y (Tensor): The encoded sequence of shape :obj:`(N, M)`.
+
+        :rtype: Tensor
         """
         bands = torch.flip(y, dims=[1])
         adj = EncodeGraphRNNFeature.bands_to_matrix(bands)
@@ -82,9 +95,8 @@ class EncodeGraphRNNFeature(T.BaseTransform):
 
 
 class BFS(T.BaseTransform):
-    """
-    Start a breath first search from a random node and reorder the edge list so
-    that the node indices correspond to the breadth-first search order.
+    r"""Start a breath first search from a random node and reorder the edge
+    list so that the node indices correspond to the breadth-first search order.
     """
 
     def __call__(self, data):
@@ -115,8 +127,11 @@ class GraphRNNTransform(T.Compose):
 
 
 class CyclesDataset(data.InMemoryDataset):
-    """
-    Creates a dataset of cycle graphs.
+    r"""Creates a dataset of :obj:`max_n - min_n` cycle graphs.
+
+    Args:
+        min_n (int): The minimum number of nodes in the graphs.
+        max_n (int): The maximum number of nodes in the graphs.
     """
 
     def __init__(self, min_n, max_n, transform):
@@ -142,6 +157,19 @@ def plot_4_graphs(graphs, title):
 
 
 class GraphRNN_S(nn.Module):
+    r"""The GraphRNN-S model from the "GraphRNN: Generating Realistic Graphs
+    with Deep Auto-regressive Models" <https://arxiv.org/pdf/1802.08773>`_
+    paper, consisting of a node-level RNN and a edge-level output layer.
+
+    Args:
+        adjacency_size (int): The size of the adjacency vectors.
+        adjacency_embedding_size (int): The size of the embedding of the
+            of the adjacency vectors before feeding it to the RNN cell.
+        hidden_size (int): The size of the hidden vectors of the RNN cell.
+        num_layers (int): The number of stacked RNN layers.
+        output_embedding_size (int): The size of the embedding of the
+            edge level MLP.
+    """
     def __init__(
         self,
         *,
@@ -151,15 +179,6 @@ class GraphRNN_S(nn.Module):
         num_layers: int,
         output_embedding_size: int,
     ):
-        """
-        @param adjacency_size: Size of an adjacency vector. M in the paper.
-        @param adjacency_embedding_size: Size of the embedding
-            of the adjacency vectors before feeding it to the RNN cell.
-        @param hidden_size: Size of the hidden vectors of the RNN cell.
-        @param num_layers: Number of stacked RNN layers
-        @param output_embedding_size: Size of the embedding of the edge_level
-        MLP.
-        """
         super().__init__()
         self.adjacency_size = adjacency_size
         self.num_layers = num_layers
@@ -193,12 +212,14 @@ class GraphRNN_S(nn.Module):
         return sequences
 
     def forward(self, input_sequences, input_length, sampling=False):
-        """
-        @param input_sequences: (batch_size, max_num_nodes, adjacency_size=M)
-            For each graph in the batch, the sequence of adjacency vectors
-            (including the first SOS).
-        @param input_length: (batch_size,)
-            num_nodes for each graph in the batch.
+        r"""Forward pass of the GraphRNN-S model.
+
+        Args:
+            input_sequences (Tensor): For each graph in the batch, the sequence
+                of adjacency vectors (including the first SOS token). Shape:
+                :obj:`(batch_size, max_num_nodes, adjacency_size)`
+            input_length (Tensor): For each graph in the batch, the length of
+                the sequence of adjacency vectors. Shape: :obj:`(batch_size,)`
         """
         input_sequences = self.embedding(input_sequences)
 
@@ -226,11 +247,16 @@ class GraphRNN_S(nn.Module):
         return self.mask_out_bits_after_length(output_sequences, input_length)
 
     def sample(self, batch_size, device, max_num_nodes):
-        """
-        Sample a batch of graph sequences.
-        Assumes that learned/generated graphs are connected, as in the paper.
-        @return: Tensor of size (batch_size, max_num_node, self.adjacency_size)
-            in the same device as the model.
+        r"""Sample a batch of graph sequences. Assumes that learned/generated
+        graphs are connected, as in the paper.
+
+        Args:
+            batch_size (int): The number of graphs to sample.
+            device (torch.device): The device to run the sampling on.
+            max_num_nodes (int): The maximum number of nodes that a sampled
+                graph may contain.
+
+        :rtype Tensor:
         """
         input_sequence = torch.ones(
             batch_size, 1, self.adjacency_size, device=device
