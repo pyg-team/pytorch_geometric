@@ -20,7 +20,7 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
 
 
 def mask_to_index(mask: Tensor) -> Tensor:
-    r"""Converts mask to indicies representation 
+    r"""Converts mask to indicies representation
 
     Args:
         mask (Tensor): The mask.
