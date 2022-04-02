@@ -7,12 +7,11 @@ from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import OptTensor
 
 
 class DisenConv(MessagePassing):
     r"""The graph convolutional operator from the `"Disentangled graph convolutional networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper
+    <http://proceedings.mlr.press/v97/ma19a.html>`_ paper
 
     Args:
       in_channels (int): The number of input channels.
