@@ -406,7 +406,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.h
 For older versions, you might need to explicitly specify the latest supported version number in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
-### Nightly or from master
+### Nightly and Master
 
 In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `torch-scatter` and `torch-sparse` are installed by [following the steps mentioned above](#pip-wheels), and install either the **nightly version** of PyG via
 
