@@ -132,8 +132,7 @@ class LinkNeighborLoader(DataLoader):
                     input_edges[1], -1)
                 match = start_match & end_match
                 idx = torch.stack(torch.where(match))[1, :]
-                if len(idx) == 0 or idx.size()[1] < self.data.edge_index.size(
-                )[1]:
+                if len(idx) == 0 or idx.size()[1] < input_size[1]:
                     raise ValueError("some input edges not found in the graph")
 
             raise ValueError("`input_edges` in unsupported format")
