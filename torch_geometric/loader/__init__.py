@@ -1,5 +1,6 @@
 from .dataloader import DataLoader
 from .neighbor_loader import NeighborLoader
+from .link_neighbor_loader import LinkNeighborLoader
 from .hgt_loader import HGTLoader
 from .cluster import ClusterData, ClusterLoader
 from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
@@ -15,6 +16,7 @@ from .imbalanced_sampler import ImbalancedSampler
 __all__ = classes = [
     'DataLoader',
     'NeighborLoader',
+    'LinkNeighborLoader',
     'HGTLoader',
     'ClusterData',
     'ClusterLoader',

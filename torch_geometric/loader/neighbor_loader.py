@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterator, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -18,6 +18,9 @@ from torch_geometric.utils.mask import mask_to_index
 
 
 class NeighborSampler:
+
+    device = "cpu"
+
     def __init__(
         self,
         data: Union[Data, HeteroData],
@@ -34,7 +37,7 @@ class NeighborSampler:
 
         if isinstance(data, Data):
             # Convert the graph data into a suitable format for sampling.
-            out = to_csc(data, device='cpu', share_memory=share_memory)
+            out = to_csc(data, device=self.device, share_memory=share_memory)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
@@ -42,7 +45,8 @@ class NeighborSampler:
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu', share_memory=share_memory)
+            out = to_hetero_csc(data, device=self.device,
+                                share_memory=share_memory)
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
@@ -234,8 +238,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
                 data, num_neighbors, replace, directed, input_node_type,
                 share_memory=kwargs.get('num_workers', 0) > 0)
 
-        return super().__init__(get_input_node_indices(data, input_nodes),
-                                collate_fn=self.neighbor_sampler, **kwargs)
+        super().__init__(get_input_node_indices(data, input_nodes),
+                         collate_fn=self.neighbor_sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
