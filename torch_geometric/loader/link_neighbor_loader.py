@@ -89,8 +89,8 @@ class LinkNeighborLoader(DataLoader):
             data, num_neighbors, replace, directed, force_order,
             share_memory=kwargs.get('num_workers', 0) > 0)
 
-        super().__init__(self.input_edges, collate_fn=self.neighbor_sampler,
-                         **kwargs)
+        super().__init__(self.input_edges_idx,
+                         collate_fn=self.neighbor_sampler, **kwargs)
 
     def _get_iterator(self) -> Iterator:
         return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
@@ -104,7 +104,7 @@ class LinkNeighborLoader(DataLoader):
         data = data if self.transform is None else self.transform(data)
 
         labels = self.input_edge_labels[index]
-        edges = self.data.edge_index.T[torch.Tensor(self.input_edges).type(
+        edges = self.data.edge_index.T[torch.Tensor(self.input_edges_idx).type(
             torch.long)[index]]
 
         data.edge_label_index = edges
