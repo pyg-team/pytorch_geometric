@@ -38,7 +38,6 @@ class EncodeGraphRNNFeature(T.BaseTransform):
         :rtype: Tensor
         """
         N = adj.shape[1]
-        adj = adj.reshape(N, N)
         padded_adj = torch.zeros((N + M - 1, N))
         padded_adj[M - 1:, :] = adj
         return padded_adj.as_strided(size=(N - 1, M), stride=(N + 1, N),
@@ -202,7 +201,7 @@ class GraphRNN_S(nn.Module):
                                                  batch_first=True)[0]
         return sequences
 
-    def forward(self, input_sequences, input_length, sampling=False):
+    def forward(self, input_sequences, input_length, hidden=None):
         r"""Forward pass of the GraphRNN-S model.
 
         Args:
@@ -211,6 +210,7 @@ class GraphRNN_S(nn.Module):
                 :obj:`(batch_size, max_num_nodes, adjacency_size)`
             input_length (Tensor): For each graph in the batch, the length of
                 the sequence of adjacency vectors. Shape: :obj:`(batch_size,)`
+            hidden (Tensor, optional): Initial hidden state.
         """
         input_sequences = self.embedding(input_sequences)
 
@@ -221,9 +221,9 @@ class GraphRNN_S(nn.Module):
             batch_first=True,
             enforce_sorted=False,
         )
-        if sampling:
+        if hidden is not None:
             output_sequences, self.hidden = self.rnn(input_sequences,
-                                                     self.hidden)
+                                                     hidden)
         else:
             output_sequences, self.hidden = self.rnn(input_sequences)
         # Unpack RNN output.
@@ -264,17 +264,20 @@ class GraphRNN_S(nn.Module):
                 if node_id == max_num_nodes:
                     break
 
+                # generate the sampling probabilities for the adjacency vectors
                 output_sequence_probs = self.forward(input_sequence,
                                                      torch.ones(batch_size),
-                                                     sampling=True)
+                                                     hidden=self.hidden)
+                # sample the adjacency vectors
                 mask = torch.rand_like(output_sequence_probs)
                 output_sequence = torch.gt(output_sequence_probs, mask)
 
-                # Identify the EOS sequences.
+                # Identify the EOS sequences
+                # (these are the adjacency where no edge was sampled).
                 is_not_eos *= output_sequence.any(dim=-1).squeeze().cpu()
                 seq_lengths += is_not_eos
 
-                sequences[:, node_id - 1] = output_sequence[:, 0]
+                sequences[:, node_id - 1] = output_sequence.squeeze(1)
                 input_sequence = output_sequence.float()
 
         # Clean irrelevant bits and enforce creation of connected graph.
