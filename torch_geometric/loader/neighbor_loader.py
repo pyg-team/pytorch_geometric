@@ -14,7 +14,7 @@ from torch_geometric.loader.utils import (
     to_hetero_csc,
 )
 from torch_geometric.typing import InputNodes, NodeType, NumNeighbors
-from torch_geometric.utils.mask import mask_to_index
+from torch_geometric.utils import mask_to_index
 
 
 class NeighborSampler:
