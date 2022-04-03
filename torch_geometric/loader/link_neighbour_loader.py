@@ -32,7 +32,7 @@ class LinkNeighborSampler(NeighborSampler):
         node_index = torch.unique(node_index)
 
         # get sampled graph
-        node, row, col, edge, _ = super().__call__(index)
+        node, row, col, edge, _ = super().__call__(node_index)
         return node, row, col, edge, batch_size, index
 
 
