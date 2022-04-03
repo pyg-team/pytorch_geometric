@@ -8,15 +8,21 @@ from torch_geometric.data import Data
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
 from torch_geometric.loader.utils import filter_data
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.typing import (
+    EdgeType,
+    InputEdges,
+    NumNeighbors,
+    OptTensor,
+)
 from torch_geometric.utils import mask_to_index
 
 
 class LinkNeighborSampler(NeighborSampler):
     def __init__(self, data: Data, num_neighbors: NumNeighbors,
                  replace: bool = False, directed: bool = True,
-                 force_order: bool = False):
-        super().__init__(data, num_neighbors, replace, directed)
+                 force_order: bool = False, share_memory: bool = False):
+        super().__init__(data, num_neighbors, replace, directed, share_memory)
+
         self.force_order = force_order
         if self.force_order and self.perm is not None:
             inv_perm = torch.argsort(self.perm)
@@ -24,6 +30,9 @@ class LinkNeighborSampler(NeighborSampler):
             self.inv_perm = inv_perm
         else:
             self.inv_perm = None
+
+        if self.inv_perm is not None and inv_perm.is_cuda and share_memory:
+            inv_perm.share_memory_()
 
     def __call__(self, index: Union[List[int], Tensor]):
         # if force_order and permuted modify index to respect suffle
@@ -67,17 +76,18 @@ class LinkNeighborLoader(DataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        # Save for PyTorch Lightning:
         self.data = data
+
+        # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
-        self.input_edges = self._get_input_edges(input_edges)
+        self.input_edges_idx = self._get_input_edges_idx(input_edges)
         self.input_edge_labels = self._get_edge_labels(input_edge_labels)
         self.replace = replace
         self.directed = directed
         self.transform = transform
-        self.neighbor_sampler = LinkNeighborSampler(data, num_neighbors,
-                                                    replace, directed,
-                                                    force_order)
+        self.neighbor_sampler = LinkNeighborSampler(
+            data, num_neighbors, replace, directed, force_order,
+            share_memory=kwargs.get('num_workers', 0) > 0)
 
         super().__init__(self.input_edges, collate_fn=self.neighbor_sampler,
                          **kwargs)
@@ -101,12 +111,35 @@ class LinkNeighborLoader(DataLoader):
         data.edge_labels = labels
         return data
 
-    def _get_input_edges(self, input_edges):
-        if input_edges is None:
-            return range(self.data.num_edges)
-        if input_edges.dtype == torch.bool:
-            input_edges = mask_to_index(input_edges)
-        return input_edges
+    def _get_input_edges_idx(self, input_edges: InputEdges):
+        if isinstance(self.data, Data):
+            if input_edges is None:
+                return range(self.data.num_edges)
+
+            if isinstance(input_edges, EdgeType):
+                raise RuntimeError("`input_edges` cannot be string for non"
+                                   "hetrogenous graphs")
+
+            input_size = input_edges.size()
+
+            if len(input_size) == 1 and input_edges.dtype == torch.bool:
+                return mask_to_index(self.input_edge_idx)
+
+            if len(input_edges.size()) == 2 and input_edges.size()[0] == 2:
+                start_match = self.data.edge_index[0] == torch.unsqueeze(
+                    input_edges[0], -1)
+                end_match = self.data.edge_index[1] == torch.unsqueeze(
+                    input_edges[1], -1)
+                match = start_match & end_match
+                idx = torch.stack(torch.where(match))[1, :]
+                if len(idx) == 0 or idx.size()[1] < self.data.edge_index.size(
+                )[1]:
+                    raise ValueError("some input edges not found in the graph")
+
+            raise ValueError("`input_edges` in unsupported format")
+
+        raise NotImplementedError("self.data must be `Data` object"
+                                  )  # TODO: Fix this before PR ready.
 
     def _get_edge_labels(self, input_edge_labels):
         if input_edge_labels is None:
