@@ -222,8 +222,7 @@ class GraphRNN_S(nn.Module):
             enforce_sorted=False,
         )
         if hidden is not None:
-            output_sequences, self.hidden = self.rnn(input_sequences,
-                                                     hidden)
+            output_sequences, self.hidden = self.rnn(input_sequences, hidden)
         else:
             output_sequences, self.hidden = self.rnn(input_sequences)
         # Unpack RNN output.
