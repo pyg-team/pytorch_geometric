@@ -32,19 +32,16 @@ AGGRS = {'add', 'sum', 'mean', 'min', 'max', 'mul'}
 
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers of the form
-
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
         \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
-
     where :math:`\square` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_gnn.html>`__ for the accompanying tutorial.
-
     Args:
         aggr (string or list, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
@@ -112,6 +109,7 @@ class MessagePassing(torch.nn.Module):
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
+        self.inspector.inspect(self.explain_message, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
@@ -119,7 +117,8 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'aggregate', 'update']).difference(self.special_args)
+            ['message', 'explain_message', 'aggregate', 'update']).difference(
+            self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
         self.__edge_user_args__ = self.inspector.keys(
@@ -130,6 +129,9 @@ class MessagePassing(torch.nn.Module):
 
         # Support for GNNExplainer.
         self._explain = False
+        self.message_scale = None
+        self.message_replacement = None
+        self._gmask_explain = False
         self._edge_mask = None
         self._loop_mask = None
         self._apply_sigmoid = True
@@ -250,7 +252,6 @@ class MessagePassing(torch.nn.Module):
 
     def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
-
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
@@ -328,6 +329,8 @@ class MessagePassing(torch.nn.Module):
                                              size, kwargs)
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
+                explain_kwargs = self.inspector.distribute('explain_message',
+                                                           coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -337,6 +340,9 @@ class MessagePassing(torch.nn.Module):
                     res = hook(self, (msg_kwargs, ), out)
                     if res is not None:
                         out = res
+
+                if self._gmask_explain:
+                    out = self.explain_message(out, **explain_kwargs)
 
                 # For `GNNExplainer`, we require a separate message and
                 # aggregate procedure since this allows us to inject the
@@ -393,7 +399,6 @@ class MessagePassing(torch.nn.Module):
     def edge_updater(self, edge_index: Adj, **kwargs):
         r"""The initial call to compute or update features for each edge in the
         graph.
-
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
@@ -434,15 +439,39 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
+    # , out: Tensor
+    def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
+
+        if out.size(-1) != self.process_message[0].normalized_shape[0]:
+            out = self.convert(out)
+        basis_messages = self.process_message(out)
+
+        if self.message_scale is not None:
+            basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
+
+            if self.message_replacement is not None:
+                if basis_messages.shape == self.message_replacement.shape:
+                    basis_messages = (basis_messages +
+                                      (1 - self.message_scale).unsqueeze(
+                                         -1) * self.message_replacement)
+                else:
+                    basis_messages = (basis_messages +
+                                      ((1 - self.message_scale).unsqueeze(-1) *
+                                       self.message_replacement.unsqueeze(0)))
+
+        self.latest_messages = basis_messages
+        self.latest_source_embeddings = x_j
+        self.latest_target_embeddings = x_i
+
+        return basis_messages
+
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                   aggr: Optional[str] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
-
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.
-
         By default, this function will delegate its call to scatter functions
         that support "add", "mean", "min", "max" and "mul" operations as
         specified in :meth:`__init__` by the :obj:`aggr` argument.
@@ -497,15 +526,11 @@ class MessagePassing(torch.nn.Module):
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`propagate` is invoked.
         It should have the following signature:
-
         .. code-block:: python
-
             hook(module, inputs) -> None or modified input
-
         The hook can modify the input.
         Input keyword arguments are passed to the hook as a dictionary in
         :obj:`inputs[-1]`.
-
         Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
         to remove the added hook by calling :obj:`handle.remove()`.
         """
@@ -519,15 +544,11 @@ class MessagePassing(torch.nn.Module):
         The hook will be called every time after :meth:`propagate` has computed
         an output.
         It should have the following signature:
-
         .. code-block:: python
-
             hook(module, inputs, output) -> None or modified output
-
         The hook can modify the output.
         Input keyword arguments are passed to the hook as a dictionary in
         :obj:`inputs[-1]`.
-
         Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
         to remove the added hook by calling :obj:`handle.remove()`.
         """
@@ -624,7 +645,6 @@ class MessagePassing(torch.nn.Module):
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module.
-
         Args:
             typing (string, optional): If given, will generate a concrete
                 instance with :meth:`forward` types based on :obj:`typing`,
