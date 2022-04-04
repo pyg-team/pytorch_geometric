@@ -8,7 +8,6 @@ install_requires = [
     'numpy',
     'scipy',
     'pandas',
-    'jinja2',
     'requests',
     'pyparsing',
     'scikit-learn',
@@ -17,6 +16,7 @@ install_requires = [
 full_install_requires = [
     'h5py',
     'yacs',
+    'jinja2',
     'numba',
     'captum',
     'rdflib',
