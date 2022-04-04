@@ -117,8 +117,8 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'explain_message', 'aggregate', 'update']).difference(
-            self.special_args)
+            ['message', 'explain_message', 'aggregate',
+             'update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
         self.__edge_user_args__ = self.inspector.keys(
@@ -329,8 +329,8 @@ class MessagePassing(torch.nn.Module):
                                              size, kwargs)
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
-                explain_kwargs = self.inspector.distribute('explain_message',
-                                                           coll_dict)
+                explain_kwargs = self.inspector.distribute(
+                    'explain_message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -452,8 +452,8 @@ class MessagePassing(torch.nn.Module):
             if self.message_replacement is not None:
                 if basis_messages.shape == self.message_replacement.shape:
                     basis_messages = (basis_messages +
-                                      (1 - self.message_scale).unsqueeze(
-                                         -1) * self.message_replacement)
+                                      (1 - self.message_scale).unsqueeze(-1) *
+                                      self.message_replacement)
                 else:
                     basis_messages = (basis_messages +
                                       ((1 - self.message_scale).unsqueeze(-1) *
