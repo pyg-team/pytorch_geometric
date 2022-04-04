@@ -439,7 +439,6 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    # , out: Tensor
     def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
 
         if out.size(-1) != self.process_message[0].normalized_shape[0]:
