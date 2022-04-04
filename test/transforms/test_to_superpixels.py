@@ -18,7 +18,11 @@ resources = [
 
 def test_to_superpixels():
     import torchvision.transforms as T
-    from torchvision.datasets.mnist import MNIST, read_image_file, read_label_file
+    from torchvision.datasets.mnist import (
+        MNIST,
+        read_image_file,
+        read_label_file,
+    )
 
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
 
