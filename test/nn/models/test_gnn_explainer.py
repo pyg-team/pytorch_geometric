@@ -107,7 +107,6 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
 
     node_feat_mask, edge_mask = explainer.explain_graph(x, edge_index)
     if feat_mask_type == 'scalar':
-        pass
         _, _ = explainer.visualize_subgraph(-1, edge_index, edge_mask,
                                             y=torch.tensor(2), threshold=0.8,
                                             node_alpha=node_feat_mask)

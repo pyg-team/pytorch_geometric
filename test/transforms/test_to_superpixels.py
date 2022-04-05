@@ -8,6 +8,7 @@ import torch
 from torch_geometric.data import download_url, extract_gz
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.loader import DataLoader
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import ToSLIC
 
 resources = [
@@ -16,6 +17,7 @@ resources = [
 ]
 
 
+@withPackage('torchvision')
 def test_to_superpixels():
     import torchvision.transforms as T
     from torchvision.datasets.mnist import (

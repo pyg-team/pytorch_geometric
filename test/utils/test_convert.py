@@ -3,6 +3,7 @@ import scipy.sparse
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
     from_networkx,
     from_scipy_sparse_matrix,
@@ -228,6 +229,7 @@ def test_subgraph_convert():
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
 
+@withPackage('trimesh')
 def test_trimesh():
     pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
                        dtype=torch.float)
