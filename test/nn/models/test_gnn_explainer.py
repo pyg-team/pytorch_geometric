@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torch.nn import Linear
 
 from torch_geometric.nn import GATConv, GCNConv, GNNExplainer, global_add_pool
+from torch_geometric.testing import withPackage
 
 
 class GCN(torch.nn.Module):
@@ -52,6 +53,7 @@ return_types = ['log_prob', 'regression']
 feat_mask_types = ['individual_feature', 'scalar', 'feature']
 
 
+@withPackage('matplotlib')
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
@@ -91,6 +93,7 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
         assert edge_mask[8:].tolist() == [0.] * 6
 
 
+@withPackage('matplotlib')
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
