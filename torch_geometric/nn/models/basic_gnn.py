@@ -70,7 +70,7 @@ class BasicGNN(torch.nn.Module):
         self.num_layers = num_layers
 
         self.dropout = dropout
-        self.act = activation_resolver(act, **act_kwargs)
+        self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
 

@@ -97,7 +97,7 @@ class MLP(torch.nn.Module):
         self.channel_list = channel_list
 
         self.dropout = dropout
-        self.act = activation_resolver(act, **act_kwargs)
+        self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
 
         self.lins = torch.nn.ModuleList()
