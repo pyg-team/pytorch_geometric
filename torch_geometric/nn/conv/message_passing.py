@@ -629,7 +629,12 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
-        from jinja2 import Template
+        try:
+            from jinja2 import Template
+        except ImportError:
+            raise ModuleNotFoundError(
+                "No module named 'jinja2' found on this machine. "
+                "Run 'pip install jinja2' to install the library.")
 
         source = inspect.getsource(self.__class__)
 
