@@ -9,7 +9,6 @@ from typing import Callable, List, Optional, Set, Union, get_type_hints
 from uuid import uuid1
 
 import torch
-from jinja2 import Template
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 from torch_scatter import gather_csr, scatter, segment_csr
@@ -109,7 +108,6 @@ class MessagePassing(torch.nn.Module):
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
-        self.inspector.inspect(self.explain_message, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
@@ -117,8 +115,7 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'explain_message', 'aggregate',
-             'update']).difference(self.special_args)
+            ['message', 'aggregate', 'update']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
         self.__edge_user_args__ = self.inspector.keys(
@@ -129,9 +126,6 @@ class MessagePassing(torch.nn.Module):
 
         # Support for GNNExplainer.
         self._explain = False
-        self.message_scale = None
-        self.message_replacement = None
-        self._gmask_explain = False
         self._edge_mask = None
         self._loop_mask = None
         self._apply_sigmoid = True
@@ -250,6 +244,13 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
+    def __requires_explain__(self, explain):
+        if explain:
+            self.inspector.inspect(self.explain_message, pop_first=True)
+            self.__user_args__ = self.inspector.keys(
+                ['message', 'explain_message', 'aggregate',
+                 'update']).difference(self.special_args)
+
     def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
         Args:
@@ -286,6 +287,7 @@ class MessagePassing(torch.nn.Module):
             if res is not None:
                 edge_index, size, kwargs = res
 
+        self.__requires_explain__(self._explain)
         size = self.__check_input__(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
@@ -329,8 +331,9 @@ class MessagePassing(torch.nn.Module):
                                              size, kwargs)
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
-                explain_kwargs = self.inspector.distribute(
-                    'explain_message', coll_dict)
+                if self._explain:
+                    explain_kwargs = self.inspector.distribute(
+                        'explain_message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -341,24 +344,12 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         out = res
 
-                if self._gmask_explain:
-                    out = self.explain_message(out, **explain_kwargs)
-
-                # For `GNNExplainer`, we require a separate message and
-                # aggregate procedure since this allows us to inject the
-                # `edge_mask` into the message passing computation scheme.
                 if self._explain:
-                    edge_mask = self._edge_mask
-                    if self._apply_sigmoid:
-                        edge_mask = edge_mask.sigmoid()
-                    # Some ops add self-loops to `edge_index`. We need to do
-                    # the same for `edge_mask` (but do not train those).
-                    if out.size(self.node_dim) != edge_mask.size(0):
-                        edge_mask = edge_mask[self._loop_mask]
-                        loop = edge_mask.new_ones(size[0])
-                        edge_mask = torch.cat([edge_mask, loop], dim=0)
-                    assert out.size(self.node_dim) == edge_mask.size(0)
-                    out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
+                    if self._explainer_name == 'GNNExplainer':
+                        self.size = size
+                        out = self.explain_message(out, **explain_kwargs)
+                    else:
+                        out = self.explain_message(out, **explain_kwargs)
 
                 aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
                 for hook in self._aggregate_forward_pre_hooks.values():
@@ -441,28 +432,45 @@ class MessagePassing(torch.nn.Module):
 
     def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
 
-        if out.size(-1) != self.process_message[0].normalized_shape[0]:
-            out = self.convert(out)
-        basis_messages = self.process_message(out)
+        if self._explainer_name == 'GNNExplainer':
+            edge_mask = self._edge_mask
+            if self._apply_sigmoid:
+                edge_mask = edge_mask.sigmoid()
+            # Some ops add self-loops to `edge_index`. We need to do
+            # the same for `edge_mask` (but do not train those).
+            if out.size(self.node_dim) != edge_mask.size(0):
+                edge_mask = edge_mask[self._loop_mask]
+                loop = edge_mask.new_ones(self.size[0])
+                edge_mask = torch.cat([edge_mask, loop], dim=0)
+            assert out.size(self.node_dim) == edge_mask.size(0)
+            out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
+            return out
+        else:
+            if out.size(-1) != self.process_message[0].normalized_shape[0]:
+                out = self.convert(out)
+            basis_messages = self.process_message(out)
 
-        if self.message_scale is not None:
-            basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
+            if self.message_scale is not None:
+                basis_messages = basis_messages * self.message_scale.unsqueeze(
+                    -1)
 
-            if self.message_replacement is not None:
-                if basis_messages.shape == self.message_replacement.shape:
-                    basis_messages = (basis_messages +
-                                      (1 - self.message_scale).unsqueeze(-1) *
-                                      self.message_replacement)
-                else:
-                    basis_messages = (basis_messages +
-                                      ((1 - self.message_scale).unsqueeze(-1) *
-                                       self.message_replacement.unsqueeze(0)))
+                if self.message_replacement is not None:
+                    if basis_messages.shape == self.message_replacement.shape:
+                        basis_messages = (basis_messages +
+                                          (1 - self.message_scale).unsqueeze(
+                                             -1) * self.message_replacement)
+                    else:
+                        basis_messages = (basis_messages +
+                                          ((1 - self.message_scale).unsqueeze(
+                                              -1) *
+                                           self.message_replacement.unsqueeze(
+                                               0)))
 
-        self.latest_messages = basis_messages
-        self.latest_source_embeddings = x_j
-        self.latest_target_embeddings = x_i
+            self.latest_messages = basis_messages
+            self.latest_source_embeddings = x_j
+            self.latest_target_embeddings = x_i
 
-        return basis_messages
+            return basis_messages
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -649,6 +657,13 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        try:
+            from jinja2 import Template
+        except ImportError:
+            raise ModuleNotFoundError(
+                "No module named 'jinja2' found on this machine. "
+                "Run 'pip install jinja2' to install the library.")
+
         source = inspect.getsource(self.__class__)
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
