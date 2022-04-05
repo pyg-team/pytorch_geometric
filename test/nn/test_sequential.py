@@ -12,8 +12,10 @@ from torch_geometric.nn import (
     Sequential,
     global_mean_pool,
 )
+from torch_geometric.testing import withPackage
 
 
+@withPackage('jinja2')
 def test_sequential():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -64,6 +66,7 @@ def test_sequential():
     assert out.size() == (1, 7)
 
 
+@withPackage('jinja2')
 def test_sequential_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -97,6 +100,7 @@ def symbolic_trace(module):
     return torch.fx.GraphModule(module, Tracer().trace(module))
 
 
+@withPackage('jinja2')
 def test_sequential_tracable():
     model = Sequential('x, edge_index', [
         (GCNConv(16, 64), 'x, edge_index -> x1'),
@@ -109,6 +113,7 @@ def test_sequential_tracable():
     symbolic_trace(model)
 
 
+@withPackage('jinja2')
 def test_sequential_with_multiple_return_values():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -124,6 +129,7 @@ def test_sequential_with_multiple_return_values():
     assert x2.size() == (4, 64)
 
 
+@withPackage('jinja2')
 def test_sequential_with_ordered_dict():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
