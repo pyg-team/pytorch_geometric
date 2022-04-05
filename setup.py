@@ -7,7 +7,6 @@ install_requires = [
     'tqdm',
     'numpy',
     'scipy',
-    'pandas',
     'requests',
     'pyparsing',
     'scikit-learn',
@@ -16,8 +15,9 @@ install_requires = [
 full_install_requires = [
     'h5py',
     'yacs',
-    'jinja2',
     'numba',
+    'pandas',
+    'jinja2',
     'captum',
     'rdflib',
     'trimesh',
