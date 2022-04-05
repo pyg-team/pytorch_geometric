@@ -9,7 +9,6 @@ from torch.nn import BatchNorm1d, ReLU
 
 from torch_geometric.nn import LayerNorm
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, GraphSAGE
-from torch_geometric.testing import withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -18,7 +17,6 @@ norms = [None, BatchNorm1d(16), LayerNorm(16)]
 jks = [None, 'last', 'cat', 'max', 'lstm']
 
 
-@withPackage('class_resolver')
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
                          product(out_dims, dropouts, acts, norms, jks))
 def test_gcn(out_dim, dropout, act, norm, jk):
@@ -32,7 +30,6 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withPackage('class_resolver')
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
                          product(out_dims, dropouts, acts, norms, jks))
 def test_graph_sage(out_dim, dropout, act, norm, jk):
@@ -46,7 +43,6 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withPackage('class_resolver')
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
                          product(out_dims, dropouts, acts, norms, jks))
 def test_gin(out_dim, dropout, act, norm, jk):
@@ -60,7 +56,6 @@ def test_gin(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withPackage('class_resolver')
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
                          product(out_dims, dropouts, acts, norms, jks))
 def test_gat(out_dim, dropout, act, norm, jk):
@@ -80,7 +75,6 @@ def test_gat(out_dim, dropout, act, norm, jk):
         assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withPackage('class_resolver')
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
                          product(out_dims, dropouts, acts, norms, jks))
 def test_pna(out_dim, dropout, act, norm, jk):
@@ -100,7 +94,6 @@ def test_pna(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withPackage('class_resolver')
 def test_packaging():
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
 

@@ -6,6 +6,7 @@ from torch import Tensor
 from torch.nn import BatchNorm1d, Identity
 
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.resolver import activation_resolver
 
 
 class MLP(torch.nn.Module):
@@ -80,8 +81,6 @@ class MLP(torch.nn.Module):
     ):
         super().__init__()
 
-        from class_resolver.contrib.torch import activation_resolver
-
         act_first = act_first or relu_first  # Backward compatibility.
         batch_norm_kwargs = batch_norm_kwargs or {}
 
@@ -98,7 +97,7 @@ class MLP(torch.nn.Module):
         self.channel_list = channel_list
 
         self.dropout = dropout
-        self.act = activation_resolver.make(act, act_kwargs)
+        self.act = activation_resolver(act, **act_kwargs)
         self.act_first = act_first
 
         self.lins = torch.nn.ModuleList()

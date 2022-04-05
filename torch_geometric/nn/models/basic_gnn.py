@@ -17,6 +17,7 @@ from torch_geometric.nn.conv import (
 )
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
+from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj
 
 
@@ -64,19 +65,12 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        try:
-            from class_resolver.contrib.torch import activation_resolver
-        except ImportError:
-            raise ModuleNotFoundError(
-                "No module named 'class_resolver' found on this machine. "
-                "Run 'pip install class_resolver' to install the library.")
-
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
 
         self.dropout = dropout
-        self.act = activation_resolver.make(act, act_kwargs)
+        self.act = activation_resolver(act, **act_kwargs)
         self.jk_mode = jk
         self.act_first = act_first
 
