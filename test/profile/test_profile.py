@@ -1,12 +1,12 @@
-import pytest
 import torch
 import torch.nn.functional as F
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile import get_stats_summary, profileit, timeit
+from torch_geometric.testing import withCUDA
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withCUDA
 def test_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
     data = dataset[0].cuda()

@@ -3,9 +3,10 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.nn import DataParallel
+from torch_geometric.testing import withCUDA
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withCUDA
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason='No multiple GPUs')
 def test_data_parallel():
     module = DataParallel(None)

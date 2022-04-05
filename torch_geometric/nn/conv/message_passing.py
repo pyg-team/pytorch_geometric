@@ -9,7 +9,6 @@ from typing import Callable, List, Optional, Set, Union, get_type_hints
 from uuid import uuid1
 
 import torch
-from jinja2 import Template
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 from torch_scatter import gather_csr, scatter, segment_csr
@@ -630,6 +629,13 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
+        try:
+            from jinja2 import Template
+        except ImportError:
+            raise ModuleNotFoundError(
+                "No module named 'jinja2' found on this machine. "
+                "Run 'pip install jinja2' to install the library.")
+
         source = inspect.getsource(self.__class__)
 
         # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
