@@ -24,7 +24,7 @@ class NeighborSampler:
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
-        input_node_type: Optional[str] = None,
+        input_node_type: Optional[NodeType] = None,
         share_memory: bool = False,
     ):
         self.data_cls = data.__class__
