@@ -1,4 +1,5 @@
 import os
+from importlib.util import find_spec
 from typing import Callable
 
 
@@ -12,3 +13,18 @@ def onlyFullTest(func: Callable) -> Callable:
     suite."""
     import pytest
     return pytest.mark.skipif(not is_full_test(), reason="Fast test run")(func)
+
+
+def withPackage(*args) -> Callable:
+    r"""A decorator to skip tests if certain packages are not installed."""
+    na_packages = set(arg for arg in args if find_spec(arg) is None)
+
+    def decorator(func: Callable) -> Callable:
+        import pytest
+
+        return pytest.mark.skipif(
+            not is_full_test() and len(na_packages) > 0,
+            reason=f"Package(s) {na_packages} are not installed",
+        )(func)
+
+    return decorator
