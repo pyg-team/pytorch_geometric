@@ -64,7 +64,12 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        from class_resolver.contrib.torch import activation_resolver
+        try:
+            from class_resolver.contrib.torch import activation_resolver
+        except ImportError:
+            raise ModuleNotFoundError(
+                "No module named 'class_resolver' found on this machine. "
+                "Run 'pip install class_resolver' to install the library.")
 
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
