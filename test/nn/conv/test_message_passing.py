@@ -10,7 +10,6 @@ from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 
 from torch_geometric.nn import MessagePassing
-from torch_geometric.testing import withPackage
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
@@ -81,7 +80,6 @@ def test_my_conv():
     conv.fuse = True
 
 
-@withPackage('jinja2')
 def test_my_conv_jittable():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
@@ -186,7 +184,6 @@ def test_my_multiple_aggr_conv():
     assert torch.allclose(conv(x, adj.t()), out)
 
 
-@withPackage('jinja2')
 def test_my_multiple_aggr_conv_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -257,7 +254,6 @@ def test_my_edge_conv():
     assert torch.allclose(conv(x, adj.t()), out)
 
 
-@withPackage('jinja2')
 def test_my_edge_conv_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -415,7 +411,6 @@ def test_my_default_arg_conv():
     assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
 
 
-@withPackage('jinja2')
 def test_my_default_arg_conv_jittable():
     conv = MyDefaultArgConv()
 
@@ -453,7 +448,6 @@ def test_tuple_output():
     assert isinstance(out1, tuple) and len(out1) == 2
 
 
-@withPackage('jinja2')
 def test_tuple_output_jittable():
     conv = MyMultipleOutputConv()
 
