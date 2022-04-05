@@ -2,6 +2,8 @@ import os
 from importlib.util import find_spec
 from typing import Callable
 
+import torch
+
 
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
@@ -12,7 +14,10 @@ def onlyFullTest(func: Callable) -> Callable:
     r"""A decorator to specify that this function belongs to the full test
     suite."""
     import pytest
-    return pytest.mark.skipif(not is_full_test(), reason="Fast test run")(func)
+    return pytest.mark.skipif(
+        not is_full_test(),
+        reason="Fast test run",
+    )(func)
 
 
 def withPackage(*args) -> Callable:
@@ -28,3 +33,12 @@ def withPackage(*args) -> Callable:
         )(func)
 
     return decorator
+
+
+def withCUDA(func: Callable) -> Callable:
+    r"""A decorator to skip tests if CUDA is not found."""
+    import pytest
+    return pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA not available",
+    )(func)
