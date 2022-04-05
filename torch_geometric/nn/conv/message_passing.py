@@ -456,15 +456,14 @@ class MessagePassing(torch.nn.Module):
 
                 if self.message_replacement is not None:
                     if basis_messages.shape == self.message_replacement.shape:
-                        basis_messages = (basis_messages +
-                                          (1 - self.message_scale).unsqueeze(
-                                             -1) * self.message_replacement)
+                        basis_messages = (
+                            basis_messages +
+                            (1 - self.message_scale).unsqueeze(-1) *
+                            self.message_replacement)
                     else:
-                        basis_messages = (basis_messages +
-                                          ((1 - self.message_scale).unsqueeze(
-                                              -1) *
-                                           self.message_replacement.unsqueeze(
-                                               0)))
+                        basis_messages = (basis_messages + (
+                            (1 - self.message_scale).unsqueeze(-1) *
+                            self.message_replacement.unsqueeze(0)))
 
             self.latest_messages = basis_messages
             self.latest_source_embeddings = x_j
