@@ -132,11 +132,11 @@ class BasicGNN(torch.nn.Module):
             x = self.convs[i](x, edge_index, *args, **kwargs)
             if i == self.num_layers - 1 and self.jk_mode is None:
                 break
-            if self.act_first:
+            if self.act is not None and self.act_first:
                 x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
-            if not self.act_first:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if hasattr(self, 'jk'):

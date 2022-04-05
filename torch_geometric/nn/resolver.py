@@ -8,7 +8,7 @@ def normalize_string(s: str) -> str:
 
 
 def resolver(classes: List[Any], query: Union[Any, str], *args, **kwargs):
-    if not isinstance(query, str):
+    if query is None or not isinstance(query, str):
         return query
 
     query = normalize_string(query)

@@ -141,10 +141,10 @@ class MLP(torch.nn.Module):
         """"""
         x = self.lins[0](x)
         for lin, norm in zip(self.lins[1:], self.norms):
-            if self.act_first:
+            if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
-            if not self.act_first:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
