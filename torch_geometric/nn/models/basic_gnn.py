@@ -17,6 +17,7 @@ from torch_geometric.nn.conv import (
 )
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
+from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj
 
 
@@ -64,14 +65,12 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        from class_resolver.contrib.torch import activation_resolver
-
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
 
         self.dropout = dropout
-        self.act = activation_resolver.make(act, act_kwargs)
+        self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
 
@@ -133,11 +132,11 @@ class BasicGNN(torch.nn.Module):
             x = self.convs[i](x, edge_index, *args, **kwargs)
             if i == self.num_layers - 1 and self.jk_mode is None:
                 break
-            if self.act_first:
+            if self.act is not None and self.act_first:
                 x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
-            if not self.act_first:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if hasattr(self, 'jk'):
