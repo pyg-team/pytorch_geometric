@@ -1,5 +1,6 @@
 from math import sqrt
 
+import pytest
 import torch
 
 from torch_geometric.testing import withPackage
@@ -7,6 +8,7 @@ from torch_geometric.utils import geodesic_distance
 
 
 @withPackage('gdist')
+@pytest.mark.skip(reason="No way of currently testing this")
 def test_geodesic_distance():
     pos = torch.Tensor([[0, 0, 0], [2, 0, 0], [0, 2, 0], [2, 2, 0]])
     face = torch.tensor([[0, 1, 3], [0, 2, 3]]).t()
