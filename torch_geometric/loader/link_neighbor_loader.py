@@ -66,7 +66,6 @@ class LinkNeighborSampler(NeighborSampler):
             node, row, col, edge, _ = super().__call__(query_nodes)
 
             # assume order of nodes in the new graph is same as input
-            assert all(query_nodes == node[:len(query_nodes)])
             out_graph_nodes = torch.argsort(query_nodes)
             out_edges = out_graph_nodes[reverse_query_nodes].reshape(2, -1)
 
@@ -92,12 +91,6 @@ class LinkNeighborSampler(NeighborSampler):
                 self.replace,
                 self.directed,
             )
-
-            assert all(query_start_nodes == node_dict[self.start_node_type]
-                       [:len(query_start_nodes)])
-
-            assert all(query_end_nodes == node_dict[self.end_node_type]
-                       [:len(query_end_nodes)])
 
             out_edges = torch.stack([
                 torch.argsort(
