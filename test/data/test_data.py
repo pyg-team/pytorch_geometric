@@ -91,7 +91,6 @@ def test_data():
     data.edge_attr = None
 
     data.x = None
-
     with pytest.warns(UserWarning, match='Unable to accurately infer'):
         assert data.num_nodes == 3
 
