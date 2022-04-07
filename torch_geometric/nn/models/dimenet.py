@@ -219,22 +219,24 @@ class InteractionBlock(torch.nn.Module):
         return h
 
 
-class OutputBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
-                 act=swish):
+class OutputPPBlock(torch.nn.Module):
+    def __init__(self, num_radial, hidden_channels, out_emb_channels,
+                 out_channels, num_layers, act=swish):
         super().__init__()
         self.act = act
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
+        self.lin_up = Linear(hidden_channels, out_emb_channels, bias=True)
         self.lins = torch.nn.ModuleList()
         for _ in range(num_layers):
-            self.lins.append(Linear(hidden_channels, hidden_channels))
-        self.lin = Linear(hidden_channels, out_channels, bias=False)
+            self.lins.append(Linear(out_emb_channels, out_emb_channels))
+        self.lin = Linear(out_emb_channels, out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
+        glorot_orthogonal(self.lin_up.weight, scale=2.0)
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
@@ -243,9 +245,21 @@ class OutputBlock(torch.nn.Module):
     def forward(self, x, rbf, i, num_nodes=None):
         x = self.lin_rbf(rbf) * x
         x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
+
+
+class OutputBlock(OutputPPBlock):
+    def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
+                 act=swish):
+        super().__init__(num_radial, hidden_channels, hidden_channels,
+                         out_channels, num_layers, act=swish)
+        import warnings
+        warnings.warn(
+            "OutputBlock will be depreciated in PyG 2.1.0. Use OutputPPBlock instead",  # noqa
+            FutureWarning)
 
 
 class DimeNet(torch.nn.Module):
