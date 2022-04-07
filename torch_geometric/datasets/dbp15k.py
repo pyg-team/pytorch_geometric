@@ -39,7 +39,7 @@ class DBP15K(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-    file_id = '1dYJtj1_J4nYJdrDY95ucGLCuZXDXI7PL'
+    file_id = '1ggYlYf2_kTyi7oF9g07oTNn3VDhjl7so'
 
     def __init__(self, root: str, pair: str,
                  transform: Optional[Callable] = None,
