@@ -1,10 +1,13 @@
-import hydra
-from omegaconf import DictConfig
-
-from torch_geometric.graphgym.config_store import fill_config_store
+from torch_geometric.testing import withPackage
 
 
+@withPackage('hydra')
 def test_config_store():
+    import hydra
+    from omegaconf import DictConfig
+
+    from torch_geometric.graphgym.config_store import fill_config_store
+
     fill_config_store()
 
     with hydra.initialize(config_path='.'):

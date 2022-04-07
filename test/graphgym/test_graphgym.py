@@ -29,6 +29,7 @@ from torch_geometric.graphgym.utils import (
     auto_select_device,
     params_count,
 )
+from torch_geometric.testing import withPackage
 
 num_trivial_metric_calls = 0
 
@@ -39,6 +40,7 @@ def trivial_metric(true, pred, task_type):
     return 1
 
 
+@withPackage('yacs')
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])

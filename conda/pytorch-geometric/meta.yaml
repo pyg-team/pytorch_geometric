@@ -17,17 +17,13 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
-    - networkx>=2.4
     - tqdm
     - jinja2
     - pyparsing
-    - yacs
-    - PyYAML
-    - scikit-learn
-    - python-louvain
-    - pandas
-    - requests
     - numpy
+    - scipy
+    - requests
+    - scikit-learn
 
 build:
   string: py{{ environ.get('PYTHON_VERSION').replace('.', '') }}_torch_{{ environ['TORCH_VERSION'] }}_{{ environ['CUDA_VERSION'] }}

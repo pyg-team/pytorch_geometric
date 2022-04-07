@@ -2,12 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import GAT, GCN, Explainer, to_captum
-
-try:
-    from captum import attr  # noqa
-    with_captum = True
-except ImportError:
-    with_captum = False
+from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
 edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
@@ -59,12 +54,13 @@ def test_to_captum(model, mask_type, output_idx):
         assert torch.any(out != pre_out)
 
 
-@pytest.mark.skipif(not with_captum, reason="no 'captum' package")
+@withPackage('captum')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
 def test_captum_attribution_methods(mask_type, method):
-    model = GCN
-    captum_model = to_captum(model, mask_type, 0)
+    from captum import attr  # noqa
+
+    captum_model = to_captum(GCN, mask_type, 0)
     input_mask = torch.ones((1, edge_index.shape[1]), dtype=torch.float,
                             requires_grad=True)
     explainer = getattr(attr, method)(captum_model)

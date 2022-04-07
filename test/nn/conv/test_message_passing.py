@@ -65,6 +65,32 @@ def test_my_conv():
     assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = True
 
+    adj = adj.sparse_resize((4, 2))
+    conv = MyConv((8, 16), 32)
+    out1 = conv((x1, x2), edge_index, value)
+    out2 = conv((x1, None), edge_index, value, (4, 2))
+    assert out1.size() == (2, 32)
+    assert out2.size() == (2, 32)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = False
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = True
+
+
+def test_my_conv_jittable():
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    value = torch.randn(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+
+    conv = MyConv(8, 32)
+    out = conv(x1, edge_index, value)
+
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index, value).tolist() == out.tolist()
@@ -81,15 +107,6 @@ def test_my_conv():
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
-    assert out1.size() == (2, 32)
-    assert out2.size() == (2, 32)
-    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    conv.fuse = False
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    conv.fuse = True
 
     t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
@@ -166,6 +183,16 @@ def test_my_multiple_aggr_conv():
     assert not torch.allclose(out[:, 16:32], out[:, 32:48])
     assert torch.allclose(conv(x, adj.t()), out)
 
+
+def test_my_multiple_aggr_conv_jittable():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyMultipleAggrConv()
+    out = conv(x, edge_index)
+
     t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x, edge_index), out)
@@ -226,13 +253,23 @@ def test_my_edge_conv():
     assert torch.allclose(out, expected)
     assert torch.allclose(conv(x, adj.t()), out)
 
+
+def test_my_edge_conv_jittable():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyEdgeConv()
+    out = conv(x, edge_index)
+
     t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index), expected)
+    assert torch.allclose(jit(x, edge_index), out)
 
     t = '(Tensor, SparseTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), expected)
+    assert torch.allclose(jit(x, adj.t()), out)
 
 
 num_pre_hook_calls = 0
@@ -373,8 +410,11 @@ def test_my_default_arg_conv():
     assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
     assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
 
-    # This should not succeed in JIT mode.
-    with pytest.raises(RuntimeError):
+
+def test_my_default_arg_conv_jittable():
+    conv = MyDefaultArgConv()
+
+    with pytest.raises(RuntimeError):  # This should not succeed in JIT mode.
         torch.jit.script(conv.jittable())
 
 
@@ -399,6 +439,16 @@ class MyMultipleOutputConv(MessagePassing):
 
 
 def test_tuple_output():
+    conv = MyMultipleOutputConv()
+
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    out1 = conv(x, edge_index)
+    assert isinstance(out1, tuple) and len(out1) == 2
+
+
+def test_tuple_output_jittable():
     conv = MyMultipleOutputConv()
 
     x = torch.randn(4, 8)
