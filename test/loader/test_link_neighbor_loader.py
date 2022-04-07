@@ -99,7 +99,6 @@ def test_heterogeneous_neighbor_loader(directed):
     batch_size = 20
     n_paper = 100
     n_author = 200
-    n_author_feature = 300
     n_paper_paper = 500
     n_paper_author = 1000
     n_author_paper = 500
@@ -107,7 +106,7 @@ def test_heterogeneous_neighbor_loader(directed):
     data = HeteroData()
 
     data['paper'].x = torch.arange(n_paper)
-    data['author'].x = torch.arange(n_author, n_author_feature)
+    data['author'].x = torch.arange(n_author)
 
     data['paper', 'paper'].edge_index = get_edge_index(n_paper, n_paper,
                                                        n_paper_paper)
@@ -126,16 +125,15 @@ def test_heterogeneous_neighbor_loader(directed):
                                 batch_size=batch_size, directed=directed)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == int(
-        (n_paper_paper + n_author_paper + n_paper_author) / batch_size)
+    assert len(loader) == int(n_paper_author / batch_size)
 
-    # for batch in loader:
-    #     assert isinstance(batch, HeteroData)
+    for batch in loader:
+        assert isinstance(batch, HeteroData)
 
-    #     # Test node type selection:
-    #     assert set(batch.node_types) == {'paper', 'author'}
+        # Test node type selection:
+        assert set(batch.node_types) == {'paper', 'author'}
 
-    #     # Test edge type selection:
-    #     assert set(batch.edge_types) == {('paper', 'to', 'paper'),
-    #                                      ('paper', 'to', 'author'),
-    #                                      ('author', 'to', 'paper')}
+        # Test edge type selection:
+        assert set(batch.edge_types) == {('paper', 'to', 'paper'),
+                                         ('paper', 'to', 'author'),
+                                         ('author', 'to', 'paper')}

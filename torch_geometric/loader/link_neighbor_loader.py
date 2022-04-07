@@ -96,12 +96,14 @@ class LinkNeighborSampler(NeighborSampler):
             assert all(query_start_nodes == node_dict[self.start_node_type]
                        [:len(query_start_nodes)])
 
-            assert all(query_start_nodes == node_dict[self.end_node_type]
+            assert all(query_end_nodes == node_dict[self.end_node_type]
                        [:len(query_end_nodes)])
 
             out_edges = torch.stack([
-                torch.argsort(node_dict[self.start_node_type]),
-                torch.argsort(node_dict[self.end_node_type])
+                torch.argsort(
+                    node_dict[self.start_node_type][:len(query_start_nodes)]),
+                torch.argsort(
+                    node_dict[self.end_node_type][:len(query_end_nodes)])
             ])
             return node_dict, row_dict, col_dict, edge_dict, len(
                 index), out_edges, index
