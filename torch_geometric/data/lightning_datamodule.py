@@ -8,7 +8,7 @@ from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
     NeighborSampler,
-    get_input_node_type,
+    get_input_nodes,
 )
 from torch_geometric.typing import InputNodes
 
@@ -272,7 +272,7 @@ class LightningNodeData(LightningDataModule):
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
                 directed=kwargs.get('directed', True),
-                input_node_type=get_input_node_type(input_train_nodes),
+                input_type=get_input_nodes(data, input_train_nodes)[0],
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes

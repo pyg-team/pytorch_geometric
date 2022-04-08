@@ -1,81 +1,43 @@
-from typing import (
-    Any,
-    Callable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-)
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.utils.data import DataLoader
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
 from torch_geometric.loader.utils import filter_data, filter_hetero_data
-from torch_geometric.typing import (
-    EdgeType,
-    InputEdges,
-    NumNeighbors,
-    OptTensor,
-)
-from torch_geometric.utils import mask_to_index
+from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
 class LinkNeighborSampler(NeighborSampler):
-    def __init__(
-        self,
-        data: Union[Data, HeteroData],
-        input_edges: Tensor,
-        num_neighbors: NumNeighbors,
-        replace: bool = False,
-        directed: bool = True,
-        input_edge_type=Optional[EdgeType],
-        share_memory: bool = False,
-    ):
-        super().__init__(
-            data,
-            num_neighbors,
-            replace,
-            directed,
-            "link",  # prevents failing assert
-            share_memory)
-        self.input_edges = input_edges
-
-        if issubclass(self.data_cls, HeteroData):
-            assert_is_hetro_edge_type(input_edge_type)
-            self.input_edge_type = input_edge_type
-            self.start_node_type = input_edge_type[0]
-            self.end_node_type = input_edge_type[2]
-
-    def __call__(self, index: Union[List[int], Tensor]):
+    def __call__(self, query: List[Tuple[Tensor]]):
+        query = [torch.tensor(s) for s in zip(*query)]
+        if len(query) == 2:
+            edge_label_index = torch.stack(query, dim=0)
+            edge_label = None
+        else:
+            edge_label_index = torch.stack(query[:2], dim=0)
+            edge_label = query[2]
 
         if issubclass(self.data_cls, Data):
-            # take start and end node from each edge then deduplicate
-            query_nodes = torch.cat(
-                [self.input_edges[0][index], self.input_edges[1][index]],
-                dim=0)
-            query_nodes, reverse_query_nodes = torch.unique(
-                query_nodes, return_inverse=True)
+            sample_fn = torch.ops.torch_sparse.neighbor_sample
 
-            # get sampled graph
-            node, row, col, edge, _ = super().__call__(query_nodes)
+            query_nodes = edge_label_index.view(-1)
+            query_nodes, reverse = query_nodes.unique(return_inverse=True)
 
-            # assume order of nodes in the new graph is same as input
-            out_graph_nodes = torch.argsort(query_nodes)
-            out_edges = out_graph_nodes[reverse_query_nodes].reshape(2, -1)
+            node, row, col, edge = sample_fn(
+                self.colptr,
+                self.row,
+                query_nodes,
+                self.num_neighbors,
+                self.replace,
+                self.directed,
+            )
 
-            return node, row, col, edge, len(index), out_edges, index
+            return node, row, col, edge, reverse.view(2, -1), edge_label
 
         elif issubclass(self.data_cls, HeteroData):
-
-            query_start_nodes = self.input_edges[0][index]
-            query_end_nodes = self.input_edges[1][index]
-
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
             node_dict, row_dict, col_dict, edge_dict = sample_fn(
                 self.node_types,
@@ -83,30 +45,19 @@ class LinkNeighborSampler(NeighborSampler):
                 self.colptr_dict,
                 self.row_dict,
                 {
-                    self.start_node_type: query_start_nodes,
-                    self.end_node_type: query_end_nodes
+                    self.input_type[0]: edge_label_index[0],
+                    self.input_type[-1]: edge_label_index[1],
                 },
                 self.num_neighbors,
                 self.num_hops,
                 self.replace,
                 self.directed,
             )
-
-            out_edges = torch.stack([
-                torch.argsort(
-                    node_dict[self.start_node_type][:len(query_start_nodes)]),
-                torch.argsort(
-                    node_dict[self.end_node_type][:len(query_end_nodes)])
-            ])
-            return node_dict, row_dict, col_dict, edge_dict, len(
-                index), out_edges, index
-
-        else:
-            raise TypeError(
-                f'NeighborLoader found invalid type: {self.data_cls}')
+            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
+                    edge_label)
 
 
-class LinkNeighborLoader(DataLoader):
+class LinkNeighborLoader(torch.utils.data.DataLoader):
     r"""A link based data loader that is an extension of the node based
     :obj:`NeighborLoader`. This loader allows for mini-batch training of GNNs
     on large-scale graphs with respect to edge based tasks like link
@@ -201,11 +152,12 @@ class LinkNeighborLoader(DataLoader):
         self,
         data: Union[Data, HeteroData],
         num_neighbors: NumNeighbors,
-        input_edges: InputEdges = None,
-        input_edge_labels: OptTensor = None,
+        edge_label_index: InputEdges = None,
+        edge_label: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
         transform: Callable = None,
+        neighbor_sampler: Optional[LinkNeighborSampler] = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -218,86 +170,93 @@ class LinkNeighborLoader(DataLoader):
 
         # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
-        edge_type, edges = self._get_input_edge_data(input_edges)
-        self.input_edge_type = edge_type
-        self.input_edges = edges
-        self.input_edge_labels = input_edge_labels
+        self.edge_label_index = edge_label_index
+        self.edge_label = edge_label
         self.replace = replace
         self.directed = directed
         self.transform = transform
-        self.neighbor_sampler = LinkNeighborSampler(
-            data, self.input_edges, num_neighbors, replace, directed,
-            self.input_edge_type,
-            share_memory=kwargs.get('num_workers', 0) > 0)
+        self.neighbor_sampler = neighbor_sampler
 
-        index = range(self.input_edges.size()[1])
-        super().__init__(index, collate_fn=self.neighbor_sampler, **kwargs)
+        edge_type, edge_label_index = get_edge_label_index(
+            data, edge_label_index)
+
+        if neighbor_sampler is None:
+            self.neighbor_sampler = LinkNeighborSampler(
+                data, num_neighbors, replace, directed, edge_type,
+                share_memory=kwargs.get('num_workers', 0) > 0)
+
+        super().__init__(Dataset(edge_label_index, edge_label),
+                         collate_fn=self.neighbor_sampler, **kwargs)
+
+    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
+        if isinstance(self.data, Data):
+            node, row, col, edge, edge_label_index, edge_label = out
+            data = filter_data(self.data, node, row, col, edge,
+                               self.neighbor_sampler.perm)
+            data.edge_label_index = edge_label_index
+            if edge_label is not None:
+                data.edge_label = edge_label
+
+        elif isinstance(self.data, HeteroData):
+            (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
+             edge_label) = out
+            data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
+                                      edge_dict,
+                                      self.neighbor_sampler.perm_dict)
+            edge_type = self.neighbor_sampler.input_type
+            data[edge_type].edge_label_index = edge_label_index
+            if edge_label is not None:
+                data[edge_type].edge_label = edge_label
+
+        return data if self.transform is None else self.transform(data)
 
     def _get_iterator(self) -> Iterator:
         return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
-
-    def transform_fn(self, out: Any) -> Tuple[Data, torch.Tensor]:
-        if isinstance(self.data, Data):
-
-            node, row, col, edge, batch_size, out_edges, index = out
-            data = filter_data(self.data, node, row, col, edge,
-                               self.neighbor_sampler.perm)
-
-            data.batch_size = batch_size
-            data = data if self.transform is None else self.transform(data)
-
-            data.sampled_edges = out_edges
-            if self.input_edge_labels is not None:
-                labels = self.input_edge_labels[index]
-                data.sampled_edge_labels = labels
-
-        elif isinstance(self.data, HeteroData):
-            node_d, row_d, col_d, edge_d, batch_size, out_edges, index = out
-
-            data = filter_hetero_data(self.data, node_d, row_d, col_d, edge_d,
-                                      self.neighbor_sampler.perm_dict)
-
-            data[self.input_edge_type].batch_size = batch_size
-            data[self.input_edge_type].sampled_edges = out_edges
-
-            if self.input_edge_labels is not None:
-                labels = self.input_edge_labels[index]
-                data[self.input_edge_type].sampled_edge_labels = labels
-
-        else:
-            raise TypeError(
-                f'LinkNeighborLoader found invalid type: {type(self.data)}')
-
-        return data
-
-    def _get_input_edge_data(self, input_edges: InputEdges):
-
-        if isinstance(self.data, Data):
-            if input_edges is None:
-                return None, self.data.edge_index,
-            input_size = input_edges.size()
-            if len(input_size) == 1 and input_edges.dtype == torch.bool:
-                return None, self.data.edge_index[mask_to_index(input_edges)]
-            if len(input_edges.size()) == 2 and input_edges.size()[0] == 2:
-                return None, input_edges
-
-        elif isinstance(self.data, HeteroData):
-            if isinstance(input_edges, (list, tuple)):
-                if len(input_edges) == 3 and isinstance(input_edges[0], str):
-                    return tuple(input_edges), self.data[tuple(
-                        input_edges)].edge_index
-            elif isinstance(input_edges, Sequence):
-                return input_edges
-
-        raise ValueError("`input_edges` in unsupported format")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
 
 
-def assert_is_hetro_edge_type(edge_type):
-    assert (
-        isinstance(edge_type, tuple) and len(edge_type) == 3
-        and isinstance(edge_type[0], str) and isinstance(edge_type[1], str)
-        and isinstance(edge_type[2], str)
-    ), f"hetro data edge_type '{edge_type}' must be a tuple of 3 strings"
+###############################################################################
+
+
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, edge_label_index: Tensor, edge_label: OptTensor = None):
+        self.edge_label_index = edge_label_index
+        self.edge_label = edge_label
+
+    def __getitem__(self, idx: int) -> Tuple[int]:
+        if self.edge_label is None:
+            return self.edge_label_index[0, idx], self.edge_label_index[1, idx]
+        else:
+            return (self.edge_label_index[0, idx],
+                    self.edge_label_index[1, idx], self.edge_label[idx])
+
+    def __len__(self) -> int:
+        return self.edge_label_index.size(1)
+
+
+def get_edge_label_index(
+    data: Union[Data, HeteroData],
+    edge_label_index: InputEdges,
+) -> Tuple[Optional[str], Tensor]:
+    edge_type = None
+    if isinstance(data, Data):
+        if edge_label_index is None:
+            return None, data.edge_index
+        return None, edge_label_index
+
+    assert edge_label_index is not None
+    assert isinstance(edge_label_index, (list, tuple))
+
+    if isinstance(edge_label_index[0], str):
+        edge_type = edge_label_index
+        return edge_type, data[edge_type].edge_index
+
+    assert len(edge_label_index) == 2
+
+    edge_type, edge_label_index = edge_label_index
+    if edge_label_index is None:
+        return edge_type, data[edge_type].edge_index
+
+    return edge_type, edge_label_index
