@@ -204,6 +204,7 @@ class Explainer(torch.nn.Module):
             x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             **kwargs (optional): Additional arguments passed to the GNN module.
+
         :rtype: (Tensor, Tensor, LongTensor, LongTensor, LongTensor, dict)
         """
         num_nodes, num_edges = x.size(0), edge_index.size(1)
