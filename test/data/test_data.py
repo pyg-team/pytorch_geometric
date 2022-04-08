@@ -1,5 +1,6 @@
 import copy
 
+import pytest
 import torch
 import torch.multiprocessing as mp
 
@@ -80,7 +81,8 @@ def test_data():
 
     assert data.num_nodes == 3
     assert data.num_edges == 4
-    assert data.num_faces is None
+    with pytest.warns(UserWarning, match='deprecated'):
+        assert data.num_faces is None
     assert data.num_node_features == 2
     assert data.num_features == 2
 
@@ -89,10 +91,12 @@ def test_data():
     data.edge_attr = None
 
     data.x = None
-    assert data.num_nodes == 3
+    with pytest.warns(UserWarning, match='Unable to accurately infer'):
+        assert data.num_nodes == 3
 
     data.edge_index = None
-    assert data.num_nodes is None
+    with pytest.warns(UserWarning, match='Unable to accurately infer'):
+        assert data.num_nodes is None
     assert data.num_edges == 0
 
     data.num_nodes = 4
@@ -105,7 +109,8 @@ def test_data():
 
     face = torch.tensor([[0, 1], [1, 2], [2, 3]])
     data = Data(num_nodes=4, face=face)
-    assert data.num_faces == 2
+    with pytest.warns(UserWarning, match='deprecated'):
+        assert data.num_faces == 2
     assert data.num_nodes == 4
 
     data = Data(title='test')
@@ -181,11 +186,9 @@ def test_debug_data():
     torch_geometric.set_debug(True)
 
     Data()
-    Data(edge_index=torch.tensor([[0, 1], [1, 0]])).num_nodes
     Data(edge_index=torch.zeros((2, 0), dtype=torch.long), num_nodes=10)
     Data(face=torch.zeros((3, 0), dtype=torch.long), num_nodes=10)
     Data(edge_index=torch.tensor([[0, 1], [1, 0]]), edge_attr=torch.randn(2))
-    Data(face=torch.tensor([[0], [1], [2]])).num_nodes
     Data(x=torch.torch.randn(5, 3), num_nodes=5)
     Data(pos=torch.torch.randn(5, 3), num_nodes=5)
     Data(norm=torch.torch.randn(5, 3), num_nodes=5)
