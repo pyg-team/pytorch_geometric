@@ -111,6 +111,7 @@ class MessagePassing(torch.nn.Module):
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
+        self.inspector.inspect(self.explain_message, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
@@ -127,7 +128,7 @@ class MessagePassing(torch.nn.Module):
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
 
-        # Support for GNNExplainer.
+        # Support for explainability.
         self._explain = False
         self._edge_mask = None
         self._loop_mask = None
@@ -247,13 +248,6 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def __requires_explain__(self, explain):
-        if explain:
-            self.inspector.inspect(self.explain_message, pop_first=True)
-            self.__user_args__ = self.inspector.keys(
-                ['message', 'explain_message', 'aggregate',
-                 'update']).difference(self.special_args)
-
     def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
 
@@ -284,19 +278,18 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        decomposed_layers = 1 if self._explain else self.decomposed_layers
+        decomposed_layers = 1 if self.explain else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
             if res is not None:
                 edge_index, size, kwargs = res
 
-        self.__requires_explain__(self._explain)
         size = self.__check_input__(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self._explain and len(self.aggrs) == 0):
+                and not self.explain and len(self.aggrs) == 0):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -335,9 +328,6 @@ class MessagePassing(torch.nn.Module):
                                              size, kwargs)
 
                 msg_kwargs = self.inspector.distribute('message', coll_dict)
-                if self._explain:
-                    explain_kwargs = self.inspector.distribute(
-                        'explain_message', coll_dict)
                 for hook in self._message_forward_pre_hooks.values():
                     res = hook(self, (msg_kwargs, ))
                     if res is not None:
@@ -348,12 +338,10 @@ class MessagePassing(torch.nn.Module):
                     if res is not None:
                         out = res
 
-                if self._explain:
-                    if self._explainer_name == 'GNNExplainer':
-                        self.size = size
-                        out = self.explain_message(out, **explain_kwargs)
-                    else:
-                        out = self.explain_message(out, **explain_kwargs)
+                if self.explain:
+                    explain_msg_kwargs = self.inspector.distribute(
+                        'explain_message', coll_dict)
+                    out = self.explain_message(out, **explain_msg_kwargs)
 
                 aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
                 for hook in self._aggregate_forward_pre_hooks.values():
@@ -394,6 +382,7 @@ class MessagePassing(torch.nn.Module):
     def edge_updater(self, edge_index: Adj, **kwargs):
         r"""The initial call to compute or update features for each edge in the
         graph.
+
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
@@ -434,46 +423,43 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
+    @property
+    def explain(self) -> bool:
+        return self._explain
 
-        if self._explainer_name == 'GNNExplainer':
-            edge_mask = self._edge_mask
-            if self._apply_sigmoid:
-                edge_mask = edge_mask.sigmoid()
-            # Some ops add self-loops to `edge_index`. We need to do
-            # the same for `edge_mask` (but do not train those).
-            if out.size(self.node_dim) != edge_mask.size(0):
-                edge_mask = edge_mask[self._loop_mask]
-                loop = edge_mask.new_ones(self.size[0])
-                edge_mask = torch.cat([edge_mask, loop], dim=0)
-            assert out.size(self.node_dim) == edge_mask.size(0)
-            out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
-            return out
+    @explain.setter
+    def explain(self, explain: bool):
+        if explain:
+            methods = ['message', 'explain_message', 'aggregate', 'update']
         else:
-            if out.size(-1) != self.process_message[0].normalized_shape[0]:
-                out = self.convert(out)
-            basis_messages = self.process_message(out)
+            methods = ['message', 'aggregate', 'update']
 
-            if self.message_scale is not None:
-                basis_messages = basis_messages * self.message_scale.unsqueeze(
-                    -1)
+        self._explain = explain
+        self.__user_args__ = self.inspector.keys(methods).difference(
+            self.special_args)
 
-                if self.message_replacement is not None:
-                    if basis_messages.shape == self.message_replacement.shape:
-                        basis_messages = (
-                            basis_messages +
-                            (1 - self.message_scale).unsqueeze(-1) *
-                            self.message_replacement)
-                    else:
-                        basis_messages = (basis_messages + (
-                            (1 - self.message_scale).unsqueeze(-1) *
-                            self.message_replacement.unsqueeze(0)))
+    def explain_message(self, inputs: Tensor) -> Tensor:
+        edge_mask = self._edge_mask
 
-            self.latest_messages = basis_messages
-            self.latest_source_embeddings = x_j
-            self.latest_target_embeddings = x_i
+        if edge_mask is None:
+            raise ValueError(f"Could not found a pre-defined 'edge_mask' as "
+                             f"part of {self.__class__.__name__}")
 
-            return basis_messages
+        if self._apply_sigmoid:
+            edge_mask = edge_mask.sigmoid()
+
+        # Some ops add self-loops to `edge_index`. We need to do the same for
+        # `edge_mask` (but do not train these entries).
+        if inputs.size(self.node_dim) != edge_mask.size(0):
+            edge_mask = edge_mask[self._loop_mask]
+            loop = edge_mask.new_ones(self.size[0])
+            edge_mask = torch.cat([edge_mask, loop], dim=0)
+        assert inputs.size(self.node_dim) == edge_mask.size(0)
+
+        size = [1] * inputs.dim()
+        size[self.node_dim] = -1
+        print("DRIN")
+        return inputs * edge_mask.view(size)
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,

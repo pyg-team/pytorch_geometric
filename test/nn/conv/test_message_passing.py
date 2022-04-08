@@ -462,3 +462,28 @@ def test_tuple_output_jittable():
     assert isinstance(out2, tuple) and len(out2) == 2
     assert torch.allclose(out1[0], out2[0])
     assert torch.allclose(out1[1], out2[1])
+
+
+class MyExplainConv(MessagePassing):
+    def __init__(self):
+        super().__init__(aggr='add')
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        return self.propagate(edge_index, x=x)
+
+
+def test_explain_message():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = MyExplainConv()
+    assert conv(x, edge_index).abs().sum() != 0.
+
+    conv.explain = True
+
+    with pytest.raises(ValueError, match="pre-defined 'edge_mask'"):
+        conv(x, edge_index)
+
+    conv._edge_mask = torch.tensor([0, 0, 0, 0], dtype=torch.float)
+    conv._apply_sigmoid = False
+    assert conv(x, edge_index).abs().sum() == 0.
