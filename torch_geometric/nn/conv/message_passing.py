@@ -458,7 +458,6 @@ class MessagePassing(torch.nn.Module):
 
         size = [1] * inputs.dim()
         size[self.node_dim] = -1
-        print("DRIN")
         return inputs * edge_mask.view(size)
 
     def aggregate(self, inputs: Tensor, index: Tensor,

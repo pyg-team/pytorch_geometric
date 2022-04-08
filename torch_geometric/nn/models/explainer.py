@@ -18,7 +18,7 @@ def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module._explain = True
+            module.explain = True
             module._edge_mask = mask
             module._loop_mask = loop_mask
             module._apply_sigmoid = apply_sigmoid
@@ -28,7 +28,7 @@ def clear_masks(model: torch.nn.Module):
     """Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module._explain = False
+            module.explain = False
             module._edge_mask = None
             module._loop_mask = None
             module._apply_sigmoid = True
