@@ -65,7 +65,7 @@ def test_lstm_sage_conv():
     assert str(conv) == 'SAGEConv(8, 32, aggr=lstm)'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
-    assert conv(x, adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x, adj.t()), out)
 
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 0]])
     with pytest.raises(ValueError, match="is not sorted by columns"):

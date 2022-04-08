@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
+from torch_scatter import scatter
 from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
@@ -119,7 +120,8 @@ class SAGEConv(MessagePassing):
     def aggregate(self, x: Tensor, index: Tensor, ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
         if self.aggr is not None:
-            return super().aggregate(x, index, ptr, dim_size)
+            return scatter(x, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
 
         # LSTM aggregation:
         if ptr is None and not torch.all(index[:-1] <= index[1:]):
