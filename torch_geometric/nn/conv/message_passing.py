@@ -31,16 +31,19 @@ AGGRS = {'add', 'sum', 'mean', 'min', 'max', 'mul'}
 
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers of the form
+
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
         \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
+
     where :math:`\square` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_gnn.html>`__ for the accompanying tutorial.
+
     Args:
         aggr (string or list, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
@@ -253,6 +256,7 @@ class MessagePassing(torch.nn.Module):
 
     def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
+
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
@@ -476,8 +480,10 @@ class MessagePassing(torch.nn.Module):
                   aggr: Optional[str] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
+
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.
+
         By default, this function will delegate its call to scatter functions
         that support "add", "mean", "min", "max" and "mul" operations as
         specified in :meth:`__init__` by the :obj:`aggr` argument.
@@ -532,11 +538,15 @@ class MessagePassing(torch.nn.Module):
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`propagate` is invoked.
         It should have the following signature:
+
         .. code-block:: python
+
             hook(module, inputs) -> None or modified input
+
         The hook can modify the input.
         Input keyword arguments are passed to the hook as a dictionary in
         :obj:`inputs[-1]`.
+
         Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
         to remove the added hook by calling :obj:`handle.remove()`.
         """
@@ -550,11 +560,15 @@ class MessagePassing(torch.nn.Module):
         The hook will be called every time after :meth:`propagate` has computed
         an output.
         It should have the following signature:
+
         .. code-block:: python
+
             hook(module, inputs, output) -> None or modified output
+
         The hook can modify the output.
         Input keyword arguments are passed to the hook as a dictionary in
         :obj:`inputs[-1]`.
+
         Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
         to remove the added hook by calling :obj:`handle.remove()`.
         """
@@ -651,6 +665,7 @@ class MessagePassing(torch.nn.Module):
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module.
+
         Args:
             typing (string, optional): If given, will generate a concrete
                 instance with :meth:`forward` types based on :obj:`typing`,
