@@ -220,7 +220,6 @@ class {{cls_name}}({{parent_cls_name}}):
 
 {% endif %}
 
-
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
         # type: (Tensor, {{ prop_types.values()|join(', ') }}, Size) -> {{ prop_return_type }}
@@ -273,6 +272,15 @@ class {{cls_name}}({{parent_cls_name}}):
     def edge_updater(self):
         pass
 {% endif %}
+
+    @property
+    def explain(self) -> bool:
+        return self._explain
+
+    @explain.setter
+    def explain(self, explain: bool):
+        raise ValueError("Explainability of message passing modules "
+                         "is only supported on the Python module")
 
 {%- for (arg_types, return_type_repr) in forward_types %}
 
