@@ -439,6 +439,9 @@ class MessagePassing(torch.nn.Module):
             self.special_args)
 
     def explain_message(self, inputs: Tensor) -> Tensor:
+        # NOTE Replace this method in custom explainers per message-passing
+        # layer to customize how messages shall be explained.
+
         edge_mask = self._edge_mask
 
         if edge_mask is None:
