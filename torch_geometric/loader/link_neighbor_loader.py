@@ -65,15 +65,16 @@ class LinkNeighborSampler(NeighborSampler):
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
-    r"""A link based data loader that is an extension of the node based
-    :obj:`NeighborLoader`. This loader allows for mini-batch training of GNNs
-    on large-scale graphs with respect to edge based tasks like link
-    prediction.
+    r"""A link-based data loader derived as an extension of the node-based
+    :class:`torch_geometric.loader.NeighborLoader`.
+    This loader allows for mini-batch training of GNNs on large-scale graphs
+    where full-batch training is not feasible.
 
-    This loader first selects a sample of edges from the input list (which
-    may or not be edges in the original graph) and then constructs a subgraph
-    from all the nodes represented by this list by using
-    :obj:`num_neighbors` neighbours in each iteration.
+    More specifically, this loader first selects a sample of edges from the
+    set of input edges :obj:`edge_label_index` (which may or not be edges in
+    the original graph) and then constructs a subgraph from all the nodes
+    present in this list by sampling :obj:`num_neighbors` neighbors in each
+    iteration.
 
     .. code-block:: python
 
@@ -94,15 +95,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         sampled_data = next(iter(loader))
         print(sampled_data)
         >>> Data(x=[1368, 1433], edge_index=[2, 3103], y=[1368],
-            train_mask=[1368], val_mask=[1368], test_mask=[1368],
-            batch_size=128, sampled_edges=[2, 128])
+                 train_mask=[1368], val_mask=[1368], test_mask=[1368],
+                 edge_label_index=[2, 128])
 
-    The batch size above is the number of edges that were sampled,
-    while the sampled_edges gives the edge index of the edges that
-    that subgraph has been built for.
-
-    It is additionally possible to provide edge labels, which are
-    then added to the batch.
+    It is additionally possible to provide edge labels for sampled edges, which
+    are then added to the batch:
 
     .. code-block:: python
 
@@ -117,8 +114,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         sampled_data = next(iter(loader))
         print(sampled_data)
         >>> Data(x=[1368, 1433], edge_index=[2, 3103], y=[1368],
-            train_mask=[1368], val_mask=[1368], test_mask=[1368],
-            batch_size=128, sampled_edges=[2, 128], sampled_edge_labels=[128])
+                 train_mask=[1368], val_mask=[1368], test_mask=[1368],
+                 edge_label_index=[2, 128], edge_label=[128])
 
     The rest of the functionality mirros that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
