@@ -147,6 +147,7 @@ class LinkNeighborLoader(DataLoader):
     then added to the batch.
 
     .. code-block:: python
+
         loader = LinkNeighborLoader(
             data,
             num_neighbors=[30] * 2,
