@@ -6,14 +6,12 @@ import torch.nn.functional as F
 
 from torch_geometric.data import LightningDataset, LightningNodeData
 from torch_geometric.nn import global_mean_pool
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
 try:
     from pytorch_lightning import LightningModule
-    no_pytorch_lightning = False
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     LightningModule = torch.nn.Module
-    no_pytorch_lightning = True
 
 
 class LinearGraphModule(LightningModule):
@@ -53,9 +51,9 @@ class LinearGraphModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@withCUDA
 @onlyFullTest
-@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withPackage('pytorch_lightning')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
 def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
@@ -144,9 +142,9 @@ class LinearNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@withCUDA
 @onlyFullTest
-@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withPackage('pytorch_lightning')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
@@ -239,9 +237,9 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@withCUDA
 @onlyFullTest
-@pytest.mark.skipif(no_pytorch_lightning, reason='PL not available')
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withPackage('pytorch_lightning')
 def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 

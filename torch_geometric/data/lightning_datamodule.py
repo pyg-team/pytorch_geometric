@@ -27,7 +27,7 @@ class LightningDataModule(PLLightningDataModule):
         if no_pytorch_lightning:
             raise ModuleNotFoundError(
                 "No module named 'pytorch_lightning' found on this machine. "
-                "Run 'pip install pytorch_lightning' to install the library")
+                "Run 'pip install pytorch_lightning' to install the library.")
 
         if not has_val:
             self.val_dataloader = None
