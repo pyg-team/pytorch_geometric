@@ -99,10 +99,8 @@ class SAGEConv(MessagePassing):
         out = self.propagate(edge_index, x=x, size=size)
         out = self.lin_l(out)
 
-        # updates node embeddings
         x_r = x[1]
         if self.root_weight and x_r is not None:
-            # root weight does not get concatenated for the convolutional aggregator
             out += self.lin_r(x_r)
 
         if self.normalize:
@@ -113,8 +111,8 @@ class SAGEConv(MessagePassing):
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor,
-                              edge_index_j, edge_index_i) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              x: OptPairTensor) -> Tensor:
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
