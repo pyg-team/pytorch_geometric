@@ -53,9 +53,6 @@ def test_homogeneous_neighbor_loader(directed):
 
         assert is_subset(batch.edge_index, data.edge_index, batch.x, batch.x)
 
-        # Test for isolated nodes (there shouldn't exist any):
-        assert data.edge_index.view(-1).unique().numel() == data.num_nodes
-
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader(directed):

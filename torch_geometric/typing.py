@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -33,3 +33,5 @@ NoneType = Optional[Tensor]
 # Types for sampling ##########################################################
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
