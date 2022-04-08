@@ -39,22 +39,29 @@ class LinkNeighborSampler(NeighborSampler):
 
         elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
+
+            query_src = edge_label_index[0]
+            query_src, reverse_src = query_src.unique(return_inverse=True)
+
+            query_dst = edge_label_index[1]
+            query_dst, reverse_dst = query_dst.unique(return_inverse=True)
+
             node_dict, row_dict, col_dict, edge_dict = sample_fn(
                 self.node_types,
                 self.edge_types,
                 self.colptr_dict,
                 self.row_dict,
                 {
-                    self.input_type[0]: edge_label_index[0],
-                    self.input_type[-1]: edge_label_index[1],
+                    self.input_type[0]: query_src,
+                    self.input_type[-1]: query_dst,
                 },
                 self.num_neighbors,
                 self.num_hops,
                 self.replace,
                 self.directed,
             )
-            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-                    edge_label)
+            return (node_dict, row_dict, col_dict, edge_dict,
+                    torch.stack([reverse_src, reverse_dst], dim=0), edge_label)
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):

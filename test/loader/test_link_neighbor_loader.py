@@ -65,48 +65,36 @@ def test_homogeneous_link_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-def test_heterogeneous_neighbor_loader(directed):
-    return
+def test_heterogeneous_link_neighbor_loader(directed):
     torch.manual_seed(12345)
-
-    batch_size = 20
-    n_paper = 100
-    n_author = 200
-    n_paper_paper = 500
-    n_paper_author = 1000
-    n_author_paper = 500
 
     data = HeteroData()
 
-    data['paper'].x = torch.arange(n_paper)
-    data['author'].x = torch.arange(n_author)
+    data['paper'].x = torch.arange(100)
+    data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(n_paper, n_paper,
-                                                       n_paper_paper)
-    data['paper', 'paper'].edge_attr = torch.arange(n_paper_paper)
-    data['paper',
-         'author'].edge_index = get_edge_index(n_paper, n_author,
-                                               n_paper_author)
-    data['paper', 'author'].edge_attr = torch.arange(n_paper_author)
-    data['author',
-         'paper'].edge_index = get_edge_index(n_author, n_paper,
-                                              n_author_paper)
-    data['author', 'paper'].edge_attr = torch.arange(n_author_paper)
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_attr = torch.arange(500)
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
-    loader = LinkNeighborLoader(data, num_neighbors=[10] * 2,
-                                input_edges=('paper', 'to', 'author'),
-                                batch_size=batch_size, directed=directed)
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                edge_label_index=('paper', 'to', 'author'),
+                                batch_size=20, directed=directed, shuffle=True)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == int(n_paper_author / batch_size)
+    assert len(loader) == int(1000 / 20)
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
+        print(batch)
 
-        # Test node type selection:
-        assert set(batch.node_types) == {'paper', 'author'}
+        assert len(batch) == 4
 
-        # Test edge type selection:
-        assert set(batch.edge_types) == {('paper', 'to', 'paper'),
-                                         ('paper', 'to', 'author'),
-                                         ('author', 'to', 'paper')}
+        # Assert positive samples were present in the original graph:
+        edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
+        edge_label_index = batch['paper', 'author'].edge_label_index
+        edge_label_index = unique_edge_pairs(edge_label_index)
+        assert len(edge_index | edge_label_index) == len(edge_index)
