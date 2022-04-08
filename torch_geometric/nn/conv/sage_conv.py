@@ -1,5 +1,6 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
+import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
@@ -25,7 +26,9 @@ class SAGEConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (str): ['mean', 'max', 'lstm'], mean by default
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"mean"`, :obj:`"max"`, :obj:`"lstm"`).
+            (default: :obj:`"add"`)
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
             :math:`\frac{\mathbf{x}^{\prime}_i}
@@ -38,12 +41,6 @@ class SAGEConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
-            For eg: to inherit the aggregation function implementation from
-            `torch_geometric.nn.conv.MessagePassing`, set (aggr = 'func_name')
-            where func_name is in ['mean', 'sum', 'add', 'min', 'max', 'mul'];
-            additionally, set the flow direction of message passing by passing
-            the flow argument as either (flow = 'source_to_target') or
-            (flow = 'target_to_source')
 
     Shapes:
         - **inputs:**
@@ -64,8 +61,7 @@ class SAGEConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-
-        kwargs.setdefault("aggr", aggr if aggr != 'lstm' else 'mean')
+        kwargs['aggr'] = aggr if aggr != 'lstm' else None
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -76,25 +72,22 @@ class SAGEConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        if aggr == 'lstm':
+        if self.aggr is None:
+            self.fuse = False  # No "fused" message_and_aggregate.
             self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
-        else:
-            self.lstm = None
 
-        self.lin_l = Linear(in_channels[0], out_channels,
-                            bias=bias)  # neighbours
+        self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
         if self.root_weight:
-            self.lin_r = Linear(in_channels[1], out_channels,
-                                bias=False)  # root
+            self.lin_r = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        if self.aggr is None:
+            self.lstm.reset_parameters()
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()
-        if self.lstm is not None:
-            self.lstm.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
@@ -103,9 +96,6 @@ class SAGEConv(MessagePassing):
             x: OptPairTensor = (x, x)
 
         # propagate_type: (x: OptPairTensor)
-        # propagate internally calls message_and_aggregate() if edge_index is a SparseTensor
-        # or if message_and_aggregate() is implemented
-        # otherwise it calls message(), aggregate() separately if edge_index is a Tensor
         out = self.propagate(edge_index, x=x, size=size)
         out = self.lin_l(out)
 
@@ -125,19 +115,27 @@ class SAGEConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor,
                               edge_index_j, edge_index_i) -> Tensor:
-        """
-            Performs both message passing and aggregation of messages from neighbours using the aggregator_type
-        """
         adj_t = adj_t.set_value(None, layout=None)
-        if self.lstm is not None:
-            x_j = x[0][edge_index_j]
-            x, mask = to_dense_batch(x_j, edge_index_i)
-            _, (rst, _) = self.lstm(x)
-            out = rst.squeeze(0)
-            return out
+        return matmul(adj_t, x[0], reduce=self.aggr)
 
-        elif self.aggr == 'mean':
-            return matmul(adj_t, x[0], reduce=self.aggr)
+    def aggregate(self, x: Tensor, index: Tensor, ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
+        if self.aggr is not None:
+            return super().aggregate(x, index, ptr, dim_size)
 
-        elif self.aggr == 'max':
-            return matmul(adj_t, x[0], reduce=self.aggr)
+        # LSTM aggregation:
+        if ptr is None and not torch.all(index[:-1] <= index[1:]):
+            raise ValueError(f"Can not utilize LSTM-style aggregation inside "
+                             f"'{self.__class__.__name__}' in case the "
+                             f"'edge_index' tensor is not sorted by columns. "
+                             f"Run 'sort_edge_index(..., sort_by_row=False)' "
+                             f"in a pre-processing step.")
+
+        x, mask = to_dense_batch(x, batch=index, batch_size=dim_size)
+        out, _ = self.lstm(x)
+        return out[:, -1]
+
+    def __repr__(self) -> str:
+        aggr = self.aggr if self.aggr is not None else 'lstm'
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggr={aggr})')
