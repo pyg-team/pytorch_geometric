@@ -53,23 +53,18 @@ class MaskLabel(torch.nn.Module):
             return x
 
     @staticmethod
-    def ratio_mask(mask: torch.Tensor, ratio: float, shuffle: bool = False):
+    def ratio_mask(mask: Tensor, ratio: float):
         r"""Modifies :obj:`mask` by setting :obj:`ratio` of :obj:`True`
         entries to :obj:`False`. Does not operate in-place.
 
         Args:
             mask (torch.Tensor): The mask to re-mask.
             ratio (float): The ratio of entries to remove.
-            shuffle (bool, optional): Whether to randomize which elements to
-                change to :obj:`False`. (default: :obj:`False`)
         """
         n = int(mask.sum())
-        mask = torch.clone(mask)
-        new_mask = torch.arange(1, n + 1) > ratio * n
-        if shuffle:
-            new_mask = new_mask[torch.randperm(n)]
-        mask[mask == 1] = new_mask
-        return mask
+        out = mask.clone()
+        out[mask] = torch.rand(n, device=mask.device) < ratio
+        return out
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
