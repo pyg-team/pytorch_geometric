@@ -269,6 +269,8 @@ def get_input_nodes(data: Union[Data, HeteroData],
     if isinstance(data, Data):
         if input_nodes is None:
             return None, range(data.num_nodes)
+        if input_nodes.dtype == torch.bool:
+            input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
         return None, input_nodes
 
     assert input_nodes is not None
@@ -283,4 +285,7 @@ def get_input_nodes(data: Union[Data, HeteroData],
     if input_nodes[1] is None:
         return input_nodes[0], range(data[input_nodes[0]].num_nodes)
 
-    return input_nodes
+    node_type, input_nodes = input_nodes
+    if input_nodes.dtype == torch.bool:
+        input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
+    return node_type, input_nodes
