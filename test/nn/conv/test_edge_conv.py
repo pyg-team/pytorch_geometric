@@ -5,7 +5,7 @@ from torch.nn import Sequential as Seq
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import DynamicEdgeConv, EdgeConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
 def test_edge_conv_conv():
@@ -56,6 +56,7 @@ def test_edge_conv_conv():
         assert jit((x1, x2), adj.t()).tolist() == out2.tolist()
 
 
+@withPackage('torch_cluster')
 def test_dynamic_edge_conv_conv():
     x1 = torch.randn(8, 16)
     x2 = torch.randn(4, 16)

@@ -7,7 +7,6 @@ install_requires = [
     'tqdm',
     'numpy',
     'scipy',
-    'pandas',
     'jinja2',
     'requests',
     'pyparsing',
@@ -18,6 +17,7 @@ full_install_requires = [
     'h5py',
     'yacs',
     'numba',
+    'pandas',
     'captum',
     'rdflib',
     'trimesh',
@@ -28,7 +28,6 @@ full_install_requires = [
     'scikit-image',
     'pytorch-memlab',
     'torchmetrics>=0.7',
-    'class-resolver>=0.3.2',
 ]
 
 test_requires = [

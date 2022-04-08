@@ -1,6 +1,7 @@
 import torch
 
 import torch_geometric.graphgym.register as register
+from torch_geometric.testing import withPackage
 
 
 @register.register_act('identity')
@@ -8,6 +9,7 @@ def identity_act(x: torch.Tensor) -> torch.Tensor:
     return x
 
 
+@withPackage('yacs')
 def test_register():
     assert len(register.act_dict) == 8
     assert list(register.act_dict.keys()) == [

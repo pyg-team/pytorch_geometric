@@ -4,12 +4,11 @@ import shutil
 import sys
 
 import torch
-import torchvision.transforms as T
-from torchvision.datasets.mnist import MNIST, read_image_file, read_label_file
 
 from torch_geometric.data import download_url, extract_gz
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.loader import DataLoader
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import ToSLIC
 
 resources = [
@@ -18,7 +17,15 @@ resources = [
 ]
 
 
+@withPackage('torchvision')
 def test_to_superpixels():
+    import torchvision.transforms as T
+    from torchvision.datasets.mnist import (
+        MNIST,
+        read_image_file,
+        read_label_file,
+    )
+
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
 
     raw_folder = osp.join(root, 'MNIST', 'raw')

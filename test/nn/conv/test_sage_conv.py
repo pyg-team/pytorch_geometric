@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -13,7 +14,7 @@ def test_sage_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = SAGEConv(8, 32)
-    assert conv.__repr__() == 'SAGEConv(8, 32)'
+    assert str(conv) == 'SAGEConv(8, 32, aggr=mean)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
@@ -31,7 +32,7 @@ def test_sage_conv():
 
     adj = adj.sparse_resize((4, 2))
     conv = SAGEConv((8, 16), 32)
-    assert conv.__repr__() == 'SAGEConv((8, 16), 32)'
+    assert str(conv) == 'SAGEConv((8, 16), 32, aggr=mean)'
     out1 = conv((x1, x2), edge_index)
     out2 = conv((x1, None), edge_index, (4, 2))
     assert out1.size() == (2, 32)
@@ -52,3 +53,20 @@ def test_sage_conv():
         jit = torch.jit.script(conv.jittable(t))
         assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
         assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+
+
+def test_lstm_sage_conv():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = SAGEConv(8, 32, aggr='lstm')
+    assert str(conv) == 'SAGEConv(8, 32, aggr=lstm)'
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
+    assert torch.allclose(conv(x, adj.t()), out)
+
+    edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 0]])
+    with pytest.raises(ValueError, match="is not sorted by columns"):
+        conv(x, edge_index)

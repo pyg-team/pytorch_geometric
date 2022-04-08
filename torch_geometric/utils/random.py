@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import torch
 
@@ -20,6 +22,7 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
     else:
+        warnings.filterwarnings('ignore', '.*pass the indexing argument.*')
         idx = torch.combinations(torch.arange(num_nodes), r=2)
 
     # Filter edges.

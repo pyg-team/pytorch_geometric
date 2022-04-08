@@ -1,11 +1,16 @@
+import warnings
+
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SplineConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
+@withPackage('torch_spline_conv')
 def test_spline_conv():
+    warnings.filterwarnings('ignore', '.*non-optimized CPU version.*')
+
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -56,7 +61,10 @@ def test_spline_conv():
         assert torch.allclose(jit((x1, None), adj.t()), out2)
 
 
+@withPackage('torch_spline_conv')
 def test_lazy_spline_conv():
+    warnings.filterwarnings('ignore', '.*non-optimized CPU version.*')
+
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
