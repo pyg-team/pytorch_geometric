@@ -81,7 +81,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             num_neighbors=[30] * 2,
             # Use a batch size of 128 for sampling training nodes
             batch_size=128,
-            input_edges=data.edge_index,
+            edge_label_index=data.edge_index,
         )
 
         sampled_data = next(iter(loader))
@@ -103,8 +103,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             data,
             num_neighbors=[30] * 2,
             batch_size=128,
-            input_edges=data.edge_index,
-            input_edge_labels=torch.ones(data.edge_index.size()[1])
+            edge_label_index=data.edge_index,
+            edge_label=torch.ones(data.edge_index.size(1))
         )
 
         sampled_data = next(iter(loader))
@@ -113,8 +113,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             train_mask=[1368], val_mask=[1368], test_mask=[1368],
             batch_size=128, sampled_edges=[2, 128], sampled_edge_labels=[128])
 
-    The rest of the functionality is mirros that of :obj:`NeighborLoader`,
-    including support for hetrogenous graphs.
+    The rest of the functionality mirros that of
+    :class:`~torch_geometric.loader.NeighborLoader`, including support for
+    heterogenous graphs.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
@@ -125,17 +126,15 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
             If an entry is set to :obj:`-1`, all neighbors will be included.
-        input_edges (torch.Tensor or str or Tuple[Tuple(str), torch.Tensor]):
-            The edge_index format edges for which neighbors are sampled to
-            create mini-batches.
+        edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
+            The edge indices for which neighbors are sampled to create
+            mini-batches.
             If set to :obj:`None`, all edges will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
-            the edge type and edge indices. (default: :obj:`None`)
-            Note that the edges provide do not need to be in the graph provided
-            to sample, but the nodes of those edge should be.
-        input_edge_labels (torch.Tensor):
-            The labels of the input_edges. Must be the same length as the
-            input_edges.
+            the edge type and corresponding edge indices.
+            (default: :obj:`None`)
+        edge_label (Tensor): The labels of edge indices for which neighbors are
+            sampled. Must be the same length as the :obj:`edge_label_index`.
             If set to :obj:`None` then no labels are returned in the batch.
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
