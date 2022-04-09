@@ -108,11 +108,8 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
     data['author'].x = torch.arange(100, 300)
 
     data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
-    data['paper', 'paper'].edge_attr = torch.arange(500)
     data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
-    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
-    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'to', 'paper'),
