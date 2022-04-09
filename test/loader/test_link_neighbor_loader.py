@@ -81,7 +81,7 @@ def test_heterogeneous_link_neighbor_loader(directed):
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=('paper', 'to', 'author'),
+                                edge_label_index=('paper', 'author'),
                                 batch_size=20, directed=directed, shuffle=True)
 
     assert str(loader) == 'LinkNeighborLoader()'
@@ -112,7 +112,7 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=('paper', 'to', 'paper'),
+                                edge_label_index=('paper', 'paper'),
                                 batch_size=20, directed=directed)
 
     for batch in loader:
@@ -124,3 +124,21 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
         edge_label_index = batch['paper', 'paper'].edge_label_index
         edge_label_index = unique_edge_pairs(edge_label_index)
         assert len(edge_index | edge_label_index) == len(edge_index)
+
+
+def test_heterogeneous_link_neighbor_input_types():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+    data['paper'].x = torch.arange(100)
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 5)
+
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                edge_label_index=('paper', 'paper'),
+                                batch_size=20)
+    assert ('paper', 'to', 'paper') in next(iter(loader)).edge_types
+
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                edge_label_index=('paper', 'to', 'paper'),
+                                batch_size=20)
+    assert ('paper', 'to', 'paper') in next(iter(loader)).edge_types
