@@ -25,6 +25,7 @@ class LinkNeighborSampler(NeighborSampler):
 
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
+            edge_label_index = reverse.view(2, -1)
 
             node, row, col, edge = sample_fn(
                 self.colptr,
@@ -35,33 +36,41 @@ class LinkNeighborSampler(NeighborSampler):
                 self.directed,
             )
 
-            return node, row, col, edge, reverse.view(2, -1), edge_label
+            return node, row, col, edge, edge_label_index, edge_label
 
         elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
 
-            query_src = edge_label_index[0]
-            query_src, reverse_src = query_src.unique(return_inverse=True)
-
-            query_dst = edge_label_index[1]
-            query_dst, reverse_dst = query_dst.unique(return_inverse=True)
+            if self.input_type[0] != self.input_type[-1]:
+                query_src = edge_label_index[0]
+                query_src, reverse_src = query_src.unique(return_inverse=True)
+                query_dst = edge_label_index[1]
+                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
+                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
+                query_node_dict = {
+                    self.input_type[0]: query_src,
+                    self.input_type[-1]: query_dst,
+                }
+            else:  # Merge both source and destination node indices:
+                query_nodes = edge_label_index.view(-1)
+                query_nodes, reverse = query_nodes.unique(return_inverse=True)
+                edge_label_index = reverse.view(2, -1)
+                query_node_dict = {self.input_type[0]: query_nodes}
 
             node_dict, row_dict, col_dict, edge_dict = sample_fn(
                 self.node_types,
                 self.edge_types,
                 self.colptr_dict,
                 self.row_dict,
-                {
-                    self.input_type[0]: query_src,
-                    self.input_type[-1]: query_dst,
-                },
+                query_node_dict,
                 self.num_neighbors,
                 self.num_hops,
                 self.replace,
                 self.directed,
             )
-            return (node_dict, row_dict, col_dict, edge_dict,
-                    torch.stack([reverse_src, reverse_dst], dim=0), edge_label)
+
+            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
+                    edge_label)
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
