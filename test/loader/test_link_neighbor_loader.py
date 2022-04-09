@@ -51,13 +51,13 @@ def test_homogeneous_link_neighbor_loader(directed):
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
-        # Assert positive samples were present in the original graph:
+        # Assert positive samples are present in the original graph:
         edge_index = unique_edge_pairs(batch.edge_index)
         edge_label_index = batch.edge_label_index[:, batch.edge_label == 1]
         edge_label_index = unique_edge_pairs(edge_label_index)
         assert len(edge_index | edge_label_index) == len(edge_index)
 
-        # Assert negative samples were not present in the original graph:
+        # Assert negative samples are not present in the original graph:
         edge_index = unique_edge_pairs(batch.edge_index)
         edge_label_index = batch.edge_label_index[:, batch.edge_label == 0]
         edge_label_index = unique_edge_pairs(edge_label_index)
@@ -89,11 +89,9 @@ def test_heterogeneous_link_neighbor_loader(directed):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        print(batch)
-
         assert len(batch) == 4
 
-        # Assert positive samples were present in the original graph:
+        # Assert positive samples are present in the original graph:
         edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
         edge_label_index = batch['paper', 'author'].edge_label_index
         edge_label_index = unique_edge_pairs(edge_label_index)
@@ -117,28 +115,14 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=("paper", "to", "paper"),
+                                edge_label_index=('paper', 'to', 'paper'),
                                 batch_size=20, directed=directed)
 
-    assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 25
-
     for batch in loader:
-        assert isinstance(batch, HeteroData)
-        assert len(batch) == 4
-
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
-        assert batch['author'].x.size(0) <= 200
-        assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
 
-        assert batch['paper', 'paper'].edge_attr.min() >= 0
-        assert batch['paper', 'paper'].edge_attr.min() < 500
-        assert batch['paper', 'author'].edge_attr.min() >= 500
-        assert batch['paper', 'author'].edge_attr.min() < 1500
-        assert batch['author', 'paper'].edge_attr.min() >= 1500
-        assert batch['author', 'paper'].edge_attr.min() < 2500
-
+        # Assert positive samples are present in the original graph:
         edge_index = unique_edge_pairs(batch['paper', 'paper'].edge_index)
         edge_label_index = batch['paper', 'paper'].edge_label_index
         edge_label_index = unique_edge_pairs(edge_label_index)
