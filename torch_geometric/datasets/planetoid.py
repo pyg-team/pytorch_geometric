@@ -20,19 +20,18 @@ class Planetoid(InMemoryDataset):
         name (string): The name of the dataset (:obj:`"Cora"`,
             :obj:`"CiteSeer"`, :obj:`"PubMed"`).
         split (string): The type of dataset split
-            (:obj:`"public"`, :obj:`"full"`, :obj:`"geomgcn"`, :obj:`"random"`).
+            (:obj:`"public"`, :obj:`"full"`, :obj:`"geom-gcn"`,
+            :obj:`"random"`).
             If set to :obj:`"public"`, the split will be the public fixed split
-            from the
-            `"Revisiting Semi-Supervised Learning with Graph Embeddings"
-            <https://arxiv.org/abs/1603.08861>`_ paper.
+            from the `"Revisiting Semi-Supervised Learning with Graph
+            Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
             If set to :obj:`"full"`, all nodes except those in the validation
             and test sets will be used for training (as in the
             `"FastGCN: Fast Learning with Graph Convolutional Networks via
             Importance Sampling" <https://arxiv.org/abs/1801.10247>`_ paper).
-            If set to :obj:`"geomgcn"`, the split will be the 10 fixed splits
-            from the
+            If set to :obj:`"geom-gcn"`, the 10 public fixed splits from the
             `"Geom-GCN: Geometric Graph Convolutional Networks"
-            <https://openreview.net/forum?id=S1e2agrFvS>`_ paper.
+            <https://openreview.net/forum?id=S1e2agrFvS>`_ paper are given.
             If set to :obj:`"random"`, train, validation, and test sets will be
             randomly generated, according to :obj:`num_train_per_class`,
             :obj:`num_val` and :obj:`num_test`. (default: :obj:`"public"`)
@@ -79,7 +78,8 @@ class Planetoid(InMemoryDataset):
     """
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
-    geomgcn_url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'
+    geom_gcn_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
+                    'geom-gcn/master')
 
     def __init__(self, root: str, name: str, split: str = "public",
                  num_train_per_class: int = 20, num_val: int = 500,
@@ -88,7 +88,7 @@ class Planetoid(InMemoryDataset):
         self.name = name
 
         self.split = split.lower()
-        assert self.split in ['public', 'full', 'geomgcn', 'random']
+        assert self.split in ['public', 'full', 'geom-gcn', 'random']
 
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -120,50 +120,48 @@ class Planetoid(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
+        if self.split == 'geom-gcn':
+            return osp.join(self.root, self.name, 'geom-gcn', 'raw')
         return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
+        if self.split == 'geom-gcn':
+            return osp.join(self.root, self.name, 'geom-gcn', 'processed')
         return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:
         names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
-        raw_names = [f'ind.{self.name.lower()}.{name}' for name in names]
-        if self.split == 'geomgcn':
-            split_names = [
-                f'{self.name.lower()}_split_0.6_0.2_{i}.npz' for i in range(10)
-            ]
-            return raw_names + split_names
-        else:
-            return raw_names
+        return [f'ind.{self.name.lower()}.{name}' for name in names]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data_geomgcn.pt' if self.split == 'geomgcn' else 'data.pt'
+        return 'data.pt'
 
     def download(self):
-        for name in self.raw_file_names[:8]:
+        for name in self.raw_file_names:
             download_url(f'{self.url}/{name}', self.raw_dir)
-        for name in self.raw_file_names[8:]:
-            download_url(f'{self.geomgcn_url}/splits/{name}', self.raw_dir)
+        if self.split == 'geom-gcn':
+            for i in range(10):
+                url = f'{self.geom_gcn_url}/splits/{self.name.lower()}'
+                download_url(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
 
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
-        if self.split == 'geomgcn':
+
+        if self.split == 'geom-gcn':
             train_masks, val_masks, test_masks = [], [], []
-            for f in self.raw_paths[8:]:
-                tmp = np.load(f)
-                train_masks += [
-                    torch.from_numpy(tmp['train_mask']).to(torch.bool)
-                ]
-                val_masks += [torch.from_numpy(tmp['val_mask']).to(torch.bool)]
-                test_masks += [
-                    torch.from_numpy(tmp['test_mask']).to(torch.bool)
-                ]
+            for i in range(10):
+                name = f'{self.name.lower()}_split_0.6_0.2_{i}.npz'
+                splits = np.load(osp.join(self.raw_dir, name))
+                train_masks.append(torch.from_numpy(splits['train_mask']))
+                val_masks.append(torch.from_numpy(splits['val_mask']))
+                test_masks.append(torch.from_numpy(splits['test_mask']))
             data.train_mask = torch.stack(train_masks, dim=1)
             data.val_mask = torch.stack(val_masks, dim=1)
             data.test_mask = torch.stack(test_masks, dim=1)
+
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
 
