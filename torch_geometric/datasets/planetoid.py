@@ -131,7 +131,9 @@ class Planetoid(InMemoryDataset):
         names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
         raw_names = [f'ind.{self.name.lower()}.{name}' for name in names]
         if self.split == 'geomgcn':
-            split_names = [f'{self.name.lower()}_split_0.6_0.2_{i}.npz' for i in range(10)]
+            split_names = [
+                f'{self.name.lower()}_split_0.6_0.2_{i}.npz' for i in range(10)
+            ]
             return raw_names + split_names
         else:
             return raw_names
@@ -152,9 +154,13 @@ class Planetoid(InMemoryDataset):
             train_masks, val_masks, test_masks = [], [], []
             for f in self.raw_paths[8:]:
                 tmp = np.load(f)
-                train_masks += [torch.from_numpy(tmp['train_mask']).to(torch.bool)]
+                train_masks += [
+                    torch.from_numpy(tmp['train_mask']).to(torch.bool)
+                ]
                 val_masks += [torch.from_numpy(tmp['val_mask']).to(torch.bool)]
-                test_masks += [torch.from_numpy(tmp['test_mask']).to(torch.bool)]
+                test_masks += [
+                    torch.from_numpy(tmp['test_mask']).to(torch.bool)
+                ]
             data.train_mask = torch.stack(train_masks, dim=1)
             data.val_mask = torch.stack(val_masks, dim=1)
             data.test_mask = torch.stack(test_masks, dim=1)
