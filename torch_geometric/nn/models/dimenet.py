@@ -573,3 +573,68 @@ class DimeNet(torch.nn.Module):
             P += output_block(x, rbf, i)
 
         return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
+
+
+class DimeNetPlusPlus(DimeNet):
+    r"""The DimeNet++ from the `"Fast and Uncertainty-Aware
+    Directional Message Passing for Non-Equilibrium Molecules"
+    <https://arxiv.org/abs/2011.14115>`_ paper.
+
+    DimeNet++ is an upgrade to DimeNet model with 8x faster and
+    10% more accurate than DimeNet.
+
+    Args:
+        hidden_channels (int): Hidden embedding size.
+        out_channels (int): Size of each output sample.
+        num_blocks (int): Number of building blocks.
+        int_emb_size (int): Size of embedding in the interaction block.
+        basis_emb_size (int): Size of basis embedding in the interaction block.
+        out_emb_channels (int): Size of embedding in the output block.
+        num_spherical (int): Number of spherical harmonics.
+        num_radial (int): Number of radial basis functions.
+        cutoff: (float, optional): Cutoff distance for interatomic
+            interactions. (default: :obj:`5.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance.
+            (default: :obj:`32`)
+        envelope_exponent (int, optional): Shape of the smooth cutoff.
+            (default: :obj:`5`)
+        num_before_skip: (int, optional): Number of residual layers in the
+            interaction blocks before the skip connection. (default: :obj:`1`)
+        num_after_skip: (int, optional): Number of residual layers in the
+            interaction blocks after the skip connection. (default: :obj:`2`)
+        num_output_layers: (int, optional): Number of linear layers for the
+            output blocks. (default: :obj:`3`)
+        act: (Callable, optional): The activation funtion.
+            (default: :obj:`swish`)
+    """
+    def __init__(self, hidden_channels: int, out_channels: int,
+                 num_blocks: int, int_emb_size: int, basis_emb_size: int,
+                 out_emb_channels: int, num_spherical: int, num_radial: int,
+                 cutoff: float = 5.0, max_num_neighbors: int = 32,
+                 envelope_exponent: int = 5, num_before_skip: int = 1,
+                 num_after_skip: int = 2, num_output_layers: int = 3,
+                 act: Callable = swish):
+        super().__init__(hidden_channels=hidden_channels,
+                         out_channels=out_channels, num_blocks=num_blocks,
+                         num_bilinear=int_emb_size,
+                         num_spherical=num_spherical, num_radial=num_radial,
+                         cutoff=cutoff, max_num_neighbors=max_num_neighbors,
+                         envelope_exponent=envelope_exponent,
+                         num_before_skip=num_before_skip,
+                         num_after_skip=num_after_skip,
+                         num_output_layers=num_output_layers, act=act)
+
+        self.output_blocks = torch.nn.ModuleList([
+            OutputPPBlock(num_radial, hidden_channels, out_emb_channels,
+                          out_channels, num_output_layers, act)
+            for _ in range(num_blocks + 1)
+        ])
+
+        self.interaction_blocks = torch.nn.ModuleList([
+            InteractionPPBlock(hidden_channels, int_emb_size, basis_emb_size,
+                               num_spherical, num_radial, num_before_skip,
+                               num_after_skip, act) for _ in range(num_blocks)
+        ])
+
+        self.reset_parameters()
