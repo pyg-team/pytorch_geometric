@@ -160,6 +160,5 @@ class SAGEConv(MessagePassing):
 
     def __repr__(self) -> str:
         aggr = self.aggr if self.aggr is not None else 'lstm'
-
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, aggr={aggr})')
