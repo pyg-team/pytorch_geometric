@@ -14,11 +14,11 @@ class LinkNeighborSampler(NeighborSampler):
     def __init__(self, data: Union[Data, HeteroData],
                  num_neighbors: NumNeighbors, replace: bool = False,
                  directed: bool = True, input_type: Optional[Any] = None,
-                 share_memory: bool = False, neg_size: int = 0):
+                 share_memory: bool = False, neg_sampling_ratio: int = 0):
         super().__init__(data, num_neighbors, replace, directed, input_type,
                          share_memory)
 
-        self.neg_size = neg_size
+        self.neg_sampling_ratio = neg_sampling_ratio
         if issubclass(self.data_cls, Data):
             self.n_src = self.n_dst = len(data.x)
         else:
@@ -32,17 +32,17 @@ class LinkNeighborSampler(NeighborSampler):
         return torch.stack([row, col], dim=0)
 
     def _add_negative_edges(self, edge_label_index, edge_label):
-
-        if self.neg_size == 0:
+        neg_size = int(edge_label_index.size()[1] * self.neg_sampling_ratio)
+        if neg_size == 0:
             return edge_label_index, edge_label
         n_query = edge_label_index.size()[1]
 
         if edge_label is None:
             edge_label = torch.ones(n_query)
 
-        neg_edges = self._random_edges(self.n_src, self.n_dst, self.neg_size)
+        neg_edges = self._random_edges(self.n_src, self.n_dst, neg_size)
         edge_label_index = torch.cat([edge_label_index, neg_edges], axis=1)
-        edge_label = torch.cat([edge_label, torch.zeros(self.neg_size)])
+        edge_label = torch.cat([edge_label, torch.zeros(neg_size)])
         return edge_label_index, edge_label
 
     def __call__(self, query: List[Tuple[Tensor]]):
@@ -200,7 +200,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
-            edges to the number of positive edges. (default: :obj:`0`).
+            edges to the number of positive edges, new edges will be added
+            to the batch increasing the size. (default: :obj:`0`).
             If set, and edge_labels are not provided, all provided edges will
             be assumed to be positive and given a label of :obj:`1`. The
             negative edges will have label :obj:`0`.
@@ -242,11 +243,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.directed = directed
         self.transform = transform
         self.neighbor_sampler = neighbor_sampler
-
-        batch_size = kwargs.get("batch_size", 1)
-        self.neg_size = int(neg_sampling_ratio * batch_size)
-        self.batch_size = batch_size - self.neg_size
-        kwargs['batch_size'] = self.batch_size
+        self.neg_sampling_ratio = neg_sampling_ratio
 
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
@@ -255,7 +252,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             self.neighbor_sampler = LinkNeighborSampler(
                 data, num_neighbors, replace, directed, edge_type,
                 share_memory=kwargs.get('num_workers', 0) > 0,
-                neg_size=self.neg_size)
+                neg_sampling_ratio=self.neg_sampling_ratio)
 
         super().__init__(Dataset(edge_label_index, edge_label),
                          collate_fn=self.neighbor_sampler, **kwargs)

@@ -35,6 +35,7 @@ def test_homogeneous_link_neighbor_loader(directed, negative_sampling):
 
     neg_sampling_ratio = 0.5 if negative_sampling else 0
     n_batch = 20
+    n_full_batch = n_batch + int(neg_sampling_ratio * 20)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 batch_size=n_batch,
@@ -44,7 +45,7 @@ def test_homogeneous_link_neighbor_loader(directed, negative_sampling):
                                 shuffle=True)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 100 if negative_sampling else 50
+    assert len(loader) == 50
 
     for batch in loader:
         assert isinstance(batch, Data)
@@ -56,7 +57,7 @@ def test_homogeneous_link_neighbor_loader(directed, negative_sampling):
         assert batch.edge_index.max() < batch.num_nodes
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
-        assert batch.edge_label_index.size()[1] == n_batch
+        assert batch.edge_label_index.size()[1] == n_full_batch
 
         # Assert positive samples are present in the original graph:
         edge_index = unique_edge_pairs(batch.edge_index)
@@ -96,6 +97,7 @@ def test_heterogeneous_link_neighbor_loader(directed, negative_sampling):
 
     neg_sampling_ratio = 0.5 if negative_sampling else 0
     n_batch = 20
+    n_full_batch = n_batch + int(neg_sampling_ratio * 20)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'author'),
@@ -104,12 +106,13 @@ def test_heterogeneous_link_neighbor_loader(directed, negative_sampling):
                                 neg_sampling_ratio=neg_sampling_ratio)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 100 if negative_sampling else 50
+    assert len(loader) == 50
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
         assert len(batch) == 5 if negative_sampling else 4
-        assert batch['paper', 'author'].edge_label_index.size()[1] == n_batch
+        n_in_batch = batch['paper', 'author'].edge_label_index.size(1)
+        assert n_in_batch == n_full_batch
 
         # Assert positive samples are present in the original graph:
         edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
