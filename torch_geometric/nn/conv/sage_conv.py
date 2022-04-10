@@ -20,11 +20,15 @@ class SAGEConv(MessagePassing):
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2 \cdot
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
-        \text{ mean }
 
-        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2 \cdot
-        \mathrm{mean}_{j \in \mathcal{N(i)}} \sigma(\mathbf{W}_3
-        \cdot \mathbf{x}_j) \text{ mean pre\_transform}
+    If :obj:`project = True`, then :math:`\mathbf{x}_j` will first get
+    projected via
+
+    .. math::
+        \mathbf{x}_j \leftarrow \sigma ( \mathbf{W}_3 \mathbf{x}_j +
+        \mathbf{b})
+
+    as described in Eq. (3) of the paper.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
@@ -43,11 +47,12 @@ class SAGEConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
+        project (bool, optional): If set to :obj:`True`, the layer will apply a
+            linear transformation followed by an activation function before
+            aggregation (as described in Eq. (3) of the paper).
+            (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        pre_transform (bool, optional): If set to :obj:`True`, the layer will
-            apply a linear transformation (with bias) followed by an activation function
-            before aggregating. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -67,8 +72,8 @@ class SAGEConv(MessagePassing):
         aggr: str = 'mean',
         normalize: bool = False,
         root_weight: bool = True,
+        project: bool = False,
         bias: bool = True,
-        pre_transform: bool = False,
         **kwargs,
     ):
         kwargs['aggr'] = aggr if aggr != 'lstm' else None
@@ -78,12 +83,12 @@ class SAGEConv(MessagePassing):
         self.out_channels = out_channels
         self.normalize = normalize
         self.root_weight = root_weight
-        self.pre_transform = pre_transform
+        self.project = project
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        if self.pre_transform:
+        if self.project:
             self.lin = Linear(in_channels[0], in_channels[0], bias=True)
 
         if self.aggr is None:
@@ -97,19 +102,22 @@ class SAGEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        if self.project:
+            self.lin.reset_parameters()
         if self.aggr is None:
             self.lstm.reset_parameters()
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()
-        if self.pre_transform is not None:
-            self.lin.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
+
+        if self.project and hasattr(self, 'lin'):
+            x = (self.lin(x[0]).relu(), x[1])
 
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
@@ -134,8 +142,6 @@ class SAGEConv(MessagePassing):
 
     def aggregate(self, x: Tensor, index: Tensor, ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
-        if self.pre_transform:
-            x = F.relu(self.lin(x))
         if self.aggr is not None:
             return scatter(x, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
@@ -156,5 +162,4 @@ class SAGEConv(MessagePassing):
         aggr = self.aggr if self.aggr is not None else 'lstm'
 
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, aggr={aggr}, '
-                f'pre_transform={self.pre_transform})')
+                f'{self.out_channels}, aggr={aggr})')
