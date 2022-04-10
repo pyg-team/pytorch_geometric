@@ -21,6 +21,15 @@ class SAGEConv(MessagePassing):
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2 \cdot
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
 
+    If :obj:`project = True`, then :math:`\mathbf{x}_j` will first get
+    projected via
+
+    .. math::
+        \mathbf{x}_j \leftarrow \sigma ( \mathbf{W}_3 \mathbf{x}_j +
+        \mathbf{b})
+
+    as described in Eq. (3) of the paper.
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
@@ -38,6 +47,10 @@ class SAGEConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
+        project (bool, optional): If set to :obj:`True`, the layer will apply a
+            linear transformation followed by an activation function before
+            aggregation (as described in Eq. (3) of the paper).
+            (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -59,6 +72,7 @@ class SAGEConv(MessagePassing):
         aggr: str = 'mean',
         normalize: bool = False,
         root_weight: bool = True,
+        project: bool = False,
         bias: bool = True,
         **kwargs,
     ):
@@ -69,9 +83,13 @@ class SAGEConv(MessagePassing):
         self.out_channels = out_channels
         self.normalize = normalize
         self.root_weight = root_weight
+        self.project = project
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
+
+        if self.project:
+            self.lin = Linear(in_channels[0], in_channels[0], bias=True)
 
         if self.aggr is None:
             self.fuse = False  # No "fused" message_and_aggregate.
@@ -84,6 +102,8 @@ class SAGEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        if self.project:
+            self.lin.reset_parameters()
         if self.aggr is None:
             self.lstm.reset_parameters()
         self.lin_l.reset_parameters()
@@ -95,6 +115,9 @@ class SAGEConv(MessagePassing):
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
+
+        if self.project and hasattr(self, 'lin'):
+            x = (self.lin(x[0]).relu(), x[1])
 
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
