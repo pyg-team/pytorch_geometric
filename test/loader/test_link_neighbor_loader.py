@@ -71,6 +71,11 @@ def test_homogeneous_link_neighbor_loader(directed, negative_sampling):
             edge_label_index = unique_edge_pairs(edge_label_index)
             assert len(edge_index & edge_label_index) == 0
 
+        if negative_sampling:
+            n_neg = int(neg_sampling_ratio * n_batch)
+            negative_labels = batch.edge_label[-n_neg:]
+            assert torch.all(negative_labels == 0)
+
 
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('negative_sampling', [True, False])
@@ -114,6 +119,11 @@ def test_heterogeneous_link_neighbor_loader(directed, negative_sampling):
             edge_label_index = edge_label_index[:, mask]
         edge_label_index = unique_edge_pairs(edge_label_index)
         assert len(edge_index | edge_label_index) == len(edge_index)
+
+        if negative_sampling:
+            n_neg = int(neg_sampling_ratio * n_batch)
+            negative_labels = batch['paper', 'author'].edge_label[-n_neg:]
+            assert torch.all(negative_labels == 0)
 
 
 @pytest.mark.parametrize('directed', [True, False])
