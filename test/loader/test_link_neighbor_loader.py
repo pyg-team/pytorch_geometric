@@ -34,17 +34,17 @@ def test_homogeneous_link_neighbor_loader(directed, negative_sampling):
     data.edge_attr = torch.arange(500)
 
     neg_sampling_ratio = 0.5 if negative_sampling else 0
-    negative_samples = int(neg_sampling_ratio * 20)
-    n_batch = 20 + negative_samples
+    n_batch = 20
 
-    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2, batch_size=20,
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                batch_size=n_batch,
                                 edge_label_index=edge_label_index,
                                 edge_label=edge_label, directed=directed,
                                 neg_sampling_ratio=neg_sampling_ratio,
                                 shuffle=True)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 1000 / 20
+    assert len(loader) == 100 if negative_sampling else 50
 
     for batch in loader:
         assert isinstance(batch, Data)
@@ -90,16 +90,16 @@ def test_heterogeneous_link_neighbor_loader(directed, negative_sampling):
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     neg_sampling_ratio = 0.5 if negative_sampling else 0
-    negative_samples = int(neg_sampling_ratio * 20)
-    n_batch = 20 + negative_samples
+    n_batch = 20
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'author'),
-                                batch_size=20, directed=directed, shuffle=True,
+                                batch_size=n_batch, directed=directed,
+                                shuffle=True,
                                 neg_sampling_ratio=neg_sampling_ratio)
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == int(1000 / 20)
+    assert len(loader) == 100 if negative_sampling else 50
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
