@@ -17,28 +17,36 @@ class LinkNeighborSampler(NeighborSampler):
                  share_memory: bool = False, neg_sampling_ratio: float = 1.0):
         super().__init__(data, num_neighbors, replace, directed, input_type,
                          share_memory)
+
         self.neg_sampling_ratio = neg_sampling_ratio
+        if issubclass(self.data_cls, Data):
+            self.n_src = self.n_dst = len(data.x)
+        else:
+            self.n_src = len(data[self.input_type[0]].x)
+            self.n_dst = len(data[self.input_type[-1]].x)
+
+    @staticmethod
+    def _random_edges(n_src, n_dest, n_edges):
+        row = torch.randint(n_src, (n_edges, ), dtype=torch.long)
+        col = torch.randint(n_dest, (n_edges, ), dtype=torch.long)
+        return torch.stack([row, col], dim=0)
+
+    def _add_negative_edges(self, edge_label_index, edge_label):
+
+        n_query = edge_label_index.size()[1]
+        n_neg = int(n_query * self.neg_sampling_ratio)
+        if n_neg == 0:
+            return edge_label_index, edge_label
+
+        if edge_label is None:
+            edge_label = torch.ones(n_query)
+
+        neg_edges = self._random_edges(self.n_src, self.n_dst, n_neg)
+        edge_label_index = torch.cat([edge_label_index, neg_edges], axis=1)
+        edge_label = torch.cat([edge_label, torch.zeros(n_neg)])
+        return edge_label_index, edge_label
 
     def __call__(self, query: List[Tuple[Tensor]]):
-
-        # # Create negative samples:
-        # num_neg_train = 0
-        # if self.add_negative_train_samples:
-        #     if num_disjoint > 0:
-        #         num_neg_train = int(num_disjoint * self.neg_sampling_ratio)
-        #     else:
-        #         num_neg_train = int(num_train * self.neg_sampling_ratio)
-        # num_neg_val = int(num_val * self.neg_sampling_ratio)
-        # num_neg_test = int(num_test * self.neg_sampling_ratio)
-
-        # num_neg = num_neg_train + num_neg_val + num_neg_test
-
-        # size = store.size()
-        # if store._key is None or store._key[0] == store._key[-1]:
-        #     size = size[0]
-        # neg_edge_index = negative_sampling(edge_index, size,
-        #                                    num_neg_samples=num_neg,
-        #                                    method='sparse')
 
         query = [torch.tensor(s) for s in zip(*query)]
         if len(query) == 2:
@@ -47,6 +55,9 @@ class LinkNeighborSampler(NeighborSampler):
         else:
             edge_label_index = torch.stack(query[:2], dim=0)
             edge_label = query[2]
+
+        edge_label_index, edge_label = self._add_negative_edges(
+            edge_label_index, edge_label)
 
         if issubclass(self.data_cls, Data):
             sample_fn = torch.ops.torch_sparse.neighbor_sample
@@ -158,6 +169,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
     heterogenous graphs.
 
+    .. note::
+        :obj:`neg_sampling_ratio` is currently implemented in an approximate
+        way, the edges added are completely random, and do not filter out
+        false negatives.
+
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
@@ -188,6 +204,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edges to the number of positive edges. (default: :obj:`0`).
             If set, the edge labels cannot be provided, as the labels now
             become :obj:`0` for positive edges and  :obj:`1` for positive.
+            If the data is :class:`~torch_geometric.data.HeteroData` then
+            the edge type that is being sampled will be the edge type for
+            which negative edges are added.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -221,8 +240,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.directed = directed
         self.transform = transform
         self.neighbor_sampler = neighbor_sampler
-
-        assert neg_sampling_ratio == 0 or self.edge_label is None
         self.neg_sampling_ratio = neg_sampling_ratio
 
         edge_type, edge_label_index = get_edge_label_index(
