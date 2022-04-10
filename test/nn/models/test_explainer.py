@@ -1,7 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.nn import GAT, GCN, Explainer, to_captum
+from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv, to_captum
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
@@ -119,3 +120,27 @@ def test_explainer_to_log_prob(model):
 
     assert torch.allclose(raw_to_log(raw), prob_to_log(prob))
     assert torch.allclose(prob_to_log(prob), log_to_log(log_prob))
+
+
+def test_custom_explain_message():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+
+    conv = SAGEConv(8, 32)
+
+    def explain_message(self, inputs, x_i, x_j):
+        assert isinstance(self, SAGEConv)
+        assert inputs.size() == (6, 8)
+        assert inputs.size() == x_i.size() == x_j.size()
+        assert torch.allclose(inputs, x_j)
+        self.x_i = x_i
+        self.x_j = x_j
+        return inputs
+
+    conv.explain_message = explain_message.__get__(conv, MessagePassing)
+    conv.explain = True
+
+    conv(x, edge_index)
+
+    assert torch.allclose(conv.x_i, x[edge_index[1]])
+    assert torch.allclose(conv.x_j, x[edge_index[0]])
