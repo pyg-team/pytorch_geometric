@@ -202,8 +202,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             (default: :obj:`None`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges. (default: :obj:`0`).
-            If set, the edge labels cannot be provided, as the labels now
-            become :obj:`0` for positive edges and  :obj:`1` for positive.
+            If set, and edge_labels are not provided, all provided edges will
+            be assumed to be positive and given a label of :obj:`1`. The
+            negative edges will have label :obj:`0`.
+            Note that these edges will be added to the batch, increasing the
+            batch size.
             If the data is :class:`~torch_geometric.data.HeteroData` then
             the edge type that is being sampled will be the edge type for
             which negative edges are added.
