@@ -6,14 +6,15 @@ from torch_geometric.nn import SAGEConv
 from torch_geometric.testing import is_full_test
 
 
-def test_sage_conv():
+@pytest.mark.parametrize('project', [False, True])
+def test_sage_conv(project):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = SAGEConv(8, 32)
+    conv = SAGEConv(8, 32, project=project)
     assert str(conv) == 'SAGEConv(8, 32, aggr=mean)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
@@ -31,7 +32,7 @@ def test_sage_conv():
         assert jit(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
-    conv = SAGEConv((8, 16), 32)
+    conv = SAGEConv((8, 16), 32, project=project)
     assert str(conv) == 'SAGEConv((8, 16), 32, aggr=mean)'
     out1 = conv((x1, x2), edge_index)
     out2 = conv((x1, None), edge_index, (4, 2))

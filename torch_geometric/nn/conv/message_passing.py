@@ -111,7 +111,6 @@ class MessagePassing(torch.nn.Module):
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
-        self.inspector.inspect(self.explain_message, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.params['aggregate'].pop('aggr', None)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
@@ -435,12 +434,15 @@ class MessagePassing(torch.nn.Module):
             methods = ['message', 'aggregate', 'update']
 
         self._explain = explain
+        self.inspector.inspect(self.explain_message, pop_first=True)
         self.__user_args__ = self.inspector.keys(methods).difference(
             self.special_args)
 
     def explain_message(self, inputs: Tensor, size_i: int) -> Tensor:
         # NOTE Replace this method in custom explainers per message-passing
-        # layer to customize how messages shall be explained.
+        # layer to customize how messages shall be explained, e.g., via:
+        # conv.explain_message = explain_message.__get__(conv, MessagePassing)
+        # see stackoverflow.com: 394770/override-a-method-at-instance-level
 
         edge_mask = self._edge_mask
 

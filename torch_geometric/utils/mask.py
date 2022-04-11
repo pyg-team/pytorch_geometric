@@ -17,3 +17,12 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
     mask = index.new_zeros(size, dtype=torch.bool)
     mask[index] = True
     return mask
+
+
+def mask_to_index(mask: Tensor) -> Tensor:
+    r"""Converts a mask to an index representation.
+
+    Args:
+        mask (Tensor): The mask.
+    """
+    return mask.nonzero(as_tuple=False).view(-1)
