@@ -7,7 +7,7 @@ from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Size, OptPairTensor
+from torch_geometric.typing import OptPairTensor, Size
 
 
 class DisenConv(MessagePassing):
@@ -81,7 +81,6 @@ class DisenConv(MessagePassing):
             :math:`\mathcal{V_t}` .
 
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -107,8 +106,7 @@ class DisenConv(MessagePassing):
         if separate_channels is None:
             if K is None:
                 raise ValueError(
-                    "`K` must be assigned when `separate_channels` is None"
-                )
+                    "`K` must be assigned when `separate_channels` is None")
             self.separate_channels = [out_channels // K] * K
             self.separate_channels[-1] += out_channels % K
             self.K = K
@@ -130,7 +128,8 @@ class DisenConv(MessagePassing):
         projector_bias = self.lin_projector.bias
         if separate:
             projector = torch.split(projector, self.separate_channels, dim=0)
-            projector_bias = torch.split(projector_bias, self.separate_channels, dim=0)
+            projector_bias = torch.split(projector_bias,
+                                         self.separate_channels, dim=0)
         return projector, projector_bias
 
     def project2aspects(self, features: Tensor) -> List[Tensor]:
@@ -148,8 +147,8 @@ class DisenConv(MessagePassing):
     ) -> Tensor:
         assert len(dst_nodes) == len(src_nodes)
         pout = [
-            torch.sum(cs[k][dst_nodes] * zs[k][src_nodes], dim=-1).div_(self.tao)
-            for k in range(self.K)
+            torch.sum(cs[k][dst_nodes] * zs[k][src_nodes],
+                      dim=-1).div_(self.tao) for k in range(self.K)
         ]
         pout = F.softmax(torch.stack(pout), dim=0)
         return pout
@@ -186,29 +185,24 @@ class DisenConv(MessagePassing):
         for i in range(self.T):
             p = self.update_p(z_src, c_dst, dst_nodes, src_nodes)
             for k in range(self.K):
-                graph = (
-                    edge_index.set_value(p[k], layout="coo")
-                    if isinstance(edge_index, SparseTensor)
-                    else edge_index
-                )
-                ck = self.propagate(
-                    graph, x=(z_src[k], None), edge_weight=p[k], size=size
-                )
+                graph = (edge_index.set_value(p[k], layout="coo") if
+                         isinstance(edge_index, SparseTensor) else edge_index)
+                ck = self.propagate(graph, x=(z_src[k], None),
+                                    edge_weight=p[k], size=size)
                 ck = ck + z_dst[k]
                 c_dst[k] = ck / ck.norm(dim=-1, keepdim=True)
 
         out = torch.cat(c_dst, dim=1)
         return out
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              x: OptPairTensor) -> Tensor:
         return matmul(adj_t, x[0], reduce=self.aggr)
 
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, "
-            f"[{self.K}]disentangled_channels={self.separate_channels})"
-        )
+        return (f"{self.__class__.__name__}({self.in_channels}, "
+                f"{self.out_channels}, "
+                f"[{self.K}]disentangled_channels={self.separate_channels})")
