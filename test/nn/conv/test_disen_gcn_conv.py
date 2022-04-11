@@ -21,10 +21,8 @@ def test_disen_gcn_conv():
     adj_full = SparseTensor(row=row, col=col, sparse_sizes=(6, 6))
 
     conv = DisenConv(in_channels, out_channels, K=num_factors)
-    repr_str = (
-        f"DisenConv({in_channels}, {out_channels}, "
-        f"[{num_factors}]disentangled_channels=[2, 2, 3])"
-    )
+    repr_str = (f"DisenConv({in_channels}, {out_channels}, "
+                f"[{num_factors}]disentangled_channels=[2, 2, 3])")
     assert conv.__repr__() == repr_str
 
     # All nodes are both src and dst nodes
@@ -50,14 +48,10 @@ def test_disen_gcn_conv():
     out1 = conv((x_src, x_dst), edge_index)
     print(out1)
     assert out1.tolist() == out[:batch_size].tolist()
-    assert (
-        conv((x_src, x_dst), edge_index,
-             size=(6, batch_size)).tolist() == out1.tolist()
-    )
-    assert (
-        conv((x_src, None), edge_index,
-             size=(6, batch_size)).tolist() == out1.tolist()
-    )
+    assert (conv((x_src, x_dst), edge_index,
+                 size=(6, batch_size)).tolist() == out1.tolist())
+    assert (conv((x_src, None), edge_index,
+                 size=(6, batch_size)).tolist() == out1.tolist())
     with pytest.raises(RuntimeError):  # shape should be (6,2)
         conv((x_src, x_dst), edge_index, size=(6, 6))
 

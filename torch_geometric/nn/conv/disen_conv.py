@@ -7,7 +7,7 @@ from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Size, OptPairTensor
+from torch_geometric.typing import OptPairTensor, Size
 
 
 class DisenConv(MessagePassing):
@@ -84,16 +84,15 @@ class DisenConv(MessagePassing):
             :math:`\mathcal{V_t}` .
 
     """
-
     def __init__(
-            self,
-            in_channels: int,
-            out_channels: int,
-            K: int = None,
-            T: int = 5,
-            tao: float = 1.0,
-            separate_channels: List[int] = None,
-            **kwargs,
+        self,
+        in_channels: int,
+        out_channels: int,
+        K: int = None,
+        T: int = 5,
+        tao: float = 1.0,
+        separate_channels: List[int] = None,
+        **kwargs,
     ):
         kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
@@ -127,7 +126,7 @@ class DisenConv(MessagePassing):
         self.lin_projector.reset_parameters()
 
     def get_projector(
-            self, separate: bool = False
+        self, separate: bool = False
     ) -> Union[Tuple[Tensor, Tensor], Tuple[Tuple[Tensor], Tuple[Tensor]]]:
         projector = self.lin_projector.weight
         projector_bias = self.lin_projector.bias
@@ -144,26 +143,25 @@ class DisenConv(MessagePassing):
         return zs
 
     def update_p(
-            self,
-            zs: List[Tensor],
-            cs: List[Tensor],
-            dst_nodes: Union[Tensor, List[int]],
-            src_nodes: Union[Tensor, List[int]],
+        self,
+        zs: List[Tensor],
+        cs: List[Tensor],
+        dst_nodes: Union[Tensor, List[int]],
+        src_nodes: Union[Tensor, List[int]],
     ) -> Tensor:
         assert len(dst_nodes) == len(src_nodes)
         pout = [
-            torch.sum(cs[k][dst_nodes] *
-                      zs[k][src_nodes], dim=-1).div_(self.tao)
-            for k in range(self.K)
+            torch.sum(cs[k][dst_nodes] * zs[k][src_nodes],
+                      dim=-1).div_(self.tao) for k in range(self.K)
         ]
         pout = F.softmax(torch.stack(pout), dim=0)
         return pout
 
     def forward(
-            self,
-            x: Union[Tensor, OptPairTensor],
-            edge_index: Union[SparseTensor, Tensor],
-            size: Size = None,
+        self,
+        x: Union[Tensor, OptPairTensor],
+        edge_index: Union[SparseTensor, Tensor],
+        size: Size = None,
     ) -> Tensor:
         """"""
         if isinstance(edge_index, Tensor):
@@ -191,14 +189,10 @@ class DisenConv(MessagePassing):
         for i in range(self.T):
             p = self.update_p(z_src, c_dst, dst_nodes, src_nodes)
             for k in range(self.K):
-                graph = (
-                    edge_index.set_value(p[k], layout="coo")
-                    if isinstance(edge_index, SparseTensor)
-                    else edge_index
-                )
-                ck = self.propagate(
-                    graph, x=(z_src[k], None), edge_weight=p[k], size=size
-                )
+                graph = (edge_index.set_value(p[k], layout="coo") if
+                         isinstance(edge_index, SparseTensor) else edge_index)
+                ck = self.propagate(graph, x=(z_src[k], None),
+                                    edge_weight=p[k], size=size)
                 ck = ck + z_dst[k]
                 c_dst[k] = ck / ck.norm(dim=-1, keepdim=True)
 
@@ -213,8 +207,6 @@ class DisenConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.in_channels}, "
-            f"{self.out_channels}, "
-            f"[{self.K}]disentangled_channels={self.separate_channels})"
-        )
+        return (f"{self.__class__.__name__}({self.in_channels}, "
+                f"{self.out_channels}, "
+                f"[{self.K}]disentangled_channels={self.separate_channels})")
