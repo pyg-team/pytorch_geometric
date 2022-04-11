@@ -1,8 +1,10 @@
 import torch
 
 from torch_geometric.nn import Node2Vec
+from torch_geometric.testing import withPackage
 
 
+@withPackage('torch_cluster')
 def test_node2vec():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 

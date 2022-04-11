@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import sys
 from itertools import product
 
 import pytest
@@ -95,11 +94,6 @@ def test_pna(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-# There exists a Python 3.6 pickling bug:
-# >>> pickle.PicklingError: Can't pickle typing.Union[torch.Tensor, NoneType]:
-# >>> it's not the same object as typing.Union
-# The easiest way to avoid this is to upgrade to at least Python 3.7
-@pytest.mark.skipif(sys.version_info.minor < 7, reason='Pickle requires Py3.7')
 def test_packaging():
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
 

@@ -1,12 +1,14 @@
 name: Code Scanning
 
 on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
   schedule:
     - cron: "0 8 * * *"  # Everyday at 8:00am UTC/0:00am PST
 
 jobs:
 
   codeql:
+    if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
     permissions:

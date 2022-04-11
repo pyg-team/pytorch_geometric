@@ -1,9 +1,11 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import KNNGraph
 
 
+@withPackage('torch_cluster')
 def test_knn_graph():
     assert KNNGraph().__repr__() == 'KNNGraph(k=6)'
 
