@@ -14,7 +14,7 @@ from tqdm import tqdm
 from torch_geometric.data import Data
 from originalMessagePassing import MessagePassing
 from torch_geometric.utils import k_hop_subgraph, to_networkx
-from Explainer import Explainer
+from torch_geometric.nn.models.explainer import Explainer
 
 EPS = 1e-15
 
