@@ -16,7 +16,7 @@ You can run PyG inside a singularity image. An example singularity file can be f
 
 You might have to modify the script; depending on your needs, modify the following:
 
-- **cuda version 10.1**: If you need another version, change `From: nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04` to the corresponding tag from <https://hub.docker.com/r/nvidia/cuda>. Same if you want to use anything but Ubuntu 18.04. Your host has to have at least this cuda version!
+- **cuda version 10.2**: If you need another version, change `From: nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04` to the corresponding tag from <https://hub.docker.com/r/nvidia/cuda>. Same if you want to use anything but Ubuntu 18.04. Your host has to have at least this cuda version!
 - **python version 3.10.3**: If you need another version, change `pyenv install 3.10.3` and the following lines to the corresponding version.
 - **pytorch version 1.11.0**: If you need another version, change `pip install torch==1.11.0`.
 - **pytorch_geometric versions**: This uses specific versions for each of the `pytorch_geometric` requirements (scatter: 2.0.6, sparse: 0.6.13, cluster: 1.6.0, geometric 2.0.4). To change these, change the corresponding `git checkout` lines near the bottom.
