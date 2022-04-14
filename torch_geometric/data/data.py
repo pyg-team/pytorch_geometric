@@ -1,15 +1,28 @@
 import copy
 from collections.abc import Mapping, Sequence
-from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
-                    Tuple, Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
-                                          GlobalStorage, NodeStorage)
+from torch_geometric.data.storage import (
+    BaseStorage,
+    EdgeStorage,
+    GlobalStorage,
+    NodeStorage,
+)
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import subgraph
@@ -429,7 +442,7 @@ class Data(BaseData):
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
-        elif 'index' in key or 'face' in key:
+        elif 'index' in key or key == 'face':
             return -1
         else:
             return 0
@@ -437,7 +450,7 @@ class Data(BaseData):
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'batch' in key:
             return int(value.max()) + 1
-        elif 'index' in key or 'face' in key:
+        elif 'index' in key or key == 'face':
             return self.num_nodes
         else:
             return 0

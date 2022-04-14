@@ -1,17 +1,19 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.base import BaseDataLoader
-from torch_geometric.loader.utils import (edge_type_to_str, filter_data,
-                                          filter_hetero_data, to_csc,
-                                          to_hetero_csc)
-from torch_geometric.typing import EdgeType, InputNodes, NodeType
-
-NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
+from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.loader.utils import (
+    edge_type_to_str,
+    filter_data,
+    filter_hetero_data,
+    to_csc,
+    to_hetero_csc,
+)
+from torch_geometric.typing import InputNodes, NodeType, NumNeighbors
 
 
 class NeighborSampler:
@@ -21,7 +23,8 @@ class NeighborSampler:
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
-        input_node_type: Optional[str] = None,
+        input_type: Optional[Any] = None,
+        share_memory: bool = False,
         node_time: Optional[Dict[NodeType, Tensor]] = None,
     ):
         self.data_cls = data.__class__
@@ -32,14 +35,15 @@ class NeighborSampler:
 
         if isinstance(data, Data):
             # Convert the graph data into a suitable format for sampling.
-            self.colptr, self.row, self.perm = to_csc(data, device='cpu')
+            out = to_csc(data, device='cpu', share_memory=share_memory)
+            self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
         elif isinstance(data, HeteroData):
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu')
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory)
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
@@ -53,16 +57,15 @@ class NeighborSampler:
 
             self.num_hops = max([len(v) for v in self.num_neighbors.values()])
 
-            assert isinstance(input_node_type, str)
-            self.input_node_type = input_node_type
+            assert input_type is not None
+            self.input_type = input_type
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
 
-    def __call__(self, indices: List[int]):
-        if not isinstance(indices, Tensor):
-            index = torch.tensor(indices)
-        assert index.dtype == torch.int64
+    def __call__(self, index: Union[List[int], Tensor]):
+        if not isinstance(index, torch.LongTensor):
+            index = torch.LongTensor(index)
 
         if issubclass(self.data_cls, Data):
             sample_fn = torch.ops.torch_sparse.neighbor_sample
@@ -98,7 +101,7 @@ class NeighborSampler:
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    {self.input_node_type: index},
+                    {self.input_type: index},
                     self.num_neighbors,
                     self.node_time,
                     self.num_hops,
@@ -108,7 +111,7 @@ class NeighborSampler:
             return node_dict, row_dict, col_dict, edge_dict, index.numel()
 
 
-class NeighborLoader(BaseDataLoader):
+class NeighborLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
@@ -228,13 +231,15 @@ class NeighborLoader(BaseDataLoader):
         node_time: Optional[Dict[NodeType, Tensor]] = None,
         **kwargs,
     ):
+        # Remove for PyTorch Lightning:
         if 'dataset' in kwargs:
             del kwargs['dataset']
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        # Save for PyTorch Lightning:
         self.data = data
+
+        # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
         self.input_nodes = input_nodes
         self.replace = replace
@@ -242,14 +247,15 @@ class NeighborLoader(BaseDataLoader):
         self.transform = transform
         self.neighbor_sampler = neighbor_sampler
 
-        if neighbor_sampler is None:
-            input_node_type = get_input_node_type(input_nodes)
-            self.neighbor_sampler = NeighborSampler(data, num_neighbors,
-                                                    replace, directed,
-                                                    input_node_type, node_time)
+        node_type, input_nodes = get_input_nodes(data, input_nodes)
 
-        return super().__init__(get_input_node_indices(self.data, input_nodes),
-                                collate_fn=self.neighbor_sampler, **kwargs)
+        if neighbor_sampler is None:
+            self.neighbor_sampler = NeighborSampler(
+                data, num_neighbors, replace, directed, node_type, node_time,
+                share_memory=kwargs.get('num_workers', 0) > 0)
+
+        super().__init__(input_nodes, collate_fn=self.neighbor_sampler,
+                         **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
@@ -263,9 +269,12 @@ class NeighborLoader(BaseDataLoader):
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
-            data[self.neighbor_sampler.input_node_type].batch_size = batch_size
+            data[self.neighbor_sampler.input_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
+
+    def _get_iterator(self) -> Iterator:
+        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -274,33 +283,28 @@ class NeighborLoader(BaseDataLoader):
 ###############################################################################
 
 
-def get_input_node_type(input_nodes: InputNodes) -> Optional[str]:
-    if isinstance(input_nodes, str):
-        return input_nodes
-    if isinstance(input_nodes, (list, tuple)):
-        assert isinstance(input_nodes[0], str)
-        return input_nodes[0]
-    return None
-
-
-def get_input_node_indices(data: Union[Data, HeteroData],
-                           input_nodes: InputNodes) -> Sequence:
-    if isinstance(data, Data) and input_nodes is None:
-        return range(data.num_nodes)
-    if isinstance(data, HeteroData):
-        if isinstance(input_nodes, str):
-            input_nodes = (input_nodes, None)
-        assert isinstance(input_nodes, (list, tuple))
-        assert len(input_nodes) == 2
-        assert isinstance(input_nodes[0], str)
-        if input_nodes[1] is None:
-            return range(data[input_nodes[0]].num_nodes)
-        input_nodes = input_nodes[1]
-
-    if isinstance(input_nodes, Tensor):
+def get_input_nodes(data: Union[Data, HeteroData],
+                    input_nodes: InputNodes) -> Tuple[Optional[str], Sequence]:
+    if isinstance(data, Data):
+        if input_nodes is None:
+            return None, range(data.num_nodes)
         if input_nodes.dtype == torch.bool:
             input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
-        input_nodes = input_nodes.tolist()
+        return None, input_nodes
 
-    assert isinstance(input_nodes, Sequence)
-    return input_nodes
+    assert input_nodes is not None
+
+    if isinstance(input_nodes, str):
+        return input_nodes, range(data[input_nodes].num_nodes)
+
+    assert isinstance(input_nodes, (list, tuple))
+    assert len(input_nodes) == 2
+    assert isinstance(input_nodes[0], str)
+
+    if input_nodes[1] is None:
+        return input_nodes[0], range(data[input_nodes[0]].num_nodes)
+
+    node_type, input_nodes = input_nodes
+    if input_nodes.dtype == torch.bool:
+        input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
+    return node_type, input_nodes

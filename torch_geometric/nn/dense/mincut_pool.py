@@ -4,7 +4,7 @@ EPS = 1e-15
 
 
 def dense_mincut_pool(x, adj, s, mask=None):
-    r"""MinCUt pooling operator from the `"Mincut Pooling in Graph Neural
+    r"""The MinCUt pooling operator from the `"Mincut Pooling in Graph Neural
     Networks" <https://arxiv.org/abs/1907.00481>`_ paper
 
     .. math::
@@ -16,8 +16,9 @@ def dense_mincut_pool(x, adj, s, mask=None):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns pooled node feature matrix, coarsened symmetrically normalized
-    adjacency matrix and two auxiliary objectives: (1) The minCUT loss
+    Returns the pooled node feature matrix, the coarsened and symmetrically
+    normalized adjacency matrix and two auxiliary objectives: (1) The minCUT
+    loss
 
     .. math::
         \mathcal{L}_c = - \frac{\mathrm{Tr}(\mathbf{S}^{\top} \mathbf{A}

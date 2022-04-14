@@ -97,16 +97,16 @@ class LINKX(torch.nn.Module):
         if self.num_edge_layers > 1:
             self.edge_norm = BatchNorm1d(hidden_channels)
             channels = [hidden_channels] * num_edge_layers
-            self.edge_mlp = MLP(channels, dropout=0., relu_first=True)
+            self.edge_mlp = MLP(channels, dropout=0., act_first=True)
 
         channels = [in_channels] + [hidden_channels] * num_node_layers
-        self.node_mlp = MLP(channels, dropout=0., relu_first=True)
+        self.node_mlp = MLP(channels, dropout=0., act_first=True)
 
         self.cat_lin1 = torch.nn.Linear(hidden_channels, hidden_channels)
         self.cat_lin2 = torch.nn.Linear(hidden_channels, hidden_channels)
 
         channels = [hidden_channels] * num_layers + [out_channels]
-        self.final_mlp = MLP(channels, dropout=dropout, relu_first=True)
+        self.final_mlp = MLP(channels, dropout=dropout, act_first=True)
 
         self.reset_parameters()
 

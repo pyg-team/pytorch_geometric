@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import DNAConv
+from torch_geometric.testing import is_full_test
 
 
 def test_dna_conv():
@@ -16,25 +17,27 @@ def test_dna_conv():
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit = torch.jit.script(conv.jittable())
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        jit = torch.jit.script(conv.jittable())
+        assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
     assert conv.__repr__() == 'DNAConv(32, heads=1, groups=1)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit = torch.jit.script(conv.jittable())
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        jit = torch.jit.script(conv.jittable())
+        assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
     out = conv(x, edge_index)
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit = torch.jit.script(conv.jittable())
-    jit(x, edge_index)
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        jit = torch.jit.script(conv.jittable())
+        assert jit(x, edge_index).tolist() == out.tolist()
 
 
 def test_dna_conv():
@@ -54,15 +57,16 @@ def test_dna_conv():
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out1.tolist()
-    assert jit(x, edge_index, value).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert jit(x, edge_index, value).tolist() == out2.tolist()
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
-    assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)

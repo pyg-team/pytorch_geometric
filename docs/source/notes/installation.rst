@@ -19,21 +19,21 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 
 .. code-block:: none
 
-    conda install pyg -c pyg -c conda-forge
+    conda install pyg -c pyg
 
 Installation via Pip Wheels
 ---------------------------
 
 We have outsourced a lot of functionality of PyG to other packages, which needs to be installed in advance.
 These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
-We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
+We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations, see `here <https://data.pyg.org/whl>`__:
 
-#. Ensure that at least PyTorch 1.4.0 is installed:
+#. Ensure that at least PyTorch 1.10.0 is installed:
 
     .. code-block:: none
 
         python -c "import torch; print(torch.__version__)"
-        >>> 1.10.0
+        >>> 1.11.0
 
 #. Find the CUDA version PyTorch was installed with:
 
@@ -50,21 +50,21 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
          pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by the specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`, :obj:`cu113`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`, :obj:`1.9.1`, :obj:`1.10.0`), respectively.
-    For example, for PyTorch 1.10.0 and CUDA 11.3, type:
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by the specific CUDA version (:obj:`cpu`, :obj:`cu102`, :obj:`cu113`, :obj:`cu115`) and PyTorch version (:obj:`1.10.0`, :obj:`1.11.0`), respectively.
+    For example, for PyTorch 1.11.* and CUDA 11.3, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
-         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
+         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.11.0+cu113.html
+         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.11.0+cu113.html
          pip install torch-geometric
 
-    For PyTorch 1.9.0/1.9.1 and CUDA 10.2, type:
+    For PyTorch 1.10.* and CUDA 10.2, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
-         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cu102.html
+         pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+cu102.html
+         pip install torch-sparse -f https://data.pyg.org/whl/torch-1.10.0+cu102.html
          pip install torch-geometric
 
 #. Install additional packages *(optional)*:
@@ -77,6 +77,10 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
          pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
     following the same procedure as mentioned above.
+
+Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1 and PyTorch 1.9.0 (following the same procedure).
+**For older versions, you need to explicitly specify the latest supported version number** in order to prevent a manual installation from source.
+You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
 Installation from Source
 ------------------------

@@ -59,7 +59,9 @@ class BesselBasisLayer(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
+        with torch.no_grad():
+            torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
+        self.freq.requires_grad_()
 
     def forward(self, dist):
         dist = dist.unsqueeze(-1) / self.cutoff
@@ -72,8 +74,10 @@ class SphericalBasisLayer(torch.nn.Module):
         super().__init__()
         import sympy as sym
 
-        from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
-                                                             real_sph_harm)
+        from torch_geometric.nn.models.dimenet_utils import (
+            bessel_basis,
+            real_sph_harm,
+        )
 
         assert num_radial <= 64
         self.num_spherical = num_spherical
@@ -291,6 +295,9 @@ class DimeNet(torch.nn.Module):
                  num_after_skip: int = 2, num_output_layers: int = 3,
                  act: Callable = swish):
         super().__init__()
+
+        if num_spherical < 2:
+            raise ValueError("num_spherical should be greater than 1")
 
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors

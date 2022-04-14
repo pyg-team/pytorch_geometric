@@ -12,4 +12,3 @@ torch_geometric.profile
 .. automodule:: torch_geometric.profile
     :members:
     :undoc-members:
-

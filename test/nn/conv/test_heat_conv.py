@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import HEATConv
+from torch_geometric.testing import is_full_test
 
 
 def test_heat_conv():
@@ -21,10 +22,11 @@ def test_heat_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj.t(), node_type, edge_type), out)
 
-    t = '(Tensor, Tensor, Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index, node_type, edge_type, edge_attr),
-                          out)
+    if is_full_test():
+        t = '(Tensor, Tensor, Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(
+            jit(x, edge_index, node_type, edge_type, edge_attr), out)
 
     conv = HEATConv(in_channels=8, out_channels=16, num_node_types=3,
                     num_edge_types=3, edge_type_emb_dim=5, edge_dim=2,
@@ -34,6 +36,7 @@ def test_heat_conv():
     assert out.size() == (4, 16)
     assert torch.allclose(conv(x, adj.t(), node_type, edge_type), out)
 
-    t = '(Tensor, SparseTensor, Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t(), node_type, edge_type), out)
+    if is_full_test():
+        t = '(Tensor, SparseTensor, Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t(), node_type, edge_type), out)

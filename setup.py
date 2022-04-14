@@ -1,32 +1,33 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
     'tqdm',
-    'yacs',
     'numpy',
     'scipy',
-    'pandas',
     'jinja2',
     'requests',
     'pyparsing',
-    'hydra-core',
     'scikit-learn',
-    'googledrivedownloader',
 ]
 
 full_install_requires = [
     'h5py',
+    'yacs',
     'numba',
+    'pandas',
+    'captum',
     'rdflib',
     'trimesh',
     'networkx',
     'tabulate',
+    'hydra-core',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'torchmetrics>=0.7',
 ]
 
 test_requires = [
@@ -47,13 +48,13 @@ setup(
     url=URL,
     download_url=f'{URL}/archive/{__version__}.tar.gz',
     keywords=[
-        'deep-learning'
+        'deep-learning',
         'pytorch',
         'geometric-deep-learning',
         'graph-neural-networks',
         'graph-convolutional-networks',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=install_requires,
     extras_require={
         'full': full_install_requires,

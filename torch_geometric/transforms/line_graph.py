@@ -3,12 +3,15 @@ from torch_scatter import scatter_add
 from torch_sparse import coalesce
 
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import remove_self_loops
 
 
+@functional_transform('line_graph')
 class LineGraph(BaseTransform):
-    r"""Converts a graph to its corresponding line-graph:
+    r"""Converts a graph to its corresponding line-graph
+    (functional name: :obj:`line_graph`):
 
     .. math::
         L(\mathcal{G}) &= (\mathcal{V}^{\prime}, \mathcal{E}^{\prime})

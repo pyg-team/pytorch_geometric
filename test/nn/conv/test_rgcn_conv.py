@@ -5,6 +5,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import FastRGCNConv, RGCNConv
+from torch_geometric.testing import is_full_test
 
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
@@ -64,19 +65,20 @@ def test_rgcn_conv(cls, conf):
         assert out2.size() == (4, 32)
         assert conv(None, adj.t()).tolist() == out2.tolist()
 
-    t = '(OptTensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index, edge_type).tolist() == out1.tolist()
-    if num_blocks is None:
-        assert jit(idx1, edge_index, edge_type).tolist() == out2.tolist()
-        assert jit(None, edge_index, edge_type).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(OptTensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index, edge_type).tolist() == out1.tolist()
+        if num_blocks is None:
+            assert jit(idx1, edge_index, edge_type).tolist() == out2.tolist()
+            assert jit(None, edge_index, edge_type).tolist() == out2.tolist()
 
-    t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t()).tolist() == out1.tolist()
-    if num_blocks is None:
-        assert jit(idx1, adj.t()).tolist() == out2.tolist()
-        assert jit(None, adj.t()).tolist() == out2.tolist()
+        t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, adj.t()).tolist() == out1.tolist()
+        if num_blocks is None:
+            assert jit(idx1, adj.t()).tolist() == out2.tolist()
+            assert jit(None, adj.t()).tolist() == out2.tolist()
 
     adj = adj.sparse_resize((4, 2))
     conv = cls((4, 16), 32, 2, num_bases, num_blocks)
@@ -92,16 +94,19 @@ def test_rgcn_conv(cls, conf):
         assert conv((None, idx2), adj.t()).tolist() == out2.tolist()
         assert conv((idx1, idx2), adj.t()).tolist() == out2.tolist()
 
-    t = '(Tuple[OptTensor, Tensor], Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index, edge_type).tolist() == out1.tolist()
-    if num_blocks is None:
-        assert torch.allclose(jit((None, idx2), edge_index, edge_type), out2)
-        assert torch.allclose(jit((idx1, idx2), edge_index, edge_type), out2)
+    if is_full_test():
+        t = '(Tuple[OptTensor, Tensor], Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index, edge_type).tolist() == out1.tolist()
+        if num_blocks is None:
+            assert torch.allclose(jit((None, idx2), edge_index, edge_type),
+                                  out2)
+            assert torch.allclose(jit((idx1, idx2), edge_index, edge_type),
+                                  out2)
 
-    t = '(Tuple[OptTensor, Tensor], SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
-    if num_blocks is None:
-        assert jit((None, idx2), adj.t()).tolist() == out2.tolist()
-        assert jit((idx1, idx2), adj.t()).tolist() == out2.tolist()
+        t = '(Tuple[OptTensor, Tensor], SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+        if num_blocks is None:
+            assert jit((None, idx2), adj.t()).tolist() == out2.tolist()
+            assert jit((idx1, idx2), adj.t()).tolist() == out2.tolist()

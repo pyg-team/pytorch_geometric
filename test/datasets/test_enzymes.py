@@ -1,24 +1,16 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
 import pytest
 import torch
 
-from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataListLoader, DataLoader, DenseDataLoader
 from torch_geometric.transforms import ToDense
 
 
-def test_enzymes():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, 'ENZYMES')
-
+def test_enzymes(get_dataset):
+    dataset = get_dataset(name='ENZYMES')
     assert len(dataset) == 600
     assert dataset.num_features == 3
     assert dataset.num_classes == 6
-    assert dataset.__repr__() == 'ENZYMES(600)'
+    assert str(dataset) == 'ENZYMES(600)'
 
     assert len(dataset[0]) == 3
     assert len(dataset.shuffle()) == 600
@@ -63,18 +55,14 @@ def test_enzymes():
         assert list(data.mask.size()) == [600, 126]
         assert list(data.y.size()) == [600, 1]
 
-    dataset = TUDataset(root, 'ENZYMES', use_node_attr=True)
+
+def test_enzymes_with_node_attr(get_dataset):
+    dataset = get_dataset(name='ENZYMES', use_node_attr=True)
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0
 
-    shutil.rmtree(root)
 
-
-def test_cleaned_enzymes():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = TUDataset(root, 'ENZYMES', cleaned=True)
-
+def test_cleaned_enzymes(get_dataset):
+    dataset = get_dataset(name='ENZYMES', cleaned=True)
     assert len(dataset) == 595
-
-    shutil.rmtree(root)

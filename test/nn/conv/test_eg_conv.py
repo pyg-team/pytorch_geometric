@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import EGConv
+from torch_geometric.testing import is_full_test
 
 
 def test_eg_conv():
@@ -22,13 +23,14 @@ def test_eg_conv():
     conv(x, adj.t())
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_eg_conv_multiple_aggregators():
@@ -49,13 +51,14 @@ def test_eg_conv_multiple_aggregators():
     conv(x, adj.t())
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_eg_conv_with_sparse_input_feature():

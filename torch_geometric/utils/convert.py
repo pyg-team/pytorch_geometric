@@ -6,8 +6,6 @@ import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
-import torch_geometric.data
-
 from .num_nodes import maybe_num_nodes
 
 
@@ -50,7 +48,7 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None,
+def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
                 to_undirected: Union[bool, str] = False,
                 remove_self_loops: bool = False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
@@ -62,6 +60,8 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
         node_attrs (iterable of str, optional): The node attributes to be
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
+            copied. (default: :obj:`None`)
+        graph_attrs (iterable of str, optional): The graph attributes to be
             copied. (default: :obj:`None`)
         to_undirected (bool or str, optional): If set to :obj:`True` or
             "upper", will return a :obj:`networkx.Graph` instead of a
@@ -82,16 +82,17 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
 
     G.add_nodes_from(range(data.num_nodes))
 
-    node_attrs, edge_attrs = node_attrs or [], edge_attrs or []
+    node_attrs = node_attrs or []
+    edge_attrs = edge_attrs or []
+    graph_attrs = graph_attrs or []
 
     values = {}
-    for key, item in data(*(node_attrs + edge_attrs)):
-        if torch.is_tensor(item):
-            values[key] = item.squeeze().tolist()
+    for key, value in data(*(node_attrs + edge_attrs + graph_attrs)):
+        if torch.is_tensor(value):
+            value = value if value.dim() <= 1 else value.squeeze(-1)
+            values[key] = value.tolist()
         else:
-            values[key] = item
-        if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
-            values[key] = item[0]
+            values[key] = value
 
     to_undirected = "upper" if to_undirected is True else to_undirected
     to_undirected_upper = True if to_undirected == "upper" else False
@@ -116,6 +117,9 @@ def to_networkx(data, node_attrs=None, edge_attrs=None,
         for i, feat_dict in G.nodes(data=True):
             feat_dict.update({key: values[key][i]})
 
+    for key in graph_attrs:
+        G.graph[key] = values[key]
+
     return G
 
 
@@ -138,6 +142,8 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         be numeric.
     """
     import networkx as nx
+
+    from torch_geometric.data import Data
 
     G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
@@ -174,6 +180,10 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
             key = f'edge_{key}' if key in node_attrs else key
             data[str(key)].append(value)
 
+    for key, value in G.graph.items():
+        key = f'graph_{key}' if key in node_attrs else key
+        data[str(key)] = value
+
     for key, value in data.items():
         try:
             data[key] = torch.tensor(value)
@@ -181,7 +191,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
             pass
 
     data['edge_index'] = edge_index.view(2, -1)
-    data = torch_geometric.data.Data.from_dict(data)
+    data = Data.from_dict(data)
 
     if group_node_attrs is all:
         group_node_attrs = list(node_attrs)
@@ -232,10 +242,12 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
     """
+    from torch_geometric.data import Data
+
     pos = torch.from_numpy(mesh.vertices).to(torch.float)
     face = torch.from_numpy(mesh.faces).t().contiguous()
 
-    return torch_geometric.data.Data(pos=pos, face=face)
+    return Data(pos=pos, face=face)
 
 
 def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,

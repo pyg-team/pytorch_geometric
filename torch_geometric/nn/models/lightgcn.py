@@ -83,7 +83,7 @@ class LightGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.embedding.reset_parameters()
+        torch.nn.init.xavier_uniform_(self.embedding.weight)
         for conv in self.convs:
             conv.reset_parameters()
 

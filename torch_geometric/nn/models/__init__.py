@@ -9,6 +9,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet
+from .explainer import Explainer, to_captum
 from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
@@ -19,6 +20,7 @@ from .attentive_fp import AttentiveFP
 from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
+from .mask_label import MaskLabel
 
 __all__ = [
     'MLP',
@@ -40,6 +42,8 @@ __all__ = [
     'GraphUNet',
     'SchNet',
     'DimeNet',
+    'Explainer',
+    'to_captum',
     'GNNExplainer',
     'MetaPath2Vec',
     'DeepGCNLayer',
@@ -50,6 +54,7 @@ __all__ = [
     'RECT_L',
     'LINKX',
     'LightGCN',
+    'MaskLabel',
 ]
 
 classes = __all__

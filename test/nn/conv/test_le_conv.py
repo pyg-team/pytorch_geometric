@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import LEConv
+from torch_geometric.testing import is_full_test
 
 
 def test_le_conv():
@@ -14,6 +15,7 @@ def test_le_conv():
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, out_channels)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out.tolist()

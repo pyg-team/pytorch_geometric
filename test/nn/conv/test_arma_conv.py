@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import ARMAConv
+from torch_geometric.testing import is_full_test
 
 
 def test_arma_conv():
@@ -16,13 +17,14 @@ def test_arma_conv():
     assert out.size() == (4, 32)
     assert conv(x, adj.t()).tolist() == out.tolist()
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_lazy_arma_conv():
