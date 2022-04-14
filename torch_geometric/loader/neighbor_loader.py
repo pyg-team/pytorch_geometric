@@ -87,7 +87,7 @@ class NeighborSampler:
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    {self.input_node_type: index},
+                    {self.input_type: index},
                     self.num_neighbors,
                     self.num_hops,
                     self.replace,
@@ -251,7 +251,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
-                data, num_neighbors, replace, directed, node_type, node_time,
+                data, num_neighbors, replace, directed, node_type,
+                node_time=node_time,
                 share_memory=kwargs.get('num_workers', 0) > 0)
 
         super().__init__(input_nodes, collate_fn=self.neighbor_sampler,
