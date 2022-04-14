@@ -215,6 +215,13 @@ class NeighborLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        node_time (Dict[NodeType, Tensor], optional): an optional argument
+            to specify the timestamps for nodes in graph. The dict maps
+            node type to a tensor (int or float type) of dimension [num_nodes]
+            which indicates the time. Temporal sampling will be used to
+            sample neighbors:
+            nodes are sampled with the constraint that its time is less
+            than the time of the `center` node.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
