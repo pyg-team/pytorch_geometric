@@ -20,7 +20,7 @@ You might have to modify the script; depending on your needs, modify the followi
 - **python version 3.10.3**: If you need another version, change `pyenv install 3.10.3` and the following lines to the corresponding version.
 - **pytorch version 1.11.0**: If you need another version, change `pip install torch==1.11.0`.
 - **pytorch_geometric versions**: This uses specific versions for each of the `pytorch_geometric` requirements (scatter: 2.0.6, sparse: 0.6.13, cluster: 1.6.0, geometric 2.0.4). To change these, change the corresponding `git checkout` lines near the bottom.
-- **cuda compute capability 5.0 and 6.1**: If you run the container on multiple systems, ensure that all compute capabilities are listed here. If you have the cuda samples installed, check it with (for example) `/usr/local/cuda-10.1/extras/demo_suite/deviceQuery | grep 'CUDA Capability'`; if not, check [here](https://en.wikipedia.org/wiki/CUDA#GPUs_supported).
+- **cuda compute capability 5.0 and 6.1**: If you run the container on multiple systems, ensure that all compute capabilities are listed here. If you have the cuda samples installed, check it with (for example) `/usr/local/cuda-10.2/extras/demo_suite/deviceQuery | grep 'CUDA Capability'`; if not, check [here](https://en.wikipedia.org/wiki/CUDA#GPUs_supported).
 
 Note: If your harddisk runs full after multiple builds, this is known and apparently working as intended; delete the `/tmp/sbuild-XXXXXXXXX` files.
 
