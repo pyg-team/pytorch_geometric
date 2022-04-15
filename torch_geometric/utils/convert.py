@@ -186,7 +186,11 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
     for key, value in data.items():
         try:
-            data[key] = torch.tensor(value)
+            if isinstance(value, List) & isinstance(value[0], Tensor):
+                value = torch.stack(value)
+            else:
+                value = torch.tensor(value)
+            data[key] = value
         except ValueError:
             pass
 
