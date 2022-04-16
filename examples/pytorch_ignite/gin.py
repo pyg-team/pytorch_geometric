@@ -1,29 +1,23 @@
-import torch
-import ignite
-import torch_geometric as pyg
 import os.path as osp
+
+import ignite
+import torch
 from ignite.contrib.handlers.tensorboard_logger import *
 from ignite.contrib.handlers.tqdm_logger import ProgressBar
 
+import torch_geometric as pyg
+
 
 class Model(torch.nn.Module):
-
-    def __init__(self,
-                 in_channels: int,
-                 out_channels: int,
-                 hidden_channels: int = 64,
-                 num_layers: int = 3,
+    def __init__(self, in_channels: int, out_channels: int,
+                 hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):
         super().__init__()
-        self.gnn = pyg.nn.GIN(in_channels,
-                              hidden_channels,
-                              num_layers,
-                              dropout=dropout,
-                              jk='cat')
+        self.gnn = pyg.nn.GIN(in_channels, hidden_channels, num_layers,
+                              dropout=dropout, jk='cat')
 
         self.classifier = pyg.nn.MLP(
-            [hidden_channels, hidden_channels, out_channels],
-            batch_norm=True,
+            [hidden_channels, hidden_channels, out_channels], batch_norm=True,
             dropout=dropout)
 
     def forward(self, data):
@@ -92,14 +86,10 @@ def main():
     pbar = ProgressBar()
     pbar.attach(trainer, output_transform=lambda x: {"loss": x})
 
-
     trn_evaluator = ignite.engine.create_supervised_evaluator(
-        model=model,
-        metrics=metrics,
-        device=device,
-        prepare_batch=prepare_batch_fn,
-        output_transform=lambda x, y, y_pred: (y_pred, y),
-        amp_mode=amp_mode)
+        model=model, metrics=metrics, device=device,
+        prepare_batch=prepare_batch_fn, output_transform=lambda x, y, y_pred:
+        (y_pred, y), amp_mode=amp_mode)
 
     @trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))
     def log_training_metrics(trainer):
@@ -134,30 +124,23 @@ def main():
     neg_loss_score = ignite.handlers.Checkpoint.get_default_score_fn(
         list(metrics.keys())[0], -1.0)
     checkpoint_handler = ignite.handlers.Checkpoint(
-        {'model': model},
-        log_dir,
-        n_saved=4,
-        filename_prefix='best_trn',
-        score_name=list(metrics.keys())[0],
-        score_function=neg_loss_score,
+        {'model': model}, log_dir, n_saved=4, filename_prefix='best_trn',
+        score_name=list(metrics.keys())[0], score_function=neg_loss_score,
         filename_pattern="epoch-{global_step}-{score_name}-{score}.pt",
         global_step_transform=global_step_from_engine(trainer))
-    trainer.add_event_handler(ignite.engine.Events.COMPLETED, checkpoint_handler)
+    trainer.add_event_handler(ignite.engine.Events.COMPLETED,
+                              checkpoint_handler)
 
     # create a tensorboard logger to write logs
     tb_logger = TensorboardLogger(log_dir=osp.join(log_dir, "tb_logs"))
     # Attach the logger to the trainer to log training loss at each iteration
     tb_logger.attach_output_handler(
-        trainer,
-        event_name=ignite.engine.Events.ITERATION_COMPLETED,
-        tag="training",
-        output_transform=lambda loss: {"loss_iteration": loss})
+        trainer, event_name=ignite.engine.Events.ITERATION_COMPLETED,
+        tag="training", output_transform=lambda loss: {"loss_iteration": loss})
     # Attach the logger to the trainer to log training loss at each epoch
     tb_logger.attach_output_handler(
-        trainer,
-        event_name=ignite.engine.Events.EPOCH_COMPLETED,
-        tag="training",
-        output_transform=lambda loss: {"loss_epoch": loss})
+        trainer, event_name=ignite.engine.Events.EPOCH_COMPLETED,
+        tag="training", output_transform=lambda loss: {"loss_epoch": loss})
     # Attach the logger to the train evaluator to log training metrics at each epoch
     tb_logger.attach_output_handler(
         trn_evaluator,
