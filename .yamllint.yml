@@ -1,0 +1,9 @@
+extends: default
+
+rules:
+  line-length: disable
+  document-start: disable
+  truthy:
+    level: error
+  braces:
+    max-spaces-inside: 1

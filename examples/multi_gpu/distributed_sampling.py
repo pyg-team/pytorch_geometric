@@ -1,15 +1,15 @@
 import os
 
 import torch
-from tqdm import tqdm
-import torch.nn.functional as F
-import torch.multiprocessing as mp
 import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel
+from tqdm import tqdm
 
-from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
+from torch_geometric.nn import SAGEConv
 
 
 class SAGE(torch.nn.Module):

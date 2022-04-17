@@ -1,8 +1,9 @@
-import sys
 import os.path as osp
+import sys
 from getpass import getuser
-from tempfile import NamedTemporaryFile as TempFile, gettempdir
 from importlib.util import module_from_spec, spec_from_file_location
+from tempfile import NamedTemporaryFile as TempFile
+from tempfile import gettempdir
 
 from torch_geometric.data.makedirs import makedirs
 

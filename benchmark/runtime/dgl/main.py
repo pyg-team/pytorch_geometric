@@ -1,16 +1,15 @@
 from itertools import product
 
-import torch
 import dgl
-from dgl.data import citation_graph
-from dgl.contrib.data import load_data
+import torch
 from dgl import DGLGraph
-
-from runtime.dgl.gcn import GCN, GCNSPMV
+from dgl.contrib.data import load_data
+from dgl.data import citation_graph
 from runtime.dgl.gat import GAT, GATSPMV
+from runtime.dgl.gcn import GCN, GCNSPMV
+from runtime.dgl.hidden import HiddenPrint
 from runtime.dgl.rgcn import RGCN, RGCNSPMV
 from runtime.dgl.train import train_runtime
-from runtime.dgl.hidden import HiddenPrint
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 with HiddenPrint():

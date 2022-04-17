@@ -1,7 +1,7 @@
+import ast
 import json
 import os
 import shutil
-import ast
 
 
 def string_to_python(string):

@@ -1,10 +1,10 @@
-from typing import Optional, Callable, List
-
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data, download_url
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class RelLinkPredDataset(InMemoryDataset):

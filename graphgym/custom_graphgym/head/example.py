@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch_geometric.graphgym.register import register_head
 
 
+@register_head('head')
 class ExampleNodeHead(nn.Module):
     '''Head of GNN, node prediction'''
     def __init__(self, dim_in, dim_out):
@@ -20,6 +21,3 @@ class ExampleNodeHead(nn.Module):
         batch = self.layer_post_mp(batch)
         pred, label = self._apply_index(batch)
         return pred, label
-
-
-register_head('example', ExampleNodeHead)

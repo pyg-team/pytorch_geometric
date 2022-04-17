@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import read_txt_array
 
 

@@ -1,11 +1,13 @@
-from typing import Union, Optional, Callable
+from typing import Callable, Optional, Union
+
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
+
 from torch_geometric.utils import softmax
 
-from ..inits import uniform
 from ...utils.num_nodes import maybe_num_nodes
+from ..inits import uniform
 
 
 def topk(x, ratio, batch, min_score=None, tol=1e-7):

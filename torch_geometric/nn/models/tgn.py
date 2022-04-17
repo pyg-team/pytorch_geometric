@@ -3,7 +3,7 @@ from typing import Callable, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, GRUCell
+from torch.nn import GRUCell, Linear
 from torch_scatter import scatter, scatter_max
 
 from torch_geometric.nn.inits import zeros

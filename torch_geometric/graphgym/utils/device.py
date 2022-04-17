@@ -1,9 +1,11 @@
-import torch
-import subprocess
-import numpy as np
-from torch_geometric.graphgym.config import cfg
 import logging
 import os
+import subprocess
+
+import numpy as np
+import torch
+
+from torch_geometric.graphgym.config import cfg
 
 
 def get_gpu_memory_map():

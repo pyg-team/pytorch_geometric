@@ -1,4 +1,4 @@
-from typing import Union, Optional, Callable
+from typing import Callable, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -7,9 +7,8 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import LEConv
-from torch_geometric.utils import softmax
 from torch_geometric.nn.pool.topk_pool import topk
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, softmax
 
 
 class ASAPooling(torch.nn.Module):

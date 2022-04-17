@@ -3,14 +3,15 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.nn.inits import zeros
-from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.utils import add_remaining_self_loops
 from torch_scatter import scatter
-from torch_sparse import SparseTensor, matmul, fill_diag
+from torch_sparse import SparseTensor, fill_diag, matmul
+
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import add_remaining_self_loops
 
 
 class EGConv(MessagePassing):
@@ -67,6 +68,12 @@ class EGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, OptTensor]]

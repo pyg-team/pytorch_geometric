@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union, Any
-
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -85,7 +84,8 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
-            device = value.device if isinstance(value, Tensor) else device
+            if isinstance(value, Tensor) and value.is_cuda:
+                device = value.device
 
             out_store[attr] = value
             if key is not None:
@@ -132,7 +132,10 @@ def _collate(
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
-                values = [value + inc for value, inc in zip(values, incs)]
+                values = [
+                    value + inc.to(value.device)
+                    for value, inc in zip(values, incs)
+                ]
         else:
             incs = None
 
@@ -178,7 +181,7 @@ def _collate(
         return value_dict, slice_dict, inc_dict
 
     elif (isinstance(elem, Sequence) and not isinstance(elem, str)
-          and isinstance(elem[0], (Tensor, SparseTensor))):
+          and len(elem) > 0 and isinstance(elem[0], (Tensor, SparseTensor))):
         # Recursively collate elements of lists.
         value_list, slice_list, inc_list = [], [], []
         for i in range(len(elem)):

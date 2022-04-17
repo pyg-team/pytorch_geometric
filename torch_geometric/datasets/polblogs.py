@@ -1,10 +1,14 @@
-from typing import Optional, Callable, List
-
 import os
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_tar)
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
 
 
 class PolBlogs(InMemoryDataset):
@@ -33,7 +37,7 @@ class PolBlogs(InMemoryDataset):
 
     url = 'https://netset.telecom-paris.fr/datasets/polblogs.tar.gz'
 
-    def __init__(self, root: str = None, transform: Optional[Callable] = None,
+    def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])

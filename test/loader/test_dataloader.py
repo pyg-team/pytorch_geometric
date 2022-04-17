@@ -1,8 +1,9 @@
-import sys
 import multiprocessing
-import pytest
+import sys
 
+import pytest
 import torch
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
 

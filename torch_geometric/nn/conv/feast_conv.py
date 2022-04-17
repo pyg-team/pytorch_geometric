@@ -1,15 +1,16 @@
 from typing import Union
-from torch_geometric.typing import PairTensor, Adj
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_sparse import SparseTensor, set_diag
-from torch_geometric.nn.inits import normal
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.nn.inits import normal
+from torch_geometric.typing import Adj, PairTensor
+from torch_geometric.utils import add_self_loops, remove_self_loops
 
 
 class FeaStConv(MessagePassing):
@@ -39,6 +40,15 @@ class FeaStConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):

@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, Conv1d
+from torch.nn import Conv1d, Linear
+
 from torch_geometric.nn import SAGEConv, global_sort_pool
 
 

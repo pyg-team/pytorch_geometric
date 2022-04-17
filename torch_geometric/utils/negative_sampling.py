@@ -1,11 +1,11 @@
-from typing import Optional, Union, Tuple
-
 import random
+from typing import Optional, Tuple, Union
 
-import torch
 import numpy as np
+import torch
 from torch import Tensor
-from torch_geometric.utils import degree, remove_self_loops, coalesce
+
+from torch_geometric.utils import coalesce, degree, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
@@ -49,7 +49,9 @@ def negative_sampling(edge_index: Tensor,
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
-    assert idx.numel() < population, ("No negative edges to sample")
+
+    if idx.numel() >= population:
+        return edge_index.new_empty((2, 0))
 
     if num_neg_samples is None:
         num_neg_samples = edge_index.size(1)
@@ -76,13 +78,14 @@ def negative_sampling(edge_index: Tensor,
 
     else:  # 'sparse'
         # The sparse version checks for invalid samples via `np.isin`.
+        idx = idx.to('cpu')
         for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, device='cpu')
-            mask = np.isin(rnd, idx.to('cpu'))
+            mask = np.isin(rnd, idx)
             if neg_idx is not None:
                 mask |= np.isin(rnd, neg_idx.to('cpu'))
             mask = torch.from_numpy(mask).to(torch.bool)
-            rnd = rnd[~mask]
+            rnd = rnd[~mask].to(edge_index.device)
             neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
             if neg_idx.numel() >= num_neg_samples:
                 neg_idx = neg_idx[:num_neg_samples]

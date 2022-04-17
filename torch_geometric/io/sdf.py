@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
 from torch_sparse import coalesce
-from torch_geometric.io import parse_txt_array
+
 from torch_geometric.data import Data
+from torch_geometric.io import parse_txt_array
 
 elems = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
 

@@ -1,6 +1,8 @@
 import datetime
 import doctest
+
 import sphinx_rtd_theme
+
 import torch_geometric
 
 extensions = [
@@ -32,7 +34,13 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE
 autodoc_member_order = 'bysource'
-intersphinx_mapping = {'python': ('https://docs.python.org/', None)}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    # TODO "unknown or unsupported inventory version" error for numpy doc.
+    # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
+    'torch': ('https://pytorch.org/docs/master', None),
+}
 
 html_theme_options = {
     'collapse_navigation': False,

@@ -1,7 +1,7 @@
-import re
 import inspect
+import re
 from collections import OrderedDict
-from typing import Dict, List, Any, Optional, Callable, Set
+from typing import Any, Callable, Dict, List, Optional, Set
 
 from .typing import parse_types
 

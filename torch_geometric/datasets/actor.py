@@ -1,9 +1,10 @@
-from typing import Optional, Callable, List
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
+import torch
 from torch_sparse import SparseTensor, coalesce
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Actor(InMemoryDataset):

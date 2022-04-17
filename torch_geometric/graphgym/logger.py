@@ -1,16 +1,14 @@
-import torch
+import logging
 import math
 import sys
-import logging
 
-from torch_geometric.graphgym.config import cfg
+import torch
+
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
-
-from sklearn.metrics import accuracy_score, precision_score, recall_score, \
-    f1_score, roc_auc_score, mean_absolute_error, mean_squared_error
-
+from torch_geometric.graphgym import register
+from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
+from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 
 def set_printing():
@@ -97,6 +95,14 @@ class Logger(object):
 
     # task properties
     def classification_binary(self):
+        from sklearn.metrics import (
+            accuracy_score,
+            f1_score,
+            precision_score,
+            recall_score,
+            roc_auc_score,
+        )
+
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
         try:
@@ -112,11 +118,15 @@ class Logger(object):
         }
 
     def classification_multi(self):
+        from sklearn.metrics import accuracy_score
+
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
         return {'accuracy': round(accuracy_score(true, pred_int), cfg.round)}
 
     def regression(self):
+        from sklearn.metrics import mean_absolute_error, mean_squared_error
+
         true, pred = torch.cat(self._true), torch.cat(self._pred)
         return {
             'mae':
@@ -159,14 +169,25 @@ class Logger(object):
     def write_epoch(self, cur_epoch):
         basic_stats = self.basic()
 
-        if self.task_type == 'regression':
-            task_stats = self.regression()
-        elif self.task_type == 'classification_binary':
-            task_stats = self.classification_binary()
-        elif self.task_type == 'classification_multi':
-            task_stats = self.classification_multi()
-        else:
-            raise ValueError('Task has to be regression or classification')
+        # Try to load customized metrics
+        task_stats = {}
+        for custom_metric in cfg.custom_metrics:
+            func = register.metric_dict.get(custom_metric)
+            if not func:
+                raise ValueError(
+                    f'Unknown custom metric function name: {custom_metric}')
+            custom_metric_score = func(self._true, self._pred, self.task_type)
+            task_stats[custom_metric] = custom_metric_score
+
+        if not task_stats:  # use default metrics if no matching custom metric
+            if self.task_type == 'regression':
+                task_stats = self.regression()
+            elif self.task_type == 'classification_binary':
+                task_stats = self.classification_binary()
+            elif self.task_type == 'classification_multi':
+                task_stats = self.classification_multi()
+            else:
+                raise ValueError('Task has to be regression or classification')
 
         epoch_stats = {'epoch': cur_epoch}
         eta_stats = {'eta': round(self.eta(cur_epoch), cfg.round)}

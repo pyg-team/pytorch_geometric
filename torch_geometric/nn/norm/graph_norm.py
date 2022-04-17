@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_mean
 
-from ..inits import zeros, ones
+from ..inits import ones, zeros
 
 
 class GraphNorm(torch.nn.Module):

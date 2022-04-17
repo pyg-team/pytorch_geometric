@@ -1,10 +1,14 @@
+import os
 from typing import List
 
-import os
-
 import torch
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class MNISTSuperpixels(InMemoryDataset):

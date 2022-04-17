@@ -1,10 +1,9 @@
+import os.path as osp
 from typing import Optional
 
-import os.path as osp
-
 import torch
-from tqdm import tqdm
 from torch_sparse import SparseTensor
+from tqdm import tqdm
 
 
 class GraphSAINTSampler(torch.utils.data.DataLoader):

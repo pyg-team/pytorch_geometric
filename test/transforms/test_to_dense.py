@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import ToDense
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import ToDense
 
 
 def test_to_dense():

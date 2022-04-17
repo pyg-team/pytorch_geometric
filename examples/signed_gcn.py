@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+
 from torch_geometric.datasets import BitcoinOTC
 from torch_geometric.nn import SignedGCN
 

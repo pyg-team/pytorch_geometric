@@ -17,6 +17,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointNetConv, PointConv
@@ -47,6 +48,7 @@ from .hgt_conv import HGTConv
 from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
+from .lg_conv import LGConv
 
 __all__ = [
     'MessagePassing',
@@ -70,6 +72,7 @@ __all__ = [
     'MFConv',
     'RGCNConv',
     'FastRGCNConv',
+    'RGATConv',
     'SignedConv',
     'DNAConv',
     'PointNetConv',
@@ -103,6 +106,7 @@ __all__ = [
     'HEATConv',
     'HeteroConv',
     'HANConv',
+    'LGConv',
 ]
 
 classes = __all__

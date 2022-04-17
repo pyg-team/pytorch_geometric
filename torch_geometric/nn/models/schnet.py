@@ -1,19 +1,18 @@
+import os
+import os.path as osp
+import warnings
+from math import pi as PI
 from typing import Optional
 
-import os
-import warnings
-import os.path as osp
-from math import pi as PI
-
+import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.nn import Embedding, Sequential, Linear, ModuleList
-import numpy as np
-
+from torch.nn import Embedding, Linear, ModuleList, Sequential
 from torch_scatter import scatter
+
+from torch_geometric.data import Dataset, download_url, extract_zip
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.data import download_url, extract_zip, Dataset
-from torch_geometric.nn import radius_graph, MessagePassing
+from torch_geometric.nn import MessagePassing, radius_graph
 
 qm9_target_dict = {
     0: 'dipole_moment',

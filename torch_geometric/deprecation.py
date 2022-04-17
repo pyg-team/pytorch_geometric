@@ -1,7 +1,6 @@
-from typing import Optional
-
-import warnings
 import functools
+import warnings
+from typing import Optional
 
 
 def deprecated(details: Optional[str] = None, func_name: Optional[str] = None):

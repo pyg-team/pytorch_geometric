@@ -1,8 +1,8 @@
 # Shameless steal from: https://github.com/klicperajo/dimenet
 
 import numpy as np
-from scipy.optimize import brentq
 from scipy import special as sp
+from scipy.optimize import brentq
 
 try:
     import sympy as sym

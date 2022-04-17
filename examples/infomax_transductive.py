@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn as nn
+
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, DeepGraphInfomax
+from torch_geometric.nn import DeepGraphInfomax, GCNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)

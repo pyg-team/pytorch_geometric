@@ -1,4 +1,4 @@
-from torch_geometric import is_debug_enabled, debug, set_debug
+from torch_geometric import debug, is_debug_enabled, set_debug
 
 
 def test_debug():

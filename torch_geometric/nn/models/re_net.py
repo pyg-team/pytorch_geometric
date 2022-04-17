@@ -1,8 +1,8 @@
 import math
 
 import torch
-from torch.nn import Parameter, GRU, Linear
 import torch.nn.functional as F
+from torch.nn import GRU, Linear, Parameter
 from torch_scatter import scatter_mean
 
 

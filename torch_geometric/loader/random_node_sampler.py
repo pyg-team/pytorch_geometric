@@ -2,7 +2,6 @@ import copy
 
 import torch
 from torch import Tensor
-
 from torch_sparse import SparseTensor
 
 

@@ -1,10 +1,11 @@
 import argparse
-import torch
-from torch.nn import Linear
-import torch.nn.functional as F
-from torch_geometric.nn import APPNP
 
+import torch
+import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
+from torch.nn import Linear
+
+from torch_geometric.nn import APPNP
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)

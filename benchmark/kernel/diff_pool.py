@@ -3,7 +3,8 @@ from math import ceil
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import DenseSAGEConv, dense_diff_pool, JumpingKnowledge
+
+from torch_geometric.nn import DenseSAGEConv, JumpingKnowledge, dense_diff_pool
 
 
 class Block(torch.nn.Module):

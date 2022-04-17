@@ -1,6 +1,7 @@
 import torch
-from torch_geometric.transforms import Delaunay
+
 from torch_geometric.data import Data
+from torch_geometric.transforms import Delaunay
 
 
 def test_delaunay():

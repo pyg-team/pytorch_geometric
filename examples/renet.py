@@ -2,7 +2,8 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import ICEWS18, GDELT  # noqa
+
+from torch_geometric.datasets import GDELT, ICEWS18  # noqa
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models.re_net import RENet
 

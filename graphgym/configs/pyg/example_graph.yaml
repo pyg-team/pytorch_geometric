@@ -4,9 +4,9 @@ dataset:
   name: ogbg-molhiv
   task: graph
   task_type: classification
-  node_encoder: True
+  node_encoder: true
   node_encoder_name: Atom
-  edge_encoder: True
+  edge_encoder: true
   edge_encoder_name: Bond
 train:
   batch_size: 128
@@ -25,11 +25,11 @@ gnn:
   dim_inner: 300
   layer_type: generalconv
   stage_type: stack
-  batchnorm: True
+  batchnorm: true
   act: prelu
   dropout: 0.0
   agg: mean
-  normalize_adj: False
+  normalize_adj: false
 optim:
   optimizer: adam
   base_lr: 0.01

@@ -1,15 +1,14 @@
-from typing import Optional, Dict, Any
-
 import copy
+from typing import Any, Dict, Optional
 
 import torch
-from torch.nn import Module, ModuleList, ModuleDict, Sequential
-from torch_geometric.nn.dense import Linear
+from torch.nn import Module, ModuleDict, ModuleList, Sequential
+
 from torch_geometric.nn.conv import MessagePassing
 
 try:
-    from torch.fx import GraphModule, Graph, Node
-except (ImportError, ModuleNotFoundError):
+    from torch.fx import Graph, GraphModule, Node
+except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
@@ -236,11 +235,8 @@ def symbolic_trace(
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
     class Tracer(torch.fx.Tracer):
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
-            # We don't want to trace inside `MessagePassing` and lazy `Linear`
-            # modules, so we mark them as leaf modules.
-            return (isinstance(module, MessagePassing)
-                    or isinstance(module, Linear)
-                    or super().is_leaf_module(module, *args, **kwargs))
+            # TODO We currently only trace top-level modules.
+            return not isinstance(module, torch.nn.Sequential)
 
     return GraphModule(module, Tracer().trace(module, concrete_args))
 

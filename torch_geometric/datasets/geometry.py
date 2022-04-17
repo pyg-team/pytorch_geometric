@@ -1,10 +1,10 @@
-from typing import Optional, Callable, List
-
+import glob
 import os
 import os.path as osp
-import glob
+from typing import Callable, List, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_off
 

@@ -1,9 +1,9 @@
-from typing import Union, List
+from typing import List, Union
 
 import torch
 from torch.utils.data.dataloader import default_collate
 
-from torch_geometric.data import Data, Batch, Dataset
+from torch_geometric.data import Batch, Data, Dataset
 
 
 def collate_fn(data_list: List[Data]) -> Batch:

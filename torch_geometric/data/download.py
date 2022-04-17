@@ -1,7 +1,7 @@
-import sys
-import ssl
 import os.path as osp
-from six.moves import urllib
+import ssl
+import sys
+import urllib
 
 from .makedirs import makedirs
 

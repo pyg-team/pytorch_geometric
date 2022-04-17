@@ -1,6 +1,5 @@
-from typing import Any
-
 from collections.abc import Mapping, Sequence
+from typing import Any
 
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -65,7 +64,7 @@ def _separate(
         value = value.narrow(cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
         if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
-            value = value - incs[idx]
+            value = value - incs[idx].to(value.device)
         return value
 
     elif isinstance(value, SparseTensor) and decrement:
@@ -88,7 +87,7 @@ def _separate(
         }
 
     elif (isinstance(value, Sequence) and isinstance(value[0], Sequence)
-          and not isinstance(value[0], str)
+          and not isinstance(value[0], str) and len(value[0]) > 0
           and isinstance(value[0][0], (Tensor, SparseTensor))):
         # Recursively separate elements of lists of lists.
         return [

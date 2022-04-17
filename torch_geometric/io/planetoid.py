@@ -1,9 +1,12 @@
-import sys
 import os.path as osp
+import sys
+import warnings
 from itertools import repeat
 
 import torch
-from torch_sparse import coalesce as coalesce_fn, SparseTensor
+from torch_sparse import SparseTensor
+from torch_sparse import coalesce as coalesce_fn
+
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import remove_self_loops
@@ -92,6 +95,7 @@ def read_file(folder, prefix, name):
 
     with open(path, 'rb') as f:
         if sys.version_info > (3, 0):
+            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
             out = pickle.load(f, encoding='latin1')
         else:
             out = pickle.load(f)

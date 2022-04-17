@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, NamedTuple, Union, Callable
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -121,7 +121,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
         if 'dataset' in kwargs:
             del kwargs['dataset']
 
-        # Save for Pytorch Lightning...
+        # Save for Pytorch Lightning < 1.6:
         self.edge_index = edge_index
         self.node_idx = node_idx
         self.num_nodes = num_nodes

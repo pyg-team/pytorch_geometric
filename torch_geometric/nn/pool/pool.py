@@ -1,13 +1,13 @@
-import torch
-from torch_sparse import coalesce
-from torch_scatter import scatter_mean
-from torch_geometric.utils import remove_self_loops
-
 from typing import Optional
 
+import torch
+from torch_scatter import scatter_mean
+from torch_sparse import coalesce
 
-def pool_edge(cluster, edge_index,
-              edge_attr: Optional[torch.Tensor] = None):
+from torch_geometric.utils import remove_self_loops
+
+
+def pool_edge(cluster, edge_index, edge_attr: Optional[torch.Tensor] = None):
     num_nodes = cluster.size(0)
     edge_index = cluster[edge_index.view(-1)].view(2, -1)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)

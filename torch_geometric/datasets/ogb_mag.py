@@ -1,14 +1,17 @@
-from typing import Optional, Callable, List
-
 import os
-import shutil
 import os.path as osp
+import shutil
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    HeteroData,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class OGB_MAG(InMemoryDataset):

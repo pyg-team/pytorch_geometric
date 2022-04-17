@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.data import Data, InMemoryDataset, Dataset
+
+from torch_geometric.data import Data, Dataset, InMemoryDataset
 
 
 class MyData(Data):

@@ -1,12 +1,13 @@
 import os
-import sys
 import random
+import sys
 
-import torch
 import numpy as np
+import torch
 from torch_sparse import SparseTensor
+
 import torch_geometric
-from torch_geometric.data import Data, HeteroData, Batch
+from torch_geometric.data import Batch, Data, HeteroData
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -374,3 +375,14 @@ def test_pair_data_batching():
     assert torch.allclose(batch.x_t, torch.cat([x_t, x_t], dim=0))
     assert batch.edge_index_t.tolist() == [[0, 0, 0, 4, 4, 4],
                                            [1, 2, 3, 5, 6, 7]]
+
+
+def test_batch_with_empty_list():
+    x = torch.randn(4, 1)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+    data = Data(x=x, edge_index=edge_index, nontensor=[])
+
+    batch = Batch.from_data_list([data, data])
+    assert batch.nontensor == [[], []]
+    assert batch[0].nontensor == []
+    assert batch[1].nontensor == []

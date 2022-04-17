@@ -3,18 +3,17 @@ import os.path as osp
 from itertools import chain
 
 import numpy as np
-from sklearn.metrics import roc_auc_score
-from scipy.sparse.csgraph import shortest_path
 import torch
 import torch.nn.functional as F
-from torch.nn import BCEWithLogitsLoss
-from torch.nn import ModuleList, Conv1d, MaxPool1d
+from scipy.sparse.csgraph import shortest_path
+from sklearn.metrics import roc_auc_score
+from torch.nn import BCEWithLogitsLoss, Conv1d, MaxPool1d, ModuleList
 
-from torch_geometric.loader import DataLoader
-from torch_geometric.datasets import Planetoid
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.datasets import Planetoid
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import MLP, GCNConv, global_sort_pool
 from torch_geometric.transforms import RandomLinkSplit
-from torch_geometric.nn import GCNConv, global_sort_pool, MLP
 from torch_geometric.utils import k_hop_subgraph, to_scipy_sparse_matrix
 
 

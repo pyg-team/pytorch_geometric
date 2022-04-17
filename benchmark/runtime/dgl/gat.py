@@ -1,9 +1,10 @@
+import dgl.function as fn
 import torch
 import torch.nn.functional as F
-from torch.nn import Parameter
-from torch_geometric.nn.inits import glorot, zeros
-import dgl.function as fn
 from dgl.nn.pytorch import EdgeSoftmax
+from torch.nn import Parameter
+
+from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATConv(torch.nn.Module):

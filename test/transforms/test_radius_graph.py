@@ -1,9 +1,12 @@
 import torch
-from torch_geometric.transforms import RadiusGraph
-from torch_geometric.data import Data
 from torch_sparse import coalesce
 
+from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
+from torch_geometric.transforms import RadiusGraph
 
+
+@withPackage('torch_cluster')
 def test_radius_graph():
     assert RadiusGraph(r=1).__repr__() == 'RadiusGraph(r=1)'
 

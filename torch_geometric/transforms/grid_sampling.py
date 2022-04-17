@@ -1,19 +1,21 @@
-from typing import Union, List, Optional
-
 import re
+from typing import List, Optional, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch_scatter import scatter_add, scatter_mean
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('grid_sampling')
 class GridSampling(BaseTransform):
-    r"""Clusters points into voxels with size :attr:`size`.
+    r"""Clusters points into voxels with size :attr:`size`
+    (functional name: :obj:`grid_sampling`).
     Each cluster returned is a new point based on the mean of all points
     inside the given cluster.
 

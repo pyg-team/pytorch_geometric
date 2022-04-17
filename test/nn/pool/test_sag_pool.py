@@ -1,6 +1,12 @@
 import torch
-from torch_geometric.nn import (SAGPooling, GraphConv, GCNConv, GATConv,
-                                SAGEConv)
+
+from torch_geometric.nn import (
+    GATConv,
+    GCNConv,
+    GraphConv,
+    SAGEConv,
+    SAGPooling,
+)
 
 
 def test_sag_pooling():

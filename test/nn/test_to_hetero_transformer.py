@@ -2,11 +2,12 @@ from typing import Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, Sequential, ReLU
+from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
-from torch_geometric.nn import to_hetero
-from torch_geometric.nn import SAGEConv, GINEConv, RGCNConv
-from torch_geometric.nn import Linear as LazyLinear, MessagePassing
+
+from torch_geometric.nn import BatchNorm, GCNConv, GINEConv
+from torch_geometric.nn import Linear as LazyLinear
+from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
 
 
 class Net1(torch.nn.Module):
@@ -112,6 +113,15 @@ class Net8(torch.nn.Module):
         return x
 
 
+class Net9(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.batch_norm = BatchNorm(16)
+
+    def forward(self, x: Tensor) -> Tensor:
+        return self.batch_norm(x)
+
+
 def test_to_hetero():
     metadata = (['paper', 'author'], [('paper', 'cites', 'paper'),
                                       ('paper', 'written_by', 'author'),
@@ -194,6 +204,40 @@ def test_to_hetero():
     assert out['paper'].size() == (4, 32)
     assert out['author'].size() == (8, 32)
 
+    model = Net9()
+    model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 16), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 16)
+    assert out['author'].size() == (8, 16)
+
+
+class GCN(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(16, 32)
+        self.conv2 = GCNConv(32, 64)
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        x = self.conv1(x, edge_index).relu()
+        x = self.conv2(x, edge_index).relu()
+        return x
+
+
+def test_to_hetero_with_gcn():
+    metadata = (['paper'], [('paper', '0', 'paper'), ('paper', '1', 'paper')])
+    x_dict = {'paper': torch.randn(100, 16)}
+    edge_index_dict = {
+        ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
+    }
+
+    model = GCN()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 1
+    assert out['paper'].size() == (100, 64)
+
 
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
@@ -204,6 +248,8 @@ class GraphConv(MessagePassing):
         self.lin.reset_parameters()
 
     def forward(self, x, edge_index):
+        if isinstance(x, Tensor):
+            x = (x, x)
         return self.propagate(edge_index, x=(self.lin(x[0]), x[1]))
 
 

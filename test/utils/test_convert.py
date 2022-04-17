@@ -1,13 +1,17 @@
-import torch
 import scipy.sparse
-import networkx as nx
+import torch
 
 from torch_geometric.data import Data
-from torch_geometric.utils import (to_scipy_sparse_matrix,
-                                   from_scipy_sparse_matrix)
-from torch_geometric.utils import to_networkx, from_networkx
-from torch_geometric.utils import to_trimesh, from_trimesh
-from torch_geometric.utils import subgraph
+from torch_geometric.testing import withPackage
+from torch_geometric.utils import (
+    from_networkx,
+    from_scipy_sparse_matrix,
+    from_trimesh,
+    subgraph,
+    to_networkx,
+    to_scipy_sparse_matrix,
+    to_trimesh,
+)
 
 
 def test_to_scipy_sparse_matrix():
@@ -38,7 +42,10 @@ def test_from_scipy_sparse_matrix():
     assert out[1].tolist() == [1, 1, 1]
 
 
+@withPackage('networkx')
 def test_to_networkx():
+    import networkx as nx
+
     x = torch.Tensor([[1, 2], [3, 4]])
     pos = torch.Tensor([[0, 0], [1, 1]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
@@ -55,12 +62,15 @@ def test_to_networkx():
         assert G.nodes[1]['pos'] == [1, 1]
 
         if remove_self_loops:
-            assert nx.to_numpy_matrix(G).tolist() == [[0, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[0, 1], [2, 0]]
         else:
-            assert nx.to_numpy_matrix(G).tolist() == [[3, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
 
 
+@withPackage('networkx')
 def test_to_networkx_undirected():
+    import networkx as nx
+
     x = torch.Tensor([[1, 2], [3, 4]])
     pos = torch.Tensor([[0, 0], [1, 1]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
@@ -78,11 +88,21 @@ def test_to_networkx_undirected():
         assert G.nodes[1]['pos'] == [1, 1]
 
         if remove_self_loops:
-            assert nx.to_numpy_matrix(G).tolist() == [[0, 2], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[0, 1], [1, 0]]
         else:
-            assert nx.to_numpy_matrix(G).tolist() == [[3, 2], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[3, 1], [1, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected=False)
+    assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected="upper")
+    assert nx.to_numpy_array(G).tolist() == [[3, 1], [1, 0]]
+
+    G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
+    assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
 
 
+@withPackage('networkx')
 def test_from_networkx():
     x = torch.randn(2, 8)
     pos = torch.randn(2, 3)
@@ -99,6 +119,7 @@ def test_from_networkx():
     assert data.edge_attr.tolist() == edge_attr[perm].tolist()
 
 
+@withPackage('networkx')
 def test_from_networkx_group_attrs():
     x = torch.randn(2, 2)
     x1 = torch.randn(2, 4)
@@ -120,7 +141,10 @@ def test_from_networkx_group_attrs():
                                                   dim=-1)[perm].tolist()
 
 
+@withPackage('networkx')
 def test_networkx_vice_versa_convert():
+    import networkx as nx
+
     G = nx.complete_graph(5)
     assert G.is_directed() is False
     data = from_networkx(G)
@@ -131,7 +155,10 @@ def test_networkx_vice_versa_convert():
     assert G.is_directed() is False
 
 
+@withPackage('networkx')
 def test_from_networkx_non_consecutive():
+    import networkx as nx
+
     graph = nx.Graph()
     graph.add_node(4)
     graph.add_node(2)
@@ -145,7 +172,10 @@ def test_from_networkx_non_consecutive():
     assert data.edge_index.tolist() == [[0, 1], [1, 0]]
 
 
+@withPackage('networkx')
 def test_from_networkx_inverse():
+    import networkx as nx
+
     graph = nx.Graph()
     graph.add_node(3)
     graph.add_node(2)
@@ -161,7 +191,10 @@ def test_from_networkx_inverse():
     assert data.num_nodes == 4
 
 
+@withPackage('networkx')
 def test_from_networkx_non_numeric_labels():
+    import networkx as nx
+
     graph = nx.Graph()
     graph.add_node('4')
     graph.add_node('2')
@@ -174,7 +207,10 @@ def test_from_networkx_non_numeric_labels():
     assert data.edge_index.tolist() == [[0, 1], [1, 0]]
 
 
+@withPackage('networkx')
 def test_from_networkx_without_edges():
+    import networkx as nx
+
     graph = nx.Graph()
     graph.add_node(1)
     graph.add_node(2)
@@ -184,7 +220,10 @@ def test_from_networkx_without_edges():
     assert data.num_nodes == 2
 
 
+@withPackage('networkx')
 def test_from_networkx_with_same_node_and_edge_attributes():
+    import networkx as nx
+
     G = nx.Graph()
     G.add_nodes_from([(0, {'age': 1}), (1, {'age': 6}), (2, {'age': 5})])
     G.add_edges_from([(0, 1, {'age': 2}), (1, 2, {'age': 7})])
@@ -203,7 +242,10 @@ def test_from_networkx_with_same_node_and_edge_attributes():
     assert data.edge_attr.tolist() == [[2], [2], [7], [7]]
 
 
-def test_subgraph_convert():
+@withPackage('networkx')
+def test_from_networkx_subgraph_convert():
+    import networkx as nx
+
     G = nx.complete_graph(5)
 
     edge_index = from_networkx(G).edge_index
@@ -215,6 +257,7 @@ def test_subgraph_convert():
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
 
+@withPackage('trimesh')
 def test_trimesh():
     pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
                        dtype=torch.float)

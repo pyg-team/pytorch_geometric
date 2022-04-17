@@ -1,12 +1,13 @@
-import sys
-import random
 import os.path as osp
+import random
 import shutil
+import sys
 
 import torch
-from torch_geometric.nn import RENet
+
 from torch_geometric.datasets.icews import EventDataset
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import RENet
 
 
 class MyTestEventDataset(EventDataset):

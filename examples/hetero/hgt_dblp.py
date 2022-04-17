@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import DBLP
-from torch_geometric.nn import Linear, HGTConv
+from torch_geometric.nn import HGTConv, Linear
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
 dataset = DBLP(path)
@@ -31,8 +32,10 @@ class HGT(torch.nn.Module):
         self.lin = Linear(hidden_channels, out_channels)
 
     def forward(self, x_dict, edge_index_dict):
-        for node_type, x in x_dict.items():
-            x_dict[node_type] = self.lin_dict[node_type](x).relu_()
+        x_dict = {
+            node_type: self.lin_dict[node_type](x).relu_()
+            for node_type, x in x_dict.items()
+        }
 
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)

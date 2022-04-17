@@ -1,20 +1,25 @@
 from typing import Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('linear_transformation')
 class LinearTransformation(BaseTransform):
     r"""Transforms node positions :obj:`pos` with a square transformation
-    matrix computed offline.
+    matrix computed offline (functional name: :obj:`linear_transformation`)
 
     Args:
-        matrix (Tensor): tensor with shape :obj:`[D, D]` where :obj:`D`
+        matrix (Tensor): Tensor with shape :obj:`[D, D]` where :obj:`D`
             corresponds to the dimensionality of node positions.
     """
     def __init__(self, matrix: Tensor):
+        if not isinstance(matrix, Tensor):
+            matrix = torch.tensor(matrix)
         assert matrix.dim() == 2, (
             'Transformation matrix should be two-dimensional.')
         assert matrix.size(0) == matrix.size(1), (

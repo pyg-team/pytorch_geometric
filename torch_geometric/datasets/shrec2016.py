@@ -1,8 +1,9 @@
+import glob
 import os
 import os.path as osp
-import glob
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 from torch_geometric.io import read_off, read_txt_array
 

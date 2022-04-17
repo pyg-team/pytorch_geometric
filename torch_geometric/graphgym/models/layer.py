@@ -3,15 +3,17 @@ from dataclasses import dataclass, replace
 
 import torch
 import torch.nn as nn
-from torch_geometric.nn import Linear as Linear_pyg
 import torch.nn.functional as F
+
 import torch_geometric as pyg
-
 import torch_geometric.graphgym.models.act
-from torch_geometric.graphgym.contrib.layer.generalconv import (
-    GeneralConvLayer, GeneralEdgeConvLayer)
-
 import torch_geometric.graphgym.register as register
+from torch_geometric.graphgym.contrib.layer.generalconv import (
+    GeneralConvLayer,
+    GeneralEdgeConvLayer,
+)
+from torch_geometric.graphgym.register import register_layer
+from torch_geometric.nn import Linear as Linear_pyg
 
 
 @dataclass
@@ -150,6 +152,7 @@ class GeneralMultiLayer(nn.Module):
 # ---------- Core basic layers. Input: batch; Output: batch ----------------- #
 
 
+@register_layer('linear')
 class Linear(nn.Module):
     """
     Basic Linear layer.
@@ -207,6 +210,7 @@ class BatchNorm1dEdge(nn.Module):
         return batch
 
 
+@register_layer('mlp')
 class MLP(nn.Module):
     """
     Basic MLP model.
@@ -247,6 +251,7 @@ class MLP(nn.Module):
         return batch
 
 
+@register_layer('gcnconv')
 class GCNConv(nn.Module):
     """
     Graph Convolutional Network (GCN) layer
@@ -261,6 +266,7 @@ class GCNConv(nn.Module):
         return batch
 
 
+@register_layer('sageconv')
 class SAGEConv(nn.Module):
     """
     GraphSAGE Conv layer
@@ -275,6 +281,7 @@ class SAGEConv(nn.Module):
         return batch
 
 
+@register_layer('gatconv')
 class GATConv(nn.Module):
     """
     Graph Attention Network (GAT) layer
@@ -289,6 +296,7 @@ class GATConv(nn.Module):
         return batch
 
 
+@register_layer('ginconv')
 class GINConv(nn.Module):
     """
     Graph Isomorphism Network (GIN) layer
@@ -305,6 +313,7 @@ class GINConv(nn.Module):
         return batch
 
 
+@register_layer('splineconv')
 class SplineConv(nn.Module):
     """
     SplineCNN layer
@@ -321,6 +330,7 @@ class SplineConv(nn.Module):
         return batch
 
 
+@register_layer('generalconv')
 class GeneralConv(nn.Module):
     """A general GNN layer"""
     def __init__(self, layer_config: LayerConfig, **kwargs):
@@ -334,6 +344,7 @@ class GeneralConv(nn.Module):
         return batch
 
 
+@register_layer('generaledgeconv')
 class GeneralEdgeConv(nn.Module):
     """A general GNN layer that supports edge features as well"""
     def __init__(self, layer_config: LayerConfig, **kwargs):
@@ -349,6 +360,7 @@ class GeneralEdgeConv(nn.Module):
         return batch
 
 
+@register_layer('generalsampleedgeconv')
 class GeneralSampleEdgeConv(nn.Module):
     """A general GNN layer that supports edge features and edge sampling"""
     def __init__(self, layer_config: LayerConfig, **kwargs):
@@ -365,20 +377,3 @@ class GeneralSampleEdgeConv(nn.Module):
         edge_feature = batch.edge_attr[edge_mask, :]
         batch.x = self.model(batch.x, edge_index, edge_feature=edge_feature)
         return batch
-
-
-layer_dict = {
-    'linear': Linear,
-    'mlp': MLP,
-    'gcnconv': GCNConv,
-    'sageconv': SAGEConv,
-    'gatconv': GATConv,
-    'splineconv': SplineConv,
-    'ginconv': GINConv,
-    'generalconv': GeneralConv,
-    'generaledgeconv': GeneralEdgeConv,
-    'generalsampleedgeconv': GeneralSampleEdgeConv,
-}
-
-# register additional convs
-register.layer_dict = {**register.layer_dict, **layer_dict}

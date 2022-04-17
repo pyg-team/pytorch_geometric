@@ -1,6 +1,6 @@
-import sys
 import copy
 import os.path as osp
+import sys
 from typing import Optional
 
 import torch

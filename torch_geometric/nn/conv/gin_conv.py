@@ -1,11 +1,12 @@
-from typing import Callable, Union, Optional
-from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
+from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 from ..inits import reset
 
@@ -37,6 +38,15 @@ class GINConv(MessagePassing):
             will be a trainable parameter. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  **kwargs):
@@ -109,6 +119,16 @@ class GINEConv(MessagePassing):
             node feature dimensionality. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
                  edge_dim: Optional[int] = None, **kwargs):

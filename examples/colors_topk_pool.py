@@ -2,12 +2,14 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
+from torch_scatter import scatter_mean
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import GINConv, TopKPooling
-from torch_geometric.nn import global_add_pool
-from torch_scatter import scatter_mean
+from torch_geometric.nn import GINConv, TopKPooling, global_add_pool
 
 
 class HandleNodeAttention(object):

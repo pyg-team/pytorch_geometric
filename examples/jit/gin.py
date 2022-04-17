@@ -2,11 +2,13 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, BatchNorm1d as BatchNorm
-from torch_geometric.transforms import OneHotDegree
+from torch.nn import BatchNorm1d as BatchNorm
+from torch.nn import Linear, ReLU, Sequential
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
+from torch_geometric.transforms import OneHotDegree
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data', 'TU')
 dataset = TUDataset(path, name='IMDB-BINARY', transform=OneHotDegree(135))

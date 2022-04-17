@@ -2,17 +2,15 @@ import argparse
 from itertools import product
 
 import torch
+from datasets import get_dataset
+from gcn import GCN
+from gin import GIN
+from graph_sage import GraphSAGE
+from train_eval import eval_acc, train
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
-from torch_geometric.profile import profileit, timeit, get_stats_summary
-
-from datasets import get_dataset
-from train_eval import train, eval_acc
-
-from gcn import GCN
-from graph_sage import GraphSAGE
-from gin import GIN
+from torch_geometric.profile import get_stats_summary, profileit, timeit
 
 seed_everything(0)
 
