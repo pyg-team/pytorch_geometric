@@ -9,13 +9,10 @@ from torch_geometric.nn import RGCNConv, FastRGCNConv
 from torch_geometric.loader import DataLoader
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str,
-                    choices=['AIFB', 'MUTAG', 'BGS', 'AM'])
+parser.add_argument('-k', '--num_layers', default=2, help="number of layers")
+parser.add_argument('-epochs', '--epochs', default=2, help="number of epochs")
+parser.add_argument('-hidden_channels', '--hidden_channels', default=16, help="number of channels in hidden layers")
 args = parser.parse_args()
-
-# Trade memory consumption for faster computation.
-if args.dataset in ['AIFB', 'MUTAG']:
-    RGCNConv = FastRGCNConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 
@@ -53,8 +50,10 @@ class Net(torch.nn.Module):
         x, edge_index, edge_type = data.x, data.edge_index, data.edge_type
         for conv in self.convs:
             x1 = conv(x, edge_index, edge_type)
-            
+
             x = F.relu(x1)
+            x = F.dropout(x, training=self.training)
+
         return F.log_softmax(x1, dim=1)
 
 
@@ -74,8 +73,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu') if args.dataset == 'AM' else device
-model = Net(4, 16).to(device)
+model = Net(int(args.num_layers), int(args.hidden_channels)).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 
 
@@ -115,11 +113,10 @@ def test(loader):
     return acc.item()
 
 
-for epoch in range(1, 41):
+for epoch in range(1, int(args.epochs)):
     loss = train(train_loader)
-    train_acc = test(train_loader)
-    val_acc = test(val_loader)
-    test_acc = test(test_loader)
-    print(
-        f'Epoch: {epoch:02d}, Loss: {loss:.4f}, \
-            Train: {train_acc:.4f}, Val accuracy: {val_acc:.4f}, Test accuracy: {test_acc:.4f}')
+    # train_acc = test(train_loader)
+    val_f1 = test(val_loader)
+    test_f1 = test(test_loader)
+    print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
+        epoch, loss, val_f1, test_f1))

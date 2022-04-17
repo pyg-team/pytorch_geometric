@@ -13,8 +13,9 @@ from torch_geometric.nn import GATConv
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--use_gdc', action='store_true',
-                    help='Use GDC preprocessing.')
+parser.add_argument('-k', '--num_layers', default=2, help="number of layers")
+parser.add_argument('-epochs', '--epochs', default=2, help="number of epochs")
+parser.add_argument('-hidden_channels', '--hidden_channels', default=16, help="number of channels in hidden layers")
 args = parser.parse_args()
 
 # dataset = 'Cora'
@@ -40,24 +41,32 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
 class Net(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, num_layers, hidden_channels):
         super(Net, self).__init__()
+        self.convs = torch.nn.ModuleList()
+        self.convs.append(
+            ChebConv(train_dataset.num_features, hidden_channels, K=4))
+        for _ in range(num_layers - 2):
+            self.convs.append(
+                ChebConv(hidden_channels, hidden_channels,  K=4))
+        self.convs.append(ChebConv(hidden_channels, train_dataset.num_classes, K=4))
+        print(
+            f"number of layers k:{len(self.convs)} hidden layersize :{hidden_channels}")
         # self.conv1 = GCNConv(train_dataset.num_features, 16, cached=False,
         #                      normalize=not args.use_gdc)
         # self.conv2 = GCNConv(16, train_dataset.num_classes, cached=False,
         #                      normalize=not args.use_gdc)
-        self.conv1 = ChebConv(train_dataset.num_features, 16, K=3)
-        self.conv2 = ChebConv(16, train_dataset.num_classes, K=3)
 
     def forward(self, x, edge_index):
-        x = F.relu(self.conv1(x, edge_index))
-        x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index)
+        for conv in self.convs:
+            x1 = conv(x, edge_index)
+            x = F.relu(x1)
+            x = F.dropout(x, training=self.training)
         return x
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+model = Net(int(args.num_layers), int(args.hidden_channels)).to(device)
 loss_op = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
@@ -108,10 +117,10 @@ def debug(loader):
     y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
-for epoch in range(1, 201):
+for epoch in range(1, int(args.epochs)):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
     print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
         epoch, loss, val_f1, test_f1))
-debug(test_loader)
+# debug(test_loader)

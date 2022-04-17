@@ -24,8 +24,8 @@ test_dataset = PPI(path, split='test', multi=True)
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
-print(val_dataset[0].edge_weight)
-exit()
+# print(val_dataset[0].edge_weight)
+# exit()
 
 class Net(torch.nn.Module):
     def __init__(self):
