@@ -1,9 +1,9 @@
-import sys
-import os.path as osp
-import tarfile
-import zipfile
 import bz2
 import gzip
+import os.path as osp
+import sys
+import tarfile
+import zipfile
 
 
 def maybe_log(path, log=True):

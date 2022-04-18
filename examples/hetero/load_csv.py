@@ -1,11 +1,11 @@
 import os.path as osp
 
-import torch
 import pandas as pd
+import torch
 from sentence_transformers import SentenceTransformer
 
 from torch_geometric.data import HeteroData, download_url, extract_zip
-from torch_geometric.transforms import ToUndirected, RandomLinkSplit
+from torch_geometric.transforms import RandomLinkSplit, ToUndirected
 
 url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 root = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')

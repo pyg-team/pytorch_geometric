@@ -1,10 +1,10 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
 from torch import Tensor
 from torch.nn import Parameter as Param
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import uniform
 
@@ -29,7 +29,7 @@ class GatedGraphConv(MessagePassing):
     node :obj:`i` (default: :obj:`1`)
 
     Args:
-        out_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
         num_layers (int): The sequence length :math:`L`.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
@@ -38,10 +38,17 @@ class GatedGraphConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+
     """
     def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
                  bias: bool = True, **kwargs):
-        super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.out_channels = out_channels
         self.num_layers = num_layers
@@ -81,7 +88,6 @@ class GatedGraphConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, num_layers={})'.format(self.__class__.__name__,
-                                              self.out_channels,
-                                              self.num_layers)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.out_channels}, '
+                f'num_layers={self.num_layers})')

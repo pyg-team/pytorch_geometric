@@ -1,11 +1,12 @@
 from typing import Dict, List, Optional, Tuple
-from torch_geometric.typing import NodeType, EdgeType, OptTensor
 
 import torch
 from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
+
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 EPS = 1e-15
 
@@ -124,7 +125,7 @@ class MetaPath2Vec(torch.nn.Module):
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
         :obj:`node_type`."""
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
         r"""Returns the data loader that creates both positive and negative

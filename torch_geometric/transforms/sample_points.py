@@ -1,11 +1,13 @@
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('sample_points')
 class SamplePoints(BaseTransform):
     r"""Uniformly samples :obj:`num` points on the mesh faces according to
-    their face area.
+    their face area (functional name: :obj:`sample_points`).
 
     Args:
         num (int): The number of points to sample.
@@ -55,5 +57,5 @@ class SamplePoints(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.num})'

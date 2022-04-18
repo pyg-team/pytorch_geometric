@@ -1,17 +1,19 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
-from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.utils import sort_edge_index
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import sort_edge_index
 
 
+@functional_transform('to_sparse_tensor')
 class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a (transposed)
-    :class:`torch_sparse.SparseTensor` type with key :obj:`adj_.t`.
+    :class:`torch_sparse.SparseTensor` type with key :obj:`adj_t`
+    (functional name: :obj:`to_sparse_tensor`).
 
     .. note::
 
@@ -41,11 +43,12 @@ class ToSparseTensor(BaseTransform):
             if 'edge_index' not in store:
                 continue
 
-            nnz = store.edge_index.size(1)
-
             keys, values = [], []
             for key, value in store.items():
-                if isinstance(value, Tensor) and value.size(0) == nnz:
+                if key == 'edge_index':
+                    continue
+
+                if store.is_edge_attr(key):
                     keys.append(key)
                     values.append(value)
 
@@ -60,7 +63,7 @@ class ToSparseTensor(BaseTransform):
                 row=store.edge_index[1], col=store.edge_index[0],
                 value=None if self.attr is None or self.attr not in store else
                 store[self.attr], sparse_sizes=store.size()[::-1],
-                is_sorted=True)
+                is_sorted=True, trust_data=True)
 
             if self.remove_edge_index:
                 del store['edge_index']

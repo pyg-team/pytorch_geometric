@@ -1,13 +1,18 @@
 import os
 import os.path as osp
 
-import torch
 import numpy as np
 import scipy.sparse as sp
-
+import torch
 from torch_sparse import coalesce
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_txt_array
-from torch_geometric.data import Data, InMemoryDataset
 
 
 class UPFD(InMemoryDataset):
@@ -68,6 +73,7 @@ class UPFD(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     ids = {
         'politifact': '1KOmSrlGcC50PjkvRVbyb_WoWHVql06J-',
@@ -79,7 +85,7 @@ class UPFD(InMemoryDataset):
         self.root = root
         self.name = name
         self.feature = feature
-        super(UPFD, self).__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         assert split in ['train', 'val', 'test']
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
@@ -105,12 +111,9 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        gdd.download_file_from_google_drive(
-            self.ids[self.name], osp.join(self.raw_dir, f'{self.name}.zip'),
-            unzip=True)
-        os.remove(osp.join(self.raw_dir, f'{self.name}.zip'))
+        path = download_url(self.url.format(self.ids[self.name]), self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.remove(path)
 
     def process(self):
         x = sp.load_npz(

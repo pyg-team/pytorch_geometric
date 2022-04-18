@@ -1,11 +1,11 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-import torch.nn.functional as F
 from torch_scatter import scatter
+
 from torch_geometric.nn import GCNConv
+from torch_geometric.typing import Adj, OptTensor
 
 
 class RECT_L(torch.nn.Module):

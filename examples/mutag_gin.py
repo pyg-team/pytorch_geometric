@@ -2,7 +2,8 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, BatchNorm1d, ReLU
+from torch.nn import BatchNorm1d, Linear, ReLU, Sequential
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
@@ -19,7 +20,7 @@ test_loader = DataLoader(test_dataset, batch_size=128)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, dim, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GINConv(
             Sequential(Linear(in_channels, dim), BatchNorm1d(dim), ReLU(),

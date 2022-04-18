@@ -1,13 +1,13 @@
-from torch_geometric.typing import OptTensor
-
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import softmax
 
-from .topk_pool import topk, filter_adj
+from .topk_pool import filter_adj, topk
 
 
 class PANPooling(torch.nn.Module):
@@ -40,7 +40,7 @@ class PANPooling(torch.nn.Module):
     """
     def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1.0,
                  nonlinearity=torch.tanh):
-        super(PANPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -83,9 +83,11 @@ class PANPooling(torch.nn.Module):
 
         return x, edge_index, edge_attr, batch[perm], perm, score[perm]
 
-    def __repr__(self):
-        return '{}({}, {}={}, multiplier={})'.format(
-            self.__class__.__name__, self.in_channels,
-            'ratio' if self.min_score is None else 'min_score',
-            self.ratio if self.min_score is None else self.min_score,
-            self.multiplier)
+    def __repr__(self) -> str:
+        if self.min_score is None:
+            ratio = f'ratio={self.ratio}'
+        else:
+            ratio = f'min_score={self.min_score}'
+
+        return (f'{self.__class__.__name__}({self.in_channels}, {ratio}, '
+                f'multiplier={self.multiplier})')

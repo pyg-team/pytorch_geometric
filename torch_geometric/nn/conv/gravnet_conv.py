@@ -1,11 +1,12 @@
 from typing import Optional, Union
-from torch_geometric.typing import OptTensor, PairTensor, PairOptTensor
 
 import torch
 from torch import Tensor
 from torch_scatter import scatter
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor
 
 try:
     from torch_cluster import knn
@@ -39,11 +40,24 @@ class GravNetConv(MessagePassing):
             lies on the GPU. (default: :obj:`1`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
+          if bipartite,
+          batch vector :math:`(|\mathcal{V}|)` or
+          :math:`((|\mathcal{V}_s|), (|\mathcal{V}_t|))` if bipartite
+          *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
+
+
     """
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,
                  num_workers: int = 1, **kwargs):
-        super(GravNetConv, self).__init__(flow='target_to_source', **kwargs)
+        super().__init__(flow='source_to_target', **kwargs)
 
         if knn is None:
             raise ImportError('`GravNetConv` requires `torch-cluster`.')
@@ -70,13 +84,17 @@ class GravNetConv(MessagePassing):
     def forward(
             self, x: Union[Tensor, PairTensor],
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
+        # type: (Tensor, OptTensor) -> Tensor  # noqa
+        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
         """"""
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
             is_bipartite = False
-        assert x[0].dim() == 2, 'Static graphs not supported in `GravNetConv`.'
+
+        if x[0].dim() != 2:
+            raise ValueError("Static graphs not supported in 'GravNetConv'")
 
         b: PairOptTensor = (None, None)
         if isinstance(batch, Tensor):
@@ -90,10 +108,9 @@ class GravNetConv(MessagePassing):
         s_l: Tensor = self.lin_s(x[0])
         s_r: Tensor = self.lin_s(x[1]) if is_bipartite else s_l
 
-        edge_index = knn(s_l, s_r, self.k, b[0], b[1],
-                         num_workers=self.num_workers)
+        edge_index = knn(s_l, s_r, self.k, b[0], b[1]).flip([0])
 
-        edge_weight = (s_l[edge_index[1]] - s_r[edge_index[0]]).pow(2).sum(-1)
+        edge_weight = (s_l[edge_index[0]] - s_r[edge_index[1]]).pow(2).sum(-1)
         edge_weight = torch.exp(-10. * edge_weight)  # 10 gives a better spread
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
@@ -114,7 +131,6 @@ class GravNetConv(MessagePassing):
                           reduce='max')
         return torch.cat([out_mean, out_max], dim=-1)
 
-    def __repr__(self):
-        return '{}({}, {}, k={})'.format(self.__class__.__name__,
-                                         self.in_channels, self.out_channels,
-                                         self.k)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, k={self.k})')

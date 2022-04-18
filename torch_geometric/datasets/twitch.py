@@ -1,10 +1,10 @@
-from typing import Optional, Callable
-
 import os.path as osp
+from typing import Callable, Optional
 
-import torch
 import numpy as np
-from torch_geometric.data import InMemoryDataset, download_url, Data
+import torch
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Twitch(InMemoryDataset):

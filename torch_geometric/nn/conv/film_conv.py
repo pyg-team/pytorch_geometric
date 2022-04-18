@@ -1,12 +1,13 @@
 import copy
-from typing import Union, Tuple, Optional, Callable
-from torch_geometric.typing import PairTensor, Adj, OptTensor
+from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import ModuleList, ReLU
 from torch_sparse import SparseTensor, masked_select_nnz
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 from ..inits import reset
 
@@ -52,6 +53,16 @@ class FiLMConv(MessagePassing):
             (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge types :math:`(|\mathcal{E}|)`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(
             self,
@@ -63,7 +74,7 @@ class FiLMConv(MessagePassing):
             aggr: str = 'mean',
             **kwargs,
     ):
-        super(FiLMConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -113,8 +124,8 @@ class FiLMConv(MessagePassing):
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
-            out += self.propagate(edge_index, x=self.lins[0](x[0]), beta=beta,
-                                  gamma=gamma, size=None)
+            out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
+                                       beta=beta, gamma=gamma, size=None)
         else:
             for i, (lin, film) in enumerate(zip(self.lins, self.films)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
@@ -122,14 +133,14 @@ class FiLMConv(MessagePassing):
                     edge_type = edge_index.storage.value()
                     assert edge_type is not None
                     mask = edge_type == i
-                    out += self.propagate(
+                    out = out + self.propagate(
                         masked_select_nnz(edge_index, mask, layout='coo'),
                         x=lin(x[0]), beta=beta, gamma=gamma, size=None)
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
-                    out += self.propagate(edge_index[:, mask], x=lin(x[0]),
-                                          beta=beta, gamma=gamma, size=None)
+                    out = out + self.propagate(edge_index[:, mask], x=lin(
+                        x[0]), beta=beta, gamma=gamma, size=None)
 
         return out
 
@@ -139,8 +150,6 @@ class FiLMConv(MessagePassing):
             out = self.act(out)
         return out
 
-    def __repr__(self):
-        return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,
-                                                     self.in_channels,
-                                                     self.out_channels,
-                                                     self.num_relations)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, num_relations={self.num_relations})')

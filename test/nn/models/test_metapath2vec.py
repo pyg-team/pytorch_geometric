@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.nn import MetaPath2Vec
 
 

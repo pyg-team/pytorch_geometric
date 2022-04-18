@@ -1,11 +1,14 @@
 import torch
 
-from torch_geometric.utils import degree
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import degree
 
 
+@functional_transform('target_indegree')
 class TargetIndegree(BaseTransform):
     r"""Saves the globally normalized degree of target nodes
+    (functional name: :obj:`target_indegree`)
 
     .. math::
 
@@ -41,6 +44,6 @@ class TargetIndegree(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

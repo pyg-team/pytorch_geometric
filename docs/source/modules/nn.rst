@@ -149,7 +149,7 @@ Models
 .. automodule:: torch_geometric.nn.models
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
 Functional
 ----------

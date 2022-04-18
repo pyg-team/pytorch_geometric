@@ -1,14 +1,15 @@
 import pytest
-
 import torch
-from torch.nn import Linear
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, GATConv, GNNExplainer, global_add_pool
+from torch.nn import Linear
+
+from torch_geometric.nn import GATConv, GCNConv, GNNExplainer, global_add_pool
+from torch_geometric.testing import withPackage
 
 
 class GCN(torch.nn.Module):
     def __init__(self):
-        super(GCN, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 7)
 
@@ -21,7 +22,7 @@ class GCN(torch.nn.Module):
 
 class GAT(torch.nn.Module):
     def __init__(self):
-        super(GAT, self).__init__()
+        super().__init__()
         self.conv1 = GATConv(3, 16, heads=2, concat=True)
         self.conv2 = GATConv(2 * 16, 7, heads=2, concat=False)
 
@@ -52,6 +53,7 @@ return_types = ['log_prob', 'regression']
 feat_mask_types = ['individual_feature', 'scalar', 'feature']
 
 
+@withPackage('matplotlib')
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
@@ -91,6 +93,7 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
         assert edge_mask[8:].tolist() == [0.] * 6
 
 
+@withPackage('matplotlib')
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
@@ -107,7 +110,6 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
 
     node_feat_mask, edge_mask = explainer.explain_graph(x, edge_index)
     if feat_mask_type == 'scalar':
-        pass
         _, _ = explainer.visualize_subgraph(-1, edge_index, edge_mask,
                                             y=torch.tensor(2), threshold=0.8,
                                             node_alpha=node_feat_mask)
@@ -125,20 +127,6 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
     assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
     assert edge_mask.size() == (edge_index.size(1), )
     assert edge_mask.max() <= 1 and edge_mask.min() >= 0
-
-
-@pytest.mark.parametrize('model', [GCN(), GAT()])
-def test_gnn_explainer_to_log_prob(model):
-    raw_to_log = GNNExplainer(model, return_type='raw').__to_log_prob__
-    prob_to_log = GNNExplainer(model, return_type='prob').__to_log_prob__
-    log_to_log = GNNExplainer(model, return_type='log_prob').__to_log_prob__
-
-    raw = torch.tensor([[1, 3.2, 6.1], [9, 9, 0.1]])
-    prob = raw.softmax(dim=-1)
-    log_prob = raw.log_softmax(dim=-1)
-
-    assert torch.allclose(raw_to_log(raw), prob_to_log(prob))
-    assert torch.allclose(prob_to_log(prob), log_to_log(log_prob))
 
 
 @pytest.mark.parametrize('return_type', return_types)

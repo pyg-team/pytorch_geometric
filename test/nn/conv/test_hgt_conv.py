@@ -1,5 +1,7 @@
 import torch
 from torch_sparse import SparseTensor
+
+from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
 
 
@@ -28,14 +30,16 @@ def test_hgt_conv_same_dimensions():
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
     conv = HGTConv(16, 16, metadata, heads=2)
-    assert str(conv) == 'HGTConv(16, heads=2)'
+    assert str(conv) == 'HGTConv(-1, 16, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 16)
     assert out_dict1['paper'].size() == (6, 16)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
 
     # TODO: Test JIT functionality. We need to wait on this one until PyTorch
     # allows indexing `ParameterDict` mappings :(
@@ -69,14 +73,16 @@ def test_hgt_conv_different_dimensions():
         'author': 16,
         'paper': 32
     }, out_channels=32, metadata=metadata, heads=2)
-    assert str(conv) == 'HGTConv(32, heads=2)'
+    assert str(conv) == 'HGTConv(-1, 32, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
 
 
 def test_hgt_conv_lazy():
@@ -104,11 +110,37 @@ def test_hgt_conv_lazy():
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
     conv = HGTConv(-1, 32, metadata, heads=2)
-    assert str(conv) == 'HGTConv(32, heads=2)'
+    assert str(conv) == 'HGTConv(-1, 32, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
     out_dict2 = conv(x_dict, adj_t_dict)
-    for out1, out2 in zip(out_dict1.values(), out_dict2.values()):
-        assert torch.allclose(out1, out2, atol=1e-6)
+
+    assert len(out_dict1) == len(out_dict2)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
+
+
+def test_hgt_conv_out_of_place():
+    data = HeteroData()
+    data['author'].x = torch.randn(4, 16)
+    data['paper'].x = torch.randn(6, 32)
+
+    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
+    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+
+    data['author', 'paper'].edge_index = torch.stack([index1, index2], dim=0)
+    data['paper', 'author'].edge_index = torch.stack([index2, index1], dim=0)
+
+    conv = HGTConv(-1, 64, data.metadata(), heads=1)
+
+    x_dict, edge_index_dict = data.x_dict, data.edge_index_dict
+    assert x_dict['author'].size() == (4, 16)
+    assert x_dict['paper'].size() == (6, 32)
+
+    _ = conv(x_dict, edge_index_dict)
+
+    assert x_dict['author'].size() == (4, 16)
+    assert x_dict['paper'].size() == (6, 32)

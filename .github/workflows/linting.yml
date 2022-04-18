@@ -1,6 +1,6 @@
 name: Linting
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -8,25 +8,37 @@ on:
 
 jobs:
 
-  flake8:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.6]
-
+  pylint:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
+
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
 
       - name: Install dependencies
-        run: |
-          pip install flake8
+        run: pip install pylint
 
       - name: Run linting
+        continue-on-error: true
+        run: pylint **/*.py
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: pip install mypy
+
+      - name: Check type hints
+        continue-on-error: true
         run: |
-          flake8 .
+          mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric

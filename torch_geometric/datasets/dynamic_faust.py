@@ -1,9 +1,9 @@
-from typing import Optional, Callable, List
-
 from itertools import product
+from typing import Callable, List, Optional
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data
+
+from torch_geometric.data import Data, InMemoryDataset
 
 
 class DynamicFAUST(InMemoryDataset):
@@ -117,7 +117,7 @@ class DynamicFAUST(InMemoryDataset):
 
         data_list = []
         for (sid, cat) in product(self.subjects, self.categories):
-            idx = '{}_{}'.format(sid, cat)
+            idx = f'{sid}_{cat}'
             if idx in fm:
                 pos = torch.from_numpy(fm[idx][()])
             elif idx in ff:

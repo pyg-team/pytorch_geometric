@@ -1,11 +1,11 @@
-from typing import Union, Tuple, Optional, Callable
-from torch_geometric.typing import PairTensor, Adj
+from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
-from torch.nn import Parameter
-from torch.nn import Sigmoid
+from torch.nn import Parameter, Sigmoid
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, PairTensor
 
 from ..inits import zeros
 
@@ -41,6 +41,15 @@ class ResGatedGraphConv(MessagePassing):
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **inputs:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(
         self,
@@ -53,7 +62,7 @@ class ResGatedGraphConv(MessagePassing):
     ):
 
         kwargs.setdefault('aggr', 'add')
-        super(ResGatedGraphConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -110,7 +119,3 @@ class ResGatedGraphConv(MessagePassing):
 
     def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor) -> Tensor:
         return self.act(k_i + q_j) * v_j
-
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

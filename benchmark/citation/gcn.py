@@ -1,9 +1,10 @@
 import argparse
+
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv
-
 from citation import get_planetoid_dataset, random_planetoid_splits, run
+
+from torch_geometric.nn import GCNConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
@@ -21,7 +22,7 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, dataset):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(dataset.num_features, args.hidden)
         self.conv2 = GCNConv(args.hidden, dataset.num_classes)
 

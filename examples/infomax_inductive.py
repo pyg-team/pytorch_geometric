@@ -2,12 +2,11 @@ import os.path as osp
 
 import torch
 import torch.nn as nn
-
 from tqdm import tqdm
+
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborSampler
-from torch_geometric.nn import SAGEConv
-from torch_geometric.nn import DeepGraphInfomax
+from torch_geometric.nn import DeepGraphInfomax, SAGEConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 dataset = Reddit(path)
@@ -24,7 +23,7 @@ test_loader = NeighborSampler(data.edge_index, node_idx=None,
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, hidden_channels):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.convs = torch.nn.ModuleList([
             SAGEConv(in_channels, hidden_channels),
             SAGEConv(hidden_channels, hidden_channels),

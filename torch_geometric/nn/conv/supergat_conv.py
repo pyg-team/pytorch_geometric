@@ -1,19 +1,24 @@
-from typing import Optional
-from torch_geometric.typing import OptTensor
-
 import math
+from typing import Optional
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-import torch.nn.functional as F
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import (remove_self_loops, add_self_loops, softmax,
-                                   is_undirected, negative_sampling,
-                                   batched_negative_sampling, to_undirected,
-                                   dropout_adj)
+from torch_geometric.typing import OptTensor
+from torch_geometric.utils import (
+    add_self_loops,
+    batched_negative_sampling,
+    dropout_adj,
+    is_undirected,
+    negative_sampling,
+    remove_self_loops,
+    softmax,
+    to_undirected,
+)
 
 from ..inits import glorot, zeros
 
@@ -110,6 +115,13 @@ class SuperGATConv(MessagePassing):
             when negative sampling is performed. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})`
     """
     att_x: OptTensor
     att_y: OptTensor
@@ -121,7 +133,7 @@ class SuperGATConv(MessagePassing):
                  neg_sample_ratio: float = 0.5, edge_sample_ratio: float = 1.0,
                  is_undirected: bool = False, **kwargs):
         kwargs.setdefault('aggr', 'add')
-        super(SuperGATConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -283,9 +295,7 @@ class SuperGATConv(MessagePassing):
             self.att_y,
         )
 
-    def __repr__(self):
-        return '{}({}, {}, heads={}, type={})'.format(self.__class__.__name__,
-                                                      self.in_channels,
-                                                      self.out_channels,
-                                                      self.heads,
-                                                      self.attention_type)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads}, '
+                f'type={self.attention_type})')

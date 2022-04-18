@@ -1,14 +1,14 @@
 from typing import Optional
-from torch_geometric.typing import Adj, Size, OptTensor
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding
-import torch.nn.functional as F
 
-from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear, HeteroLinear
+from torch_geometric.nn.dense.linear import HeteroLinear, Linear
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import softmax
 
 
 class HEATConv(MessagePassing):
@@ -47,6 +47,15 @@ class HEATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          node types :math:`(|\mathcal{V}|)`,
+          edge types :math:`(|\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_node_types: int, num_edge_types: int,
@@ -89,8 +98,7 @@ class HEATConv(MessagePassing):
         self.lin.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
-                edge_type: Tensor, edge_attr: OptTensor = None,
-                size: Size = None) -> Tensor:
+                edge_type: Tensor, edge_attr: OptTensor = None) -> Tensor:
         """"""
         x = self.hetero_lin(x, node_type)
 
@@ -99,7 +107,7 @@ class HEATConv(MessagePassing):
 
         # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
-                             edge_attr=edge_attr, size=size)
+                             edge_attr=edge_attr, size=None)
 
         if self.concat:
             if self.root_weight:

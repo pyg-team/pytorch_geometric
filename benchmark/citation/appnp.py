@@ -1,10 +1,11 @@
 import argparse
-import torch
-from torch.nn import Linear
-import torch.nn.functional as F
-from torch_geometric.nn import APPNP
 
+import torch
+import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
+from torch.nn import Linear
+
+from torch_geometric.nn import APPNP
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
@@ -24,7 +25,7 @@ args = parser.parse_args()
 
 class Net(torch.nn.Module):
     def __init__(self, dataset):
-        super(Net, self).__init__()
+        super().__init__()
         self.lin1 = Linear(dataset.num_features, args.hidden)
         self.lin2 = Linear(args.hidden, dataset.num_classes)
         self.prop1 = APPNP(args.K, args.alpha)

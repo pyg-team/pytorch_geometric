@@ -4,8 +4,9 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 from torch.utils.data import DataLoader
-from torch_geometric.datasets import Flickr
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import Flickr
 
 K = 2
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
@@ -24,7 +25,7 @@ test_loader = DataLoader(test_idx, batch_size=32 * 1024)
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.lins = torch.nn.ModuleList()
         for _ in range(K + 1):

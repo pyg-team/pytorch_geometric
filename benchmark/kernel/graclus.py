@@ -1,14 +1,20 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+
 from torch_geometric.data import Batch
-from torch_geometric.nn import (GraphConv, graclus, max_pool, global_mean_pool,
-                                JumpingKnowledge)
+from torch_geometric.nn import (
+    GraphConv,
+    JumpingKnowledge,
+    global_mean_pool,
+    graclus,
+    max_pool,
+)
 
 
 class Graclus(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
-        super(Graclus, self).__init__()
+        super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):

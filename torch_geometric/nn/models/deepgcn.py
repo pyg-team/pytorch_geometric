@@ -50,7 +50,7 @@ class DeepGCNLayer(torch.nn.Module):
     """
     def __init__(self, conv=None, norm=None, act=None, block='res+',
                  dropout=0., ckpt_grad=False):
-        super(DeepGCNLayer, self).__init__()
+        super().__init__()
 
         self.conv = conv
         self.norm = norm
@@ -102,5 +102,5 @@ class DeepGCNLayer(torch.nn.Module):
 
             return F.dropout(h, p=self.dropout, training=self.training)
 
-    def __repr__(self):
-        return '{}(block={})'.format(self.__class__.__name__, self.block)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(block={self.block})'

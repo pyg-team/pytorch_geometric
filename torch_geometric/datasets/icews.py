@@ -1,13 +1,13 @@
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import read_txt_array
 
 
 class EventDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
-        super(EventDataset, self).__init__(root, transform, pre_transform,
-                                           pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
     @property
     def num_nodes(self):
@@ -67,9 +67,8 @@ class ICEWS18(EventDataset):
     def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
         assert split in ['train', 'val', 'test']
-        super(ICEWS18, self).__init__(root, transform, pre_transform,
-                                      pre_filter)
-        idx = self.processed_file_names.index('{}.pt'.format(split))
+        super().__init__(root, transform, pre_transform, pre_filter)
+        idx = self.processed_file_names.index(f'{split}.pt')
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
     @property
@@ -82,7 +81,7 @@ class ICEWS18(EventDataset):
 
     @property
     def raw_file_names(self):
-        return ['{}.txt'.format(name) for name in ['train', 'valid', 'test']]
+        return [f'{name}.txt' for name in ['train', 'valid', 'test']]
 
     @property
     def processed_file_names(self):
@@ -90,7 +89,7 @@ class ICEWS18(EventDataset):
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, filename), self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
     def process_events(self):
         events = []
@@ -102,7 +101,7 @@ class ICEWS18(EventDataset):
 
     def process(self):
         s = self.splits
-        data_list = super(ICEWS18, self).process()
+        data_list = super().process()
         torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
         torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
         torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])

@@ -1,4 +1,5 @@
 import argparse
+
 from torch_geometric.graphgym.utils.agg_runs import agg_batch
 
 

@@ -1,11 +1,16 @@
-from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, Size
+from typing import Optional, Tuple, Union
 
-from torch import Tensor
+import torch
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import LSTM
+from torch_scatter import scatter
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, OptPairTensor, Size
+from torch_geometric.utils import to_dense_batch
 
 
 class SAGEConv(MessagePassing):
@@ -16,12 +21,24 @@ class SAGEConv(MessagePassing):
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2 \cdot
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
 
+    If :obj:`project = True`, then :math:`\mathbf{x}_j` will first get
+    projected via
+
+    .. math::
+        \mathbf{x}_j \leftarrow \sigma ( \mathbf{W}_3 \mathbf{x}_j +
+        \mathbf{b})
+
+    as described in Eq. (3) of the paper.
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"mean"`, :obj:`"max"`, :obj:`"lstm"`).
+            (default: :obj:`"add"`)
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
             :math:`\frac{\mathbf{x}^{\prime}_i}
@@ -30,25 +47,53 @@ class SAGEConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
+        project (bool, optional): If set to :obj:`True`, the layer will apply a
+            linear transformation followed by an activation function before
+            aggregation (as described in Eq. (3) of the paper).
+            (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **inputs:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, normalize: bool = False,
-                 root_weight: bool = True,
-                 bias: bool = True, **kwargs):  # yapf: disable
-        kwargs.setdefault('aggr', 'mean')
-        super(SAGEConv, self).__init__(**kwargs)
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        aggr: str = 'mean',
+        normalize: bool = False,
+        root_weight: bool = True,
+        project: bool = False,
+        bias: bool = True,
+        **kwargs,
+    ):
+        kwargs['aggr'] = aggr if aggr != 'lstm' else None
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalize = normalize
         self.root_weight = root_weight
+        self.project = project
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
+
+        if self.project:
+            self.lin = Linear(in_channels[0], in_channels[0], bias=True)
+
+        if self.aggr is None:
+            self.fuse = False  # No "fused" message_and_aggregate.
+            self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
 
         self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
         if self.root_weight:
@@ -57,6 +102,10 @@ class SAGEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        if self.project:
+            self.lin.reset_parameters()
+        if self.aggr is None:
+            self.lstm.reset_parameters()
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()
@@ -66,6 +115,9 @@ class SAGEConv(MessagePassing):
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
+
+        if self.project and hasattr(self, 'lin'):
+            x = (self.lin(x[0]).relu(), x[1])
 
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
@@ -88,6 +140,25 @@ class SAGEConv(MessagePassing):
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def aggregate(self, x: Tensor, index: Tensor, ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
+        if self.aggr is not None:
+            return scatter(x, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
+
+        # LSTM aggregation:
+        if ptr is None and not torch.all(index[:-1] <= index[1:]):
+            raise ValueError(f"Can not utilize LSTM-style aggregation inside "
+                             f"'{self.__class__.__name__}' in case the "
+                             f"'edge_index' tensor is not sorted by columns. "
+                             f"Run 'sort_edge_index(..., sort_by_row=False)' "
+                             f"in a pre-processing step.")
+
+        x, mask = to_dense_batch(x, batch=index, batch_size=dim_size)
+        out, _ = self.lstm(x)
+        return out[:, -1]
+
+    def __repr__(self) -> str:
+        aggr = self.aggr if self.aggr is not None else 'lstm'
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, aggr={aggr})')

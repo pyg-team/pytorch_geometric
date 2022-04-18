@@ -1,10 +1,11 @@
 from typing import Optional
-from torch_geometric.typing import Adj
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 from torch_scatter import scatter_add
+from torch_sparse import SparseTensor
+
+from torch_geometric.typing import Adj
 
 
 class WLConv(torch.nn.Module):
@@ -16,9 +17,16 @@ class WLConv(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
         \mathbf{x}_j \colon j \in \mathcal{N}(i) \} \right)
+
+    Shapes:
+        - **input:**
+          node coloring :math:`(|\mathcal{V}|, F_{in})` *(one-hot encodings)*
+          or :math:`(|\mathcal{V}|)` *(integer-based)*,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **output:** node coloring :math:`(|\mathcal{V}|)` *(integer-based)*
     """
     def __init__(self):
-        super(WLConv, self).__init__()
+        super().__init__()
         self.hashmap = {}
 
     def reset_parameters(self):
@@ -69,6 +77,3 @@ class WLConv(torch.nn.Module):
             out /= out.norm(dim=-1, keepdim=True)
 
         return out
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

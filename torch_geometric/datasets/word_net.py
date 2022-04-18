@@ -1,7 +1,8 @@
 from itertools import chain
 
 import torch
-from torch_geometric.data import InMemoryDataset, Data, download_url
+
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class WordNet18(InMemoryDataset):
@@ -37,7 +38,7 @@ class WordNet18(InMemoryDataset):
            'datasets_knowledge_embedding/master/WN18/original')
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(WordNet18, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -130,7 +131,7 @@ class WordNet18RR(InMemoryDataset):
     }
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(WordNet18RR, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

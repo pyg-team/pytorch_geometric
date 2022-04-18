@@ -1,18 +1,12 @@
-import sys
-import random
-import shutil
-import pytest
-import os.path as osp
-
-import torch
 import numpy as np
+import pytest
+import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.datasets import Planetoid
-from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.utils import k_hop_subgraph
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -58,9 +52,6 @@ def test_homogeneous_neighbor_loader(directed):
         assert batch.edge_attr.max() < 500
 
         assert is_subset(batch.edge_index, data.edge_index, batch.x, batch.x)
-
-        # Test for isolated nodes (there shouldn't exist any):
-        assert data.edge_index.view(-1).unique().numel() == data.num_nodes
 
 
 @pytest.mark.parametrize('directed', [True, False])
@@ -172,9 +163,8 @@ def test_heterogeneous_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-def test_homogeneous_neighbor_loader_on_cora(directed):
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, 'Cora')
+def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
     data.edge_weight = torch.rand(data.num_edges)
@@ -214,13 +204,10 @@ def test_homogeneous_neighbor_loader_on_cora(directed):
     out2 = model(batch.x, batch.edge_index, batch.edge_weight)[:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
 
-    shutil.rmtree(root)
-
 
 @pytest.mark.parametrize('directed', [True, False])
-def test_heterogeneous_neighbor_loader_on_cora(directed):
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, 'Cora')
+def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 
@@ -268,5 +255,3 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
-
-    shutil.rmtree(root)

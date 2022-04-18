@@ -1,13 +1,20 @@
-import torch
-from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Adj, Size, Optional
+from typing import Tuple, Union
 
-from torch import Tensor
-from torch_geometric.nn.dense.linear import Linear
-from torch.nn import Parameter
+import torch
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import Parameter
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot
+from torch_geometric.typing import (
+    Adj,
+    Optional,
+    OptPairTensor,
+    OptTensor,
+    Size,
+)
 from torch_geometric.utils import softmax
 
 
@@ -48,15 +55,32 @@ class GeneralConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
-    """
 
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: Optional[int], in_edge_channels: int = None,
-                 aggr: str = 'add', skip_linear: str = False,
-                 directed_msg: bool = True, heads: int = 1,
-                 attention: bool = False, attention_type: str = 'additive',
-                 l2_normalize: bool = False, bias: bool = True,
-                 **kwargs):  # yapf: disable
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
+    """
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: Optional[int],
+        in_edge_channels: int = None,
+        aggr: str = "add",
+        skip_linear: str = False,
+        directed_msg: bool = True,
+        heads: int = 1,
+        attention: bool = False,
+        attention_type: str = "additive",
+        l2_normalize: bool = False,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
 
@@ -92,7 +116,7 @@ class GeneralConv(MessagePassing):
             self.lin_edge = Linear(in_edge_channels, out_channels * self.heads,
                                    bias=bias)
 
-        # todo: A general torch_geometric.nn.AttentionLayer
+        # TODO: A general torch_geometric.nn.AttentionLayer
         if self.attention:
             if self.attention_type == 'additive':
                 self.att_msg = Parameter(
@@ -101,50 +125,50 @@ class GeneralConv(MessagePassing):
                 self.scaler = torch.sqrt(
                     torch.tensor(out_channels, dtype=torch.float))
             else:
-                raise ValueError('attention_type: {} not supported'.format(
-                    self.attention_type))
+                raise ValueError(
+                    f"Attention type '{self.attention_type}' not supported")
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin_msg.reset_parameters()
-        self.lin_self.reset_parameters()
+        if hasattr(self.lin_self, 'reset_parameters'):
+            self.lin_self.reset_parameters()
         if self.in_edge_channels is not None:
             self.lin_edge.reset_parameters()
         if self.attention and self.attention_type == 'additive':
             glorot(self.att_msg)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None, edge_feature: Tensor = None) -> Tensor:
+                edge_attr: Tensor = None, size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]
         # propagate_type: (x: OptPairTensor)
-        out = self.propagate(edge_index, x=x, size=size,
-                             edge_feature=edge_feature)
+        out = self.propagate(edge_index, x=x, size=size, edge_attr=edge_attr)
         out = out.mean(dim=1)  # todo: other approach to aggregate heads
         out += self.lin_self(x_self)
         if self.normalize_l2:
             out = F.normalize(out, p=2, dim=-1)
         return out
 
-    def message_basic(self, x_i: Tensor, x_j: Tensor, edge_feature: Tensor):
+    def message_basic(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor):
         if self.directed_msg:
             x_j = self.lin_msg(x_j)
         else:
             x_j = self.lin_msg(x_j) + self.lin_msg_i(x_i)
-        if edge_feature is not None:
-            x_j = x_j + self.lin_edge(edge_feature)
+        if edge_attr is not None:
+            x_j = x_j + self.lin_edge(edge_attr)
         return x_j
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
-                size_i: Tensor, edge_feature: Tensor) -> Tensor:
-        x_j_out = self.message_basic(x_i, x_j, edge_feature)
+                size_i: Tensor, edge_attr: Tensor) -> Tensor:
+        x_j_out = self.message_basic(x_i, x_j, edge_attr)
         x_j_out = x_j_out.view(-1, self.heads, self.out_channels)
         if self.attention:
             if self.attention_type == 'dot_product':
-                x_i_out = self.message_basic(x_j, x_i, edge_feature)
+                x_i_out = self.message_basic(x_j, x_i, edge_attr)
                 x_i_out = x_i_out.view(-1, self.heads, self.out_channels)
                 alpha = (x_i_out * x_j_out).sum(dim=-1) / self.scaler
             else:
@@ -155,7 +179,3 @@ class GeneralConv(MessagePassing):
             return x_j_out * alpha
         else:
             return x_j_out
-
-    def __repr__(self) -> str:
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)

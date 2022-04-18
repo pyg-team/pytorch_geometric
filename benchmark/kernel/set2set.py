@@ -1,12 +1,13 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+
 from torch_geometric.nn import SAGEConv, Set2Set
 
 
 class Set2SetNet(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
-        super(Set2SetNet, self).__init__()
+        super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):

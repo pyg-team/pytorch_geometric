@@ -1,14 +1,14 @@
-from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor
-
 from math import log
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot
 
@@ -60,6 +60,14 @@ class GCN2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          initial node features :math:`(|\mathcal{V}|, F)`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
@@ -71,7 +79,7 @@ class GCN2Conv(MessagePassing):
                  normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(GCN2Conv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.channels = channels
         self.alpha = alpha
@@ -152,7 +160,6 @@ class GCN2Conv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, alpha={}, beta={})'.format(self.__class__.__name__,
-                                                  self.channels, self.alpha,
-                                                  self.beta)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'alpha={self.alpha}, beta={self.beta})')

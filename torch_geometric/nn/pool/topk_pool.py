@@ -1,17 +1,19 @@
-from typing import Union, Optional, Callable
+from typing import Callable, Optional, Union
+
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
+
 from torch_geometric.utils import softmax
 
-from ..inits import uniform
 from ...utils.num_nodes import maybe_num_nodes
+from ..inits import uniform
 
 
 def topk(x, ratio, batch, min_score=None, tol=1e-7):
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
-        scores_max = scatter_max(x, batch)[0][batch] - tol
+        scores_max = scatter_max(x, batch)[0].index_select(0, batch) - tol
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero(as_tuple=False).view(-1)
@@ -126,7 +128,7 @@ class TopKPooling(torch.nn.Module):
     def __init__(self, in_channels: int, ratio: Union[int, float] = 0.5,
                  min_score: Optional[float] = None, multiplier: float = 1.,
                  nonlinearity: Callable = torch.tanh):
-        super(TopKPooling, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -167,9 +169,11 @@ class TopKPooling(torch.nn.Module):
 
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
-    def __repr__(self):
-        return '{}({}, {}={}, multiplier={})'.format(
-            self.__class__.__name__, self.in_channels,
-            'ratio' if self.min_score is None else 'min_score',
-            self.ratio if self.min_score is None else self.min_score,
-            self.multiplier)
+    def __repr__(self) -> str:
+        if self.min_score is None:
+            ratio = f'ratio={self.ratio}'
+        else:
+            ratio = f'min_score={self.min_score}'
+
+        return (f'{self.__class__.__name__}({self.in_channels}, {ratio}, '
+                f'multiplier={self.multiplier})')

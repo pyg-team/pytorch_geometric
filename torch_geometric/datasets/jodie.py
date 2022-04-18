@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
@@ -12,7 +13,7 @@ class JODIEDataset(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.names
 
-        super(JODIEDataset, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property

@@ -1,11 +1,12 @@
 from typing import Union
-from torch_geometric.typing import PairTensor, Adj
 
 import torch
 from torch import Tensor
-from torch_geometric.nn.dense.linear import Linear
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, PairTensor
 
 
 class SignedConv(MessagePassing):
@@ -43,22 +44,30 @@ class SignedConv(MessagePassing):
     the negative node features :math:`\mathbf{X}^{(\textrm{neg})}`.
 
     Args:
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         first_aggr (bool): Denotes which aggregation formula to use.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
+          if bipartite,
+          positive edge indices :math:`(2, |\mathcal{E}^{(+)}|)`,
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: int, out_channels: int, first_aggr: bool,
                  bias: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'mean')
-        super(SignedConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -129,11 +138,9 @@ class SignedConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: PairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
+        adj_t = adj_t.set_value(None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
-    def __repr__(self):
-        return '{}({}, {}, first_aggr={})'.format(self.__class__.__name__,
-                                                  self.in_channels,
-                                                  self.out_channels,
-                                                  self.first_aggr)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, first_aggr={self.first_aggr})')

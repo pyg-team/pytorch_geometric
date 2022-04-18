@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
@@ -28,8 +29,7 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
     def __init__(self, root, group, name, transform=None, pre_transform=None):
         self.group = group
         self.name = name
-        super(SuiteSparseMatrixCollection,
-              self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -79,6 +79,6 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}(group={}, name={})'.format(self.__class__.__name__,
-                                              self.group, self.name)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(group={self.group}, '
+                f'name={self.name})')

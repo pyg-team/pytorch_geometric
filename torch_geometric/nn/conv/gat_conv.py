@@ -1,15 +1,21 @@
-from typing import Union, Tuple, Optional
-from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
-                                    OptTensor)
+from typing import Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Parameter
 from torch_sparse import SparseTensor, set_diag
-from torch_geometric.nn.dense.linear import Linear
+
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import (
+    Adj,
+    NoneType,
+    OptPairTensor,
+    OptTensor,
+    Size,
+)
+from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 from ..inits import glorot, zeros
 
@@ -81,9 +87,22 @@ class GATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
-    """
-    _alpha: OptTensor
 
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
+          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          If :obj:`return_attention_weights=True`, then
+          :math:`((|\mathcal{V}|, H * F_{out}),
+          ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
+          or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
+          (|\mathcal{E}|, H)))` if bipartite
+    """
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -141,8 +160,6 @@ class GATConv(MessagePassing):
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
-
-        self._alpha = None
 
         self.reset_parameters()
 
@@ -222,13 +239,11 @@ class GATConv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
-        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor, edge_attr: OptTensor)  # noqa
-        out = self.propagate(edge_index, x=x, alpha=alpha, edge_attr=edge_attr,
-                             size=size)
+        # edge_updater_type: (alpha: OptPairTensor, edge_attr: OptTensor)
+        alpha = self.edge_updater(edge_index, alpha=alpha, edge_attr=edge_attr)
 
-        alpha = self._alpha
-        assert alpha is not None
-        self._alpha = None
+        # propagate_type: (x: OptPairTensor, alpha: Tensor)
+        out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -246,9 +261,9 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
-                edge_attr: OptTensor, index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+    def edge_update(self, alpha_j: Tensor, alpha_i: OptTensor,
+                    edge_attr: OptTensor, index: Tensor, ptr: OptTensor,
+                    size_i: Optional[int]) -> Tensor:
         # Given edge-level attention coefficients for source and target nodes,
         # we simply need to sum them up to "emulate" concatenation:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
@@ -264,11 +279,12 @@ class GATConv(MessagePassing):
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
-        self._alpha = alpha  # Save for later use.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return x_j * alpha.unsqueeze(-1)
+        return alpha
 
-    def __repr__(self):
-        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.heads)
+    def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
+        return alpha.unsqueeze(-1) * x_j
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')

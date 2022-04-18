@@ -49,7 +49,7 @@ class Node2Vec(torch.nn.Module):
     def __init__(self, edge_index, embedding_dim, walk_length, context_size,
                  walks_per_node=1, p=1, q=1, num_negative_samples=1,
                  num_nodes=None, sparse=False):
-        super(Node2Vec, self).__init__()
+        super().__init__()
 
         if random_walk is None:
             raise ImportError('`Node2Vec` requires `torch-cluster`.')
@@ -79,7 +79,7 @@ class Node2Vec(torch.nn.Module):
     def forward(self, batch=None):
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
         return DataLoader(range(self.adj.sparse_size(0)),
@@ -155,7 +155,6 @@ class Node2Vec(torch.nn.Module):
         return clf.score(test_z.detach().cpu().numpy(),
                          test_y.detach().cpu().numpy())
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__,
-                                   self.embedding.weight.size(0),
-                                   self.embedding.weight.size(1))
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.embedding.weight.size(0)}, '
+                f'{self.embedding.weight.size(1)})')

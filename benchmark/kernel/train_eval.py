@@ -2,10 +2,12 @@ import time
 
 import torch
 import torch.nn.functional as F
+from sklearn.model_selection import StratifiedKFold
 from torch import tensor
 from torch.optim import Adam
-from sklearn.model_selection import StratifiedKFold
-from torch_geometric.loader import DataLoader, DenseDataLoader as DenseLoader
+
+from torch_geometric.loader import DataLoader
+from torch_geometric.loader import DenseDataLoader as DenseLoader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -73,8 +75,8 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
     acc_mean = acc.mean().item()
     acc_std = acc.std().item()
     duration_mean = duration.mean().item()
-    print('Val Loss: {:.4f}, Test Accuracy: {:.3f} ± {:.3f}, Duration: {:.3f}'.
-          format(loss_mean, acc_mean, acc_std, duration_mean))
+    print(f'Val Loss: {loss_mean:.4f}, Test Accuracy: {acc_mean:.3f} '
+          f'± {acc_std:.3f}, Duration: {duration_mean:.3f}')
 
     return loss_mean, acc_mean, acc_std
 

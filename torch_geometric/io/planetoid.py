@@ -1,9 +1,12 @@
-import sys
 import os.path as osp
+import sys
+import warnings
 from itertools import repeat
 
 import torch
-from torch_sparse import coalesce as coalesce_fn, SparseTensor
+from torch_sparse import SparseTensor
+from torch_sparse import coalesce as coalesce_fn
+
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import remove_self_loops
@@ -87,13 +90,14 @@ def read_planetoid_data(folder, prefix):
 
 
 def read_file(folder, prefix, name):
-    path = osp.join(folder, 'ind.{}.{}'.format(prefix.lower(), name))
+    path = osp.join(folder, f'ind.{prefix.lower()}.{name}')
 
     if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)
 
     with open(path, 'rb') as f:
         if sys.version_info > (3, 0):
+            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
             out = pickle.load(f, encoding='latin1')
         else:
             out = pickle.load(f)

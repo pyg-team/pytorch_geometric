@@ -1,8 +1,8 @@
-from typing import Optional, Callable
-
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -26,6 +26,42 @@ class CitationFull(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - Cora
+              - 19,793
+              - 126,842
+              - 8,710
+              - 70
+            * - Cora_ML
+              - 2,995
+              - 16,316
+              - 2,879
+              - 7
+            * - CiteSeer
+              - 4,230
+              - 10,674
+              - 602
+              - 6
+            * - DBLP
+              - 17,716
+              - 105,734
+              - 1,639
+              - 4
+            * - PubMed
+              - 19,717
+              - 88,648
+              - 500
+              - 3
     """
 
     url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'
@@ -68,14 +104,29 @@ class CitationFull(InMemoryDataset):
 
 
 class CoraFull(CitationFull):
-    r"""Alias for :class:`torch_geometric.dataset.CitationFull` with
-    :obj:`name="cora"`."""
+    r"""Alias for :class:`torch_geometric.datasets.CitationFull` with
+    :obj:`name="cora"`.
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 19,793
+              - 126,842
+              - 8,710
+              - 70
+    """
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, 'cora', transform, pre_transform)
 
     def download(self):
-        super(CoraFull, self).download()
+        super().download()
 
     def process(self):
-        super(CoraFull, self).process()
+        super().process()

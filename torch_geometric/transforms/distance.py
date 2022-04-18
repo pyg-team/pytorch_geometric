@@ -1,10 +1,13 @@
 import torch
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('distance')
 class Distance(BaseTransform):
-    r"""Saves the Euclidean distance of linked nodes in its edge attributes.
+    r"""Saves the Euclidean distance of linked nodes in its edge attributes
+    (functional name: :obj:`distance`).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be
@@ -36,6 +39,6 @@ class Distance(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max})')

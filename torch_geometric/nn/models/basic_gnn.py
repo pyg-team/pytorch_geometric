@@ -1,16 +1,24 @@
-from typing import Optional, Callable, List
-from torch_geometric.typing import Adj
-
 import copy
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU
+from torch import Tensor
+from torch.nn import Linear, ModuleList
 
-from torch_geometric.nn.conv import (GCNConv, SAGEConv, GINConv, GATConv,
-                                     PNAConv)
+from torch_geometric.nn.conv import (
+    GATConv,
+    GATv2Conv,
+    GCNConv,
+    GINConv,
+    MessagePassing,
+    PNAConv,
+    SAGEConv,
+)
+from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
+from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.typing import Adj
 
 
 class BasicGNN(torch.nn.Module):
@@ -24,46 +32,88 @@ class BasicGNN(torch.nn.Module):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
+        **kwargs (optional): Additional arguments of the underlying
+            :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last'):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        out_channels: Optional[int] = None,
+        dropout: float = 0.0,
+        act: Union[str, Callable, None] = "relu",
+        norm: Optional[torch.nn.Module] = None,
+        jk: Optional[str] = None,
+        act_first: bool = False,
+        act_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ):
         super().__init__()
+
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
+
         self.dropout = dropout
-        self.act = act
-
-        self.convs = ModuleList()
-
-        self.norms = None
-        if norm is not None:
-            self.norms = ModuleList(
-                [copy.deepcopy(norm) for _ in range(num_layers)])
-
-        if jk != 'last':
-            self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
+        self.act = activation_resolver(act, **(act_kwargs or {}))
+        self.jk_mode = jk
+        self.act_first = act_first
 
         if out_channels is not None:
             self.out_channels = out_channels
-            if jk == 'cat':
-                self.lin = Linear(num_layers * hidden_channels, out_channels)
-            else:
-                self.lin = Linear(hidden_channels, out_channels)
         else:
+            self.out_channels = hidden_channels
+
+        self.convs = ModuleList()
+        self.convs.append(
+            self.init_conv(in_channels, hidden_channels, **kwargs))
+        for _ in range(num_layers - 2):
+            self.convs.append(
+                self.init_conv(hidden_channels, hidden_channels, **kwargs))
+        if out_channels is not None and jk is None:
+            self._is_conv_to_out = True
+            self.convs.append(
+                self.init_conv(hidden_channels, out_channels, **kwargs))
+        else:
+            self.convs.append(
+                self.init_conv(hidden_channels, hidden_channels, **kwargs))
+
+        self.norms = None
+        if norm is not None:
+            self.norms = ModuleList()
+            for _ in range(num_layers - 1):
+                self.norms.append(copy.deepcopy(norm))
+            if jk is not None:
+                self.norms.append(copy.deepcopy(norm))
+
+        if jk is not None and jk != 'last':
+            self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
+
+        if jk is not None:
             if jk == 'cat':
-                self.out_channels = num_layers * hidden_channels
+                in_channels = num_layers * hidden_channels
             else:
-                self.out_channels = hidden_channels
+                in_channels = hidden_channels
+            self.lin = Linear(in_channels, self.out_channels)
+
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        raise NotImplementedError
 
     def reset_parameters(self):
         for conv in self.convs:
@@ -76,12 +126,17 @@ class BasicGNN(torch.nn.Module):
             self.lin.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
+        """"""
         xs: List[Tensor] = []
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, *args, **kwargs)
+            if i == self.num_layers - 1 and self.jk_mode is None:
+                break
+            if self.act is not None and self.act_first:
+                x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
-            if self.act is not None:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if hasattr(self, 'jk'):
@@ -110,28 +165,24 @@ class GCN(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 **kwargs):
-        super().__init__(in_channels, hidden_channels, num_layers,
-                         out_channels, dropout, act, norm, jk)
-
-        self.convs.append(GCNConv(in_channels, hidden_channels, **kwargs))
-        for _ in range(1, num_layers):
-            self.convs.append(
-                GCNConv(hidden_channels, hidden_channels, **kwargs))
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        return GCNConv(in_channels, out_channels, **kwargs)
 
 
 class GraphSAGE(BasicGNN):
@@ -147,28 +198,24 @@ class GraphSAGE(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 **kwargs):
-        super().__init__(in_channels, hidden_channels, num_layers,
-                         out_channels, dropout, act, norm, jk)
-
-        self.convs.append(SAGEConv(in_channels, hidden_channels, **kwargs))
-        for _ in range(1, num_layers):
-            self.convs.append(
-                SAGEConv(hidden_channels, hidden_channels, **kwargs))
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        return SAGEConv(in_channels, out_channels, **kwargs)
 
 
 class GIN(BasicGNN):
@@ -185,43 +232,33 @@ class GIN(BasicGNN):
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+            (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 **kwargs):
-        super().__init__(in_channels, hidden_channels, num_layers,
-                         out_channels, dropout, act, norm, jk)
-
-        self.convs.append(
-            GINConv(GIN.MLP(in_channels, hidden_channels), **kwargs))
-        for _ in range(1, num_layers):
-            self.convs.append(
-                GINConv(GIN.MLP(hidden_channels, hidden_channels), **kwargs))
-
-    @staticmethod
-    def MLP(in_channels: int, out_channels: int) -> torch.nn.Module:
-        return Sequential(
-            Linear(in_channels, out_channels),
-            BatchNorm1d(out_channels),
-            ReLU(inplace=True),
-            Linear(out_channels, out_channels),
-        )
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
+        return GINConv(mlp, **kwargs)
 
 
 class GAT(BasicGNN):
-    r"""The Graph Neural Network from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper, using the
-    :class:`~torch_geometric.nn.GATConv` operator for message passing.
+    r"""The Graph Neural Network from `"Graph Attention Networks"
+    <https://arxiv.org/abs/1710.10903>`_ or `"How Attentive are Graph Attention
+    Networks?" <https://arxiv.org/abs/2105.14491>`_ papers, using the
+    :class:`~torch_geometric.nn.GATConv` or
+    :class:`~torch_geometric.nn.GATv2Conv` operator for message passing,
+    respectively.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -230,37 +267,49 @@ class GAT(BasicGNN):
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
+        v2 (bool, optional): If set to :obj:`True`, will make use of
+            :class:`~torch_geometric.nn.conv.GATv2Conv` rather than
+            :class:`~torch_geometric.nn.conv.GATConv`. (default: :obj:`False`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
-            :class:`torch_geometric.nn.conv.GATConv`.
+            :class:`torch_geometric.nn.conv.GATConv` or
+            :class:`torch_geometric.nn.conv.GATv2Conv`.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 **kwargs):
-        super().__init__(in_channels, hidden_channels, num_layers,
-                         out_channels, dropout, act, norm, jk)
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
 
-        if 'concat' in kwargs:
-            del kwargs['concat']
+        v2 = kwargs.pop('v2', False)
+        heads = kwargs.pop('heads', 1)
+        concat = kwargs.pop('concat', True)
 
-        if 'heads' in kwargs:
-            assert hidden_channels % kwargs['heads'] == 0
+        # Do not use concatenation in case the layer `GATConv` layer maps to
+        # the desired output channels (out_channels != None and jk != None):
+        if getattr(self, '_is_conv_to_out', False):
+            concat = False
 
-        out_channels = hidden_channels // kwargs.get('heads', 1)
+        if concat and out_channels % heads != 0:
+            raise ValueError(f"Ensure that the number of output channels of "
+                             f"'GATConv' (got '{out_channels}') is divisible "
+                             f"by the number of heads (got '{heads}')")
 
-        self.convs.append(
-            GATConv(in_channels, out_channels, dropout=dropout, **kwargs))
-        for _ in range(1, num_layers):
-            self.convs.append(GATConv(hidden_channels, out_channels, **kwargs))
+        if concat:
+            out_channels = out_channels // heads
+
+        Conv = GATConv if not v2 else GATv2Conv
+        return Conv(in_channels, out_channels, heads=heads, concat=concat,
+                    dropout=self.dropout, **kwargs)
 
 
 class PNA(BasicGNN):
@@ -272,42 +321,28 @@ class PNA(BasicGNN):
         in_channels (int): Size of each input sample.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
-        aggregators (list of str): Set of aggregation function identifiers,
-            namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"var"` and :obj:`"std"`.
-        scalers: (list of str): Set of scaling function identifiers, namely
-            :obj:`"identity"`, :obj:`"amplification"`,
-            :obj:`"attenuation"`, :obj:`"linear"` and
-            :obj:`"inverse_linear"`.
-        deg (Tensor): Histogram of in-degrees of nodes in the training set,
-            used by scalers to normalize.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
             (default: :obj:`"last"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
-    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 aggregators: List[str], scalers: List[str], deg: Tensor,
-                 out_channels: Optional[int] = None, dropout: float = 0.0,
-                 act: Optional[Callable] = ReLU(inplace=True),
-                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
-                 **kwargs):
-        super().__init__(in_channels, hidden_channels, num_layers,
-                         out_channels, dropout, act, norm, jk)
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        return PNAConv(in_channels, out_channels, **kwargs)
 
-        self.convs.append(
-            PNAConv(in_channels, hidden_channels, aggregators, scalers, deg,
-                    **kwargs))
-        for _ in range(1, num_layers):
-            self.convs.append(
-                PNAConv(hidden_channels, hidden_channels, aggregators, scalers,
-                        deg, **kwargs))
+
+__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA']

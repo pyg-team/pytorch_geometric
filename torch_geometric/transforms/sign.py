@@ -1,14 +1,16 @@
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('sign')
 class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
-    <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed
-    representations
+    <https://arxiv.org/abs/2004.11198>`_ paper (functional name: :obj:`sign`),
+    which precomputes the fixed representations
 
     .. math::
         \mathbf{X}^{(i)} = {\left( \mathbf{D}^{-1/2} \mathbf{A}
@@ -50,5 +52,5 @@ class SIGN(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}(K={})'.format(self.__class__.__name__, self.K)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(K={self.K})'

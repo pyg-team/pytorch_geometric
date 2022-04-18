@@ -9,7 +9,7 @@ class DenseGINConv(torch.nn.Module):
     :rtype: :class:`Tensor`
     """
     def __init__(self, nn, eps=0, train_eps=False):
-        super(DenseGINConv, self).__init__()
+        super().__init__()
 
         self.nn = nn
         self.initial_eps = eps
@@ -56,5 +56,5 @@ class DenseGINConv(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(nn={self.nn})'

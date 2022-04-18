@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union, Any
-
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -85,7 +84,8 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
-            device = value.device if isinstance(value, Tensor) else device
+            if isinstance(value, Tensor) and value.is_cuda:
+                device = value.device
 
             out_store[attr] = value
             if key is not None:
@@ -99,18 +99,15 @@ def collate(
             if (attr in follow_batch and isinstance(slices, Tensor)
                     and slices.dim() == 1):
                 repeats = slices[1:] - slices[:-1]
-                arange = torch.arange(len(values), device=device)
-                batch = arange.repeat_interleave(repeats.to(device))
+                batch = repeat_interleave(repeats.tolist(), device=device)
                 out_store[f'{attr}_batch'] = batch
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].can_infer_num_nodes):
-            arange = torch.arange(len(stores), device=device)
-            repeats = torch.tensor([store.num_nodes for store in stores],
-                                   device=device)
-            out_store.batch = arange.repeat_interleave(repeats)
-            out_store.ptr = cumsum(repeats)
+            repeats = [store.num_nodes for store in stores]
+            out_store.batch = repeat_interleave(repeats, device=device)
+            out_store.ptr = cumsum(torch.tensor(repeats, device=device))
 
     return out, slice_dict, inc_dict
 
@@ -135,11 +132,22 @@ def _collate(
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
-                values = [value + inc for value, inc in zip(values, incs)]
+                values = [
+                    value + inc.to(value.device)
+                    for value, inc in zip(values, incs)
+                ]
         else:
             incs = None
 
-        value = torch.cat(values, dim=cat_dim or 0)
+        if torch.utils.data.get_worker_info() is not None:
+            # Write directly into shared memory to avoid an extra copy:
+            numel = sum(value.numel() for value in values)
+            storage = elem.storage()._new_shared(numel)
+            out = elem.new(storage)
+        else:
+            out = None
+
+        value = torch.cat(values, dim=cat_dim or 0, out=out)
         return value, slices, incs
 
     elif isinstance(elem, SparseTensor) and increment:
@@ -173,7 +181,7 @@ def _collate(
         return value_dict, slice_dict, inc_dict
 
     elif (isinstance(elem, Sequence) and not isinstance(elem, str)
-          and isinstance(elem[0], (Tensor, SparseTensor))):
+          and len(elem) > 0 and isinstance(elem[0], (Tensor, SparseTensor))):
         # Recursively collate elements of lists.
         value_list, slice_list, inc_list = [], [], []
         for i in range(len(elem)):
@@ -191,6 +199,14 @@ def _collate(
 
 
 ###############################################################################
+
+
+def repeat_interleave(
+    repeats: List[int],
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
+    return torch.cat(outs, dim=0)
 
 
 def cumsum(value: Union[Tensor, List[int]]) -> Tensor:

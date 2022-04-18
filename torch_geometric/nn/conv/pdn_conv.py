@@ -1,11 +1,11 @@
-from torch_geometric.typing import Adj, OptTensor
-
 import torch
 from torch import Tensor
-from torch.nn import Sequential, Linear, ReLU, Sigmoid, Parameter
+from torch.nn import Linear, Parameter, ReLU, Sequential, Sigmoid
 from torch_sparse import SparseTensor, matmul
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
 
@@ -37,6 +37,13 @@ class PDNConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
                  hidden_channels: int, add_self_loops: bool = True,

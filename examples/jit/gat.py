@@ -2,8 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import Planetoid
+
 import torch_geometric.transforms as T
+from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv
 
 dataset = 'Cora'
@@ -14,7 +15,7 @@ dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GATConv(dataset.num_features, 8, heads=8,
                              dropout=0.6).jittable()
 

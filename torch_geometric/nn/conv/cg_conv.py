@@ -1,11 +1,12 @@
-from typing import Union, Tuple
-from torch_geometric.typing import PairTensor, Adj, OptTensor, Size
+from typing import Tuple, Union
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Linear, BatchNorm1d
+from torch import Tensor
+from torch.nn import BatchNorm1d, Linear
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 
 class CGConv(MessagePassing):
@@ -39,11 +40,21 @@ class CGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, F)` or
+          :math:`(|\mathcal{V_t}|, F_{t})` if bipartite
     """
     def __init__(self, channels: Union[int, Tuple[int, int]], dim: int = 0,
                  aggr: str = 'add', batch_norm: bool = False,
                  bias: bool = True, **kwargs):
-        super(CGConv, self).__init__(aggr=aggr, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
         self.channels = channels
         self.dim = dim
         self.batch_norm = batch_norm
@@ -67,13 +78,13 @@ class CGConv(MessagePassing):
             self.bn.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+                edge_attr: OptTensor = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
         out = out if self.bn is None else self.bn(out)
         out += x[1]
         return out
@@ -85,6 +96,5 @@ class CGConv(MessagePassing):
             z = torch.cat([x_i, x_j, edge_attr], dim=-1)
         return self.lin_f(z).sigmoid() * F.softplus(self.lin_s(z))
 
-    def __repr__(self):
-        return '{}({}, dim={})'.format(self.__class__.__name__, self.channels,
-                                       self.dim)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.channels}, dim={self.dim})'

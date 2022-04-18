@@ -1,8 +1,8 @@
-from typing import Optional, Callable
-
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
+
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
 
@@ -28,6 +28,27 @@ class Coauthor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - CS
+              - 18,333
+              - 163,788
+              - 6,805
+              - 15
+            * - Physics
+              - 34,493
+              - 495,924
+              - 8,415
+              - 5
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'

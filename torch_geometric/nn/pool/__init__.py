@@ -1,3 +1,6 @@
+from torch import Tensor
+from torch_geometric.typing import OptTensor
+
 from .max_pool import max_pool, max_pool_x, max_pool_neighbor_x
 from .avg_pool import avg_pool, avg_pool_x, avg_pool_neighbor_x
 from .graclus import graclus
@@ -15,7 +18,8 @@ except ImportError:
     torch_cluster = None
 
 
-def fps(x, batch=None, ratio=0.5, random_start=True):
+def fps(x: Tensor, batch: OptTensor = None, ratio: float = 0.5,
+        random_start: bool = True) -> Tensor:
     r"""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
     Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper, which iteratively samples the
@@ -42,13 +46,12 @@ def fps(x, batch=None, ratio=0.5, random_start=True):
         batch = torch.tensor([0, 0, 0, 0])
         index = fps(x, batch, ratio=0.5)
     """
-    if torch_cluster is None:
-        raise ImportError('`fps` requires `torch-cluster`.')
-
     return torch_cluster.fps(x, batch, ratio, random_start)
 
 
-def knn(x, y, k, batch_x=None, batch_y=None, cosine=False, num_workers=1):
+def knn(x: Tensor, y: Tensor, k: int, batch_x: OptTensor = None,
+        batch_y: OptTensor = None, cosine: bool = False,
+        num_workers: int = 1) -> Tensor:
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest points in
     :obj:`x`.
 
@@ -84,14 +87,12 @@ def knn(x, y, k, batch_x=None, batch_y=None, cosine=False, num_workers=1):
         batch_y = torch.tensor([0, 0])
         assign_index = knn(x, y, 2, batch_x, batch_y)
     """
-    if torch_cluster is None:
-        raise ImportError('`knn` requires `torch-cluster`.')
-
     return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers)
 
 
-def knn_graph(x, k, batch=None, loop=False, flow='source_to_target',
-              cosine=False, num_workers=1):
+def knn_graph(x: Tensor, k: int, batch: OptTensor = None, loop: bool = False,
+              flow: str = 'source_to_target', cosine: bool = False,
+              num_workers: int = 1) -> Tensor:
     r"""Computes graph edges to the nearest :obj:`k` points.
 
     Args:
@@ -124,15 +125,13 @@ def knn_graph(x, k, batch=None, loop=False, flow='source_to_target',
         batch = torch.tensor([0, 0, 0, 0])
         edge_index = knn_graph(x, k=2, batch=batch, loop=False)
     """
-    if torch_cluster is None:
-        raise ImportError('`knn_graph` requires `torch-cluster`.')
-
     return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
                                    num_workers)
 
 
-def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32,
-           num_workers=1):
+def radius(x: Tensor, y: Tensor, r: float, batch_x: OptTensor = None,
+           batch_y: OptTensor = None, max_num_neighbors: int = 32,
+           num_workers: int = 1) -> Tensor:
     r"""Finds for each element in :obj:`y` all points in :obj:`x` within
     distance :obj:`r`.
 
@@ -167,15 +166,14 @@ def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32,
         batch_y = torch.tensor([0, 0])
         assign_index = radius(x, y, 1.5, batch_x, batch_y)
     """
-    if torch_cluster is None:
-        raise ImportError('`radius` requires `torch-cluster`.')
-
     return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
                                 num_workers)
 
 
-def radius_graph(x, r, batch=None, loop=False, max_num_neighbors=32,
-                 flow='source_to_target', num_workers=1):
+def radius_graph(x: Tensor, r: float, batch: OptTensor = None,
+                 loop: bool = False, max_num_neighbors: int = 32,
+                 flow: str = 'source_to_target',
+                 num_workers: int = 1) -> Tensor:
     r"""Computes graph edges to all points within a given distance.
 
     Args:
@@ -207,14 +205,12 @@ def radius_graph(x, r, batch=None, loop=False, max_num_neighbors=32,
         batch = torch.tensor([0, 0, 0, 0])
         edge_index = radius_graph(x, r=1.5, batch=batch, loop=False)
     """
-    if torch_cluster is None:
-        raise ImportError('`radius_graph` requires `torch-cluster`.')
-
     return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
                                       flow, num_workers)
 
 
-def nearest(x, y, batch_x=None, batch_y=None):
+def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
+            batch_y: OptTensor = None) -> Tensor:
     r"""Clusters points in :obj:`x` together which are nearest to a given query
     point in :obj:`y`.
 
@@ -243,9 +239,6 @@ def nearest(x, y, batch_x=None, batch_y=None):
         batch_y = torch.tensor([0, 0])
         cluster = nearest(x, y, batch_x, batch_y)
     """
-    if torch_cluster is None:
-        raise ImportError('`radius` requires `torch-cluster`.')
-
     return torch_cluster.nearest(x, y, batch_x, batch_y)
 
 

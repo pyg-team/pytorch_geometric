@@ -1,12 +1,15 @@
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.utils import degree
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import degree
 
 
+@functional_transform('one_hot_degree')
 class OneHotDegree(BaseTransform):
-    r"""Adds the node degree as one hot encodings to the node features.
+    r"""Adds the node degree as one hot encodings to the node features
+    (functional name: :obj:`one_hot_degree`).
 
     Args:
         max_degree (int): Maximum degree.
@@ -34,5 +37,5 @@ class OneHotDegree(BaseTransform):
 
         return data
 
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.max_degree)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.max_degree})'

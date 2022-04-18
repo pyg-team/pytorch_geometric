@@ -1,15 +1,18 @@
-from typing import Optional, Callable, List
-
 import os
 import os.path as osp
 from itertools import product
+from typing import Callable, List, Optional
 
-import torch
 import numpy as np
 import scipy.sparse as sp
+import torch
 
-from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    HeteroData,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class DBLP(InMemoryDataset):

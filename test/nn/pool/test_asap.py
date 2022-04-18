@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn import ASAPooling, GraphConv, GCNConv
+from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
 
 
 def test_asap():

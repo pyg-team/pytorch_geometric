@@ -1,5 +1,9 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
+
 from torch_geometric.utils import softmax
 
 from ..inits import reset
@@ -16,7 +20,7 @@ class GlobalAttention(torch.nn.Module):
 
     where :math:`h_{\mathrm{gate}} \colon \mathbb{R}^F \to
     \mathbb{R}` and :math:`h_{\mathbf{\Theta}}` denote neural networks, *i.e.*
-    MLPS.
+    MLPs.
 
     Args:
         gate_nn (torch.nn.Module): A neural network :math:`h_{\mathrm{gate}}`
@@ -28,9 +32,18 @@ class GlobalAttention(torch.nn.Module):
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F)`,
+          batch vector :math:`(|\mathcal{V}|)` *(optional)*
+        - **output:**
+          graph features :math:`(|\mathcal{G}|, F)` where
+          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
-    def __init__(self, gate_nn, nn=None):
-        super(GlobalAttention, self).__init__()
+    def __init__(self, gate_nn: torch.nn.Module,
+                 nn: Optional[torch.nn.Module] = None):
+        super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
 
@@ -40,10 +53,21 @@ class GlobalAttention(torch.nn.Module):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x, batch, size=None):
-        """"""
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                size: Optional[int] = None) -> Tensor:
+        r"""
+        Args:
+            x (Tensor): The input node features.
+            batch (LongTensor, optional): A vector that maps each node to its
+                respective graph identifier. (default: :obj:`None`)
+            size (int, optional): The number of graphs in the batch.
+                (default: :obj:`None`)
+        """
+        if batch is None:
+            batch = x.new_zeros(x.size(0), dtype=torch.int64)
+
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        size = batch[-1].item() + 1 if size is None else size
+        size = int(batch.max()) + 1 if size is None else size
 
         gate = self.gate_nn(x).view(-1, 1)
         x = self.nn(x) if self.nn is not None else x
@@ -54,6 +78,6 @@ class GlobalAttention(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
-        return '{}(gate_nn={}, nn={})'.format(self.__class__.__name__,
-                                              self.gate_nn, self.nn)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(gate_nn={self.gate_nn}, '
+                f'nn={self.nn})')

@@ -1,9 +1,9 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
-import torch
 import numpy as np
+import torch
 
-from torch_geometric.data import InMemoryDataset, Data, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class LastFMAsia(InMemoryDataset):

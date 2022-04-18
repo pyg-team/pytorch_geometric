@@ -1,13 +1,18 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import (GraphConv, SAGPooling, global_mean_pool,
-                                JumpingKnowledge)
+
+from torch_geometric.nn import (
+    GraphConv,
+    JumpingKnowledge,
+    SAGPooling,
+    global_mean_pool,
+)
 
 
 class SAGPool(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden, ratio=0.8):
-        super(SAGPool, self).__init__()
+        super().__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
         self.pools = torch.nn.ModuleList()

@@ -2,13 +2,15 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-from torch_geometric.datasets import TUDataset
-import torch_geometric.transforms as T
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn import GINConv, GCNConv, SAGPooling
-from torch_geometric.nn import global_max_pool
+from torch.nn import Linear as Lin
+from torch.nn import ReLU
+from torch.nn import Sequential as Seq
 from torch_scatter import scatter_mean
+
+import torch_geometric.transforms as T
+from torch_geometric.datasets import TUDataset
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GCNConv, GINConv, SAGPooling, global_max_pool
 
 
 class HandleNodeAttention(object):
@@ -30,7 +32,7 @@ test_loader = DataLoader(dataset[35000:], batch_size=60)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GINConv(Seq(Lin(in_channels, 64), ReLU(), Lin(64, 64)))
         self.pool1 = SAGPooling(64, min_score=0.001, GNN=GCNConv)
@@ -108,8 +110,7 @@ for epoch in range(1, 301):
     test_acc1 = test_correct[:5000].sum().item() / 5000
     test_acc2 = test_correct[5000:].sum().item() / 5000
 
-    print(('Epoch: {:03d}, Loss: {:.4f}, Train: {:.3f}, Val: {:.3f}, '
-           'Test Orig: {:.3f}, Test Large: {:.3f}, '
-           'Train/Val/Test Ratio={:.3f}/{:.3f}/{:.3f}').format(
-               epoch, loss, train_acc, val_acc, test_acc1, test_acc2,
-               train_ratio, val_ratio, test_ratio))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.3f}, '
+          f'Val: {val_acc:.3f}, Test Orig: {test_acc1:.3f}, '
+          f'Test Large: {test_acc2:.3f}, Train/Val/Test Ratio='
+          f'{train_ratio:.3f}/{val_ratio:.3f}/{test_ratio:.3f}')

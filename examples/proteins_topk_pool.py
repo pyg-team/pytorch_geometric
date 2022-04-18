@@ -2,10 +2,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GraphConv, TopKPooling
-from torch_geometric.nn import global_mean_pool as gap, global_max_pool as gmp
+from torch_geometric.nn import global_max_pool as gmp
+from torch_geometric.nn import global_mean_pool as gap
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS')
@@ -19,7 +21,7 @@ train_loader = DataLoader(train_dataset, batch_size=60)
 
 class Net(torch.nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
 
         self.conv1 = GraphConv(dataset.num_features, 128)
         self.pool1 = TopKPooling(128, ratio=0.8)
@@ -92,5 +94,5 @@ for epoch in range(1, 201):
     loss = train(epoch)
     train_acc = test(train_loader)
     test_acc = test(test_loader)
-    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.5f}, Test Acc: {:.5f}'.
-          format(epoch, loss, train_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.5f}, Train Acc: {train_acc:.5f}, '
+          f'Test Acc: {test_acc:.5f}')

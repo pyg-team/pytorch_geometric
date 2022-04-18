@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_mean
 
-from ..inits import zeros, ones
+from ..inits import ones, zeros
 
 
 class GraphNorm(torch.nn.Module):
@@ -27,7 +27,7 @@ class GraphNorm(torch.nn.Module):
             stability. (default: :obj:`1e-5`)
     """
     def __init__(self, in_channels: int, eps: float = 1e-5):
-        super(GraphNorm, self).__init__()
+        super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps
@@ -50,10 +50,10 @@ class GraphNorm(torch.nn.Module):
 
         batch_size = int(batch.max()) + 1
 
-        mean = scatter_mean(x, batch, dim=0, dim_size=batch_size)[batch]
-        out = x - mean * self.mean_scale
+        mean = scatter_mean(x, batch, dim=0, dim_size=batch_size)
+        out = x - mean.index_select(0, batch) * self.mean_scale
         var = scatter_mean(out.pow(2), batch, dim=0, dim_size=batch_size)
-        std = (var + self.eps).sqrt()[batch]
+        std = (var + self.eps).sqrt().index_select(0, batch)
         return self.weight * out / std + self.bias
 
     def __repr__(self):

@@ -1,13 +1,14 @@
+import dgl.function as fn
 import torch
 import torch.nn.functional as F
 from torch.nn import Parameter
+
 from torch_geometric.nn.inits import glorot, zeros
-import dgl.function as fn
 
 
 class GCNConv(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GCNConv, self).__init__()
+        super().__init__()
         self.g = g
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
         self.bias = Parameter(torch.Tensor(out_channels))
@@ -33,7 +34,7 @@ class GCNConv(torch.nn.Module):
 
 class GCN(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GCN, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(g, in_channels, 16)
         self.conv2 = GCNConv(g, 16, out_channels)
 
@@ -46,7 +47,7 @@ class GCN(torch.nn.Module):
 
 class GCNSPMVConv(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GCNSPMVConv, self).__init__()
+        super().__init__()
         self.g = g
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
         self.bias = Parameter(torch.Tensor(out_channels))
@@ -59,8 +60,8 @@ class GCNSPMVConv(torch.nn.Module):
     def forward(self, x):
         x = torch.matmul(x, self.weight)
         self.g.ndata['x'] = x * self.g.ndata['norm']
-        self.g.update_all(
-            fn.copy_src(src='x', out='m'), fn.sum(msg='m', out='x'))
+        self.g.update_all(fn.copy_src(src='x', out='m'),
+                          fn.sum(msg='m', out='x'))
         x = self.g.ndata.pop('x') * self.g.ndata['norm']
         x = x + self.bias
         return x
@@ -68,7 +69,7 @@ class GCNSPMVConv(torch.nn.Module):
 
 class GCNSPMV(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GCNSPMV, self).__init__()
+        super().__init__()
         self.conv1 = GCNSPMVConv(g, in_channels, 16)
         self.conv2 = GCNSPMVConv(g, 16, out_channels)
 
