@@ -20,12 +20,15 @@ if args.dataset in ['AIFB', 'MUTAG']:
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 dataset = Entities(path, args.dataset)
 data = dataset[0]
-
+print(data)
+print(data.train_idx)
+print(data.test_idx)
 # BGS and AM graphs are too big to process them in a full-batch fashion.
 # Since our model does only make use of a rather small receptive field, we
 # filter the graph to only contain the nodes that are at most 2-hop neighbors
 # away from any training/test node.
 node_idx = torch.cat([data.train_idx, data.test_idx], dim=0)
+print(node_idx)
 node_idx, edge_index, mapping, edge_mask = k_hop_subgraph(
     node_idx, 2, data.edge_index, relabel_nodes=True)
 
@@ -34,8 +37,9 @@ data.edge_index = edge_index
 data.edge_type = data.edge_type[edge_mask]
 data.train_idx = mapping[:data.train_idx.size(0)]
 data.test_idx = mapping[data.train_idx.size(0):]
-
-
+print(f"updated data {data}")
+print(f"updated index {data.train_y}")
+print(f"type {data.edge_type}")
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -75,7 +79,7 @@ def test():
     return train_acc, test_acc
 
 
-for epoch in range(1, 51):
+for epoch in range(1, 2):
     loss = train()
     train_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f} '
