@@ -15,7 +15,7 @@ class TAGConv(MessagePassing):
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=0}^K \left( \mathbf{D}^{-1/2} \mathbf{A}
-        \mathbf{D}^{-1/2} \right)^k \mathbf{X} \mathbf{\Theta}_{k},
+        \mathbf{D}^{-1/2} \right)^k \mathbf{X} \mathbf{W}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
     :math:`D_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
