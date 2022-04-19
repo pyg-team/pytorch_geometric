@@ -1,14 +1,14 @@
 import os.path as osp
+
+import ignite
 import ignite.contrib.handlers.tensorboard_logger
 import ignite.contrib.handlers.tqdm_logger
-import ignite
 import torch
 
 import torch_geometric as pyg
 
 
 class Model(torch.nn.Module):
-
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):
@@ -35,8 +35,7 @@ def main():
     root = osp.join('data', 'TUDataset')
     log_dir = 'runs/example/'
     dataset = pyg.datasets.TUDataset(
-        root, 'IMDB-BINARY', pre_transform=pyg.transforms.OneHotDegree(135)
-    )
+        root, 'IMDB-BINARY', pre_transform=pyg.transforms.OneHotDegree(135))
 
     amp_mode = 'amp'
     batch_size = 16
@@ -78,10 +77,8 @@ def main():
         # dato che ignite non dà argomenti multipli a model, dovremo
         # avere modelli che estraggono dentro forward() i dati di input
         # da `data`
-        return (
-            batch.to(device, non_blocking=non_blocking),
-            batch.y.to(device, non_blocking=non_blocking)
-        )
+        return (batch.to(device, non_blocking=non_blocking),
+                batch.y.to(device, non_blocking=non_blocking))
 
     trainer = ignite.engine.create_supervised_trainer(
         model=model,
@@ -105,9 +102,8 @@ def main():
     def log_training_metrics(trainer):
         trn_evaluator.run(loader_trn)
         metrics = trn_evaluator.state.metrics
-        print(
-            f"{'Training Results - Epoch: ':30}{trainer.state.epoch} ", end=''
-        )
+        print(f"{'Training Results - Epoch: ':30}{trainer.state.epoch} ",
+              end='')
         for key, value in metrics.items():
             print(f"{key}: {value:.2f} ", end='')
         print()
@@ -125,10 +121,8 @@ def main():
     def log_validation_metrics(trainer):
         val_evaluator.run(loader_val)
         metrics = val_evaluator.state.metrics
-        print(
-            f"{'Validation Results - Epoch: ':30}{trainer.state.epoch} ",
-            end=''
-        )
+        print(f"{'Validation Results - Epoch: ':30}{trainer.state.epoch} ",
+              end='')
         for key, value in metrics.items():
             print(f"{key}: {value:.2f} ", end='')
         print()
@@ -154,51 +148,36 @@ def main():
     # create an handler to save checkpoints of the
     # model based on Accuracy on the training set
     checkpoint_handler = ignite.handlers.Checkpoint(
-        {'model': model},
-        log_dir,
-        n_saved=2,
+        {'model': model}, log_dir, n_saved=2,
         score_name=list(metrics.keys())[0],
-        filename_pattern="best_trn_epoch-{global_step}"+
-            "-{score_name}-{score}.pt",
-        global_step_transform=ignite.handlers.global_step_from_engine(trainer)
-    )
-    trn_evaluator.add_event_handler(
-        ignite.engine.Events.EPOCH_COMPLETED, checkpoint_handler
-    )
+        filename_pattern="best_trn_epoch-{global_step}" +
+        "-{score_name}-{score}.pt",
+        global_step_transform=ignite.handlers.global_step_from_engine(trainer))
+    trn_evaluator.add_event_handler(ignite.engine.Events.EPOCH_COMPLETED,
+                                    checkpoint_handler)
 
     # create an handler to save checkpoints of the
     # model based on Accuracy on the validation set
     checkpoint_handler = ignite.handlers.Checkpoint(
-        {'model': model},
-        log_dir,
-        n_saved=2,
+        {'model': model}, log_dir, n_saved=2,
         score_name=list(metrics.keys())[0],
-        filename_pattern="best_val_epoch-{global_step}"+
-            "-{score_name}-{score}.pt",
-        global_step_transform=ignite.handlers.global_step_from_engine(trainer)
-    )
-    val_evaluator.add_event_handler(
-        ignite.engine.Events.EPOCH_COMPLETED, checkpoint_handler
-    )
+        filename_pattern="best_val_epoch-{global_step}" +
+        "-{score_name}-{score}.pt",
+        global_step_transform=ignite.handlers.global_step_from_engine(trainer))
+    val_evaluator.add_event_handler(ignite.engine.Events.EPOCH_COMPLETED,
+                                    checkpoint_handler)
 
     # create a tensorboard logger to write logs
     tb_logger = ignite.contrib.handlers.tensorboard_logger.TensorboardLogger(
-        log_dir=osp.join(log_dir, "tb_logs")
-    )
+        log_dir=osp.join(log_dir, "tb_logs"))
     # Attach the logger to the trainer to log training loss at each iteration
     tb_logger.attach_output_handler(
-        trainer,
-        event_name=ignite.engine.Events.ITERATION_COMPLETED,
-        tag="training",
-        output_transform=lambda loss: {"loss_iteration": loss}
-    )
+        trainer, event_name=ignite.engine.Events.ITERATION_COMPLETED,
+        tag="training", output_transform=lambda loss: {"loss_iteration": loss})
     # Attach the logger to the trainer to log training loss at each epoch
     tb_logger.attach_output_handler(
-        trainer,
-        event_name=ignite.engine.Events.EPOCH_COMPLETED,
-        tag="training",
-        output_transform=lambda loss: {"loss_epoch": loss}
-    )
+        trainer, event_name=ignite.engine.Events.EPOCH_COMPLETED,
+        tag="training", output_transform=lambda loss: {"loss_epoch": loss})
     # Attach the logger to the train evaluator
     # to log training metrics at each epoch
     tb_logger.attach_output_handler(
