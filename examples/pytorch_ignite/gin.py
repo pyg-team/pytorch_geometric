@@ -1,35 +1,24 @@
-import torch
-import ignite
-import torch_geometric as pyg
 import os.path as osp
 import ignite.contrib.handlers.tensorboard_logger
 import ignite.contrib.handlers.tqdm_logger
+import ignite
+import torch
+
+import torch_geometric as pyg
 
 
 class Model(torch.nn.Module):
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        hidden_channels: int = 64,
-        num_layers: int = 3,
-        dropout: float = 0.5
-    ):
+    def __init__(self, in_channels: int, out_channels: int,
+                 hidden_channels: int = 64, num_layers: int = 3,
+                 dropout: float = 0.5):
         super().__init__()
-        self.gnn = pyg.nn.GIN(
-            in_channels,
-            hidden_channels,
-            num_layers,
-            dropout=dropout,
-            jk='cat'
-        )
+        self.gnn = pyg.nn.GIN(in_channels, hidden_channels, num_layers,
+                              dropout=dropout, jk='cat')
 
         self.classifier = pyg.nn.MLP(
-            [hidden_channels, hidden_channels, out_channels],
-            batch_norm=True,
-            dropout=dropout
-        )
+            [hidden_channels, hidden_channels, out_channels], batch_norm=True,
+            dropout=dropout)
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
@@ -108,13 +97,9 @@ def main():
     pbar.attach(trainer, output_transform=lambda x: {"loss": x})
 
     trn_evaluator = ignite.engine.create_supervised_evaluator(
-        model=model,
-        metrics=metrics,
-        device=device,
-        prepare_batch=prepare_batch_fn,
-        output_transform=lambda x, y, y_pred: (y_pred, y),
-        amp_mode=amp_mode
-    )
+        model=model, metrics=metrics, device=device,
+        prepare_batch=prepare_batch_fn, output_transform=lambda x, y, y_pred:
+        (y_pred, y), amp_mode=amp_mode)
 
     @trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))
     def log_training_metrics(trainer):
