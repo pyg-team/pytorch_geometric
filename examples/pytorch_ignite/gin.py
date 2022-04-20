@@ -82,7 +82,7 @@ def main():
     trainer = ignite.engine.create_supervised_trainer(
         model=model,
         optimizer=optimizer,
-        loss_fn=F.cross_entropy,
+        loss_fn=torch.nn.functional.cross_entropy,
         device=device,
         prepare_batch=prepare_batch_fn,
         output_transform=lambda x, y, y_pred, loss: loss.item(),
