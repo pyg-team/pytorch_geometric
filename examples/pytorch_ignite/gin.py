@@ -68,7 +68,6 @@ def main():
 
     model = Model(dataset.num_node_features, dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-    loss = torch.nn.functional.cross_entropy
     metrics = {'acc': ignite.metrics.Accuracy()}
 
     def prepare_batch_fn(batch, device, non_blocking):
