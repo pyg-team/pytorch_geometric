@@ -1,3 +1,4 @@
+import pytorch_lightning as pl
 import torch
 
 from torch_geometric.graphgym.config import cfg
@@ -5,6 +6,31 @@ from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.register import network_dict, register_network
 
 register_network('gnn', GNN)
+
+
+class GraphGymModule(pl.LightningModule):
+    def __init__(self, dim_in, dim_out, cfg):
+        super().__init__()
+        self.model = network_dict[cfg.model.type](dim_in=dim_in, dim_out=dim_out)
+
+    def forward(self, *args, **kwargs):
+        return self.model(*args, **kwargs)
+
+    @property
+    def encoder(self):
+        return self.model.encoder
+
+    @property
+    def mp(self):
+        return self.model.mp
+
+    @property
+    def post_mp(self):
+        return self.model.post_mp
+
+    @property
+    def pre_mp(self):
+        return self.model.pre_mp
 
 
 def create_model(to_device=True, dim_in=None, dim_out=None):
@@ -22,7 +48,7 @@ def create_model(to_device=True, dim_in=None, dim_out=None):
     if 'classification' in cfg.dataset.task_type and dim_out == 2:
         dim_out = 1
 
-    model = network_dict[cfg.model.type](dim_in=dim_in, dim_out=dim_out)
+    model = GraphGymModule(dim_in, dim_out, cfg)
     if to_device:
         model.to(torch.device(cfg.device))
     return model
