@@ -73,9 +73,7 @@ def main():
     def prepare_batch_fn(batch, device, non_blocking):
         # return a tuple of (x, y) that can be directly runned as
         # `loss_fn(model(x), y)`
-        # dato che ignite non dà argomenti multipli a model, dovremo
-        # avere modelli che estraggono dentro forward() i dati di input
-        # da `data`
+        # consequently model will have to accept the whole `Data` object
         return (batch.to(device, non_blocking=non_blocking),
                 batch.y.to(device, non_blocking=non_blocking))
 
