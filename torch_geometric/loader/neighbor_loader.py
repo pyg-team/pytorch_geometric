@@ -173,6 +173,21 @@ class NeighborLoader(torch.utils.data.DataLoader):
         `examples/hetero/to_hetero_mag.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`_.
 
+    The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
+    where global node indices are mapped to local indices corresponding to this
+    specific subgraph. However, often times it is desired to map the nodes of
+    the current subgraph back to the global node indices. A simple trick to
+    achieve this is to include this mapping as part of the :obj:`data` object:
+
+    .. code-block:: python
+
+        # Assign each node its global node index:
+        data.n_id = torch.arange(data.num_nodes)
+
+        loader = NeighborLoader(data, ...)
+        sampled_data = next(iter(loader))
+        print(sampled_data.n_id)
+
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
