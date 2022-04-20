@@ -16,7 +16,8 @@ def unique_edge_pairs(edge_index):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-def test_homogeneous_link_neighbor_loader(directed):
+@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
+def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     torch.manual_seed(12345)
 
     pos_edge_index = get_edge_index(100, 50, 500)
@@ -32,10 +33,16 @@ def test_homogeneous_link_neighbor_loader(directed):
     data.x = torch.arange(100)
     data.edge_attr = torch.arange(500)
 
-    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2, batch_size=20,
-                                edge_label_index=edge_label_index,
-                                edge_label=edge_label, directed=directed,
-                                shuffle=True)
+    loader = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        batch_size=20,
+        edge_label_index=edge_label_index,
+        edge_label=edge_label if neg_sampling_ratio == 0.0 else None,
+        directed=directed,
+        neg_sampling_ratio=neg_sampling_ratio,
+        shuffle=True,
+    )
 
     assert str(loader) == 'LinkNeighborLoader()'
     assert len(loader) == 1000 / 20
@@ -51,21 +58,30 @@ def test_homogeneous_link_neighbor_loader(directed):
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
-        # Assert positive samples are present in the original graph:
-        edge_index = unique_edge_pairs(batch.edge_index)
-        edge_label_index = batch.edge_label_index[:, batch.edge_label == 1]
-        edge_label_index = unique_edge_pairs(edge_label_index)
-        assert len(edge_index | edge_label_index) == len(edge_index)
+        if neg_sampling_ratio == 0.0:
+            assert batch.edge_label_index.size(1) == 20
 
-        # Assert negative samples are not present in the original graph:
-        edge_index = unique_edge_pairs(batch.edge_index)
-        edge_label_index = batch.edge_label_index[:, batch.edge_label == 0]
-        edge_label_index = unique_edge_pairs(edge_label_index)
-        assert len(edge_index & edge_label_index) == 0
+            # Assert positive samples are present in the original graph:
+            edge_index = unique_edge_pairs(batch.edge_index)
+            edge_label_index = batch.edge_label_index[:, batch.edge_label == 1]
+            edge_label_index = unique_edge_pairs(edge_label_index)
+            assert len(edge_index | edge_label_index) == len(edge_index)
+
+            # Assert negative samples are not present in the original graph:
+            edge_index = unique_edge_pairs(batch.edge_index)
+            edge_label_index = batch.edge_label_index[:, batch.edge_label == 0]
+            edge_label_index = unique_edge_pairs(edge_label_index)
+            assert len(edge_index & edge_label_index) == 0
+
+        else:
+            assert batch.edge_label_index.size(1) == 40
+            assert torch.all(batch.edge_label[:20] == 1)
+            assert torch.all(batch.edge_label[20:] == 0)
 
 
 @pytest.mark.parametrize('directed', [True, False])
-def test_heterogeneous_link_neighbor_loader(directed):
+@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
+def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     torch.manual_seed(12345)
 
     data = HeteroData()
@@ -80,22 +96,37 @@ def test_heterogeneous_link_neighbor_loader(directed):
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
-    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=('paper', 'author'),
-                                batch_size=20, directed=directed, shuffle=True)
+    loader = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        edge_label_index=('paper', 'author'),
+        batch_size=20,
+        directed=directed,
+        neg_sampling_ratio=neg_sampling_ratio,
+        shuffle=True,
+    )
 
     assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == int(1000 / 20)
+    assert len(loader) == 1000 / 20
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 4
 
-        # Assert positive samples are present in the original graph:
-        edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
-        edge_label_index = batch['paper', 'author'].edge_label_index
-        edge_label_index = unique_edge_pairs(edge_label_index)
-        assert len(edge_index | edge_label_index) == len(edge_index)
+        if neg_sampling_ratio == 0.0:
+            assert len(batch) == 4
+
+            # Assert positive samples are present in the original graph:
+            edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
+            edge_label_index = batch['paper', 'author'].edge_label_index
+            edge_label_index = unique_edge_pairs(edge_label_index)
+            assert len(edge_index | edge_label_index) == len(edge_index)
+
+        else:
+            assert len(batch) == 5
+
+            assert batch['paper', 'author'].edge_label_index.size(1) == 40
+            assert torch.all(batch['paper', 'author'].edge_label[:20] == 1)
+            assert torch.all(batch['paper', 'author'].edge_label[20:] == 0)
 
 
 @pytest.mark.parametrize('directed', [True, False])
