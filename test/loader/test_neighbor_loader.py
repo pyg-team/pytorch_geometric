@@ -5,6 +5,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader.neighbor_loader import get_input_nodes
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.utils import k_hop_subgraph
 
@@ -255,3 +256,39 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+def test_get_input_nodes():
+
+    data = Data()
+    data.x = torch.arange(100)
+    data.edge_index = get_edge_index(100, 100, 500)
+    data.edge_attr = torch.arange(500)
+
+    t, ind = get_input_nodes(data, None)
+    assert t is None
+    assert len(ind) == 100
+
+    input_nodes = torch.cat([torch.ones(50), torch.zeros(50)]).type(torch.bool)
+    t, ind = get_input_nodes(data, input_nodes)
+    assert t is None
+    assert len(ind) == 50
+
+    data = HeteroData()
+    data['paper'].x = torch.arange(100)
+
+    with pytest.raises(AssertionError):
+        get_input_nodes(data, None)
+
+    t, ind = get_input_nodes(data, "paper")
+    assert t == "paper"
+    assert len(ind) == 100
+
+    t, ind = get_input_nodes(data, ("paper", None))
+    assert t == "paper"
+    assert len(ind) == 100
+
+    input_nodes = torch.cat([torch.ones(50), torch.zeros(50)]).type(torch.bool)
+    t, ind = get_input_nodes(data, ("paper", input_nodes))
+    assert t == "paper"
+    assert len(ind) == 50

@@ -31,7 +31,8 @@ class LinkNeighborSampler(NeighborSampler):
             return edge_label_index, edge_label
 
         if edge_label is None:
-            edge_label = torch.ones(num_pos_edges, device=device)
+            edge_label = torch.ones(num_pos_edges,
+                                    device=device).type(torch.long)
         else:
             assert edge_label.dtype == torch.long
             edge_label = edge_label + 1
@@ -170,7 +171,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                  train_mask=[1368], val_mask=[1368], test_mask=[1368],
                  edge_label_index=[2, 128], edge_label=[128])
 
-    The rest of the functionality mirros that of
+    The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
     heterogenous graphs.
 
@@ -280,6 +281,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             data[edge_type].edge_label_index = edge_label_index
             if edge_label is not None:
                 data[edge_type].edge_label = edge_label
+
+        else:
+            raise NotImplementedError(
+                "transform_fn only implemented for Union[Data, HeteroData]")
 
         return data if self.transform is None else self.transform(data)
 
