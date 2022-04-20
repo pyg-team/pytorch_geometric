@@ -68,26 +68,24 @@ def test_to_networkx():
 
 
 @withPackage('networkx')
-def test_to_networkx_tensors():
+def test_from_networkx_set_node_attributes():
     import networkx as nx
 
     G = nx.path_graph(3)
     attrs = {
         0: {
-            "attr1": torch.tensor([1, 1], dtype=torch.int64)
+            'x': torch.tensor([1, 0, 0])
         },
         1: {
-            "attr1": torch.tensor([1, 1], dtype=torch.int64)
+            'x': torch.tensor([0, 1, 0])
         },
         2: {
-            "attr1": torch.tensor([0, 1], dtype=torch.int64)
-        }
+            'x': torch.tensor([0, 0, 1])
+        },
     }
     nx.set_node_attributes(G, attrs)
 
-    data = from_networkx(G, group_node_attrs=['attr1'])
-
-    assert torch.allclose(data.x, torch.tensor([[1, 1], [1, 1], [0, 1]]))
+    assert from_networkx(G).x.tolist() == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
 
 @withPackage('networkx')
