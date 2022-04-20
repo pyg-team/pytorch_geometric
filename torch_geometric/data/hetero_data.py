@@ -273,6 +273,28 @@ class HeteroData(BaseData):
         r"""Returns the number of nodes in the graph."""
         return super().num_nodes
 
+    @property
+    def num_node_features(self) -> Dict[NodeType, int]:
+        r"""Returns the number of features per node type in the graph."""
+        return {
+            key: store.num_node_features
+            for key, store in self._node_store_dict.items()
+        }
+
+    @property
+    def num_features(self) -> Dict[NodeType, int]:
+        r"""Returns the number of features per node type in the graph.
+        Alias for :py:attr:`~num_node_features`."""
+        return self.num_node_features
+
+    @property
+    def num_edge_features(self) -> Dict[EdgeType, int]:
+        r"""Returns the number of features per edge type in the graph."""
+        return {
+            key: store.num_edge_features
+            for key, store in self._edge_store_dict.items()
+        }
+
     def debug(self):
         pass  # TODO
 
