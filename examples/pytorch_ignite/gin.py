@@ -92,6 +92,7 @@ def main():
 
     def log_metrics(evaluator, loader, tag):
         assert isinstance(tag, str)
+
         def logger(trainer):
             evaluator.run(loader)
             metrics = trn_evaluator.state.metrics
@@ -100,15 +101,15 @@ def main():
             for key, value in metrics.items():
                 print(f"{key}: {value:.2f} ", end='')
             print()
+
         return logger
 
     trn_evaluator = ignite.engine.create_supervised_evaluator(
         model=model, metrics=metrics, device=device,
         prepare_batch=prepare_batch_fn, output_transform=lambda x, y, y_pred:
         (y_pred, y), amp_mode=amp_mode)
-    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(
-        log_metrics(trn_evaluator, loader_trn, 'Training')
-    )
+    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(log_metrics(
+        trn_evaluator, loader_trn, 'Training'))
 
     val_evaluator = ignite.engine.create_supervised_evaluator(
         model=model,
@@ -118,9 +119,8 @@ def main():
         output_transform=lambda x, y, y_pred: (y_pred, y),
         amp_mode=amp_mode,
     )
-    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(
-        log_metrics(val_evaluator, loader_val, 'Validation')
-    )
+    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(log_metrics(
+        val_evaluator, loader_val, 'Validation'))
 
     test_evaluator = ignite.engine.create_supervised_evaluator(
         model=model,
@@ -130,9 +130,8 @@ def main():
         output_transform=lambda x, y, y_pred: (y_pred, y),
         amp_mode=amp_mode,
     )
-    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(
-        log_metrics(test_evaluator, loader_test, 'Test')
-    )
+    trainer.on(ignite.engine.Events.EPOCH_COMPLETED(every=1))(log_metrics(
+        test_evaluator, loader_test, 'Test'))
 
     # create an handler to save checkpoints of the
     # model based on Accuracy on the training set
