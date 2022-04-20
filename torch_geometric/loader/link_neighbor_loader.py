@@ -11,42 +11,48 @@ from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
 class LinkNeighborSampler(NeighborSampler):
-    def __init__(self, data: Union[Data, HeteroData],
-                 num_neighbors: NumNeighbors, replace: bool = False,
-                 directed: bool = True, input_type: Optional[Any] = None,
-                 share_memory: bool = False, neg_sampling_ratio: int = 0):
-        super().__init__(data, num_neighbors, replace, directed, input_type,
-                         share_memory)
-
+    def __init__(self, data, *args, neg_sampling_ratio: float = 0.0, **kwargs):
+        super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
+
         if issubclass(self.data_cls, Data):
-            self.n_src = self.n_dst = len(data.x)
+            self.num_src_nodes = self.num_dst_nodes = len(data.x)
         else:
-            self.n_src = len(data[self.input_type[0]].x)
-            self.n_dst = len(data[self.input_type[-1]].x)
+            self.num_src_nodes = data[self.input_type[0]].num_nodes
+            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
-    @staticmethod
-    def _random_edges(n_src, n_dest, n_edges):
-        row = torch.randint(n_src, (n_edges, ), dtype=torch.long)
-        col = torch.randint(n_dest, (n_edges, ), dtype=torch.long)
-        return torch.stack([row, col], dim=0)
+    def _create_label(self, edge_label_index, edge_label):
+        device = edge_label_index.device
 
-    def _add_negative_edges(self, edge_label_index, edge_label):
-        neg_size = int(edge_label_index.size()[1] * self.neg_sampling_ratio)
-        if neg_size == 0:
+        num_pos_edges = edge_label_index.size(1)
+        num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
+
+        if num_neg_edges == 0:
             return edge_label_index, edge_label
-        n_query = edge_label_index.size()[1]
 
         if edge_label is None:
-            edge_label = torch.ones(n_query)
+            edge_label = torch.ones(num_pos_edges, device=device)
+        else:
+            assert edge_label.dtype == torch.long
+            edge_label = edge_label + 1
 
-        neg_edges = self._random_edges(self.n_src, self.n_dst, neg_size)
-        edge_label_index = torch.cat([edge_label_index, neg_edges], axis=1)
-        edge_label = torch.cat([edge_label, torch.zeros(neg_size)])
+        neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
+        neg_col = torch.randint(self.num_dst_nodes, (num_neg_edges, ))
+        neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
+
+        neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
+                                              edge_label.size()[1:])
+
+        edge_label_index = torch.cat([
+            edge_label_index,
+            neg_edge_label_index,
+        ], dim=1)
+
+        edge_label = torch.cat([edge_label, neg_edge_label], dim=0)
+
         return edge_label_index, edge_label
 
     def __call__(self, query: List[Tuple[Tensor]]):
-
         query = [torch.tensor(s) for s in zip(*query)]
         if len(query) == 2:
             edge_label_index = torch.stack(query, dim=0)
@@ -55,7 +61,7 @@ class LinkNeighborSampler(NeighborSampler):
             edge_label_index = torch.stack(query[:2], dim=0)
             edge_label = query[2]
 
-        edge_label_index, edge_label = self._add_negative_edges(
+        edge_label_index, edge_label = self._create_label(
             edge_label_index, edge_label)
 
         if issubclass(self.data_cls, Data):
@@ -170,8 +176,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
     .. note::
         :obj:`neg_sampling_ratio` is currently implemented in an approximate
-        way, the edges added are completely random, and do not filter out
-        false negatives.
+        way, *i.e.* negative edges may contain false negatives.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
@@ -200,16 +205,15 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
-            edges to the number of positive edges, new edges will be added
-            to the batch increasing the size. (default: :obj:`0`).
-            If set, and edge_labels are not provided, all provided edges will
-            be assumed to be positive and given a label of :obj:`1`. The
-            negative edges will have label :obj:`0`.
-            Note that these edges will be added to the batch, increasing the
-            batch size.
-            If the data is :class:`~torch_geometric.data.HeteroData` then
-            the edge type that is being sampled will be the edge type for
-            which negative edges are added.
+            edges to the number of positive edges.
+            If :obj:`edge_label` does not exist, it will be automatically
+            created and represents a binary classification task
+            (:obj:`1` = edge, :obj:`0` = no edge).
+            If :obj:`edge_label` exists, it has to be a categorical label from
+            :obj:`0` to :obj:`num_classes - 1`.
+            After negative sampling, label :obj:`0` represents negative edges,
+            and labels :obj:`1` to :obj:`num_classes` represent the labels of
+            positive edges. (default: :obj:`0.0`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -224,7 +228,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         directed: bool = True,
         transform: Callable = None,
         neighbor_sampler: Optional[LinkNeighborSampler] = None,
-        neg_sampling_ratio: float = 0,
+        neg_sampling_ratio: float = 0.0,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
