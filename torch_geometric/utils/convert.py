@@ -185,10 +185,13 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         data[str(key)] = value
 
     for key, value in data.items():
-        try:
-            data[key] = torch.tensor(value)
-        except ValueError:
-            pass
+        if isinstance(value, (tuple, list)) and isinstance(value[0], Tensor):
+            data[key] = torch.stack(value, dim=0)
+        else:
+            try:
+                data[key] = torch.tensor(value)
+            except ValueError:
+                pass
 
     data['edge_index'] = edge_index.view(2, -1)
     data = Data.from_dict(data)

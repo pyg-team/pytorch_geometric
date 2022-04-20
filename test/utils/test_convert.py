@@ -68,6 +68,27 @@ def test_to_networkx():
 
 
 @withPackage('networkx')
+def test_from_networkx_set_node_attributes():
+    import networkx as nx
+
+    G = nx.path_graph(3)
+    attrs = {
+        0: {
+            'x': torch.tensor([1, 0, 0])
+        },
+        1: {
+            'x': torch.tensor([0, 1, 0])
+        },
+        2: {
+            'x': torch.tensor([0, 0, 1])
+        },
+    }
+    nx.set_node_attributes(G, attrs)
+
+    assert from_networkx(G).x.tolist() == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+
+
+@withPackage('networkx')
 def test_to_networkx_undirected():
     import networkx as nx
 
