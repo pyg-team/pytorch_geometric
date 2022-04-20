@@ -36,7 +36,7 @@ class RemoveIsolatedNodes(BaseTransform):
 
             idx = n_id_dict[store._key]
             mapping = idx.new_zeros(data.num_nodes)
-            mapping[idx] = torch.arange(idx.numel())
+            mapping[idx] = torch.arange(idx.numel(), device=mapping.device)
             n_map_dict[store._key] = mapping
 
         for store in data.edge_stores:
