@@ -14,6 +14,8 @@ edge_index_paper_paper = torch.stack([idx_paper[:50], idx_paper[:50]], dim=0)
 edge_index_paper_author = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
 edge_index_author_paper = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
 
+edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
+
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
@@ -77,11 +79,19 @@ def test_hetero_data_functions():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
-    assert len(data) == 2
-    assert sorted(data.keys) == ['edge_index', 'x']
-    assert 'x' in data and 'edge_index' in data
+    data['paper', 'paper'].edge_attr = edge_attr_paper_paper
+    assert len(data) == 3
+    assert sorted(data.keys) == ['edge_attr', 'edge_index', 'x']
+    assert 'x' in data and 'edge_index' in data and 'edge_attr' in data
     assert data.num_nodes == 15
     assert data.num_edges == 110
+
+    assert data.num_node_features == {'paper': 16, 'author': 32}
+    assert data.num_edge_features == {
+        ('paper', 'to', 'paper'): 8,
+        ('paper', 'to', 'author'): 0,
+        ('author', 'to', 'paper'): 0,
+    }
 
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
@@ -99,8 +109,8 @@ def test_hetero_data_functions():
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
-    assert len(data) == 3
-    assert sorted(data.keys) == ['edge_index', 'x', 'y']
+    assert len(data) == 4
+    assert sorted(data.keys) == ['edge_attr', 'edge_index', 'x', 'y']
 
     del data['paper', 'author']
     node_types, edge_types = data.metadata()
