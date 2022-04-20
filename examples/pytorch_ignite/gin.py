@@ -62,7 +62,7 @@ def main():
         dataset=test_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=1,
+        num_workers=0,
         pin_memory=torch.cuda.is_available(),
     )
 
