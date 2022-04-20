@@ -48,7 +48,7 @@ def main():
         dataset=train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
         pin_memory=torch.cuda.is_available(),
     )
     loader_val = pyg.data.DataLoader(
