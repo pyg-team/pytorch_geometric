@@ -11,7 +11,8 @@ register_network('gnn', GNN)
 class GraphGymModule(pl.LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
-        self.model = network_dict[cfg.model.type](dim_in=dim_in, dim_out=dim_out)
+        self.model = network_dict[cfg.model.type](dim_in=dim_in,
+                                                  dim_out=dim_out)
 
     def forward(self, *args, **kwargs):
         return self.model(*args, **kwargs)
