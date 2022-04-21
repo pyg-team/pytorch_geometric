@@ -47,4 +47,5 @@ node_idx = 10
 node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index,
                                                    edge_weight=edge_weight)
 ax, G = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
+print("check", data.y)
 plt.show()

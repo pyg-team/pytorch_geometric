@@ -81,7 +81,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
         G = nx.DiGraph()
 
     G.add_nodes_from(range(data.num_nodes))
-
+    print(f"inside number of nodes = {len(G.nodes())} data {data.num_nodes}")
     node_attrs = node_attrs or []
     edge_attrs = edge_attrs or []
     graph_attrs = graph_attrs or []

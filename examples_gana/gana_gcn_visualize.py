@@ -1,17 +1,13 @@
 import os.path as osp
-import argparse
-import csv
 import torch
+import time
 import torch.nn.functional as F
-from torch_geometric.datasets import Planetoid
-import torch_geometric.transforms as T
-from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import PPI
-from sklearn.metrics import f1_score
-from torch_geometric.nn import GATConv
-
+from torch_geometric.loader import DataLoader
+from sklearn.metrics import f1_score, confusion_matrix
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
 
+import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-k', '--num_layers', default=2, help="number of layers")
 parser.add_argument('-epochs', '--epochs', default=2, help="number of epochs")
@@ -20,14 +16,13 @@ parser.add_argument('--use_gdc', action='store_true',
                     help='Use GDC preprocessing.')
 args = parser.parse_args()
 
-
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ppi')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI_GANA')
 train_dataset = PPI(path, split='train')
 val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=False)
-val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
 
 class Net(torch.nn.Module):
@@ -46,12 +41,14 @@ class Net(torch.nn.Module):
         print(
             f"number of layers k:{len(self.convs)} hidden layersize :{hidden_channels}")
 
-    def forward(self, x, edge_index, edge_weight):
+
+    def forward(self, x, edge_index):
         for conv in self.convs:
-            x1 = conv(x, edge_index, edge_weight)
+            x1 = conv(x, edge_index)
             x = F.relu(x1)
             x = F.dropout(x, training=self.training)
-        return x
+
+        return x1
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -62,13 +59,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
 def train():
     model.train()
-
     total_loss = 0
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        loss = loss_op(model(data.x, data.edge_index, data.edge_weight),
-                       data.y)
+        loss = loss_op(model(data.x, data.edge_index), data.y)
         total_loss += loss.item() * data.num_graphs
         loss.backward()
         optimizer.step()
@@ -82,14 +77,11 @@ def test(loader):
     ys, preds = [], []
     for data in loader:
         ys.append(data.y)
-        out = model(data.x.to(device), data.edge_index.to(device),
-                    data.edge_weight.to(device))
+        out = model(data.x.to(device), data.edge_index.to(device))
         preds.append((out > 0).float().cpu())
 
     y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
-
-
 
 for epoch in range(1, int(args.epochs)):
     loss = train()
@@ -97,7 +89,6 @@ for epoch in range(1, int(args.epochs)):
     test_f1 = test(test_loader)
     print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
         epoch, loss, val_f1, test_f1))
-
 
 @torch.no_grad()
 def debug(loader):
