@@ -20,9 +20,9 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI_GANA')
 train_dataset = PPI(path, split='train')
 val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
-val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
 
 class Net(torch.nn.Module):

@@ -19,9 +19,9 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 train_dataset = Entities(path, 'ppi', split='train')
 val_dataset = Entities(path, 'ppi', split='val')
 test_dataset = Entities(path, 'ppi', split='test')
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False)
-val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
 print(train_dataset[0])
 num_relations = train_dataset.num_relations

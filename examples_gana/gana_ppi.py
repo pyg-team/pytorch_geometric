@@ -22,8 +22,8 @@ test_dataset = PPI(path, split='test', multi=True)
 #     data = PPI(path, split=data_type)
 #     locals()[data_type+'_dataset'] = data
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 # print(val_dataset[0].edge_weight)
 # exit()
 
