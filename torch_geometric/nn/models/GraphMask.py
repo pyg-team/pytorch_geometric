@@ -179,10 +179,9 @@ class GraphMaskExplainer(Explainer):
 
         clipped_s = s.clamp(min_val, max_val)
 
-        if True:
-            clip_value = (torch.min(clipped_s) + torch.max(clipped_s)) / 2
-            hard_concrete = (clipped_s > clip_value).float()
-            clipped_s = clipped_s + (hard_concrete - clipped_s).detach()
+        clip_value = (torch.min(clipped_s) + torch.max(clipped_s)) / 2
+        hard_concrete = (clipped_s > clip_value).float()
+        clipped_s = clipped_s + (hard_concrete - clipped_s).detach()
 
         return clipped_s, penalty
 
@@ -523,7 +522,7 @@ class GraphMaskExplainer(Explainer):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) + 3](
                     relu_output).squeeze(dim=-1)
-                sampling_weights, penalty = self.__hard_concrete__(
+                sampling_weights, _ = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights
@@ -713,7 +712,7 @@ class GraphMaskExplainer(Explainer):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) + 3](
                     relu_output).squeeze(dim=-1)
-                sampling_weights, penalty = self.__hard_concrete__(
+                sampling_weights, _ = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights
