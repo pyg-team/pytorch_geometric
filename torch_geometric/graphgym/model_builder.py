@@ -1,4 +1,5 @@
-import pytorch_lightning as pl
+import logging
+
 import torch
 from torch import nn
 
@@ -6,10 +7,19 @@ from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.register import network_dict, register_network
 
+logger = logging.getLogger(__name__)
+
+try:
+    from pytorch_lightning import LightningModule
+except ImportError:
+    logger.warning(
+        "To use GraphGym please pip install pytorch_lightning first")
+    LightningModule = object
+
 register_network('gnn', GNN)
 
 
-class GraphGymModule(pl.LightningModule):
+class GraphGymModule(LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
         self.model = network_dict[cfg.model.type](dim_in=dim_in,
