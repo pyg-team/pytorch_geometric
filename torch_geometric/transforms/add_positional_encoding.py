@@ -1,10 +1,14 @@
 from typing import Optional, Union
 
-from torch import Tensor
+from scipy.sparse.linalg import eigs, eigsh
+import numpy as np
+
+import torch
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
 @functional_transform('add_positional_encoding')
@@ -33,24 +37,40 @@ class AddPositionalEncoding(BaseTransform):
                 data object.
             If set to :obj:`"cat"`, will be concatenated to the existing
                 :obj:`x` in the data object. (default: :obj:`attr`)
+        is_undirected (bool, optional): If set to :obj:`True`, this transform
+            expects undirected graphs as input, and can hence speed up the
+            computation of the eigenvectors. (default: :obj:`False`)
     """
-    def __init__(self, name: str, num_channels: int, method: Optional[str] = 'attr'):
+
+    def __init__(self, name: str, num_channels: int, method: Optional[str] = 'attr',
+                 is_undirected: Optional[bool] = False):
         self.name = name
         self.num_channels = num_channels
         self.method = method
+        self.is_undirected = is_undirected
         assert name in ['laplacian_eigenvector_pe', 'random_walk_pe']
         assert method in ['attr', 'cat']
 
     def __call__(self, data: Data):
-
+        pe = None
         if self.name == 'laplacian_eigenvector_pe':
-            pass
+            eig_fn = eigs if not self.is_undirected else eigsh
+            edge_index, edge_weight = get_laplacian(
+                data.edge_index, normalization='sym', dtype=torch.float,
+                num_nodes=data.num_nodes)
+            L = to_scipy_sparse_matrix(edge_index, edge_weight, data.num_nodes)
+            eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which='SR',
+                                        return_eigenvectors=True)
+            eig_vecs = eig_vecs[:, eig_vals.argsort()]
+            pe = torch.from_numpy(np.real(eig_vecs[:, 1:self.num_channels + 1]))
+
         elif self.name == 'random_walk_pe':
-            pass
+            raise NotImplementedError
 
-        if self.method == 'attr':
-            pass
-        elif self.method == 'cat':
-            pass
-
+        for store in data.node_stores:
+            if self.method == 'attr':
+                setattr(store, self.name, pe)
+            elif self.method == 'cat':
+                x = store.x.view(-1, 1) if store.x.dim() == 1 else store.x
+                store.x = torch.cat([x, pe.to(x.device, x.dtype)], dim=-1)
         return data
