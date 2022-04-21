@@ -3,13 +3,10 @@ from typing import Any, Tuple
 
 import torch
 
-from torch_geometric.graphgym import (
-    compute_loss,
-    create_optimizer,
-    create_scheduler,
-)
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.models.gnn import GNN
+from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.register import network_dict, register_network
 
 try:
