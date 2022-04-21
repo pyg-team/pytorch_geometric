@@ -28,6 +28,7 @@ full_install_requires = [
     'scikit-image',
     'pytorch-memlab',
     'torchmetrics>=0.7',
+    'pytorch-lightning>=1.6',
 ]
 
 test_requires = [
