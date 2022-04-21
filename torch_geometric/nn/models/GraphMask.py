@@ -147,7 +147,7 @@ class GraphMaskExplainer(Explainer):
         self.allow_multiple_explanations = allow_multiple_explanations
         self.coeffs.update(kwargs)
 
-    def __hard_concrete__(
+    def hard_concrete(
             self,
             input_element,
             summarize_penalty=True,
@@ -185,7 +185,7 @@ class GraphMaskExplainer(Explainer):
 
         return clipped_s, penalty
 
-    def __set_masks__(self, i_dim, j_dim, h_dim, x):
+    def set_masks(self, i_dim, j_dim, h_dim, x):
         if self.layer_type == 'GCN' or self.layer_type == 'GAT':
             i_dim = j_dim
         (num_nodes, num_feat) = x.size()
@@ -263,7 +263,7 @@ class GraphMaskExplainer(Explainer):
         for layer_norm in self.layer_norms:
             layer_norm.reset_parameters()
 
-    def __loss__(self, node_idx, log_logits, pred_label, penalty):
+    def _loss(self, node_idx, log_logits, pred_label, penalty):
         if self.return_type == 'regression':
             if -1 not in node_idx:
                 loss = torch.cdist(log_logits[node_idx], pred_label[node_idx])
@@ -311,7 +311,7 @@ class GraphMaskExplainer(Explainer):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def __train_node_explainer__(self, node_idx, x, edge_index, **kwargs):
+    def train_node_explainer(self, node_idx, x, edge_index, **kwargs):
         r"""Learns a node feature mask and an edge mask and returns only the
         learned node feature mask that plays a crucial role to explain the
         prediction made by the GNN for node(s) :attr:`node_idx`.
@@ -354,7 +354,7 @@ class GraphMaskExplainer(Explainer):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self.__set_masks__(input_dims, output_dims, output_dims, x)
+        self.set_masks(input_dims, output_dims, output_dims, x)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
@@ -399,7 +399,7 @@ class GraphMaskExplainer(Explainer):
                         gate_input))
                     sampling_weights = self.gates[(i * 4) + 3](
                         relu_output).squeeze(dim=-1)
-                    sampling_weights, penalty = self.__hard_concrete__(
+                    sampling_weights, penalty = self.hard_concrete(
                         sampling_weights)
                     gates.append(sampling_weights)
                     total_penalty += penalty
@@ -421,11 +421,11 @@ class GraphMaskExplainer(Explainer):
                 self.__inject_messages__(gates, self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
+                    loss = self._loss(
                         mapping, out, prediction, total_penalty)
                 else:
                     log_logits = self._to_log_prob(out)
-                    loss = self.__loss__(
+                    loss = self._loss(
                         mapping, log_logits, prediction, total_penalty)
                 loss.backward()
                 optimizer.step()
@@ -457,7 +457,7 @@ class GraphMaskExplainer(Explainer):
         node_feat_mask = node_feat_mask.squeeze()
         return node_feat_mask
 
-    def __explain_node__(self, node_idx, x, edge_index):
+    def explain_node(self, node_idx, x, edge_index):
         r"""Returns only the learned edge mask that plays a crucial role to explain the
         prediction made by the GNN for node(s) :attr:`node_idx`.
 
@@ -522,7 +522,7 @@ class GraphMaskExplainer(Explainer):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) + 3](
                     relu_output).squeeze(dim=-1)
-                sampling_weights, _ = self.__hard_concrete__(
+                sampling_weights, _ = self.hard_concrete(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights
@@ -548,7 +548,7 @@ class GraphMaskExplainer(Explainer):
 
         return edge_mask
 
-    def __train_graph_explainer__(self, graph_idx, x, edge_index, **kwargs):
+    def train_graph_explainer(self, graph_idx, x, edge_index, **kwargs):
         r"""Learns a node feature mask and an edge mask and returns only the
         learned node feature mask that plays a crucial role to explain the
         prediction made by the GNN for graph :attr:`graph_idx`.
@@ -577,7 +577,7 @@ class GraphMaskExplainer(Explainer):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self.__set_masks__(input_dims, output_dims, output_dims, x)
+        self.set_masks(input_dims, output_dims, output_dims, x)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
@@ -617,7 +617,7 @@ class GraphMaskExplainer(Explainer):
                         output / len(gate_input))
                     sampling_weights = self.gates[(i * 4) + 3](
                         relu_output).squeeze(dim=-1)
-                    sampling_weights, penalty = self.__hard_concrete__(
+                    sampling_weights, penalty = self.hard_concrete(
                         sampling_weights)
                     gates.append(sampling_weights)
                     total_penalty += penalty
@@ -640,11 +640,11 @@ class GraphMaskExplainer(Explainer):
                 self.__inject_messages__(gates, self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
+                    loss = self._loss(
                         [-1], out, prediction, total_penalty)
                 else:
                     log_logits = self._to_log_prob(out)
-                    loss = self.__loss__(
+                    loss = self._loss(
                         [-1], log_logits, prediction, total_penalty)
                 loss.backward()
                 optimizer.step()
@@ -668,7 +668,7 @@ class GraphMaskExplainer(Explainer):
 
         return node_feat_mask
 
-    def __explain_graph__(self, graph_idx):
+    def explain_graph(self, graph_idx):
         r"""Returns only the learned edge mask that plays a crucial role to explain the
         prediction made by the GNN for graph :attr:`graph_idx`.
 
@@ -712,7 +712,7 @@ class GraphMaskExplainer(Explainer):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) + 3](
                     relu_output).squeeze(dim=-1)
-                sampling_weights, _ = self.__hard_concrete__(
+                sampling_weights, _ = self.hard_concrete(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights
