@@ -61,6 +61,7 @@ setup(
     python_requires='>=3.7',
     install_requires=install_requires,
     extras_require={
+        'graphgym': graphgym_requires,
         'full': full_install_requires,
         'test': test_requires,
         'dev': dev_requires,
