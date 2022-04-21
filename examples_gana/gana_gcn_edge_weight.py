@@ -135,7 +135,7 @@ def debug(loader):
         y_val = [row.index(1) for row in data.y.tolist()]
         y_pred = [row.index(True) for row in (out > 0).tolist()]
         df = pd.DataFrame({'actual': y_val, 'predicted': y_pred})
-        df['true'] = (df['actual'] == df['predicted'])
+        df['true'] = (df['actual'] != df['predicted'])
         cm = confusion_matrix(y_val, y_pred)
         FP = cm.sum(axis=0) - np.diag(cm)
         FN = cm.sum(axis=1) - np.diag(cm)
