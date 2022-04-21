@@ -11,6 +11,7 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
+    'pytorch-lightning>=1.6',
 ]
 
 full_install_requires = [
@@ -28,7 +29,6 @@ full_install_requires = [
     'scikit-image',
     'pytorch-memlab',
     'torchmetrics>=0.7',
-    'pytorch-lightning>=1.6',
 ]
 
 test_requires = [
