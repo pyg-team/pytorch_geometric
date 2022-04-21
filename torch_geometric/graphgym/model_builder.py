@@ -1,5 +1,6 @@
 import pytorch_lightning as pl
 import torch
+from torch import nn
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
@@ -18,19 +19,19 @@ class GraphGymModule(pl.LightningModule):
         return self.model(*args, **kwargs)
 
     @property
-    def encoder(self):
+    def encoder(self) -> nn.Module:
         return self.model.encoder
 
     @property
-    def mp(self):
+    def mp(self) -> nn.Module:
         return self.model.mp
 
     @property
-    def post_mp(self):
+    def post_mp(self) -> nn.Module:
         return self.model.post_mp
 
     @property
-    def pre_mp(self):
+    def pre_mp(self) -> nn.Module:
         return self.model.pre_mp
 
 
