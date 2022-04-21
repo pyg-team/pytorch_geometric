@@ -16,7 +16,7 @@ class LinkNeighborSampler(NeighborSampler):
         self.neg_sampling_ratio = neg_sampling_ratio
 
         if issubclass(self.data_cls, Data):
-            self.num_src_nodes = self.num_dst_nodes = len(data.x)
+            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
         else:
             self.num_src_nodes = data[self.input_type[0]].num_nodes
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
