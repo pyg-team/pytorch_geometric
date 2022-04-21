@@ -216,7 +216,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             positive edges. (default: :obj:`0.0`).
             Note that returned labels are :obj:`torch.float` when it is binary
             classification (to facilitate easy use with :obj:`BCE_loss`)
-            and :obj:`torch.long` when is a multiclass classification problem.
+            and :obj:`torch.long` when it is a multi-class classification problem.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
