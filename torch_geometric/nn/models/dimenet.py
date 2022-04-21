@@ -64,7 +64,7 @@ class BesselBasisLayer(torch.nn.Module):
         self.freq.requires_grad_()
 
     def forward(self, dist):
-        dist = dist.unsqueeze(-1) / self.cutoff
+        dist = (dist.unsqueeze(-1) / self.cutoff).clamp(max=1.0)
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
