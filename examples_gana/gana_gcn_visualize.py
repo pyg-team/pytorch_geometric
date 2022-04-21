@@ -108,7 +108,6 @@ def debug(loader):
         '../data/PPI_GANA/raw/valid_name_map.json'), f'no map file found '
     with open('../data/PPI_GANA/raw/valid_name_map.json', "r") as f:
         map_data = json.loads(json.load(f))
-    # map_data = pd.read_json(r'../data/PPI_GANA/raw/valid_name_map.json')
     x_names = [map_data["name"][str(i)] for i in range(len(map_data['name']))]
     count = 0
 
@@ -135,7 +134,7 @@ def debug(loader):
         TN = cm.sum() - (FP + FN + TP)
         TPR = TP / (TP + FN)
         FPR = FP / (FP + TN)
-        f1 = f1_score(data.y.cpu().numpy(), (out > 0).numpy(), average='micro')
+        f1 = f1_score(data.y.cpu().numpy(), (out > 0).cpu().numpy(), average='micro')
         G = to_networkx(data, node_attrs=['y'], to_undirected=True)
         mapping = {k: i for k, i in enumerate(eles)}
         incorrect_nodes = [v for k, v in mapping.items() if df['true'][k]]

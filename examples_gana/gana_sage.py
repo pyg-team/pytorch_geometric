@@ -163,7 +163,7 @@ def debug(loader):
         TN = cm.sum() - (FP + FN + TP)
         TPR = TP / (TP + FN)
         FPR = FP / (FP + TN)
-        f1 = f1_score(data.y.cpu().numpy(), (out > 0).numpy(), average='micro')
+        f1 = f1_score(data.y.cpu().numpy(), (out > 0).cpu().numpy(), average='micro')
         G = to_networkx(data, node_attrs=['y'], to_undirected=True)
         mapping = {k: i for k, i in enumerate(eles)}
         incorrect_nodes = [v for k, v in mapping.items() if df['true'][k]]
