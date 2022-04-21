@@ -1,20 +1,19 @@
+import math
+from inspect import signature
+from math import sqrt
 from typing import Optional
 
-import math
-from math import sqrt
-from inspect import signature
 import numpy as np
-
 import torch
-from torch import Tensor
-from torch.nn import Linear, LayerNorm, ReLU, Parameter, init, Sequential
 import torch.nn.functional as F
-from torch import sigmoid
-from tqdm import tqdm
-from torch_geometric.data import Data
 from originalMessagePassing import MessagePassing
-from torch_geometric.utils import k_hop_subgraph, to_networkx
+from torch import Tensor, sigmoid
+from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential, init
+from tqdm import tqdm
+
+from torch_geometric.data import Data
 from torch_geometric.nn.models.explainer import Explainer
+from torch_geometric.utils import k_hop_subgraph, to_networkx
 
 EPS = 1e-15
 
@@ -23,20 +22,17 @@ def explain_message(self, out, x_i, x_j):
     basis_messages = Sequential(LayerNorm(out.size(-1)), ReLU())(out)
 
     if getattr(self, 'message_scale', None) is not None:
-        basis_messages = basis_messages * self.message_scale.unsqueeze(
-            -1)
+        basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
 
         if self.message_replacement is not None:
             if basis_messages.shape == self.message_replacement.shape:
                 basis_messages = (basis_messages +
-                                  (1 - self.message_scale).unsqueeze(
-                                      -1) * self.message_replacement)
+                                  (1 - self.message_scale).unsqueeze(-1) *
+                                  self.message_replacement)
             else:
                 basis_messages = (basis_messages +
-                                  ((1 - self.message_scale).unsqueeze(
-                                      -1) *
-                                   self.message_replacement.unsqueeze(
-                                       0)))
+                                  ((1 - self.message_scale).unsqueeze(-1) *
+                                   self.message_replacement.unsqueeze(0)))
 
     self.latest_messages = basis_messages
     self.latest_source_embeddings = x_j
@@ -112,23 +108,14 @@ class GraphMaskExplainer(Explainer):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(
-            self,
-            num_layers,
-            model_to_explain=None,
-            epochs: int = 100,
-            lr: float = 0.01,
-            num_hops: Optional[int] = 3,
-            return_type: str = 'log_prob',
-            penalty_scaling: int = 5,
-            lambda_optimizer_lr: int = 1e-2,
-            init_lambda: int = 0.55,
-            allowance: int = 0.03,
-            feat_mask_type: str = 'scalar',
-            layer_type: str = 'GCN',
-            allow_multiple_explanations: bool = False,
-            log: bool = True,
-            **kwargs):
+    def __init__(self, num_layers, model_to_explain=None, epochs: int = 100,
+                 lr: float = 0.01, num_hops: Optional[int] = 3,
+                 return_type: str = 'log_prob', penalty_scaling: int = 5,
+                 lambda_optimizer_lr: int = 1e-2, init_lambda: int = 0.55,
+                 allowance: int = 0.03, feat_mask_type: str = 'scalar',
+                 layer_type: str = 'GCN',
+                 allow_multiple_explanations: bool = False, log: bool = True,
+                 **kwargs):
         super().__init__(model_to_explain, lr, epochs, num_hops, return_type,
                          log)
         assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
@@ -147,27 +134,19 @@ class GraphMaskExplainer(Explainer):
         self.allow_multiple_explanations = allow_multiple_explanations
         self.coeffs.update(kwargs)
 
-    def __hard_concrete__(
-            self,
-            input_element,
-            summarize_penalty=True,
-            beta=1 / 3,
-            gamma=-0.2,
-            zeta=1.2,
-            loc_bias=2,
-            min_val=0,
-            max_val=1,
-            training=True):
+    def __hard_concrete__(self, input_element, summarize_penalty=True,
+                          beta=1 / 3, gamma=-0.2, zeta=1.2, loc_bias=2,
+                          min_val=0, max_val=1, training=True):
         input_element = input_element + loc_bias
 
         if training:
             u = torch.empty_like(input_element).uniform_(1e-6, 1.0 - 1e-6)
 
-            s = sigmoid((torch.log(u) - torch.log(1 - u) + input_element) /
-                        beta)
+            s = sigmoid(
+                (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
-            penalty = sigmoid(input_element - beta *
-                              np.math.log(-gamma / zeta))
+            penalty = sigmoid(input_element -
+                              beta * np.math.log(-gamma / zeta))
         else:
             s = sigmoid(input_element)
             penalty = torch.zeros_like(input_element)
@@ -221,10 +200,9 @@ class GraphMaskExplainer(Explainer):
             self.output_layer = Linear(h_dim, 1)
 
             gate = [
-                self.transforms,
-                self.layer_norms,
-                self.non_linear,
-                self.output_layer]
+                self.transforms, self.layer_norms, self.non_linear,
+                self.output_layer
+            ]
             self.gates.extend(gate)
 
             baseline = torch.FloatTensor(m_dim)
@@ -372,8 +350,8 @@ class GraphMaskExplainer(Explainer):
             self.enable_layer(layer)
             for epoch in range(self.epochs):
                 self.model.eval()
-                prediction = self.get_initial_prediction(x, edge_index,
-                                                         **kwargs)
+                prediction = self.get_initial_prediction(
+                    x, edge_index, **kwargs)
                 self.model.train()
                 gates, total_penalty = [], 0
                 latest_source_embeddings, latest_messages = [], []
@@ -386,19 +364,20 @@ class GraphMaskExplainer(Explainer):
                         latest_target_embeddings.append(
                             module.latest_target_embeddings)
                 gate_input = [
-                    latest_source_embeddings,
-                    latest_messages,
-                    latest_target_embeddings]
+                    latest_source_embeddings, latest_messages,
+                    latest_target_embeddings
+                ]
                 for i in range(self.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
                         partial = self.gates[i * 4][j](gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
-                    relu_output = self.gates[(i * 4) + 2](output / len(
-                        gate_input))
-                    sampling_weights = self.gates[(i * 4) + 3](
-                        relu_output).squeeze(dim=-1)
+                    relu_output = self.gates[(i * 4) + 2](output /
+                                                          len(gate_input))
+                    sampling_weights = self.gates[(i * 4) +
+                                                  3](relu_output).squeeze(
+                                                      dim=-1)
                     sampling_weights, penalty = self.__hard_concrete__(
                         sampling_weights)
                     gates.append(sampling_weights)
@@ -406,8 +385,8 @@ class GraphMaskExplainer(Explainer):
 
                 self.__inject_messages__(gates, self.baselines)
 
-                self.lambda_op = torch.tensor(
-                    self.init_lambda, requires_grad=True)
+                self.lambda_op = torch.tensor(self.init_lambda,
+                                              requires_grad=True)
                 optimizer_lambda = torch.optim.RMSprop(
                     [self.lambda_op], lr=self.lambda_optimizer_lr,
                     centered=True)
@@ -421,12 +400,12 @@ class GraphMaskExplainer(Explainer):
                 self.__inject_messages__(gates, self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
-                        mapping, out, prediction, total_penalty)
+                    loss = self.__loss__(mapping, out, prediction,
+                                         total_penalty)
                 else:
                     log_logits = self._to_log_prob(out)
-                    loss = self.__loss__(
-                        mapping, log_logits, prediction, total_penalty)
+                    loss = self.__loss__(mapping, log_logits, prediction,
+                                         total_penalty)
                 loss.backward()
                 optimizer.step()
                 self.lambda_op.grad *= -1
@@ -503,9 +482,9 @@ class GraphMaskExplainer(Explainer):
                     latest_target_embeddings.append(
                         module.latest_target_embeddings)
             gate_input = [
-                latest_source_embeddings,
-                latest_messages,
-                latest_target_embeddings]
+                latest_source_embeddings, latest_messages,
+                latest_target_embeddings
+            ]
             if self.log:  # pragma: no cover
                 pbar = tqdm(total=self.num_layers)
             for i in range(self.num_layers):
@@ -520,8 +499,8 @@ class GraphMaskExplainer(Explainer):
                     result = self.gates[(i * 4) + 1][j](partial)
                     output = output + result
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
-                sampling_weights = self.gates[(i * 4) + 3](
-                    relu_output).squeeze(dim=-1)
+                sampling_weights = self.gates[(i * 4) +
+                                              3](relu_output).squeeze(dim=-1)
                 sampling_weights, _ = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
@@ -529,13 +508,11 @@ class GraphMaskExplainer(Explainer):
                 else:
                     if (edge_weight.size(-1) != sampling_weights.size(-1)
                             and self.layer_type == 'GAT'):
-                        sampling_weights = F.pad(input=sampling_weights,
-                                                 pad=(0, edge_weight.size(
-                                                     -1) -
-                                                      sampling_weights.size(
-                                                          -1),
-                                                      0, 0),
-                                                 mode='constant', value=0)
+                        sampling_weights = F.pad(
+                            input=sampling_weights,
+                            pad=(0, edge_weight.size(-1) -
+                                 sampling_weights.size(-1), 0, 0),
+                            mode='constant', value=0)
                     edge_weight = torch.cat((edge_weight, sampling_weights), 0)
                 if self.log:  # pragma: no cover
                     pbar.update(1)
@@ -590,8 +567,8 @@ class GraphMaskExplainer(Explainer):
             self.enable_layer(layer)
             for epoch in range(self.epochs):
                 self.model.eval()
-                prediction = self.get_initial_prediction(x, edge_index,
-                                                         batch=batch, **kwargs)
+                prediction = self.get_initial_prediction(
+                    x, edge_index, batch=batch, **kwargs)
                 self.model.train()
                 gates, total_penalty = [], 0
                 latest_source_embeddings, latest_messages = [], []
@@ -604,19 +581,20 @@ class GraphMaskExplainer(Explainer):
                         latest_target_embeddings.append(
                             module.latest_target_embeddings)
                 gate_input = [
-                    latest_source_embeddings,
-                    latest_messages,
-                    latest_target_embeddings]
+                    latest_source_embeddings, latest_messages,
+                    latest_target_embeddings
+                ]
                 for i in range(self.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
                         partial = self.gates[i * 4][j](gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
-                    relu_output = self.gates[(i * 4) + 2](
-                        output / len(gate_input))
-                    sampling_weights = self.gates[(i * 4) + 3](
-                        relu_output).squeeze(dim=-1)
+                    relu_output = self.gates[(i * 4) + 2](output /
+                                                          len(gate_input))
+                    sampling_weights = self.gates[(i * 4) +
+                                                  3](relu_output).squeeze(
+                                                      dim=-1)
                     sampling_weights, penalty = self.__hard_concrete__(
                         sampling_weights)
                     gates.append(sampling_weights)
@@ -624,8 +602,8 @@ class GraphMaskExplainer(Explainer):
 
                 self.__inject_messages__(gates, self.baselines)
 
-                self.lambda_op = torch.tensor(
-                    self.init_lambda, requires_grad=True)
+                self.lambda_op = torch.tensor(self.init_lambda,
+                                              requires_grad=True)
                 optimizer_lambda = torch.optim.RMSprop(
                     [self.lambda_op], lr=self.lambda_optimizer_lr,
                     centered=True)
@@ -634,18 +612,17 @@ class GraphMaskExplainer(Explainer):
                 optimizer_lambda.zero_grad()
 
                 h = x * self.node_feat_mask.sigmoid()
-                out = self.model(x=h, edge_index=edge_index,
-                                 batch=batch, **kwargs)
+                out = self.model(x=h, edge_index=edge_index, batch=batch,
+                                 **kwargs)
 
                 self.__inject_messages__(gates, self.baselines, True)
 
                 if self.return_type == 'regression':
-                    loss = self.__loss__(
-                        [-1], out, prediction, total_penalty)
+                    loss = self.__loss__([-1], out, prediction, total_penalty)
                 else:
                     log_logits = self._to_log_prob(out)
-                    loss = self.__loss__(
-                        [-1], log_logits, prediction, total_penalty)
+                    loss = self.__loss__([-1], log_logits, prediction,
+                                         total_penalty)
                 loss.backward()
                 optimizer.step()
                 self.lambda_op.grad *= -1
@@ -697,9 +674,9 @@ class GraphMaskExplainer(Explainer):
                     latest_target_embeddings.append(
                         module.latest_target_embeddings)
             gate_input = [
-                latest_source_embeddings,
-                latest_messages,
-                latest_target_embeddings]
+                latest_source_embeddings, latest_messages,
+                latest_target_embeddings
+            ]
             if self.log:  # pragma: no cover
                 pbar = tqdm(total=self.num_layers)
                 pbar.set_description(f'Explain graph {graph_idx}')
@@ -710,8 +687,8 @@ class GraphMaskExplainer(Explainer):
                     result = self.gates[(i * 4) + 1][j](partial)
                     output = output + result
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
-                sampling_weights = self.gates[(i * 4) + 3](
-                    relu_output).squeeze(dim=-1)
+                sampling_weights = self.gates[(i * 4) +
+                                              3](relu_output).squeeze(dim=-1)
                 sampling_weights, _ = self.__hard_concrete__(
                     sampling_weights, training=False)
                 if i == 0:
@@ -719,13 +696,11 @@ class GraphMaskExplainer(Explainer):
                 else:
                     if (edge_weight.size(-1) != sampling_weights.size(-1)
                             and self.layer_type == 'GAT'):
-                        sampling_weights = F.pad(input=sampling_weights,
-                                                 pad=(0, edge_weight.size(
-                                                     -1) -
-                                                      sampling_weights.size(
-                                                          -1),
-                                                      0, 0),
-                                                 mode='constant', value=0)
+                        sampling_weights = F.pad(
+                            input=sampling_weights,
+                            pad=(0, edge_weight.size(-1) -
+                                 sampling_weights.size(-1), 0, 0),
+                            mode='constant', value=0)
                     edge_weight = torch.cat((edge_weight, sampling_weights), 0)
                 if self.log:  # pragma: no cover
                     pbar.update(1)
@@ -768,8 +743,8 @@ class GraphMaskExplainer(Explainer):
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
 
-        import networkx as nx
         import matplotlib.pyplot as plt
+        import networkx as nx
 
         if (node_alpha is not None
                 and (self.feat_mask_type == 'feature'
@@ -787,8 +762,8 @@ class GraphMaskExplainer(Explainer):
             y = None
         else:
             subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
-                        node_idx, self.num_hops, edge_index,
-                        relabel_nodes=True, num_nodes=None, flow=self._flow())
+                node_idx, self.num_hops, edge_index, relabel_nodes=True,
+                num_nodes=None, flow=self._flow())
 
         threshold = (torch.min(edge_mask) + torch.max(edge_mask)) / 2
         edge_mask = (edge_mask >= threshold).to(torch.float)
