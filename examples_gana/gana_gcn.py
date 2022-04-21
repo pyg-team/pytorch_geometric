@@ -84,8 +84,6 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
-
-
 for epoch in range(1, int(args.epochs)):
     loss = train()
     val_f1 = test(val_loader)
@@ -163,6 +161,7 @@ def debug(loader):
             G, pos, nodelist=incorrect_nodes, node_color="tab:red")
         nx.draw_networkx_labels(G, pos, **label_kwargs)
         df['name'] = eles
+
         plt.title(
             f"f1 score: {format(f1,'.2')} TPR: {TPR} FPR: {FPR} time: {format(1000*(end - start), '.4')}")
         plt.savefig(
@@ -170,7 +169,7 @@ def debug(loader):
         df.to_csv(
             f"{result_dir}/{str(count)}.csv")
         count += 1
-        if count == 5:
+        if count % 29==0:
             break
 
 

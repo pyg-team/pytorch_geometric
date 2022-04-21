@@ -169,7 +169,7 @@ def debug(loader):
         df.to_csv(
             f"{result_dir}/{str(count)}.csv")
         count += 1
-        if count == 5:
+        if count %20 == 5:
             break
 
 

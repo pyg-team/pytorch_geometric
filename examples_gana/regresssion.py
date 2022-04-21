@@ -61,7 +61,7 @@ def plot_results(xlimit, ylimit, title, dict_key, fpath):
 
 if __name__ == '__main__':
 
-	file_name = 'gana_gcn'
+	file_name = 'gana_gat'
 	# file_name = 'gana_gat' #high error
 	# file_name = 'gana_sage' #epochs 101
 	# file_name = 'gana_rgcn' #epochs 41
