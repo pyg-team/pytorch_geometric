@@ -64,6 +64,9 @@ class AddPositionalEncoding(BaseTransform):
             eig_vecs = eig_vecs[:, eig_vals.argsort()]
             pe = torch.from_numpy(np.real(eig_vecs[:, 1:self.num_channels + 1]))
 
+            sign = 2 * torch.randint(0, 2, (self.num_channels, ), dtype=torch.float) - 1
+            pe *= sign
+
         elif self.name == 'random_walk_pe':
             raise NotImplementedError
 
