@@ -27,8 +27,8 @@ full_install_requires = [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'pytorch-lightning',
     'torchmetrics>=0.7',
-    'pytorch-lightning>=1.6',
 ]
 
 test_requires = [
