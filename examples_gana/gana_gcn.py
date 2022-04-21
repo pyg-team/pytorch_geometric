@@ -111,9 +111,8 @@ def debug(loader):
     assert os.path.exists(
         '../data/PPI_GANA/raw/valid_name_map.json'), f'no map file found '
     with open('../data/PPI_GANA/raw/valid_name_map.json', "r") as f:
-        map_data = json.load(f)
-    print(map_data)
-    x_names = [map_data[str(i)] for i in range(len(map_data))]
+        map_data = json.loads(json.load(f))
+    x_names = [map_data["name"][str(i)] for i in range(len(map_data['name']))]
     count = 0
 
     result_dir = f"results/{os.path.basename(__file__).split('.')[0]}/{args.num_layers}_{args.hidden_channels}"
