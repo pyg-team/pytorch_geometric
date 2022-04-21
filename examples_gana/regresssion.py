@@ -61,11 +61,11 @@ def plot_results(xlimit, ylimit, title, dict_key, fpath):
 
 if __name__ == '__main__':
 
-	# file_name = 'gana_gcn'
+	file_name = 'gana_gcn'
 	# file_name = 'gana_gat' #high error
 	# file_name = 'gana_sage' #epochs 101
 	# file_name = 'gana_rgcn' #epochs 41
-	file_name = 'gana_rgcn' #epochs 41
+	# file_name = 'gana_rgat' #epochs 41
 	epochs = 101
 	run_regression(file_name, 2,epochs)
 	run_regression(file_name, 4,epochs)
