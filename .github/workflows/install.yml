@@ -42,6 +42,7 @@ jobs:
           python -c "import torch_geometric"
           python -c "import torch_geometric.datasets"
           python -c "import torch_geometric.nn"
+          python -c "import torch_geometric.graphgym"
 
       - name: Run tests
         run: |

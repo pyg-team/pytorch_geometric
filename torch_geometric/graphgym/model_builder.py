@@ -1,20 +1,17 @@
-import logging
+import warnings
 
 import torch
-from torch import nn
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.register import network_dict, register_network
 
-logger = logging.getLogger(__name__)
-
 try:
     from pytorch_lightning import LightningModule
 except ImportError:
-    logger.warning(
-        "To use GraphGym please pip install pytorch_lightning first")
     LightningModule = object
+    warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
+                  "experiment manager via 'pip install pytorch_lightning'")
 
 register_network('gnn', GNN)
 
@@ -29,19 +26,19 @@ class GraphGymModule(LightningModule):
         return self.model(*args, **kwargs)
 
     @property
-    def encoder(self) -> nn.Module:
+    def encoder(self) -> torch.nn.Module:
         return self.model.encoder
 
     @property
-    def mp(self) -> nn.Module:
+    def mp(self) -> torch.nn.Module:
         return self.model.mp
 
     @property
-    def post_mp(self) -> nn.Module:
+    def post_mp(self) -> torch.nn.Module:
         return self.model.post_mp
 
     @property
-    def pre_mp(self) -> nn.Module:
+    def pre_mp(self) -> torch.nn.Module:
         return self.model.pre_mp
 
 

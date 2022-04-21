@@ -13,9 +13,14 @@ install_requires = [
     'scikit-learn',
 ]
 
-full_install_requires = [
-    'h5py',
+graphgym_requires = [
     'yacs',
+    'hydra-core',
+    'pytorch-lightning',
+]
+
+full_install_requires = graphgym_requires + [
+    'h5py',
     'numba',
     'pandas',
     'captum',
@@ -23,11 +28,9 @@ full_install_requires = [
     'trimesh',
     'networkx',
     'tabulate',
-    'hydra-core',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
-    'pytorch-lightning',
     'torchmetrics>=0.7',
 ]
 
