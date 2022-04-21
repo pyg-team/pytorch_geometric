@@ -112,6 +112,7 @@ def debug(loader):
         '../data/PPI_GANA/raw/valid_name_map.json'), f'no map file found '
     with open('../data/PPI_GANA/raw/valid_name_map.json', "r") as f:
         map_data = json.load(f)
+    print(map_data)
     x_names = [map_data[str(i)] for i in range(len(map_data))]
     count = 0
 
