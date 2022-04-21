@@ -1,7 +1,13 @@
 import warnings
+from typing import Any, Tuple
 
 import torch
 
+from torch_geometric.graphgym import (
+    compute_loss,
+    create_optimizer,
+    create_scheduler,
+)
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.register import network_dict, register_network
@@ -24,6 +30,37 @@ class GraphGymModule(LightningModule):
 
     def forward(self, *args, **kwargs):
         return self.model(*args, **kwargs)
+
+    def configure_optimizers(self) -> Tuple[Any, Any]:
+        optimizer = create_optimizer(self.model.parameters(), self.cfg.optim)
+        scheduler = create_scheduler(optimizer, self.cfg.optim)
+        return optimizer, scheduler
+
+    def _shared_step(self, batch, split: str):
+        batch.split = split
+        pred, true = self.forward(batch)
+        loss, pred_score = compute_loss(pred, true)
+        log_dict = dict(
+            true=true,
+            pred=pred_score,
+            loss=loss,
+        )
+        return loss, log_dict
+
+    def training_step(self, batch):
+        loss, log_dict = self._shared_step(batch, "train")
+        self.log_dict(log_dict)
+        return loss
+
+    def validation_step(self, batch):
+        loss, log_dict = self._shared_step(batch, "val")
+        self.log_dict(log_dict)
+        return loss
+
+    def test_step(self, batch):
+        loss, log_dict = self._shared_step(batch, "test")
+        self.log_dict(log_dict)
+        return loss
 
     @property
     def encoder(self) -> torch.nn.Module:
