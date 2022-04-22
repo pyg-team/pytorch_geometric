@@ -157,8 +157,7 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
         assert len(edge_index | edge_label_index) == len(edge_index)
 
 
-def test_link_neighbour_loader_labels():
-
+def test_link_neighbor_loader_edge_label():
     torch.manual_seed(12345)
 
     edge_index = get_edge_index(100, 100, 500)
@@ -168,21 +167,23 @@ def test_link_neighbour_loader_labels():
         data,
         num_neighbors=[-1] * 2,
         batch_size=10,
-        neg_sampling_ratio=1,
+        neg_sampling_ratio=1.0,
     )
 
     for batch in loader:
-        assert all(batch.edge_label[:10] == 1)
-        assert all(batch.edge_label[10:] == 0)
+        assert batch.edge_label.dtype == torch.float
+        assert torch.all(batch.edge_label[:10] == 1.0)
+        assert torch.all(batch.edge_label[10:] == 0.0)
 
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1] * 2,
         batch_size=10,
-        edge_label=torch.ones(500).type(torch.long),
-        neg_sampling_ratio=1,
+        edge_label=torch.ones(500, dtype=torch.long),
+        neg_sampling_ratio=1.0,
     )
 
     for batch in loader:
-        assert all(batch.edge_label[:10] == 2)
-        assert all(batch.edge_label[10:] == 0)
+        assert batch.edge_label.dtype == torch.long
+        assert torch.all(batch.edge_label[:10] == 2)
+        assert torch.all(batch.edge_label[10:] == 0)
