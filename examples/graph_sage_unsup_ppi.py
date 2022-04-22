@@ -89,7 +89,7 @@ def test():
 
     # Evaluate on test set:
     x, y = encode(test_loader)
-    val_f1 = f1_score(y, clf.predict(x), average='micro')
+    test_f1 = f1_score(y, clf.predict(x), average='micro')
 
     return train_f1, val_f1, test_f1
 
