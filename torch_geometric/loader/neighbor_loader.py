@@ -25,21 +25,24 @@ class NeighborSampler:
         directed: bool = True,
         input_type: Optional[Any] = None,
         share_memory: bool = False,
-        node_time: Optional[Dict[NodeType, Tensor]] = None,
+        time_attr: str = None,
     ):
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
-        self.node_time = node_time
+        self.node_time = None
 
         if isinstance(data, Data):
             # Convert the graph data into a suitable format for sampling.
             out = to_csc(data, device='cpu', share_memory=share_memory)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
+            # TODO: time_attr for homogeneous graphs
 
         elif isinstance(data, HeteroData):
+            if time_attr is not None:
+                self.node_time = data[time_attr]
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
@@ -230,9 +233,12 @@ class NeighborLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        node_time (Dict[NodeType, Tensor], optional): an optional argument
-            to specify the timestamps for nodes in graph. The dict maps
-            node type to a tensor (int or float type) of dimension [num_nodes]
+        time_attr (str, optional): An optional argument
+            to specify the node attribute that denotes the timestamps for
+            nodes in graph. 
+            If set, data[time_attr] has to be a dictionary of type
+            Dict[NodeType, Tensor], which maps
+            node type to a tensor (int type) of dimension [num_nodes]
             which indicates the time. Temporal sampling will be used to
             sample neighbors:
             nodes are sampled with the constraint that its time is less
@@ -250,7 +256,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         directed: bool = True,
         transform: Callable = None,
         neighbor_sampler: Optional[NeighborSampler] = None,
-        node_time: Optional[Dict[NodeType, Tensor]] = None,
+        time_attr: str = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -274,7 +280,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
                 data, num_neighbors, replace, directed, node_type,
-                node_time=node_time,
+                time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0)
 
         super().__init__(input_nodes, collate_fn=self.neighbor_sampler,

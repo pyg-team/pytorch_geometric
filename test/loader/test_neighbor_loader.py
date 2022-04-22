@@ -85,13 +85,15 @@ def test_heterogeneous_neighbor_loader(directed, temporal):
         node_time = {}
         node_time['paper'] = torch.tensor(np.arange(100))
         node_time['author'] = torch.tensor(np.arange(300))
+        data['node_time'] = node_time
+        time_attr = 'node_time'
     else:
-        node_time = None
+        time_attr = None
 
     batch_size = 20
     loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
                             batch_size=batch_size, directed=directed,
-                            node_time=node_time)
+                            time_attr=time_attr)
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == (100 + batch_size - 1) // batch_size
 

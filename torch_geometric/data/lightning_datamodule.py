@@ -201,7 +201,7 @@ class LightningNodeData(LightningDataModule):
             indices of test nodes. If not given, will try to automatically
             infer them from the :obj:`data` object. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"neighbor"`, :obj:`"temporal"`). (default: :obj:`"neighbor"`)
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -222,7 +222,7 @@ class LightningNodeData(LightningDataModule):
         **kwargs,
     ):
 
-        assert loader in ['full', 'neighbor', 'temporal']
+        assert loader in ['full', 'neighbor']
 
         if input_train_nodes is None:
             input_train_nodes = infer_input_nodes(data, split='train')
@@ -271,16 +271,8 @@ class LightningNodeData(LightningDataModule):
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                input_type=get_input_nodes(data, input_train_nodes)[0],
-            )
-        elif loader == 'temporal':
-            self.neighbor_sampler = NeighborSampler(
-                data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                node_time=kwargs.get('node_time'),
+                directed=kwargs.get('directed', True), 
+                time_attr=kwargs.get('time_attr', None),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
             )
         self.input_train_nodes = input_train_nodes
@@ -312,10 +304,6 @@ class LightningNodeData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader == 'neighbor':
-            return NeighborLoader(data=self.data, input_nodes=input_nodes,
-                                  neighbor_sampler=self.neighbor_sampler,
-                                  shuffle=shuffle, **self.kwargs)
-        elif self.loader == 'temporal':
             return NeighborLoader(data=self.data, input_nodes=input_nodes,
                                   neighbor_sampler=self.neighbor_sampler,
                                   shuffle=shuffle, **self.kwargs)
