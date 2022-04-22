@@ -170,7 +170,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                  train_mask=[1368], val_mask=[1368], test_mask=[1368],
                  edge_label_index=[2, 128], edge_label=[128])
 
-    The rest of the functionality mirros that of
+    The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
     heterogenous graphs.
 
@@ -213,7 +213,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :obj:`0` to :obj:`num_classes - 1`.
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
-            positive edges. (default: :obj:`0.0`)
+            positive edges.
+            Note that returned labels are of type :obj:`torch.float` for binary
+            classification (to facilitate the ease-of-use of
+            :meth:`F.binary_cross_entropy`) and of type
+            :obj:`torch.long` for multi-class classification (to facilitate the
+            ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
