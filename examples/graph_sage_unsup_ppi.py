@@ -56,7 +56,7 @@ def train():
         optimizer.step()
 
         total_loss += float(loss) * link_pred.numel()
-        total_examples = link_pred.numel()
+        total_examples += link_pred.numel()
 
     return total_loss / total_examples
 
@@ -76,7 +76,7 @@ def encode(loader):
 @torch.no_grad()
 def test():
     # Train classifier on training set:
-    x, y = (train_loader)
+    x, y = encode(train_loader)
 
     clf = MultiOutputClassifier(SGDClassifier(loss='log', penalty='l2'))
     clf.fit(x, y)
@@ -84,11 +84,11 @@ def test():
     train_f1 = f1_score(y, clf.predict(x), average='micro')
 
     # Evaluate on validation set:
-    x, y = (val_loader)
+    x, y = encode(val_loader)
     val_f1 = f1_score(y, clf.predict(x), average='micro')
 
     # Evaluate on test set:
-    x, y = (test_loader)
+    x, y = encode(test_loader)
     val_f1 = f1_score(y, clf.predict(x), average='micro')
 
     return train_f1, val_f1, test_f1
