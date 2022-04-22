@@ -94,10 +94,9 @@ def test():
     return train_f1, val_f1, test_f1
 
 
-for epoch in range(1, 51):
+for epoch in range(1, 6):
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    if epoch % 5 == 0:
-        train_f1, val_f1, test_f1 = test()
-        print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
-              f'Test F1: {test_f1:.4f}')
+    train_f1, val_f1, test_f1 = test()
+    print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
+          f'Test F1: {test_f1:.4f}')
