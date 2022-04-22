@@ -235,7 +235,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             (default: :obj:`None`)
         time_attr (str, optional): An optional argument
             to specify the node attribute that denotes the timestamps for
-            nodes in graph. 
+            nodes in graph.
             If set, data[time_attr] has to be a dictionary of type
             Dict[NodeType, Tensor], which maps
             node type to a tensor (int type) of dimension [num_nodes]
