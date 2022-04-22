@@ -82,7 +82,10 @@ def test_heterogeneous_neighbor_loader(directed, temporal):
 
     # timestamps of nodes
     if temporal:
-        node_time = {}
+        node_time = {
+            'paper': torch.arange(100),
+            'author': torch.arange(300),
+        }
         node_time['paper'] = torch.tensor(np.arange(100))
         node_time['author'] = torch.tensor(np.arange(300))
         data['node_time'] = node_time
