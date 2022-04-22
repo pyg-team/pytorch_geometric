@@ -1,6 +1,7 @@
 import logging
 import math
 import sys
+from typing import Any, Dict, Optional
 
 import torch
 
@@ -9,6 +10,15 @@ from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
+
+try:
+    import pytorch_lightning as pl
+    from pytorch_lightning import Callback
+
+except ImportError:
+    pl = object
+    Callback = object
+    logging.warning("pytorch_lightning is not installed")
 
 
 def set_printing():
@@ -247,3 +257,70 @@ def create_logger():
     for i, dataset in enumerate(range(cfg.share.num_splits)):
         loggers.append(Logger(name=names[i], task_type=infer_task()))
     return loggers
+
+
+class LoggerCallback(Callback):
+    def __init__(self):
+        self._logger = create_logger()
+
+    def on_train_batch_end(
+        self,
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
+        outputs: Dict[str, Any],
+        batch: Any,
+        batch_idx: int,
+        unused: int = 0,
+    ) -> None:
+        self.train_logger.update_stats(**outputs)
+
+    def on_validation_batch_end(
+        self,
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
+        outputs: Optional[Dict[str, Any]],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
+    ) -> None:
+        self.val_logger.update_stats(**outputs)
+
+    def on_test_batch_end(
+        self,
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
+        outputs: Optional[Dict[str, Any]],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
+    ) -> None:
+        self.test_logger.update_stats(**outputs)
+
+    def on_train_epoch_end(self, trainer: "pl.Trainer",
+                           pl_module: "pl.LightningModule") -> None:
+        self.train_logger.write_epoch(trainer.current_epoch)
+
+    def on_validation_epoch_end(self, trainer: "pl.Trainer",
+                                pl_module: "pl.LightningModule") -> None:
+        self.val_logger.write_epoch(trainer.current_epoch)
+
+    def on_test_epoch_end(self, trainer: "pl.Trainer",
+                          pl_module: "pl.LightningModule") -> None:
+        self.val_logger.write_epoch(trainer.current_epoch)
+
+    def on_epoch_end(self, trainer: "pl.Trainer",
+                     pl_module: "pl.LightningModule") -> None:
+        for logger in self._logger:
+            logger.close()
+
+    @property
+    def train_logger(self):
+        return self._logger[0]
+
+    @property
+    def val_logger(self):
+        return self._logger[1]
+
+    @property
+    def test_logger(self):
+        return self._logger[2]
