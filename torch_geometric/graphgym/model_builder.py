@@ -1,5 +1,6 @@
+import time
 import warnings
-from typing import Any, Tuple
+from typing import Any, Dict, Tuple
 
 import torch
 
@@ -33,31 +34,22 @@ class GraphGymModule(LightningModule):
         scheduler = create_scheduler(optimizer, self.cfg.optim)
         return optimizer, scheduler
 
-    def _shared_step(self, batch, split: str):
+    def _shared_step(self, batch, split: str) -> Dict:
         batch.split = split
         pred, true = self.forward(batch)
         loss, pred_score = compute_loss(pred, true)
-        log_dict = dict(
-            true=true,
-            pred=pred_score,
-            loss=loss,
-        )
-        return loss, log_dict
+        step_end_time = time.time()
+        return dict(loss=loss, true=true, pred=pred, pred_score=pred_score,
+                    step_end_time=step_end_time)
 
     def training_step(self, batch):
-        loss, log_dict = self._shared_step(batch, "train")
-        self.log_dict(log_dict)
-        return loss
+        return self._shared_step(batch, "train")
 
     def validation_step(self, batch):
-        loss, log_dict = self._shared_step(batch, "val")
-        self.log_dict(log_dict)
-        return loss
+        return self._shared_step(batch, "val")
 
     def test_step(self, batch):
-        loss, log_dict = self._shared_step(batch, "test")
-        self.log_dict(log_dict)
-        return loss
+        return self._shared_step(batch, "test")
 
     @property
     def encoder(self) -> torch.nn.Module:

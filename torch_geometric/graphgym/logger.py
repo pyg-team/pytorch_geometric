@@ -1,6 +1,7 @@
 import logging
 import math
 import sys
+import time
 from typing import Any, Dict, Optional
 
 import torch
@@ -262,6 +263,34 @@ def create_logger():
 class LoggerCallback(Callback):
     def __init__(self):
         self._logger = create_logger()
+        self._train_epoch_start_time = None
+        self._val_epoch_start_time = None
+        self._test_epoch_start_time = None
+
+    def _create_stats(self, time_start, outputs: Dict[str, Any],
+                      trainer: "pl.Trainer") -> Dict:
+        true: torch.Tensor = outputs["true"]
+        pred_score: torch.Tensor = outputs["pred_score"]
+        loss: torch.Tensor = outputs["loss"]
+        lr = trainer.lr_schedulers[0]["scheduler"].get_last_lr()[0]
+        stats = dict(true=true.detach().cpu(),
+                     pred_score=pred_score.detach().cpu(), loss=loss.item(),
+                     lr=lr, time_used=time.time() - time_start,
+                     params=cfg.params)
+
+        return stats
+
+    def on_train_epoch_start(self, trainer: "pl.Trainer",
+                             pl_module: "pl.LightningModule") -> None:
+        self._train_epoch_start_time = time.time()
+
+    def on_validation_epoch_start(self, trainer: "pl.Trainer",
+                                  pl_module: "pl.LightningModule") -> None:
+        self._val_epoch_start_time = time.time()
+
+    def on_test_epoch_start(self, trainer: "pl.Trainer",
+                            pl_module: "pl.LightningModule") -> None:
+        self._test_epoch_start_time = time.time()
 
     def on_train_batch_end(
         self,
@@ -272,7 +301,9 @@ class LoggerCallback(Callback):
         batch_idx: int,
         unused: int = 0,
     ) -> None:
-        self.train_logger.update_stats(**outputs)
+        stats = self._create_stats(self._train_epoch_start_time, outputs,
+                                   trainer)
+        self.train_logger.update_stats(**stats)
 
     def on_validation_batch_end(
         self,
@@ -283,7 +314,9 @@ class LoggerCallback(Callback):
         batch_idx: int,
         dataloader_idx: int,
     ) -> None:
-        self.val_logger.update_stats(**outputs)
+        stats = self._create_stats(self._val_epoch_start_time, outputs,
+                                   trainer)
+        self.val_logger.update_stats(**stats)
 
     def on_test_batch_end(
         self,
@@ -294,7 +327,9 @@ class LoggerCallback(Callback):
         batch_idx: int,
         dataloader_idx: int,
     ) -> None:
-        self.test_logger.update_stats(**outputs)
+        stats = self._create_stats(self._test_epoch_start_time, outputs,
+                                   trainer)
+        self.test_logger.update_stats(**stats)
 
     def on_train_epoch_end(self, trainer: "pl.Trainer",
                            pl_module: "pl.LightningModule") -> None:
