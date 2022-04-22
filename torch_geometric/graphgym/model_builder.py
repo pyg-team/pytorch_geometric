@@ -9,7 +9,7 @@ from torch_geometric.graphgym.register import network_dict, register_network
 try:
     from pytorch_lightning import LightningModule
 except ImportError:
-    LightningModule = object
+    LightningModule = torch.nn.Module
     warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
                   "experiment manager via 'pip install pytorch_lightning'")
 
