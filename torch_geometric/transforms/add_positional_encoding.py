@@ -1,21 +1,20 @@
 from typing import Optional
 
-from scipy.sparse.linalg import eigs, eigsh
 import numpy as np
-
 import torch
+from scipy.sparse.linalg import eigs, eigsh
 from torch_scatter import scatter_add
 from torch_sparse import spspmm
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils import (
     get_laplacian,
-    to_scipy_sparse_matrix,
     remove_self_loops,
+    to_scipy_sparse_matrix,
 )
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 @functional_transform('add_positional_encoding')
@@ -47,7 +46,6 @@ class AddPositionalEncoding(BaseTransform):
             expects undirected graphs as input, and can hence speed up the
             computation of the eigenvectors. (default: :obj:`False`)
     """
-
     def __init__(self, name: str, num_channels: int,
                  method: Optional[str] = 'attr',
                  is_undirected: Optional[bool] = False):
@@ -63,16 +61,17 @@ class AddPositionalEncoding(BaseTransform):
         N = data.num_nodes
         if self.name == 'laplacian_eigenvector_pe':
             eig_fn = eigs if not self.is_undirected else eigsh
-            edge_index, edge_weight = get_laplacian(
-                data.edge_index, normalization='sym', dtype=torch.float,
-                num_nodes=N)
+            edge_index, edge_weight = get_laplacian(data.edge_index,
+                                                    normalization='sym',
+                                                    dtype=torch.float,
+                                                    num_nodes=N)
             L = to_scipy_sparse_matrix(edge_index, edge_weight, N)
             eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which='SR',
                                         return_eigenvectors=True)
             eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
             pe = torch.from_numpy(eig_vecs[:, 1:self.num_channels + 1])
 
-            sign = -1. + 2 * torch.randint(0, 2, (self.num_channels,),
+            sign = -1. + 2 * torch.randint(0, 2, (self.num_channels, ),
                                            dtype=torch.float)
             pe *= sign
 
@@ -84,7 +83,7 @@ class AddPositionalEncoding(BaseTransform):
                 loop_edge_attr = edge_weight[loop_mask]
 
                 N = maybe_num_nodes(edge_index, num_nodes)
-                diag_attr = torch.zeros((N,), dtype=edge_weight.dtype)
+                diag_attr = torch.zeros((N, ), dtype=edge_weight.dtype)
                 diag_attr[loop_index] = loop_edge_attr
                 return diag_attr
 
@@ -102,9 +101,9 @@ class AddPositionalEncoding(BaseTransform):
             rw_index, rw_weight = edge_index, edge_weight
             pe_list = [diagonal_weight(rw_index, rw_weight)]
             for _ in range(self.num_channels - 1):
-                rw_index, rw_weight = spspmm(
-                    rw_index, rw_weight, edge_index, edge_weight,
-                    N, N, N, coalesced=True)
+                rw_index, rw_weight = spspmm(rw_index, rw_weight, edge_index,
+                                             edge_weight, N, N, N,
+                                             coalesced=True)
                 pe_list.append(diagonal_weight(rw_index, rw_weight))
             pe = torch.stack(pe_list, dim=-1)
 
