@@ -341,7 +341,7 @@ class LoggerCallback(Callback):
 
     def on_test_epoch_end(self, trainer: "pl.Trainer",
                           pl_module: "pl.LightningModule") -> None:
-        self.val_logger.write_epoch(trainer.current_epoch)
+        self.test_logger.write_epoch(trainer.current_epoch)
 
     def on_epoch_end(self, trainer: "pl.Trainer",
                      pl_module: "pl.LightningModule") -> None:
