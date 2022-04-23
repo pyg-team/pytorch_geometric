@@ -4,11 +4,25 @@ from scipy.sparse.linalg import eigs, eigsh
 import numpy as np
 
 import torch
+from torch_scatter import scatter_add
+from torch_sparse import spspmm
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
+from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix, remove_self_loops
+from torch_geometric.utils.num_nodes import maybe_num_nodes
+
+
+def diagonal_weight(edge_index, edge_weight, num_nodes=None):
+    loop_mask = edge_index[0] == edge_index[1]
+    loop_index = edge_index[:, loop_mask][0]
+    loop_edge_attr = edge_weight[loop_mask]
+
+    N = maybe_num_nodes(edge_index, num_nodes)
+    diag_attr = torch.zeros((N,), dtype=edge_weight.dtype)
+    diag_attr[loop_index] = loop_edge_attr
+    return diag_attr
 
 
 @functional_transform('add_positional_encoding')
@@ -53,12 +67,13 @@ class AddPositionalEncoding(BaseTransform):
 
     def __call__(self, data: Data):
         pe = None
+        N = data.num_nodes
         if self.name == 'laplacian_eigenvector_pe':
             eig_fn = eigs if not self.is_undirected else eigsh
             edge_index, edge_weight = get_laplacian(
                 data.edge_index, normalization='sym', dtype=torch.float,
-                num_nodes=data.num_nodes)
-            L = to_scipy_sparse_matrix(edge_index, edge_weight, data.num_nodes)
+                num_nodes=N)
+            L = to_scipy_sparse_matrix(edge_index, edge_weight, N)
             eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which='SR',
                                         return_eigenvectors=True)
             eig_vecs = eig_vecs[:, eig_vals.argsort()]
@@ -68,7 +83,23 @@ class AddPositionalEncoding(BaseTransform):
             pe *= sign
 
         elif self.name == 'random_walk_pe':
-            raise NotImplementedError
+            # Compute D^{-1} A.
+            edge_index, edge_weight = remove_self_loops(data.edge_index, data.edge_weight)
+            if edge_weight is None:
+                edge_weight = torch.ones(edge_index.size(1), dtype=torch.float,
+                                         device=edge_index.device)
+            row, col = edge_index[0], edge_index[1]
+            deg_inv = 1.0 / scatter_add(edge_weight, row, dim=0, dim_size=N)
+            deg_inv.masked_fill_(deg_inv == float('inf'), 0)
+            edge_weight = deg_inv[row] * edge_weight
+
+            rw_index, rw_weight = edge_index, edge_weight
+            pe_list = [diagonal_weight(rw_index, rw_weight)]
+            for _ in range(self.num_channels - 1):
+                rw_index, rw_weight = spspmm(rw_index, rw_weight, edge_index, edge_weight,
+                                             N, N, N, coalesced=True)
+                pe_list.append(diagonal_weight(rw_index, rw_weight))
+            pe = torch.stack(pe_list, dim=-1)
 
         for store in data.node_stores:
             if self.method == 'attr':
