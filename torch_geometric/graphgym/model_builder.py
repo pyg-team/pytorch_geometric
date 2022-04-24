@@ -23,6 +23,7 @@ register_network('gnn', GNN)
 class GraphGymModule(LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
+        self.cfg = cfg
         self.model = network_dict[cfg.model.type](dim_in=dim_in,
                                                   dim_out=dim_out)
 
@@ -32,7 +33,7 @@ class GraphGymModule(LightningModule):
     def configure_optimizers(self) -> Tuple[Any, Any]:
         optimizer = create_optimizer(self.model.parameters(), self.cfg.optim)
         scheduler = create_scheduler(optimizer, self.cfg.optim)
-        return optimizer, scheduler
+        return [optimizer], [scheduler]
 
     def _shared_step(self, batch, split: str) -> Dict:
         batch.split = split
@@ -42,13 +43,13 @@ class GraphGymModule(LightningModule):
         return dict(loss=loss, true=true, pred=pred, pred_score=pred_score,
                     step_end_time=step_end_time)
 
-    def training_step(self, batch):
+    def training_step(self, batch, *args, **kwargs):
         return self._shared_step(batch, "train")
 
-    def validation_step(self, batch):
+    def validation_step(self, batch, *args, **kwargs):
         return self._shared_step(batch, "val")
 
-    def test_step(self, batch):
+    def test_step(self, batch, *args, **kwargs):
         return self._shared_step(batch, "test")
 
     @property

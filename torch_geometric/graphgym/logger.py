@@ -270,10 +270,11 @@ class LoggerCallback(Callback):
     def _create_stats(self, time_start, outputs: Dict[str, Any],
                       trainer: "pl.Trainer") -> Dict:
         true: torch.Tensor = outputs["true"]
+        pred: torch.Tensor = outputs["pred"]
         pred_score: torch.Tensor = outputs["pred_score"]
         loss: torch.Tensor = outputs["loss"]
-        lr = trainer.lr_schedulers[0]["scheduler"].get_last_lr()[0]
-        stats = dict(true=true.detach().cpu(),
+        lr = trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0]
+        stats = dict(true=true.detach().cpu(), pred=pred.detach().cpu(),
                      pred_score=pred_score.detach().cpu(), loss=loss.item(),
                      lr=lr, time_used=time.time() - time_start,
                      params=cfg.params)
