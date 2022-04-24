@@ -39,9 +39,9 @@ class AddPositionalEncoding(BaseTransform):
             steps.
         method: (str, optional): The method to add positional encoding.
             If set to :obj:`"attr"`, will be added to the data object
-                as a new attribute.
+            as a new attribute.
             If set to :obj:`"cat"`, will be concatenated to the existing
-                :obj:`x` in the data object. (default: :obj:`attr`)
+            :obj:`x` in the data object. (default: :obj:`attr`)
         is_undirected (bool, optional): If set to :obj:`True`, this transform
             expects undirected graphs as input, and can hence speed up the
             computation of the eigenvectors. (default: :obj:`False`)
