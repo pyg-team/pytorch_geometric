@@ -98,7 +98,7 @@ class NeighborSampler:
                 )
             else:
                 sample_fn = \
-                    torch.ops.torch_sparse.hetero_neighbor_temporal_sample
+                    torch.ops.torch_sparse.hetero_temporal_neighbor_sample
                 node_dict, row_dict, col_dict, edge_dict = sample_fn(
                     self.node_types,
                     self.edge_types,
