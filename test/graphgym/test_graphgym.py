@@ -170,15 +170,18 @@ def test_graphgym_module(auto_resume, skip_train_eval, use_trivial_metric):
     batch = next(iter(loaders[0]))
     outputs = model.training_step(batch)
     assert "loss" in outputs
+    assert torch.is_tensor(outputs["loss"])
 
     # test validation step
     batch = next(iter(loaders[1]))
     outputs = model.validation_step(batch)
     assert "loss" in outputs
+    assert torch.is_tensor(outputs["loss"])
 
     # test test step
     batch = next(iter(loaders[2]))
     outputs = model.test_step(batch)
     assert "loss" in outputs
+    assert torch.is_tensor(outputs["loss"])
 
     shutil.rmtree(cfg.out_dir)
