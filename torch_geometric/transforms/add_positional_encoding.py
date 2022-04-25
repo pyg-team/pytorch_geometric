@@ -52,7 +52,8 @@ class AddPositionalEncoding(BaseTransform):
             If set to :obj:`"attr"`, will be added to the data object
             as a new attribute.
             If set to :obj:`"cat"`, will be concatenated to the existing
-            :obj:`x` in the data object. (default: :obj:`attr`)
+            :obj:`x` in the data object. If there is no :obj:`x`, will be
+             added as a new :obj:`x`. (default: :obj:`attr`)
         is_undirected (bool, optional): If set to :obj:`True`, this transform
             expects undirected graphs as input, and can hence speed up the
             computation of the eigenvectors. (default: :obj:`False`)
@@ -111,8 +112,11 @@ class AddPositionalEncoding(BaseTransform):
             if self.method == 'attr':
                 setattr(store, self.name, pe)
             elif self.method == 'cat':
-                x = store.x.view(-1, 1) if store.x.dim() == 1 else store.x
-                store.x = torch.cat([x, pe.to(x.device, x.dtype)], dim=-1)
+                if store.x is not None:
+                    x = store.x.view(-1, 1) if store.x.dim() == 1 else store.x
+                    store.x = torch.cat([x, pe.to(x.device, x.dtype)], dim=-1)
+                else:
+                    setattr(store, 'x', pe)
         return data
 
     def __repr__(self) -> str:
