@@ -23,7 +23,7 @@ def diagonal_weight(edge_index, edge_weight, num_nodes=None):
     loop_edge_attr = edge_weight[loop_mask]
 
     N = maybe_num_nodes(edge_index, num_nodes)
-    diag_attr = torch.zeros((N,), dtype=edge_weight.dtype)
+    diag_attr = torch.zeros((N, ), dtype=edge_weight.dtype)
     diag_attr[loop_index] = loop_edge_attr
     return diag_attr
 
