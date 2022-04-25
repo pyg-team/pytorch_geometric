@@ -17,7 +17,7 @@ try:
     from pytorch_lightning import Callback
 
 except ImportError:
-    pl = object
+    pl = None
     Callback = object
     logging.warning("pytorch_lightning is not installed")
 
