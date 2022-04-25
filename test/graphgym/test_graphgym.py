@@ -157,11 +157,9 @@ def test_graphgym_module(auto_resume, skip_train_eval, use_trivial_metric):
     model = create_model()
     assert isinstance(model, pl.LightningModule)
 
-    optimizer = create_optimizer(model.parameters(), cfg.optim)
-    assert isinstance(optimizer, torch.optim.Adam)
-
-    scheduler = create_scheduler(optimizer, cfg.optim)
-    assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
+    optimizer, scheduler = model.configure_optimizers()
+    assert isinstance(optimizer[0], torch.optim.Adam)
+    assert isinstance(scheduler[0], torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)
     assert cfg.params == 23880
