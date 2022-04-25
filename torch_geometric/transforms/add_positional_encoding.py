@@ -17,6 +17,17 @@ from torch_geometric.utils import (
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
+def diagonal_weight(edge_index, edge_weight, num_nodes=None):
+    loop_mask = edge_index[0] == edge_index[1]
+    loop_index = edge_index[:, loop_mask][0]
+    loop_edge_attr = edge_weight[loop_mask]
+
+    N = maybe_num_nodes(edge_index, num_nodes)
+    diag_attr = torch.zeros((N,), dtype=edge_weight.dtype)
+    diag_attr[loop_index] = loop_edge_attr
+    return diag_attr
+
+
 @functional_transform('add_positional_encoding')
 class AddPositionalEncoding(BaseTransform):
     r"""Adds positional encoding to the given graph (functional name:
@@ -76,17 +87,6 @@ class AddPositionalEncoding(BaseTransform):
             pe *= sign
 
         elif self.name == 'random_walk_pe':
-
-            def diagonal_weight(edge_index, edge_weight, num_nodes=None):
-                loop_mask = edge_index[0] == edge_index[1]
-                loop_index = edge_index[:, loop_mask][0]
-                loop_edge_attr = edge_weight[loop_mask]
-
-                N = maybe_num_nodes(edge_index, num_nodes)
-                diag_attr = torch.zeros((N, ), dtype=edge_weight.dtype)
-                diag_attr[loop_index] = loop_edge_attr
-                return diag_attr
-
             # Compute D^{-1} A.
             edge_index, edge_weight = remove_self_loops(
                 data.edge_index, data.edge_weight)
