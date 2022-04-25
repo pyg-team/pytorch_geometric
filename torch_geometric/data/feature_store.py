@@ -27,7 +27,7 @@ from typing import Any, Optional
 import numpy as np
 import torch
 
-from torch_geometric.typing import TensorType
+from torch_geometric.typing import FeatureTensorType
 from torch_geometric.utils.mixin import CastMixin
 
 
@@ -36,7 +36,7 @@ class TensorAttr(CastMixin):
     r"""Defines the attributes of a :obj:`FeatureStore` tensor."""
 
     # The node indices the rows of the tensor correspond to
-    index: Optional[TensorType] = None
+    index: Optional[FeatureTensorType] = None
 
     # The type of the feature tensor (may be used if there are multiple
     # different feature tensors for the same node index)
@@ -72,7 +72,7 @@ class AttrView:
         self.attr.tensor_type = tensor_type
         return self
 
-    def __getitem__(self, index: TensorType):
+    def __getitem__(self, index: FeatureTensorType):
         r"""Supports attr_view.attr[idx]"""
         self.attr.index = index
         return self._store.get_tensor(self.attr)
@@ -89,15 +89,16 @@ class FeatureStore(MutableMapping):
     # Core (CRUD) #############################################################
 
     @abstractmethod
-    def _put_tensor(self, tensor: TensorType, attr: TensorAttr) -> bool:
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""Implemented by :obj:`FeatureStore` subclasses."""
         pass
 
-    def put_tensor(self, tensor: TensorType, attr: TensorAttr) -> bool:
-        r"""Synchronously adds a :obj:`TensorType` object to the feature store.
+    def put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Synchronously adds a :obj:`FeatureTensorType` object to the feature
+        store.
 
         Args:
-            tensor (TensorType): the features to be added.
+            tensor (FeatureTensorType): the features to be added.
             attr (TensorAttr): any relevant tensor attributes that correspond
                 to the feature tensor. See the :obj:`TensorAttr` documentation
                 for required and optional attributes. It is the job of
@@ -113,13 +114,13 @@ class FeatureStore(MutableMapping):
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
-    def _get_tensor(self, attr: TensorAttr) -> Optional[TensorType]:
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""Implemented by :obj:`FeatureStore` subclasses."""
         pass
 
-    def get_tensor(self, attr: TensorAttr) -> Optional[TensorType]:
-        r"""Synchronously obtains a :obj:`TensorType` object from the feature
-        store. Feature store implementors guarantee that the call
+    def get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Synchronously obtains a :obj:`FeatureTensorType` object from the
+        feature store. Feature store implementors guarantee that the call
         get_tensor(put_tensor(tensor, attr), attr) = tensor.
 
         Args:
@@ -130,8 +131,8 @@ class FeatureStore(MutableMapping):
                 meaningful way that allows for tensor retrieval from a
                 :obj:`TensorAttr` object.
         Returns:
-            TensorType, optional: a tensor of the same type as the index, or
-            None if no tensor was found.
+            FeatureTensorType, optional: a tensor of the same type as the
+            index, or None if no tensor was found.
         """
         def maybe_to_torch(x):
             return torch.from_numpy(x) if isinstance(
@@ -148,7 +149,7 @@ class FeatureStore(MutableMapping):
         pass
 
     def remove_tensor(self, attr: TensorAttr) -> bool:
-        r"""Removes a :obj:`TensorType` object from the feature store.
+        r"""Removes a :obj:`FeatureTensorType` object from the feature store.
 
         Args:
             attr (TensorAttr): any relevant tensor attributes that correspond
@@ -164,13 +165,14 @@ class FeatureStore(MutableMapping):
         attr = TensorAttr.cast(attr)
         self._remove_tensor(attr)
 
-    def update_tensor(self, tensor: TensorType, attr: TensorAttr) -> bool:
-        r"""Updates a :obj:`TensorType` object with a new value. Implementor
-        classes can choose to define more efficient update methods; the default
-        performs a removal and insertion.
+    def update_tensor(self, tensor: FeatureTensorType,
+                      attr: TensorAttr) -> bool:
+        r"""Updates a :obj:`FeatureTensorType` object with a new value.
+        implementor classes can choose to define more efficient update methods;
+        the default performs a removal and insertion.
 
         Args:
-            tensor (TensorType): the features to be added.
+            tensor (FeatureTensorType): the features to be added.
             attr (TensorAttr): any relevant tensor attributes that correspond
                 to the old tensor. See :obj:`TensorAttr` documentation
                 for required and optional attributes. It is the job of
@@ -190,7 +192,7 @@ class FeatureStore(MutableMapping):
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(backend={self.backend})'
 
-    def __setitem__(self, key: TensorAttr, value: TensorType):
+    def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
         key = TensorAttr.cast(key)
         assert key.index is not None

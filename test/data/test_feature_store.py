@@ -3,7 +3,7 @@ from typing import Optional
 import torch
 
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.typing import TensorType
+from torch_geometric.typing import FeatureTensorType
 
 
 class MyFeatureStore(FeatureStore):
@@ -18,12 +18,12 @@ class MyFeatureStore(FeatureStore):
         return (attr.tensor_type or '', attr.node_type or '', attr.graph_type
                 or '')
 
-    def _put_tensor(self, tensor: TensorType, attr: TensorAttr) -> bool:
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         self.store[MyFeatureStore.key(attr)] = torch.cat(
             (attr.index.reshape(-1, 1), tensor), dim=1)
         return True
 
-    def _get_tensor(self, attr: TensorAttr) -> Optional[TensorType]:
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         tensor = self.store.get(MyFeatureStore.key(attr), None)
         if tensor is None:
             return None
