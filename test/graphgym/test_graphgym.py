@@ -31,7 +31,15 @@ from torch_geometric.graphgym.utils import (
 )
 from torch_geometric.testing import withPackage
 
+try:
+    import pytorch_lightning as pl
+except ImportError:
+    pl = None
 num_trivial_metric_calls = 0
+
+Args = namedtuple('Args', ['cfg_file', 'opts'])
+root = osp.join(osp.dirname(osp.realpath(__file__)))
+args = Args(osp.join(root, 'example_node.yml'), [])
 
 
 def trivial_metric(true, pred, task_type):
@@ -114,21 +122,11 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
-@pytest.mark.parametrize('auto_resume', [True, False])
-@pytest.mark.parametrize('skip_train_eval', [True, False])
-@pytest.mark.parametrize('use_trivial_metric', [True, False])
-def test_graphgym_module(auto_resume, skip_train_eval, use_trivial_metric):
-    import pytorch_lightning as pl
-
-    Args = namedtuple('Args', ['cfg_file', 'opts'])
-    root = osp.join(osp.dirname(osp.realpath(__file__)))
-    args = Args(osp.join(root, 'example_node.yml'), [])
-
+def test_graphgym_module():
     load_cfg(cfg, args)
     cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
-    cfg.train.auto_resume = auto_resume
 
     set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
@@ -137,19 +135,6 @@ def test_graphgym_module(auto_resume, skip_train_eval, use_trivial_metric):
     seed_everything(cfg.seed)
     auto_select_device()
     set_run_dir(cfg.out_dir)
-
-    cfg.train.skip_train_eval = skip_train_eval
-    cfg.train.enable_ckpt = use_trivial_metric and skip_train_eval
-    if use_trivial_metric:
-        if 'trivial' not in register.metric_dict:
-            register.register_metric('trivial', trivial_metric)
-        global num_trivial_metric_calls
-        num_trivial_metric_calls = 0
-        cfg.metric_best = 'trivial'
-        cfg.custom_metrics = ['trivial']
-    else:
-        cfg.metric_best = 'auto'
-        cfg.custom_metrics = []
 
     loaders = create_loader()
     assert len(loaders) == 3
