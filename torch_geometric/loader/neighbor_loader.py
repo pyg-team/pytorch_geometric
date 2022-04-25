@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,7 +13,7 @@ from torch_geometric.loader.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.typing import InputNodes, NodeType, NumNeighbors
+from torch_geometric.typing import InputNodes, NumNeighbors
 
 
 class NeighborSampler:
@@ -25,7 +25,7 @@ class NeighborSampler:
         directed: bool = True,
         input_type: Optional[Any] = None,
         share_memory: bool = False,
-        time_attr: str = None,
+        time_attr: Optional[str] = None,
     ):
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
@@ -34,15 +34,23 @@ class NeighborSampler:
         self.node_time = None
 
         if isinstance(data, Data):
+            if time_attr is not None:
+                # TODO `time_attr` support for homogeneous graphs
+                raise ValueError(
+                    f"'time_attr' attribute not yet supported for "
+                    f"'{data.__class__.__name__}' object")
+
             # Convert the graph data into a suitable format for sampling.
             out = to_csc(data, device='cpu', share_memory=share_memory)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
-            # TODO: time_attr for homogeneous graphs
 
         elif isinstance(data, HeteroData):
             if time_attr is not None:
-                self.node_time = data[time_attr]
+                self.node_time_dict = data.collect(time_attr)
+            else:
+                self.node_time_dict = None
+
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
@@ -71,8 +79,8 @@ class NeighborSampler:
             index = torch.LongTensor(index)
 
         if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
-            node, row, col, edge = sample_fn(
+            fn = torch.ops.torch_sparse.neighbor_sample
+            node, row, col, edge = fn(
                 self.colptr,
                 self.row,
                 index,
@@ -83,9 +91,9 @@ class NeighborSampler:
             return node, row, col, edge, index.numel()
 
         elif issubclass(self.data_cls, HeteroData):
-            if self.node_time is None:
-                sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
-                node_dict, row_dict, col_dict, edge_dict = sample_fn(
+            if self.node_time_dict is None:
+                fn = torch.ops.torch_sparse.hetero_neighbor_sample
+                node_dict, row_dict, col_dict, edge_dict = fn(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
@@ -97,16 +105,15 @@ class NeighborSampler:
                     self.directed,
                 )
             else:
-                sample_fn = \
-                    torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                node_dict, row_dict, col_dict, edge_dict = sample_fn(
+                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+                node_dict, row_dict, col_dict, edge_dict = fn(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
                     {self.input_type: index},
                     self.num_neighbors,
-                    self.node_time,
+                    self.node_time_dict,
                     self.num_hops,
                     self.replace,
                     self.directed,
@@ -230,19 +237,14 @@ class NeighborLoader(torch.utils.data.DataLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e., neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        time_attr (str, optional): An optional argument
-            to specify the node attribute that denotes the timestamps for
-            nodes in graph.
-            If set, data[time_attr] has to be a dictionary of type
-            Dict[NodeType, Tensor], which maps
-            node type to a tensor (int type) of dimension [num_nodes]
-            which indicates the time. Temporal sampling will be used to
-            sample neighbors:
-            nodes are sampled with the constraint that its time is less
-            than the time of the `center` node.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -254,9 +256,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
         input_nodes: InputNodes = None,
         replace: bool = False,
         directed: bool = True,
+        time_attr: Optional[str] = None,
         transform: Callable = None,
         neighbor_sampler: Optional[NeighborSampler] = None,
-        time_attr: str = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:

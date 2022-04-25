@@ -55,8 +55,7 @@ def test_homogeneous_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
-@pytest.mark.parametrize('temporal', [True, False])
-def test_heterogeneous_neighbor_loader(directed, temporal):
+def test_heterogeneous_neighbor_loader(directed):
     torch.manual_seed(12345)
 
     data = HeteroData()
@@ -80,21 +79,9 @@ def test_heterogeneous_neighbor_loader(directed, temporal):
         value=torch.arange(2500),
     )
 
-    # timestamps of nodes
-    if temporal:
-        node_time = {
-            'paper': torch.arange(100),
-            'author': torch.arange(300),
-        }
-        data['node_time'] = node_time
-        time_attr = 'node_time'
-    else:
-        time_attr = None
-
     batch_size = 20
     loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
-                            batch_size=batch_size, directed=directed,
-                            time_attr=time_attr)
+                            batch_size=batch_size, directed=directed)
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == (100 + batch_size - 1) // batch_size
 
@@ -268,3 +255,21 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
+    dataset = get_dataset(name='Cora')
+    data = dataset[0]
+
+    hetero_data = HeteroData()
+    hetero_data['paper'].x = data.x
+    hetero_data['paper'].time = torch.arange(data.num_nodes)
+    hetero_data['paper', 'paper'].edge_index = data.edge_index
+
+    loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
+                            input_nodes='paper', time_key='time',
+                            batch_size=128)
+    print(len(loader))
+
+    # hetero_batch = next(iter(loader))
+    # batch_size = hetero_batch['paper'].batch_size

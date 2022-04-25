@@ -272,8 +272,8 @@ class LightningNodeData(LightningDataModule):
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
                 directed=kwargs.get('directed', True),
-                time_attr=kwargs.get('time_attr', None),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
+                time_attr=kwargs.get('time_attr', None),
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
