@@ -267,9 +267,9 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     hetero_data['paper', 'paper'].edge_index = data.edge_index
 
     loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
-                            input_nodes='paper', time_key='time',
-                            batch_size=128)
-    print(len(loader))
+                            input_nodes='paper', time_attr='time',
+                            batch_size=1)
 
-    # hetero_batch = next(iter(loader))
-    # batch_size = hetero_batch['paper'].batch_size
+    for batch in loader:
+        mask = batch['paper'].time[0] >= batch['paper'].time[1:]
+        assert torch.all(mask)
