@@ -134,14 +134,19 @@ class FeatureStore(MutableMapping):
             FeatureTensorType, optional: a tensor of the same type as the
             index, or None if no tensor was found.
         """
-        def maybe_to_torch(x):
-            return torch.from_numpy(x) if isinstance(
-                attr.index, torch.Tensor) and isinstance(x, np.ndarray) else x
+        def to_type(tensor):
+            if isinstance(attr.index, torch.Tensor):
+                return torch.from_numpy(tensor) if isinstance(
+                    tensor, np.ndarray) else tensor
+            if isinstance(attr.index, np.ndarray):
+                return tensor.numpy() if isinstance(tensor,
+                                                    torch.Tensor) else tensor
+            raise ValueError
 
         attr = TensorAttr.cast(attr)
         assert attr.index is not None
 
-        return maybe_to_torch(self._get_tensor(attr))
+        return to_type(self._get_tensor(attr))
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
