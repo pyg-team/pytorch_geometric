@@ -135,6 +135,8 @@ class FeatureStore(MutableMapping):
             index, or None if no tensor was found.
         """
         def to_type(tensor):
+            if tensor is None:
+                return None
             if isinstance(attr.index, torch.Tensor):
                 return torch.from_numpy(tensor) if isinstance(
                     tensor, np.ndarray) else tensor
