@@ -42,12 +42,14 @@ def to_csc(
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
 
+    print("HERE")
     if hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
         size = data.size()
+        print('edge index is ', data.edge_index.size(), ' and size is ', size)
         perm = (col * size[0]).add_(row).argsort()
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
         row = row[perm]

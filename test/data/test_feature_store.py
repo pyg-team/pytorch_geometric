@@ -2,7 +2,12 @@ from typing import Optional
 
 import torch
 
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.feature_store import (
+    AttrView,
+    FeatureStore,
+    TensorAttr,
+    _field_status,
+)
 from torch_geometric.typing import FeatureTensorType
 
 
@@ -15,19 +20,21 @@ class MyFeatureStore(FeatureStore):
 
     @classmethod
     def key(cls, attr: TensorAttr):
-        return (attr.tensor_type or '', attr.node_type or '', attr.graph_type
-                or '')
+        return (attr.group_name or '', attr.attr_name or '')
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        index = attr.index
+        if index is None or index is _field_status.UNSET:
+            index = torch.range(0, tensor.shape[0] - 1)
         self.store[MyFeatureStore.key(attr)] = torch.cat(
-            (attr.index.reshape(-1, 1), tensor), dim=1)
+            (index.reshape(-1, 1), tensor), dim=1)
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         tensor = self.store.get(MyFeatureStore.key(attr), None)
-        if tensor is None:
+        if tensor is None or tensor is _field_status.UNSET:
             return None
-        if attr.index is not None:
+        if attr.index is not None and attr.index is not _field_status.UNSET:
             indices = torch.cat([(tensor[:, 0] == v).nonzero()
                                  for v in attr.index]).reshape(1, -1)[0]
 
@@ -35,8 +42,6 @@ class MyFeatureStore(FeatureStore):
         return tensor[:, 1:]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        if attr.index is not None:
-            raise NotImplementedError
         del self.store[MyFeatureStore.key(attr)]
 
     def __len__(self):
@@ -50,37 +55,52 @@ def test_feature_store():
     tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
     index = torch.Tensor([0, 1, 2])
 
-    tensor_type = 'feat'
-    node_type = 'A'
-    graph_type = 'graph'
+    attr_name = 'feat'
+    group_name = 'A'
 
-    attr = TensorAttr(index, tensor_type, node_type, graph_type)
+    attr = TensorAttr(group_name, attr_name, index)
 
     # Normal API
     store.put_tensor(tensor, attr)
     assert torch.equal(store.get_tensor(attr), tensor)
     assert torch.equal(
-        store.get_tensor(
-            (torch.Tensor([0, 2]), tensor_type, node_type, graph_type)),
+        store.get_tensor((group_name, attr_name, torch.Tensor([0, 2]))),
         tensor[[0, 2]],
     )
-    assert store.get_tensor((index)) is None
-    store.remove_tensor((None, tensor_type, node_type, graph_type))
+    assert store.get_tensor(TensorAttr(index=index)) is None
+    store.remove_tensor(TensorAttr(group_name, attr_name))
     assert store.get_tensor(attr) is None
+
+    # Views
+    view = store.view(TensorAttr(group_name=group_name))
+    view.attr_name = attr_name
+    view.index = index
+    assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
 
     # Indexing
-    store[attr] = tensor
-    assert torch.equal(store[attr], tensor)
-    assert torch.equal(
-        store[(torch.Tensor([0, 2]), tensor_type, node_type, graph_type)],
-        tensor[[0, 2]],
-    )
-    assert store[(index)] is None
-    del store[(None, tensor_type, node_type, graph_type)]
-    assert store.get_tensor(attr) is None
 
-    # Advanced indexing
-    store[attr] = tensor
-    assert (torch.equal(
-        store[TensorAttr(node_type=node_type,
-                         graph_type=graph_type)].feat[index], tensor))
+    # Setting via indexing
+    store[group_name, attr_name, index] = tensor
+
+    # Fully-specified forms, all of which produce a tensor output
+    assert torch.equal(store[group_name, attr_name, index], tensor)
+    assert torch.equal(store[group_name, attr_name, None], tensor)
+    assert torch.equal(store[group_name, attr_name, :], tensor)
+    assert torch.equal(store[group_name].feat[:], tensor)
+
+    # Partially-specified forms, which produce an AttrView object
+    assert store[group_name] == store.view(TensorAttr(group_name=group_name))
+    assert store[group_name].feat == store.view(
+        TensorAttr(group_name=group_name, attr_name=attr_name))
+
+    # Partially-specified forms, when called, produce a Tensor output
+    # from the `TensorAttr` that has been partially specified.
+    store[group_name] = tensor
+    assert isinstance(store[group_name], AttrView)
+    assert torch.equal(store[group_name](), tensor)
+
+    # Deletion
+    del store[group_name, attr_name, index]
+    assert store[group_name, attr_name, index] is None
+    del store[group_name]
+    assert store[group_name]() is None

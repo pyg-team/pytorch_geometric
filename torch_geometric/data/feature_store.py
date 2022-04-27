@@ -4,11 +4,13 @@ feature store is to abstract away all node and edge feature memory management
 so that varying implementations can allow for independent scale-out.
 
 This particular feature store abstraction makes a few key assumptions:
-    * The features we care about storing are all associated with some sort of
-        `index`; explicitly for PyG the the index of the node in the graph (or
-            the heterogeneous component of the graph it resides in).
-    * A feature can uniquely be identified from (a) its index and (b) any other
-        associated attributes specified in :obj:`TensorAttr`.
+    * The features we care about storing are graph node and edge features. To
+        this end, the attributes that the feature store supports include a
+        group_name (e.g. a heterogeneous node name, a heterogeneous edge type,
+        etc.), an attr_name (which defines the name of the feature tensor,
+        e.g. `feat`, `discrete_feat`, etc.), and an index.
+    * A feature can uniquely be identified from any associated attributes
+        specified in :obj:`TensorAttr`.
 
 It is the job of a feature store implementor class to handle these assumptions
 properly. For example, a simple in-memory feature store implementation may
@@ -22,7 +24,8 @@ Major TODOs for future implementation:
 from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
-from typing import Any, Optional
+from enum import Enum
+from typing import Any, Optional, Union
 
 import numpy as np
 import torch
@@ -30,55 +33,106 @@ import torch
 from torch_geometric.typing import FeatureTensorType
 from torch_geometric.utils.mixin import CastMixin
 
+_field_status = Enum("FieldStatus", "UNSET")
+
+IndexType = Union[FeatureTensorType, slice]
+
 
 @dataclass
 class TensorAttr(CastMixin):
-    r"""Defines the attributes of a :obj:`FeatureStore` tensor."""
+    r"""Defines the attributes of a :obj:`FeatureStore` tensor; in particular,
+    all the parameters necessary to uniquely identify a tensor from the feature
+    store.
 
-    # The node indices the rows of the tensor correspond to
-    index: Optional[FeatureTensorType] = None
-
-    # The type of the feature tensor (may be used if there are multiple
-    # different feature tensors for the same node index)
-    tensor_type: Optional[str] = None
+    Note that the order of the attributes is important; this is the order in
+    which attributes must be provided for indexing calls. Feature store
+    implementor classes can define a different ordering by overriding
+    TensorAttr.__init__.
+    """
 
     # The type of the nodes that the tensor corresponds to (may be used for
     # hetereogeneous graphs)
-    node_type: Optional[str] = None
+    group_name: Optional[str] = _field_status.UNSET
 
-    # The type of the graph that the nodes correspond to (may be used if a
-    # feature store supports multiple graphs)
-    graph_type: Optional[str] = None
+    # The name of the feature tensor (may be used if there are multiple
+    # different feature tensors for the same node index)
+    attr_name: Optional[str] = _field_status.UNSET
+
+    # The node indices the rows of the tensor correspond to
+    index: Optional[IndexType] = _field_status.UNSET
+
+    def is_fully_specified(self):
+        r"""Whether the :obj:`TensorAttr` has no UNSET fields."""
+        return all([
+            getattr(self, field) != _field_status.UNSET
+            for field in self.__dataclass_fields__
+        ])
+
+    def update(self, attr: 'TensorAttr'):
+        r"""Updates an :obj:`TensorAttr` with attributes from another
+        :obj:`TensorAttr`."""
+        for field in self.__dataclass_fields__:
+            val = getattr(attr, field)
+            if val != _field_status.UNSET:
+                setattr(self, field, val)
 
 
-class AttrView:
-    r"""A view of a :obj:`FeatureStore` that is obtained from an incomplete
-    specification of attributes. This view stores a reference to the
-    originating feature store as well as a :obj:`TensorAttr` object that
-    represents the view's (incomplete) state.
+class AttrView(CastMixin):
+    r"""Defines a view of a :obj:`FeatureStore` that is obtained from a
+    specification of attributes on the feature store. The view stores a
+    reference to the backing feature store as well as a :obj:`TensorAttr`
+    object that represents the view's state.
 
-    As a result, store[TensorAttr(...)].tensor_type[idx] allows for indexing
-    into the store.
+    Users can create views either using the :obj:`AttrView` constructor,
+    :obj:`FeatureStore.view`, or by incompletely indexing a feature store.
     """
     _store: 'FeatureStore'
-    attr: TensorAttr
+    _attr: TensorAttr
 
-    def __init__(self, store, attr):
+    def __init__(self, store: 'FeatureStore', attr: TensorAttr):
         self._store = store
-        self.attr = attr
+        self._attr = attr
 
-    def __getattr__(self, tensor_type):
-        r"""Supports attr_view.attr"""
-        self.attr.tensor_type = tensor_type
+    def __getattr__(self, key):
+        r"""Sets the attr_name field of the backing :obj:`TensorAttr` object to
+        the attribute. In particular, this allows for :obj:`AttrView` to be
+        indexed by different values of attr_name."""
+        if key in ['_attr', '_store']:
+            return super(AttrView, self).__getattribute__(key)
+
+        self._attr.attr_name = key
+        if self._attr.is_fully_specified():
+            return self._store.get_tensor(self._attr)
         return self
 
-    def __getitem__(self, index: FeatureTensorType):
-        r"""Supports attr_view.attr[idx]"""
-        self.attr.index = index
-        return self._store.get_tensor(self.attr)
+    def __setattr__(self, key, value):
+        r"""Supports attribute assignment to the backing :obj:`TensorAttr` of
+        an :obj:`AttrView`."""
+        if key in ['_attr', '_store']:
+            return super(AttrView, self).__setattr__(key, value)
+
+        TensorAttr.__setattr__(self._attr, key, value)
+        return self
+
+    def __getitem__(self, index: IndexType):
+        r"""Supports indexing the backing :obj:`TensorAttr` object by an
+        index or a slice."""
+        self._attr.index = index
+        if self._attr.is_fully_specified():
+            return self._store.get_tensor(self._attr)
+
+    def __call__(self) -> FeatureTensorType:
+        r"""Supports :obj:`AttrView` as a callable to force retrieval"""
+        return self._store.get_tensor(self._attr)
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, AttrView):
+            return False
+
+        return id(self._store) == id(__o._store) and self._attr == __o._attr
 
     def __repr__(self) -> str:
-        return f'AttrView(store={self._store}, attr={self.attr})'
+        return f"AttrView(store={self._store}, attr={self._attr})"
 
 
 class FeatureStore(MutableMapping):
@@ -109,8 +163,6 @@ class FeatureStore(MutableMapping):
             bool: whether insertion was successful.
         """
         attr = TensorAttr.cast(attr)
-        assert attr.index is not None
-        assert attr.index.size(dim=0) == tensor.size(dim=-1)
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
@@ -143,10 +195,13 @@ class FeatureStore(MutableMapping):
             if isinstance(attr.index, np.ndarray):
                 return tensor.numpy() if isinstance(tensor,
                                                     torch.Tensor) else tensor
-            raise ValueError
+            return tensor
 
         attr = TensorAttr.cast(attr)
-        assert attr.index is not None
+        if isinstance(attr.index,
+                      slice) and (attr.index.start, attr.index.stop,
+                                  attr.index.step) == (None, None, None):
+            attr.index = None
 
         return to_type(self._get_tensor(attr))
 
@@ -194,6 +249,13 @@ class FeatureStore(MutableMapping):
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
+    # :obj:`AttrView` methods #################################################
+
+    def view(self, attr: Optional[TensorAttr]) -> AttrView:
+        r"""Returns an :obj:`AttrView` of the feature store, with the defined
+        attributes set."""
+        return AttrView(self, TensorAttr.cast(attr))
+
     # Python built-ins ########################################################
 
     def __repr__(self) -> str:
@@ -202,17 +264,27 @@ class FeatureStore(MutableMapping):
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
         key = TensorAttr.cast(key)
-        assert key.index is not None
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr):
-        r"""Supports store[tensor_attr]. If tensor_attr has index specified,
-        will obtain the corresponding features from the store. Otherwise, will
-        return an :obj:`AttrView` which can be indexed independently."""
-        key = TensorAttr.cast(key)
-        if key.index is not None:
-            return self.get_tensor(key)
-        return AttrView(self, key)
+        r"""Supports pythonic indexing into the feature store. In particular,
+        the following rules are followed for indexing:
+
+        * Fully-specified indexes will produce a Tensor output. A
+            fully-specified index specifies all the required attributes in
+            :obj:`TensorAttr`.
+
+        * Partially-specified indexes will produce an AttrView output, which
+            is a view on the FeatureStore. If a view is called, it will produce
+            a Tensor output from the corresponding (partially specified)
+            attributes.
+        """
+        # CastMixin will handle the case of key being a tuple or TensorAttr
+        # object.
+        attr = TensorAttr.cast(key)
+        if attr.is_fully_specified():
+            return self.get_tensor(attr)
+        return AttrView(self, attr)
 
     def __delitem__(self, key: TensorAttr):
         r"""Supports del store[tensor_attr]."""
