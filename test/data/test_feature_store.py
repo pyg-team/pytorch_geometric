@@ -32,7 +32,7 @@ class MyFeatureStore(FeatureStore):
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         tensor = self.store.get(MyFeatureStore.key(attr), None)
-        if tensor is None or tensor is _field_status.UNSET:
+        if tensor is None:
             return None
         if attr.index is not None and attr.index is not _field_status.UNSET:
             indices = torch.cat([(tensor[:, 0] == v).nonzero()

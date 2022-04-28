@@ -9,7 +9,7 @@ This particular feature store abstraction makes a few key assumptions:
         group_name (e.g. a heterogeneous node name, a heterogeneous edge type,
         etc.), an attr_name (which defines the name of the feature tensor,
         e.g. `feat`, `discrete_feat`, etc.), and an index.
-    * A feature can uniquely be identified from any associated attributes
+    * A feature can be uniquely identified from any associated attributes
         specified in :obj:`TensorAttr`.
 
 It is the job of a feature store implementor class to handle these assumptions
@@ -61,15 +61,22 @@ class TensorAttr(CastMixin):
     # The node indices the rows of the tensor correspond to
     index: Optional[IndexType] = _field_status.UNSET
 
+    # Convenience methods #####################################################
+
+    def is_set(self, attr):
+        r"""Whether an attribute is set in :obj:`TensorAttr`."""
+        assert attr in self.__dataclass_fields__
+        return getattr(self, attr) != _field_status.UNSET
+
     def is_fully_specified(self):
-        r"""Whether the :obj:`TensorAttr` has no UNSET fields."""
+        r"""Whether the :obj:`TensorAttr` has no unset fields."""
         return all([
             getattr(self, field) != _field_status.UNSET
             for field in self.__dataclass_fields__
         ])
 
     def update(self, attr: 'TensorAttr'):
-        r"""Updates an :obj:`TensorAttr` with attributes from another
+        r"""Updates an :obj:`TensorAttr` with set attributes from another
         :obj:`TensorAttr`."""
         for field in self.__dataclass_fields__:
             val = getattr(attr, field)
@@ -93,10 +100,29 @@ class AttrView(CastMixin):
         self._store = store
         self._attr = attr
 
-    def __getattr__(self, key):
+    # Properties ##############################################################
+
+    @property
+    def attr(self) -> TensorAttr:
+        return self._attr
+
+    @property
+    def store(self) -> 'FeatureStore':
+        return self._store
+
+    # Python built-ins ########################################################
+
+    def __getattr__(self, key) -> 'AttrView':
         r"""Sets the attr_name field of the backing :obj:`TensorAttr` object to
-        the attribute. In particular, this allows for :obj:`AttrView` to be
-        indexed by different values of attr_name."""
+        the attribute. This allows for :obj:`AttrView` to be indexed by
+        different values of attr_name. In particular, for a feature store that
+        has `feat` as an `attr_name`, the following code indexes into `feat`:
+
+        .. code-block:: python
+
+            store[group_name].feat[:]
+
+        """
         if key in ['_attr', '_store']:
             return super(AttrView, self).__getattribute__(key)
 
@@ -107,25 +133,59 @@ class AttrView(CastMixin):
 
     def __setattr__(self, key, value):
         r"""Supports attribute assignment to the backing :obj:`TensorAttr` of
-        an :obj:`AttrView`."""
+        an :obj:`AttrView`. This allows for :obj:`AttrView` objects to set
+        their backing attribute values. In particular, the following operation
+        sets the `index` of an :obj:`AttrView`:
+
+        .. code-block:: python
+
+            view = store.view(TensorAttr(group_name))
+            view.index = torch.Tensor([1, 2, 3])
+
+        """
         if key in ['_attr', '_store']:
             return super(AttrView, self).__setattr__(key, value)
 
         TensorAttr.__setattr__(self._attr, key, value)
-        return self
 
-    def __getitem__(self, index: IndexType):
+    def __getitem__(
+        self,
+        index: IndexType,
+    ) -> Union['AttrView', FeatureTensorType]:
         r"""Supports indexing the backing :obj:`TensorAttr` object by an
-        index or a slice."""
+        index or a slice. If the index operation results in a fully-specified
+        :obj:`AttrView`, a Tensor is returned. Otherwise, the :obj:`AttrView`
+        object is returned. The following operation returns a Tensor object
+        as a result of the index specification:
+
+        .. code-block:: python
+
+            store[group_name, attr_name][:]
+
+        """
         self._attr.index = index
         if self._attr.is_fully_specified():
             return self._store.get_tensor(self._attr)
+        return self
 
     def __call__(self) -> FeatureTensorType:
-        r"""Supports :obj:`AttrView` as a callable to force retrieval"""
+        r"""Supports :obj:`AttrView` as a callable to force retrieval from
+        the currently specified attributes. In particular, this passes the
+        current :obj:`TensorAttr` object to a GET call, regardless of whether
+        all attributes have been specified. It returns the result of this
+        call. In particular, the following operation returns a Tensor by
+        performing a GET operation on the backing feature store:
+
+        .. code-block:: python
+
+            store[group_name, attr_name]()
+
+        """
         return self._store.get_tensor(self._attr)
 
     def __eq__(self, __o: object) -> bool:
+        r"""Compares two :obj:`AttrView` objects by checking equality of their
+        :obj:`FeatureStore` references and :obj:`TensorAttr` attributes."""
         if not isinstance(__o, AttrView):
             return False
 
@@ -258,9 +318,6 @@ class FeatureStore(MutableMapping):
 
     # Python built-ins ########################################################
 
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(backend={self.backend})'
-
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
         key = TensorAttr.cast(key)
@@ -297,3 +354,6 @@ class FeatureStore(MutableMapping):
     @abstractmethod
     def __len__(self):
         pass
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(backend={self.backend})'
