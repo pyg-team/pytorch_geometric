@@ -13,15 +13,12 @@ from torch_geometric.typing import FeatureTensorType
 
 
 class MyFeatureStore(FeatureStore):
-    r"""A basic feature store, does NOT implement all functionality of a
-    fully-fledged feature store. Only works for Torch tensors."""
     def __init__(self):
-        super().__init__(backend='test')
+        super().__init__()
         self.store = {}
 
     @classmethod
     def key(cls, attr: TensorAttr):
-        r"""Define the key as (group_name, attr_name)."""
         return (attr.group_name or '', attr.attr_name or '')
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
@@ -68,15 +65,12 @@ class MyTensorAttrNoGroupName(TensorAttr):
 
 
 class MyFeatureStoreNoGroupName(MyFeatureStore):
-    # pylint: disable=super-init-not-called
     def __init__(self):
-        FeatureStore.__init__(self, backend='test',
-                              attr_cls=MyTensorAttrNoGroupName)
-        self.store = {}
+        super().__init__()
+        self._attr_cls = MyTensorAttrNoGroupName
 
     @classmethod
     def key(cls, attr: TensorAttr):
-        r"""Define the key as (group_name, attr_name)."""
         return attr.attr_name or ''
 
     def __len__(self):
