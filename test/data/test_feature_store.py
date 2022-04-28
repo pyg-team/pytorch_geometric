@@ -67,7 +67,6 @@ class MyTensorAttrNoGroupName(TensorAttr):
         super().__init__(None, attr_name, index)
 
 
-@dataclass
 class MyFeatureStoreNoGroupName(MyFeatureStore):
     # pylint: disable=super-init-not-called
     def __init__(self):
