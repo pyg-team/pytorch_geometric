@@ -6,7 +6,6 @@ from torch_geometric.data.feature_store import (
     AttrView,
     FeatureStore,
     TensorAttr,
-    _field_status,
 )
 from torch_geometric.typing import FeatureTensorType
 
@@ -20,26 +19,36 @@ class MyFeatureStore(FeatureStore):
 
     @classmethod
     def key(cls, attr: TensorAttr):
+        r"""Define the key as (group_name, attr_name)."""
         return (attr.group_name or '', attr.attr_name or '')
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         index = attr.index
-        if index is None or index is _field_status.UNSET:
+
+        # Not set or None indices define the obvious index
+        if not attr.is_set('index') or index is None:
             index = torch.range(0, tensor.shape[0] - 1)
+
+        # Store the index as a column
         self.store[MyFeatureStore.key(attr)] = torch.cat(
             (index.reshape(-1, 1), tensor), dim=1)
+
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         tensor = self.store.get(MyFeatureStore.key(attr), None)
         if tensor is None:
             return None
-        if attr.index is not None and attr.index is not _field_status.UNSET:
-            indices = torch.cat([(tensor[:, 0] == v).nonzero()
-                                 for v in attr.index]).reshape(1, -1)[0]
 
-            return torch.index_select(tensor[:, 1:], 0, indices)
-        return tensor[:, 1:]
+        # Not set or None indices return the whole tensor
+        if not attr.is_set('index') or attr.index is None:
+            return tensor[:, 1:]
+
+        # Index into the tensor
+        indices = torch.cat([(tensor[:, 0] == v).nonzero()
+                             for v in attr.index]).reshape(1, -1)[0]
+
+        return torch.index_select(tensor[:, 1:], 0, indices)
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         del self.store[MyFeatureStore.key(attr)]
@@ -50,7 +59,6 @@ class MyFeatureStore(FeatureStore):
 
 def test_feature_store():
     r"""Tests basic API and indexing functionality of a feature store."""
-
     store = MyFeatureStore()
     tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
     index = torch.Tensor([0, 1, 2])

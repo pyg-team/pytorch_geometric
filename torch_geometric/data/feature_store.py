@@ -196,9 +196,13 @@ class AttrView(CastMixin):
 
 
 class FeatureStore(MutableMapping):
-    def __init__(self, backend: Any):
-        r"""Initializes the feature store with a specified backend."""
+    def __init__(self, backend: Any, attr_cls: Any = TensorAttr):
+        r"""Initializes the feature store with a specified backend. Implementor
+        classes can customize the ordering and require nature of their
+        :obj:`TensorAttr` tensor attributes by subclassing :obj:`TensorAttr`
+        and passing the subclass as `attr_cls`."""
         self.backend = backend
+        self._attr_cls = attr_cls
 
     # Core (CRUD) #############################################################
 
@@ -222,7 +226,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether insertion was successful.
         """
-        attr = TensorAttr.cast(attr)
+        attr = self._attr_cls.cast(attr)
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
@@ -257,7 +261,7 @@ class FeatureStore(MutableMapping):
                                                     torch.Tensor) else tensor
             return tensor
 
-        attr = TensorAttr.cast(attr)
+        attr = self._attr_cls.cast(attr)
         if isinstance(attr.index,
                       slice) and (attr.index.start, attr.index.stop,
                                   attr.index.step) == (None, None, None):
@@ -284,7 +288,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether deletion was succesful.
         """
-        attr = TensorAttr.cast(attr)
+        attr = self._attr_cls.cast(attr)
         self._remove_tensor(attr)
 
     def update_tensor(self, tensor: FeatureTensorType,
@@ -305,7 +309,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether the update was succesful.
         """
-        attr = TensorAttr.cast(attr)
+        attr = self._attr_cls.cast(attr)
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
@@ -314,13 +318,13 @@ class FeatureStore(MutableMapping):
     def view(self, attr: Optional[TensorAttr]) -> AttrView:
         r"""Returns an :obj:`AttrView` of the feature store, with the defined
         attributes set."""
-        return AttrView(self, TensorAttr.cast(attr))
+        return AttrView(self, self._attr_cls.cast(attr))
 
     # Python built-ins ########################################################
 
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
-        key = TensorAttr.cast(key)
+        key = self._attr_cls.cast(key)
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr):
@@ -338,14 +342,14 @@ class FeatureStore(MutableMapping):
         """
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object.
-        attr = TensorAttr.cast(key)
+        attr = self._attr_cls.cast(key)
         if attr.is_fully_specified():
             return self.get_tensor(attr)
         return AttrView(self, attr)
 
     def __delitem__(self, key: TensorAttr):
         r"""Supports del store[tensor_attr]."""
-        key = TensorAttr.cast(key)
+        key = self._attr_cls.cast(key)
         self.remove_tensor(key)
 
     def __iter__(self):
