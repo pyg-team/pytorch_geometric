@@ -100,16 +100,6 @@ class AttrView(CastMixin):
         self._store = store
         self._attr = attr
 
-    # Properties ##############################################################
-
-    @property
-    def attr(self) -> TensorAttr:
-        return self._attr
-
-    @property
-    def store(self) -> 'FeatureStore':
-        return self._store
-
     # Python built-ins ########################################################
 
     def __getattr__(self, key) -> 'AttrView':
@@ -192,7 +182,8 @@ class AttrView(CastMixin):
         return id(self._store) == id(__o._store) and self._attr == __o._attr
 
     def __repr__(self) -> str:
-        return f"AttrView(store={self._store}, attr={self._attr})"
+        return (f'{self.__class__.__name__}(store={self._store}, '
+                f'attr={self._attr})')
 
 
 class FeatureStore(MutableMapping):
