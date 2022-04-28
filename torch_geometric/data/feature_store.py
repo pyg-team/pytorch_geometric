@@ -187,12 +187,12 @@ class AttrView(CastMixin):
 
 
 class FeatureStore(MutableMapping):
-    def __init__(self, backend: Any, attr_cls: Any = TensorAttr):
-        r"""Initializes the feature store with a specified backend. Implementor
-        classes can customize the ordering and require nature of their
-        :obj:`TensorAttr` tensor attributes by subclassing :obj:`TensorAttr`
-        and passing the subclass as `attr_cls`."""
-        self.backend = backend
+    def __init__(self, attr_cls: Any = TensorAttr):
+        r"""Initializes the feature store. Implementor classes can customize
+        the ordering and require nature of their :obj:`TensorAttr` tensor
+        attributes by subclassing :class:`TensorAttr` and passing the subclass
+        as `attr_cls`."""
+        super().__init__()
         self._attr_cls = attr_cls
 
     # Core (CRUD) #############################################################
@@ -351,4 +351,4 @@ class FeatureStore(MutableMapping):
         pass
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(backend={self.backend})'
+        return f'{self.__class__.__name__}()'
