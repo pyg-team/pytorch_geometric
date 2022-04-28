@@ -1,16 +1,16 @@
 r"""
-This class defines the abstraction for a Graph feature store. The goal of a
-feature store is to abstract away all node and edge feature memory management
-so that varying implementations can allow for independent scale-out.
+This class defines the abstraction for a backend-agnostic feature store. The
+goal of a feature store is to abstract away all node and edge feature memory
+management so that varying implementations can allow for independent scale-out.
 
 This particular feature store abstraction makes a few key assumptions:
-    * The features we care about storing are graph node and edge features. To
-        this end, the attributes that the feature store supports include a
+    * The features we care about storing are node and edge features of a graph.
+        To this end, the attributes that the feature store supports include a
         group_name (e.g. a heterogeneous node name, a heterogeneous edge type,
         etc.), an attr_name (which defines the name of the feature tensor,
-        e.g. `feat`, `discrete_feat`, etc.), and an index.
+        e.g. `x`, `edge_attr`, etc.), and an index.
     * A feature can be uniquely identified from any associated attributes
-        specified in :obj:`TensorAttr`.
+        specified in :class:`TensorAttr`.
 
 It is the job of a feature store implementor class to handle these assumptions
 properly. For example, a simple in-memory feature store implementation may
@@ -21,6 +21,7 @@ features in interesting manners based on the provided metadata.
 Major TODOs for future implementation:
 * Async `put` and `get` functionality
 """
+import copy
 from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
@@ -35,7 +36,9 @@ from torch_geometric.utils.mixin import CastMixin
 
 _field_status = Enum("FieldStatus", "UNSET")
 
-IndexType = Union[FeatureTensorType, slice]
+# We allow indexing with a tensor, numpy array, Python slicing, or a single
+# integer index.
+IndexType = Union[torch.Tensor, np.ndarray, slice, int]
 
 
 @dataclass
@@ -50,15 +53,13 @@ class TensorAttr(CastMixin):
     TensorAttr.__init__.
     """
 
-    # The type of the nodes that the tensor corresponds to (may be used for
-    # hetereogeneous graphs)
-    group_name: Optional[str] = _field_status.UNSET
+    # The group name that the tensor corresponds to. Defaults to None.
+    group_name: Optional[str] = None
 
-    # The name of the feature tensor (may be used if there are multiple
-    # different feature tensors for the same node index)
-    attr_name: Optional[str] = _field_status.UNSET
+    # The name of the tensor within its group. Defaults to None.
+    attr_name: Optional[str] = None
 
-    # The node indices the rows of the tensor correspond to
+    # The node indices the rows of the tensor correspond to. Defaults to UNSET.
     index: Optional[IndexType] = _field_status.UNSET
 
     # Convenience methods #####################################################
@@ -85,24 +86,38 @@ class TensorAttr(CastMixin):
 
 
 class AttrView(CastMixin):
-    r"""Defines a view of a :obj:`FeatureStore` that is obtained from a
+    r"""Defines a view of a :class:`FeatureStore` that is obtained from a
     specification of attributes on the feature store. The view stores a
-    reference to the backing feature store as well as a :obj:`TensorAttr`
+    reference to the backing feature store as well as a :class:`TensorAttr`
     object that represents the view's state.
 
     Users can create views either using the :obj:`AttrView` constructor,
-    :obj:`FeatureStore.view`, or by incompletely indexing a feature store.
-    """
-    _store: 'FeatureStore'
-    _attr: TensorAttr
+    :obj:`FeatureStore.view`, or by incompletely indexing a feature store. For
+    example, the following calls all create views:
 
+    .. code-block:: python
+
+        store[group_name]
+        store[group_name].feat
+        store[group_name, feat]
+
+    While the following calls all materialize those views and produce tensors
+    by either calling the view or fully-specifying the view:
+
+    .. code-block:: python
+
+        store[group_name]()
+        store[group_name].feat[index]
+        store[group_name, feat][index]
+
+    """
     def __init__(self, store: 'FeatureStore', attr: TensorAttr):
-        self._store = store
-        self._attr = attr
+        self.__dict__['_store'] = store
+        self.__dict__['_attr'] = attr
 
     # Python built-ins ########################################################
 
-    def __getattr__(self, key) -> 'AttrView':
+    def __getattr__(self, key: str) -> 'AttrView':
         r"""Sets the attr_name field of the backing :obj:`TensorAttr` object to
         the attribute. This allows for :obj:`AttrView` to be indexed by
         different values of attr_name. In particular, for a feature store that
@@ -113,13 +128,11 @@ class AttrView(CastMixin):
             store[group_name].feat[:]
 
         """
-        if key in ['_attr', '_store']:
-            return super(AttrView, self).__getattribute__(key)
-
-        self._attr.attr_name = key
-        if self._attr.is_fully_specified():
-            return self._store.get_tensor(self._attr)
-        return self
+        out = copy.copy(self)
+        out._attr.attr_name = key
+        if out._attr.is_fully_specified():
+            return out._store.get_tensor(out._attr)
+        return out
 
     def __setattr__(self, key, value):
         r"""Supports attribute assignment to the backing :obj:`TensorAttr` of
@@ -133,10 +146,7 @@ class AttrView(CastMixin):
             view.index = torch.Tensor([1, 2, 3])
 
         """
-        if key in ['_attr', '_store']:
-            return super(AttrView, self).__setattr__(key, value)
-
-        TensorAttr.__setattr__(self._attr, key, value)
+        setattr(self._attr, key, value)
 
     def __getitem__(
         self,
@@ -153,10 +163,11 @@ class AttrView(CastMixin):
             store[group_name, attr_name][:]
 
         """
-        self._attr.index = index
-        if self._attr.is_fully_specified():
-            return self._store.get_tensor(self._attr)
-        return self
+        out = copy.copy(self)
+        out._attr.index = index
+        if out._attr.is_fully_specified():
+            return out._store.get_tensor(out._attr)
+        return out
 
     def __call__(self) -> FeatureTensorType:
         r"""Supports :obj:`AttrView` as a callable to force retrieval from
@@ -173,13 +184,19 @@ class AttrView(CastMixin):
         """
         return self._store.get_tensor(self._attr)
 
+    def __copy__(self):
+        out = self.__class__.__new__(self.__class__)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        return out
+
     def __eq__(self, __o: object) -> bool:
         r"""Compares two :obj:`AttrView` objects by checking equality of their
         :obj:`FeatureStore` references and :obj:`TensorAttr` attributes."""
         if not isinstance(__o, AttrView):
             return False
 
-        return id(self._store) == id(__o._store) and self._attr == __o._attr
+        return self._store == __o._store and self._attr == __o._attr
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(store={self._store}, '
@@ -202,7 +219,7 @@ class FeatureStore(MutableMapping):
         r"""Implemented by :obj:`FeatureStore` subclasses."""
         pass
 
-    def put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+    def put_tensor(self, tensor: FeatureTensorType, *args, **kwargs) -> bool:
         r"""Synchronously adds a :obj:`FeatureTensorType` object to the feature
         store.
 
@@ -217,7 +234,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether insertion was successful.
         """
-        attr = self._attr_cls.cast(attr)
+        attr = self._attr_cls.cast(*args, **kwargs)
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
@@ -225,10 +242,10 @@ class FeatureStore(MutableMapping):
         r"""Implemented by :obj:`FeatureStore` subclasses."""
         pass
 
-    def get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+    def get_tensor(self, *args, **kwargs) -> Optional[FeatureTensorType]:
         r"""Synchronously obtains a :obj:`FeatureTensorType` object from the
         feature store. Feature store implementors guarantee that the call
-        get_tensor(put_tensor(tensor, attr), attr) = tensor.
+        get_tensor(put_tensor(tensor, attr), attr) = tensor holds.
 
         Args:
             attr (TensorAttr): any relevant tensor attributes that correspond
@@ -252,7 +269,7 @@ class FeatureStore(MutableMapping):
                                                     torch.Tensor) else tensor
             return tensor
 
-        attr = self._attr_cls.cast(attr)
+        attr = self._attr_cls.cast(*args, **kwargs)
         if isinstance(attr.index,
                       slice) and (attr.index.start, attr.index.stop,
                                   attr.index.step) == (None, None, None):
@@ -265,7 +282,7 @@ class FeatureStore(MutableMapping):
         r"""Implemented by :obj:`FeatureStore` subclasses."""
         pass
 
-    def remove_tensor(self, attr: TensorAttr) -> bool:
+    def remove_tensor(self, *args, **kwargs) -> bool:
         r"""Removes a :obj:`FeatureTensorType` object from the feature store.
 
         Args:
@@ -279,11 +296,11 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether deletion was succesful.
         """
-        attr = self._attr_cls.cast(attr)
+        attr = self._attr_cls.cast(*args, **kwargs)
         self._remove_tensor(attr)
 
-    def update_tensor(self, tensor: FeatureTensorType,
-                      attr: TensorAttr) -> bool:
+    def update_tensor(self, tensor: FeatureTensorType, *args,
+                      **kwargs) -> bool:
         r"""Updates a :obj:`FeatureTensorType` object with a new value.
         implementor classes can choose to define more efficient update methods;
         the default performs a removal and insertion.
@@ -300,16 +317,16 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: whether the update was succesful.
         """
-        attr = self._attr_cls.cast(attr)
+        attr = self._attr_cls.cast(*args, **kwargs)
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
     # :obj:`AttrView` methods #################################################
 
-    def view(self, attr: Optional[TensorAttr]) -> AttrView:
+    def view(self, *args, **kwargs) -> AttrView:
         r"""Returns an :obj:`AttrView` of the feature store, with the defined
         attributes set."""
-        return AttrView(self, self._attr_cls.cast(attr))
+        return AttrView(self, self._attr_cls.cast(*args, **kwargs))
 
     # Python built-ins ########################################################
 
@@ -345,6 +362,9 @@ class FeatureStore(MutableMapping):
 
     def __iter__(self):
         raise NotImplementedError
+
+    def __eq__(self, __o: object) -> bool:
+        return id(self) == id(__o)
 
     @abstractmethod
     def __len__(self):
