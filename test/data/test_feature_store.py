@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Optional
 
 import torch
@@ -6,6 +7,7 @@ from torch_geometric.data.feature_store import (
     AttrView,
     FeatureStore,
     TensorAttr,
+    _field_status,
 )
 from torch_geometric.typing import FeatureTensorType
 
@@ -27,7 +29,7 @@ class MyFeatureStore(FeatureStore):
 
         # Not set or None indices define the obvious index
         if not attr.is_set('index') or index is None:
-            index = torch.range(0, tensor.shape[0] - 1)
+            index = torch.arange(0, tensor.shape[0])
 
         # Store the index as a column
         self.store[MyFeatureStore.key(attr)] = torch.cat(
@@ -52,6 +54,31 @@ class MyFeatureStore(FeatureStore):
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         del self.store[MyFeatureStore.key(attr)]
+
+    def __len__(self):
+        raise NotImplementedError
+
+
+@dataclass
+class MyTensorAttrNoGroupName(TensorAttr):
+    def __init__(self, attr_name=_field_status.UNSET,
+                 index=_field_status.UNSET):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(None, attr_name, index)
+
+
+@dataclass
+class MyFeatureStoreNoGroupName(MyFeatureStore):
+    # pylint: disable=super-init-not-called
+    def __init__(self):
+        FeatureStore.__init__(self, backend='test',
+                              attr_cls=MyTensorAttrNoGroupName)
+        self.store = {}
+
+    @classmethod
+    def key(cls, attr: TensorAttr):
+        r"""Define the key as (group_name, attr_name)."""
+        return attr.attr_name or ''
 
     def __len__(self):
         raise NotImplementedError
@@ -112,3 +139,21 @@ def test_feature_store():
     assert store[group_name, attr_name, index] is None
     del store[group_name]
     assert store[group_name]() is None
+
+
+def test_feature_store_override():
+    store = MyFeatureStoreNoGroupName()
+    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    index = torch.Tensor([0, 1, 2])
+
+    attr_name = 'feat'
+
+    # Only use attr_name and index, in that order
+    store[attr_name, index] = tensor
+
+    # A few assertions to ensure group_name is not needed
+    assert isinstance(store[attr_name], AttrView)
+    assert torch.equal(store[attr_name, index], tensor)
+    assert torch.equal(store[attr_name][index], tensor)
+    assert torch.equal(store[attr_name][:], tensor)
+    assert torch.equal(store[attr_name, :], tensor)
