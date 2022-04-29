@@ -45,7 +45,8 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return (1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2) * (x < 1.0).float()
+        return (1. / x + a * x_pow_p0 + b * x_pow_p1 +
+                c * x_pow_p2) * (x < 1.0).float()
 
 
 class BesselBasisLayer(torch.nn.Module):
