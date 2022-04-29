@@ -146,6 +146,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
+        print(_repr(self.pre_transform))
         if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
             warnings.warn(
                 f"The `pre_transform` argument differs from the one used in "
