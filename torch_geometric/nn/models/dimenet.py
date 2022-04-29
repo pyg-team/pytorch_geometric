@@ -104,7 +104,7 @@ class SphericalBasisLayer(torch.nn.Module):
                 self.bessel_funcs.append(bessel)
 
     def forward(self, dist, angle, idx_kj):
-        dist = (dist / self.cutoff)
+        dist = dist / self.cutoff
         rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)
         rbf = self.envelope(dist).unsqueeze(-1) * rbf
 
