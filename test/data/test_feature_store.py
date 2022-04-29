@@ -18,40 +18,38 @@ class MyFeatureStore(FeatureStore):
         super().__init__()
         self.store = {}
 
-    @classmethod
-    def key(cls, attr: TensorAttr):
-        return (attr.group_name or '', attr.attr_name or '')
+    @staticmethod
+    def key(attr: TensorAttr) -> str:
+        return (attr.group_name, attr.attr_name)
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         index = attr.index
 
-        # Not set or None indices define the obvious index
+        # Not set or None indices define the obvious index:
         if index is None:
             index = torch.arange(0, tensor.shape[0])
 
-        # Store the index as a column
-        self.store[MyFeatureStore.key(attr)] = torch.cat(
-            (index.reshape(-1, 1), tensor), dim=1)
+        # Store the index as a column:
+        self.store[MyFeatureStore.key(attr)] = (index, tensor)
 
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        tensor = self.store.get(MyFeatureStore.key(attr), None)
+        index, tensor = self.store.get(MyFeatureStore.key(attr), (None, None))
+
         if tensor is None:
             return None
 
-        # Not set or None indices return the whole tensor
+        # Not set or None indices return the whole tensor:
         if attr.index is None:
-            return tensor[:, 1:]
+            return tensor
 
-        # Index into the tensor
-        indices = torch.cat([(tensor[:, 0] == v).nonzero()
-                             for v in attr.index]).reshape(1, -1)[0]
-
-        return torch.index_select(tensor[:, 1:], 0, indices)
+        idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
+        return tensor[idx]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         del self.store[MyFeatureStore.key(attr)]
+        return True
 
     def __len__(self):
         raise NotImplementedError
@@ -70,9 +68,9 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
         super().__init__()
         self._attr_cls = MyTensorAttrNoGroupName
 
-    @classmethod
-    def key(cls, attr: TensorAttr):
-        return attr.attr_name or ''
+    @staticmethod
+    def key(attr: TensorAttr) -> str:
+        return attr.attr_name
 
     def __len__(self):
         raise NotImplementedError
@@ -82,33 +80,30 @@ def test_feature_store():
     r"""Tests basic API and indexing functionality of a feature store."""
     store = MyFeatureStore()
     tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
-    index = torch.Tensor([0, 1, 2])
 
-    attr_name = 'feat'
     group_name = 'A'
-
+    attr_name = 'feat'
+    index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
 
-    # Normal API
+    # Normal API:
     store.put_tensor(tensor, attr)
     assert torch.equal(store.get_tensor(attr), tensor)
     assert torch.equal(
-        store.get_tensor(group_name, attr_name, torch.Tensor([0, 2])),
-        tensor[[0, 2]],
+        store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
+        tensor[torch.tensor([0, 2])],
     )
     assert store.get_tensor(None, None, index) is None
     store.remove_tensor(group_name, attr_name, None)
     assert store.get_tensor(attr) is None
 
-    # Views
-    view = store.view(TensorAttr(group_name=group_name))
+    # Views:
+    view = store.view(group_name=group_name)
     view.attr_name = attr_name
     view['index'] = index
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
 
-    # Indexing
-
-    # Setting via indexing
+    # Indexing:
     store[group_name, attr_name, index] = tensor
 
     # Fully-specified forms, all of which produce a tensor output
@@ -134,7 +129,7 @@ def test_feature_store():
     assert isinstance(store[group_name], AttrView)
     assert torch.equal(store[group_name](), tensor)
 
-    # Deletion
+    # Deletion:
     del store[group_name, attr_name, index]
     assert store[group_name, attr_name, index] is None
     del store[group_name]
@@ -144,14 +139,14 @@ def test_feature_store():
 def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
     tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
-    index = torch.Tensor([0, 1, 2])
 
     attr_name = 'feat'
+    index = torch.tensor([0, 1, 2])
 
-    # Only use attr_name and index, in that order
+    # Only use attr_name and index, in that order:
     store[attr_name, index] = tensor
 
-    # A few assertions to ensure group_name is not needed
+    # A few assertions to ensure group_name is not needed:
     assert isinstance(store[attr_name], AttrView)
     assert torch.equal(store[attr_name, index], tensor)
     assert torch.equal(store[attr_name][index], tensor)
