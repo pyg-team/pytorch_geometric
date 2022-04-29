@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
+import pytest
 import torch
 
 from torch_geometric.data.feature_store import (
@@ -25,7 +26,7 @@ class MyFeatureStore(FeatureStore):
         index = attr.index
 
         # Not set or None indices define the obvious index
-        if not attr.is_set('index') or index is None:
+        if index is None:
             index = torch.arange(0, tensor.shape[0])
 
         # Store the index as a column
@@ -40,7 +41,7 @@ class MyFeatureStore(FeatureStore):
             return None
 
         # Not set or None indices return the whole tensor
-        if not attr.is_set('index') or attr.index is None:
+        if attr.index is None:
             return tensor[:, 1:]
 
         # Index into the tensor
@@ -92,17 +93,17 @@ def test_feature_store():
     store.put_tensor(tensor, attr)
     assert torch.equal(store.get_tensor(attr), tensor)
     assert torch.equal(
-        store.get_tensor((group_name, attr_name, torch.Tensor([0, 2]))),
+        store.get_tensor(group_name, attr_name, torch.Tensor([0, 2])),
         tensor[[0, 2]],
     )
-    assert store.get_tensor(TensorAttr(index=index)) is None
-    store.remove_tensor(TensorAttr(group_name, attr_name))
+    assert store.get_tensor(None, None, index) is None
+    store.remove_tensor(group_name, attr_name, None)
     assert store.get_tensor(attr) is None
 
     # Views
     view = store.view(TensorAttr(group_name=group_name))
     view.attr_name = attr_name
-    view.index = index
+    view['index'] = index
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
 
     # Indexing
@@ -114,7 +115,13 @@ def test_feature_store():
     assert torch.equal(store[group_name, attr_name, index], tensor)
     assert torch.equal(store[group_name, attr_name, None], tensor)
     assert torch.equal(store[group_name, attr_name, :], tensor)
+    assert torch.equal(store[group_name][attr_name][:], tensor)
     assert torch.equal(store[group_name].feat[:], tensor)
+    assert torch.equal(store.view().A.feat[:], tensor)
+
+    with pytest.raises(AttributeError) as exc_info:
+        _ = store.view(group_name=group_name, index=None).feat.A
+        print(exc_info)
 
     # Partially-specified forms, which produce an AttrView object
     assert store[group_name] == store.view(TensorAttr(group_name=group_name))

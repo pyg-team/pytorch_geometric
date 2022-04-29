@@ -54,10 +54,10 @@ class TensorAttr(CastMixin):
     """
 
     # The group name that the tensor corresponds to. Defaults to None.
-    group_name: Optional[str] = None
+    group_name: Optional[str] = _field_status.UNSET
 
     # The name of the tensor within its group. Defaults to None.
-    attr_name: Optional[str] = None
+    attr_name: Optional[str] = _field_status.UNSET
 
     # The node indices the rows of the tensor correspond to. Defaults to UNSET.
     index: Optional[IndexType] = _field_status.UNSET
@@ -75,6 +75,13 @@ class TensorAttr(CastMixin):
             getattr(self, field) != _field_status.UNSET
             for field in self.__dataclass_fields__
         ])
+
+    def fully_specify(self):
+        r"""Sets all UNSET fields to None."""
+        for field in self.__dataclass_fields__:
+            if getattr(self, field) == _field_status.UNSET:
+                setattr(self, field, None)
+        return self
 
     def update(self, attr: 'TensorAttr'):
         r"""Updates an :obj:`TensorAttr` with set attributes from another
@@ -115,24 +122,57 @@ class AttrView(CastMixin):
         self.__dict__['_store'] = store
         self.__dict__['_attr'] = attr
 
-    # Python built-ins ########################################################
+    # Advanced indexing #######################################################
 
-    def __getattr__(self, key: str) -> 'AttrView':
-        r"""Sets the attr_name field of the backing :obj:`TensorAttr` object to
-        the attribute. This allows for :obj:`AttrView` to be indexed by
-        different values of attr_name. In particular, for a feature store that
-        has `feat` as an `attr_name`, the following code indexes into `feat`:
+    def __getattr__(self, key: Any) -> 'AttrView':
+        r"""Sets the first unset field of the backing :obj:`TensorAttr` object
+        to the attribute. This allows for :obj:`AttrView` to be indexed by
+        different values of attributes, in order. In particular, for a feature
+        store that we want to index by `group_name` group and `attr_name` attr,
+        the following code will do so:
 
         .. code-block:: python
 
-            store[group_name].feat[:]
+            store[group, attr]
+            store[group].attr
+            store.group.attr
 
         """
         out = copy.copy(self)
-        out._attr.attr_name = key
+
+        # First attribute that is UNSET
+        attr_name = None
+        for field in out._attr.__dataclass_fields__:
+            if getattr(out._attr, field) == _field_status.UNSET:
+                attr_name = field
+                break
+
+        if attr_name is None:
+            raise AttributeError(f"Cannot access attribute {key} on view "
+                                 f"{out} as all attributes have already been "
+                                 f"set in this view.")
+
+        setattr(out._attr, attr_name, key)
         if out._attr.is_fully_specified():
             return out._store.get_tensor(out._attr)
         return out
+
+    def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
+        r"""Sets the first unset field of the backing :obj:`TensorAttr` object
+        to the attribute via indexing. This allows for :obj:`AttrView` to be
+        indexed by different values of attributes, in order. In particular, for
+        a feature store that we want to index by `group_name` group and
+        `attr_name` attr, the following code will do so:
+
+        .. code-block:: python
+
+            store[group, attr]
+            store[group][attr]
+
+        """
+        return self.__getattr__(key)
+
+    # Setting attributes ######################################################
 
     def __setattr__(self, key, value):
         r"""Supports attribute assignment to the backing :obj:`TensorAttr` of
@@ -146,28 +186,28 @@ class AttrView(CastMixin):
             view.index = torch.Tensor([1, 2, 3])
 
         """
+        if key not in self._attr.__dataclass_fields__:
+            raise ValueError(f"Attempted to set nonexistent attribute {key} "
+                             f"(acceptable attributes are "
+                             f"{self._attr.__dataclass_fields__}).")
+
         setattr(self._attr, key, value)
 
-    def __getitem__(
-        self,
-        index: IndexType,
-    ) -> Union['AttrView', FeatureTensorType]:
-        r"""Supports indexing the backing :obj:`TensorAttr` object by an
-        index or a slice. If the index operation results in a fully-specified
-        :obj:`AttrView`, a Tensor is returned. Otherwise, the :obj:`AttrView`
-        object is returned. The following operation returns a Tensor object
-        as a result of the index specification:
+    def __setitem__(self, key, value):
+        r"""Supports attribute assignment to the backing :obj:`TensorAttr` of
+        an :obj:`AttrView` via indexing. This allows for :obj:`AttrView`
+        objects to set their backing attribute values. In particular, the
+        following operation sets the `index` of an :obj:`AttrView`:
 
         .. code-block:: python
 
-            store[group_name, attr_name][:]
+            view = store.view(TensorAttr(group_name))
+            view['index'] = torch.Tensor([1, 2, 3])
 
         """
-        out = copy.copy(self)
-        out._attr.index = index
-        if out._attr.is_fully_specified():
-            return out._store.get_tensor(out._attr)
-        return out
+        self.__setattr__(key, value)
+
+    # Miscellaneous built-ins #################################################
 
     def __call__(self) -> FeatureTensorType:
         r"""Supports :obj:`AttrView` as a callable to force retrieval from
@@ -182,7 +222,10 @@ class AttrView(CastMixin):
             store[group_name, attr_name]()
 
         """
-        return self._store.get_tensor(self._attr)
+        # Set all UNSET values to None if forced execution
+        out = copy.copy(self)
+        out._attr.fully_specify()
+        return out._store.get_tensor(out._attr)
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
@@ -235,6 +278,11 @@ class FeatureStore(MutableMapping):
             bool: whether insertion was successful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
+        if not attr.is_fully_specified():
+            raise ValueError(f"The input TensorAttr {attr} is not fully "
+                             f"specified. Please fully specify the input "
+                             f"by specifying all UNSET fields.")
+
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
@@ -275,6 +323,11 @@ class FeatureStore(MutableMapping):
                                   attr.index.step) == (None, None, None):
             attr.index = None
 
+        if not attr.is_fully_specified():
+            raise ValueError(f"The input TensorAttr {attr} is not fully "
+                             f"specified. Please fully specify the input "
+                             f"by specifying all UNSET fields.")
+
         return to_type(self._get_tensor(attr))
 
     @abstractmethod
@@ -297,6 +350,11 @@ class FeatureStore(MutableMapping):
             bool: whether deletion was succesful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
+        if not attr.is_fully_specified():
+            raise ValueError(f"The input TensorAttr {attr} is not fully "
+                             f"specified. Please fully specify the input "
+                             f"by specifying all UNSET fields.")
+
         self._remove_tensor(attr)
 
     def update_tensor(self, tensor: FeatureTensorType, *args,
@@ -318,6 +376,11 @@ class FeatureStore(MutableMapping):
             bool: whether the update was succesful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
+        if not attr.is_fully_specified():
+            raise ValueError(f"The input TensorAttr {attr} is not fully "
+                             f"specified. Please fully specify the input "
+                             f"by specifying all UNSET fields.")
+
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
@@ -333,6 +396,10 @@ class FeatureStore(MutableMapping):
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
         key = self._attr_cls.cast(key)
+
+        # We need to fully specify the key for __setitem__ as it does not make
+        # sense to work with a view here.
+        key.fully_specify()
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr):
@@ -358,6 +425,7 @@ class FeatureStore(MutableMapping):
     def __delitem__(self, key: TensorAttr):
         r"""Supports del store[tensor_attr]."""
         key = self._attr_cls.cast(key)
+        key.fully_specify()
         self.remove_tensor(key)
 
     def __iter__(self):
