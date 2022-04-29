@@ -3,7 +3,7 @@ from typing import List, Optional
 import torch
 from torch_scatter import scatter
 
-from torch_geometric.nn.inits import normal, reset
+from torch_geometric.nn.inits import reset
 
 
 class ResNetPotential(torch.nn.Module):
@@ -73,7 +73,7 @@ class EquilibriumAggregation(torch.nn.Module):
 
         self.potential = ResNetPotential(in_channels + out_channels,
                                          num_layers)
-        self.lamb = torch.nn.Parameter(torch.Tensor([1]), requires_grad=True)
+        self.lamb = torch.nn.Parameter(torch.Tensor([0.1]), requires_grad=True)
         self.softplus = torch.nn.Softplus()
         self.grad_iter = grad_iter
         self.alpha = alpha
@@ -82,7 +82,7 @@ class EquilibriumAggregation(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        normal(self.lamb, 0, 0.1)
+        self.lamb.data.fill_(0.1)
         reset(self.potential)
 
     def init_output(self,
