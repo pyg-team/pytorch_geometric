@@ -241,9 +241,9 @@ class AttrView(CastMixin):
 class FeatureStore(MutableMapping):
     def __init__(self, attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
-        the ordering and require nature of their :obj:`TensorAttr` tensor
+        the ordering and required nature of their :class:`TensorAttr` tensor
         attributes by subclassing :class:`TensorAttr` and passing the subclass
-        as `attr_cls`."""
+        as :obj:`attr_cls`."""
         super().__init__()
         self._attr_cls = attr_cls
 
@@ -251,171 +251,167 @@ class FeatureStore(MutableMapping):
 
     @abstractmethod
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        r"""Implemented by :obj:`FeatureStore` subclasses."""
+        r"""To be implemented by :class:`FeatureStore` subclasses."""
         pass
 
     def put_tensor(self, tensor: FeatureTensorType, *args, **kwargs) -> bool:
-        r"""Synchronously adds a :obj:`FeatureTensorType` object to the feature
-        store.
+        r"""Synchronously adds a :class:`FeatureTensorType` object to the
+        feature store.
 
         Args:
-            tensor (FeatureTensorType): the features to be added.
-            attr (TensorAttr): any relevant tensor attributes that correspond
-                to the feature tensor. See the :obj:`TensorAttr` documentation
-                for required and optional attributes. It is the job of
-                implementations of a FeatureStore to store this metadata in a
-                meaningful way that allows for tensor retrieval from a
-                :obj:`TensorAttr` object.
+            tensor (FeatureTensorType): The feature tensor to be added.
+            **attr (TensorAttr): Any relevant tensor attributes that correspond
+                to the feature tensor. See the :class:`TensorAttr`
+                documentation for required and optional attributes. It is the
+                job of implementations of a :class:`FeatureStore` to store this
+                metadata in a meaningful way that allows for tensor retrieval
+                from a :class:`TensorAttr` object.
+
         Returns:
-            bool: whether insertion was successful.
+            bool: Whether insertion was successful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr {attr} is not fully "
-                             f"specified. Please fully specify the input "
-                             f"by specifying all UNSET fields.")
-
+            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
+                             f"specified. Please fully specify the input by "
+                             f"specifying all 'UNSET' fields")
         return self._put_tensor(tensor, attr)
 
     @abstractmethod
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        r"""Implemented by :obj:`FeatureStore` subclasses."""
+        r"""To be implemented by :class:`FeatureStore` subclasses."""
         pass
 
     def get_tensor(self, *args, **kwargs) -> Optional[FeatureTensorType]:
-        r"""Synchronously obtains a :obj:`FeatureTensorType` object from the
+        r"""Synchronously obtains a :class:`FeatureTensorType` object from the
         feature store. Feature store implementors guarantee that the call
-        get_tensor(put_tensor(tensor, attr), attr) = tensor holds.
+        :obj:`get_tensor(put_tensor(tensor, attr), attr) = tensor` holds.
 
         Args:
-            attr (TensorAttr): any relevant tensor attributes that correspond
-                to the tensor to obtain. See :obj:`TensorAttr` documentation
-                for required and optional attributes. It is the job of
-                implementations of a FeatureStore to store this metadata in a
-                meaningful way that allows for tensor retrieval from a
-                :obj:`TensorAttr` object.
+            **attr (TensorAttr): Any relevant tensor attributes that correspond
+                to the feature tensor. See the :class:`TensorAttr`
+                documentation for required and optional attributes. It is the
+                job of implementations of a :class:`FeatureStore` to store this
+                metadata in a meaningful way that allows for tensor retrieval
+                from a :class:`TensorAttr` object.
+
         Returns:
-            FeatureTensorType, optional: a tensor of the same type as the
-            index, or None if no tensor was found.
+            FeatureTensorType, optional: a Tensor of the same type as the
+            index, or :obj:`None` if no tensor was found.
         """
-        def to_type(tensor):
+        def to_type(tensor: FeatureTensorType) -> FeatureTensorType:
             if tensor is None:
                 return None
-            if isinstance(attr.index, torch.Tensor):
-                return torch.from_numpy(tensor) if isinstance(
-                    tensor, np.ndarray) else tensor
-            if isinstance(attr.index, np.ndarray):
-                return tensor.numpy() if isinstance(tensor,
-                                                    torch.Tensor) else tensor
+            if (isinstance(attr.index, torch.Tensor)
+                    and isinstance(tensor, np.ndarray)):
+                return torch.from_numpy(tensor)
+            if (isinstance(attr.index, np.ndarray)
+                    and isinstance(tensor, torch.Tensor)):
+                return tensor.numpy()
             return tensor
 
         attr = self._attr_cls.cast(*args, **kwargs)
-        if isinstance(attr.index,
-                      slice) and (attr.index.start, attr.index.stop,
-                                  attr.index.step) == (None, None, None):
-            attr.index = None
+        if isinstance(attr.index, slice):
+            if attr.index.start == attr.index.stop == attr.index.step is None:
+                attr.index = None
 
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr {attr} is not fully "
-                             f"specified. Please fully specify the input "
-                             f"by specifying all UNSET fields.")
+            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
+                             f"specified. Please fully specify the input by "
+                             f"specifying all 'UNSET' fields.")
 
         return to_type(self._get_tensor(attr))
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        r"""Implemented by :obj:`FeatureStore` subclasses."""
+        r"""To be implemented by :obj:`FeatureStore` subclasses."""
         pass
 
     def remove_tensor(self, *args, **kwargs) -> bool:
         r"""Removes a :obj:`FeatureTensorType` object from the feature store.
 
         Args:
-            attr (TensorAttr): any relevant tensor attributes that correspond
-                to the tensor to remove. See :obj:`TensorAttr` documentation
-                for required and optional attributes. It is the job of
-                implementations of a FeatureStore to store this metadata in a
-                meaningful way that allows for tensor deletion from a
-                :obj:`TensorAttr` object.
+            **attr (TensorAttr): Any relevant tensor attributes that correspond
+                to the feature tensor. See the :class:`TensorAttr`
+                documentation for required and optional attributes. It is the
+                job of implementations of a :class:`FeatureStore` to store this
+                metadata in a meaningful way that allows for tensor retrieval
+                from a :class:`TensorAttr` object.
 
         Returns:
-            bool: whether deletion was succesful.
+            bool: Whether deletion was succesful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr {attr} is not fully "
-                             f"specified. Please fully specify the input "
-                             f"by specifying all UNSET fields.")
-
+            raise ValueError(f"The input TensorAttr '{attr}' is not fully "
+                             f"specified. Please fully specify the input by "
+                             f"specifying all 'UNSET' fields.")
         self._remove_tensor(attr)
 
     def update_tensor(self, tensor: FeatureTensorType, *args,
                       **kwargs) -> bool:
-        r"""Updates a :obj:`FeatureTensorType` object with a new value.
+        r"""Updates a :class:`FeatureTensorType` object with a new value.
         implementor classes can choose to define more efficient update methods;
         the default performs a removal and insertion.
 
         Args:
-            tensor (FeatureTensorType): the features to be added.
-            attr (TensorAttr): any relevant tensor attributes that correspond
-                to the old tensor. See :obj:`TensorAttr` documentation
-                for required and optional attributes. It is the job of
-                implementations of a FeatureStore to store this metadata in a
-                meaningful way that allows for tensor update from a
-                :obj:`TensorAttr` object.
+            tensor (FeatureTensorType): The feature tensor to be updated.
+            **attr (TensorAttr): Any relevant tensor attributes that correspond
+                to the feature tensor. See the :class:`TensorAttr`
+                documentation for required and optional attributes. It is the
+                job of implementations of a :class:`FeatureStore` to store this
+                metadata in a meaningful way that allows for tensor retrieval
+                from a :class:`TensorAttr` object.
 
         Returns:
-            bool: whether the update was succesful.
+            bool: Whether the update was succesful.
         """
         attr = self._attr_cls.cast(*args, **kwargs)
-        if not attr.is_fully_specified():
-            raise ValueError(f"The input TensorAttr {attr} is not fully "
-                             f"specified. Please fully specify the input "
-                             f"by specifying all UNSET fields.")
-
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
     # :obj:`AttrView` methods #################################################
 
     def view(self, *args, **kwargs) -> AttrView:
-        r"""Returns an :obj:`AttrView` of the feature store, with the defined
+        r"""Returns an :class:`AttrView` of the feature store, with the defined
         attributes set."""
-        return AttrView(self, self._attr_cls.cast(*args, **kwargs))
+        attr = self._attr_cls.cast(*args, **kwargs)
+        return AttrView(self, attr)
 
     # Python built-ins ########################################################
 
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
         r"""Supports store[tensor_attr] = tensor."""
+        # CastMixin will handle the case of key being a tuple or TensorAttr
+        # object:
         key = self._attr_cls.cast(key)
-
         # We need to fully specify the key for __setitem__ as it does not make
-        # sense to work with a view here.
+        # sense to work with a view here:
         key.fully_specify()
         self.put_tensor(value, key)
 
-    def __getitem__(self, key: TensorAttr):
+    def __getitem__(self, key: TensorAttr) -> Any:
         r"""Supports pythonic indexing into the feature store. In particular,
         the following rules are followed for indexing:
 
-        * Fully-specified indexes will produce a Tensor output. A
-            fully-specified index specifies all the required attributes in
-            :obj:`TensorAttr`.
+        * A fully-specified :obj:`key` will produce a tensor output.
 
-        * Partially-specified indexes will produce an AttrView output, which
-            is a view on the FeatureStore. If a view is called, it will produce
-            a Tensor output from the corresponding (partially specified)
-            attributes.
+        * A partially-specified :obj:`key` will produce an :class:`AttrView`
+          output, which is a view on the :class:`FeatureStore`. If a view is
+          called, it will produce a tensor output from the corresponding
+          (partially specified) attributes.
         """
         # CastMixin will handle the case of key being a tuple or TensorAttr
-        # object.
+        # object:
         attr = self._attr_cls.cast(key)
         if attr.is_fully_specified():
             return self.get_tensor(attr)
-        return AttrView(self, attr)
+        return self.view(attr)
 
     def __delitem__(self, key: TensorAttr):
         r"""Supports del store[tensor_attr]."""
+        # CastMixin will handle the case of key being a tuple or TensorAttr
+        # object:
         key = self._attr_cls.cast(key)
         key.fully_specify()
         self.remove_tensor(key)
@@ -423,8 +419,8 @@ class FeatureStore(MutableMapping):
     def __iter__(self):
         raise NotImplementedError
 
-    def __eq__(self, __o: object) -> bool:
-        return id(self) == id(__o)
+    def __eq__(self, obj: object) -> bool:
+        return id(self) == id(obj)
 
     @abstractmethod
     def __len__(self):
