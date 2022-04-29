@@ -52,10 +52,10 @@ class TensorAttr(CastMixin):
     :meth:`TensorAttr.__init__`.
     """
 
-    # The group name that the tensor corresponds to. Defaults to None.
+    # The group name that the tensor corresponds to. Defaults to UNSET.
     group_name: Optional[str] = _field_status.UNSET
 
-    # The name of the tensor within its group. Defaults to None.
+    # The name of the tensor within its group. Defaults to UNSET.
     attr_name: Optional[str] = _field_status.UNSET
 
     # The node indices the rows of the tensor correspond to. Defaults to UNSET.
@@ -72,7 +72,7 @@ class TensorAttr(CastMixin):
         r"""Whether the :obj:`TensorAttr` has no unset fields."""
         return all([self.is_set(key) for key in self.__dataclass_fields__])
 
-    def fully_specify(self):
+    def fully_specify(self) -> 'TensorAttr':
         r"""Sets all :obj:`UNSET` fields to :obj:`None`."""
         for key in self.__dataclass_fields__:
             if not self.is_set(key):
@@ -346,7 +346,7 @@ class FeatureStore(MutableMapping):
             raise ValueError(f"The input TensorAttr '{attr}' is not fully "
                              f"specified. Please fully specify the input by "
                              f"specifying all 'UNSET' fields.")
-        self._remove_tensor(attr)
+        return self._remove_tensor(attr)
 
     def update_tensor(self, tensor: FeatureTensorType, *args,
                       **kwargs) -> bool:
@@ -406,6 +406,7 @@ class FeatureStore(MutableMapping):
         attr = self._attr_cls.cast(key)
         if attr.is_fully_specified():
             return self.get_tensor(attr)
+        # If the view is not fully specified, return a :class:`AttrView`:
         return self.view(attr)
 
     def __delitem__(self, key: TensorAttr):

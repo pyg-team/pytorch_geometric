@@ -25,11 +25,11 @@ class MyFeatureStore(FeatureStore):
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         index = attr.index
 
-        # Not set or None indices define the obvious index:
+        # None indices define the obvious index:
         if index is None:
             index = torch.arange(0, tensor.shape[0])
 
-        # Store the index as a column:
+        # Store the index:
         self.store[MyFeatureStore.key(attr)] = (index, tensor)
 
         return True
@@ -40,7 +40,7 @@ class MyFeatureStore(FeatureStore):
         if tensor is None:
             return None
 
-        # Not set or None indices return the whole tensor:
+        # None indices return the whole tensor:
         if attr.index is None:
             return tensor
 
