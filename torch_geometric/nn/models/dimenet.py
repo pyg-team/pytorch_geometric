@@ -45,7 +45,7 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return 1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2
+        return (1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2) * (x < 1.0).float()
 
 
 class BesselBasisLayer(torch.nn.Module):
@@ -64,7 +64,7 @@ class BesselBasisLayer(torch.nn.Module):
         self.freq.requires_grad_()
 
     def forward(self, dist):
-        dist = (dist.unsqueeze(-1) / self.cutoff).clamp(max=1.0)
+        dist = (dist.unsqueeze(-1) / self.cutoff)
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
@@ -104,7 +104,7 @@ class SphericalBasisLayer(torch.nn.Module):
                 self.bessel_funcs.append(bessel)
 
     def forward(self, dist, angle, idx_kj):
-        dist = dist / self.cutoff
+        dist = (dist / self.cutoff)
         rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)
         rbf = self.envelope(dist).unsqueeze(-1) * rbf
 
