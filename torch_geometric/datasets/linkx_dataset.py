@@ -36,6 +36,14 @@ class LINKXDataset(InMemoryDataset):
         'amherst41': f'{url}/facebook100/Amherst41.mat',
         'cornell5': f'{url}/facebook100/Cornell5.mat',
         'johnshopkins55': f'{url}/facebook100/Johns%20Hopkins55.mat',
+        'chameleon': f'{url}/chameleon.mat',
+        'cornell': f'{url}/cornell.mat',
+        'deezer-europe': f'{url}/deezer-europe.mat',
+        'film': f'{url}/film.mat',
+        'genius': f'{url}/genius.mat',
+        'squirrel': f'{url}/squirrel.mat',
+        'texas': f'{url}/texas.mat',
+        'wisconsin': f'{url}/wisconsin.mat',
     }
 
     splits = {
@@ -79,20 +87,36 @@ class LINKXDataset(InMemoryDataset):
 
         mat = loadmat(self.raw_paths[0])
 
-        A = mat['A'].tocsr().tocoo()
-        row = torch.from_numpy(A.row).to(torch.long)
-        col = torch.from_numpy(A.col).to(torch.long)
-        edge_index = torch.stack([row, col], dim=0)
+        if 'A' in mat:
+            A = mat['A'].tocsr().tocoo()
+            row = torch.from_numpy(A.row).to(torch.long)
+            col = torch.from_numpy(A.col).to(torch.long)
+            edge_index = torch.stack([row, col], dim=0)
+        elif 'edge_index' in mat:
+            edge_index = torch.tensor(mat['edge_index'])
+        else:
+            raise ValueError("Unknown adjacency format in dataset.")
 
-        metadata = torch.from_numpy(mat['local_info'].astype('int64'))
-
-        xs = []
-        y = metadata[:, 1] - 1  # gender label, -1 means unlabeled
-        x = torch.cat([metadata[:, :1], metadata[:, 2:]], dim=-1)
-        for i in range(x.size(1)):
-            _, out = x[:, i].unique(return_inverse=True)
-            xs.append(F.one_hot(out).to(torch.float))
-        x = torch.cat(xs, dim=-1)
+        if 'metadata' in mat:
+            metadata = torch.from_numpy(mat['local_info'].astype('int64'))
+            xs = []
+            y = metadata[:, 1] - 1  # gender label, -1 means unlabeled
+            x = torch.cat([metadata[:, :1], metadata[:, 2:]], dim=-1)
+            for i in range(x.size(1)):
+                _, out = x[:, i].unique(return_inverse=True)
+                xs.append(F.one_hot(out).to(torch.float))
+            x = torch.cat(xs, dim=-1)
+        else:
+            if 'node_feat' in mat:
+                x = torch.tensor(mat['node_feat'])
+            elif 'features' in mat:
+                x = torch.tensor(mat['features'].todense())
+            else:
+                raise ValueError("Unknown features format in dataset.")
+            if 'label' in mat:
+                y = torch.tensor(mat['label'])
+            else:
+                raise ValueError("Unknown label format in dataset.")
 
         data = Data(x=x, edge_index=edge_index, y=y)
 
