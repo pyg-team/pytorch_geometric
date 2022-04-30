@@ -12,7 +12,7 @@ from torch_geometric.typing import Adj, OptTensor, Size, Tensor
 
 class PEGConv(MessagePassing):
     r"""The PEG layer from the
-    `"Equivariant and Stable Positional Encoding 
+    `"Equivariant and Stable Positional Encoding
     for More Powerful Graph Neural Networks"
     <https://arxiv.org/abs/2203.00199>`_ paper
 
@@ -22,8 +22,8 @@ class PEGConv(MessagePassing):
         pos_dim (int): Size of positional encoding.
         out_feats_dim (int): Size of output node features.
         edge_mlp_dim (int):
-            We use MLP to make one to one mapping between the relative information 
-            and edge weight. edge_mlp_dim represents the hidden units dimension 
+            We use MLP to make one to one mapping between the relative information
+            and edge weight. edge_mlp_dim represents the hidden units dimension
             in the MLP. (default: 32)
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
