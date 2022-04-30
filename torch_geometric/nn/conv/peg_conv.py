@@ -131,9 +131,9 @@ class PEGConv(MessagePassing):
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         # pos: l2 norms
         hidden_out, coors_out = self.propagate(edge_index, x=feats,
-                                            edge_weight=edge_weight,
-                                            pos=rel_dist, coors=coors,
-                                            size=None)
+                                               edge_weight=edge_weight,
+                                               pos=rel_dist, coors=coors,
+                                               size=None)
 
         if self.bias is not None:
             hidden_out += self.bias
@@ -157,7 +157,8 @@ class PEGConv(MessagePassing):
                 aggregate messages, and to update node embeddings.
         """
         size = self.__check_input__(edge_index, size)
-        coll_dict = self.__collect__(self.__user_args__, edge_index, size, kwargs)
+        coll_dict = self.__collect__(self.__user_args__, edge_index, size,
+                                     kwargs)
         msg_kwargs = self.inspector.distribute('message', coll_dict)
         aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
         update_kwargs = self.inspector.distribute('update', coll_dict)
