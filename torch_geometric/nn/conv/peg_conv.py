@@ -12,7 +12,7 @@ from torch_geometric.typing import Adj, OptTensor, Size, Tensor
 
 class PEGConv(MessagePassing):
     r"""The PEG layer from the
-    `"Equivariant and Stable Positional Encoding 
+    `"Equivariant and Stable Positional Encoding
     for More Powerful Graph Neural Networks"
     <https://arxiv.org/abs/2203.00199>`_ paper
 
