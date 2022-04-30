@@ -15,7 +15,7 @@ def test_peg_conv():
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     adj1 = adj2.set_value(None)
 
-    conv = PEGConv(in_feats_dim = 16, pos_dim = 16, out_feats_dim = 32)
+    conv = PEGConv(in_feats_dim=16, pos_dim=16, out_feats_dim=32)
     assert conv.__repr__() == 'PEGConv(16,16,32)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 48)

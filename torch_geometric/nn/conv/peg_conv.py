@@ -1,27 +1,26 @@
 import math
-from torch_geometric.typing import Adj, Size, OptTensor, Tensor
+from typing import Optional, Tuple
+
 import torch
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
 from torch.nn import Parameter
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.typing import Adj, OptTensor, Size, Tensor
 
 
 class PEGConv(MessagePassing):
-    r"""The PEG layer from the 
-    `"Equivariant and Stable Positional Encoding for More Powerful Graph Neural Networks" 
-    <https://arxiv.org/abs/2203.00199>`_ paper
-    
+    r"""The PEG layer from the `"Equivariant and Stable Positional Encoding for More Powerful Graph Neural Networks" <https://arxiv.org/abs/2203.00199>`_ paper
+
+
     Args:
         in_feats_dim (int): Size of input node features.
         pos_dim (int): Size of positional encoding.
         out_feats_dim (int): Size of output node features.
-        edge_mlp_dim (int): 
-            We use MLP to make one to one mapping between 
-                the relative information and edge weight. 
-            edge_mlp_dim represents the hidden units dimension in the MLP. (default: 32)
+        edge_mlp_dim (int): We use MLP to make one to one mapping between the relative information and edge weight.
+                            edge_mlp_dim represents the hidden units dimension in the MLP. (default: 32)
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
             (default: :obj:`False`)
@@ -43,19 +42,11 @@ class PEGConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self,
-                 in_feats_dim: int,
-                 pos_dim: int,
-                 out_feats_dim: int,
-                 edge_mlp_dim: int = 32,
-                 improved: bool = False,
-                 cached: bool = False,
-                 add_self_loops: bool = True,
-                 normalize: bool = True,
-                 bias: bool = True,
-                 use_formerinfo: bool = False,
-                 **kwargs):
+    def __init__(self, in_feats_dim: int, pos_dim: int, out_feats_dim: int,
+                 edge_mlp_dim: int = 32, improved: bool = False,
+                 cached: bool = False, add_self_loops: bool = True,
+                 normalize: bool = True, bias: bool = True,
+                 use_formerinfo: bool = False, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super(PEGConv, self).__init__(**kwargs)
@@ -94,9 +85,7 @@ class PEGConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self,
-                x: Tensor,
-                edge_index: Adj,
+    def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""
 
@@ -126,16 +115,21 @@ class PEGConv(MessagePassing):
                     edge_index = cache
         else:
             print('We normalize the adjacency matrix in PEG.')
-        
+
         if isinstance(edge_index, Tensor):
             rel_coors = coors[edge_index[0]] - coors[edge_index[1]]
         elif isinstance(edge_index, SparseTensor):
-            rel_coors = coors[edge_index.to_torch_sparse_coo_tensor()._indices()[0]] - coors[edge_index.to_torch_sparse_coo_tensor()._indices()[1]]
+            rel_coors = coors[
+                edge_index.to_torch_sparse_coo_tensor()._indices()[0]] - coors[
+                    edge_index.to_torch_sparse_coo_tensor()._indices()[1]]
         rel_dist = (rel_coors**2).sum(dim=-1, keepdim=True)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         # pos: l2 norms
-        hidden_out, coors_out = self.propagate(edge_index, x=feats, edge_weight=edge_weight, pos=rel_dist, coors=coors, size=None)
+        hidden_out, coors_out = self.propagate(edge_index, x=feats,
+                                               edge_weight=edge_weight,
+                                               pos=rel_dist, coors=coors,
+                                               size=None)
 
         if self.bias is not None:
             hidden_out += self.bias
@@ -192,5 +186,6 @@ class PEGConv(MessagePassing):
             tensor.data.fill_(0)
 
     def __repr__(self):
-        return '{}({},{},{})'.format(self.__class__.__name__, self.in_feats_dim, self.pos_dim,
-                                   self.out_feats_dim)
+        return '{}({},{},{})'.format(self.__class__.__name__,
+                                     self.in_feats_dim, self.pos_dim,
+                                     self.out_feats_dim)
