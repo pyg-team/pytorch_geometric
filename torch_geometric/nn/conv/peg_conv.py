@@ -22,9 +22,9 @@ class PEGConv(MessagePassing):
         pos_dim (int): Size of positional encoding.
         out_feats_dim (int): Size of output node features.
         edge_mlp_dim (int):
-            We use MLP to make one to one mapping between the relative information 
-            and edge weight. edge_mlp_dim represents the hidden units dimension 
-            in the MLP. (default: 32)
+            We use MLP to make one to one mapping between the 
+            relative information and edge weight. edge_mlp_dim 
+            represents the hidden units dimension in the MLP. (default: 32)
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
             (default: :obj:`False`)
@@ -157,8 +157,7 @@ class PEGConv(MessagePassing):
                 aggregate messages, and to update node embeddings.
         """
         size = self.__check_input__(edge_index, size)
-        coll_dict = self.__collect__(self.__user_args__, edge_index, size,
-                                     kwargs)
+        coll_dict = self.__collect__(self.__user_args__, edge_index, size, kwargs)
         msg_kwargs = self.inspector.distribute('message', coll_dict)
         aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
         update_kwargs = self.inspector.distribute('update', coll_dict)
