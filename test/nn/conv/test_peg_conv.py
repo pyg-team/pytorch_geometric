@@ -1,5 +1,3 @@
-import copy
-
 import torch
 from torch_sparse import SparseTensor
 

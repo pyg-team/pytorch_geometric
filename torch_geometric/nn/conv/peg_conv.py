@@ -1,6 +1,4 @@
 import math
-
-from typing import Optional, Tuple
 from torch_geometric.typing import Adj, Size, OptTensor, Tensor
 import torch
 from torch import nn
@@ -12,15 +10,18 @@ from torch_geometric.nn.conv import MessagePassing
 
 
 class PEGConv(MessagePassing):
-    r"""The PEG layer from the `"Equivariant and Stable Positional Encoding for More Powerful Graph Neural Networks" <https://arxiv.org/abs/2203.00199>`_ paper
-    
+    r"""The PEG layer from the 
+    `"Equivariant and Stable Positional Encoding for More Powerful Graph Neural Networks" 
+    <https://arxiv.org/abs/2203.00199>`_ paper
     
     Args:
         in_feats_dim (int): Size of input node features.
         pos_dim (int): Size of positional encoding.
         out_feats_dim (int): Size of output node features.
-        edge_mlp_dim (int): We use MLP to make one to one mapping between the relative information and edge weight. 
-                            edge_mlp_dim represents the hidden units dimension in the MLP. (default: 32)
+        edge_mlp_dim (int): 
+            We use MLP to make one to one mapping between 
+                the relative information and edge weight. 
+            edge_mlp_dim represents the hidden units dimension in the MLP. (default: 32)
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
             (default: :obj:`False`)
@@ -37,7 +38,8 @@ class PEGConv(MessagePassing):
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        use_formerinfo (bool): Whether to use previous layer's output to update node features.
+        use_formerinfo (bool): 
+            Whether to use previous layer's output to update node features.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -133,12 +135,7 @@ class PEGConv(MessagePassing):
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         # pos: l2 norms
-        hidden_out, coors_out = self.propagate(edge_index,
-                                               x=feats,
-                                               edge_weight=edge_weight,
-                                               pos=rel_dist,
-                                               coors=coors,
-                                               size=None)
+        hidden_out, coors_out = self.propagate(edge_index, x=feats, edge_weight=edge_weight, pos=rel_dist, coors=coors, size=None)
 
         if self.bias is not None:
             hidden_out += self.bias
