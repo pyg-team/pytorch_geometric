@@ -37,7 +37,7 @@ class PEGConv(MessagePassing):
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        use_formerinfo (bool): 
+        use_formerinfo (bool):
             Whether to use previous layer's output to update node features.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
