@@ -147,8 +147,9 @@ class PEGConv(MessagePassing):
                                                 edge_weight.view(-1, 1) * x_j)
 
     def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
-        """The initial call to start propagating messages.
-            Args:
+        r"""The initial call to start propagating messages.
+        
+        Args:
             `edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
             size (tuple, optional) if none, the size will be inferred
