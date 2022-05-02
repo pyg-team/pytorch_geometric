@@ -218,7 +218,7 @@ class ToHeteroTransformer(Transformer):
                     'call_function', target=torch.div,
                     args=(self.find_by_name(key), len(keys_per_dst[dst])),
                     name=f'{name}__{dst}')
-            self.graph.inserting_after(out)
+                self.graph.inserting_after(out)
 
     def call_global_pooling_module(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise `GlobalPooling` modules and aggregate
