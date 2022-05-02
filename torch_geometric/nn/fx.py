@@ -140,8 +140,12 @@ class Transformer(object):
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
                     self._state[node.name] = 'edge'
-                else:
+                if self.has_node_level_arg(node):
                     self._state[node.name] = 'node'
+                else:
+                    self._state[node.name] = 'graph'
+
+        print(self._state)
 
         # We iterate over each node and may transform it:
         for node in list(self.graph.nodes):
@@ -198,13 +202,13 @@ class Transformer(object):
         else:
             return self.init_submodule(module, target)
 
-    def is_edge_level(self, node: Node) -> bool:
-        return self._state[node.name] == 'edge'
+    def _is_level(self, node: None, name: str) -> bool:
+        return self._state[node.name] == name
 
-    def has_edge_level_arg(self, node: Node) -> bool:
+    def _has_level_arg(self, node: Node, name: str) -> bool:
         def _recurse(value: Any) -> bool:
             if isinstance(value, Node):
-                return self.is_edge_level(value)
+                return getattr(self, f'is_{name}_level')(value)
             elif isinstance(value, dict):
                 return any([_recurse(v) for v in value.values()])
             elif isinstance(value, (list, tuple)):
@@ -214,6 +218,24 @@ class Transformer(object):
 
         return (any([_recurse(value) for value in node.args])
                 or any([_recurse(value) for value in node.kwargs.values()]))
+
+    def is_node_level(self, node: Node) -> bool:
+        return self._is_level(node, name='node')
+
+    def is_edge_level(self, node: Node) -> bool:
+        return self._is_level(node, name='edge')
+
+    def is_graph_level(self, node: Node) -> bool:
+        return self._is_level(node, name='graph')
+
+    def has_node_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='node')
+
+    def has_edge_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='edge')
+
+    def has_graph_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='graph')
 
     def find_by_name(self, name: str) -> Optional[Node]:
         for node in self.graph.nodes:
