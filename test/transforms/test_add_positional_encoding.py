@@ -23,7 +23,6 @@ def test_add_laplacian_eigenvector_pe():
     assert out.laplacian_eigenvector_pe.size() == (N, num_pe)
 
     transform_cat = AddLaplacianEigenvectorPE(num_pe, 'cat')
-    assert transform_cat.__repr__() == 'AddLaplacianEigenvectorPE()'
 
     data = Data(x=x, edge_index=edge_index)
     out = transform_cat(data)
@@ -42,15 +41,14 @@ def test_add_random_walk_pe():
     num_pe = 3
 
     transform_attr = AddRandomWalkPE(num_pe, 'attr')
-    assert transform_attr.__repr__() == 'AddRandomWalkPE()'
+    assert str(transform_attr) == 'AddRandomWalkPE()'
 
     data = Data(x=x, edge_index=edge_index)
     out = transform_attr(data)
     assert hasattr(out, 'random_walk_pe')
-    assert getattr(out, 'random_walk_pe').size() == (N, num_pe)
+    assert out.random_walk_pe.size() == (N, num_pe)
 
     transform_cat = AddRandomWalkPE(num_pe, 'cat')
-    assert transform_cat.__repr__() == 'AddRandomWalkPE()'
 
     data = Data(x=x, edge_index=edge_index)
     out = transform_cat(data)
