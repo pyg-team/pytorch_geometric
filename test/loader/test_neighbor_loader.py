@@ -6,6 +6,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.testing import withRegisteredOp
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -255,3 +256,22 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
+def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
+    dataset = get_dataset(name='Cora')
+    data = dataset[0]
+
+    hetero_data = HeteroData()
+    hetero_data['paper'].x = data.x
+    hetero_data['paper'].time = torch.arange(data.num_nodes)
+    hetero_data['paper', 'paper'].edge_index = data.edge_index
+
+    loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
+                            input_nodes='paper', time_attr='time',
+                            batch_size=1)
+
+    for batch in loader:
+        mask = batch['paper'].time[0] >= batch['paper'].time[1:]
+        assert torch.all(mask)
