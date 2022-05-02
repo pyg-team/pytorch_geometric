@@ -1,4 +1,5 @@
 import time
+import typing
 import warnings
 from typing import Any, Dict, Tuple
 
@@ -9,6 +10,9 @@ from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.register import network_dict, register_network
+
+if typing.TYPE_CHECKING:
+    from yacs.config import CfgNode
 
 try:
     from pytorch_lightning import LightningModule
@@ -21,7 +25,7 @@ register_network('gnn', GNN)
 
 
 class GraphGymModule(LightningModule):
-    def __init__(self, dim_in, dim_out, cfg):
+    def __init__(self, dim_in, dim_out, cfg: "CfgNode"):
         super().__init__()
         self.cfg = cfg
         self.model = network_dict[cfg.model.type](dim_in=dim_in,

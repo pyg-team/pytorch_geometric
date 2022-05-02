@@ -2,6 +2,7 @@ import logging
 import math
 import sys
 import time
+import warnings
 from typing import Any, Dict, Optional
 
 import torch
@@ -19,7 +20,8 @@ try:
 except ImportError:
     pl = None
     Callback = object
-    logging.warning("pytorch_lightning is not installed")
+    warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
+                  "experiment manager via 'pip install pytorch_lightning'")
 
 
 def set_printing():
