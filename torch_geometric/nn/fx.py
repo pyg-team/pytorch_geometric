@@ -140,7 +140,7 @@ class Transformer(object):
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
                     self._state[node.name] = 'edge'
-                if self.has_node_level_arg(node):
+                elif self.has_node_level_arg(node):
                     self._state[node.name] = 'node'
                 else:
                     self._state[node.name] = 'graph'
@@ -200,7 +200,7 @@ class Transformer(object):
         else:
             return self.init_submodule(module, target)
 
-    def _is_level(self, node: None, name: str) -> bool:
+    def _is_level(self, node: Node, name: str) -> bool:
         return self._state[node.name] == name
 
     def _has_level_arg(self, node: Node, name: str) -> bool:

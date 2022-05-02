@@ -150,7 +150,6 @@ class ToHeteroTransformer(Transformer):
     def placeholder(self, node: Node, target: Any, name: str):
         # Adds a `get` call to the input dictionary for every node-type or
         # edge-type.
-
         if node.type is not None:
             Type = EdgeType if self.is_edge_level(node) else NodeType
             node.type = Dict[Type, node.type]
@@ -298,13 +297,12 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
     def output(self, node: Node, target: Any, name: str):
-        if self.is_graph_level(node.args[0]):
-            return
-
         # Replace the output by dictionaries, holding either node type-wise or
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
             if isinstance(value, Node):
+                if self.is_graph_level(value):
+                    return value
                 return {
                     key: self.find_by_name(f'{value.name}__{key2str(key)}')
                     for key in self.metadata[int(self.is_edge_level(value))]
@@ -320,8 +318,10 @@ class ToHeteroTransformer(Transformer):
 
         if node.type is not None and isinstance(node.args[0], Node):
             output = node.args[0]
-            Type = EdgeType if self.is_edge_level(output) else NodeType
-            node.type = Dict[Type, node.type]
+            if self.is_node_level(output):
+                node.type = Dict[NodeType, node.type]
+            elif self.is_edge_level(output):
+                node.type = Dict[EdgeType, node.type]
         else:
             node.type = None
 

@@ -123,7 +123,6 @@ class Net9(torch.nn.Module):
 
 
 def test_to_hetero():
-    return
     x_dict = {
         'paper': torch.randn(100, 16),
         'author': torch.randn(100, 16),
@@ -227,7 +226,6 @@ class GCN(torch.nn.Module):
 
 
 def test_to_hetero_with_gcn():
-    return
     x_dict = {
         'paper': torch.randn(100, 16),
     }
@@ -270,7 +268,6 @@ class RGCN(torch.nn.Module):
 
 
 def test_to_hetero_and_rgcn_equal_output():
-    return
     torch.manual_seed(1234)
 
     # Run `RGCN`:
@@ -363,6 +360,6 @@ def test_graph_level_to_hetero():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = GraphLevelGNN()
-    model = to_hetero(model, metadata, debug=True, aggr='mean')
+    model = to_hetero(model, metadata, aggr='mean', debug=False)
     out = model(x_dict, edge_index_dict, batch_dict)
     assert out.size() == (1, 64)
