@@ -145,8 +145,6 @@ class Transformer(object):
                 else:
                     self._state[node.name] = 'graph'
 
-        print(self._state)
-
         # We iterate over each node and may transform it:
         for node in list(self.graph.nodes):
             # Call the corresponding `Transformer` method for each `node.op`,
