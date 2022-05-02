@@ -63,13 +63,13 @@ class AddLaplacianEigenvectorPE(BaseAddPE):
     Args:
         num_channels (int): The number of channels. It will be the number of
             the smallest non-trivial eigenvectors.
-        method: (str, optional): The method to add positional encoding.
+        method (str, optional): The method to add positional encoding.
             If set to :obj:`"attr"`, will be added to the data object
             as a new attribute.
             If set to :obj:`"cat"`, will be concatenated to the existing
             :obj:`x` in the data object. If there is no :obj:`x`, will be
             added as a new :obj:`x`. (default: :obj:`"attr"`)
-        attr_name: (str, optional): The attribute name of the positional
+        attr_name (str, optional): The attribute name of the positional
             encoding to be added when :attr:`"method"` is set to :obj:`"attr"`.
             (default: :obj:`"laplacian_eigenvector_pe"`)
         is_undirected (bool, optional): If set to :obj:`True`, this transform
@@ -110,15 +110,15 @@ class AddRandomWalkPE(BaseAddPE):
     (functional name: :obj:`add_random_walk_pe`).
 
     Args:
-        num_channels: (int): The number of channels. It will be the number of
+        num_channels (int): The number of channels. It will be the number of
             the random walk steps.
-        method: (str, optional): The method to add positional encoding.
+        method (str, optional): The method to add positional encoding.
             If set to :obj:`"attr"`, will be added to the data object
             as a new attribute.
             If set to :obj:`"cat"`, will be concatenated to the existing
             :obj:`x` in the data object. If there is no :obj:`x`, will be
             added as a new :obj:`x`. (default: :obj:`"attr"`)
-        attr_name: (str, optional): The attribute name of the positional
+        attr_name (str, optional): The attribute name of the positional
             encoding to be added when :attr:`"method"` is set to :obj:`"attr"`.
             (default: :obj:`"random_walk_pe"`)
     """
