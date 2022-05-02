@@ -20,7 +20,7 @@ def test_add_laplacian_eigenvector_pe():
     data = Data(x=x, edge_index=edge_index)
     out = transform_attr(data)
     assert hasattr(out, 'laplacian_eigenvector_pe')
-    assert getattr(out, 'laplacian_eigenvector_pe').size() == (N, num_pe)
+    assert out.laplacian_eigenvector_pe.size() == (N, num_pe)
 
     transform_cat = AddLaplacianEigenvectorPE(num_pe, 'cat')
     assert transform_cat.__repr__() == 'AddLaplacianEigenvectorPE()'
