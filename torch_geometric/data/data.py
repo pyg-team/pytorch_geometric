@@ -630,7 +630,7 @@ class Data(BaseData):
     def num_features(self) -> int:
         r"""Returns the number of features per node in the graph.
         Alias for :py:attr:`~num_node_features`."""
-        return self._store.num_features
+        return self.num_node_features
 
     @property
     def num_edge_features(self) -> int:

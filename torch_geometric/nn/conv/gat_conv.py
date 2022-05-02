@@ -268,10 +268,9 @@ class GATConv(MessagePassing):
         # we simply need to sum them up to "emulate" concatenation:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
 
-        if edge_attr is not None:
+        if edge_attr is not None and self.lin_edge is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)
-            assert self.lin_edge is not None
             edge_attr = self.lin_edge(edge_attr)
             edge_attr = edge_attr.view(-1, self.heads, self.out_channels)
             alpha_edge = (edge_attr * self.att_edge).sum(dim=-1)

@@ -95,6 +95,13 @@ class RandomLinkSplit(BaseTransform):
         edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
         rev_edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
     ):
+        if isinstance(edge_types, list):
+            if rev_edge_types is None:
+                rev_edge_types = [None] * len(edge_types)
+
+            assert isinstance(rev_edge_types, list)
+            assert len(edge_types) == len(rev_edge_types)
+
         self.num_val = num_val
         self.num_test = num_test
         self.is_undirected = is_undirected
@@ -105,10 +112,6 @@ class RandomLinkSplit(BaseTransform):
         self.disjoint_train_ratio = disjoint_train_ratio
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
-
-        if isinstance(edge_types, list):
-            assert isinstance(rev_edge_types, list)
-            assert len(edge_types) == len(rev_edge_types)
 
     def __call__(self, data: Union[Data, HeteroData]):
         edge_types = self.edge_types
