@@ -30,6 +30,7 @@ class Transformer(object):
                 +-- call_method()
                 +-- call_module()
                 +-- call_message_passing_module()
+                +-- call_global_pooling_module()
                 +-- output()
             +-- Erase unused nodes in the graph
             +-- Iterate over each children module
@@ -39,8 +40,9 @@ class Transformer(object):
     :class:`Transformer` exposes additional functionality:
 
     #. It subdivides :func:`call_module` into nodes that call a regular
-       :class:`torch.nn.Module` (:func:`call_module`) or a
-       :class:`MessagePassing` module (:func:`call_message_passing_module`).
+       :class:`torch.nn.Module` (:func:`call_module`), a
+       :class:`MessagePassing` module (:func:`call_message_passing_module`),
+       or a :class:`GlobalPooling` module (:func:`call_global_pooling_module`).
 
     #. It allows to customize or initialize new children modules via
        :func:`init_submodule`
@@ -81,6 +83,9 @@ class Transformer(object):
         pass
 
     def call_message_passing_module(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_global_pooling_module(self, node: Node, target: Any, name: str):
         pass
 
     def call_module(self, node: Node, target: Any, name: str):
@@ -131,7 +136,7 @@ class Transformer(object):
             elif is_message_passing_op(self.module, node.op, node.target):
                 self._state[node.name] = 'node'
             elif is_global_pooling_op(self.module, node.op, node.target):
-                self._state[node.name] = 'node'
+                self._state[node.name] = 'graph'
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
                     self._state[node.name] = 'edge'
