@@ -61,7 +61,7 @@ class AddLaplacianEigenvectorPE(BaseAddPE):
     given graph (functional name: :obj:`add_laplacian_eigenvector_pe`).
 
     Args:
-        num_channels: (int): The number of channels. It will be the number of
+        num_channels (int): The number of channels. It will be the number of
             the smallest non-trivial eigenvectors.
         method: (str, optional): The method to add positional encoding.
             If set to :obj:`"attr"`, will be added to the data object
