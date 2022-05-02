@@ -15,7 +15,7 @@ def test_add_laplacian_eigenvector_pe():
     num_pe = 3
 
     transform_attr = AddLaplacianEigenvectorPE(num_pe, 'attr')
-    assert transform_attr.__repr__() == 'AddLaplacianEigenvectorPE()'
+    assert str(transform_attr) == 'AddLaplacianEigenvectorPE()'
 
     data = Data(x=x, edge_index=edge_index)
     out = transform_attr(data)
