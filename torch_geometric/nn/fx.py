@@ -4,8 +4,6 @@ from typing import Any, Dict, Optional
 import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
 
-from torch_geometric.nn.conv import MessagePassing
-
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
@@ -132,6 +130,8 @@ class Transformer(object):
                         self._state[node.name] = 'node'
             elif is_message_passing_op(self.module, node.op, node.target):
                 self._state[node.name] = 'node'
+            elif is_global_pooling_op(self.module, node.op, node.target):
+                self._state[node.name] = 'node'
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
                     self._state[node.name] = 'edge'
@@ -145,6 +145,9 @@ class Transformer(object):
             op = node.op
             if is_message_passing_op(self.module, op, node.target):
                 op = 'call_message_passing_module'
+            elif is_global_pooling_op(self.module, op, node.target):
+                op = 'call_global_pooling_module'
+
             getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
@@ -249,7 +252,14 @@ def get_submodule(module: Module, target: str) -> Module:
 
 
 def is_message_passing_op(module: Module, op: str, target: str) -> bool:
+    from torch_geometric.nn import MessagePassing
     if op == 'call_module':
-        if isinstance(get_submodule(module, target), MessagePassing):
-            return True
+        return isinstance(get_submodule(module, target), MessagePassing)
+    return False
+
+
+def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
+    from torch_geometric.nn import GlobalPooling
+    if op == 'call_module':
+        return isinstance(get_submodule(module, target), GlobalPooling)
     return False

@@ -363,7 +363,5 @@ def test_graph_level_to_hetero():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = GraphLevelGNN()
-    print('-------------------')
     model = to_hetero(model, metadata, debug=True)
-    out = model(x_dict, edge_index_dict, batch_dict)
-    print(out)
+    model(x_dict, edge_index_dict, batch_dict)
