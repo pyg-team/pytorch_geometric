@@ -122,11 +122,11 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
-def test_graphgym_module():
+def test_graphgym_module(tmpdir):
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
+    cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
+    cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
+    cfg.dataset.dir = osp.join(tmpdir, 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
