@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -99,3 +99,40 @@ def test_hetero_in_memory_dataset():
     assert dataset[1]['paper'].x.tolist() == data2['paper'].x.tolist()
     assert (dataset[1]['paper', 'paper'].edge_index.tolist() == data2[
         'paper', 'paper'].edge_index.tolist())
+
+
+def test_override_behaviour():
+    class DS(Dataset):
+        def _download(self):
+            self.test = True
+
+        def _process(self):
+            self.test2 = True
+
+        def download(self):
+            pass
+
+        def process(self):
+            pass
+
+    class DS2(DS):
+        def _process(self):
+            self.test2 = False
+
+        def proccess(self):
+            pass
+
+    class DS3(Dataset):
+        def _download(self):
+            self.test = True
+
+    ds = DS()
+    assert ds.test
+    assert ds.test2
+
+    ds = DS2()
+    assert ds.test
+    assert not ds.test2
+
+    ds = DS3()
+    assert not hasattr(ds, "test")
