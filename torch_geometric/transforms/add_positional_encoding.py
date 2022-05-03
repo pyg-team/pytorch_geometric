@@ -14,19 +14,8 @@ from torch_geometric.utils import (
     get_laplacian,
     remove_self_loops,
     to_scipy_sparse_matrix,
+    full_self_loop_attr,
 )
-from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-
-def diagonal_weight(edge_index, edge_weight, num_nodes=None):
-    loop_mask = edge_index[0] == edge_index[1]
-    loop_index = edge_index[:, loop_mask][0]
-    loop_edge_attr = edge_weight[loop_mask]
-
-    N = maybe_num_nodes(edge_index, num_nodes)
-    diag_attr = torch.zeros((N, ), dtype=edge_weight.dtype)
-    diag_attr[loop_index] = loop_edge_attr
-    return diag_attr
 
 
 class BaseAddPE(BaseTransform):
@@ -140,11 +129,11 @@ class AddRandomWalkPE(BaseAddPE):
         edge_weight = deg_inv[row] * edge_weight
 
         rw_index, rw_weight = edge_index, edge_weight
-        pe_list = [diagonal_weight(rw_index, rw_weight)]
+        pe_list = [full_self_loop_attr(rw_index, rw_weight)]
         for _ in range(self.num_channels - 1):
             rw_index, rw_weight = spspmm(rw_index, rw_weight, edge_index,
                                          edge_weight, N, N, N, coalesced=True)
-            pe_list.append(diagonal_weight(rw_index, rw_weight))
+            pe_list.append(full_self_loop_attr(rw_index, rw_weight))
         pe = torch.stack(pe_list, dim=-1)
 
         data = self.add_pe(data, pe)
