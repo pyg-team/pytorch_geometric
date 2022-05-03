@@ -43,12 +43,6 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def download(self):
-        raise NotImplementedError
-
-    def process(self):
-        raise NotImplementedError
-
     def __init__(self, root: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
