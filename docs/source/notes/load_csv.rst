@@ -177,7 +177,7 @@ With this, we are ready to initialize our :class:`~torch_geometric.data.HeteroDa
 
     data = HeteroData()
 
-    data['user'].num_nodes = len(user_mapping)  # Users do not have any features.
+    data['user'].num_nodes = len(movie_mapping)  # Users do not have any features.
     data['movie'].x = movie_x
 
     print(data)
