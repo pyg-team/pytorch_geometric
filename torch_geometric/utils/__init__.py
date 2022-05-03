@@ -6,8 +6,7 @@ from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
 from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
-                   add_remaining_self_loops,
-                   full_self_loop_attr)
+                   add_remaining_self_loops, full_self_loop_attr)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)

@@ -235,9 +235,8 @@ def full_self_loop_attr(edge_index, edge_attr=None, num_nodes=None):
     pass
 
 
-def full_self_loop_attr(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        num_nodes: Optional[int] = None) -> Tensor:
+def full_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
+                        num_nodes: Optional[int] = None) -> Tensor:
     r"""Returns edge features or weights of self-loops
     :math:`(i, i)` of every node :math:`i \in \mathcal{V}` in the
     graph given by :attr:`edge_index`. The edge features of self-loops not
@@ -254,8 +253,7 @@ def full_self_loop_attr(
     :rtype: :class:`Tensor`
     """
     if edge_attr is None:
-        edge_attr = torch.ones_like(edge_index[0],
-                                    dtype=torch.float)
+        edge_attr = torch.ones_like(edge_index[0], dtype=torch.float)
 
     loop_mask = edge_index[0] == edge_index[1]
     loop_index = edge_index[:, loop_mask][0]

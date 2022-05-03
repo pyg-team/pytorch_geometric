@@ -4,9 +4,9 @@ from torch_geometric.utils import (
     add_remaining_self_loops,
     add_self_loops,
     contains_self_loops,
+    full_self_loop_attr,
     remove_self_loops,
     segregate_self_loops,
-    full_self_loop_attr,
 )
 
 
@@ -124,8 +124,6 @@ def test_full_self_loop_attr():
     full_loop_weight = full_self_loop_attr(edge_index, None)
     assert full_loop_weight.tolist() == [1.0, 0.0]
 
-    edge_attr = torch.tensor([[1.0, 0.0],
-                              [0.0, 1.0],
-                              [0.5, 1.0]])
+    edge_attr = torch.tensor([[1.0, 0.0], [0.0, 1.0], [0.5, 1.0]])
     full_loop_attr = full_self_loop_attr(edge_index, edge_attr)
     assert full_loop_attr.tolist() == [[0.5, 1.0], [0.0, 0.0]]
