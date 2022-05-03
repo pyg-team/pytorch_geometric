@@ -3,7 +3,6 @@ from typing import Any, Optional
 import numpy as np
 import torch
 from scipy.sparse.linalg import eigs, eigsh
-from torch import Tensor
 from torch_scatter import scatter_add
 from torch_sparse import spspmm
 
@@ -18,33 +17,24 @@ from torch_geometric.utils import (
 )
 
 
-class BaseAddPE(BaseTransform):
-    r"""An abstract base class for adding positional encodings."""
-    def __init__(self, num_channels: int, method: Optional[str] = 'attr',
-                 attr_name: Optional[str] = None):
-        self.num_channels = num_channels
-        self.method = method
-        self.attr_name = attr_name
-        assert method in ['attr', 'cat']
-
-    def __call__(self, data: Any) -> Any:
-        raise NotImplementedError
-
-    def add_pe(self, data: Data, pe: Tensor) -> Data:
-        for store in data.node_stores:
-            if self.method == 'attr':
-                setattr(store, self.attr_name, pe)
-            elif self.method == 'cat':
-                if hasattr(store, 'x'):
-                    x = store.x.view(-1, 1) if store.x.dim() == 1 else store.x
-                    store.x = torch.cat([x, pe.to(x.device, x.dtype)], dim=-1)
-                else:
-                    setattr(store, 'x', pe)
-        return data
+def add_node_attr(data: Data, value: Any, cat: bool,
+                  attr_name: Optional[str] = None):
+    # todo: moving this to BaseTransform.
+    for store in data.node_stores:
+        if cat:
+            if hasattr(store, 'x'):
+                x = store.x.view(-1, 1) if store.x.dim() == 1 else store.x
+                store.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
+            else:
+                setattr(store, 'x', value)
+        else:
+            assert attr_name is not None
+            setattr(store, attr_name, value)
+    return data
 
 
 @functional_transform('add_laplacian_eigenvector_pe')
-class AddLaplacianEigenvectorPE(BaseAddPE):
+class AddLaplacianEigenvectorPE(BaseTransform):
     r"""Adds Laplacian eigenvector positional encoding from the `"Benchmarking
     Graph Neural Networks" <https://arxiv.org/abs/2003.00982>`_ paper to the
     given graph (functional name: :obj:`add_laplacian_eigenvector_pe`).
@@ -68,8 +58,10 @@ class AddLaplacianEigenvectorPE(BaseAddPE):
     def __init__(self, num_channels: int, method: Optional[str] = 'attr',
                  attr_name: Optional[str] = 'laplacian_eigenvector_pe',
                  is_undirected: Optional[bool] = False):
+        self.num_channels = num_channels
+        self.method = method
+        self.attr_name = attr_name
         self.is_undirected = is_undirected
-        super().__init__(num_channels, method, attr_name)
 
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
@@ -87,12 +79,13 @@ class AddLaplacianEigenvectorPE(BaseAddPE):
                                        dtype=torch.float)
         pe *= sign
 
-        data = self.add_pe(data, pe)
+        data = add_node_attr(data, pe, cat=self.method == 'cat',
+                             attr_name=self.attr_name)
         return data
 
 
 @functional_transform('add_random_walk_pe')
-class AddRandomWalkPE(BaseAddPE):
+class AddRandomWalkPE(BaseTransform):
     r"""Adds random walk positional encoding from the `"Graph Neural Networks
     with Learnable Structural and Positional Representations"
     <https://arxiv.org/abs/2110.07875>`_ paper to the given graph
@@ -113,7 +106,9 @@ class AddRandomWalkPE(BaseAddPE):
     """
     def __init__(self, num_channels: int, method: Optional[str] = 'attr',
                  attr_name: Optional[str] = 'random_walk_pe'):
-        super().__init__(num_channels, method, attr_name)
+        self.num_channels = num_channels
+        self.method = method
+        self.attr_name = attr_name
 
     def __call__(self, data: Data) -> Data:
         # Compute D^{-1} A.
@@ -136,5 +131,6 @@ class AddRandomWalkPE(BaseAddPE):
             pe_list.append(full_self_loop_attr(rw_index, rw_weight))
         pe = torch.stack(pe_list, dim=-1)
 
-        data = self.add_pe(data, pe)
+        data = add_node_attr(data, pe, cat=self.method == 'cat',
+                             attr_name=self.attr_name)
         return data
