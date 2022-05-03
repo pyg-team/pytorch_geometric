@@ -240,8 +240,10 @@ def full_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
     r"""Returns edge features or weights of self-loops
     :math:`(i, i)` of every node :math:`i \in \mathcal{V}` in the
     graph given by :attr:`edge_index`. The edge features of self-loops not
-    existing in :attr:`edge_index` will be filled with zeros. This operation
-    is analogous to getting the diagonal elements of the dense adjacency matrix.
+    existing in :attr:`edge_index` will be filled with zeros. If
+    :attr:`edge_attr` is not given, it will be the vector of ones.
+    This operation is analogous to getting the diagonal elements of the
+    dense adjacency matrix.
 
     Args:
         edge_index (LongTensor): The edge indices.
