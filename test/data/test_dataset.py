@@ -103,11 +103,16 @@ def test_hetero_in_memory_dataset():
 
 def test_override_behaviour():
     class DS(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
         def _download(self):
-            self.test = True
+            self.enter_download = True
 
         def _process(self):
-            self.test2 = True
+            self.enter_process = True
 
         def download(self):
             pass
@@ -115,24 +120,41 @@ def test_override_behaviour():
         def process(self):
             pass
 
-    class DS2(DS):
-        def _process(self):
-            self.test2 = False
+    class DS2(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
 
-        def proccess(self):
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+        def process(self):
             pass
 
     class DS3(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
         def _download(self):
-            self.test = True
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
 
     ds = DS()
-    assert ds.test
-    assert ds.test2
+    assert ds.enter_download
+    assert ds.enter_process
 
     ds = DS2()
-    assert ds.test
-    assert not ds.test2
+    assert not ds.enter_download
+    assert ds.enter_process
 
     ds = DS3()
-    assert not hasattr(ds, "test")
+    assert not ds.enter_download
+    assert not ds.enter_process

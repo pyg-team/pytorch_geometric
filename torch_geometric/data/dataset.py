@@ -80,10 +80,10 @@ class Dataset(torch.utils.data.Dataset):
         self.pre_filter = pre_filter
         self._indices: Optional[Sequence] = None
 
-        if self.download.__qualname__.split(".")[0] != 'Dataset':
+        if self.download.__qualname__.split('.')[0] != 'Dataset':
             self._download()
 
-        if self.process.__qualname__.split(".")[0] != 'Dataset':
+        if self.process.__qualname__.split('.')[0] != 'Dataset':
             self._process()
 
     def indices(self) -> Sequence:
