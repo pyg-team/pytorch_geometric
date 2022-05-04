@@ -126,8 +126,8 @@ class AddRandomWalkPE(BaseTransform):
         for _ in range(self.num_channels - 1):
             rw_index, rw_weight = spspmm(rw_index, rw_weight, edge_index,
                                          edge_weight, N, N, N, coalesced=True)
-            pe_list.append(full_self_loop_attr(rw_index, rw_weight,
-                                               num_nodes=N))
+            pe_list.append(
+                full_self_loop_attr(rw_index, rw_weight, num_nodes=N))
         pe = torch.stack(pe_list, dim=-1)
 
         data = add_node_attr(data, pe, cat=self.method == 'cat',

@@ -60,8 +60,7 @@ def test_add_random_walk_pe():
                                            [0.0, 0.5, 0.0], [0.0, 1.0, 0.0],
                                            [0.0, 0.5, 0.25], [0.0, 0.5, 0.0]]
 
-    edge_index = torch.tensor([[0, 1, 2],
-                               [0, 1, 2]])
+    edge_index = torch.tensor([[0, 1, 2], [0, 1, 2]])
     data = Data(edge_index=edge_index, num_nodes=4)
     out = transform_attr(data)
     assert out.random_walk_pe.tolist() == [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0],
