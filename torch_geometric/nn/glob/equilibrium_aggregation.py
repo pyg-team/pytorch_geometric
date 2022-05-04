@@ -88,10 +88,11 @@ class EquilibriumAggregation(torch.nn.Module):
     def init_output(self,
                     batch: Optional[torch.Tensor] = None) -> torch.Tensor:
         batch_size = 1 if batch is None else int(batch.max().item() + 1)
-        return torch.zeros(batch_size, self.output_dim, requires_grad=True)
+        return torch.randn(batch_size, self.output_dim,
+                           requires_grad=True) * 0.01
 
     def reg(self, y: torch.Tensor) -> float:
-        return self.softplus(self.lamb) * y.norm(dim=1, keepdim=True)
+        return self.softplus(self.lamb) * y.norm(2, dim=1, keepdim=True)
 
     def combine_input(self, x: torch.Tensor, y: torch.Tensor,
                       batch: Optional[torch.Tensor] = None) -> torch.Tensor:
