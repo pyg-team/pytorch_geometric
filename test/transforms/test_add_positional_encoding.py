@@ -40,15 +40,8 @@ def test_add_random_walk_pe():
     N, F = x.size()
     num_pe = 3
 
-    transform_attr = AddRandomWalkPE(num_pe, 'attr')
-    assert str(transform_attr) == 'AddRandomWalkPE()'
-
-    data = Data(x=x, edge_index=edge_index)
-    out = transform_attr(data)
-    assert hasattr(out, 'random_walk_pe')
-    assert out.random_walk_pe.size() == (N, num_pe)
-
     transform_cat = AddRandomWalkPE(num_pe, 'cat')
+    assert str(transform_cat) == 'AddRandomWalkPE()'
 
     data = Data(x=x, edge_index=edge_index)
     out = transform_cat(data)
@@ -57,3 +50,19 @@ def test_add_random_walk_pe():
     data = Data(edge_index=edge_index)
     out = transform_cat(data)
     assert out.x.size() == (N, num_pe)
+
+    transform_attr = AddRandomWalkPE(num_pe, 'attr')
+    data = Data(x=x, edge_index=edge_index)
+    out = transform_attr(data)
+    assert hasattr(out, 'random_walk_pe')
+    assert out.random_walk_pe.size() == (N, num_pe)
+    assert out.random_walk_pe.tolist() == [[0.0, 0.5, 0.25], [0.0, 0.5, 0.25],
+                                           [0.0, 0.5, 0.0], [0.0, 1.0, 0.0],
+                                           [0.0, 0.5, 0.25], [0.0, 0.5, 0.0]]
+
+    edge_index = torch.tensor([[0, 1, 2],
+                               [0, 1, 2]])
+    data = Data(edge_index=edge_index, num_nodes=4)
+    out = transform_attr(data)
+    assert out.random_walk_pe.tolist() == [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0],
+                                           [1.0, 1.0, 1.0], [0.0, 0.0, 0.0]]
