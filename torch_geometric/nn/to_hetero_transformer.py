@@ -150,7 +150,6 @@ class ToHeteroTransformer(Transformer):
     def placeholder(self, node: Node, target: Any, name: str):
         # Adds a `get` call to the input dictionary for every node-type or
         # edge-type.
-
         if node.type is not None:
             Type = EdgeType if self.is_edge_level(node) else NodeType
             node.type = Dict[Type, node.type]
@@ -197,14 +196,14 @@ class ToHeteroTransformer(Transformer):
         # `keys_per_dst` and append the result to the list.
         for dst, keys in keys_per_dst.items():
             queue = deque([key_name[key] for key in keys])
-            i = len(queue) + 1
+            i = 1
             while len(queue) >= 2:
                 key1, key2 = queue.popleft(), queue.popleft()
                 args = (self.find_by_name(key1), self.find_by_name(key2))
 
                 new_name = f'{name}__{dst}'
                 if self.aggr == 'mean' or len(queue) > 0:
-                    new_name += f'{i}'
+                    new_name = f'{new_name}_{i}'
 
                 out = self.graph.create_node('call_function',
                                              target=self.aggrs[self.aggr],
@@ -221,7 +220,46 @@ class ToHeteroTransformer(Transformer):
                     name=f'{name}__{dst}')
                 self.graph.inserting_after(out)
 
+    def call_global_pooling_module(self, node: Node, target: Any, name: str):
+        # Add calls to node type-wise `GlobalPooling` modules and aggregate
+        # the outputs to graph type-wise embeddings afterwards.
+        self.graph.inserting_after(node)
+        for key in self.metadata[0]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_module',
+                                         target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{node.name}__{key2str(key)}')
+            self.graph.inserting_after(out)
+
+        # Perform node-wise aggregation.
+        queue = deque(
+            [f'{node.name}__{key2str(key)}' for key in self.metadata[0]])
+        i = 1
+        while len(queue) >= 2:
+            key1, key2 = queue.popleft(), queue.popleft()
+            args = (self.find_by_name(key1), self.find_by_name(key2))
+            out = self.graph.create_node('call_function',
+                                         target=self.aggrs[self.aggr],
+                                         args=args, name=f'{name}_{i}')
+            self.graph.inserting_after(out)
+            queue.append(f'{name}_{i}')
+            i += 1
+
+        if self.aggr == 'mean':
+            key = queue.popleft()
+            out = self.graph.create_node(
+                'call_function', target=torch.div,
+                args=(self.find_by_name(key), len(self.metadata[0])),
+                name=f'{name}_{i}')
+            self.graph.inserting_after(out)
+
+        self.replace_all_uses_with(node, out)
+
     def call_module(self, node: Node, target: Any, name: str):
+        if self.is_graph_level(node):
+            return
+
         # Add calls to node type-wise or edge type-wise modules.
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
@@ -233,6 +271,9 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
+        if self.is_graph_level(node):
+            return
+
         # Add calls to node type-wise or edge type-wise methods.
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
@@ -243,6 +284,9 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
     def call_function(self, node: Node, target: Any, name: str):
+        if self.is_graph_level(node):
+            return
+
         # Add calls to node type-wise or edge type-wise functions.
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
@@ -257,6 +301,8 @@ class ToHeteroTransformer(Transformer):
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
             if isinstance(value, Node):
+                if self.is_graph_level(value):
+                    return value
                 return {
                     key: self.find_by_name(f'{value.name}__{key2str(key)}')
                     for key in self.metadata[int(self.is_edge_level(value))]
@@ -272,8 +318,10 @@ class ToHeteroTransformer(Transformer):
 
         if node.type is not None and isinstance(node.args[0], Node):
             output = node.args[0]
-            Type = EdgeType if self.is_edge_level(output) else NodeType
-            node.type = Dict[Type, node.type]
+            if self.is_node_level(output):
+                node.type = Dict[NodeType, node.type]
+            elif self.is_edge_level(output):
+                node.type = Dict[EdgeType, node.type]
         else:
             node.type = None
 
@@ -281,8 +329,13 @@ class ToHeteroTransformer(Transformer):
 
     def init_submodule(self, module: Module, target: str) -> Module:
         # Replicate each module for each node type or edge type.
+        has_node_level_target = bool(
+            self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}'))
         has_edge_level_target = bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
+
+        if not has_node_level_target and not has_edge_level_target:
+            return module
 
         module_dict = torch.nn.ModuleDict()
         for key in self.metadata[int(has_edge_level_target)]:
@@ -296,6 +349,7 @@ class ToHeteroTransformer(Transformer):
                     f"'{target}' will be duplicated, but its parameters "
                     f"cannot be reset. To suppress this warning, add a "
                     f"'reset_parameters()' method to '{target}'")
+
         return module_dict
 
     # Helper methods ##########################################################
