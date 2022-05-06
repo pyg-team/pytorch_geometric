@@ -6,12 +6,12 @@ from torch_scatter import scatter
 from torch_geometric.nn.inits import reset
 
 
-class ResNetPotential(torch.nn.Module):
-    def __init__(self, in_channels: int, num_layers: List[int]):
+class FCResNetBlock(torch.nn.Module):
+    def __init__(self, in_channels: int, out_channels: int,
+                 num_layers: List[int]):
 
         super().__init__()
-        output_size = 1
-        sizes = [in_channels] + num_layers + [output_size]
+        sizes = [in_channels] + num_layers + [out_channels]
         self.layers = torch.nn.ModuleList([
             torch.nn.Sequential(torch.nn.Linear(in_size, out_size),
                                 torch.nn.LayerNorm(out_size), torch.nn.Tanh())
@@ -20,7 +20,7 @@ class ResNetPotential(torch.nn.Module):
 
         self.res_trans = torch.nn.ModuleList([
             torch.nn.Linear(in_channels, layer_size)
-            for layer_size in num_layers + [output_size]
+            for layer_size in num_layers + [out_channels]
         ])
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -71,8 +71,8 @@ class EquilibriumAggregation(torch.nn.Module):
                  alpha: float = 0.1):
         super().__init__()
 
-        self.potential = ResNetPotential(in_channels + out_channels,
-                                         num_layers)
+        self.potential = FCResNetBlock(in_channels + out_channels, 1,
+                                       num_layers)
         self.lamb = torch.nn.Parameter(torch.Tensor([0.1]), requires_grad=True)
         self.softplus = torch.nn.Softplus()
         self.grad_iter = grad_iter

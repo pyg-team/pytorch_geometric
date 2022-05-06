@@ -91,7 +91,6 @@ class PPI(InMemoryDataset):
     def process(self):
         import networkx as nx
         from networkx.readwrite import json_graph
-        print("test")
 
         for s, split in enumerate(['train', 'valid', 'test']):
             path = osp.join(self.raw_dir, f'{split}_graph.json')
@@ -124,7 +123,6 @@ class PPI(InMemoryDataset):
                     continue
 
                 if self.pre_transform is not None:
-                    print("test")
                     data = self.pre_transform(data)
 
                 data_list.append(data)
