@@ -13,14 +13,15 @@ from torch_geometric.nn import EquilibriumAggregation
 input_size = 100
 epochs = 10000
 embedding_size = 10
+eval_each = 8000
 
 model = torch.nn.Sequential(EquilibriumAggregation(1, 10, [256, 256], 5, 0.1),
                             torch.nn.Linear(10, 1))
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-norm = torch.distributions.normal.Normal(0, 0.5)
-gamma = torch.distributions.gamma.Gamma(1, 2)
-uniform = torch.distributions.uniform.Uniform(-1, 1)
+norm = torch.distributions.normal.Normal(0.5, 0.4)
+gamma = torch.distributions.gamma.Gamma(0.2, 0.5)
+uniform = torch.distributions.uniform.Uniform(0, 1)
 
 total_loss = 0
 n_loss = 0
@@ -34,5 +35,5 @@ for i in range(epochs):
     optimizer.step()
     total_loss += loss
     n_loss += 1
-    if i % 500 == 499:
-        print(f"Average loss at epoc {i} is {total_loss/n_loss}")
+    if i % eval_each == (eval_each - 1):
+        print(f"Average loss at epoc {i} is {total_loss / n_loss}")
