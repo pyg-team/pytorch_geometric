@@ -11,7 +11,7 @@ import torch
 from torch_geometric.nn import EquilibriumAggregation
 
 input_size = 100
-epochs = 10000
+steps = 10000000
 embedding_size = 10
 eval_each = 8000
 
@@ -25,7 +25,7 @@ uniform = torch.distributions.uniform.Uniform(0, 1)
 
 total_loss = 0
 n_loss = 0
-for i in range(epochs):
+for i in range(steps):
     optimizer.zero_grad()
     dist = np.random.choice([norm, gamma, uniform])
     x = dist.sample((input_size, 1))
