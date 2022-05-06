@@ -13,15 +13,15 @@ class LINKXDataset(InMemoryDataset):
     Learning on Non-Homophilous Graphs: New Benchmarks and Strong Simple
     Methods" <https://arxiv.org/abs/2110.14446>`_ paper.
 
-    Note that some of these datasets ('genius') are not originally from
-    this paper, but have been updated by the authors with new features
-    and or labels.
+    .. note::
+        Some of the datasets provided in :class:`LINKXDataset` are from other
+        sources, but have been updated with new features and/or labels.
 
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"penn94"`,
             :obj:`"reed98"`, :obj:`"amherst41"`, :obj:`"cornell5"`,
-            :obj:`"johnshopkins55"`).
+            :obj:`"johnshopkins55"`, :obj:`"genius"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -117,27 +117,30 @@ class LINKXDataset(InMemoryDataset):
                 data.val_mask[:, i][torch.tensor(split['valid'])] = True
                 data.test_mask[:, i][torch.tensor(split['test'])] = True
 
-        if self.pre_transform is not None:
-            data = self.pre_transform(data)
-
-        torch.save(self.collate([data]), self.processed_paths[0])
+        return data
 
     def _process_genius(self):
         from scipy.io import loadmat
 
-        fulldata = loadmat(self.raw_paths[0])
-        edge_index = torch.tensor(fulldata['edge_index'].astype('int64'))
-        x = torch.tensor(fulldata['node_feat'], dtype=torch.float)
-        y = torch.tensor(fulldata['label'], dtype=torch.long).squeeze()
+        mat = loadmat(self.raw_paths[0])
+        edge_index = torch.from_numpy(mat['edge_index']).to(torch.long)
+        x = torch.from_numpy(mat['node_feat']).to(torch.float)
+        y = torch.from_numpy(mat['label']).squeeze().to(torch.long)
 
-        data = Data(x=x, edge_index=edge_index, y=y)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        return Data(x=x, edge_index=edge_index, y=y)
 
     def process(self):
         if self.name in self.facebook_datasets:
-            self._process_facebook()
+            data = self._process_facebook()
         elif self.name == 'genius':
-            self._process_genius()
+            data = self._process_genius()
+        else:
+            raise NotImplementedError
+
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
+        torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}({len(self)})'
