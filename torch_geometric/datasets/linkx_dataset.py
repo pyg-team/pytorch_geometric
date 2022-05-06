@@ -13,6 +13,10 @@ class LINKXDataset(InMemoryDataset):
     Learning on Non-Homophilous Graphs: New Benchmarks and Strong Simple
     Methods" <https://arxiv.org/abs/2110.14446>`_ paper.
 
+    Note that some of these datasets ('genius') are not originally from
+    this paper, but have been updated by the authors with new features
+    and or labels.
+
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"penn94"`,
@@ -30,12 +34,17 @@ class LINKXDataset(InMemoryDataset):
 
     url = 'https://github.com/CUAI/Non-Homophily-Large-Scale/raw/master/data'
 
+    facebook_datasets = [
+        'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
+    ]
+
     datasets = {
         'penn94': f'{url}/facebook100/Penn94.mat',
         'reed98': f'{url}/facebook100/Reed98.mat',
         'amherst41': f'{url}/facebook100/Amherst41.mat',
         'cornell5': f'{url}/facebook100/Cornell5.mat',
         'johnshopkins55': f'{url}/facebook100/Johns%20Hopkins55.mat',
+        'genius': f'{url}/genius.mat'
     }
 
     splits = {
@@ -74,7 +83,7 @@ class LINKXDataset(InMemoryDataset):
         if self.name in self.splits:
             download_url(self.splits[self.name], self.raw_dir)
 
-    def process(self):
+    def _process_facebook(self):
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -112,6 +121,23 @@ class LINKXDataset(InMemoryDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
+
+    def _process_genius(self):
+        from scipy.io import loadmat
+
+        fulldata = loadmat(self.raw_paths[0])
+        edge_index = torch.tensor(fulldata['edge_index'].astype('int64'))
+        x = torch.tensor(fulldata['node_feat'], dtype=torch.float)
+        y = torch.tensor(fulldata['label'], dtype=torch.long).squeeze()
+
+        data = Data(x=x, edge_index=edge_index, y=y)
+        torch.save(self.collate([data]), self.processed_paths[0])
+
+    def process(self):
+        if self.name in self.facebook_datasets:
+            self._process_facebook()
+        elif self.name == 'genius':
+            self._process_genius()
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}({len(self)})'
