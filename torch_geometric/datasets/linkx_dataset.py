@@ -32,8 +32,9 @@ class LINKXDataset(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    ghurl = 'https://github.com/CUAI/Non-Homophily-Large-Scale/raw/master/data'
-    gdriveurl = 'https://drive.google.com/uc?confirm=t&'
+    github_url = 'https://github.com/CUAI/Non-Homophily-Large-Scale/' \
+                 'raw/master/data'
+    gdrive_url = 'https://drive.google.com/uc?confirm=t&'
 
     facebook_datasets = [
         'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
@@ -41,35 +42,35 @@ class LINKXDataset(InMemoryDataset):
 
     datasets = {
         'penn94': {
-            'data.mat': f'{ghurl}/facebook100/Penn94.mat'
+            'data.mat': f'{github_url}/facebook100/Penn94.mat'
         },
         'reed98': {
-            'data.mat': f'{ghurl}/facebook100/Reed98.mat'
+            'data.mat': f'{github_url}/facebook100/Reed98.mat'
         },
         'amherst41': {
-            'data.mat': f'{ghurl}/facebook100/Amherst41.mat',
+            'data.mat': f'{github_url}/facebook100/Amherst41.mat',
         },
         'cornell5': {
-            'data.mat': f'{ghurl}/facebook100/Cornell5.mat'
+            'data.mat': f'{github_url}/facebook100/Cornell5.mat'
         },
         'johnshopkins55': {
-            'data.mat': f'{ghurl}/facebook100/Johns%20Hopkins55.mat'
+            'data.mat': f'{github_url}/facebook100/Johns%20Hopkins55.mat'
         },
         'genius': {
-            'data.mat': f'{ghurl}/genius.mat'
+            'data.mat': f'{github_url}/genius.mat'
         },
         'wiki': {
             'wiki_views2M.pt':
-            f'{gdriveurl}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
+            f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
             'wiki_edges2M.pt':
-            f'{gdriveurl}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
+            f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
             'wiki_features2M.pt':
-            f'{gdriveurl}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
+            f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
         }
     }
 
     splits = {
-        'penn94': f'{ghurl}/splits/fb100-Penn94-splits.npy',
+        'penn94': f'{github_url}/splits/fb100-Penn94-splits.npy',
     }
 
     def __init__(self, root: str, name: str,
