@@ -40,7 +40,7 @@ def download_url(url: str, folder: str, log: bool = True,
     with open(path, 'wb') as f:
         # workaround for https://bugs.python.org/issue42853
         while True:
-            chunk = data.read(6 * 1024)
+            chunk = data.read(10 * 1024 * 1024)
             if not chunk:
                 break
             f.write(chunk)
