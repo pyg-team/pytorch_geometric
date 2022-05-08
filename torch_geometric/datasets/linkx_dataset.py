@@ -13,11 +13,15 @@ class LINKXDataset(InMemoryDataset):
     Learning on Non-Homophilous Graphs: New Benchmarks and Strong Simple
     Methods" <https://arxiv.org/abs/2110.14446>`_ paper.
 
+    .. note::
+        Some of the datasets provided in :class:`LINKXDataset` are from other
+        sources, but have been updated with new features and/or labels.
+
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"penn94"`,
             :obj:`"reed98"`, :obj:`"amherst41"`, :obj:`"cornell5"`,
-            :obj:`"johnshopkins55"`).
+            :obj:`"johnshopkins55"`, :obj:`"genius"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -30,12 +34,17 @@ class LINKXDataset(InMemoryDataset):
 
     url = 'https://github.com/CUAI/Non-Homophily-Large-Scale/raw/master/data'
 
+    facebook_datasets = [
+        'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
+    ]
+
     datasets = {
         'penn94': f'{url}/facebook100/Penn94.mat',
         'reed98': f'{url}/facebook100/Reed98.mat',
         'amherst41': f'{url}/facebook100/Amherst41.mat',
         'cornell5': f'{url}/facebook100/Cornell5.mat',
         'johnshopkins55': f'{url}/facebook100/Johns%20Hopkins55.mat',
+        'genius': f'{url}/genius.mat'
     }
 
     splits = {
@@ -74,7 +83,7 @@ class LINKXDataset(InMemoryDataset):
         if self.name in self.splits:
             download_url(self.splits[self.name], self.raw_dir)
 
-    def process(self):
+    def _process_facebook(self):
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -107,6 +116,26 @@ class LINKXDataset(InMemoryDataset):
                 data.train_mask[:, i][torch.tensor(split['train'])] = True
                 data.val_mask[:, i][torch.tensor(split['valid'])] = True
                 data.test_mask[:, i][torch.tensor(split['test'])] = True
+
+        return data
+
+    def _process_genius(self):
+        from scipy.io import loadmat
+
+        mat = loadmat(self.raw_paths[0])
+        edge_index = torch.from_numpy(mat['edge_index']).to(torch.long)
+        x = torch.from_numpy(mat['node_feat']).to(torch.float)
+        y = torch.from_numpy(mat['label']).squeeze().to(torch.long)
+
+        return Data(x=x, edge_index=edge_index, y=y)
+
+    def process(self):
+        if self.name in self.facebook_datasets:
+            data = self._process_facebook()
+        elif self.name == 'genius':
+            data = self._process_genius()
+        else:
+            raise NotImplementedError
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
