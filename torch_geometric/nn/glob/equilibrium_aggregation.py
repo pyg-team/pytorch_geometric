@@ -13,8 +13,10 @@ class FCResNetBlock(torch.nn.Module):
         super().__init__()
         sizes = [in_channels] + num_layers + [out_channels]
         self.layers = torch.nn.ModuleList([
-            torch.nn.Sequential(torch.nn.Linear(in_size, out_size),
-                                torch.nn.LayerNorm(out_size), torch.nn.Tanh())
+            torch.nn.Sequential(
+                torch.nn.Linear(in_size, out_size),
+                # torch.nn.LayerNorm(out_size),
+                torch.nn.Tanh())
             for in_size, out_size in zip(sizes[:-1], sizes[1:])
         ])
 
