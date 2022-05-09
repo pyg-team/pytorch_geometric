@@ -111,7 +111,7 @@ class LINKXDataset(InMemoryDataset):
         paths = {x.split("/")[-1]: x for x in self.raw_paths}
         print(paths)
         x = torch.load(paths['wiki_features2M.pt'])
-        edge_index = torch.load(paths['wiki_edges2M.pt']).T
+        edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
         y = torch.load(paths['wiki_views2M.pt'])
 
         return Data(x=x, edge_index=edge_index, y=y)
