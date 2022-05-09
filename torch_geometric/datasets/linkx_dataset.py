@@ -33,7 +33,7 @@ class LINKXDataset(InMemoryDataset):
     """
 
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
-                 'raw/master/data'
+                  'raw/master/data')
     gdrive_url = 'https://drive.google.com/uc?confirm=t&'
 
     facebook_datasets = [
