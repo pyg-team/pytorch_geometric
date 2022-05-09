@@ -109,7 +109,6 @@ class LINKXDataset(InMemoryDataset):
     def _process_wiki(self):
 
         paths = {x.split('/')[-1]: x for x in self.raw_paths}
-        print(paths)
         x = torch.load(paths['wiki_features2M.pt'])
         edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
         y = torch.load(paths['wiki_views2M.pt'])
