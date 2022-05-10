@@ -65,11 +65,12 @@ class AddLaplacianEigenvectorPE(BaseTransform):
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
         eig_fn = eigs if not self.is_undirected else eigsh
+        eig_which = 'SR' if not self.is_undirected else 'SA'
         edge_index, edge_weight = get_laplacian(data.edge_index,
                                                 normalization='sym',
                                                 dtype=torch.float, num_nodes=N)
         L = to_scipy_sparse_matrix(edge_index, edge_weight, N)
-        eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which='SR',
+        eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which=eig_which,
                                     return_eigenvectors=True)
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
         pe = torch.from_numpy(eig_vecs[:, 1:self.num_channels + 1])
