@@ -251,12 +251,12 @@ def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
     :rtype: :class:`Tensor`
     """
     loop_mask = edge_index[0] == edge_index[1]
-    loop_index = edge_index[:, loop_mask][0]
+    loop_index = edge_index[0][loop_mask]
 
     if edge_attr is not None:
         loop_attr = edge_attr[loop_mask]
     else:  # A vector of ones:
-        loop_attr = torch.ones_like(loop_index[0], dtype=torch.float)
+        loop_attr = torch.ones_like(loop_index, dtype=torch.float)
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     full_loop_attr = loop_attr.new_zeros((num_nodes, ) + loop_attr.size()[1:])
