@@ -38,20 +38,19 @@ def test_add_laplacian_eigenvector_pe():
     transform2 = AddLaplacianEigenvectorPE(k=1, is_undirected=False)
 
     # Clustering test with first non-trivial eigenvector (Fiedler vector)
-    for _ in range(5):
-        pe = transform1(copy.copy(data)).laplacian_eigenvector_pe
-        pe_cluster_1 = pe[[0, 1, 4]]
-        pe_cluster_2 = pe[[2, 3, 5]]
-        assert not torch.allclose(pe_cluster_1, pe_cluster_2)
-        assert torch.allclose(pe_cluster_1, pe_cluster_1.mean())
-        assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
+    pe = transform1(copy.copy(data)).laplacian_eigenvector_pe
+    pe_cluster_1 = pe[[0, 1, 4]]
+    pe_cluster_2 = pe[[2, 3, 5]]
+    assert not torch.allclose(pe_cluster_1, pe_cluster_2)
+    assert torch.allclose(pe_cluster_1, pe_cluster_1.mean())
+    assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
 
-        pe = transform2(copy.copy(data)).laplacian_eigenvector_pe
-        pe_cluster_1 = pe[[0, 1, 4]]
-        pe_cluster_2 = pe[[2, 3, 5]]
-        assert not torch.allclose(pe_cluster_1, pe_cluster_2)
-        assert torch.allclose(pe_cluster_1, pe_cluster_1.mean())
-        assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
+    pe = transform2(copy.copy(data)).laplacian_eigenvector_pe
+    pe_cluster_1 = pe[[0, 1, 4]]
+    pe_cluster_2 = pe[[2, 3, 5]]
+    assert not torch.allclose(pe_cluster_1, pe_cluster_2)
+    assert torch.allclose(pe_cluster_1, pe_cluster_1.mean())
+    assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
 
 
 def test_add_random_walk_pe():
