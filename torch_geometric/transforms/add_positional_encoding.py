@@ -2,7 +2,6 @@ from typing import Any, Optional
 
 import numpy as np
 import torch
-from torch_scatter import scatter_add
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data

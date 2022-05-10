@@ -1,9 +1,7 @@
 import copy
 
-import numpy as np
 import torch
 
-from torch_geometric import seed_everything
 from torch_geometric.data import Data
 from torch_geometric.transforms import (
     AddLaplacianEigenvectorPE,
