@@ -1,11 +1,11 @@
 import pytest
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import global_add_pool
+
 import torch_geometric.transforms as T
-from torch_geometric.datasets import Entities, TUDataset, Planetoid
-from torch_geometric.nn.conv import GCNConv, GATConv, FastRGCNConv
-from torch_geometric.nn import GraphMaskExplainer
+from torch_geometric.datasets import Entities, Planetoid, TUDataset
+from torch_geometric.nn import GraphMaskExplainer, global_add_pool
+from torch_geometric.nn.conv import FastRGCNConv, GATConv, GCNConv
 from torch_geometric.testing import withPackage
 
 
@@ -95,15 +95,16 @@ def test_graphmask_explainer_gcn_explain_node(model, return_type,
                                             edge_mask, y=data.y,
                                             node_alpha=feat_mask)
     else:
-        edge_y = torch.randint(low=0, high=30, size=(data.edge_index.size(1),))
+        edge_y = torch.randint(low=0, high=30,
+                               size=(data.edge_index.size(1), ))
         _, _ = explainer.visualize_subgraph([6, 12], data.edge_index,
                                             edge_mask, y=data.y, edge_y=edge_y)
     if feat_mask_type == 'individual_feature':
         assert feat_mask.size() == data.x.size()
     elif feat_mask_type == 'scalar':
-        assert feat_mask.size() == (data.x.size(0),)
+        assert feat_mask.size() == (data.x.size(0), )
     else:
-        assert feat_mask.size() == (data.x.size(1),)
+        assert feat_mask.size() == (data.x.size(1), )
     assert feat_mask.min() >= 0 and feat_mask.max() <= 1
     assert edge_mask.min() >= 0 and edge_mask.max() <= 1
 
@@ -132,15 +133,16 @@ def test_graphmask_explainer_gat_explain_node(model, return_type,
                                             edge_mask, y=data.y,
                                             node_alpha=feat_mask)
     else:
-        edge_y = torch.randint(low=0, high=30, size=(data.edge_index.size(1),))
+        edge_y = torch.randint(low=0, high=30,
+                               size=(data.edge_index.size(1), ))
         _, _ = explainer.visualize_subgraph([6, 12], data.edge_index,
                                             edge_mask, y=data.y, edge_y=edge_y)
     if feat_mask_type == 'individual_feature':
         assert feat_mask.size() == data.x.size()
     elif feat_mask_type == 'scalar':
-        assert feat_mask.size() == (data.x.size(0),)
+        assert feat_mask.size() == (data.x.size(0), )
     else:
-        assert feat_mask.size() == (data.x.size(1),)
+        assert feat_mask.size() == (data.x.size(1), )
     assert feat_mask.min() >= 0 and feat_mask.max() <= 1
     assert edge_mask.min() >= 0 and edge_mask.max() <= 1
 
@@ -168,15 +170,15 @@ def test_graphmask_explainer_rgcn_explain_node(model, return_type,
         _, _ = explainer.visualize_subgraph([1, 5, 12], edge_index, edge_mask,
                                             node_alpha=feat_mask)
     else:
-        edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1),))
+        edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1), ))
         _, _ = explainer.visualize_subgraph([1, 5, 12], edge_index, edge_mask,
                                             edge_y=edge_y)
     if feat_mask_type == 'individual_feature':
         assert feat_mask.size() == x.size()
     elif feat_mask_type == 'scalar':
-        assert feat_mask.size() == (x.size(0),)
+        assert feat_mask.size() == (x.size(0), )
     else:
-        assert feat_mask.size() == (x.size(1),)
+        assert feat_mask.size() == (x.size(1), )
     assert feat_mask.min() >= 0 and feat_mask.max() <= 1
     assert edge_mask.min() >= 0 and edge_mask.max() <= 1
 
@@ -203,7 +205,7 @@ def test_graphmask_explainer_explain_graph(model, return_type, feat_mask_type):
                                             task='graph', node_alpha=feat_mask)
     else:
         edge_y = torch.randint(low=0, high=30,
-                               size=(dataset[4].edge_index.size(1),))
+                               size=(dataset[4].edge_index.size(1), ))
         _, _ = explainer.visualize_subgraph(None, dataset[4].edge_index,
                                             edge_mask, edge_y=edge_y,
                                             y=dataset[4].y, task='graph')
