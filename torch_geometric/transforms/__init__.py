@@ -48,6 +48,7 @@ from .random_link_split import RandomLinkSplit
 from .add_metapaths import AddMetaPaths
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
+from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 
 __all__ = [
     'BaseTransform',
@@ -100,6 +101,8 @@ __all__ = [
     'AddMetaPaths',
     'LargestConnectedComponents',
     'VirtualNode',
+    'AddLaplacianEigenvectorPE',
+    'AddRandomWalkPE',
 ]
 
 classes = __all__
