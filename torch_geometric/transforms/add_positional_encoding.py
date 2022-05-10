@@ -10,7 +10,7 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
-    full_self_loop_attr,
+    get_self_loop_attr,
     get_laplacian,
     to_scipy_sparse_matrix,
 )
@@ -130,12 +130,12 @@ class AddRandomWalkPE(BaseTransform):
         edge_weight = deg_inv[row] * edge_weight
 
         rw_index, rw_weight = edge_index, edge_weight
-        pe_list = [full_self_loop_attr(rw_index, rw_weight, num_nodes=N)]
+        pe_list = [get_self_loop_attr(rw_index, rw_weight, num_nodes=N)]
         for _ in range(self.num_channels - 1):
             rw_index, rw_weight = spspmm(rw_index, rw_weight, edge_index,
                                          edge_weight, N, N, N, coalesced=True)
-            pe_list.append(
-                full_self_loop_attr(rw_index, rw_weight, num_nodes=N))
+            pe_list.append(get_self_loop_attr(rw_index, rw_weight,
+                                              num_nodes=N))
         pe = torch.stack(pe_list, dim=-1)
 
         data = add_node_attr(data, pe, cat=self.method == 'cat',
