@@ -53,14 +53,20 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         is_undirected (bool, optional): If set to :obj:`True`, this transform
             expects undirected graphs as input, and can hence speed up the
             computation of the eigenvectors. (default: :obj:`False`)
+        **kwargs (optional): The keyword arguments that are passed down to the
+            :meth:`scipy.sparse.linalg.eigs` (when :attr:`"is_undirected"` is
+            False) or :meth:`scipy.sparse.linalg.eigsh` (when
+            :attr:`"is_undirected"` is True) methods for computing
+            eigenvectors.
     """
     def __init__(self, num_channels: int, method: Optional[str] = 'attr',
                  attr_name: Optional[str] = 'laplacian_eigenvector_pe',
-                 is_undirected: Optional[bool] = False):
+                 is_undirected: Optional[bool] = False, **kwargs):
         self.num_channels = num_channels
         self.method = method
         self.attr_name = attr_name
         self.is_undirected = is_undirected
+        self.kwargs = kwargs
 
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
@@ -70,8 +76,10 @@ class AddLaplacianEigenvectorPE(BaseTransform):
                                                 normalization='sym',
                                                 dtype=torch.float, num_nodes=N)
         L = to_scipy_sparse_matrix(edge_index, edge_weight, N)
-        eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1, which=eig_which,
-                                    return_eigenvectors=True)
+        eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1,
+                                    which=eig_which,
+                                    return_eigenvectors=True,
+                                    **self.kwargs)
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
         pe = torch.from_numpy(eig_vecs[:, 1:self.num_channels + 1])
 
