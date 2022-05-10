@@ -11,6 +11,7 @@ from .schnet import SchNet
 from .dimenet import DimeNet
 from .explainer import Explainer, to_captum
 from .gnn_explainer import GNNExplainer
+from .graphmask_explainer import GraphMaskExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -45,6 +46,7 @@ __all__ = [
     'Explainer',
     'to_captum',
     'GNNExplainer',
+    'GraphMaskExplainer',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
