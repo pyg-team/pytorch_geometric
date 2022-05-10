@@ -41,6 +41,7 @@ def trivial_metric(true, pred, task_type):
 
 
 @withPackage('yacs')
+@withPackage('pytorch_lightning')
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
