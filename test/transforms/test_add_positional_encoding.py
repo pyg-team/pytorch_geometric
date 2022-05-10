@@ -65,24 +65,18 @@ def test_add_laplacian_eigenvector_pe():
     transform_deterministic = AddLaplacianEigenvectorPE(
         num_pe, 'attr', is_undirected=False, v0=np.arange(6) / 6.)
     pe = transform_deterministic(data).laplacian_eigenvector_pe
-    ref = torch.Tensor([[-0.2582, -0.4564],
-                        [-0.2582, -0.1826],
-                        [-0.5164, -0.3651],
-                        [-0.5164, -0.0913],
-                        [-0.2582, 0.6390],
-                        [-0.5164, 0.4564]])
+    ref = torch.Tensor([[-0.2582, -0.4564], [-0.2582, -0.1826],
+                        [-0.5164, -0.3651], [-0.5164, -0.0913],
+                        [-0.2582, 0.6390], [-0.5164, 0.4564]])
     assert torch.allclose(pe, ref, atol=1e-4)
 
     seed_everything(0)
     transform_deterministic = AddLaplacianEigenvectorPE(
         num_pe, 'attr', is_undirected=True, v0=np.arange(6) / 6.)
     pe = transform_deterministic(data).laplacian_eigenvector_pe
-    ref = torch.Tensor([[-0.4930, -0.4564],
-                        [-0.4930, -0.1826],
-                        [-0.3005, -0.3651],
-                        [-0.3005, -0.0913],
-                        [-0.4930, 0.6390],
-                        [-0.3005, 0.4564]])
+    ref = torch.Tensor([[-0.4930, -0.4564], [-0.4930, -0.1826],
+                        [-0.3005, -0.3651], [-0.3005, -0.0913],
+                        [-0.4930, 0.6390], [-0.3005, 0.4564]])
     assert torch.allclose(pe, ref, atol=1e-4)
 
 

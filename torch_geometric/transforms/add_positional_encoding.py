@@ -77,8 +77,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
                                                 dtype=torch.float, num_nodes=N)
         L = to_scipy_sparse_matrix(edge_index, edge_weight, N)
         eig_vals, eig_vecs = eig_fn(L, k=self.num_channels + 1,
-                                    which=eig_which,
-                                    return_eigenvectors=True,
+                                    which=eig_which, return_eigenvectors=True,
                                     **self.kwargs)
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
         pe = torch.from_numpy(eig_vecs[:, 1:self.num_channels + 1])
