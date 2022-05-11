@@ -40,7 +40,7 @@ class DeepGCNLayer(torch.nn.Module):
         block (string, optional): The skip connection operation to use
             (:obj:`"res+"`, :obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`).
             (default: :obj:`"res+"`)
-        dropout: (float, optional): Whether to apply or dropout.
+        dropout (float, optional): Whether to apply or dropout.
             (default: :obj:`0.`)
         ckpt_grad (bool, optional): If set to :obj:`True`, will checkpoint this
             part of the model. Checkpointing works by trading compute for

@@ -50,7 +50,7 @@ class TUDataset(InMemoryDataset):
         use_edge_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous edge attributes (if present).
             (default: :obj:`False`)
-        cleaned: (bool, optional): If :obj:`True`, the dataset will
+        cleaned (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
 
     Stats:
