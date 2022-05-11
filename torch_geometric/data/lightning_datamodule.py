@@ -103,10 +103,10 @@ class LightningDataset(LightningDataModule):
             trainer.fit(model, datamodule)
 
     Args:
-        train_dataset: (Dataset) The training dataset.
-        val_dataset: (Dataset, optional) The validation dataset.
+        train_dataset (Dataset): The training dataset.
+        val_dataset (Dataset, optional): The validation dataset.
             (default: :obj:`None`)
-        test_dataset: (Dataset, optional) The test dataset.
+        test_dataset (Dataset, optional): The test dataset.
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
