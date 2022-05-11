@@ -109,13 +109,13 @@ class HANConv(MessagePassing):
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
                 features  for each individual node type.
-            edge_index_dict: (Dict[str, Union[Tensor, SparseTensor]]): A
+            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
                 dictionary holding graph connectivity information for each
                 individual edge type, either as a :obj:`torch.LongTensor` of
                 shape :obj:`[2, num_edges]` or a
                 :obj:`torch_sparse.SparseTensor`.
 
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The ouput node embeddings
+        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
             for each node type.
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.

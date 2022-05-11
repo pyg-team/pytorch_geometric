@@ -44,13 +44,13 @@ class PointTransformerConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        pos_nn : (torch.nn.Module, optional): A neural network
+        pos_nn (torch.nn.Module, optional): A neural network
             :math:`h_\mathbf{\Theta}` which maps relative spatial coordinates
             :obj:`pos_j - pos_i` of shape :obj:`[-1, 3]` to shape
             :obj:`[-1, out_channels]`.
             Will default to a :class:`torch.nn.Linear` transformation if not
             further specified. (default: :obj:`None`)
-        attn_nn : (torch.nn.Module, optional): A neural network
+        attn_nn (torch.nn.Module, optional): A neural network
             :math:`\gamma_\mathbf{\Theta}` which maps transformed
             node features of shape :obj:`[-1, out_channels]`
             to shape :obj:`[-1, out_channels]`. (default: :obj:`None`)

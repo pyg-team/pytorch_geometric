@@ -125,7 +125,7 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
             In case :obj:`input_map` is not further specified, will try to
             automatically determine the correct type of input arguments.
             (default: :obj:`None`)
-        debug: (bool, optional): If set to :obj:`True`, will perform
+        debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
     transformer = ToHeteroWithBasesTransformer(module, metadata, num_bases,
