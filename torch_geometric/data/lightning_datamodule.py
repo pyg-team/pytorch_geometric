@@ -274,6 +274,7 @@ class LightningNodeData(LightningDataModule):
                 directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
                 time_attr=kwargs.get('time_attr', None),
+                is_sorted=kwargs.get('is_sorted', False),
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes

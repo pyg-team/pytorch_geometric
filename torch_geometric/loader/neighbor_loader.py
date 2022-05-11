@@ -26,6 +26,7 @@ class NeighborSampler:
         input_type: Optional[Any] = None,
         share_memory: bool = False,
         time_attr: Optional[str] = None,
+        is_sorted: bool = False,
     ):
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
@@ -41,7 +42,8 @@ class NeighborSampler:
                     f"'{data.__class__.__name__}' object")
 
             # Convert the graph data into a suitable format for sampling.
-            out = to_csc(data, device='cpu', share_memory=share_memory)
+            out = to_csc(data, device='cpu', share_memory=share_memory,
+                         is_sorted=is_sorted)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
@@ -54,7 +56,8 @@ class NeighborSampler:
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu', share_memory=share_memory)
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
+                                is_sorted=is_sorted)
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
