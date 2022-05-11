@@ -150,19 +150,19 @@ def test_graphgym_module(tmpdir):
     # test training step
     batch = next(iter(loaders[0]))
     outputs = model.training_step(batch)
-    assert keys.issubset(outputs.keys())
+    assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
     # test validation step
     batch = next(iter(loaders[1]))
     outputs = model.validation_step(batch)
-    assert keys.issubset(outputs.keys())
-    assert torch.is_tensor(outputs["loss"])
+    assert keys == set(outputs.keys())
+    assert isinstance(outputs["loss"], torch.Tensor)
 
     # test test step
     batch = next(iter(loaders[2]))
     outputs = model.test_step(batch)
-    assert keys.issubset(outputs.keys())
-    assert torch.is_tensor(outputs["loss"])
+    assert keys == set(outputs.keys())
+    assert isinstance(outputs["loss"], torch.Tensor)
 
     shutil.rmtree(cfg.out_dir)
