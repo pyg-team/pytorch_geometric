@@ -55,7 +55,7 @@ class PNAConv(MessagePassing):
         aggregators (list of str): Set of aggregation function identifiers,
             namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"var"` and :obj:`"std"`.
-        scalers: (list of str): Set of scaling function identifiers, namely
+        scalers (list of str): Set of scaling function identifiers, namely
             :obj:`"identity"`, :obj:`"amplification"`,
             :obj:`"attenuation"`, :obj:`"linear"` and
             :obj:`"inverse_linear"`.
