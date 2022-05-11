@@ -269,7 +269,7 @@ class LoggerCallback(Callback):
         self._val_epoch_start_time = None
         self._test_epoch_start_time = None
 
-    def _create_stats(self, time_start, outputs: Dict[str, Any],
+    def _create_stats(self, epoch_start_time, outputs: Dict[str, Any],
                       trainer: "pl.Trainer") -> Dict:
         true: torch.Tensor = outputs["true"]
         pred: torch.Tensor = outputs["pred"]
@@ -278,7 +278,7 @@ class LoggerCallback(Callback):
         lr = trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0]
         stats = dict(true=true.detach().cpu(), pred=pred.detach().cpu(),
                      pred_score=pred_score.detach().cpu(), loss=loss.item(),
-                     lr=lr, time_used=time.time() - time_start,
+                     lr=lr, time_used=time.time() - epoch_start_time,
                      params=cfg.params)
 
         return stats

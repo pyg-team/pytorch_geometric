@@ -41,7 +41,7 @@ class GraphGymModule(LightningModule):
 
     def _shared_step(self, batch, split: str) -> Dict:
         batch.split = split
-        pred, true = self.forward(batch)
+        pred, true = self(batch)
         loss, pred_score = compute_loss(pred, true)
         step_end_time = time.time()
         return dict(loss=loss, true=true, pred=pred, pred_score=pred_score,

@@ -154,7 +154,7 @@ def test_graphgym_module(tmpdir):
     batch = next(iter(loaders[0]))
     outputs = model.training_step(batch)
     assert keys.issubset(outputs.keys())
-    assert torch.is_tensor(outputs["loss"])
+    assert isinstance(outputs["loss"], torch.Tensor)
 
     # test validation step
     batch = next(iter(loaders[1]))
