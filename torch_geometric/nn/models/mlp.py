@@ -151,10 +151,7 @@ class MLP(torch.nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
 
-        if return_emb:
-            return x, emb
-        else:
-            return x
+        return x, emb if return_emb else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
