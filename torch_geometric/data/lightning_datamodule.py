@@ -104,7 +104,7 @@ class LightningDataset(LightningDataModule):
 
     Args:
         train_dataset (Dataset): The training dataset.
-        val_dataset (Dataset, optional) The validation dataset.
+        val_dataset (Dataset, optional): The validation dataset.
             (default: :obj:`None`)
         test_dataset (Dataset, optional): The test dataset.
             (default: :obj:`None`)
