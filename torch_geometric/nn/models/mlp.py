@@ -61,6 +61,9 @@ class MLP(torch.nn.Module):
             learn additive biases. (default: :obj:`True`)
         relu_first (bool, optional): Deprecated in favor of :obj:`act_first`.
             (default: :obj:`False`)
+        return_emb (bool, optional): whether the layer will return embedding
+            as well. Embedding is defined as the output before the final
+            linear layer (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -78,6 +81,7 @@ class MLP(torch.nn.Module):
         batch_norm_kwargs: Optional[Dict[str, Any]] = None,
         bias: bool = True,
         relu_first: bool = False,
+        return_emb: bool = False,
     ):
         super().__init__()
 
@@ -99,6 +103,7 @@ class MLP(torch.nn.Module):
         self.dropout = dropout
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
+        self.return_emb = return_emb
 
         self.lins = torch.nn.ModuleList()
         pairwise = zip(channel_list[:-1], channel_list[1:])
@@ -140,7 +145,9 @@ class MLP(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """"""
         x = self.lins[0](x)
+        emb = x
         for lin, norm in zip(self.lins[1:], self.norms):
+            emb = x
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
@@ -148,7 +155,11 @@ class MLP(torch.nn.Module):
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
-        return x
+
+        if self.return_emb:
+            return x, emb
+        else:
+            return x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
