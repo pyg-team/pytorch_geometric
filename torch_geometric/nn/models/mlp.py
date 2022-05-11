@@ -137,10 +137,12 @@ class MLP(torch.nn.Module):
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, return_emb: bool = False) -> Tensor:
         """"""
         x = self.lins[0](x)
+        emb = x
         for lin, norm in zip(self.lins[1:], self.norms):
+            emb = x
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
@@ -148,7 +150,8 @@ class MLP(torch.nn.Module):
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
-        return x
+
+        return (x, emb) if return_emb else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
