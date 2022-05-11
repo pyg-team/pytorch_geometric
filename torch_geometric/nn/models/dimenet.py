@@ -269,20 +269,20 @@ class DimeNet(torch.nn.Module):
         num_bilinear (int): Size of the bilinear layer tensor.
         num_spherical (int): Number of spherical harmonics.
         num_radial (int): Number of radial basis functions.
-        cutoff: (float, optional): Cutoff distance for interatomic
+        cutoff (float, optional): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
         envelope_exponent (int, optional): Shape of the smooth cutoff.
             (default: :obj:`5`)
-        num_before_skip: (int, optional): Number of residual layers in the
+        num_before_skip (int, optional): Number of residual layers in the
             interaction blocks before the skip connection. (default: :obj:`1`)
-        num_after_skip: (int, optional): Number of residual layers in the
+        num_after_skip (int, optional): Number of residual layers in the
             interaction blocks after the skip connection. (default: :obj:`2`)
-        num_output_layers: (int, optional): Number of linear layers for the
+        num_output_layers (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (Callable, optional): The activation funtion.
+        act (Callable, optional): The activation function.
             (default: :obj:`swish`)
     """
 
