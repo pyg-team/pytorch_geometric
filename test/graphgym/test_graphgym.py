@@ -19,7 +19,11 @@ from torch_geometric.graphgym.config import (
     set_run_dir,
 )
 from torch_geometric.graphgym.loader import create_loader
-from torch_geometric.graphgym.logger import create_logger, set_printing
+from torch_geometric.graphgym.logger import (
+    LoggerCallback,
+    create_logger,
+    set_printing,
+)
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
 from torch_geometric.graphgym.models.head import GNNNodeHead
@@ -166,3 +170,28 @@ def test_graphgym_module(tmpdir):
     assert isinstance(outputs["loss"], torch.Tensor)
 
     shutil.rmtree(cfg.out_dir)
+
+
+@withPackage('yacs')
+@withPackage('pytorch_lightning')
+def test_train(tmpdir):
+    load_cfg(cfg, args)
+    cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
+    cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
+    cfg.dataset.dir = osp.join(tmpdir, 'pyg_test_datasets', 'Planetoid')
+
+    set_out_dir(cfg.out_dir, args.cfg_file)
+    dump_cfg(cfg)
+    set_printing()
+
+    seed_everything(cfg.seed)
+    auto_select_device()
+    set_run_dir(cfg.out_dir)
+
+    loaders = create_loader()
+    model = create_model()
+    cfg.params = params_count(model)
+    logger = LoggerCallback()
+    trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=logger)
+    train_loader, val_loader = loaders[0], loaders[1]
+    trainer.fit(model, train_loader, val_loader)

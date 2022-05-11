@@ -44,7 +44,7 @@ class GraphGymModule(LightningModule):
         pred, true = self(batch)
         loss, pred_score = compute_loss(pred, true)
         step_end_time = time.time()
-        return dict(loss=loss, true=true, pred=pred, pred_score=pred_score,
+        return dict(loss=loss, true=true, pred_score=pred_score,
                     step_end_time=step_end_time)
 
     def training_step(self, batch, *args, **kwargs):
