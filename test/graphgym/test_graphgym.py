@@ -5,7 +5,6 @@ import sys
 from collections import namedtuple
 
 import pytest
-import pytorch_lightning as pl
 import torch
 
 from torch_geometric import seed_everything
@@ -35,6 +34,11 @@ from torch_geometric.graphgym.utils import (
     params_count,
 )
 from torch_geometric.testing import withPackage
+
+try:
+    import pytorch_lightning as pl
+except ImportError:
+    pl = None
 
 num_trivial_metric_calls = 0
 
