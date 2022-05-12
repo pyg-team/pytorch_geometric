@@ -1,8 +1,8 @@
 import copy
 import math
-import pandas
 from typing import Dict, Optional, Tuple, Union
 
+import pandas
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -25,19 +25,19 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
     return torch.index_select(value, 0, index, out=out)
 
 
-def unbatcher(src: torch.tensor, index: torch.tensor,
-              dim: int = -1) -> list:
-    scatter = pandas.DataFrame(index, columns=['scatter']).reset_index().groupby('scatter').tail(1)
+def unbatcher(src: torch.tensor, index: torch.tensor, dim: int = -1) -> list:
+    scatter = pandas.DataFrame(
+        index, columns=['scatter']).reset_index().groupby('scatter').tail(1)
     indices = []
-    index_i = 0     # index starts for a graph
-    index_f = 0     # index ends for a graph
-    for i in range(0,len(scatter)):
+    index_i = 0  # index starts for a graph
+    index_f = 0  # index ends for a graph
+    for i in range(0, len(scatter)):
         index_f = scatter['index'].iloc[i] + 1
-        indices.append( torch.tensor(range(index_i,index_f)) )
+        indices.append(torch.tensor(range(index_i, index_f)))
         index_i = index_f
     unbatched = []
-    for i in range(0,len(indices)):
-        unbatched.append( torch.index_select(src, dim, indices[i]) )
+    for i in range(0, len(indices)):
+        unbatched.append(torch.index_select(src, dim, indices[i]))
     return unbatched
 
 
