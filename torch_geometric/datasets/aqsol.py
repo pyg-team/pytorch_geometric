@@ -98,13 +98,12 @@ class AQSOL(InMemoryDataset):
             data_list = []
             for idx in indices:
                 graph = graphs[idx]
-                """
-                Each `graph` is a tuple (x, edge_attr, edge_index, y)
-                    Shape of x : [num_nodes, 1]
-                    Shape of edge_attr : [num_edges]
-                    Shape of edge_index : [2, num_edges]
-                    Shape of y : [1]
-                """
+
+                # Each `graph` is a tuple (x, edge_attr, edge_index, y)
+                #     Shape of x : [num_nodes, 1]
+                #     Shape of edge_attr : [num_edges]
+                #     Shape of edge_index : [2, num_edges]
+                #     Shape of y : [1]
 
                 x = torch.LongTensor(graph[0]).unsqueeze(-1)
                 edge_attr = torch.LongTensor(graph[1])  #.unsqueeze(-1)
