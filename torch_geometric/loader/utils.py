@@ -26,7 +26,7 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
 
 
 def unbatcher(src: torch.tensor, index: torch.tensor,
-             dim: int = -1):
+              dim: int = -1) -> list:
     scatter = pandas.DataFrame(index, columns=['scatter']).reset_index().groupby('scatter').tail(1)
     indices = []
     index_i = 0     # index starts for a graph
