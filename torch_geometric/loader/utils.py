@@ -37,12 +37,7 @@ def unbatcher(src: torch.tensor, index: torch.tensor,
         index_i = index_f
     unbatched = []
     for i in range(0,len(indices)):
-        if edge_index is not True:
-            unbatched.append( torch.index_select(src, dim, indices[i]) )
-        else:
-            edge_index_select = torch.index_select(src, dim, indices[i])
-            edge_index_min = edge_index_select.min()
-            unbatched.append( torch.subtract(edge_index_select,edge_index_min) )
+        unbatched.append( torch.index_select(src, dim, indices[i]) )
     return unbatched
 
 
