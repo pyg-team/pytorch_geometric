@@ -5,9 +5,13 @@ import pickle
 
 import torch
 from tqdm import tqdm
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
 
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 class AQSOL(InMemoryDataset):
     r"""The AQSOL dataset from `Benchmarking GNNs <http://arxiv.org/abs/2003.00982>`_,
