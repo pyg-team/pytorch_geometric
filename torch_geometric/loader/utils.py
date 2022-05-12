@@ -1,5 +1,6 @@
 import copy
 import math
+import pandas
 from typing import Dict, Optional, Tuple, Union
 
 import torch
@@ -22,6 +23,27 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
     return torch.index_select(value, 0, index, out=out)
+
+
+def unbatcher(src: torch.tensor, index: torch.tensor,
+             dim: int = -1):
+    scatter = pandas.DataFrame(index, columns=['scatter']).reset_index().groupby('scatter').tail(1)
+    indices = []
+    index_i = 0     # index starts for a graph
+    index_f = 0     # index ends for a graph
+    for i in range(0,len(scatter)):
+        index_f = scatter['index'].iloc[i] + 1
+        indices.append( torch.tensor(range(index_i,index_f)) )
+        index_i = index_f
+    unbatched = []
+    for i in range(0,len(indices)):
+        if edge_index is not True:
+            unbatched.append( torch.index_select(src, dim, indices[i]) )
+        else:
+            edge_index_select = torch.index_select(src, dim, indices[i])
+            edge_index_min = edge_index_select.min()
+            unbatched.append( torch.subtract(edge_index_select,edge_index_min) )
+    return unbatched
 
 
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
