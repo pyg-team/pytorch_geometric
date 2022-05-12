@@ -33,12 +33,13 @@ class AQSOL(InMemoryDataset):
     the node features are the types of heavy atoms and the edge features
     are the types of bonds between them, similar as ZINC.
 
-    Size of Dataset: 9,982 molecules
-    Split: Scaffold split (8:1:1) following same code as OGB
-    After cleaning: 7,831 train / 996 val / 996 test
-    Number of (unique) atoms: 65
-    Number of (unique) bonds: 5
-    Performance Metric: MAE, same as ZINC
+    - Task: Graph Regression
+    - Size of Dataset: 9,982 molecules
+    - Split: Scaffold split (8:1:1) following same code as OGB
+    - After cleaning: 7,831 train / 996 val / 996 test
+    - Number of (unique) atoms: 65
+    - Number of (unique) bonds: 5
+    - Performance Metric: MAE, same as ZINC
 
     Atom Dict: {'Br': 0, 'C': 1, 'N': 2, 'O': 3, 'Cl': 4, 'Zn': 5, 'F': 6,
     'P': 7, 'S': 8, 'Na': 9, 'Al': 10, 'Si': 11, 'Mo': 12, 'Ca': 13, 'W': 14,
