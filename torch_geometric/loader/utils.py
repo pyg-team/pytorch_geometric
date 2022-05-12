@@ -101,7 +101,8 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
         elif store.is_node_attr(key):
             index = index.to(value.device)
-            out_store[key] = index_select(value, index, dim=0)
+            dim = store._parent().__cat_dim__(key, value, store)
+            out_store[key] = index_select(value, index, dim=dim)
 
     return store
 
