@@ -15,18 +15,18 @@ from torch_geometric.data import (
 
 
 class AQSOL(InMemoryDataset):
-    r"""The AQSOL dataset from `Benchmarking GNNs 
+    r"""The AQSOL dataset from `Benchmarking GNNs
     <http://arxiv.org/abs/2003.00982>`_,
     based on `AqSolDB <https://www.nature.com/articles/s41597-019-0151-1>`
     which is a standardized database of 9,982 molecular graphs with
     their aqueous solubility values, collected from 9 different data
     sources.
 
-    The aqueous solubility targets are collected from experimental 
+    The aqueous solubility targets are collected from experimental
     measurements and standardized to LogS units in AqSolDB. These final
     values as the property to regress in the AQSOL dataset which is the
     resultant collection in Benchmarking GNNs after filtering out few graphs
-    with no bonds/edges and a small number of graphs with missing node 
+    with no bonds/edges and a small number of graphs with missing node
     feature values.
 
     Thus, the total molecular graphs are 9,823. For each molecular graph,
@@ -42,7 +42,7 @@ class AQSOL(InMemoryDataset):
 
     Atom Dict: {'Br': 0, 'C': 1, 'N': 2, 'O': 3, 'Cl': 4, 'Zn': 5, 'F': 6,
     'P': 7, 'S': 8, 'Na': 9, 'Al': 10, 'Si': 11, 'Mo': 12, 'Ca': 13, 'W': 14,
-    'Pb': 15, 'B': 16, 'V': 17, 'Co': 18, 'Mg': 19, 'Bi': 20, 'Fe': 21, 
+    'Pb': 15, 'B': 16, 'V': 17, 'Co': 18, 'Mg': 19, 'Bi': 20, 'Fe': 21,
     'Ba': 22, 'K': 23, 'Ti': 24, 'Sn': 25, 'Cd': 26, 'I': 27, 'Re': 28,
     'Sr': 29, 'H': 30, 'Cu': 31, 'Ni': 32, 'Lu': 33, 'Pr': 34, 'Te': 35,
     'Ce': 36, 'Nd': 37, 'Gd': 38, 'Zr': 39, 'Mn': 40, 'As': 41, 'Hg': 42,
@@ -51,7 +51,7 @@ class AQSOL(InMemoryDataset):
     'Ru': 57, 'Au': 58, 'Sm': 59, 'Ta': 60, 'Pt': 61, 'Ir': 62, 'Be': 63,
     'Ge': 64}
 
-    Bond Dict: {'NONE': 0, 'SINGLE': 1, 'DOUBLE': 2, 'AROMATIC': 3, 
+    Bond Dict: {'NONE': 0, 'SINGLE': 1, 'DOUBLE': 2, 'AROMATIC': 3,
     'TRIPLE': 4}
 
     Args:
@@ -72,8 +72,8 @@ class AQSOL(InMemoryDataset):
 
     url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 
-    def __init__(self, root, split='train', transform=None, 
-                 pre_transform=None, pre_filter=None):
+    def __init__(self, root, split='train', transform=None, pre_transform=None,
+                 pre_filter=None):
         self.name = "AQSOL"
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -116,7 +116,7 @@ class AQSOL(InMemoryDataset):
                 #     Shape of y : [1]
 
                 x = torch.LongTensor(graph[0]).unsqueeze(-1)
-                edge_attr = torch.LongTensor(graph[1])  
+                edge_attr = torch.LongTensor(graph[1])
                 edge_index = torch.LongTensor(graph[2])
                 y = torch.tensor(graph[3])
 
