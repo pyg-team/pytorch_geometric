@@ -35,11 +35,6 @@ from torch_geometric.graphgym.utils import (
 )
 from torch_geometric.testing import withPackage
 
-try:
-    import pytorch_lightning as pl
-except ImportError:
-    pl = None
-
 num_trivial_metric_calls = 0
 
 Args = namedtuple('Args', ['cfg_file', 'opts'])
@@ -128,6 +123,8 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_graphgym_module(tmpdir):
+    import pytorch_lightning as pl
+
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
@@ -179,6 +176,8 @@ def test_graphgym_module(tmpdir):
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_train(tmpdir):
+    import pytorch_lightning as pl
+
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
