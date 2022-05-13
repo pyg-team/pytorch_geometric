@@ -195,6 +195,9 @@ def test_train(tmpdir):
     model = create_model()
     cfg.params = params_count(model)
     logger = LoggerCallback()
-    trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=logger)
+    trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=logger,
+                         log_every_n_steps=1)
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
+
+    shutil.rmtree(cfg.out_dir)

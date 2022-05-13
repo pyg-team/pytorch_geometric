@@ -355,6 +355,7 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.train_logger.write_epoch(trainer.current_epoch)
+        self.train_logger.close()
 
     def on_validation_epoch_end(
         self,
@@ -362,6 +363,7 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.val_logger.write_epoch(trainer.current_epoch)
+        self.val_logger.close()
 
     def on_test_epoch_end(
         self,
@@ -369,11 +371,4 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.test_logger.write_epoch(trainer.current_epoch)
-
-    def on_epoch_end(
-        self,
-        trainer: 'pl.Trainer',
-        pl_module: 'pl.LightningModule',
-    ):
-        for logger in self._logger:
-            logger.close()
+        self.test_logger.close()
