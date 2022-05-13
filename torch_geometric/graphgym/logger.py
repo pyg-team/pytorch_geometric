@@ -6,6 +6,7 @@ import warnings
 from typing import Any, Dict, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym import register
@@ -249,12 +250,7 @@ def infer_task():
 
 
 def create_logger():
-    """
-    Create logger for the experiment
-
-    Returns: List of logger objects
-
-    """
+    r"""Create logger for the experiment."""
     loggers = []
     names = ['train', 'val', 'test']
     for i, dataset in enumerate(range(cfg.share.num_splits)):
@@ -269,95 +265,115 @@ class LoggerCallback(Callback):
         self._val_epoch_start_time = None
         self._test_epoch_start_time = None
 
-    def _create_stats(self, epoch_start_time, outputs: Dict[str, Any],
-                      trainer: "pl.Trainer") -> Dict:
-        true: torch.Tensor = outputs["true"]
-        pred_score: torch.Tensor = outputs["pred_score"]
-        loss: torch.Tensor = outputs["loss"]
-        lr = trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0]
-        stats = dict(true=true.detach().cpu(), pred=pred_score.detach().cpu(),
-                     loss=loss.item(), lr=lr,
-                     time_used=time.time() - epoch_start_time,
-                     params=cfg.params)
+    @property
+    def train_logger(self) -> Any:
+        return self._logger[0]
 
-        return stats
+    @property
+    def val_logger(self) -> Any:
+        return self._logger[1]
 
-    def on_train_epoch_start(self, trainer: "pl.Trainer",
-                             pl_module: "pl.LightningModule") -> None:
+    @property
+    def test_logger(self) -> Any:
+        return self._logger[2]
+
+    def _get_stats(
+        self,
+        epoch_start_time: int,
+        outputs: Dict[str, Any],
+        trainer: 'pl.Trainer',
+    ) -> Dict:
+        return dict(
+            true=outputs['true'].detach().cpu(),
+            pred=outputs['pred_score'].detach().cpu(),
+            loss=float(outputs['loss']),
+            lr=trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0],
+            time_used=time.time() - epoch_start_time,
+            params=cfg.params,
+        )
+
+    def on_train_epoch_start(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self._train_epoch_start_time = time.time()
 
-    def on_validation_epoch_start(self, trainer: "pl.Trainer",
-                                  pl_module: "pl.LightningModule") -> None:
+    def on_validation_epoch_start(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self._val_epoch_start_time = time.time()
 
-    def on_test_epoch_start(self, trainer: "pl.Trainer",
-                            pl_module: "pl.LightningModule") -> None:
+    def on_test_epoch_start(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self._test_epoch_start_time = time.time()
 
     def on_train_batch_end(
         self,
-        trainer: "pl.Trainer",
-        pl_module: "pl.LightningModule",
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
         outputs: Dict[str, Any],
         batch: Any,
         batch_idx: int,
         unused: int = 0,
     ) -> None:
-        stats = self._create_stats(self._train_epoch_start_time, outputs,
-                                   trainer)
+        stats = self._get_stats(self._train_epoch_start_time, outputs, trainer)
         self.train_logger.update_stats(**stats)
 
     def on_validation_batch_end(
         self,
-        trainer: "pl.Trainer",
-        pl_module: "pl.LightningModule",
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
     ) -> None:
-        stats = self._create_stats(self._val_epoch_start_time, outputs,
-                                   trainer)
+        stats = self._get_stats(self._val_epoch_start_time, outputs, trainer)
         self.val_logger.update_stats(**stats)
 
     def on_test_batch_end(
         self,
-        trainer: "pl.Trainer",
-        pl_module: "pl.LightningModule",
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
     ) -> None:
-        stats = self._create_stats(self._test_epoch_start_time, outputs,
-                                   trainer)
+        stats = self._get_stats(self._test_epoch_start_time, outputs, trainer)
         self.test_logger.update_stats(**stats)
 
-    def on_train_epoch_end(self, trainer: "pl.Trainer",
-                           pl_module: "pl.LightningModule") -> None:
+    def on_train_epoch_end(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self.train_logger.write_epoch(trainer.current_epoch)
 
-    def on_validation_epoch_end(self, trainer: "pl.Trainer",
-                                pl_module: "pl.LightningModule") -> None:
+    def on_validation_epoch_end(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self.val_logger.write_epoch(trainer.current_epoch)
 
-    def on_test_epoch_end(self, trainer: "pl.Trainer",
-                          pl_module: "pl.LightningModule") -> None:
+    def on_test_epoch_end(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         self.test_logger.write_epoch(trainer.current_epoch)
 
-    def on_epoch_end(self, trainer: "pl.Trainer",
-                     pl_module: "pl.LightningModule") -> None:
+    def on_epoch_end(
+        self,
+        trainer: 'pl.Trainer',
+        pl_module: 'pl.LightningModule',
+    ):
         for logger in self._logger:
             logger.close()
-
-    @property
-    def train_logger(self):
-        return self._logger[0]
-
-    @property
-    def val_logger(self):
-        return self._logger[1]
-
-    @property
-    def test_logger(self):
-        return self._logger[2]
