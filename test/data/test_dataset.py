@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -99,3 +99,62 @@ def test_hetero_in_memory_dataset():
     assert dataset[1]['paper'].x.tolist() == data2['paper'].x.tolist()
     assert (dataset[1]['paper', 'paper'].edge_index.tolist() == data2[
         'paper', 'paper'].edge_index.tolist())
+
+
+def test_override_behaviour():
+    class DS(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+        def download(self):
+            pass
+
+        def process(self):
+            pass
+
+    class DS2(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+        def process(self):
+            pass
+
+    class DS3(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+    ds = DS()
+    assert ds.enter_download
+    assert ds.enter_process
+
+    ds = DS2()
+    assert not ds.enter_download
+    assert ds.enter_process
+
+    ds = DS3()
+    assert not ds.enter_download
+    assert not ds.enter_process

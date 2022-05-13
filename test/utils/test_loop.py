@@ -4,6 +4,7 @@ from torch_geometric.utils import (
     add_remaining_self_loops,
     add_self_loops,
     contains_self_loops,
+    get_self_loop_attr,
     remove_self_loops,
     segregate_self_loops,
 )
@@ -103,3 +104,21 @@ def test_add_remaining_self_loops_without_initial_loops():
     edge_index, edge_weight = add_remaining_self_loops(edge_index, edge_weight)
     assert edge_index.tolist() == [[0, 1, 0, 1], [1, 0, 0, 1]]
     assert edge_weight.tolist() == [0.5, 0.5, 1, 1]
+
+
+def test_get_self_loop_attr():
+    edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
+    edge_weight = torch.tensor([0.2, 0.3, 0.5])
+
+    full_loop_weight = get_self_loop_attr(edge_index, edge_weight)
+    assert full_loop_weight.tolist() == [0.5, 0.0]
+
+    full_loop_weight = get_self_loop_attr(edge_index, edge_weight, num_nodes=4)
+    assert full_loop_weight.tolist() == [0.5, 0.0, 0.0, 0.0]
+
+    full_loop_weight = get_self_loop_attr(edge_index)
+    assert full_loop_weight.tolist() == [1.0, 0.0]
+
+    edge_attr = torch.tensor([[1.0, 0.0], [0.0, 1.0], [0.5, 1.0]])
+    full_loop_attr = get_self_loop_attr(edge_index, edge_attr)
+    assert full_loop_attr.tolist() == [[0.5, 1.0], [0.0, 0.0]]
