@@ -6,7 +6,6 @@ import warnings
 from typing import Any, Dict, Optional
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym import register
