@@ -432,9 +432,39 @@ class HeteroData(BaseData):
 
         return self
 
-    def subgraph(self, subset: Dict[NodeType, Tensor]):
-        r"""Returns the induced subgraph given by the node types and corresponding
-        indices in :obj:`subset`.
+    def subgraph(self, subset: Dict[NodeType, Tensor]) -> 'HeteroData':
+        r"""Returns the induced subgraph containing the node types and
+        corresponding nodes in :obj:`subset`.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = (...)
+            data['author'].x = (...)
+            data['conference'].x = (...)
+            data['paper', 'cites', 'paper'].edge_index = (...)
+            data['author', 'paper'].edge_index = (...)
+            data['paper', 'conference'].edge_index = (...)
+            print(data)
+            >>> HeteroData(
+                paper={ x=[10, 16] },
+                author={ x=[5, 32] },
+                conference={ x=[5, 8] },
+                (paper, cites, paper)={ edge_index=[2, 50] },
+                (author, to, paper)={ edge_index=[2, 30] },
+                (paper, to, conference)={ edge_index=[2, 25] }
+                )
+
+            subset ={'paper': torch.tensor([3,4,5,6]),
+                     'author': torch.tensor([0,2])}
+
+            print(data.subgraph(subset))
+            >>> HeteroData(
+                paper={ x=[4, 16] },
+                author={ x=[2, 32] },
+                (paper, cites, paper)={ edge_index=[2, 24] },
+                (author, to, paper)={ edge_index=[2, 5] }
+                )
 
         Args:
             subset (Dict[str, Tensor or BoolTensor]): A dictonary holding the
