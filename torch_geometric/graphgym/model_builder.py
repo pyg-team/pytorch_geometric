@@ -1,5 +1,4 @@
 import time
-import typing
 import warnings
 from typing import Any, Dict, Tuple
 
@@ -10,9 +9,6 @@ from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.register import network_dict, register_network
-
-if typing.TYPE_CHECKING:
-    from yacs.config import CfgNode
 
 try:
     from pytorch_lightning import LightningModule
@@ -25,7 +21,7 @@ register_network('gnn', GNN)
 
 
 class GraphGymModule(LightningModule):
-    def __init__(self, dim_in, dim_out, cfg: "CfgNode"):
+    def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
         self.cfg = cfg
         self.model = network_dict[cfg.model.type](dim_in=dim_in,
@@ -48,13 +44,13 @@ class GraphGymModule(LightningModule):
                     step_end_time=step_end_time)
 
     def training_step(self, batch, *args, **kwargs):
-        return self._shared_step(batch, "train")
+        return self._shared_step(batch, split="train")
 
     def validation_step(self, batch, *args, **kwargs):
-        return self._shared_step(batch, "val")
+        return self._shared_step(batch, split="val")
 
     def test_step(self, batch, *args, **kwargs):
-        return self._shared_step(batch, "test")
+        return self._shared_step(batch, split="test")
 
     @property
     def encoder(self) -> torch.nn.Module:
@@ -74,8 +70,7 @@ class GraphGymModule(LightningModule):
 
 
 def create_model(to_device=True, dim_in=None, dim_out=None):
-    r"""
-    Create model for graph machine learning
+    r"""Create model for graph machine learning.
 
     Args:
         to_device (string): The devide that the model will be transferred to
