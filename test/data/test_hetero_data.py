@@ -6,15 +6,20 @@ from torch_geometric.data import HeteroData
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
+x_conference = torch.randn(5, 8)
 
 idx_paper = torch.randint(x_paper.size(0), (100, ), dtype=torch.long)
 idx_author = torch.randint(x_author.size(0), (100, ), dtype=torch.long)
+idx_conference = torch.randint(x_conference.size(0), (100, ), dtype=torch.long)
 
 edge_index_paper_paper = torch.stack([idx_paper[:50], idx_paper[:50]], dim=0)
 edge_index_paper_author = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
-edge_index_author_paper = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
+edge_index_author_paper = torch.stack([idx_author[:30], idx_paper[:30]], dim=0)
+edge_index_paper_conference = torch.stack(
+    [idx_paper[:25], idx_conference[:25]], dim=0)
 
 edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
+edge_attr_author_paper = torch.randn(edge_index_author_paper.size(1), 8)
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -142,6 +147,62 @@ def test_hetero_data_rename():
     assert data['article'].x.tolist() == x_paper.tolist()
     edge_index = data['article', 'article'].edge_index
     assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
+def test_hetero_data_subgraph():
+    data = HeteroData()
+    data.num_node_types = 3
+    data['paper'].x = x_paper
+    data['paper'].y = torch.randn(x_paper.size(0), 1)
+    data['paper'].train_idx = torch.tensor([0, 1, 5])
+    data['author'].x = x_author
+    data['conference'].x = x_conference
+    data['paper', 'cites', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'cites', 'paper'].edge_attr = edge_attr_paper_paper
+    data['paper', 'cites', 'paper'].train_idx = [0, 10, 50]
+    data['author', 'paper'].edge_index = edge_index_author_paper
+    data['author', 'paper'].edge_attr = edge_attr_author_paper
+    data['paper', 'conference'].edge_index = edge_index_paper_conference
+
+    subset = {
+        'paper': torch.randperm(x_paper.size(0))[:4],
+        'author': torch.randperm(x_author.size(0))[:2]
+    }
+    edge_mask_paper_paper = (
+        torch.isin(data['paper', 'cites', 'paper'].edge_index[0, :],
+                   subset['paper'])
+        & torch.isin(data['paper', 'cites', 'paper'].edge_index[1, :],
+                     subset['paper']))
+    edge_mask_author_paper = (
+        torch.isin(data['author', 'paper'].edge_index[0, :], subset['author'])
+        & torch.isin(data['author', 'paper'].edge_index[1, :],
+                     subset['paper']))
+
+    data_subgraph = data.subgraph(subset)
+    assert data_subgraph.num_node_types == data.num_node_types
+    assert data_subgraph.node_types == ['paper', 'author']
+    assert torch.allclose(data_subgraph['paper'].x,
+                          data['paper'].x[subset['paper']])
+    assert torch.allclose(data_subgraph['paper'].y,
+                          data['paper'].y[subset['paper']])
+    assert torch.allclose(data_subgraph['paper'].train_idx,
+                          data['paper'].train_idx)
+    assert torch.allclose(data_subgraph['author'].x,
+                          data['author'].x[subset['author']])
+    assert data_subgraph.edge_types == [('paper', 'cites', 'paper'),
+                                        ('author', 'to', 'paper')]
+    assert torch.allclose(
+        data_subgraph['paper', 'cites', 'paper'].edge_attr,
+        data['paper', 'cites', 'paper'].edge_attr[edge_mask_paper_paper])
+    assert data_subgraph['paper', 'cites',
+                         'paper'].train_idx == data['paper', 'cites',
+                                                    'paper'].train_idx
+    assert torch.allclose(
+        data_subgraph['author', 'paper'].edge_attr,
+        data['author', 'paper'].edge_attr[edge_mask_author_paper])
+
+    del data.num_node_types
+    assert not hasattr(data.subgraph(subset), 'num_node_types')
 
 
 def test_copy_hetero_data():

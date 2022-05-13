@@ -12,6 +12,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, NodeType, QueryType
+from torch_geometric.utils import bipartite_subgraph
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -430,6 +431,49 @@ class HeteroData(BaseData):
                 self._edge_store_dict[edge_type] = edge_store
 
         return self
+
+    def subgraph(self, subset: Dict[NodeType, Tensor]):
+        r"""Returns the induced subgraph given by the node types and corresponding
+        indices in :obj:`subset`.
+
+        Args:
+            subset (Dict[str, Tensor or BoolTensor]): A dictonary holding the
+                nodes to keep for each node type.
+        """
+
+        data = HeteroData(self._global_store)
+
+        for node_type in self.node_types:
+            if node_type not in subset:
+                continue
+            cur_num_nodes = self[node_type].num_nodes
+            for key, value in self[node_type].items():
+                if isinstance(value,
+                              Tensor) and value.shape[0] == cur_num_nodes:
+                    data[node_type][key] = value[subset[node_type]]
+                else:
+                    data[node_type][key] = value
+
+        for edge_type in self.edge_types:
+            src_node_type, target_node_type = edge_type[0], edge_type[-1]
+            if src_node_type not in subset or target_node_type not in subset:
+                continue
+            cur_num_edges = self[edge_type].num_edges
+            edge_index, _, edge_mask = bipartite_subgraph(
+                (subset[src_node_type], subset[target_node_type]),
+                self[edge_type].edge_index, relabel_nodes=True,
+                size=(self[src_node_type].num_nodes,
+                      self[target_node_type].num_nodes), return_edge_mask=True)
+            for key, value in self[edge_type].items():
+                if key == 'edge_index':
+                    data[edge_type].edge_index = edge_index
+                elif isinstance(value,
+                                Tensor) and value.shape[0] == cur_num_edges:
+                    data[edge_type][key] = value[edge_mask]
+                else:
+                    data[edge_type][key] = value
+
+        return data
 
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
