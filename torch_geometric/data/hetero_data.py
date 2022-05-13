@@ -12,8 +12,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, NodeType, QueryType
-from torch_geometric.utils import bipartite_subgraph
-from torch_geometric.utils import is_undirected
+from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
