@@ -13,8 +13,7 @@ def test_equilibrium_aggregation(iter, alpha):
     output_channels = 2
     x = torch.randn(batch, feature_channels)
     model = EquilibriumAggregation(feature_channels, output_channels,
-                                   num_layers=[10, 10], grad_iter=iter,
-                                   alpha=alpha)
+                                   num_layers=[10, 10], grad_iter=iter)
 
     assert model.__repr__() == 'EquilibriumAggregation()'
     out = model(x)
@@ -33,8 +32,7 @@ def test_equilibrium_aggregation_batch(iter, alpha):
                          [1 for _ in range(batch_2)])
 
     model = EquilibriumAggregation(feature_channels, output_channels,
-                                   num_layers=[10, 10], grad_iter=iter,
-                                   alpha=alpha)
+                                   num_layers=[10, 10], grad_iter=iter)
 
     assert model.__repr__() == 'EquilibriumAggregation()'
     out = model(x, batch)

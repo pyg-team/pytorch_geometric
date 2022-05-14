@@ -15,9 +15,8 @@ steps = 10000000
 embedding_size = 10
 eval_each = 1000
 
-model = torch.nn.Sequential(EquilibriumAggregation(1, 10, [10, 10], 10, 0.01),
-                            torch.nn.Linear(10, 1))
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+model = EquilibriumAggregation(1, 10, [256, 256], 1)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 norm = torch.distributions.normal.Normal(0.5, 0.4)
 gamma = torch.distributions.gamma.Gamma(0.2, 0.5)

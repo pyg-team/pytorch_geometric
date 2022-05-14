@@ -1,12 +1,11 @@
-from typing import List, Optional
+from typing import Callable, List, Optional, Tuple
 
 import torch
-from torch_scatter import scatter
 
 from torch_geometric.nn.inits import reset
 
 
-class FCResNetBlock(torch.nn.Module):
+class ResNetPotential(torch.nn.Module):
     def __init__(self, in_channels: int, out_channels: int,
                  num_layers: List[int]):
 
@@ -25,13 +24,80 @@ class FCResNetBlock(torch.nn.Module):
             for layer_size in num_layers + [out_channels]
         ])
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        h = x
+    def forward(self, x: torch.Tensor, y: torch.Tensor,
+                batch: Optional[torch.Tensor]) -> torch.Tensor:
+        if batch is None:
+            inp = torch.cat([x, y.expand(x.size(0), -1)], dim=1)
+        else:
+            inp = torch.cat([x, y[batch]], dim=1)
+
+        h = inp
         for layer, res in zip(self.layers, self.res_trans):
             h = layer(h)
-            h = res(x) + h
+            h = res(inp) + h
+        return h.sum()
 
-        return h
+
+class MomentumOptimizer(torch.nn.Module):
+    r"""
+    Provides an inner loop optimizer for the implicitly defined output
+    layer. It is based on an unrolled Nesterov momentum algorithm.
+
+    Args:
+        learning_rate (flaot): learning rate for optimizer.
+        momentum (float): momentum for optimizer.
+        learnable (bool): If :obj:`True` then the :obj:`learning_rate` and
+            :obj:`momentum` will be learnable parameters. If False they
+            are fixed. (default: :obj:`True`)
+    """
+    def __init__(self, learning_rate: float = 0.1, momentum: float = 0.9,
+                 learnable: bool = True):
+        super().__init__()
+
+        self._initial_lr = learning_rate
+        self._initial_mom = momentum
+        self._lr = torch.nn.Parameter(torch.Tensor([learning_rate]),
+                                      requires_grad=learnable)
+        self._mom = torch.nn.Parameter(torch.Tensor([momentum]),
+                                       requires_grad=learnable)
+        self.softplus = torch.nn.Softplus()
+        self.sigmoid = torch.nn.Sigmoid()
+        self.register_full_backward_hook(self.gradient_hook)
+
+    @staticmethod
+    def gradient_hook(module, grad_input, grad_output):
+        pass
+
+    def reset_parameters(self):
+        self._lr.data.fill_(self._initial_lr)
+        self._mom.data.fill_(self._initial_mom)
+
+    @property
+    def learning_rate(self):
+        return self.softplus(self._lr)
+
+    @property
+    def momentum(self):
+        return self.sigmoid(self._mom)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        y: torch.Tensor,
+        batch: Optional[torch.Tensor],
+        func: Callable[[torch.Tensor, torch.Tensor, Optional[torch.Tensor]],
+                       torch.Tensor],
+        iterations: int = 5,
+    ) -> Tuple[torch.Tensor, float]:
+
+        momentum = torch.zeros_like(y)
+        for _ in range(iterations):
+            val = func(x, y, batch)
+            grad = torch.autograd.grad(val, y, create_graph=True,
+                                       retain_graph=True)[0]
+            momentum = self.momentum * momentum - self.learning_rate * grad
+            y = y + momentum
+        return y
 
 
 class EquilibriumAggregation(torch.nn.Module):
@@ -64,62 +130,54 @@ class EquilibriumAggregation(torch.nn.Module):
             potential function.
         grad_iter (int): The number of steps to take in the internal gradient
             descent. (default: :obj:`5`)
-        alpha (float): The step size of the internal gradient descent.
-            (default: :obj:`0.1`)
-
+        lamb (float): The initial regularization constant. Is learnable.
+            descent. (default: :obj:`0.1`)
     """
     def __init__(self, in_channels: int, out_channels: int,
-                 num_layers: List[int], grad_iter: int = 5,
-                 alpha: float = 0.1):
+                 num_layers: List[int], grad_iter: int = 5, lamb: float = 0.1):
         super().__init__()
 
-        self.potential = FCResNetBlock(in_channels + out_channels, 1,
-                                       num_layers)
-        self.lamb = torch.nn.Parameter(torch.Tensor([0.1]), requires_grad=True)
+        self.potential = ResNetPotential(in_channels + out_channels, 1,
+                                         num_layers)
+        self.optimizer = MomentumOptimizer()
+        self._initial_lambda = lamb
+        self._labmda = torch.nn.Parameter(torch.Tensor([lamb]),
+                                          requires_grad=True)
         self.softplus = torch.nn.Softplus()
         self.grad_iter = grad_iter
-        self.alpha = alpha
         self.output_dim = out_channels
-
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lamb.data.fill_(0.1)
+        self.lamb.data.fill_(self._initial_lambda)
+        reset(self.optimizer)
         reset(self.potential)
+
+    @property
+    def lamb(self):
+        return self.softplus(self._labmda)
 
     def init_output(self,
                     batch: Optional[torch.Tensor] = None) -> torch.Tensor:
         batch_size = 1 if batch is None else int(batch.max().item() + 1)
         return torch.zeros(batch_size, self.output_dim,
-                           requires_grad=True).float() + 1e-15
+                           requires_grad=True).float()
 
     def reg(self, y: torch.Tensor) -> float:
-        return self.softplus(self.lamb) * y.norm(2, dim=1, keepdim=True)
+        return self.lamb * y.square().sum()
 
-    def combine_input(self, x: torch.Tensor, y: torch.Tensor,
-                      batch: Optional[torch.Tensor] = None) -> torch.Tensor:
-        if batch is None:
-            return torch.cat([x, y.expand(x.size(0), -1)], dim=1)
-        return torch.cat([x, y[batch]], dim=1)
+    def energy(self, x: torch.Tensor, y: torch.Tensor,
+               batch: Optional[torch.Tensor]):
+        return self.potential(x, y, batch) + self.reg(y)
 
     def forward(self, x: torch.Tensor,
                 batch: Optional[torch.Tensor] = None) -> torch.Tensor:
+
         with torch.enable_grad():
-            yhat = self.init_output(batch)
-            for _ in range(self.grad_iter):
-                z = self.combine_input(x, yhat, batch)
-                potential = self.potential(z)
-                if batch is None:
-                    potential = potential.mean(axis=0, keepdim=True)
-                else:
-                    size = int(batch.max().item() + 1)
-                    potential = scatter(potential, batch, dim=0, dim_size=size,
-                                        reduce='mean')
-                reg = self.reg(yhat)
-                enrg = (potential + reg).sum()
-                yhat = yhat - self.alpha * torch.autograd.grad(
-                    enrg, yhat, create_graph=True, retain_graph=True)[0]
-            return yhat
+            y = self.optimizer(x, self.init_output(batch), batch, self.energy,
+                               iterations=self.grad_iter)
+
+        return y
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}()')
