@@ -98,7 +98,7 @@ def vanilla_train(loggers, loaders, model, optimizer, scheduler):
     logging.info('Task done, results saved in {}'.format(cfg.run_dir))
 
 
-def train(model, loaders, logger: bool = True,
+def train(model, datamodule, logger: bool = True,
           training_config: Optional[dict] = None):
     if logger:
         logger_cbk = LoggerCallback()
@@ -113,5 +113,5 @@ def train(model, loaders, logger: bool = True,
     )
     trainer.fit(
         model,
-        *loaders,
+        datamodule=datamodule,
     )

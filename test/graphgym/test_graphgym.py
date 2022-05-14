@@ -107,7 +107,7 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     cfg.params = params_count(model)
     assert cfg.params == 23880
 
-    train(loggers, loaders, model, optimizer, scheduler)
+    train(model, loaders, logger=True)
 
     if use_trivial_metric:
         # 6 total epochs, 4 eval epochs, 3 splits (1 training split)

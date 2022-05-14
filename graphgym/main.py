@@ -13,7 +13,7 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.graphgym.loader import create_loader
+from torch_geometric.graphgym.loader import GraphGymDataModule, create_loader
 from torch_geometric.graphgym.logger import create_logger, set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
@@ -41,8 +41,7 @@ if __name__ == '__main__':
         seed_everything(cfg.seed)
         auto_select_device()
         # Set machine learning pipeline
-        loaders = create_loader()
-        loggers = create_logger()
+        datamodule = GraphGymDataModule()
         model = create_model()
         # Print model info
         logging.info(model)
@@ -51,8 +50,10 @@ if __name__ == '__main__':
         logging.info('Num parameters: %s', cfg.params)
         # Start training
         if cfg.train.mode == 'standard':
-            train(model, loaders, logger=True)
+            train(model, datamodule, logger=True)
         else:
+            loaders = create_loader()
+            loggers = create_logger()
             optimizer = create_optimizer(model.parameters(), cfg.optim)
             scheduler = create_scheduler(optimizer, cfg.optim)
             train_dict[cfg.train.mode](loggers, loaders, model, optimizer,
