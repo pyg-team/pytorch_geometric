@@ -1,6 +1,8 @@
 import logging
 import time
+from typing import Optional
 
+import pytorch_lightning as pl
 import torch
 
 from torch_geometric.graphgym.checkpoint import (
@@ -9,6 +11,7 @@ from torch_geometric.graphgym.checkpoint import (
     save_ckpt,
 )
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.logger import LoggerCallback
 from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.utils.epoch import (
     is_ckpt_epoch,
@@ -53,7 +56,7 @@ def eval_epoch(logger, loader, model, split='val'):
         time_start = time.time()
 
 
-def train(loggers, loaders, model, optimizer, scheduler):
+def vanilla_train(loggers, loaders, model, optimizer, scheduler):
     """
     The core training pipeline
 
@@ -93,3 +96,22 @@ def train(loggers, loaders, model, optimizer, scheduler):
         clean_ckpt()
 
     logging.info('Task done, results saved in {}'.format(cfg.run_dir))
+
+
+def train(model, loaders, logger: bool = True,
+          training_config: Optional[dict] = None):
+    if logger:
+        logger_cbk = LoggerCallback()
+
+    training_config = training_config or {}
+
+    trainer = pl.Trainer(
+        **training_config,
+        enable_checkpointing=cfg.train.enable_ckpt,
+        callbacks=[logger_cbk],
+        default_root_dir=cfg.run_dir,
+    )
+    trainer.fit(
+        model,
+        *loaders,
+    )
