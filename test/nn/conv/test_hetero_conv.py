@@ -30,9 +30,10 @@ def test_hetero_conv(aggr):
 
     conv = HeteroConv(
         {
-            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('paper', 'to', 'paper'): GCNConv(-1, 64, add_self_loops=False),
             ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
-            ('paper', 'to', 'author'): GATConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
         }, aggr=aggr)
 
     assert len(list(conv.parameters())) > 0
