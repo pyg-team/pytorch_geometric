@@ -7,6 +7,7 @@ from torch.nn import BatchNorm1d, Identity
 
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.typing import NoneType
 
 
 class MLP(torch.nn.Module):
@@ -137,7 +138,7 @@ class MLP(torch.nn.Module):
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb=None) -> Tensor:
+    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
         """"""
         x = self.lins[0](x)
         emb = x
