@@ -137,7 +137,7 @@ class MLP(torch.nn.Module):
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb: bool = False) -> Tensor:
+    def forward(self, x: Tensor, return_emb=None) -> Tensor:
         """"""
         x = self.lins[0](x)
         emb = x
@@ -151,7 +151,7 @@ class MLP(torch.nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = lin.forward(x)
 
-        return (x, emb) if return_emb else x
+        return (x, emb) if isinstance(return_emb, bool) else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
