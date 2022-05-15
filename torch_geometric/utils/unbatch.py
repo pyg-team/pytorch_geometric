@@ -2,6 +2,7 @@ import torch
 
 from torch_geometric.utils import degree
 
+
 def unbatch(src: torch.tensor, index: torch.tensor, dim: int = -1) -> list:
     r"""Unbatches batched data from DataLoader.
 
@@ -12,6 +13,6 @@ def unbatch(src: torch.tensor, index: torch.tensor, dim: int = -1) -> list:
 
     :rtype: :class:`list`
     """
-    split_sizes = list(map(int,degree(index).tolist()))
-    unbatched = src.split(split_sizes,dim)
+    split_sizes = list(map(int, degree(index).tolist()))
+    unbatched = src.split(split_sizes, dim)
     return unbatched
