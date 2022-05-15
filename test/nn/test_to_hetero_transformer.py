@@ -12,6 +12,8 @@ from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
 from torch_geometric.utils import dropout_adj
 
+torch.fx.wrap('dropout_adj')
+
 
 class Net1(torch.nn.Module):
     def __init__(self):
@@ -125,9 +127,6 @@ class Net9(torch.nn.Module):
         return self.batch_norm(x)
 
 
-torch.fx.wrap('dropout_adj')
-
-
 class Net10(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -230,7 +229,7 @@ def test_to_hetero():
     assert out['author'].size() == (8, 16)
 
     model = Net10()
-    model = to_hetero(model, metadata, debug=True)
+    model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
