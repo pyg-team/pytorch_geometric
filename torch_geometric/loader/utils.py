@@ -21,7 +21,7 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         numel = math.prod(size)
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
-    return torch.index_select(value, 0, index, out=out)
+    return torch.index_select(value, dim, index, out=out)
 
 
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
@@ -101,7 +101,8 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
         elif store.is_node_attr(key):
             index = index.to(value.device)
-            out_store[key] = index_select(value, index, dim=0)
+            dim = store._parent().__cat_dim__(key, value, store)
+            out_store[key] = index_select(value, index, dim=dim)
 
     return store
 
@@ -132,13 +133,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                                            is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
+            dim = store._parent().__cat_dim__(key, value, store)
             if perm is None:
                 index = index.to(value.device)
-                out_store[key] = index_select(value, index, dim=0)
+                out_store[key] = index_select(value, index, dim=dim)
             else:
                 perm = perm.to(value.device)
                 index = index.to(value.device)
-                out_store[key] = index_select(value, perm[index], dim=0)
+                out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store
 
