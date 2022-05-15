@@ -46,6 +46,7 @@ class HeteroConv(Module):
     def __init__(self, convs: Dict[EdgeType, Module],
                  aggr: Optional[str] = "sum"):
         super().__init__()
+        self.validate_convs(convs)
 
         src_node_types = set([key[0] for key in convs.keys()])
         dst_node_types = set([key[-1] for key in convs.keys()])
@@ -58,6 +59,23 @@ class HeteroConv(Module):
 
         self.convs = ModuleDict({'__'.join(k): v for k, v in convs.items()})
         self.aggr = aggr
+
+    @staticmethod
+    def validate_convs(convs: Dict[EdgeType, Module]) -> None:
+        """
+        Checks to make sure that the convs provided for bipartite message
+        passing edges to not have an 'add_self_loops' argument that is set
+        to true. Raises :attr:`ValueError` if such a model exists.
+        """
+        for edge_type, model in convs.items():
+            if edge_type[0] != edge_type[-1]:
+                if hasattr(model, "add_self_loops"):
+                    if model.add_self_loops:
+                        raise ValueError(
+                            f"bipartite edge_type '{edge_type}' has"
+                            f"'add_self_loops' attribute set "
+                            f"to true. This will lead to incorrect"
+                            f"message passing results.")
 
     def reset_parameters(self):
         for conv in self.convs.values():

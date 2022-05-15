@@ -77,3 +77,16 @@ def test_hetero_conv_with_custom_conv():
     assert len(out) == 2
     assert out['paper'].size() == (50, 64)
     assert out['author'].size() == (30, 64)
+
+
+class MessagePassingLoops(MessagePassing):
+    def __init__(self, add_self_loops: bool = True):
+        super().__init__()
+        self.add_self_loops = add_self_loops
+
+
+def test_hetero_exception_self_loops():
+
+    model = MessagePassingLoops()
+    with pytest.raises(ValueError):
+        HeteroConv({("a", "to", "b"): model})
