@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import pickle
 import shutil
-from typing import Optional, Callable, List
+from typing import Callable, List, Optional
 
 import torch
 
