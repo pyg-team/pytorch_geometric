@@ -153,56 +153,51 @@ def test_hetero_data_subgraph():
     data = HeteroData()
     data.num_node_types = 3
     data['paper'].x = x_paper
-    data['paper'].y = torch.randn(x_paper.size(0), 1)
-    data['paper'].train_idx = torch.tensor([0, 1, 5])
+    data['paper'].name = 'paper'
+    data['paper'].num_nodes = x_paper.size(0)
     data['author'].x = x_author
+    data['author'].num_nodes = x_author.size(0)
     data['conference'].x = x_conference
-    data['paper', 'cites', 'paper'].edge_index = edge_index_paper_paper
-    data['paper', 'cites', 'paper'].edge_attr = edge_attr_paper_paper
-    data['paper', 'cites', 'paper'].train_idx = [0, 10, 50]
+    data['conference'].num_nodes = x_conference.size(0)
+    data['paper', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'paper'].edge_attr = edge_attr_paper_paper
+    data['paper', 'paper'].name = 'cites'
     data['author', 'paper'].edge_index = edge_index_author_paper
-    data['author', 'paper'].edge_attr = edge_attr_author_paper
+    data['paper', 'author'].edge_index = edge_index_paper_author
     data['paper', 'conference'].edge_index = edge_index_paper_conference
 
     subset = {
         'paper': torch.randperm(x_paper.size(0))[:4],
         'author': torch.randperm(x_author.size(0))[:2]
     }
-    edge_mask_paper_paper = (
-        torch.isin(data['paper', 'cites', 'paper'].edge_index[0, :],
-                   subset['paper'])
-        & torch.isin(data['paper', 'cites', 'paper'].edge_index[1, :],
-                     subset['paper']))
-    edge_mask_author_paper = (
-        torch.isin(data['author', 'paper'].edge_index[0, :], subset['author'])
-        & torch.isin(data['author', 'paper'].edge_index[1, :],
-                     subset['paper']))
 
-    data_subgraph = data.subgraph(subset)
-    assert data_subgraph.num_node_types == data.num_node_types
-    assert data_subgraph.node_types == ['paper', 'author']
-    assert torch.allclose(data_subgraph['paper'].x,
-                          data['paper'].x[subset['paper']])
-    assert torch.allclose(data_subgraph['paper'].y,
-                          data['paper'].y[subset['paper']])
-    assert torch.allclose(data_subgraph['paper'].train_idx,
-                          data['paper'].train_idx)
-    assert torch.allclose(data_subgraph['author'].x,
-                          data['author'].x[subset['author']])
-    assert data_subgraph.edge_types == [('paper', 'cites', 'paper'),
-                                        ('author', 'to', 'paper')]
-    assert torch.allclose(
-        data_subgraph['paper', 'cites', 'paper'].edge_attr,
-        data['paper', 'cites', 'paper'].edge_attr[edge_mask_paper_paper])
-    assert data_subgraph['paper', 'cites',
-                         'paper'].train_idx == data['paper', 'cites',
-                                                    'paper'].train_idx
-    assert torch.allclose(
-        data_subgraph['author', 'paper'].edge_attr,
-        data['author', 'paper'].edge_attr[edge_mask_author_paper])
+    out = data.subgraph(subset)
 
-    del data.num_node_types
-    assert not hasattr(data.subgraph(subset), 'num_node_types')
+    assert out.num_node_types == data.num_node_types
+    assert out.node_types == ['paper', 'author']
+
+    assert len(out['paper']) == 3
+    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
+    assert out['paper'].name == 'paper'
+    assert out['paper'].num_nodes == 4
+    assert len(out['author']) == 2
+    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
+    assert out['author'].num_nodes == 2
+
+    assert out.edge_types == [
+        ('paper', 'to', 'paper'),
+        ('author', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+    ]
+
+    assert len(out['paper', 'paper']) == 3
+    assert out['paper', 'paper'].edge_index is not None
+    assert out['paper', 'paper'].edge_attr is not None
+    assert out['paper', 'paper'].name == 'cites'
+    assert len(out['paper', 'author']) == 1
+    assert out['paper', 'author'].edge_index is not None
+    assert len(out['author', 'paper']) == 1
+    assert out['author', 'paper'].edge_index is not None
 
 
 def test_copy_hetero_data():
