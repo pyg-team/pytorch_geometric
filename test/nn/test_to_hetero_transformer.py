@@ -2,6 +2,7 @@ from typing import Tuple
 
 import pytest
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
@@ -9,6 +10,9 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import BatchNorm, GCNConv, GINEConv, GlobalPooling
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
+from torch_geometric.utils import dropout_adj
+
+torch.fx.wrap('dropout_adj')
 
 
 class Net1(torch.nn.Module):
@@ -123,6 +127,17 @@ class Net9(torch.nn.Module):
         return self.batch_norm(x)
 
 
+class Net10(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 32)
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        x = F.dropout(x, p=0.5, training=self.training)
+        edge_index, _ = dropout_adj(edge_index, p=0.5, training=self.training)
+        return self.conv(x, edge_index)
+
+
 def test_to_hetero():
     x_dict = {
         'paper': torch.randn(100, 16),
@@ -212,6 +227,13 @@ def test_to_hetero():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (4, 16)
     assert out['author'].size() == (8, 16)
+
+    model = Net10()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (100, 32)
+    assert out['author'].size() == (100, 32)
 
 
 class GCN(torch.nn.Module):
