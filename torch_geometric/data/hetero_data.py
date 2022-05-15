@@ -12,7 +12,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, NodeType, QueryType
-from torch_geometric.utils import is_undirected
+from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -444,6 +444,83 @@ class HeteroData(BaseData):
                 self._edge_store_dict[edge_type] = edge_store
 
         return self
+
+    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
+        r"""Returns the induced subgraph containing the node types and
+        corresponding nodes in :obj:`subset_dict`.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = ...
+            data['author'].x = ...
+            data['conference'].x = ...
+            data['paper', 'cites', 'paper'].edge_index = ...
+            data['author', 'paper'].edge_index = ...
+            data['paper', 'conference'].edge_index = ...
+            print(data)
+            >>> HeteroData(
+                paper={ x=[10, 16] },
+                author={ x=[5, 32] },
+                conference={ x=[5, 8] },
+                (paper, cites, paper)={ edge_index=[2, 50] },
+                (author, to, paper)={ edge_index=[2, 30] },
+                (paper, to, conference)={ edge_index=[2, 25] }
+            )
+
+            subset_dict = {
+                'paper': torch.tensor([3, 4, 5, 6]),
+                'author': torch.tensor([0, 2]),
+            }
+
+            print(data.subgraph(subset_dict))
+            >>> HeteroData(
+                paper={ x=[4, 16] },
+                author={ x=[2, 32] },
+                (paper, cites, paper)={ edge_index=[2, 24] },
+                (author, to, paper)={ edge_index=[2, 5] }
+            )
+
+        Args:
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+                holding the nodes to keep for each node type.
+        """
+        data = self.__class__(self._global_store)
+
+        for node_type, subset in subset_dict.items():
+            for key, value in self[node_type].items():
+                if key == 'num_nodes':
+                    if subset.dtype == torch.bool:
+                        data[node_type].num_nodes = int(subset.sum())
+                    else:
+                        data[node_type].num_nodes = subset.size(0)
+                elif self[node_type].is_node_attr(key):
+                    data[node_type][key] = value[subset]
+                else:
+                    data[node_type][key] = value
+
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            if src not in subset_dict or dst not in subset_dict:
+                continue
+
+            edge_index, _, edge_mask = bipartite_subgraph(
+                (subset_dict[src], subset_dict[dst]),
+                self[edge_type].edge_index,
+                relabel_nodes=True,
+                size=(self[src].num_nodes, self[dst].num_nodes),
+                return_edge_mask=True,
+            )
+
+            for key, value in self[edge_type].items():
+                if key == 'edge_index':
+                    data[edge_type].edge_index = edge_index
+                elif self[edge_type].is_edge_attr(key):
+                    data[edge_type][key] = value[edge_mask]
+                else:
+                    data[edge_type][key] = value
+
+        return data
 
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
