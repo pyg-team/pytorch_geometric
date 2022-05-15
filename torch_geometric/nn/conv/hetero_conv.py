@@ -7,6 +7,7 @@ from torch.nn import Module, ModuleDict
 
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.typing import Adj, EdgeType, NodeType
+from torch_geometric.utils.hetero import check_add_self_loops
 
 
 class HeteroConv(Module):
@@ -67,15 +68,8 @@ class HeteroConv(Module):
         passing edges to not have an 'add_self_loops' argument that is set
         to true. Raises :attr:`ValueError` if such a model exists.
         """
-        for edge_type, model in convs.items():
-            if edge_type[0] != edge_type[-1]:
-                if hasattr(model, "add_self_loops"):
-                    if model.add_self_loops:
-                        raise ValueError(
-                            f"bipartite edge_type '{edge_type}' has"
-                            f"'add_self_loops' attribute set "
-                            f"to true. This will lead to incorrect"
-                            f"message passing results.")
+        for edge_type, module in convs.items():
+            check_add_self_loops(module, [edge_type])
 
     def reset_parameters(self):
         for conv in self.convs.values():

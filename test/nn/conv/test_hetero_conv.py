@@ -86,7 +86,7 @@ class MessagePassingLoops(MessagePassing):
 
 
 def test_hetero_exception_self_loops():
-
     model = MessagePassingLoops()
     with pytest.raises(ValueError):
         HeteroConv({("a", "to", "b"): model})
+    HeteroConv({("a", "to", "a"): model})

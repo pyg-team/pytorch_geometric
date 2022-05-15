@@ -8,7 +8,10 @@ from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils.hetero import get_unused_node_types
+from torch_geometric.utils.hetero import (
+    check_add_self_loops,
+    get_unused_node_types,
+)
 
 try:
     from torch.fx import Graph, GraphModule, Node
@@ -132,6 +135,7 @@ class ToHeteroTransformer(Transformer):
         debug: bool = False,
     ):
         super().__init__(module, input_map, debug)
+        check_add_self_loops(module, metadata[1])
 
         unused_node_types = get_unused_node_types(*metadata)
         if len(unused_node_types) > 0:
