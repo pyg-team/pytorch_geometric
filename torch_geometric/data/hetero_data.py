@@ -437,19 +437,19 @@ class HeteroData(BaseData):
 
         return self
 
-    def subgraph(self, subset: Dict[NodeType, Tensor]) -> 'HeteroData':
+    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
         r"""Returns the induced subgraph containing the node types and
-        corresponding nodes in :obj:`subset`.
+        corresponding nodes in :obj:`subset_dict`.
 
         .. code-block:: python
 
             data = HeteroData()
-            data['paper'].x = (...)
-            data['author'].x = (...)
-            data['conference'].x = (...)
-            data['paper', 'cites', 'paper'].edge_index = (...)
-            data['author', 'paper'].edge_index = (...)
-            data['paper', 'conference'].edge_index = (...)
+            data['paper'].x = ...
+            data['author'].x = ...
+            data['conference'].x = ...
+            data['paper', 'cites', 'paper'].edge_index = ...
+            data['author', 'paper'].edge_index = ...
+            data['paper', 'conference'].edge_index = ...
             print(data)
             >>> HeteroData(
                 paper={ x=[10, 16] },
@@ -458,52 +458,56 @@ class HeteroData(BaseData):
                 (paper, cites, paper)={ edge_index=[2, 50] },
                 (author, to, paper)={ edge_index=[2, 30] },
                 (paper, to, conference)={ edge_index=[2, 25] }
-                )
+            )
 
-            subset ={'paper': torch.tensor([3,4,5,6]),
-                     'author': torch.tensor([0,2])}
+            subset_dict = {
+                'paper': torch.tensor([3, 4, 5, 6]),
+                'author': torch.tensor([0, 2]),
+            }
 
-            print(data.subgraph(subset))
+            print(data.subgraph(subset_dict))
             >>> HeteroData(
                 paper={ x=[4, 16] },
                 author={ x=[2, 32] },
                 (paper, cites, paper)={ edge_index=[2, 24] },
                 (author, to, paper)={ edge_index=[2, 5] }
-                )
+            )
 
         Args:
-            subset (Dict[str, Tensor or BoolTensor]): A dictonary holding the
-                nodes to keep for each node type.
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+                holding the nodes to keep for each node type.
         """
+        data = self.__class__(self._global_store)
 
-        data = HeteroData(self._global_store)
-
-        for node_type in self.node_types:
-            if node_type not in subset:
-                continue
-            cur_num_nodes = self[node_type].num_nodes
+        for node_type, subset in subset_dict.items():
             for key, value in self[node_type].items():
-                if isinstance(value,
-                              Tensor) and value.shape[0] == cur_num_nodes:
-                    data[node_type][key] = value[subset[node_type]]
+                if key == 'num_nodes':
+                    if subset.dtype == torch.bool:
+                        data[node_type].num_nodes = int(subset.sum())
+                    else:
+                        data[node_type].num_nodes = subset.size(0)
+                elif self[node_type].is_node_attr(key):
+                    data[node_type][key] = value[subset]
                 else:
                     data[node_type][key] = value
 
         for edge_type in self.edge_types:
-            src_node_type, target_node_type = edge_type[0], edge_type[-1]
-            if src_node_type not in subset or target_node_type not in subset:
+            src, _, dst = edge_type
+            if src not in subset_dict or dst not in subset_dict:
                 continue
-            cur_num_edges = self[edge_type].num_edges
+
             edge_index, _, edge_mask = bipartite_subgraph(
-                (subset[src_node_type], subset[target_node_type]),
-                self[edge_type].edge_index, relabel_nodes=True,
-                size=(self[src_node_type].num_nodes,
-                      self[target_node_type].num_nodes), return_edge_mask=True)
+                (subset_dict[src], subset_dict[dst]),
+                self[edge_type].edge_index,
+                relabel_nodes=True,
+                size=(self[src].num_nodes, self[dst].num_nodes),
+                return_edge_mask=True,
+            )
+
             for key, value in self[edge_type].items():
                 if key == 'edge_index':
                     data[edge_type].edge_index = edge_index
-                elif isinstance(value,
-                                Tensor) and value.shape[0] == cur_num_edges:
+                elif self[edge_type].is_edge_attr(key):
                     data[edge_type][key] = value[edge_mask]
                 else:
                     data[edge_type][key] = value
