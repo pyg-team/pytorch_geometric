@@ -1,6 +1,7 @@
 from typing import Callable, List, Optional, Tuple
 
 import torch
+from torch_scatter import scatter
 
 from torch_geometric.nn.inits import reset
 
@@ -12,12 +13,11 @@ class ResNetPotential(torch.nn.Module):
         super().__init__()
         sizes = [in_channels] + num_layers + [out_channels]
         self.layers = torch.nn.ModuleList([
-            torch.nn.Sequential(
-                torch.nn.Linear(in_size, out_size),
-                # torch.nn.LayerNorm(out_size),
-                torch.nn.Tanh())
-            for in_size, out_size in zip(sizes[:-1], sizes[1:])
+            torch.nn.Sequential(torch.nn.Linear(in_size, out_size),
+                                torch.nn.LayerNorm(out_size), torch.nn.Tanh())
+            for in_size, out_size in zip(sizes[:-2], sizes[1:-1])
         ])
+        self.layers.append(torch.nn.Linear(sizes[-2], sizes[-1]))
 
         self.res_trans = torch.nn.ModuleList([
             torch.nn.Linear(in_channels, layer_size)
@@ -35,7 +35,12 @@ class ResNetPotential(torch.nn.Module):
         for layer, res in zip(self.layers, self.res_trans):
             h = layer(h)
             h = res(inp) + h
-        return h.sum()
+
+        if batch is None:
+            return h.mean()
+
+        size = int(batch.max().item() + 1)
+        return scatter(x, batch, dim=0, dim_size=size, reduce='mean').sum()
 
 
 class MomentumOptimizer(torch.nn.Module):
@@ -164,7 +169,7 @@ class EquilibriumAggregation(torch.nn.Module):
                            requires_grad=True).float()
 
     def reg(self, y: torch.Tensor) -> float:
-        return self.lamb * y.square().sum()
+        return self.lamb * y.square().mean(dim=1).sum(dim=0)
 
     def energy(self, x: torch.Tensor, y: torch.Tensor,
                batch: Optional[torch.Tensor]):

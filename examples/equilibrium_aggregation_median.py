@@ -21,7 +21,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 norm = torch.distributions.normal.Normal(0.5, 0.4)
 gamma = torch.distributions.gamma.Gamma(0.2, 0.5)
 uniform = torch.distributions.uniform.Uniform(0, 1)
-
 total_loss = 0
 n_loss = 0
 for i in range(steps):
