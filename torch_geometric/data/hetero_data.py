@@ -229,6 +229,14 @@ class HeteroData(BaseData):
         r"""Returns a list of all edge storages of the graph."""
         return list(self._edge_store_dict.values())
 
+    def node_items(self) -> List[Tuple[NodeType, NodeStorage]]:
+        r"""Returns a list of node type and node storage pairs."""
+        return list(self._node_store_dict.items())
+
+    def edge_items(self) -> List[Tuple[EdgeType, EdgeStorage]]:
+        r"""Returns a list of edge type and edge storage pairs."""
+        return list(self._edge_store_dict.items())
+
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
         for key, store in chain(self._node_store_dict.items(),
