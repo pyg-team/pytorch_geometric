@@ -31,9 +31,14 @@ def test_init_hetero_data():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData(
         v1={'x': 1},
@@ -43,9 +48,14 @@ def test_init_hetero_data():
         paper__author={'edge_index': edge_index_paper_author},
         author__paper={'edge_index': edge_index_author_paper},
     )
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData({
         'v1': {
@@ -67,9 +77,14 @@ def test_init_hetero_data():
             'edge_index': edge_index_author_paper
         },
     })
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
 
 def test_hetero_data_functions():
