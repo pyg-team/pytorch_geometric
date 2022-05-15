@@ -50,12 +50,9 @@ def get_unused_node_types(node_types: List[NodeType],
 
 
 def check_add_self_loops(module: torch.nn.Module, edge_types: List[EdgeType]):
-    edge_types = [
-        edge_type for edge_type in edge_types if edge_type[0] != edge_type[-1]
-    ]
-    if len(edge_types) > 0 and hasattr(
-            module, "add_self_loops") and module.add_self_loops:
+    is_bipartite = any([key[0] != key[-1] for key in edge_types])
+    if is_bipartite and getattr(module, 'add_self_loops', False):
         raise ValueError(
-            f"'add_self_loops' attribute set to 'True' on module {module} "
+            f"'add_self_loops' attribute set to 'True' on module '{module}' "
             f"for use with edge type(s) '{edge_types}'. This will lead to "
             f"incorrect message passing results.")

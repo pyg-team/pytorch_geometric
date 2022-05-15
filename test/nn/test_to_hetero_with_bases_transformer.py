@@ -1,6 +1,5 @@
 from typing import Tuple
 
-import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
@@ -280,19 +279,3 @@ def test_to_hetero_with_bases_and_rgcn_equal_output():
     out3 = model(x_dict, adj_t_dict)
     out3 = torch.cat([out3['paper'], out3['author']], dim=0)
     assert torch.allclose(out1, out3, atol=1e-6)
-
-
-class MessagePassingLoops(MessagePassing):
-    def __init__(self, add_self_loops: bool = True):
-        super().__init__()
-        self.add_self_loops = add_self_loops
-
-    def forward(self):
-        pass
-
-
-def test_hetero_transformer_exception_self_loops():
-    model = MessagePassingLoops()
-    with pytest.raises(ValueError):
-        to_hetero_with_bases(model, (('a'), (('a', 'to', 'b'), )), 1)
-    to_hetero_with_bases(model, (('a'), (('a', 'to', 'a'), )), 1)

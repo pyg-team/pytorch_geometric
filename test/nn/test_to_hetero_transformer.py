@@ -367,16 +367,25 @@ def test_graph_level_to_hetero():
 
 
 class MessagePassingLoops(MessagePassing):
-    def __init__(self, add_self_loops: bool = True):
+    def __init__(self):
         super().__init__()
-        self.add_self_loops = add_self_loops
+        self.add_self_loops = True
 
-    def forward(self):
-        pass
+    def forward(self, x):
+        return x
 
 
-def test_hetero_transformer_exception_self_loops():
-    model = MessagePassingLoops()
-    with pytest.raises(ValueError):
-        to_hetero(model, (['a'], (('a', 'to', 'b'), )), aggr='mean')
-    to_hetero(model, (['a'], (('a', 'to', 'a'), )), aggr='mean')
+class ModelLoops(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = MessagePassingLoops()
+
+    def forward(self, x):
+        return self.conv(x)
+
+
+def test_hetero_transformer_self_loop_error():
+    to_hetero(ModelLoops(), metadata=(['a'], [('a', 'to', 'a')]))
+    with pytest.raises(ValueError, match="incorrect message passing"):
+        to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
+                                                       ('b', 'to', 'a')]))

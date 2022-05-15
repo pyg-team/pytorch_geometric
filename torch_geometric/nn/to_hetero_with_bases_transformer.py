@@ -11,10 +11,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.fx import Transformer
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils.hetero import (
-    check_add_self_loops,
-    get_unused_node_types,
-)
+from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
     from torch.fx import Graph, GraphModule, Node
@@ -131,7 +128,6 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-
     transformer = ToHeteroWithBasesTransformer(module, metadata, num_bases,
                                                in_channels, input_map, debug)
     return transformer.transform()
@@ -148,7 +144,6 @@ class ToHeteroWithBasesTransformer(Transformer):
         debug: bool = False,
     ):
         super().__init__(module, input_map, debug)
-        check_add_self_loops(module, metadata[1])
 
         unused_node_types = get_unused_node_types(*metadata)
         if len(unused_node_types) > 0:
