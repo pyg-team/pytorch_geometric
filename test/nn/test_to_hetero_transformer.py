@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
@@ -363,3 +364,28 @@ def test_graph_level_to_hetero():
     model = to_hetero(model, metadata, aggr='mean', debug=False)
     out = model(x_dict, edge_index_dict, batch_dict)
     assert out.size() == (1, 64)
+
+
+class MessagePassingLoops(MessagePassing):
+    def __init__(self):
+        super().__init__()
+        self.add_self_loops = True
+
+    def forward(self, x):
+        return x
+
+
+class ModelLoops(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = MessagePassingLoops()
+
+    def forward(self, x):
+        return self.conv(x)
+
+
+def test_hetero_transformer_self_loop_error():
+    to_hetero(ModelLoops(), metadata=(['a'], [('a', 'to', 'a')]))
+    with pytest.raises(ValueError, match="incorrect message passing"):
+        to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
+                                                       ('b', 'to', 'a')]))
