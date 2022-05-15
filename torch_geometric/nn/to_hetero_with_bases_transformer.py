@@ -2,7 +2,6 @@ import copy
 import warnings
 from typing import Any, Dict, List, Optional, Union
 
-import pytest
 import torch
 from torch import Tensor
 from torch.nn import Module, Parameter
@@ -553,19 +552,3 @@ def split_output(
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
-
-
-class MessagePassingLoops(MessagePassing):
-    def __init__(self, add_self_loops: bool = True):
-        super().__init__()
-        self.add_self_loops = add_self_loops
-
-    def forward(self):
-        pass
-
-
-def test_hetero_transformer_exception_self_loops():
-    model = MessagePassingLoops()
-    with pytest.raises(ValueError):
-        to_hetero_with_bases(model, (('a'), (('a', 'to', 'b'), )), 1)
-    to_hetero_with_bases(model, (('a'), (('a', 'to', 'a'), )), 1)
