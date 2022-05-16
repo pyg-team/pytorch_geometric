@@ -2,7 +2,6 @@ import copy
 import math
 from typing import Dict, Optional, Tuple, Union
 
-import pandas
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -23,22 +22,6 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
     return torch.index_select(value, dim, index, out=out)
-
-
-def unbatcher(src: torch.tensor, index: torch.tensor, dim: int = -1) -> list:
-    scatter = pandas.DataFrame(
-        index, columns=['scatter']).reset_index().groupby('scatter').tail(1)
-    indices = []
-    index_i = 0  # index starts for a graph
-    index_f = 0  # index ends for a graph
-    for i in range(0, len(scatter)):
-        index_f = scatter['index'].iloc[i] + 1
-        indices.append(torch.tensor(range(index_i, index_f)))
-        index_i = index_f
-    unbatched = []
-    for i in range(0, len(indices)):
-        unbatched.append(torch.index_select(src, dim, indices[i]))
-    return unbatched
 
 
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
