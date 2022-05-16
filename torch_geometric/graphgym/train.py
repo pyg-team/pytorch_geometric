@@ -105,12 +105,10 @@ def train(model, datamodule, logger: bool = True,
 
     training_config = training_config or {}
 
-    trainer = pl.Trainer(
-        **training_config,
-        enable_checkpointing=cfg.train.enable_ckpt,
-        callbacks=[logger_cbk],
-        default_root_dir=cfg.run_dir,
-    )
+    trainer = pl.Trainer(**training_config,
+                         enable_checkpointing=cfg.train.enable_ckpt,
+                         callbacks=[logger_cbk], default_root_dir=cfg.run_dir,
+                         max_epochs=cfg.optim.max_epoch)
     trainer.fit(
         model,
         datamodule=datamodule,

@@ -17,16 +17,11 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.graphgym.loader import create_loader
-from torch_geometric.graphgym.logger import (
-    LoggerCallback,
-    create_logger,
-    set_printing,
-)
+from torch_geometric.graphgym.loader import GraphGymDataModule, create_loader
+from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
 from torch_geometric.graphgym.models.head import GNNNodeHead
-from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (
     agg_runs,
@@ -85,11 +80,8 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
         cfg.metric_best = 'auto'
         cfg.custom_metrics = []
 
-    loaders = create_loader()
-    assert len(loaders) == 3
-
-    loggers = create_logger()
-    assert len(loggers) == 3
+    datamodule = GraphGymDataModule()
+    assert len(datamodule._loaders) == 3
 
     model = create_model()
     assert isinstance(model, torch.nn.Module)
@@ -98,16 +90,14 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     assert isinstance(model.post_mp, GNNNodeHead)
     assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
 
-    optimizer = create_optimizer(model.parameters(), cfg.optim)
-    assert isinstance(optimizer, torch.optim.Adam)
-
-    scheduler = create_scheduler(optimizer, cfg.optim)
-    assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
+    optimizer, scheduler = model.configure_optimizers()
+    assert isinstance(optimizer[0], torch.optim.Adam)
+    assert isinstance(scheduler[0], torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)
     assert cfg.params == 23880
 
-    train(model, loaders, logger=True)
+    train(model, datamodule, logger=True)
 
     if use_trivial_metric:
         # 6 total epochs, 4 eval epochs, 3 splits (1 training split)

@@ -363,14 +363,14 @@ def create_loader():
 
 class GraphGymDataModule(LightningDataModule):
     def __init__(self):
-        self.loaders = create_loader()
+        self._loaders = create_loader()
         super().__init__(has_val=True, has_test=True)
 
     def train_dataloader(self) -> DataLoader:
-        return self.loaders[0]
+        return self._loaders[0]
 
     def val_dataloader(self) -> DataLoader:
-        return self.loaders[1]
+        return self._loaders[1]
 
     def test_dataloader(self) -> DataLoader:
-        return self.loaders[2]
+        return self._loaders[2]
