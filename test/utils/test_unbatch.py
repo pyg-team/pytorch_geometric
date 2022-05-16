@@ -27,6 +27,6 @@ def test_unbatch():
         edge_attr_unbatched = unbatch(data.edge_attr, data.edge_attr_batch, 0)
         # check if unbatched tensors match original
         for i in range(0, 3):
-            assert torch.equal(x_unbatched[i], x_test[i]) == True
+            assert torch.equal(x_unbatched[i], x_test[i]) is True
             assert torch.equal(edge_attr_unbatched[i],
-                               edge_attr_test[i]) == True
+                               edge_attr_test[i]) is True
