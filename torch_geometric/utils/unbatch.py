@@ -4,7 +4,7 @@ from torch import Tensor
 from torch_geometric.utils import degree
 
 
-def unbatch(src: Tensor, batch: Tensor, dim: int = 0) -> list[Tensor]:
+def unbatch(src: Tensor, batch: Tensor, dim: int = 0) -> List[Tensor]:
     r"""Unbatches batched data from DataLoader.
 
     Args:
