@@ -1,13 +1,9 @@
 name: Examples
 
 on:  # yamllint disable-line rule:truthy
-  # workflow_dispatch:
-  # schedule:
-  #   - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
-  push:
-    branches:
-      - master
-  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
 
 jobs:
 
