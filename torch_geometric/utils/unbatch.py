@@ -1,5 +1,4 @@
 import torch
-
 from torch import Tensor
 
 from torch_geometric.utils import degree
