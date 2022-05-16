@@ -87,9 +87,8 @@ def test():
 best_val_acc = final_test_acc = 0
 for epoch in range(1, args.epochs + 1):
     loss = train()
-    train_acc, val_acc, test_acc = test()
+    train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
-        final_test_acc = test_acc
-    log(Epoch=f'{epoch:03d}', Loss=f'{loss:.4f}', Train=f'{train_acc:.4f}',
-        Val=f'{val_acc:.4f}', Test=f'{final_test_acc:.4f}')
+        test_acc = tmp_test_acc
+    log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)

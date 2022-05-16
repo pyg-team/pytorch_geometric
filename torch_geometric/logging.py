@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 _wandb_initialized: bool = False
 
@@ -23,7 +24,14 @@ def init_wandb(name: str, **kwargs):
 
 
 def log(**kwargs):
-    print(', '.join(f'{k}: {v}' for k, v in kwargs.items()))
+    def _map(value: Any) -> str:
+        if isinstance(value, int):
+            return f'{value:03d}'
+        if isinstance(value, float):
+            return f'{value:.4f}'
+        return value
+
+    print(', '.join(f'{key}: {_map(value)}' for key, value in kwargs.items()))
 
     if _wandb_initialized:
         import wandb
