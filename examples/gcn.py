@@ -9,13 +9,20 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='Cora',
-                    choices=['Cora', 'CiteSeer', 'PubMed'])
-parser.add_argument('--use_gdc', action='store_true',
-                    help="Use GDC preprocessing")
-parser.add_argument('--wandb', action='store_true',
-                    help="Track experiment via Weights & Biases")
+parser.add_argument('--dataset', type=str, default='Cora')
+parser.add_argument('--hidden_channels', type=int, default=16)
+parser.add_argument('--lr', type=float, default=0.01)
+parser.add_argument('--weight_decay', type=float, default=5e-4)
+parser.add_argument('--epochs', type=int, default=200)
+parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
+parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
+
+if args.wandb:  # Track experiments via Weights&Biases:
+    import wandb  # !pip install wandb
+    wandb.init(project=f'GCN-{args.dataset}', entity='pytorch-geometric')
+    wandb.config = dict(hidden_channels=args.hidden_channels, lr=args.lr,
+                        weight_decay=args.weight_decay, epochs=args.epochs)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
@@ -34,7 +41,7 @@ if args.use_gdc:
 
 
 class GCN(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, hidden_channels):
+    def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels, cached=True,
                              normalize=not args.use_gdc)
@@ -42,20 +49,20 @@ class GCN(torch.nn.Module):
                              normalize=not args.use_gdc)
 
     def forward(self, x, edge_index, edge_weight=None):
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv1(x, edge_index, edge_weight).relu()
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
         return x
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GCN(dataset.num_features, dataset.num_classes, hidden_channels=16)
+model = GCN(dataset.num_features, args.hidden_channels, dataset.num_classes)
 model, data = model.to(device), data.to(device)
 optimizer = torch.optim.Adam([
-    dict(params=model.conv1.parameters(), weight_decay=5e-4),
+    dict(params=model.conv1.parameters(), weight_decay=args.weight_decay),
     dict(params=model.conv2.parameters(), weight_decay=0)
-], lr=0.01)  # Only perform weight-decay on first convolution.
+], lr=args.lr)  # Only perform weight-decay on first convolution.
 
 
 def train():
@@ -80,12 +87,19 @@ def test():
     return accs
 
 
-best_val_acc = test_acc = 0
-for epoch in range(1, 201):
+best_val_acc = final_test_acc = 0
+for epoch in range(1, args.epochs + 1):
     loss = train()
-    train_acc, val_acc, tmp_test_acc = test()
+    train_acc, val_acc, test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
-        test_acc = tmp_test_acc
+        final_test_acc = test_acc
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-          f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')
+          f'Val: {val_acc:.4f}, Test: {final_test_acc:.4f}')
+    if args.wandb:
+        wandb.log({
+            'train/loss': loss,
+            'train/acc': train_acc,
+            'val/acc': train_acc,
+            'test/acc': train_acc,
+        })

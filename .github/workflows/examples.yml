@@ -47,4 +47,4 @@ jobs:
 
       - name: Run examples
         run: |
-          python examples/gcn.py
+          python examples/gcn.py --wandb
