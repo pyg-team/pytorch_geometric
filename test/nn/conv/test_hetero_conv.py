@@ -32,7 +32,8 @@ def test_hetero_conv(aggr):
         {
             ('paper', 'to', 'paper'): GCNConv(-1, 64),
             ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
-            ('paper', 'to', 'author'): GATConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
         }, aggr=aggr)
 
     assert len(list(conv.parameters())) > 0
@@ -77,3 +78,15 @@ def test_hetero_conv_with_custom_conv():
     assert len(out) == 2
     assert out['paper'].size() == (50, 64)
     assert out['author'].size() == (30, 64)
+
+
+class MessagePassingLoops(MessagePassing):
+    def __init__(self):
+        super().__init__()
+        self.add_self_loops = True
+
+
+def test_hetero_conv_self_loop_error():
+    HeteroConv({('a', 'to', 'a'): MessagePassingLoops()})
+    with pytest.raises(ValueError, match="incorrect message passing"):
+        HeteroConv({('a', 'to', 'b'): MessagePassingLoops()})
