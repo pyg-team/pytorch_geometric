@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 from torch import Tensor
 
@@ -5,15 +7,17 @@ from torch_geometric.utils import degree
 
 
 def unbatch(src: Tensor, batch: Tensor, dim: int = 0) -> List[Tensor]:
-    r"""Unbatches batched data from DataLoader.
+    r"""Splits :obj:`src` according to a :obj:`batch` vector along dimension
+    :obj:`dim`.
 
     Args:
-        src (Tensor): source tensor.
-        batch (LongTensor): index tensor.
-        dim (int): dimension along which to split the tensor.
+        src (Tensor): The source tensor.
+        batch (LongTensor): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            entry in :obj:`src` to a specific example. Must be ordered.
+        dim (int): The dimension along which to split the :obj:`src` tensor.
 
-    :rtype: :class:`list`
+    :rtype: :class:`List[Tensor]`
     """
-    split_sizes = degree(batch, dtype=torch.long).tolist()
-    unbatched = list(src.split(split_sizes, dim))
-    return unbatched
+    sizes = degree(batch, dtype=torch.long).tolist()
+    return src.split(sizes, dim)
