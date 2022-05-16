@@ -48,3 +48,5 @@ jobs:
       - name: Run examples
         run: |
           python examples/gcn.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}

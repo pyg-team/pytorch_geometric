@@ -98,8 +98,8 @@ for epoch in range(1, args.epochs + 1):
           f'Val: {val_acc:.4f}, Test: {final_test_acc:.4f}')
     if args.wandb:
         wandb.log({
-            'train/loss': loss,
-            'train/acc': train_acc,
-            'val/acc': train_acc,
-            'test/acc': train_acc,
+            'loss': loss,
+            'train_acc': train_acc,
+            'val_acc': train_acc,
+            'test_acc': train_acc,
         })
