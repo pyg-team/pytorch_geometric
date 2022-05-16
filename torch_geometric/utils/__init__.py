@@ -32,6 +32,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
+from .unbatch import unbatch
 
 __all__ = [
     'degree',
@@ -81,6 +82,7 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
+    'unbatch',
 ]
 
 classes = __all__
