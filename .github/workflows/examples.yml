@@ -40,7 +40,7 @@ jobs:
 
       - name: Install main package
         run: |
-          pip install .
+          pip install .[benchmark]
 
       - name: Run examples
         run: |
