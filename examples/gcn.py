@@ -6,23 +6,21 @@ import torch.nn.functional as F
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
+from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GCNConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='Cora')
 parser.add_argument('--hidden_channels', type=int, default=16)
 parser.add_argument('--lr', type=float, default=0.01)
-parser.add_argument('--weight_decay', type=float, default=5e-4)
 parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-if args.wandb:  # Track experiments via Weights&Biases:
-    import wandb  # !pip install wandb
-    wandb.init(project=f'GCN-{args.dataset}', entity='pytorch-geometric')
-    wandb.config = dict(hidden_channels=args.hidden_channels, lr=args.lr,
-                        weight_decay=args.weight_decay, epochs=args.epochs)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+init_wandb(name=f'GCN-{args.dataset}', lr=args.lr, epochs=args.epochs,
+           hidden_channels=args.hidden_channels, device=device)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
@@ -56,11 +54,10 @@ class GCN(torch.nn.Module):
         return x
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GCN(dataset.num_features, args.hidden_channels, dataset.num_classes)
 model, data = model.to(device), data.to(device)
 optimizer = torch.optim.Adam([
-    dict(params=model.conv1.parameters(), weight_decay=args.weight_decay),
+    dict(params=model.conv1.parameters(), weight_decay=5e-4),
     dict(params=model.conv2.parameters(), weight_decay=0)
 ], lr=args.lr)  # Only perform weight-decay on first convolution.
 
@@ -94,12 +91,5 @@ for epoch in range(1, args.epochs + 1):
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         final_test_acc = test_acc
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-          f'Val: {val_acc:.4f}, Test: {final_test_acc:.4f}')
-    if args.wandb:
-        wandb.log({
-            'loss': loss,
-            'train_acc': train_acc,
-            'val_acc': train_acc,
-            'test_acc': train_acc,
-        })
+    log(Epoch=f'{epoch:03d}', Loss=f'{loss:.4f}', Train=f'{train_acc:.4f}',
+        Val=f'{val_acc:.4f}', Test=f'{final_test_acc:.4f}')
