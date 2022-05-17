@@ -18,7 +18,7 @@ Dataset Cheatsheet
       - #features
       - #classes/#tasks
 {% for cls in torch_geometric.datasets.classes %}
-    * - :class:`~torch_geometric.datasets.{{ cls }}` {% if torch_geometric.datasets.utils.paper_link(cls) %}(`Ref <{{ torch_geometric.datasets.utils.paper_link(cls) }}>`__){% endif %}
+    * - :class:`~torch_geometric.datasets.{{ cls }}` {% if torch_geometric.datasets.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.datasets.utils.paper_link(cls) }}>`__){% endif %}
       - {%if torch_geometric.datasets.utils.has_stats(cls) %}{{ torch_geometric.datasets.utils.get_stat(cls, '#graphs', default=1) }}{% else %}{{ torch_geometric.datasets.utils.get_stat(cls, '#graphs', default='') }}{% endif %}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#nodes', default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#edges', default='') }}
