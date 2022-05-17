@@ -22,7 +22,6 @@ html_logo = ('https://raw.githubusercontent.com/pyg-team/pyg_sphinx_theme/'
 html_favicon = ('https://raw.githubusercontent.com/pyg-team/pyg_sphinx_theme/'
                 'master/pyg_sphinx_theme/static/img/favicon.png')
 
-master_doc = 'index'
 add_module_names = False
 autodoc_member_order = 'bysource'
 
