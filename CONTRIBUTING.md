@@ -101,9 +101,11 @@ Everytime you send a Pull Request, your commit will be built and checked against
 To build the documentation:
 
 1. [Build and install](#developing-pyg) PyG from source.
-2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
+2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) theme via
+   ```bash
+   pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
+   ```
 3. Generate the documentation via:
-
    ```bash
    cd docs
    make html
