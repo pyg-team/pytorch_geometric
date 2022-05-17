@@ -2,7 +2,6 @@ import logging
 import time
 from typing import Optional
 
-import pytorch_lightning as pl
 import torch
 
 from torch_geometric.graphgym.checkpoint import (
@@ -11,6 +10,7 @@ from torch_geometric.graphgym.checkpoint import (
     save_ckpt,
 )
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.imports import pl
 from torch_geometric.graphgym.logger import LoggerCallback
 from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.utils.epoch import (
