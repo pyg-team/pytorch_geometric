@@ -162,7 +162,7 @@ class TUDataset(InMemoryDataset):
 
     @property
     def num_edge_attributes(self) -> int:
-        return self.sizes['num_node_attributes']
+        return self.sizes['num_edge_attributes']
 
     @property
     def raw_file_names(self) -> List[str]:
