@@ -9,6 +9,7 @@ import torch
 
 from torch_geometric import seed_everything
 from torch_geometric.graphgym import register
+from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import (
     cfg,
     dump_cfg,
@@ -16,12 +17,12 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.graphgym.loader import GraphGymDataModule, create_loader
+from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
 from torch_geometric.graphgym.models.head import GNNNodeHead
-from torch_geometric.graphgym.train import train
+from torch_geometric.graphgym.train import GraphGymDataModule, train
 from torch_geometric.graphgym.utils import (
     agg_runs,
     auto_select_device,
@@ -101,11 +102,9 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     # if use_trivial_metric:
     #     # 6 total epochs, 4 eval epochs, 3 splits (1 training split)
     #     assert num_trivial_metric_calls == 12 if skip_train_eval else 14
-    #
     # assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
     agg_runs(cfg.out_dir, cfg.metric_best)
-
     shutil.rmtree(cfg.out_dir)
 
 

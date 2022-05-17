@@ -62,7 +62,7 @@ class GraphGymModule(LightningModule):
         return self.model.pre_mp
 
 
-def create_model(to_device=True, dim_in=None, dim_out=None):
+def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
     r"""Create model for graph machine learning.
 
     Args:
