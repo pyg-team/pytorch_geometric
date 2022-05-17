@@ -28,7 +28,10 @@ def is_seed(s):
 
 
 def is_split(s):
-    if s in ['train', 'val', 'test']:
+    if s in [
+            'train',
+            'val',
+    ]:
         return True
     else:
         return False

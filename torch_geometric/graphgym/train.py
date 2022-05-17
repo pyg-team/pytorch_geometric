@@ -100,6 +100,7 @@ def vanilla_train(loggers, loaders, model, optimizer, scheduler):
 
 def train(model, datamodule, logger: bool = True,
           training_config: Optional[dict] = None):
+    logger_cbk = None
     if logger:
         logger_cbk = LoggerCallback()
 
@@ -107,9 +108,11 @@ def train(model, datamodule, logger: bool = True,
 
     trainer = pl.Trainer(**training_config,
                          enable_checkpointing=cfg.train.enable_ckpt,
-                         callbacks=[logger_cbk], default_root_dir=cfg.run_dir,
+                         callbacks=logger_cbk, default_root_dir=cfg.out_dir,
                          max_epochs=cfg.optim.max_epoch)
     trainer.fit(
         model,
         datamodule=datamodule,
     )
+
+    trainer.test(model, datamodule=datamodule)
