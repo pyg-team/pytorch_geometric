@@ -1,17 +1,17 @@
 GNN Cheatsheet
 ==============
 
-* :class:`~torch_sparse.SparseTensor`: If checked (✓), supports message passing based on :class:`torch_sparse.SparseTensor`, *e.g.*, :obj:`GCNConv(...).forward(x, adj_t)`. See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/sparse_tensor.html>`__ for the accompanying tutorial
+* :class:`~torch_sparse.SparseTensor`: If checked (✓), supports message passing based on :class:`torch_sparse.SparseTensor`, *e.g.*, :obj:`GCNConv(...).forward(x, adj_t)`. See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/sparse_tensor.html>`__ for the accompanying tutorial.
 
-* :obj:`edge_weight`: If checked (✓), supports message passing with one-dimensional edge weight information, *e.g.*, :obj:`GraphConv(...).forward(x, edge_index, edge_weight)`
+* :obj:`edge_weight`: If checked (✓), supports message passing with one-dimensional edge weight information, *e.g.*, :obj:`GraphConv(...).forward(x, edge_index, edge_weight)`.
 
-* :obj:`edge_attr`: If checked (✓), supports message passing with multi-dimensional edge feature information, *e.g.*, :obj:`GINEConv(...).forward(x, edge_index, edge_attr)`
+* :obj:`edge_attr`: If checked (✓), supports message passing with multi-dimensional edge feature information, *e.g.*, :obj:`GINEConv(...).forward(x, edge_index, edge_attr)`.
 
-* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionalities for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`
+* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionalities for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`.
 
-* **static**: If checked (✓), supports message passing in static graphs, *e.g.*, :obj:`GCNConv(...).forward(x, edge_index)` with :obj:`x` having shape :obj:`[batch_size, num_nodes, in_channels]`
+* **static**: If checked (✓), supports message passing in static graphs, *e.g.*, :obj:`GCNConv(...).forward(x, edge_index)` with :obj:`x` having shape :obj:`[batch_size, num_nodes, in_channels]`.
 
-* **lazy**: If checked (✓), supports lazy initialization of message passing layers, *e.g.*, :obj:`SAGEConv(in_channels=-1, out_channels=64)`
+* **lazy**: If checked (✓), supports lazy initialization of message passing layers, *e.g.*, :obj:`SAGEConv(in_channels=-1, out_channels=64)`.
 
 Graph Neural Network Operators
 ------------------------------
