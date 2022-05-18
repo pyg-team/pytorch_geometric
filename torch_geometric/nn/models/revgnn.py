@@ -234,7 +234,7 @@ class GroupAddRev(InvertibleModule):
         ys = []
         for i in range(self.num_groups):
             y_in = xs[i] + self.gnn_groups[i](y_in, edge_index, *
-                                                      args_chunks[i])
+                                              args_chunks[i])
             ys.append(y_in)
 
         y = torch.cat(ys, dim=self.split_dim)
@@ -250,8 +250,7 @@ class GroupAddRev(InvertibleModule):
                 y_in = ys[i - 1]
             else:
                 y_in = sum(xs)
-            x = ys[i] - self.gnn_groups[i](y_in, edge_index, *
-                                                   args_chunks[i])
+            x = ys[i] - self.gnn_groups[i](y_in, edge_index, *args_chunks[i])
             xs.append(x)
 
         x = torch.cat(xs[::-1], dim=self.split_dim)
