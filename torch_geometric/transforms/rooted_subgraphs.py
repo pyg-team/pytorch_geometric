@@ -11,7 +11,7 @@ class RootedSubgraphsData(Data):
     It contains several additional properties that hold the information of all nodes' rooted subgraphs.
     Assume the data represents a graph with :math:`N` nodes and :math:`M` edges, also each node
     :math:`i\in \[N\]` has a rooted subgraph with :math:`N_i` nodes and :math:`M_i` edges.
-    
+
     Additional Properties:
         subgraphs_nodes_mapper (LongTensor): map each node in rooted subgraphs to a node in the original graph.
             Size: :math:`\sum_{i=1}^{N}N_i x 1`
@@ -19,12 +19,12 @@ class RootedSubgraphsData(Data):
             Size: :math:`\sum_{i=1}^{N}M_i x 1`
         subgraph_batch: map each node in rooted subgraphs to its corresponding rooted subgraph index.
             Size: :math:`\sum_{i=1}^{N}N_i x 1`
-        combined_rooted_subgraphs: edge_index of a giant graph which represents a stacking of all rooted subgraphs. 
+        combined_rooted_subgraphs: edge_index of a giant graph which represents a stacking of all rooted subgraphs.
             Size: :math:`2 x \sum_{i=1}^{N}M_i`
-        
+
     The class works as a wrapper for the data with these properties, and automatically handles mini batching for
-    them. 
-    
+    them.
+
     """
     def __inc__(self, key, value, *args, **kwargs):
         num_nodes = self.num_nodes
@@ -54,14 +54,14 @@ class RootedSubgraphsData(Data):
 class RootedSubgraphs(BaseTransform):
     r"""
     Base class for rooted subgraphs.
-    The object transforms a Data object to RootedSubgraphsData object. 
+    The object transforms a Data object to RootedSubgraphsData object.
     """
     def extract_subgraphs(self, data: Data):
         r""" For a input graph with N nodes, extract a rooted subgraph for every node in the graph.
         Return:
-            subgraphs_nodes_mask: N x N dense mask matrix, i-th row indicates the rooted subgraph of 
-                node i. 
-            hop_indicator: N x N dense matrix, i-th row indicates the distance from other nodes to 
+            subgraphs_nodes_mask: N x N dense mask matrix, i-th row indicates the rooted subgraph of
+                node i.
+            hop_indicator: N x N dense matrix, i-th row indicates the distance from other nodes to
                 node i.
         """
         raise NotImplementedError
@@ -129,13 +129,13 @@ class RootedRWSubgraphs(RootedSubgraphs):
     <https://arxiv.org/pdf/2110.03753.pdf>`_ paper
 
     Args:
-        walk_length (int, optional): the length of random walk. When it is 0 use k-hop Egonet. 
-        p (float, optional): parameters of node2vec's random walk. 
+        walk_length (int, optional): the length of random walk. When it is 0 use k-hop Egonet.
+        p (float, optional): parameters of node2vec's random walk.
         q (float, optional): parameters of node2vec's random walk.
         repeat (int, optional): times of repeating the random walk to reduce randomness.
 
-        return_hops (bool, optional): whether return distance to centroid feature.   
-        max_hops (int, optional): if return hops, the maximum D2C. 
+        return_hops (bool, optional): whether return distance to centroid feature.
+        max_hops (int, optional): if return hops, the maximum D2C.
     """
     def __init__(self, walk_length: int = 0, p: float = 1., q: float = 1.,
                  repeat: int = 1, return_hops: bool = True,
