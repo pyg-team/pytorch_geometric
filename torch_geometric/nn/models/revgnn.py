@@ -53,7 +53,7 @@ class InvertibleFunction(torch.autograd.Function):
     def backward(ctx, *grad_outputs):
         if not torch.autograd._is_checkpoint_valid():
             raise RuntimeError(
-                "InvertibleFunction is not compatible with .grad(), \
+                f"'{self.__class__.__name__' is not compatible with .grad(), \
                     please use .backward() if possible")
         # Retrieve input and output tensor nodes
         if len(ctx.outputs) == 0:
