@@ -139,7 +139,7 @@ class InvertibleModule(nn.Module, ABC):
         self.disable = disable
         self.num_bwd_passes = num_bwd_passes
 
-    def forward(self, x: Tensor, edge_index: Adj, *args):
+    def forward(self, *args, **kwargs):
         args = (x, edge_index) + args
         y = self._fn_apply(args, self._forward, self._inverse)
         return y
