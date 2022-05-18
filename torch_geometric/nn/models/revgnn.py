@@ -144,7 +144,7 @@ class InvertibleModule(nn.Module, ABC):
         y = self._fn_apply(args, self._forward, self._inverse)
         return y
 
-    def inverse(self, y: Tensor, edge_index: Adj, *args):
+    def inverse(self, *args, **kwargs):
         args = (y, edge_index) + args
         x = self._fn_apply(args, self._inverse, self._forward)
         return x
