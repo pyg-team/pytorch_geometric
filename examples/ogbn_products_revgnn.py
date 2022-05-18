@@ -1,6 +1,5 @@
 import os.path as osp
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
@@ -9,10 +8,12 @@ from torch.nn import LayerNorm
 from torch_sparse import SparseTensor
 from tqdm import tqdm
 
+import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeSampler
 from torch_geometric.nn import GroupAddRev, SAGEConv
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.utils import add_self_loops
+from torch_geometric.profile.utils import count_parameters
+from torch_geometric.utils import index_to_mask
 
 
 class SharedDropout(nn.Module):
@@ -39,6 +40,10 @@ class BasicBlock(nn.Module):
         self.norm = LayerNorm(in_channels, elementwise_affine=True)
         self.dropout = SharedDropout()
         self.gnn = None
+
+    def reset_parameters(self):
+        self.gnn.reset_parameters()
+        self.norm.reset_parameters()
 
     def forward(self, x, edge_index, dropout_mask=None):
         out = self.norm(x)
@@ -101,9 +106,17 @@ class RevGNN(torch.nn.Module):
 
             self.gnns.append(gnn)
 
+    def reset_parameters(self):
+        for gnn in self.gnns:
+            gnn.reset_parameters()
+        self.last_norm.reset_parameters()
+        self.node_features_encoder.reset_parameters()
+        self.node_pred_linear.reset_parameters()
+
     def forward(self, x, edge_index):
         h = self.node_features_encoder(x)
 
+        # Generate a dropout mask which will be shared across GNN blocks
         m = torch.zeros_like(h).bernoulli_(1 - self.dropout)
         mask = m.requires_grad_(False) / (1 - self.dropout)
 
@@ -119,22 +132,22 @@ class RevGNN(torch.nn.Module):
 
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "products")
-dataset = PygNodePropPredDataset("ogbn-products", root)
+dataset = PygNodePropPredDataset("ogbn-products", root,
+                                 transform=T.AddSelfLoops())
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name="ogbn-products")
 data = dataset[0]
-data.edge_index = add_self_loops(edge_index=data.edge_index,
-                                 num_nodes=data.num_nodes)[0]
 data.y.squeeze_()
 
 # Set split indices to masks.
 for split in ["train", "valid", "test"]:
-    split_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    split_mask[split_idx[split]] = True
-    data[f"{split}_mask"] = split_mask
+    data[f"{split}_mask"] = index_to_mask(split_idx[split],
+                                          size=data.y.shape[0])
 
 train_loader = RandomNodeSampler(data, num_parts=10, shuffle=True,
                                  num_workers=5)
+# Increase the num_parts of the test loader if you cannot have fix
+# the full batch graph into your GPU.
 test_loader = RandomNodeSampler(data, num_parts=1, num_workers=5)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 hidden_size = 160
@@ -228,23 +241,14 @@ def test():
     return train_acc, valid_acc, test_acc
 
 
-def params_count(model):
-    """
-    Compute the number of parameters.
-
-    Args:
-        model (model): model to count the number of parameters.
-    """
-    return np.sum([p.numel() for p in model.parameters()]).item()
-
-
 def gpu_mem_usage():
     """Compute the GPU memory usage for the current device (GB)."""
     mem_usage_bytes = torch.cuda.max_memory_allocated()
     return mem_usage_bytes / 1024**3
 
 
-print(f"Model Paramters: {params_count(model)}")
+model.reset_parameters()
+print(f"Model Paramters: {count_parameters(model)}")
 highest_val = 0.0
 final_test = 0.0
 for epoch in range(1, 501):
