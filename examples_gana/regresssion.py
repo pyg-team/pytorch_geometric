@@ -29,8 +29,8 @@ def run_regression(file_name, k, epochs,hidden_channels=16):
 	arg1 = f'-k={k}'
 	arg2 = f'-epochs={epochs}'
 	arg3 = f'-hidden_channels={hidden_channels}'
-	logging.info(f"running {arg0} with {arg1} and {arg2} and {arg3}")
-	print(f"running {arg0} with {arg1} and {arg2} and {arg3}")
+	logging.info(f"running {arg0} with {arg1} {arg2} {arg3}")
+	print(f"running {arg0} with {arg1} {arg2} {arg3}")
 	proc = subprocess.Popen(['python',arg0, arg1, arg2, arg3],stdout=subprocess.PIPE)
 	epoch_list = []
 	loss_list = []
@@ -67,17 +67,17 @@ if __name__ == '__main__':
 	# file_name = 'gana_rgcn' #epochs 41
 	# file_name = 'gana_rgat' #epochs 41
 	epochs = 101
-	run_regression(file_name, 2,epochs)
-	run_regression(file_name, 4,epochs)
+	# run_regression(file_name, 2,epochs)
+	# run_regression(file_name, 4,epochs)
 	run_regression(file_name, 6,epochs)
-	run_regression(file_name, 8,epochs)
-	# run_regression(file_name, 10,epochs)
-	# run_regression(file_name, 12,epochs)
-	# run_regression(file_name, 14,epochs)
-	# run_regression(file_name, 16,epochs)
-	run_regression(file_name, 4,epochs,8)
-	run_regression(file_name, 4,epochs,24)
-	run_regression(file_name, 4,epochs,32)
+	# run_regression(file_name, 8,epochs)
+	# # run_regression(file_name, 10,epochs)
+	# # run_regression(file_name, 12,epochs)
+	# # run_regression(file_name, 14,epochs)
+	# # run_regression(file_name, 16,epochs)
+	# run_regression(file_name, 4,epochs,8)
+	# run_regression(file_name, 4,epochs,24)
+	# run_regression(file_name, 4,epochs,32)
 
 	if summary:
 		summary_path = f'results/{file_name}_summary.json'
