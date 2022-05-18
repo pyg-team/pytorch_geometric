@@ -52,3 +52,7 @@ jobs:
           python examples/gat.py --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GNNExplainer
+        run: |
+          python examples/gnn_explainer.py
