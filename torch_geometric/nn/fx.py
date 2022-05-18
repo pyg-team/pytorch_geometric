@@ -4,9 +4,6 @@ from typing import Any, Dict, Optional
 import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
 
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense import Linear
-
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
@@ -33,6 +30,7 @@ class Transformer(object):
                 +-- call_method()
                 +-- call_module()
                 +-- call_message_passing_module()
+                +-- call_global_pooling_module()
                 +-- output()
             +-- Erase unused nodes in the graph
             +-- Iterate over each children module
@@ -42,8 +40,9 @@ class Transformer(object):
     :class:`Transformer` exposes additional functionality:
 
     #. It subdivides :func:`call_module` into nodes that call a regular
-       :class:`torch.nn.Module` (:func:`call_module`) or a
-       :class:`MessagePassing` module (:func:`call_message_passing_module`).
+       :class:`torch.nn.Module` (:func:`call_module`), a
+       :class:`MessagePassing` module (:func:`call_message_passing_module`),
+       or a :class:`GlobalPooling` module (:func:`call_global_pooling_module`).
 
     #. It allows to customize or initialize new children modules via
        :func:`init_submodule`
@@ -61,7 +60,7 @@ class Transformer(object):
             In case :obj:`input_map` is not further specified, will try to
             automatically determine the correct type of input arguments.
             (default: :obj:`None`)
-        debug: (bool, optional): If set to :obj:`True`, will perform
+        debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
     def __init__(
@@ -84,6 +83,9 @@ class Transformer(object):
         pass
 
     def call_message_passing_module(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_global_pooling_module(self, node: Node, target: Any, name: str):
         pass
 
     def call_module(self, node: Node, target: Any, name: str):
@@ -133,11 +135,15 @@ class Transformer(object):
                         self._state[node.name] = 'node'
             elif is_message_passing_op(self.module, node.op, node.target):
                 self._state[node.name] = 'node'
+            elif is_global_pooling_op(self.module, node.op, node.target):
+                self._state[node.name] = 'graph'
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
                     self._state[node.name] = 'edge'
-                else:
+                elif self.has_node_level_arg(node):
                     self._state[node.name] = 'node'
+                else:
+                    self._state[node.name] = 'graph'
 
         # We iterate over each node and may transform it:
         for node in list(self.graph.nodes):
@@ -146,6 +152,9 @@ class Transformer(object):
             op = node.op
             if is_message_passing_op(self.module, op, node.target):
                 op = 'call_message_passing_module'
+            elif is_global_pooling_op(self.module, op, node.target):
+                op = 'call_global_pooling_module'
+
             getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
@@ -191,13 +200,13 @@ class Transformer(object):
         else:
             return self.init_submodule(module, target)
 
-    def is_edge_level(self, node: Node) -> bool:
-        return self._state[node.name] == 'edge'
+    def _is_level(self, node: Node, name: str) -> bool:
+        return self._state[node.name] == name
 
-    def has_edge_level_arg(self, node: Node) -> bool:
+    def _has_level_arg(self, node: Node, name: str) -> bool:
         def _recurse(value: Any) -> bool:
             if isinstance(value, Node):
-                return self.is_edge_level(value)
+                return getattr(self, f'is_{name}_level')(value)
             elif isinstance(value, dict):
                 return any([_recurse(v) for v in value.values()])
             elif isinstance(value, (list, tuple)):
@@ -207,6 +216,24 @@ class Transformer(object):
 
         return (any([_recurse(value) for value in node.args])
                 or any([_recurse(value) for value in node.kwargs.values()]))
+
+    def is_node_level(self, node: Node) -> bool:
+        return self._is_level(node, name='node')
+
+    def is_edge_level(self, node: Node) -> bool:
+        return self._is_level(node, name='edge')
+
+    def is_graph_level(self, node: Node) -> bool:
+        return self._is_level(node, name='graph')
+
+    def has_node_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='node')
+
+    def has_edge_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='edge')
+
+    def has_graph_level_arg(self, node: Node) -> bool:
+        return self._has_level_arg(node, name='graph')
 
     def find_by_name(self, name: str) -> Optional[Node]:
         for node in self.graph.nodes:
@@ -236,11 +263,8 @@ def symbolic_trace(
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
     class Tracer(torch.fx.Tracer):
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
-            # We don't want to trace inside `MessagePassing` and lazy `Linear`
-            # modules, so we mark them as leaf modules.
-            return (isinstance(module, MessagePassing)
-                    or isinstance(module, Linear)
-                    or super().is_leaf_module(module, *args, **kwargs))
+            # TODO We currently only trace top-level modules.
+            return not isinstance(module, torch.nn.Sequential)
 
     return GraphModule(module, Tracer().trace(module, concrete_args))
 
@@ -253,7 +277,14 @@ def get_submodule(module: Module, target: str) -> Module:
 
 
 def is_message_passing_op(module: Module, op: str, target: str) -> bool:
+    from torch_geometric.nn import MessagePassing
     if op == 'call_module':
-        if isinstance(get_submodule(module, target), MessagePassing):
-            return True
+        return isinstance(get_submodule(module, target), MessagePassing)
+    return False
+
+
+def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
+    from torch_geometric.nn import GlobalPooling
+    if op == 'call_module':
+        return isinstance(get_submodule(module, target), GlobalPooling)
     return False

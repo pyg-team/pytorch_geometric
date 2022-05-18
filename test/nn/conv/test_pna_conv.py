@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import PNAConv
+from torch_geometric.testing import is_full_test
 
 aggregators = ['sum', 'mean', 'min', 'max', 'var', 'std']
 scalers = [
@@ -23,10 +24,11 @@ def test_pna_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index, value), out, atol=1e-6)
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, edge_index, value), out, atol=1e-6)
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)

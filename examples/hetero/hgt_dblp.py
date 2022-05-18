@@ -32,8 +32,10 @@ class HGT(torch.nn.Module):
         self.lin = Linear(hidden_channels, out_channels)
 
     def forward(self, x_dict, edge_index_dict):
-        for node_type, x in x_dict.items():
-            x_dict[node_type] = self.lin_dict[node_type](x).relu_()
+        x_dict = {
+            node_type: self.lin_dict[node_type](x).relu_()
+            for node_type, x in x_dict.items()
+        }
 
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)

@@ -17,6 +17,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointNetConv, PointConv
@@ -71,6 +72,7 @@ __all__ = [
     'MFConv',
     'RGCNConv',
     'FastRGCNConv',
+    'RGATConv',
     'SignedConv',
     'DNAConv',
     'PointNetConv',

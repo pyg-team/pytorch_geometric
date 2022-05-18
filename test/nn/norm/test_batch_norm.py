@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import BatchNorm
+from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('conf', [True, False])
@@ -10,6 +11,9 @@ def test_batch_norm(conf):
 
     norm = BatchNorm(16, affine=conf, track_running_stats=conf)
     assert norm.__repr__() == 'BatchNorm(16)'
-    torch.jit.script(norm)
+
+    if is_full_test():
+        torch.jit.script(norm)
+
     out = norm(x)
     assert out.size() == (100, 16)

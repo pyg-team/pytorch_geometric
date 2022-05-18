@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import FiLMConv
+from torch_geometric.testing import is_full_test
 
 
 def test_film_conv():
@@ -18,12 +19,13 @@ def test_film_conv():
     assert out1.size() == (4, 32)
     assert conv(x1, adj.t().set_value(None)).tolist() == out1.tolist()
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index).tolist() == out1.tolist()
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t().set_value(None)).tolist() == out1.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index).tolist() == out1.tolist()
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv(4, 32, num_relations=2)
     assert conv.__repr__() == 'FiLMConv(4, 32, num_relations=2)'
@@ -31,12 +33,13 @@ def test_film_conv():
     assert out1.size() == (4, 32)
     assert conv(x1, adj.t()).tolist() == out1.tolist()
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index, edge_type).tolist() == out1.tolist()
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t()).tolist() == out1.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index, edge_type).tolist() == out1.tolist()
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, adj.t()).tolist() == out1.tolist()
 
     adj = adj.sparse_resize((4, 2))
 
@@ -46,12 +49,13 @@ def test_film_conv():
     assert out1.size() == (2, 32)
     assert conv((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
 
-    t = '(PairTensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index).tolist() == out1.tolist()
-    t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
+    if is_full_test():
+        t = '(PairTensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index).tolist() == out1.tolist()
+        t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv((4, 16), 32, num_relations=2)
     assert conv.__repr__() == 'FiLMConv((4, 16), 32, num_relations=2)'
@@ -59,9 +63,10 @@ def test_film_conv():
     assert out1.size() == (2, 32)
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
 
-    t = '(PairTensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index, edge_type).tolist() == out1.tolist()
-    t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    if is_full_test():
+        t = '(PairTensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index, edge_type).tolist() == out1.tolist()
+        t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), adj.t()).tolist() == out1.tolist()

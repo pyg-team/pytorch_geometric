@@ -2,7 +2,8 @@ from typing import List, Union
 
 import torch
 
-from torch_geometric.data import Data, Dataset, HeteroData
+from torch_geometric.data import Dataset
+from torch_geometric.data.data import BaseData
 
 
 def collate_fn(data_list):
@@ -30,7 +31,7 @@ class DataListLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`drop_last` or
             :obj:`num_workers`.
     """
-    def __init__(self, dataset: Union[Dataset, List[Data], List[HeteroData]],
+    def __init__(self, dataset: Union[Dataset, List[BaseData]],
                  batch_size: int = 1, shuffle: bool = False, **kwargs):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']

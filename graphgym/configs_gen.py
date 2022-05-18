@@ -8,8 +8,10 @@ import numpy as np
 import yaml
 
 from torch_geometric.graphgym.utils.comp_budget import match_baseline_cfg
-from torch_geometric.graphgym.utils.io import (makedirs_rm_exist,
-                                               string_to_python)
+from torch_geometric.graphgym.utils.io import (
+    makedirs_rm_exist,
+    string_to_python,
+)
 
 random.seed(123)
 

@@ -14,9 +14,8 @@ class GraphConv(MessagePassing):
     <https://arxiv.org/abs/1810.02244>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_1 \mathbf{x}_i +
-        \mathbf{\Theta}_2 \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot
-        \mathbf{x}_j
+        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2
+        \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot \mathbf{x}_j
 
     where :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to
     target node :obj:`i` (default: :obj:`1`)

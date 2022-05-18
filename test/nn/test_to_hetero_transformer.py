@@ -1,13 +1,18 @@
 from typing import Tuple
 
+import pytest
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import GINEConv
+from torch_geometric.nn import BatchNorm, GCNConv, GINEConv, GlobalPooling
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
+from torch_geometric.utils import dropout_adj
+
+torch.fx.wrap('dropout_adj')
 
 
 class Net1(torch.nn.Module):
@@ -113,12 +118,31 @@ class Net8(torch.nn.Module):
         return x
 
 
-def test_to_hetero():
-    metadata = (['paper', 'author'], [('paper', 'cites', 'paper'),
-                                      ('paper', 'written_by', 'author'),
-                                      ('author', 'writes', 'paper')])
+class Net9(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.batch_norm = BatchNorm(16)
 
-    x_dict = {'paper': torch.randn(100, 16), 'author': torch.randn(100, 16)}
+    def forward(self, x: Tensor) -> Tensor:
+        return self.batch_norm(x)
+
+
+class Net10(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 32)
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        x = F.dropout(x, p=0.5, training=self.training)
+        edge_index, _ = dropout_adj(edge_index, p=0.5, training=self.training)
+        return self.conv(x, edge_index)
+
+
+def test_to_hetero():
+    x_dict = {
+        'paper': torch.randn(100, 16),
+        'author': torch.randn(100, 16),
+    }
     edge_index_dict = {
         ('paper', 'cites', 'paper'):
         torch.randint(100, (2, 200), dtype=torch.long),
@@ -132,6 +156,8 @@ def test_to_hetero():
         ('paper', 'written_by', 'author'): torch.randn(200, 8),
         ('author', 'writes', 'paper'): torch.randn(200, 8),
     }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = Net1()
     model = to_hetero(model, metadata, debug=False)
@@ -195,6 +221,50 @@ def test_to_hetero():
     assert out['paper'].size() == (4, 32)
     assert out['author'].size() == (8, 32)
 
+    model = Net9()
+    model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 16), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 16)
+    assert out['author'].size() == (8, 16)
+
+    model = Net10()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (100, 32)
+    assert out['author'].size() == (100, 32)
+
+
+class GCN(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(16, 32)
+        self.conv2 = GCNConv(32, 64)
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        x = self.conv1(x, edge_index).relu()
+        x = self.conv2(x, edge_index).relu()
+        return x
+
+
+def test_to_hetero_with_gcn():
+    x_dict = {
+        'paper': torch.randn(100, 16),
+    }
+    edge_index_dict = {
+        ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+
+    model = GCN()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 1
+    assert out['paper'].size() == (100, 64)
+
 
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
@@ -205,6 +275,8 @@ class GraphConv(MessagePassing):
         self.lin.reset_parameters()
 
     def forward(self, x, edge_index):
+        if isinstance(x, Tensor):
+            x = (x, x)
         return self.propagate(edge_index, x=(self.lin(x[0]), x[1]))
 
 
@@ -239,10 +311,6 @@ def test_to_hetero_and_rgcn_equal_output():
     out1 = conv(x, edge_index, edge_type)
 
     # Run `to_hetero`:
-    node_types = ['paper', 'author']
-    edge_types = [('paper', '_', 'paper'), ('paper', '_', 'author'),
-                  ('author', '_', 'paper')]
-
     x_dict = {
         'paper': x[:6],
         'author': x[6:],
@@ -256,13 +324,14 @@ def test_to_hetero_and_rgcn_equal_output():
         edge_index[:, edge_type == 2] - torch.tensor([[6], [0]]),
     }
 
+    node_types, edge_types = list(x_dict.keys()), list(edge_index_dict.keys())
+
     adj_t_dict = {
         key: SparseTensor.from_edge_index(edge_index).t()
         for key, edge_index in edge_index_dict.items()
     }
 
-    metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
-    model = to_hetero(RGCN(16, 32), metadata)
+    model = to_hetero(RGCN(16, 32), (node_types, edge_types))
 
     # Set model weights:
     for i, edge_type in enumerate(edge_types):
@@ -279,3 +348,66 @@ def test_to_hetero_and_rgcn_equal_output():
     out3 = model(x_dict, adj_t_dict)
     out3 = torch.cat([out3['paper'], out3['author']], dim=0)
     assert torch.allclose(out1, out3, atol=1e-6)
+
+
+class GraphLevelGNN(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 32)
+        self.pool = GlobalPooling(aggr='mean')
+        self.lin = Linear(32, 64)
+
+    def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor) -> Tensor:
+        x = self.conv(x, edge_index)
+        x = self.pool(x, batch)
+        x = self.lin(x)
+        return x
+
+
+def test_graph_level_to_hetero():
+    x_dict = {
+        'paper': torch.randn(100, 16),
+        'author': torch.randn(100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+    batch_dict = {
+        'paper': torch.zeros(100, dtype=torch.long),
+        'author': torch.zeros(100, dtype=torch.long),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+
+    model = GraphLevelGNN()
+    model = to_hetero(model, metadata, aggr='mean', debug=False)
+    out = model(x_dict, edge_index_dict, batch_dict)
+    assert out.size() == (1, 64)
+
+
+class MessagePassingLoops(MessagePassing):
+    def __init__(self):
+        super().__init__()
+        self.add_self_loops = True
+
+    def forward(self, x):
+        return x
+
+
+class ModelLoops(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = MessagePassingLoops()
+
+    def forward(self, x):
+        return self.conv(x)
+
+
+def test_hetero_transformer_self_loop_error():
+    to_hetero(ModelLoops(), metadata=(['a'], [('a', 'to', 'a')]))
+    with pytest.raises(ValueError, match="incorrect message passing"):
+        to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
+                                                       ('b', 'to', 'a')]))

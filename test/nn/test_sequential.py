@@ -1,10 +1,17 @@
+from collections import OrderedDict
+
 import torch
 import torch.fx
 from torch.nn import Dropout, Linear, ReLU
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import (GCNConv, JumpingKnowledge, MessagePassing,
-                                Sequential, global_mean_pool)
+from torch_geometric.nn import (
+    GCNConv,
+    JumpingKnowledge,
+    MessagePassing,
+    Sequential,
+    global_mean_pool,
+)
 
 
 def test_sequential():
@@ -100,3 +107,35 @@ def test_sequential_tracable():
         Linear(64, 7),
     ])
     symbolic_trace(model)
+
+
+def test_sequential_with_multiple_return_values():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    model = Sequential('x, edge_index', [
+        (GCNConv(16, 32), 'x, edge_index -> x1'),
+        (GCNConv(32, 64), 'x1, edge_index -> x2'),
+        (lambda x1, x2: (x1, x2), 'x1, x2 -> x1, x2'),
+    ])
+
+    x1, x2 = model(x, edge_index)
+    assert x1.size() == (4, 32)
+    assert x2.size() == (4, 64)
+
+
+def test_sequential_with_ordered_dict():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    model = Sequential(
+        'x, edge_index', modules=OrderedDict([
+            ('conv1', (GCNConv(16, 32), 'x, edge_index -> x')),
+            ('conv2', (GCNConv(32, 64), 'x, edge_index -> x')),
+        ]))
+
+    assert isinstance(model.conv1, GCNConv)
+    assert isinstance(model.conv2, GCNConv)
+
+    x = model(x, edge_index)
+    assert x.size() == (4, 64)

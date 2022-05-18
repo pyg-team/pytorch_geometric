@@ -15,6 +15,7 @@ optimizer_dict: Dict[str, Any] = {}
 scheduler_dict: Dict[str, Any] = {}
 loss_dict: Dict[str, Any] = {}
 train_dict: Dict[str, Any] = {}
+metric_dict: Dict[str, Any] = {}
 
 
 def register_base(mapping: Dict[str, Any], key: str,
@@ -115,3 +116,8 @@ def register_loss(key: str, module: Any = None):
 def register_train(key: str, module: Any = None):
     r"""Registers a training function in GraphGym."""
     return register_base(train_dict, key, module)
+
+
+def register_metric(key: str, module: Any = None):
+    r"""Register a metric function in GraphGym."""
+    return register_base(metric_dict, key, module)

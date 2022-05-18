@@ -59,13 +59,13 @@ targets, preds = [], []
 expl = GNNExplainer(model, epochs=300, return_type='raw', log=False)
 
 # Explanation ROC AUC over all test nodes:
-self_loop_mask = data.edge_index[0] != data.edge_index[1]
+loop_mask = data.edge_index[0] != data.edge_index[1]
 for node_idx in tqdm(data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()):
     _, expl_edge_mask = expl.explain_node(node_idx, data.x, data.edge_index,
                                           edge_weight=data.edge_weight)
     subgraph = k_hop_subgraph(node_idx, num_hops=3, edge_index=data.edge_index)
-    expl_edge_mask = expl_edge_mask[self_loop_mask]
-    subgraph_edge_mask = subgraph[3][self_loop_mask]
+    expl_edge_mask = expl_edge_mask[loop_mask]
+    subgraph_edge_mask = subgraph[3][loop_mask]
     targets.append(data.edge_label[subgraph_edge_mask].cpu())
     preds.append(expl_edge_mask[subgraph_edge_mask].cpu())
 

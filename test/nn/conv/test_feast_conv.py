@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import FeaStConv
+from torch_geometric.testing import is_full_test
 
 
 def test_feast_conv():
@@ -18,23 +19,25 @@ def test_feast_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x1, edge_index).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), adj.t()), out, atol=1e-6)
 
-    t = '(PairTensor, Tensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index).tolist() == out.tolist()
+    if is_full_test():
+        t = '(PairTensor, Tensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit((x1, x2), edge_index).tolist() == out.tolist()
 
-    t = '(PairTensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), adj.t()), out, atol=1e-6)
+        t = '(PairTensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit((x1, x2), adj.t()), out, atol=1e-6)

@@ -8,8 +8,12 @@ import torch.nn.functional as F
 from torch_scatter import scatter
 from tqdm import tqdm
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -229,8 +233,8 @@ class QM9(InMemoryDataset):
 
             N = mol.GetNumAtoms()
 
-            pos = suppl.GetItemText(i).split('\n')[4:4 + N]
-            pos = [[float(x) for x in line.split()[:3]] for line in pos]
+            conf = mol.GetConformer()
+            pos = conf.GetPositions()
             pos = torch.tensor(pos, dtype=torch.float)
 
             type_idx = []

@@ -37,8 +37,8 @@ class LayerNorm(torch.nn.Module):
         self.eps = eps
 
         if affine:
-            self.weight = Parameter(torch.Tensor([in_channels]))
-            self.bias = Parameter(torch.Tensor([in_channels]))
+            self.weight = Parameter(torch.Tensor(in_channels))
+            self.bias = Parameter(torch.Tensor(in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)

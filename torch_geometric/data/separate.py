@@ -87,7 +87,7 @@ def _separate(
         }
 
     elif (isinstance(value, Sequence) and isinstance(value[0], Sequence)
-          and not isinstance(value[0], str)
+          and not isinstance(value[0], str) and len(value[0]) > 0
           and isinstance(value[0][0], (Tensor, SparseTensor))):
         # Recursively separate elements of lists of lists.
         return [

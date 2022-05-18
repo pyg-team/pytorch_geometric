@@ -3,17 +3,22 @@ import inspect
 import logging
 import os
 import shutil
+import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
 
-from yacs.config import CfgNode as CN
-
 import torch_geometric.graphgym.register as register
 from torch_geometric.data.makedirs import makedirs
 
-# Global config object
-cfg = CN()
+try:  # Define global config object
+    from yacs.config import CfgNode as CN
+    cfg = CN()
+except ImportError:
+    cfg = None
+    warnings.warn("Could not define global config object. Please install "
+                  "'yacs' for using the GraphGym experiment manager via "
+                  "'pip install yacs'.")
 
 
 def set_cfg(cfg):
@@ -26,6 +31,8 @@ def set_cfg(cfg):
 
     :return: configuration use by the experiment.
     '''
+    if cfg is None:
+        return cfg
 
     # ----------------------------------------------------------------------- #
     # Basic options
@@ -42,6 +49,9 @@ def set_cfg(cfg):
 
     # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
+
+    # Names of registered custom metric funcs to be used (use defaults if none)
+    cfg.custom_metrics = []
 
     # Random seed
     cfg.seed = 0
@@ -235,8 +245,14 @@ def set_cfg(cfg):
     # Evaluate model on test data every eval period epochs
     cfg.train.eval_period = 10
 
+    # Option to skip training epoch evaluation
+    cfg.train.skip_train_eval = False
+
     # Save model checkpoint every checkpoint period epochs
     cfg.train.ckpt_period = 100
+
+    # Enabling checkpoint, set False to disable and save I/O
+    cfg.train.enable_ckpt = True
 
     # Resume training from the latest checkpoint in the output directory
     cfg.train.auto_resume = False
@@ -510,7 +526,25 @@ def get_fname(fname):
     return fname
 
 
-def set_run_dir(out_dir, fname):
+def set_out_dir(out_dir, fname):
+    r"""
+    Create the directory for full experiment run
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
+    fname = get_fname(fname)
+    cfg.out_dir = os.path.join(out_dir, fname)
+    # Make output directory
+    if cfg.train.auto_resume:
+        os.makedirs(cfg.out_dir, exist_ok=True)
+    else:
+        makedirs_rm_exist(cfg.out_dir)
+
+
+def set_run_dir(out_dir):
     r"""
     Create the directory for each random seed experiment run
 
@@ -519,27 +553,12 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-    fname = get_fname(fname)
-    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
+    cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)
     else:
         makedirs_rm_exist(cfg.run_dir)
-
-
-def set_agg_dir(out_dir, fname):
-    r"""
-    Create the directory for aggregated results over
-    all the random seeds
-
-    Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
-    """
-    fname = get_fname(fname)
-    return os.path.join(out_dir, fname)
 
 
 set_cfg(cfg)

@@ -1,6 +1,6 @@
 package:
   name: pyg
-  version: 2.0.4
+  version: 2.0.5
 
 source:
   path: ../..
@@ -17,19 +17,13 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
-    - pytorch-spline-conv
-    - networkx>=2.4
     - tqdm
     - jinja2
     - pyparsing
-    - yacs
-    - PyYAML
-    - scikit-learn
-    - python-louvain
-    - googledrivedownloader
-    - pandas
-    - requests
     - numpy
+    - scipy
+    - requests
+    - scikit-learn
 
 build:
   string: py{{ environ.get('PYTHON_VERSION').replace('.', '') }}_torch_{{ environ['TORCH_VERSION'] }}_{{ environ['CUDA_VERSION'] }}

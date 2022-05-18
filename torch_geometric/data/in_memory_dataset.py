@@ -43,12 +43,6 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def download(self):
-        raise NotImplementedError
-
-    def process(self):
-        raise NotImplementedError
-
     def __init__(self, root: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -125,13 +119,13 @@ class InMemoryDataset(Dataset):
         :obj:`np.ndarray` of type long or bool.
         """
         if idx is None:
-            data_list = [self.get(i) for i in range(len(self))]
+            data_list = [self.get(i) for i in self.indices()]
         else:
             data_list = [self.get(i) for i in self.index_select(idx).indices()]
 
         dataset = copy.copy(self)
         dataset._indices = None
-        dataset._data_list = data_list
+        dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
 

@@ -11,8 +11,10 @@ dataset:
   edge_encoder_name: Bond
 train:
   batch_size: 128
-  eval_period: 1
+  eval_period: 2
   ckpt_period: 100
+  enable_ckpt: false
+  skip_train_eval: true
   sampler: full_batch
 model:
   type: gnn
@@ -34,4 +36,4 @@ gnn:
 optim:
   optimizer: adam
   base_lr: 0.01
-  max_epoch: 3
+  max_epoch: 6

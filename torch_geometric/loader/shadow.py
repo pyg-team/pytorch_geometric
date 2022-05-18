@@ -9,8 +9,8 @@ from torch_geometric.data import Batch, Data
 
 
 class ShaDowKHopSampler(torch.utils.data.DataLoader):
-    r"""The ShaDow :math:`k`-hop sampler from the `"Deep Graph Neural Networks
-    with Shallow Subgraph Samplers" <https://arxiv.org/abs/2012.01380>`_ paper.
+    r"""The ShaDow :math:`k`-hop sampler from the `"Decoupling the Depth and
+    Scope of Graph Neural Networks" <https://arxiv.org/abs/2201.07858>`_ paper.
     Given a graph in a :obj:`data` object, the sampler will create shallow,
     localized subgraphs.
     A deep GNN on this local graph then smooths the informative local signals.
@@ -75,7 +75,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
         adj_t = SparseTensor(rowptr=rowptr, col=col,
                              value=value[e_id] if value is not None else None,
                              sparse_sizes=(n_id.numel(), n_id.numel()),
-                             is_sorted=True)
+                             is_sorted=True, trust_data=True)
 
         batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()),
                       ptr=ptr)

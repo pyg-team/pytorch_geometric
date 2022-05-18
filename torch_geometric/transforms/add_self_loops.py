@@ -3,15 +3,18 @@ from typing import Optional, Union
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import add_self_loops
 
 
+@functional_transform('add_self_loops')
 class AddSelfLoops(BaseTransform):
-    r"""Adds self-loops to the given homogeneous or heterogeneous graph.
+    r"""Adds self-loops to the given homogeneous or heterogeneous graph
+    (functional name: :obj:`add_self_loops`).
 
     Args:
-        attr: (str, optional): The name of the attribute of edge weights
+        attr (str, optional): The name of the attribute of edge weights
             or multi-dimensional edge features to pass to
             :meth:`torch_geometric.utils.add_self_loops`.
             (default: :obj:`"edge_weight"`)
@@ -41,6 +44,3 @@ class AddSelfLoops(BaseTransform):
             setattr(store, self.attr, edge_weight)
 
         return data
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
