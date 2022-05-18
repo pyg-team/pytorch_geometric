@@ -106,6 +106,7 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
     agg_runs(cfg.out_dir, cfg.metric_best)
+
     shutil.rmtree(cfg.out_dir)
 
 

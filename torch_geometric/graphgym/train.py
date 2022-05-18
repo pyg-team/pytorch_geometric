@@ -29,7 +29,7 @@ class GraphGymDataModule(LightningDataModule):
 
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
-          training_config: Optional[dict] = None):
+          trainer_config: Optional[dict] = None):
     callbacks = []
     if logger:
         callbacks.append(LoggerCallback())
@@ -37,8 +37,8 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         ckpt_cbk = pl.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
         callbacks.append(ckpt_cbk)
 
-    training_config = training_config or {}
-    trainer = pl.Trainer(**training_config,
+    trainer_config = trainer_config or {}
+    trainer = pl.Trainer(**trainer_config,
                          enable_checkpointing=cfg.train.enable_ckpt,
                          callbacks=callbacks, default_root_dir=cfg.out_dir,
                          max_epochs=cfg.optim.max_epoch)
