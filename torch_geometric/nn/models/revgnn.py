@@ -132,7 +132,7 @@ class InvertibleModule(nn.Module, ABC):
         num_bwd_passes (int, optional):
             Number of backward passes to retain a link with the output.
             After the last backward pass the output is discarded
-            and memory is freed.
+            and memory is freed. (default: :obj:`1`)
     """
     def __init__(self, disable=False, num_bwd_passes=1):
         super().__init__()
