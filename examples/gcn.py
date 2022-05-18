@@ -75,7 +75,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index).argmax(dim=-1)
+    pred = model(data.x, data.edge_index, data.edge_weight).argmax(dim=-1)
 
     accs = []
     for mask in [data.train_mask, data.val_mask, data.test_mask]:
