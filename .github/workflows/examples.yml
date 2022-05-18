@@ -55,4 +55,5 @@ jobs:
 
       - name: Run GNNExplainer
         run: |
+          pip install matplotlib
           python examples/gnn_explainer.py
