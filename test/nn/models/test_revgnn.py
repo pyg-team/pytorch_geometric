@@ -8,7 +8,7 @@ num_groups = [2, 4, 8, 16]
 
 
 @pytest.mark.parametrize('num_groups', num_groups)
-def test_gen_conv(num_groups):
+def test_revgnn(num_groups):
     hidden_channels = 32
     x = torch.randn(4, 32)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
