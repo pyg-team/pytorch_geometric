@@ -7,7 +7,7 @@ from torch_geometric.nn.dense.linear import Linear
 num_groups = [2, 4, 8, 16]
 
 
-@pytest.mark.parametrize('num_groups', num_groups)
+@pytest.mark.parametrize('num_groups', [2, 4, 8, 16])
 def test_revgnn(num_groups):
     hidden_channels = 32
     x = torch.randn(4, 32)
