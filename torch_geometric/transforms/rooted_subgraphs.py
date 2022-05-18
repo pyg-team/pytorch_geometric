@@ -1,6 +1,5 @@
-import re
-
 import torch
+from torch_cluster import random_walk
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
@@ -8,20 +7,20 @@ from torch_geometric.transforms import BaseTransform
 
 
 class RootedSubgraphsData(Data):
-    r""" A data object describing a homogeneous graph together with each node's rooted subgraph. 
-    It contains several additional propreties that hold the information of all nodes' rooted subgraphs.
-    Assume the data represents a graph with :math:'N' nodes and :math:'M' edges, also each node 
-    :math:'i\in \[N\]' has a rooted subgraph with :math:'N_i' nodes and :math:'M_i' edges.
+    r"""A data object describing a homogeneous graph together with each node's rooted subgraph.
+    It contains several additional properties that hold the information of all nodes' rooted subgraphs.
+    Assume the data represents a graph with :math:`N` nodes and :math:`M` edges, also each node
+    :math:`i\in \[N\]` has a rooted subgraph with :math:`N_i` nodes and :math:`M_i` edges.
     
     Additional Properties:
         subgraphs_nodes_mapper (LongTensor): map each node in rooted subgraphs to a node in the original graph.
-            Size: :math:'\sum_{i=1}^{N}N_i x 1'
+            Size: :math:`\sum_{i=1}^{N}N_i x 1`
         subgraphs_edges_mapper (LongTensor): map each edge in rooted subgraphs to a edge in the original graph.
-            Size: :math:'\sum_{i=1}^{N}M_i x 1'
-        subgraphs_batch: map each node in rooted subgraphs to its corresponding rooted subgraph index. 
-            Size: :math:'\sum_{i=1}^{N}N_i x 1'
+            Size: :math:`\sum_{i=1}^{N}M_i x 1`
+        subgraph_batch: map each node in rooted subgraphs to its corresponding rooted subgraph index.
+            Size: :math:`\sum_{i=1}^{N}N_i x 1`
         combined_rooted_subgraphs: edge_index of a giant graph which represents a stacking of all rooted subgraphs. 
-            Size: :math:'2 x \sum_{i=1}^{N}M_i'
+            Size: :math:`2 x \sum_{i=1}^{N}M_i`
         
     The class works as a wrapper for the data with these properties, and automatically handles mini batching for
     them. 
@@ -30,23 +29,23 @@ class RootedSubgraphsData(Data):
     def __inc__(self, key, value, *args, **kwargs):
         num_nodes = self.num_nodes
         num_edges = self.edge_index.size(-1)
-        if bool(re.search('(combined_subgraphs)', key)):
+        if 'combined_subgraphs' in key:
             return getattr(
                 self, key[:-len('combined_subgraphs')] +
                 'subgraphs_nodes_mapper').size(0)
-        elif bool(re.search('(subgraphs_batch)', key)):
+        elif 'subgraph_batch' in key:
             # should use number of subgraphs or number of supernodes.
             return 1 + getattr(self, key)[-1]
-        elif bool(re.search('(nodes_mapper)|(selected_supernodes)', key)):
+        elif 'nodes_mapper' in key or 'selected_supernodes' in key:
             return num_nodes
-        elif bool(re.search('(edges_mapper)', key)):
+        elif 'edges_mapper' in key:
             # batched_edge_attr[subgraphs_edges_mapper] shoud be batched_combined_subgraphs_edge_attr
             return num_edges
         else:
             return super().__inc__(key, value, *args, **kwargs)
 
     def __cat_dim__(self, key, value, *args, **kwargs):
-        if bool(re.search('(combined_subgraphs)', key)):
+        if 'combined_subgraphs' in key:
             return -1
         else:
             return super().__cat_dim__(key, value, *args, **kwargs)
@@ -85,12 +84,11 @@ class RootedSubgraphs(BaseTransform):
                                                num_nodes=data.num_nodes)
 
         data = RootedSubgraphsData(**{k: v for k, v in data})
-        data.subgraphs_batch = subgraphs_nodes[0]
+        data.subgraph_batch = subgraphs_nodes[0]
         data.subgraphs_nodes_mapper = subgraphs_nodes[1]
         data.subgraphs_edges_mapper = subgraphs_edges[1]
         data.combined_subgraphs = combined_subgraphs
         data.hop_indicator = hop_indicator
-        data.__num_nodes__ = data.num_nodes
         return data
 
 
@@ -100,11 +98,11 @@ class RootedEgoNets(RootedSubgraphs):
     <https://arxiv.org/pdf/2110.03753.pdf>`_ paper
 
     Args:
-        hops (int): k for k-hop Egonet. 
+        num_hops (int): k for k-hop Egonet.
     """
-    def __init__(self, hops: int):
+    def __init__(self, num_hops: int):
         super().__init__()
-        self.num_hops = hops
+        self.num_hops = num_hops
 
     def extract_subgraphs(self, data: Data):
         # return k-hop subgraphs for all nodes in the graph
@@ -125,10 +123,7 @@ class RootedEgoNets(RootedSubgraphs):
         return node_mask, hop_indicator
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.hops})'
-
-
-from torch_cluster import random_walk
+        return f'{self.__class__.__name__}({self.num_hops})'
 
 
 class RootedRWSubgraphs(RootedSubgraphs):
@@ -167,7 +162,6 @@ class RootedRWSubgraphs(RootedSubgraphs):
         ]
         walk = torch.cat(walks, dim=-1)
         node_mask = row.new_empty((num_nodes, num_nodes), dtype=torch.bool)
-        # print(walk.shape)
         node_mask.fill_(False)
         node_mask[start.repeat_interleave(
             (self.walk_length + 1) * self.repeat),
@@ -197,7 +191,7 @@ def to_sparse(node_mask, edge_mask, hop_indicator):
     subgraphs_edges = edge_mask.nonzero().T
     if hop_indicator is not None:
         hop_indicator = hop_indicator[subgraphs_nodes[0], subgraphs_nodes[1]]
-    return subgraphs_nodes, subgraphs_edges,
+    return subgraphs_nodes, subgraphs_edges, hop_indicator
 
 
 def combine_subgraphs(edge_index, subgraphs_nodes, subgraphs_edges,
