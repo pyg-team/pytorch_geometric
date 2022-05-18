@@ -56,9 +56,6 @@ class RootedSubgraphs(BaseTransform):
     Base class for rooted subgraphs.
     The object transforms a Data object to RootedSubgraphsData object. 
     """
-    def __init__(self):
-        super().__init__()
-
     def extract_subgraphs(self, data: Data):
         r""" For a input graph with N nodes, extract a rooted subgraph for every node in the graph.
         Return:
