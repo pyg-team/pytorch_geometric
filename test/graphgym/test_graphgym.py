@@ -17,6 +17,7 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
+from torch_geometric.graphgym.imports import pl
 from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model
@@ -110,7 +111,6 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_graphgym_module(tmpdir):
-    import pytorch_lightning as pl
 
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
@@ -163,7 +163,6 @@ def test_graphgym_module(tmpdir):
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_train(tmpdir):
-    import pytorch_lightning as pl
 
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
