@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 
 from torch_geometric.data.lightning_datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
+from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.imports import pl
 from torch_geometric.graphgym.logger import LoggerCallback
@@ -29,15 +30,17 @@ class GraphGymDataModule(LightningDataModule):
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
           training_config: Optional[dict] = None):
-    logger_cbk = None
+    callbacks = []
     if logger:
-        logger_cbk = LoggerCallback()
+        callbacks.append(LoggerCallback())
+    if cfg.train.enable_ckpt:
+        ckpt_cbk = pl.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
+        callbacks.append(ckpt_cbk)
 
     training_config = training_config or {}
-
     trainer = pl.Trainer(**training_config,
                          enable_checkpointing=cfg.train.enable_ckpt,
-                         callbacks=logger_cbk, default_root_dir=cfg.out_dir,
+                         callbacks=callbacks, default_root_dir=cfg.out_dir,
                          max_epochs=cfg.optim.max_epoch)
 
     trainer.fit(model, datamodule=datamodule)
