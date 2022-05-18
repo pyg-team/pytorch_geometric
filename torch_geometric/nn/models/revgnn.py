@@ -233,7 +233,7 @@ class GroupAddRev(InvertibleModule):
         y_in = sum(xs[1:])
         ys = []
         for i in range(self.num_groups):
-            y_in = xs[i] + self.gnn_groups[i].forward(y_in, edge_index, *
+            y_in = xs[i] + self.gnn_groups[i](y_in, edge_index, *
                                                       args_chunks[i])
             ys.append(y_in)
 
