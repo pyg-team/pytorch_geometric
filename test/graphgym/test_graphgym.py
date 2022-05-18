@@ -98,7 +98,7 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
     assert cfg.params == 23880
 
     train(model, datamodule, logger=True,
-          training_config={"enable_progress_bar": False})
+          trainer_config={"enable_progress_bar": False})
 
     # if use_trivial_metric:
     #     # 6 total epochs, 4 eval epochs, 3 splits (1 training split)
