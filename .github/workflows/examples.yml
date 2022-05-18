@@ -41,8 +41,18 @@ jobs:
         run: |
           pip install .[benchmark]
 
-      - name: Run examples
+      - name: Run GCN on Cora
         run: |
           python examples/gcn.py --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GAT on Cora
+        run: |
+          python examples/gat.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GNNExplainer
+        run: |
+          python examples/gnn_explainer.py
