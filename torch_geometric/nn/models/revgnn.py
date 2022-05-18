@@ -51,16 +51,12 @@ class InvertibleFunction(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, *grad_outputs):
-        if not torch.autograd._is_checkpoint_valid():
-            raise RuntimeError(
-                f"'{self.__class__.__name__' is not compatible with .grad(), \
-                    please use .backward() if possible")
         # Retrieve input and output tensor nodes
         if len(ctx.outputs) == 0:
             raise RuntimeError(
                 f"Trying to perform backward on the InvertibleFunction \
-                    for more than {ctx.num_bwd_passes} times! \
-                         Try raising `num_bwd_passes`.", )
+                for more than {ctx.num_bwd_passes} times! \
+                Try raising `num_bwd_passes`.", )
         inputs = ctx.inputs.pop()
         outputs = ctx.outputs.pop()
 
@@ -69,8 +65,9 @@ class InvertibleFunction(torch.autograd.Function):
             # Need edge_index and other args
             inputs_inverted = ctx.fn_inverse(*(outputs + inputs[1:]))
             # Clear memory from outputs
-            for element in outputs:
-                element.storage().resize_(0)
+            if len(ctx.outputs) == 0:
+                for element in outputs:
+                    element.storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
                 inputs_inverted = (inputs_inverted, )
@@ -139,13 +136,11 @@ class InvertibleModule(nn.Module, ABC):
         self.disable = disable
         self.num_bwd_passes = num_bwd_passes
 
-    def forward(self, *args, **kwargs):
-        args = (x, edge_index) + args
+    def forward(self, *args):
         y = self._fn_apply(args, self._forward, self._inverse)
         return y
 
-    def inverse(self, *args, **kwargs):
-        args = (y, edge_index) + args
+    def inverse(self, *args):
         x = self._fn_apply(args, self._inverse, self._forward)
         return x
 
@@ -159,7 +154,7 @@ class InvertibleModule(nn.Module, ABC):
 
     def _fn_apply(self, args, fn, fn_inverse):
         if not self.disable:
-            y = InvertibleFunction.apply(
+            out = InvertibleFunction.apply(
                 fn,
                 fn_inverse,
                 self.num_bwd_passes,
@@ -168,12 +163,8 @@ class InvertibleModule(nn.Module, ABC):
                                for p in self.parameters() if p.requires_grad)),
             )
         else:
-            y = fn(*args)
+            out = fn(*args)
 
-        return self.if_unpack(y)
-
-    @staticmethod
-    def if_unpack(out):
         # If the layer only has one input, we unpack the tuple again
         if isinstance(out, tuple) and len(out) == 1:
             return out[0]
@@ -227,9 +218,13 @@ class GroupAddRev(InvertibleModule):
         self.split_dim = split_dim
         self.num_groups = num_groups
 
+    def reset_parameters(self):
+        for gnn in self.gnn_groups:
+            gnn.reset_parameters()
+
     def _forward(self, x: Tensor, edge_index: Adj, *args):
         xs = torch.chunk(x, self.num_groups, dim=self.split_dim)
-        args_chunks = self._get_arg_chucks(args)
+        args_chunks = self._get_arg_chucks(args, x.size())
         y_in = sum(xs[1:])
         ys = []
         for i in range(self.num_groups):
@@ -243,7 +238,7 @@ class GroupAddRev(InvertibleModule):
 
     def _inverse(self, y: Tensor, edge_index: Adj, *args):
         ys = torch.chunk(y, self.num_groups, dim=self.split_dim)
-        args_chunks = self._get_arg_chucks(args)
+        args_chunks = self._get_arg_chucks(args, y.size())
         xs = []
         for i in range(self.num_groups - 1, -1, -1):
             if i != 0:
@@ -257,17 +252,20 @@ class GroupAddRev(InvertibleModule):
 
         return x
 
-    def _get_arg_chucks(self, args):
+    def _get_arg_chucks(self, args, size):
+        # The size of edge related tensors should not be the
+        # same as node features.
         if len(args) == 0:
             args_chunks = [()] * self.num_groups
         else:
-            chunked_args = list(
-                map(
-                    lambda arg: torch.chunk(arg, self.num_groups, dim=self.
-                                            split_dim)
-                    if arg is not None else [None] * self.num_groups,
-                    args,
-                ))
+
+            def chunk_arg(arg):
+                if isinstance(arg, Tensor) and arg.size() == size:
+                    return torch.chunk(arg, self.num_groups,
+                                       dim=self.split_dim)
+                return [arg] * self.num_groups
+
+            chunked_args = list(map(chunk_arg, args))
             args_chunks = list(zip(*chunked_args))
         return args_chunks
 
@@ -278,10 +276,13 @@ class GroupAddRev(InvertibleModule):
             if i == 0:
                 blocks.append(seed_block)
             else:
-                blocks.append(copy.deepcopy(seed_block))
+                new_block = copy.deepcopy(seed_block)
+                if hasattr(new_block, 'reset_parameters'):
+                    new_block.reset_parameters()
+                blocks.append(new_block)
 
         return blocks
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(num_groups={self.num_groups}, ',
-                f'disable={self.disable}')
+        return f"{self.__class__.__name__}(num_groups={self.num_groups}, \
+            disable={self.disable}"
