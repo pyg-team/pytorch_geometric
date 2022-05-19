@@ -215,32 +215,27 @@ def test_data_share_memory():
         assert torch.allclose(data.x, torch.full((8, ), 4.))
 
 
-def test_data_subclass_setter():
-    class Graph(Data):
+def test_data_setter_properties():
+    class MyData(Data):
         def __init__(self):
             super().__init__()
-            self.my_attr = 1.0
+            self.my_attr1 = 1
             self.my_attr2 = 2
 
         @property
-        def my_attr(self):
-            return self._my_attr
+        def my_attr1(self):
+            return self._my_attr1
 
-        @my_attr.setter
-        def my_attr(self, value):
-            self._my_attr = int(value)
+        @my_attr1.setter
+        def my_attr1(self, value):
+            self._my_attr1 = value
 
-    g = Graph()
-    assert g._store == {'my_attr2': 2}
-    assert '_my_attr' in g._store.__dict__
-    assert isinstance(g.my_attr, int)
+    data = MyData()
+    assert data.my_attr2 == 2
 
-    x = torch.tensor([[1, 2], [3, 4]])
-    g.x = x
-    assert g._store == {'x': x, 'my_attr2': 2}
+    assert 'my_attr1' not in data._store
+    assert data.my_attr1 == 1
 
-    g.my_attr = 2.0
-    assert isinstance(g.my_attr, int)
-
-    g.my_attr2 = 'asdf'
-    assert g._store == {'x': x, 'my_attr2': 'asdf'}
+    data.my_attr1 = 2
+    assert 'my_attr1' not in data._store
+    assert data.my_attr1 == 2
