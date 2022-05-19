@@ -4,10 +4,10 @@ from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
 
+
 def test_rooted_ego_nets():
     x = torch.randn(3, 1)
-    edge_index = torch.tensor([[0, 1, 2],
-                               [1, 2, 1]])
+    edge_index = torch.tensor([[0, 1, 2], [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
     subgraph_data = RootedEgoNets(2)(data)
 

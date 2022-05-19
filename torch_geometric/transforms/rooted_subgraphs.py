@@ -66,15 +66,13 @@ class RootedSubgraph(BaseTransform):
         raise NotImplementedError
 
     def __call__(self, data: Data) -> Data:
-        subgraph_nodes_mask, hop_indicator_dense = self.extract_subgraphs(
-            data)
+        subgraph_nodes_mask, hop_indicator_dense = self.extract_subgraphs(data)
         subgraph_edges_mask = subgraph_nodes_mask[:, data.edge_index[0]] & \
                                subgraph_nodes_mask[:, data.edge_index[1]]  # N x E dense mask matrix
         subgraph_nodes, subgraph_edges, hop_indicator = to_sparse(
             subgraph_nodes_mask, subgraph_edges_mask, hop_indicator_dense)
 
-        combined_subgraph = combine_subgraph(data.edge_index,
-                                             subgraph_nodes,
+        combined_subgraph = combine_subgraph(data.edge_index, subgraph_nodes,
                                              subgraph_edges,
                                              num_selected=data.num_nodes,
                                              num_nodes=data.num_nodes)
@@ -199,8 +197,8 @@ def combine_subgraph(edge_index, subgraph_nodes, subgraph_edges,
 
     combined_subgraph = edge_index[:, subgraph_edges[1]]
     node_label_mapper = edge_index.new_full((num_selected, num_nodes), -1)
-    node_label_mapper[subgraph_nodes[0], subgraph_nodes[1]] = torch.arange(
-        len(subgraph_nodes[1]))
+    node_label_mapper[subgraph_nodes[0],
+                      subgraph_nodes[1]] = torch.arange(len(subgraph_nodes[1]))
     node_label_mapper = node_label_mapper.reshape(-1)
 
     inc = torch.arange(num_selected) * num_nodes
