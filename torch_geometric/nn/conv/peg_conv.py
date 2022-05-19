@@ -4,11 +4,12 @@ import torch
 from torch import Tensor, nn
 from torch.nn import Parameter
 from torch_sparse import SparseTensor
-from torch_geometric.nn.dense.linear import Linear
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor, Size, Tensor
-from torch_geometric.nn.inits import zeros, glorot
 
 
 class PEGConv(MessagePassing):
@@ -83,7 +84,7 @@ class PEGConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def forward(self, x: Tensor, pos_encoding: Tensor,  edge_index: Adj,
+    def forward(self, x: Tensor, pos_encoding: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""
 
@@ -113,18 +114,17 @@ class PEGConv(MessagePassing):
                     edge_index = cache
 
         if isinstance(edge_index, Tensor):
-            rel_coors = pos_encoding[edge_index[0]] - pos_encoding[edge_index[1]]
+            rel_coors = pos_encoding[edge_index[0]] - pos_encoding[
+                edge_index[1]]
         elif isinstance(edge_index, SparseTensor):
-            rel_coors = pos_encoding[
-                edge_index.to_torch_sparse_coo_tensor()._indices()[0]] - pos_encoding[
-                    edge_index.to_torch_sparse_coo_tensor()._indices()[1]]
+            rel_coors = pos_encoding[edge_index.to_torch_sparse_coo_tensor(
+            )._indices()[0]] - pos_encoding[
+                edge_index.to_torch_sparse_coo_tensor()._indices()[1]]
         rel_dist = (rel_coors**2).sum(dim=-1, keepdim=True)
 
-        
         # pos: l2 norms
-        out = self.propagate(edge_index, x=x,
-                                        edge_weight=edge_weight,
-                                        pos=rel_dist, size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                             pos=rel_dist, size=None)
 
         out = self.lin(out)
         if self.bias is not None:
@@ -139,6 +139,5 @@ class PEGConv(MessagePassing):
                                                 edge_weight.view(-1, 1) * x_j)
 
     def __repr__(self):
-        return '{}({},{})'.format(self.__class__.__name__,
-                                     self.in_channels,
-                                     self.out_channels)
+        return '{}({},{})'.format(self.__class__.__name__, self.in_channels,
+                                  self.out_channels)
