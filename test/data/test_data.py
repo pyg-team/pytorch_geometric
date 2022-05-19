@@ -213,3 +213,38 @@ def test_data_share_memory():
     for data in data_list:
         assert data.x.is_shared()
         assert torch.allclose(data.x, torch.full((8, ), 4.))
+
+def test_data_subclass_setter():
+    class Graph(Data):
+        def __init__(self):
+            super().__init__()
+            self.my_attr = 1.0
+            self.my_attr2 = 2
+
+        @property
+        def my_attr(self):
+            return self._my_attr
+
+        @my_attr.setter
+        def my_attr(self, value):
+            self._my_attr = int(value)
+
+    g = Graph()
+    assert g._store == {'my_attr2': 2}
+    assert '_my_attr' in g._store.__dict__
+    assert isinstance(g.my_attr, int)
+
+    x = torch.tensor([[1,2], [3,4]])
+    g.x = x
+    assert g._store == {'x': x, 'my_attr2': 2}
+
+    g.my_attr = 2.0
+    assert isinstance(g.my_attr, int)
+
+    g.my_attr2 = 'asdf'
+    assert g._store == {'x': x, 'my_attr2': 'asdf'}
+
+
+
+
+
