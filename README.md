@@ -14,7 +14,7 @@
 [slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-p6br3yuo-BxRoe36OHHLF6jYU8xHtBA
 
 <p align="center">
-  <img height="150" src="https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/docs/source/_static/img/pyg1.svg?sanitize=true" />
+  <img height="150" src="https://raw.githubusercontent.com/pyg-team/pyg_sphinx_theme/master/pyg_sphinx_theme/static/img/pyg_logo_text.svg?sanitize=true" />
 </p>
 
 --------------------------------------------------------------------------------
@@ -33,6 +33,10 @@
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
 In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`DataPipe` support](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py), distributed graph learning via [Quiver](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/quiver), a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/notes/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 [Click here to join our Slack community!][slack-url]
+
+<p align="center">
+  <a href="https://medium.com/stanford-cs224w"><img style="max-width=: 941px" src="https://data.pyg.org/img/cs224w_tutorials.png" /></a>
+</p>
 
 --------------------------------------------------------------------------------
 
@@ -175,7 +179,7 @@ It comprises of the following components:
 * Finally, PyG provides an abundant set of GNN **models**, and examples that showcase GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
 
 <p align="center">
-  <img width="100%" src="https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/docs/source/_static/img/architecture.svg?sanitize=true" />
+  <img width="100%" src="https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/docs/source/_figures/architecture.svg?sanitize=true" />
 </p>
 
 ## Implemented GNN Models

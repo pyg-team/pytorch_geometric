@@ -1,6 +1,7 @@
 import os
 from typing import Callable, List, Optional, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -94,13 +95,14 @@ class StochasticBlockModelDataset(InMemoryDataset):
 
         x = None
         if self.num_channels is not None:
-            x, _ = make_classification(
+            x, y_not_sorted = make_classification(
                 n_samples=num_samples,
                 n_features=self.num_channels,
                 n_classes=num_classes,
                 weights=self.block_sizes / num_samples,
                 **self.kwargs,
             )
+            x = x[np.argsort(y_not_sorted)]
             x = torch.from_numpy(x).to(torch.float)
 
         y = torch.arange(num_classes).repeat_interleave(self.block_sizes)

@@ -7,7 +7,7 @@ def test_bzr(get_dataset):
     assert len(dataset) == 405
     assert dataset.num_features == 53
     assert dataset.num_node_labels == 53
-    assert dataset.num_node_attributes == 0
+    assert dataset.num_node_attributes == 3
     assert dataset.num_classes == 2
     assert str(dataset) == 'BZR(405)'
     assert len(dataset[0]) == 3

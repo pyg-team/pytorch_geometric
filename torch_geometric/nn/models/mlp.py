@@ -7,6 +7,7 @@ from torch.nn import BatchNorm1d, Identity
 
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.typing import NoneType
 
 
 class MLP(torch.nn.Module):
@@ -57,6 +58,9 @@ class MLP(torch.nn.Module):
         batch_norm_kwargs (Dict[str, Any], optional): Arguments passed to
             :class:`torch.nn.BatchNorm1d` in case :obj:`batch_norm == True`.
             (default: :obj:`None`)
+        plain_last (bool, optional): If set to :obj:`False`, will apply
+            non-linearity, batch normalization and dropout to the last layer as
+            well. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the module will not
             learn additive biases. (default: :obj:`True`)
         relu_first (bool, optional): Deprecated in favor of :obj:`act_first`.
@@ -76,6 +80,7 @@ class MLP(torch.nn.Module):
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
         batch_norm_kwargs: Optional[Dict[str, Any]] = None,
+        plain_last: bool = True,
         bias: bool = True,
         relu_first: bool = False,
     ):
@@ -99,14 +104,16 @@ class MLP(torch.nn.Module):
         self.dropout = dropout
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
+        self.plain_last = plain_last
 
         self.lins = torch.nn.ModuleList()
-        pairwise = zip(channel_list[:-1], channel_list[1:])
-        for in_channels, out_channels in pairwise:
+        iterator = zip(channel_list[:-1], channel_list[1:])
+        for in_channels, out_channels in iterator:
             self.lins.append(Linear(in_channels, out_channels, bias=bias))
 
         self.norms = torch.nn.ModuleList()
-        for hidden_channels in channel_list[1:-1]:
+        iterator = channel_list[1:-1] if plain_last else channel_list[1:]
+        for hidden_channels in iterator:
             if batch_norm:
                 norm = BatchNorm1d(hidden_channels, **batch_norm_kwargs)
             else:
@@ -137,18 +144,22 @@ class MLP(torch.nn.Module):
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
         """"""
-        x = self.lins[0](x)
-        for lin, norm in zip(self.lins[1:], self.norms):
+        for lin, norm in zip(self.lins, self.norms):
+            x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
-            x = lin.forward(x)
-        return x
+            emb = x
+
+        if self.plain_last:
+            x = self.lins[-1](x)
+
+        return (x, emb) if isinstance(return_emb, bool) else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
