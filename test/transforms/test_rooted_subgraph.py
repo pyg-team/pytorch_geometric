@@ -4,17 +4,35 @@ from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
 
+
 def test_rooted_ego_nets():
     x = torch.randn(3, 1)
     edge_index = torch.tensor([[0, 1, 2],
                                [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
-    subgraph_data = RootedEgoNets(2)(data)
+    data_trans = RootedEgoNets(2)(data)
+
+    assert (data_trans.subgraph_batch == 0).sum() == 3
+    assert (data_trans.subgraph_batch == 1).sum() == 2
+    assert (data_trans.subgraph_batch == 2).sum() == 2
+
+    assert set(data_trans.subgraph_nodes_mapper[torch.where(data_trans.subgraph_batch == 0)].numpy()) == {0, 1, 2}
+    assert set(data_trans.subgraph_nodes_mapper[torch.where(data_trans.subgraph_batch == 1)].numpy()) == {1, 2}
+    assert set(data_trans.subgraph_nodes_mapper[torch.where(data_trans.subgraph_batch == 2)].numpy()) == {1, 2}
+
+    assert set(data_trans.subgraph_edges_mapper[torch.where(data_trans.subgraph_batch == 0)].numpy()) == {0, 1, 2}
+    assert set(data_trans.subgraph_edges_mapper[torch.where(data_trans.subgraph_batch == 1)].numpy()) == {1, 2}
+    assert set(data_trans.subgraph_edges_mapper[torch.where(data_trans.subgraph_batch == 2)].numpy()) == {1, 2}
+
+    torch.testing.assert_allclose(data_trans.rooted_subgraph(0).x, data.x)
 
 
 def test_rooted_rw_subgraph():
-    x = torch.randn(6, 4)
-    edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
-                               [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
+    x = torch.randn(3, 1)
+    edge_index = torch.tensor([[0, 1, 2],
+                               [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
-    DataLoader(RootedRWSubgraph(4)(data))
+    data_trans = RootedRWSubgraph(2)(data)
+
+    assert 0 not in set(data_trans.subgraph_nodes_mapper[torch.where(data_trans.subgraph_batch == 1)].numpy())
+    assert 0 not in set(data_trans.subgraph_nodes_mapper[torch.where(data_trans.subgraph_batch == 2)].numpy())
