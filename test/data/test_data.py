@@ -208,11 +208,11 @@ def test_data_share_memory():
     for data in data_list:
         assert not data.x.is_shared()
 
-    mp.spawn(run, args=(data_list,), nprocs=4, join=True)
+    mp.spawn(run, args=(data_list, ), nprocs=4, join=True)
 
     for data in data_list:
         assert data.x.is_shared()
-        assert torch.allclose(data.x, torch.full((8,), 4.))
+        assert torch.allclose(data.x, torch.full((8, ), 4.))
 
 
 def test_data_subclass_setter():
