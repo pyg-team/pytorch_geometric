@@ -3,8 +3,13 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import (GATConv, GCNConv, MessagePassing, PGExplainer,
-                                global_add_pool)
+from torch_geometric.nn import (
+    GATConv,
+    GCNConv,
+    MessagePassing,
+    PGExplainer,
+    global_add_pool,
+)
 
 
 def assert_edgemask_clear(model):

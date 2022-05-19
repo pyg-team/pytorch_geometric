@@ -6,8 +6,11 @@ from torch.nn.functional import nll_loss
 from torch_scatter import scatter_mean
 from tqdm import tqdm
 
-from torch_geometric.nn.models.explainer import (Explainer, clear_masks,
-                                                 set_masks)
+from torch_geometric.nn.models.explainer import (
+    Explainer,
+    clear_masks,
+    set_masks,
+)
 
 EPS = 1e-15
 
