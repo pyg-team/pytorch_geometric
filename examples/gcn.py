@@ -75,12 +75,11 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    out = model(data.x, data.edge_index, data.edge_weight)
+    pred = model(data.x, data.edge_index, data.edge_weight).argmax(dim=-1)
 
     accs = []
     for mask in [data.train_mask, data.val_mask, data.test_mask]:
-        pred = out[mask].argmax(dim=-1)
-        accs.append(int((pred == data.y[mask]).sum()) / int(mask.sum()))
+        accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
 
