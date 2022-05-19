@@ -2,8 +2,9 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
+from torch_geometric.testing import withPackage
 
-
+@withPackage('torch_cluster')
 def test_rooted_ego_nets():
     x = torch.randn(3, 1)
     edge_index = torch.tensor([[0, 1, 2], [1, 2, 1]])
