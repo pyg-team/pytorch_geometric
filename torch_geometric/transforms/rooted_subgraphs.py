@@ -179,8 +179,9 @@ class RootedRWSubgraph(RootedSubgraph):
         walk = torch.cat(walks, dim=-1)
         node_mask = row.new_empty((num_nodes, num_nodes), dtype=torch.bool)
         node_mask.fill_(False)
-        node_mask[start.repeat_interleave(
-            (self.walk_length + 1) * self.repeat), walk.reshape(-1)] = True
+        index = start.repeat_interleave(
+            (self.walk_length + 1) * self.repeat), walk.reshape(-1)
+        node_mask[index] = True
 
         if self.return_hops:  # this is fast enough
             sparse_adj = SparseTensor(row=row, col=col,
