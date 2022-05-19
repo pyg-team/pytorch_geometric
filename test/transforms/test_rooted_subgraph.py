@@ -1,8 +1,9 @@
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
 from torch_geometric.testing import withPackage
+from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
+
 
 @withPackage('torch_cluster')
 def test_rooted_ego_nets():
