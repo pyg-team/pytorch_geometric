@@ -1,5 +1,3 @@
-import math
-
 import torch
 from torch import Tensor, nn
 from torch.nn import Parameter
@@ -8,8 +6,8 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import Adj, OptTensor, Size, Tensor
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import Adj, OptTensor, Tensor
 
 
 class PEGConv(MessagePassing):
@@ -18,7 +16,17 @@ class PEGConv(MessagePassing):
     for More Powerful Graph Neural Networks"
     <https://arxiv.org/abs/2203.00199>`_ paper
 
-
+    $$X^{'},Z^{'}=(\sigma [(\hat{A} \odot M)XW],Z)$$
+    where\ $M_{uv}=MLP(||Z_u-Z_v||),\forall u,v \in V$.
+    $\hat{A} = \hat{D}^{-1/2}(A+I)\hat{D}^{-1/2}$ is the
+    normalized adjacent matrix and 
+    $\hat{D}_{ii} = \Sigma_{j=0}\hat{A}_{ij}$ is diagonal 
+    degree matrix. $\odot$ denotes Hadamard product and $Z$ 
+    is the positional encoding. 
+     
+    The adjacency matrix can include other values than 1 
+    representing edge weights via the optional edge\_weight tensor.
+    
     Args:
         in_channels (int): Size of input node features.
         out_channels (int): Size of output node features.
@@ -87,8 +95,6 @@ class PEGConv(MessagePassing):
     def forward(self, x: Tensor, pos_encoding: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""
-
-        #coors, feats = x[:, :self.pos_dim], x[:, self.pos_dim:]
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
