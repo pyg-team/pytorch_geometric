@@ -265,7 +265,7 @@ class GroupAddRev(InvertibleModule):
                                        dim=self.split_dim)
                 return [arg] * self.num_groups
 
-            chunked_args = list(map(chunk_arg, args))
+            chunked_args = map(chunk_arg, args)
             args_chunks = list(zip(*chunked_args))
         return args_chunks
 
