@@ -10,7 +10,25 @@ from torch_geometric.typing import Adj
 
 
 class InvertibleFunction(torch.autograd.Function):
-    """Invertible autograd function."""
+    r""" Invertible autograd function. This allows doing autograd in a
+    reversible fashion so that the memory of intermediate results can
+    be freed during the forward pass and be constructed on-the-fly
+    during the bachward pass.
+
+    Args:
+        ctx (torch.autograd.function.InvertibleFunctionBackward):
+            ctx is a context object that can be used
+            to stash information for backward computation.
+        fn (nn.Module): fn is the forward function.
+        fn_inverse (nn.Module): fn_inverse is the inverse function to
+            recompute the freed input node features.
+        num_bwd_passes (int):
+            Number of backward passes to retain a link with the output.
+            After the last backward pass the output is discarded
+            and memory is freed.
+        num_inputs (int): The number of inputs to the forward function.
+        inputs_and_weights (tuple): inputs and weights for autograd.
+    """
     @staticmethod
     def forward(ctx, fn, fn_inverse, num_bwd_passes, num_inputs,
                 *inputs_and_weights):
