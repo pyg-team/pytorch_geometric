@@ -10,10 +10,6 @@ def test_rooted_ego_nets():
                                [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
     subgraph_data = RootedEgoNets(2)(data)
-    print("")
-    print(subgraph_data.subgraph_batch)
-    print(subgraph_data.subgraph_nodes_mapper)
-    print(subgraph_data.subgraph_edges_mapper)
 
 
 def test_rooted_rw_subgraph():
