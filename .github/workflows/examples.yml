@@ -53,6 +53,12 @@ jobs:
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
+      - name: Run GIN on MUTAG
+        run: |
+          python examples/mutag_gin.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
       - name: Run GNNExplainer
         run: |
           pip install matplotlib
