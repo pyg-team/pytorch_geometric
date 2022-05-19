@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import DiffGroupNorm
+from torch_geometric.testing import is_full_test
 
 
 def test_diff_group_norm():
@@ -10,16 +11,20 @@ def test_diff_group_norm():
     assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
 
     assert norm(x).tolist() == x.tolist()
-    norm = torch.jit.script(norm)
-    assert norm(x).tolist() == x.tolist()
+
+    if is_full_test():
+        jit = torch.jit.script(norm)
+        assert jit(x).tolist() == x.tolist()
 
     norm = DiffGroupNorm(16, groups=4, lamda=0.01)
     assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
 
     out = norm(x)
     assert out.size() == x.size()
-    norm = torch.jit.script(norm)
-    assert norm(x).tolist() == out.tolist()
+
+    if is_full_test():
+        jit = torch.jit.script(norm)
+        assert jit(x).tolist() == out.tolist()
 
 
 def test_group_distance_ratio():

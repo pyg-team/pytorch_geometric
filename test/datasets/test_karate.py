@@ -1,13 +1,9 @@
-from torch_geometric.datasets import KarateClub
-
-
-def test_karate():
-    dataset = KarateClub()
-
+def test_karate(get_dataset):
+    dataset = get_dataset(name='KarateClub')
+    assert str(dataset) == 'KarateClub()'
     assert len(dataset) == 1
     assert dataset.num_features == 34
     assert dataset.num_classes == 4
-    assert dataset.__repr__() == 'KarateClub()'
 
     assert len(dataset[0]) == 4
     assert dataset[0].edge_index.size() == (2, 156)

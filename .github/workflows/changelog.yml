@@ -1,0 +1,13 @@
+name: Changelog Enforcer
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+
+jobs:
+
+  changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dangoslen/changelog-enforcer@v3

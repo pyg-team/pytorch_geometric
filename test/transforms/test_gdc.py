@@ -1,10 +1,12 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import GDC
 from torch_geometric.utils import to_dense_adj
 
 
+@withPackage('numba')
 def test_gdc():
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 2, 3, 3, 4],
                                [1, 2, 0, 2, 0, 1, 3, 2, 4, 3]])

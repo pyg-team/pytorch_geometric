@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GraphNorm
+from torch_geometric.testing import is_full_test
 
 
 def test_graph_norm():
@@ -9,7 +10,9 @@ def test_graph_norm():
 
     norm = GraphNorm(16)
     assert norm.__repr__() == 'GraphNorm(16)'
-    torch.jit.script(norm)
+
+    if is_full_test():
+        torch.jit.script(norm)
 
     out = norm(x)
     assert out.size() == (200, 16)

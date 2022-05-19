@@ -45,7 +45,8 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return 1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2
+        return (1. / x + a * x_pow_p0 + b * x_pow_p1 +
+                c * x_pow_p2) * (x < 1.0).to(x.dtype)
 
 
 class BesselBasisLayer(torch.nn.Module):
@@ -59,10 +60,12 @@ class BesselBasisLayer(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
+        with torch.no_grad():
+            torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
+        self.freq.requires_grad_()
 
     def forward(self, dist):
-        dist = dist.unsqueeze(-1) / self.cutoff
+        dist = (dist.unsqueeze(-1) / self.cutoff)
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
@@ -72,8 +75,10 @@ class SphericalBasisLayer(torch.nn.Module):
         super().__init__()
         import sympy as sym
 
-        from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
-                                                             real_sph_harm)
+        from torch_geometric.nn.models.dimenet_utils import (
+            bessel_basis,
+            real_sph_harm,
+        )
 
         assert num_radial <= 64
         self.num_spherical = num_spherical
@@ -264,20 +269,20 @@ class DimeNet(torch.nn.Module):
         num_bilinear (int): Size of the bilinear layer tensor.
         num_spherical (int): Number of spherical harmonics.
         num_radial (int): Number of radial basis functions.
-        cutoff: (float, optional): Cutoff distance for interatomic
+        cutoff (float, optional): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
         envelope_exponent (int, optional): Shape of the smooth cutoff.
             (default: :obj:`5`)
-        num_before_skip: (int, optional): Number of residual layers in the
+        num_before_skip (int, optional): Number of residual layers in the
             interaction blocks before the skip connection. (default: :obj:`1`)
-        num_after_skip: (int, optional): Number of residual layers in the
+        num_after_skip (int, optional): Number of residual layers in the
             interaction blocks after the skip connection. (default: :obj:`2`)
-        num_output_layers: (int, optional): Number of linear layers for the
+        num_output_layers (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (Callable, optional): The activation funtion.
+        act (Callable, optional): The activation function.
             (default: :obj:`swish`)
     """
 
@@ -291,6 +296,9 @@ class DimeNet(torch.nn.Module):
                  num_after_skip: int = 2, num_output_layers: int = 3,
                  act: Callable = swish):
         super().__init__()
+
+        if num_spherical < 2:
+            raise ValueError("num_spherical should be greater than 1")
 
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors

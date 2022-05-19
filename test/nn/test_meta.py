@@ -8,6 +8,7 @@ from torch.nn import Sequential as Seq
 from torch_scatter import scatter_mean
 
 from torch_geometric.nn import MetaLayer
+from torch_geometric.testing import is_full_test
 
 count = 0
 
@@ -99,4 +100,5 @@ def test_meta_layer_example():
     assert edge_attr.size() == (40, 5)
     assert u.size() == (2, 20)
 
-    torch.jit.script(op)
+    if is_full_test():
+        torch.jit.script(op)

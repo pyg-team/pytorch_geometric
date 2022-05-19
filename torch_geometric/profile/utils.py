@@ -5,13 +5,13 @@ import random
 import subprocess as sp
 import sys
 from collections.abc import Mapping, Sequence
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.data import BaseData
 
 
 def count_parameters(model: torch.nn.Module) -> int:
@@ -36,7 +36,7 @@ def get_model_size(model: torch.nn.Module) -> int:
     return model_size
 
 
-def get_data_size(data: Union[Data, HeteroData]) -> int:
+def get_data_size(data: BaseData) -> int:
     r"""Given a :class:`torch_geometric.data.Data` object, get its theoretical
     memory usage in bytes.
 

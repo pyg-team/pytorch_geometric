@@ -1,13 +1,17 @@
-import pytest
 import torch
 from torch.nn import Linear
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
-from torch_geometric.profile import (count_parameters, get_cpu_memory_from_gc,
-                                     get_data_size, get_gpu_memory_from_gc,
-                                     get_gpu_memory_from_nvidia_smi,
-                                     get_model_size)
+from torch_geometric.profile import (
+    count_parameters,
+    get_cpu_memory_from_gc,
+    get_data_size,
+    get_gpu_memory_from_gc,
+    get_gpu_memory_from_nvidia_smi,
+    get_model_size,
+)
+from torch_geometric.testing import withCUDA
 
 
 def test_count_parameters():
@@ -36,7 +40,7 @@ def test_get_cpu_memory_from_gc():
     assert new_mem - old_mem == 10 * 128 * 4
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withCUDA
 def test_get_cpu_memory_from_gc():
     old_mem = get_gpu_memory_from_gc()
     _ = torch.randn(10, 128, device='cuda')
@@ -44,7 +48,7 @@ def test_get_cpu_memory_from_gc():
     assert new_mem - old_mem == 10 * 128 * 4
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
+@withCUDA
 def test_get_gpu_memory_from_nvidia_smi():
     free_mem, used_mem = get_gpu_memory_from_nvidia_smi(device=0, digits=2)
     assert free_mem >= 0

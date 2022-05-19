@@ -7,8 +7,13 @@ from typing import Callable, List, Optional
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_tar, extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+    extract_zip,
+)
 from torch_geometric.utils import to_undirected
 
 

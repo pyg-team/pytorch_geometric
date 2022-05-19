@@ -1,12 +1,6 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
 import numpy as np
 import torch
 
-from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
 from torch_geometric.utils import erdos_renyi_graph
@@ -36,9 +30,8 @@ def test_neighbor_sampler():
     assert len(out) == 3
 
 
-def test_neighbor_sampler_on_cora():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, 'Cora')
+def test_neighbor_sampler_on_cora(get_dataset):
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
 
     batch = torch.arange(10)
@@ -96,8 +89,3 @@ def test_neighbor_sampler_on_cora():
     out1 = model.batch(data.x[n_id], adjs)
     out2 = model.full(data.x, data.edge_index)[batch]
     assert torch.allclose(out1, out2)
-
-    try:
-        shutil.rmtree(root)
-    except PermissionError:
-        pass

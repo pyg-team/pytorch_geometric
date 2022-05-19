@@ -16,150 +16,142 @@ from torch_geometric.utils import softmax
 
 class RGATConv(MessagePassing):
     r"""The relational graph attentional operator from the `"Relational Graph
-    Attention Networks" <https://arxiv.org/abs/1904.05811>`_ paper where the
-    attention logits :math:`\mathbf{E}^{(r)}_{i,j}` for each relation type
-    (:math:`\mathbf{r}`) are computed with the help of both query and key
-    kernels,
-    *i.e.*
+    Attention Networks" <https://arxiv.org/abs/1904.05811>`_ paper.
+    Here, attention logits :math:`\mathbf{a}^{(r)}_{i,j}` are computed for each
+    relation type :math:`r` with the help of both query and key kernels, *i.e.*
 
     .. math::
-        \mathbf{q}^{(r)}_i = \mathbf{\Theta}^{(r)}\mathbf{x}_{i} \ \cdot
-        \ \mathbf{Q}^{(r)}
+        \mathbf{q}^{(r)}_i = \mathbf{W}_1^{(r)}\mathbf{x}_{i} \cdot
+        \mathbf{Q}^{(r)}
+        \quad \textrm{and} \quad
+        \mathbf{k}^{(r)}_i = \mathbf{W}_1^{(r)}\mathbf{x}_{i} \cdot
+        \mathbf{K}^{(r)}.
 
-    and
+    Two schemes have been proposed to compute attention logits
+    :math:`\mathbf{a}^{(r)}_{i,j}` for each relation type :math:`r`:
+
+    **Additive attention**
 
     .. math::
-        \mathbf{k}^{(r)}_i = \mathbf{\Theta}^{(r)}\mathbf{x}_{i} \ \cdot
-        \ \mathbf{K}^{(r)},
+        \mathbf{a}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
+        \mathbf{k}^{(r)}_j)
 
-    where the query (:math:`\mathbf{Q}^{(r)}`) and key kernels
-    (:math:`\mathbf{K}^{(r)}`) are combined to form the attention kernels
-    :math:`\mathbf{A}^{(r)}`. Now, two schemes have been proposed to compute
-    attention logits :math:`\mathbf{E}^{(r)}_{i,j}` for each relation type
-    (:math:`\mathbf{r}`)
+    or **multiplicative attention**
 
-    .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
-        \mathbf{k}^{(r)}_j) \ \ \ \ \text{(additive attention logits)}
-
-    and
-
-    .. math:: \mathbf{E}^{(r)}_{i,j} = \mathbf{q}^{(r)}_i \ \cdot
-        \ \mathbf{k}^{(r)}_j \ \ \ \ \text{(multiplicative attention logits)}
+    .. math::
+        \mathbf{a}^{(r)}_{i,j} = \mathbf{q}^{(r)}_i \cdot \mathbf{k}^{(r)}_j.
 
     If the graph has multi-dimensional edge features
     :math:`\mathbf{e}^{(r)}_{i,j}`, the attention logits
-    :math:`\mathbf{E}^{(r)}_{i,j}` for each relation type (:math:`\mathbf{r}`)
-    are computed as
+    :math:`\mathbf{a}^{(r)}_{i,j}` for each relation type :math:`r` are
+    computed as
 
-    .. math:: \mathbf{E}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
-        \mathbf{k}^{(r)}_j + (\mathbf{\Theta}^{(r)}_e\mathbf{e}^{(r)}_{i,j}
-        \ \cdot \ \mathbf{E}^{(r)})) \ \ \ \ \text{(additive attention logits)}
+    .. math::
+        \mathbf{a}^{(r)}_{i,j} = \mathrm{LeakyReLU}(\mathbf{q}^{(r)}_i +
+        \mathbf{k}^{(r)}_j + \mathbf{W}_2^{(r)}\mathbf{e}^{(r)}_{i,j})
 
-    and
+    or
 
-    .. math:: \mathbf{E}^{(r)}_{i,j} = (\mathbf{q}^{(r)}_i \ \cdot
-        \ \mathbf{k}^{(r)}_j) \ \cdot \ (\mathbf{\Theta}^{(r)}_e
-        \ \mathbf{e}^{(r)}_{i,j} \ \cdot \ \mathbf{E}^{(r)})
-        \ \ \ \ \text{(multiplicative attention logits)},
+    .. math::
+        \mathbf{a}^{(r)}_{i,j} = \mathbf{q}^{(r)}_i \cdot \mathbf{k}^{(r)}_j
+        \cdot \mathbf{W}_2^{(r)} \mathbf{e}^{(r)}_{i,j},
 
-    where the edge kernel (:math:`\mathbf{E}^{(r)}`) when combine with the
-    query and key kernels form the final attention kernel
-    (:math:`\mathbf{A}^{(r)}`). The attention coefficients
-    :math:`\alpha^{(r)}_{i,j}` calculation for each relation type
-    (:math:`\mathbf{r}`) is done via two different attention mechanisms
+    respectively.
+    The attention coefficients :math:`\alpha^{(r)}_{i,j}` for each relation
+    type :math:`r` are then obtained via two different attention mechanisms:
+    The **within-relation** attention mechanism
 
     .. math::
         \alpha^{(r)}_{i,j} =
-        \frac{
-        \exp\left(\mathbf{E}^{(r)}_{i,j}\right)}
-        {\sum_{k \in \mathcal{N}(i)^{(r)}}
-        \exp\left(\mathbf{E}^{(r)}_{i,k}\right)}
-        \ \ \ \text{(within-relation attention mechanism)}
+        \frac{\exp(\mathbf{a}^{(r)}_{i,j})}
+        {\sum_{k \in \mathcal{N}_r(i)} \exp(\mathbf{a}^{(r)}_{i,k})}
 
-    and
+    or the **across-relation** attention mechanism
 
     .. math::
         \alpha^{(r)}_{i,j} =
-        \frac{
-        \exp\left(\mathbf{E}^{(r)}_{i,j}\right)}
-        {\sum_{r^{\prime} \in \mathcal{R}}\sum_{k \in
-        \mathcal{N}(i)^{(r^{\prime})}}
-        \exp\left(\mathbf{E}^{(r^{\prime})}_{i,k}\right)}
-        \ \ \ \text{(across-relation attention mechanism)}
+        \frac{\exp(\mathbf{a}^{(r)}_{i,j})}
+        {\sum_{r^{\prime} \in \mathcal{R}}
+        \sum_{k \in \mathcal{N}_{r^{\prime}}(i)}
+        \exp(\mathbf{a}^{(r^{\prime})}_{i,k})}
 
     where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.
     Edge type needs to be a one-dimensional :obj:`torch.long` tensor which
     stores a relation identifier :math:`\in \{ 0, \ldots, |\mathcal{R}| - 1\}`
-    for each edge. To enhance the discriminative power of attention-based GNNs,
-    this layer implements four different cardinality preservation options (for
-    each relation type (:math:`\mathbf{r}`)) proposed in the `"Improving
-    Attention Mechanism in Graph Neural Networks via Cardinality Preservation"
-    <https://arxiv.org/abs/1907.02204>`_ paper
+    for each edge.
+
+    To enhance the discriminative power of attention-based GNNs, this layer
+    further implements four different cardinality preservation options as
+    proposed in the `"Improving Attention Mechanism in Graph Neural Networks
+    via Cardinality Preservation" <https://arxiv.org/abs/1907.02204>`_ paper:
 
     .. math::
-        \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
-        \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j + \mathcal{W} \ \odot
-        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \mathbf{x}^{(r)}_j
-        \ \ \ \text{(additive)}
+        \text{additive:}~~~\mathbf{x}^{{\prime}(r)}_i &=
+        \sum_{j \in \mathcal{N}_r(i)}
+        \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j + \mathcal{W} \odot
+        \sum_{j \in \mathcal{N}_r(i)} \mathbf{x}^{(r)}_j
 
-    .. math::
-        \mathbf{x}^{{\prime}(r)}_i = \psi(|\mathcal{N}^{(r)}_i|) \ \odot
-        \ \sum_{j \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j}
-        \mathbf{x}^{(r)}_j \ \ \ \text{(scaled)}
+        \text{scaled:}~~~\mathbf{x}^{{\prime}(r)}_i &=
+        \psi(|\mathcal{N}_r(i)|) \odot
+        \sum_{j \in \mathcal{N}_r(i)} \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j
 
-    .. math::
-        \mathbf{x}^{{\prime}(r)}_i = \sum_{j \in \mathcal{N}(i)^{(r)}}
-        (\alpha^{(r)}_{i,j} + 1) \mathbf{x}^{(r)}_j \ \ \ \text{(f-additive)}
+        \text{f-additive:}~~~\mathbf{x}^{{\prime}(r)}_i &=
+        \sum_{j \in \mathcal{N}_r(i)}
+        (\alpha^{(r)}_{i,j} + 1) \cdot \mathbf{x}^{(r)}_j
 
-    .. math::
-        \mathbf{x}^{{\prime}(r)}_i = |\mathcal{N}^{(r)}_i| \ \odot \ \sum_{j
-        \in \mathcal{N}(i)^{(r)}} \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j
-        \ \ \ \text{(f-scaled)}
+        \text{f-scaled:}~~~\mathbf{x}^{{\prime}(r)}_i &=
+        |\mathcal{N}_r(i)| \odot \sum_{j \in \mathcal{N}_r(i)}
+        \alpha^{(r)}_{i,j} \mathbf{x}^{(r)}_j
+
+    * If :obj:`attention_mode="additive-self-attention"` and
+      :obj:`concat=True`, the layer outputs :obj:`heads * out_channels`
+      features for each node.
+
+    * If :obj:`attention_mode="multiplicative-self-attention"` and
+      :obj:`concat=True`, the layer outputs :obj:`heads * dim * out_channels`
+      features for each node.
+
+    * If :obj:`attention_mode="additive-self-attention"` and
+      :obj:`concat=False`, the layer outputs :obj:`out_channels` features for
+      each node.
+
+    * If :obj:`attention_mode="multiplicative-self-attention"` and
+      :obj:`concat=False`, the layer outputs :obj:`dim * out_channels` features
+      for each node.
+
+    Please make sure to set the :obj:`in_channels` argument of the next
+    layer accordingly if more than one instance of this layer is used.
 
     .. note::
-        When :obj:`attention_mode=additive-self-attention` and
-        :obj:`concat=True`, the layer outputs :obj:`heads * out_channels`
-        features for each node, and when
-        :obj:`attention_mode=multiplicative-self-attention` and
-        :obj:`concat=True`, the layer outputs :obj:`heads * d * out_channels`
-        features for each node. Besides, if
-        :obj:`attention_mode=additive-self-attention` and
-        :obj:`concat=False/None`, the layer outputs :obj:`out_channels`
-        features for each node and if
-        :obj:`attention_mode=multiplicative-self-attention` and
-        :obj:`concat=False/None`, the layer outputs :obj:`d * out_channels`
-        features for each node. Make sure to set the :obj:`in_channels`
-        argument of this layer accordingly, if more than one instance of
-        this layer is used. Furthermore, to stochastically sample the attention
-        coefficients, please use :obj:`dropout` value between 0 and 1, and
-        set :obj:`mod=None`.
 
+        For an example of using :class:`RGATConv`, see
+        `examples/rgat.py <https://github.com/pyg-team/pytorch_geometric/blob
+        /master/examples/rgat.py>`_.
 
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
-        num_bases (int, optional): If set to not :obj:`None`, this layer will
-            use the basis-decomposition regularization scheme where
-            :obj:`num_bases` denotes the number of bases to use.
-            (default: :obj:`None`)
-        num_blocks (int, optional): If set to not :obj:`None`, this layer will
-            use the block-diagonal-decomposition regularization scheme where
+        num_bases (int, optional): If set, this layer will use the
+            basis-decomposition regularization scheme where :obj:`num_bases`
+            denotes the number of bases to use. (default: :obj:`None`)
+        num_blocks (int, optional): If set, this layer will use the
+            block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
-        aggr (str, optional): The aggregation scheme to use.
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`)
         mod (str, optional): The cardinality preservation option to use.
             (:obj:`"additive"`, :obj:`"scaled"`, :obj:`"f-additive"`,
-            :obj:`"f-scaled"`, default: :obj:`None`)
-        attention_mechanism (str): The attention mechanism to use.
-            (:obj:`"within-relation"`, :obj:`"across-relation"`)
-        attention_mode (str): The mode to calculate attention logits.
+            :obj:`"f-scaled"`, :obj:`None`). (default: :obj:`None`)
+        attention_mechanism (str, optional): The attention mechanism to use
+            (:obj:`"within-relation"`, :obj:`"across-relation"`).
+            (default: :obj:`"across-relation"`)
+        attention_mode (str, optional): The mode to calculate attention logits.
             (:obj:`"additive-self-attention"`,
-            :obj:`"multiplicative-self-attention"`)
+            :obj:`"multiplicative-self-attention"`).
+            (default: :obj:`"additive-self-attention"`)
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        d (int): Number of dimensions for query and key kernels.
+        dim (int): Number of dimensions for query and key kernels.
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
             attentions are averaged instead of concatenated.
@@ -169,8 +161,8 @@ class RGATConv(MessagePassing):
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
-        edge_dim (int, optional): Edge feature dimensionality (in case
-            there are any). (default: :obj:`None`)
+        edge_dim (int, optional): Edge feature dimensionality (in case there
+            are any). (default: :obj:`None`)
         bias (bool, optional): If set to :obj:`False`, the layer will not
             learn an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -186,12 +178,11 @@ class RGATConv(MessagePassing):
         num_relations: int,
         num_bases: Optional[int] = None,
         num_blocks: Optional[int] = None,
-        aggr: str = 'add',
         mod: Optional[str] = None,
-        attention_mechanism: str = "within-relation",
+        attention_mechanism: str = "across-relation",
         attention_mode: str = "additive-self-attention",
         heads: int = 1,
-        d: int = 1,
+        dim: int = 1,
         concat: bool = True,
         negative_slope: float = 0.2,
         dropout: float = 0.0,
@@ -199,8 +190,8 @@ class RGATConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-
-        super().__init__(aggr=aggr, node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(node_dim=0, **kwargs)
 
         self.heads = heads
         self.negative_slope = negative_slope
@@ -210,7 +201,7 @@ class RGATConv(MessagePassing):
         self.concat = concat
         self.attention_mode = attention_mode
         self.attention_mechanism = attention_mechanism
-        self.d = d
+        self.dim = dim
         self.edge_dim = edge_dim
 
         self.in_channels = in_channels
@@ -232,7 +223,7 @@ class RGATConv(MessagePassing):
                              '"additive-self-attention" or '
                              '"multiplicative-self-attention"')
 
-        if self.attention_mode == "additive-self-attention" and self.d > 1:
+        if self.attention_mode == "additive-self-attention" and self.dim > 1:
             raise ValueError('"additive-self-attention" mode cannot be '
                              'applied when value of d is greater than 1. '
                              'Use "multiplicative-self-attention" instead.')
@@ -249,15 +240,17 @@ class RGATConv(MessagePassing):
         # The learnable parameters to compute both attention logits and
         # attention coefficients:
         self.q = Parameter(
-            torch.Tensor(self.heads * self.out_channels, self.heads * self.d))
+            torch.Tensor(self.heads * self.out_channels,
+                         self.heads * self.dim))
         self.k = Parameter(
-            torch.Tensor(self.heads * self.out_channels, self.heads * self.d))
+            torch.Tensor(self.heads * self.out_channels,
+                         self.heads * self.dim))
 
         if bias and concat:
             self.bias = Parameter(
-                torch.Tensor(self.heads * self.d * self.out_channels))
+                torch.Tensor(self.heads * self.dim * self.out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(self.d * self.out_channels))
+            self.bias = Parameter(torch.Tensor(self.dim * self.out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -267,7 +260,7 @@ class RGATConv(MessagePassing):
                                    weight_initializer='glorot')
             self.e = Parameter(
                 torch.Tensor(self.heads * self.out_channels,
-                             self.heads * self.d))
+                             self.heads * self.dim))
         else:
             self.lin_edge = None
             self.register_parameter('e', None)
@@ -330,7 +323,7 @@ class RGATConv(MessagePassing):
                 :obj:`[num_nodes, in_channels]` node feature matrix, or an
                 optional one-dimensional node index tensor (in which case
                 input features are treated as trainable node embeddings).
-            edge_index (LongTensor): The edge indices.
+            edge_index (LongTensor or SparseTensor): The edge indices.
             edge_type: The one-dimensional relation type/index for each edge in
                 :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
@@ -349,7 +342,7 @@ class RGATConv(MessagePassing):
                              size=size, edge_attr=edge_attr)
 
         alpha = self._alpha
-        assert alpha is not None, "attention coefficients don't have any value"
+        assert alpha is not None
         self._alpha = None
 
         if isinstance(return_attention_weights, bool):
@@ -419,10 +412,9 @@ class RGATConv(MessagePassing):
 
         if self.attention_mechanism == "within-relation":
             across_out = torch.zeros_like(alpha)
-
-            for r in range(index.size(0)):
-                g = softmax(alpha[r], index[r], ptr)
-                across_out[r] += g.view(self.heads * self.d)
+            for r in range(self.num_relations):
+                mask = edge_type == r
+                across_out[mask] = softmax(alpha[mask], index[mask])
             alpha = across_out
         elif self.attention_mechanism == "across-relation":
             alpha = softmax(alpha, index, ptr, size_i)
@@ -441,11 +433,11 @@ class RGATConv(MessagePassing):
             elif self.attention_mode == "multiplicative-self-attention":
                 ones = torch.ones_like(alpha)
                 h = (outj.view(-1, self.heads, 1, self.out_channels) *
-                     ones.view(-1, self.heads, self.d, 1))
+                     ones.view(-1, self.heads, self.dim, 1))
                 h = torch.mul(self.w, h)
 
                 return (outj.view(-1, self.heads, 1, self.out_channels) *
-                        alpha.view(-1, self.heads, self.d, 1) + h)
+                        alpha.view(-1, self.heads, self.dim, 1) + h)
 
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
@@ -470,7 +462,7 @@ class RGATConv(MessagePassing):
 
                 return torch.mul(
                     outj.view(-1, self.heads, 1, self.out_channels) *
-                    alpha.view(-1, self.heads, self.d, 1),
+                    alpha.view(-1, self.heads, self.dim, 1),
                     degree.view(-1, 1, 1, self.out_channels))
 
         elif self.mod == "f-additive":
@@ -492,7 +484,7 @@ class RGATConv(MessagePassing):
             return alpha.view(-1, self.heads, 1) * outj.view(
                 -1, self.heads, self.out_channels)
         else:
-            return (alpha.view(-1, self.heads, self.d, 1) *
+            return (alpha.view(-1, self.heads, self.dim, 1) *
                     outj.view(-1, self.heads, 1, self.out_channels))
 
     def update(self, aggr_out: Tensor) -> Tensor:
@@ -509,10 +501,10 @@ class RGATConv(MessagePassing):
         else:
             if self.concat is True:
                 aggr_out = aggr_out.view(
-                    -1, self.heads * self.d * self.out_channels)
+                    -1, self.heads * self.dim * self.out_channels)
             else:
                 aggr_out = aggr_out.mean(dim=1)
-                aggr_out = aggr_out.view(-1, self.d * self.out_channels)
+                aggr_out = aggr_out.view(-1, self.dim * self.out_channels)
 
             if self.bias is not None:
                 aggr_out = aggr_out + self.bias

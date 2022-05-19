@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SGConv
+from torch_geometric.testing import is_full_test
 
 
 def test_sg_conv():
@@ -21,15 +22,16 @@ def test_sg_conv():
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out1.tolist()
-    assert jit(x, edge_index, value).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert jit(x, edge_index, value).tolist() == out2.tolist()
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
-    assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)

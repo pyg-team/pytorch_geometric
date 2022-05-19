@@ -121,13 +121,13 @@ class HGTConv(MessagePassing):
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
                 features  for each individual node type.
-            edge_index_dict: (Dict[str, Union[Tensor, SparseTensor]]): A
+            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
                 dictionary holding graph connectivity information for each
                 individual edge type, either as a :obj:`torch.LongTensor` of
                 shape :obj:`[2, num_edges]` or a
                 :obj:`torch_sparse.SparseTensor`.
 
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The ouput node embeddings
+        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
             for each node type.
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
@@ -187,5 +187,5 @@ class HGTConv(MessagePassing):
         return out.view(-1, self.out_channels)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.out_channels}, '
+        return (f'{self.__class__.__name__}(-1, {self.out_channels}, '
                 f'heads={self.heads})')

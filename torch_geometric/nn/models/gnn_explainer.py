@@ -4,8 +4,11 @@ from typing import Optional
 import torch
 from tqdm import tqdm
 
-from torch_geometric.nn.models.explainer import (Explainer, clear_masks,
-                                                 set_masks)
+from torch_geometric.nn.models.explainer import (
+    Explainer,
+    clear_masks,
+    set_masks,
+)
 
 EPS = 1e-15
 

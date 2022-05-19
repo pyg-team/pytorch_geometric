@@ -6,10 +6,18 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 
-from torch_geometric.nn.conv import (GATConv, GCNConv, GINConv, MessagePassing,
-                                     PNAConv, SAGEConv)
+from torch_geometric.nn.conv import (
+    GATConv,
+    GATv2Conv,
+    GCNConv,
+    GINConv,
+    MessagePassing,
+    PNAConv,
+    SAGEConv,
+)
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
+from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj
 
 
@@ -57,14 +65,12 @@ class BasicGNN(torch.nn.Module):
     ):
         super().__init__()
 
-        from class_resolver.contrib.torch import activation_resolver
-
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
 
         self.dropout = dropout
-        self.act = activation_resolver.make(act, act_kwargs)
+        self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
 
@@ -80,6 +86,7 @@ class BasicGNN(torch.nn.Module):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, **kwargs))
         if out_channels is not None and jk is None:
+            self._is_conv_to_out = True
             self.convs.append(
                 self.init_conv(hidden_channels, out_channels, **kwargs))
         else:
@@ -125,11 +132,11 @@ class BasicGNN(torch.nn.Module):
             x = self.convs[i](x, edge_index, *args, **kwargs)
             if i == self.num_layers - 1 and self.jk_mode is None:
                 break
-            if self.act_first:
+            if self.act is not None and self.act_first:
                 x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
-            if not self.act_first:
+            if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if hasattr(self, 'jk'):
@@ -246,9 +253,12 @@ class GIN(BasicGNN):
 
 
 class GAT(BasicGNN):
-    r"""The Graph Neural Network from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper, using the
-    :class:`~torch_geometric.nn.GATConv` operator for message passing.
+    r"""The Graph Neural Network from `"Graph Attention Networks"
+    <https://arxiv.org/abs/1710.10903>`_ or `"How Attentive are Graph Attention
+    Networks?" <https://arxiv.org/abs/2105.14491>`_ papers, using the
+    :class:`~torch_geometric.nn.GATConv` or
+    :class:`~torch_geometric.nn.GATv2Conv` operator for message passing,
+    respectively.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -257,6 +267,9 @@ class GAT(BasicGNN):
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
+        v2 (bool, optional): If set to :obj:`True`, will make use of
+            :class:`~torch_geometric.nn.conv.GATv2Conv` rather than
+            :class:`~torch_geometric.nn.conv.GATConv`. (default: :obj:`False`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
@@ -271,19 +284,32 @@ class GAT(BasicGNN):
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
-            :class:`torch_geometric.nn.conv.GATConv`.
+            :class:`torch_geometric.nn.conv.GATConv` or
+            :class:`torch_geometric.nn.conv.GATv2Conv`.
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
 
-        kwargs = copy.copy(kwargs)
-        if 'heads' in kwargs and out_channels % kwargs['heads'] != 0:
-            kwargs['heads'] = 1
-        if 'concat' not in kwargs or kwargs['concat']:
-            out_channels = out_channels // kwargs.get('heads', 1)
+        v2 = kwargs.pop('v2', False)
+        heads = kwargs.pop('heads', 1)
+        concat = kwargs.pop('concat', True)
 
-        return GATConv(in_channels, out_channels, dropout=self.dropout,
-                       **kwargs)
+        # Do not use concatenation in case the layer `GATConv` layer maps to
+        # the desired output channels (out_channels != None and jk != None):
+        if getattr(self, '_is_conv_to_out', False):
+            concat = False
+
+        if concat and out_channels % heads != 0:
+            raise ValueError(f"Ensure that the number of output channels of "
+                             f"'GATConv' (got '{out_channels}') is divisible "
+                             f"by the number of heads (got '{heads}')")
+
+        if concat:
+            out_channels = out_channels // heads
+
+        Conv = GATConv if not v2 else GATv2Conv
+        return Conv(in_channels, out_channels, heads=heads, concat=concat,
+                    dropout=self.dropout, **kwargs)
 
 
 class PNA(BasicGNN):

@@ -21,6 +21,7 @@ from .pg_explainer import PGExplainer
 from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
+from .mask_label import MaskLabel
 
 __all__ = [
     'MLP',
@@ -55,6 +56,7 @@ __all__ = [
     'RECT_L',
     'LINKX',
     'LightGCN',
+    'MaskLabel',
 ]
 
 classes = __all__

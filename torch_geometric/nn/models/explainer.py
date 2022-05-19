@@ -18,7 +18,7 @@ def set_masks(model: torch.nn.Module, mask: Tensor, edge_index: Tensor,
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module._explain = True
+            module.explain = True
             module._edge_mask = mask
             module._loop_mask = loop_mask
             module._apply_sigmoid = apply_sigmoid
@@ -28,7 +28,7 @@ def clear_masks(model: torch.nn.Module):
     """Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module._explain = False
+            module.explain = False
             module._edge_mask = None
             module._loop_mask = None
             module._apply_sigmoid = True
@@ -204,9 +204,10 @@ class Explainer(torch.nn.Module):
             x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             **kwargs (optional): Additional arguments passed to the GNN module.
+
         :rtype: (Tensor, Tensor, LongTensor, LongTensor, LongTensor, dict)
         """
-        num_nodes, num_edges = x.size(0), edge_index.size(0)
+        num_nodes, num_edges = x.size(0), edge_index.size(1)
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
             node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=num_nodes, flow=self._flow())
@@ -218,7 +219,8 @@ class Explainer(torch.nn.Module):
                 kwargs_new[key] = value[subset]
             elif torch.is_tensor(value) and value.size(0) == num_edges:
                 kwargs_new[key] = value[edge_mask]
-            kwargs_new[key] = value  # TODO: this is not in PGExplainer
+            else:
+                kwargs_new[key] = value  # TODO: this is not in PGExplainer
         return x, edge_index, mapping, edge_mask, subset, kwargs_new
 
     def _to_log_prob(self, x):

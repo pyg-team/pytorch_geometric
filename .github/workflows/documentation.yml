@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.8]
-        torch-version: [1.10.0]
+        torch-version: [1.11.0]
 
     steps:
       - uses: actions/checkout@v2
@@ -32,8 +32,7 @@ jobs:
         run: |
           pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install sphinx
-          pip install sphinx_rtd_theme
+          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
 
       - name: Install main package
         run: |

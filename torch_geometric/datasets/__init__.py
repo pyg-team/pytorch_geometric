@@ -17,6 +17,7 @@ from .qm7 import QM7b
 from .qm9 import QM9
 from .md17 import MD17
 from .zinc import ZINC
+from .aqsol import AQSOL
 from .molecule_net import MoleculeNet
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
@@ -99,6 +100,7 @@ __all__ = [
     'QM9',
     'MD17',
     'ZINC',
+    'AQSOL',
     'MoleculeNet',
     'Entities',
     'RelLinkPredDataset',

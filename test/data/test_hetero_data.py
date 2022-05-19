@@ -6,13 +6,20 @@ from torch_geometric.data import HeteroData
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
+x_conference = torch.randn(5, 8)
 
 idx_paper = torch.randint(x_paper.size(0), (100, ), dtype=torch.long)
 idx_author = torch.randint(x_author.size(0), (100, ), dtype=torch.long)
+idx_conference = torch.randint(x_conference.size(0), (100, ), dtype=torch.long)
 
 edge_index_paper_paper = torch.stack([idx_paper[:50], idx_paper[:50]], dim=0)
 edge_index_paper_author = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
-edge_index_author_paper = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
+edge_index_author_paper = torch.stack([idx_author[:30], idx_paper[:30]], dim=0)
+edge_index_paper_conference = torch.stack(
+    [idx_paper[:25], idx_conference[:25]], dim=0)
+
+edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
+edge_attr_author_paper = torch.randn(edge_index_author_paper.size(1), 8)
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -29,9 +36,14 @@ def test_init_hetero_data():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData(
         v1={'x': 1},
@@ -41,9 +53,14 @@ def test_init_hetero_data():
         paper__author={'edge_index': edge_index_paper_author},
         author__paper={'edge_index': edge_index_author_paper},
     )
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData({
         'v1': {
@@ -65,9 +82,14 @@ def test_init_hetero_data():
             'edge_index': edge_index_author_paper
         },
     })
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
 
 def test_hetero_data_functions():
@@ -77,11 +99,19 @@ def test_hetero_data_functions():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
-    assert len(data) == 2
-    assert sorted(data.keys) == ['edge_index', 'x']
-    assert 'x' in data and 'edge_index' in data
+    data['paper', 'paper'].edge_attr = edge_attr_paper_paper
+    assert len(data) == 3
+    assert sorted(data.keys) == ['edge_attr', 'edge_index', 'x']
+    assert 'x' in data and 'edge_index' in data and 'edge_attr' in data
     assert data.num_nodes == 15
     assert data.num_edges == 110
+
+    assert data.num_node_features == {'paper': 16, 'author': 32}
+    assert data.num_edge_features == {
+        ('paper', 'to', 'paper'): 8,
+        ('paper', 'to', 'author'): 0,
+        ('author', 'to', 'paper'): 0,
+    }
 
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
@@ -99,8 +129,8 @@ def test_hetero_data_functions():
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
-    assert len(data) == 3
-    assert sorted(data.keys) == ['edge_index', 'x', 'y']
+    assert len(data) == 4
+    assert sorted(data.keys) == ['edge_attr', 'edge_index', 'x', 'y']
 
     del data['paper', 'author']
     node_types, edge_types = data.metadata()
@@ -111,6 +141,78 @@ def test_hetero_data_functions():
     assert len(data.to_namedtuple()) == 5
     assert data.to_namedtuple().y == 0
     assert len(data.to_namedtuple().paper) == 1
+
+
+def test_hetero_data_rename():
+    data = HeteroData()
+    data['paper'].x = x_paper
+    data['author'].x = x_author
+    data['paper', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'author'].edge_index = edge_index_paper_author
+    data['author', 'paper'].edge_index = edge_index_author_paper
+
+    data = data.rename('paper', 'article')
+    assert data.node_types == ['author', 'article']
+    assert data.edge_types == [
+        ('article', 'to', 'article'),
+        ('article', 'to', 'author'),
+        ('author', 'to', 'article'),
+    ]
+
+    assert data['article'].x.tolist() == x_paper.tolist()
+    edge_index = data['article', 'article'].edge_index
+    assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
+def test_hetero_data_subgraph():
+    data = HeteroData()
+    data.num_node_types = 3
+    data['paper'].x = x_paper
+    data['paper'].name = 'paper'
+    data['paper'].num_nodes = x_paper.size(0)
+    data['author'].x = x_author
+    data['author'].num_nodes = x_author.size(0)
+    data['conference'].x = x_conference
+    data['conference'].num_nodes = x_conference.size(0)
+    data['paper', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'paper'].edge_attr = edge_attr_paper_paper
+    data['paper', 'paper'].name = 'cites'
+    data['author', 'paper'].edge_index = edge_index_author_paper
+    data['paper', 'author'].edge_index = edge_index_paper_author
+    data['paper', 'conference'].edge_index = edge_index_paper_conference
+
+    subset = {
+        'paper': torch.randperm(x_paper.size(0))[:4],
+        'author': torch.randperm(x_author.size(0))[:2]
+    }
+
+    out = data.subgraph(subset)
+
+    assert out.num_node_types == data.num_node_types
+    assert out.node_types == ['paper', 'author']
+
+    assert len(out['paper']) == 3
+    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
+    assert out['paper'].name == 'paper'
+    assert out['paper'].num_nodes == 4
+    assert len(out['author']) == 2
+    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
+    assert out['author'].num_nodes == 2
+
+    assert out.edge_types == [
+        ('paper', 'to', 'paper'),
+        ('author', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+    ]
+
+    assert len(out['paper', 'paper']) == 3
+    assert out['paper', 'paper'].edge_index is not None
+    assert out['paper', 'paper'].edge_attr is not None
+    assert out['paper', 'paper'].name == 'cites'
+    assert len(out['paper', 'author']) == 1
+    assert out['paper', 'author'].edge_index is not None
+    assert len(out['author', 'paper']) == 1
+    assert out['author', 'paper'].edge_index is not None
 
 
 def test_copy_hetero_data():

@@ -1,11 +1,14 @@
 import random
 
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('random_scale')
 class RandomScale(BaseTransform):
     r"""Scales node positions by a randomly sampled factor :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
+    (functional name: :obj:`random_scale`)
 
     .. math::
         \begin{bmatrix}

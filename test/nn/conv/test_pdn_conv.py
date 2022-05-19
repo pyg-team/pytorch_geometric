@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import PDNConv
+from torch_geometric.testing import is_full_test
 
 
 def test_pdn_conv():
@@ -17,13 +18,14 @@ def test_pdn_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index, edge_attr), out)
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, edge_index, edge_attr), out)
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_pdn_conv_with_sparse_node_input_feature():

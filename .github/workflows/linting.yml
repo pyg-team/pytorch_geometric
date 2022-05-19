@@ -8,85 +8,8 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  flake8:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install flake8
-
-      - name: Run linting
-        run: |
-          flake8 .
-
-  pyroma:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install pyroma
-
-      - name: Check package metadata
-        run: |
-          pyroma --min=10 .
-
-  yamllint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install yamllint
-
-      - name: Run linting
-        run: |
-          yamllint .
-
-  isort:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          pip install isort
-
-      - name: Run linting
-        run: |
-          isort --check-only .
-
   pylint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -96,17 +19,14 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: |
-          pip install pylint
+        run: pip install pylint
 
       - name: Run linting
         continue-on-error: true
-        run: |
-          pylint **/*.py
+        run: pylint **/*.py
 
   mypy:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -116,8 +36,7 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: |
-          pip install mypy
+        run: pip install mypy
 
       - name: Check type hints
         continue-on-error: true

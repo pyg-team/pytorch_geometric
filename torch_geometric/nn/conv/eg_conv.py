@@ -25,9 +25,9 @@ class EGConv(MessagePassing):
         \mathbf{x}_i^{\prime} = {\LARGE ||}_{h=1}^H \sum_{\oplus \in
         \mathcal{A}} \sum_{b = 1}^B w_{i, h, \oplus, b} \;
         \underset{j \in \mathcal{N}(i) \cup \{i\}}{\bigoplus}
-        \mathbf{\Theta}_b \mathbf{x}_{j}
+        \mathbf{W}_b \mathbf{x}_{j}
 
-    with :math:`\mathbf{\Theta}_b` denoting a basis weight,
+    with :math:`\mathbf{W}_b` denoting a basis weight,
     :math:`\oplus` denoting an aggregator, and :math:`w` denoting per-vertex
     weighting coefficients across different heads, bases and aggregators.
 

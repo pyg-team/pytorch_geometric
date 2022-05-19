@@ -5,16 +5,19 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType
 from torch_geometric.utils import negative_sampling
 
 
+@functional_transform('random_link_split')
 class RandomLinkSplit(BaseTransform):
     r"""Performs an edge-level random split into training, validation and test
     sets of a :class:`~torch_geometric.data.Data` or a
-    :class:`~torch_geometric.data.HeteroData` object.
+    :class:`~torch_geometric.data.HeteroData` object
+    (functional name: :obj:`random_link_split`).
     The split is performed such that the training split does not include edges
     in validation and test splits; and the validation split does not include
     edges in the test split.
@@ -92,6 +95,13 @@ class RandomLinkSplit(BaseTransform):
         edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
         rev_edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
     ):
+        if isinstance(edge_types, list):
+            if rev_edge_types is None:
+                rev_edge_types = [None] * len(edge_types)
+
+            assert isinstance(rev_edge_types, list)
+            assert len(edge_types) == len(rev_edge_types)
+
         self.num_val = num_val
         self.num_test = num_test
         self.is_undirected = is_undirected
@@ -102,10 +112,6 @@ class RandomLinkSplit(BaseTransform):
         self.disjoint_train_ratio = disjoint_train_ratio
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
-
-        if isinstance(edge_types, list):
-            assert isinstance(rev_edge_types, list)
-            assert len(edge_types) == len(rev_edge_types)
 
     def __call__(self, data: Union[Data, HeteroData]):
         edge_types = self.edge_types
@@ -260,12 +266,12 @@ class RandomLinkSplit(BaseTransform):
 
         if hasattr(store, self.key):
             edge_label = store[self.key]
-            assert edge_label.dtype == torch.long
-            assert edge_label.size(0) == store.edge_index.size(1)
             edge_label = edge_label[index]
             # Increment labels by one. Note that there is no need to increment
             # in case no negative edges are added.
-            if self.neg_sampling_ratio > 0:
+            if neg_edge_index.numel() > 0:
+                assert edge_label.dtype == torch.long
+                assert edge_label.size(0) == store.edge_index.size(1)
                 edge_label.add_(1)
             if hasattr(out, self.key):
                 delattr(out, self.key)

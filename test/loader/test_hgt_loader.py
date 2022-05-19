@@ -1,14 +1,8 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
 import numpy as np
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.utils import k_hop_subgraph
@@ -129,12 +123,11 @@ def test_hgt_loader():
         # Test for isolated nodes (there shouldn't exist any):
         n_id = torch.cat([batch['paper'].x, batch['author'].x])
         row, col, _ = full_adj[n_id, n_id].coo()
-        assert torch.cat([row, col]).unique().numel() == 60
+        assert torch.cat([row, col]).unique().numel() >= 59
 
 
-def test_hgt_loader_on_cora():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, 'Cora')
+def test_hgt_loader_on_cora(get_dataset):
+    dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
 
@@ -181,8 +174,3 @@ def test_hgt_loader_on_cora():
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
-
-    try:
-        shutil.rmtree(root)
-    except PermissionError:
-        pass
