@@ -5,13 +5,11 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import RootedEgoNets, RootedRWSubgraph
 
 
-@withPackage('torch_cluster')
 def test_rooted_ego_nets():
     x = torch.randn(3, 1)
     edge_index = torch.tensor([[0, 1, 2], [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
     data_trans = RootedEgoNets(2)(data)
-
 
     assert (data_trans.subgraph_batch == 0).sum() == 3
     assert (data_trans.subgraph_batch == 1).sum() == 2
@@ -34,6 +32,7 @@ def test_rooted_ego_nets():
     torch.testing.assert_allclose(data_trans.rooted_subgraph(0).x, data.x)
 
 
+@withPackage('torch_cluster')
 def test_rooted_rw_subgraph():
     x = torch.randn(3, 1)
     edge_index = torch.tensor([[0, 1, 2], [1, 2, 1]])
