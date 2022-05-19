@@ -27,7 +27,8 @@ def test_peg_conv():
         t = '(Tensor, Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert jit(x, pos_encoding, edge_index).tolist() == out1.tolist()
-        assert jit(x, pos_encoding, edge_index, value).tolist() == out2.tolist()
+        assert jit(x, pos_encoding, edge_index,
+                   value).tolist() == out2.tolist()
 
         t = '(Tensor, Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
