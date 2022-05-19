@@ -12,7 +12,6 @@ def test_rooted_ego_nets():
     data = Data(x=x, edge_index=edge_index)
     data_trans = RootedEgoNets(2)(data)
 
-
     assert (data_trans.subgraph_batch == 0).sum() == 3
     assert (data_trans.subgraph_batch == 1).sum() == 2
     assert (data_trans.subgraph_batch == 2).sum() == 2
