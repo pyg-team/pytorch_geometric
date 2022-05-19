@@ -381,7 +381,6 @@ class Data(BaseData):
         else:
             propobj.fset(self, value)
 
-
     def __delattr__(self, key: str):
         delattr(self._store, key)
 
