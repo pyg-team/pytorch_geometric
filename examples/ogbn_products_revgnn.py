@@ -117,8 +117,11 @@ class RevGNN(torch.nn.Module):
         h = self.node_features_encoder(x)
 
         # Generate a dropout mask which will be shared across GNN blocks
-        m = torch.zeros_like(h).bernoulli_(1 - self.dropout)
-        mask = m.requires_grad_(False) / (1 - self.dropout)
+        if self.dropout != 0.:
+            m = torch.zeros_like(h).bernoulli_(1 - self.dropout)
+            mask = m.requires_grad_(False) / (1 - self.dropout)
+        else:
+            mask = None
 
         for layer in range(self.num_layers):
             h = self.gnns[layer](h, edge_index, mask)
