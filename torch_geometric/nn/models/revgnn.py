@@ -177,7 +177,8 @@ class InvertibleModule(nn.Module, ABC):
                 fn_inverse,
                 self.num_bwd_passes,
                 len(args),
-                *(args + tuple(p
+                *args,
+                *tuple(p for p in self.parameters() if p.requires_grad),
                                for p in self.parameters() if p.requires_grad)),
             )
         else:
