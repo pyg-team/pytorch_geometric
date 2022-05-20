@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `CHANGELOG.md` ([#4581](https://github.com/pyg-team/pytorch_geometric/pull/4581))
 ### Changed
 - Math support in Markdown ([#4683](https://github.com/pyg-team/pytorch_geometric/pull/4683))
-- Allow for `setter` properties in `Data` and `HeteroData` ([#4682](https://github.com/pyg-team/pytorch_geometric/pull/4682))
+- Allow for `setter` properties in `Data` ([#4682](https://github.com/pyg-team/pytorch_geometric/pull/4682), [#4686](https://github.com/pyg-team/pytorch_geometric/pull/4686))
 - Allow for optional `edge_weight` in `GCN2Conv` ([#4670](https://github.com/pyg-team/pytorch_geometric/pull/4670))
 - Fixed the interplay between `TUDataset` and `pre_transform` that modify node features ([#4669](https://github.com/pyg-team/pytorch_geometric/pull/4669))
 - Make use of the `pyg_sphinx_theme` documentation template ([#4664](https://github.com/pyg-team/pyg-lib/pull/4664), [#4667](https://github.com/pyg-team/pyg-lib/pull/4667))
