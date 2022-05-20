@@ -208,7 +208,7 @@ class GroupAddRev(InvertibleModule):
         num_bwd_passes (int, optional):
             Number of backward passes to retain a link with the output.
             After the last backward pass the output is discarded
-            and memory is freed.
+            and memory is freed. (default: :obj:`1`)
     """
     def __init__(
         self,
