@@ -19,7 +19,7 @@ class InvertibleFunction(torch.autograd.Function):
         ctx (torch.autograd.function.InvertibleFunctionBackward):
             A context object that can be used
             to stash information for backward computation.
-        fn (nn.Module): fn is the forward function.
+        fn (nn.Module): The forward function.
         fn_inverse (nn.Module): fn_inverse is the inverse function to
             recompute the freed input node features.
         num_bwd_passes (int):
