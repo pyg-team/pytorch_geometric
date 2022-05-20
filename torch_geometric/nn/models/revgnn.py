@@ -20,7 +20,7 @@ class InvertibleFunction(torch.autograd.Function):
             A context object that can be used
             to stash information for backward computation.
         fn (nn.Module): The forward function.
-        fn_inverse (nn.Module): fn_inverse is the inverse function to
+        fn_inverse (nn.Module): The inverse function to
             recompute the freed input node features.
         num_bwd_passes (int):
             Number of backward passes to retain a link with the output.
