@@ -114,7 +114,8 @@ def test():
 
 @torch.no_grad()
 def compute_rank(ranks):
-    # fair ranking prediction as the average of optimistic and pessimistic ranking
+    # fair ranking prediction as the average
+    # of optimistic and pessimistic ranking
     true = ranks[0]
     optimistic = (ranks > true).sum() + 1
     pessimistic = (ranks >= true).sum()
