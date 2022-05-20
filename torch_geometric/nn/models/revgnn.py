@@ -22,10 +22,9 @@ class InvertibleFunction(torch.autograd.Function):
         fn (nn.Module): fn is the forward function.
         fn_inverse (nn.Module): fn_inverse is the inverse function to
             recompute the freed input node features.
-        num_bwd_passes (int):
-            Number of backward passes to retain a link with the output.
-            After the last backward pass the output is discarded
-            and memory is freed.
+        num_bwd_passes (int): Number of backward passes to retain a link
+            with the output. After the last backward pass the output is
+            discarded and memory is freed.
         num_inputs (int): The number of inputs to the forward function.
         inputs_and_weights (tuple): inputs and weights for autograd.
     """
@@ -144,6 +143,7 @@ class InvertibleModule(nn.Module, ABC):
     Args:
         disable (bool, optional): This disables using the InvertibleFunction.
             Therefore, it executes functions without memory savings.
+            (default: :obj:`False`)
         num_bwd_passes (int, optional):
             Number of backward passes to retain a link with the output.
             After the last backward pass the output is discarded
@@ -179,7 +179,6 @@ class InvertibleModule(nn.Module, ABC):
                 len(args),
                 *args,
                 *tuple(p for p in self.parameters() if p.requires_grad),
-                               for p in self.parameters() if p.requires_grad)),
             )
         else:
             out = fn(*args)
@@ -201,10 +200,13 @@ class GroupAddRev(InvertibleModule):
         gnn (Union[nn.Module, nn.ModuleList]):
             A seed gnn for building gnn groups or a groups of gnns.
         split_dim (int optional): The dimension to spilt groups.
+            (default: :obj:`-1`)
         num_groups (Optional[int], optional): The number of groups for
             group additive reverse.
+            (default: :obj:`None`)
         disable (bool, optional): This disables using the InvertibleFunction.
             Therefore, it executes functions without memory savings.
+            (default: :obj:`False`)
         num_bwd_passes (int, optional):
             Number of backward passes to retain a link with the output.
             After the last backward pass the output is discarded
