@@ -123,6 +123,12 @@ More information about evaluating final model performance can be found in the co
 In addition to the easy application of existing GNNs, PyG makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829) from Wang *et al.*:
 
+$$
+\begin{equation}
+\mathbf{x}^{\prime}_i = \max_{j \in \mathcal{N}(i)} \textrm{MLP}_{\theta} \left( [ \mathbf{x}_i, \mathbf{x}_j - \mathbf{x}_i ] \right)
+\end{equation}
+$$
+
 <p align="center">
   <img height="40" src="https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/docs/source/_figures/edge_conv.svg?sanitize=true" />
 </p>
