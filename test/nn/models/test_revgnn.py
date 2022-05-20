@@ -15,7 +15,7 @@ def test_revgnn(num_groups):
         hidden_channels // num_groups,
         aggr="mean",
     )
-    gnn = GroupAddRev(seed_gnn, num_groups=num_groups, disable=False)
+    gnn = GroupAddRev(seed_gnn, num_groups=num_groups)
     assert str(gnn) == f"GroupAddRev(num_groups={num_groups}, \
             disable=False"
 
