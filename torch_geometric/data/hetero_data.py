@@ -12,6 +12,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, NodeType, QueryType
+from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -228,6 +229,14 @@ class HeteroData(BaseData):
         r"""Returns a list of all edge storages of the graph."""
         return list(self._edge_store_dict.values())
 
+    def node_items(self) -> List[Tuple[NodeType, NodeStorage]]:
+        r"""Returns a list of node type and node storage pairs."""
+        return list(self._node_store_dict.items())
+
+    def edge_items(self) -> List[Tuple[EdgeType, EdgeStorage]]:
+        r"""Returns a list of edge type and edge storage pairs."""
+        return list(self._edge_store_dict.items())
+
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
         for key, store in chain(self._node_store_dict.items(),
@@ -294,6 +303,11 @@ class HeteroData(BaseData):
             key: store.num_edge_features
             for key, store in self._edge_store_dict.items()
         }
+
+    def is_undirected(self) -> bool:
+        r"""Returns :obj:`True` if graph edges are undirected."""
+        edge_index, _, _ = to_homogeneous_edge_index(self)
+        return is_undirected(edge_index, num_nodes=self.num_nodes)
 
     def debug(self):
         pass  # TODO
@@ -431,6 +445,83 @@ class HeteroData(BaseData):
 
         return self
 
+    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
+        r"""Returns the induced subgraph containing the node types and
+        corresponding nodes in :obj:`subset_dict`.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = ...
+            data['author'].x = ...
+            data['conference'].x = ...
+            data['paper', 'cites', 'paper'].edge_index = ...
+            data['author', 'paper'].edge_index = ...
+            data['paper', 'conference'].edge_index = ...
+            print(data)
+            >>> HeteroData(
+                paper={ x=[10, 16] },
+                author={ x=[5, 32] },
+                conference={ x=[5, 8] },
+                (paper, cites, paper)={ edge_index=[2, 50] },
+                (author, to, paper)={ edge_index=[2, 30] },
+                (paper, to, conference)={ edge_index=[2, 25] }
+            )
+
+            subset_dict = {
+                'paper': torch.tensor([3, 4, 5, 6]),
+                'author': torch.tensor([0, 2]),
+            }
+
+            print(data.subgraph(subset_dict))
+            >>> HeteroData(
+                paper={ x=[4, 16] },
+                author={ x=[2, 32] },
+                (paper, cites, paper)={ edge_index=[2, 24] },
+                (author, to, paper)={ edge_index=[2, 5] }
+            )
+
+        Args:
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+                holding the nodes to keep for each node type.
+        """
+        data = self.__class__(self._global_store)
+
+        for node_type, subset in subset_dict.items():
+            for key, value in self[node_type].items():
+                if key == 'num_nodes':
+                    if subset.dtype == torch.bool:
+                        data[node_type].num_nodes = int(subset.sum())
+                    else:
+                        data[node_type].num_nodes = subset.size(0)
+                elif self[node_type].is_node_attr(key):
+                    data[node_type][key] = value[subset]
+                else:
+                    data[node_type][key] = value
+
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            if src not in subset_dict or dst not in subset_dict:
+                continue
+
+            edge_index, _, edge_mask = bipartite_subgraph(
+                (subset_dict[src], subset_dict[dst]),
+                self[edge_type].edge_index,
+                relabel_nodes=True,
+                size=(self[src].num_nodes, self[dst].num_nodes),
+                return_edge_mask=True,
+            )
+
+            for key, value in self[edge_type].items():
+                if key == 'edge_index':
+                    data[edge_type].edge_index = edge_index
+                elif self[edge_type].is_edge_attr(key):
+                    data[edge_type][key] = value[edge_mask]
+                else:
+                    data[edge_type][key] = value
+
+        return data
+
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
                        add_node_type: bool = True,
@@ -481,26 +572,14 @@ class HeteroData(BaseData):
                 if len(sizes) == len(stores) and len(set(sizes)) == 1
             ]
 
+        edge_index, node_slices, edge_slices = to_homogeneous_edge_index(self)
+        device = edge_index.device if edge_index is not None else None
+
         data = Data(**self._global_store.to_dict())
-
-        # Iterate over all node stores and record the slice information:
-        node_slices, cumsum = {}, 0
-        node_type_names, node_types = [], []
-        for i, (node_type, store) in enumerate(self._node_store_dict.items()):
-            num_nodes = store.num_nodes
-            node_slices[node_type] = (cumsum, cumsum + num_nodes)
-            node_type_names.append(node_type)
-            cumsum += num_nodes
-
-            if add_node_type:
-                kwargs = {'dtype': torch.long}
-                node_types.append(torch.full((num_nodes, ), i, **kwargs))
-        data._node_type_names = node_type_names
-
-        if len(node_types) > 1:
-            data.node_type = torch.cat(node_types, dim=0)
-        elif len(node_types) == 1:
-            data.node_type = node_types[0]
+        if edge_index is not None:
+            data.edge_index = edge_index
+        data._node_type_names = list(node_slices.keys())
+        data._edge_type_names = list(edge_slices.keys())
 
         # Combine node attributes into a single tensor:
         if node_attrs is None:
@@ -511,39 +590,8 @@ class HeteroData(BaseData):
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
-        if len([
-                key for key in node_attrs
-                if (key in {'x', 'pos', 'batch'} or 'node' in key)
-        ]) == 0 and not add_node_type:
-            data.num_nodes = cumsum
-
-        # Iterate over all edge stores and record the slice information:
-        edge_slices, cumsum = {}, 0
-        edge_indices, edge_type_names, edge_types = [], [], []
-        for i, (edge_type, store) in enumerate(self._edge_store_dict.items()):
-            src, _, dst = edge_type
-            num_edges = store.num_edges
-            edge_slices[edge_type] = (cumsum, cumsum + num_edges)
-            edge_type_names.append(edge_type)
-            cumsum += num_edges
-
-            kwargs = {'dtype': torch.long, 'device': store.edge_index.device}
-            offset = [[node_slices[src][0]], [node_slices[dst][0]]]
-            offset = torch.tensor(offset, **kwargs)
-            edge_indices.append(store.edge_index + offset)
-            if add_edge_type:
-                edge_types.append(torch.full((num_edges, ), i, **kwargs))
-        data._edge_type_names = edge_type_names
-
-        if len(edge_indices) > 1:
-            data.edge_index = torch.cat(edge_indices, dim=-1)
-        elif len(edge_indices) == 1:
-            data.edge_index = edge_indices[0]
-
-        if len(edge_types) > 1:
-            data.edge_type = torch.cat(edge_types, dim=0)
-        elif len(edge_types) == 1:
-            data.edge_type = edge_types[0]
+        if not data.can_infer_num_nodes:
+            data.num_nodes = list(node_slices.values())[-1][1]
 
         # Combine edge attributes into a single tensor:
         if edge_attrs is None:
@@ -554,4 +602,53 @@ class HeteroData(BaseData):
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
+        if add_node_type:
+            sizes = [offset[1] - offset[0] for offset in node_slices.values()]
+            sizes = torch.tensor(sizes, dtype=torch.long, device=device)
+            node_type = torch.arange(len(sizes), device=device)
+            data.node_type = node_type.repeat_interleave(sizes)
+
+        if add_edge_type and edge_index is not None:
+            sizes = [offset[1] - offset[0] for offset in edge_slices.values()]
+            sizes = torch.tensor(sizes, dtype=torch.long, device=device)
+            edge_type = torch.arange(len(sizes), device=device)
+            data.edge_type = edge_type.repeat_interleave(sizes)
+
         return data
+
+
+# Helper functions ############################################################
+
+
+def to_homogeneous_edge_index(
+    data: HeteroData,
+) -> Tuple[Optional[Tensor], Dict[NodeType, Any], Dict[EdgeType, Any]]:
+    # Record slice information per node type:
+    cumsum = 0
+    node_slices: Dict[NodeType, Tuple[int, int]] = {}
+    for node_type, store in data._node_store_dict.items():
+        num_nodes = store.num_nodes
+        node_slices[node_type] = (cumsum, cumsum + num_nodes)
+        cumsum += num_nodes
+
+    # Record edge indices and slice information per edge type:
+    cumsum = 0
+    edge_indices: List[Tensor] = []
+    edge_slices: Dict[EdgeType, Tuple[int, int]] = {}
+    for edge_type, store in data._edge_store_dict.items():
+        src, _, dst = edge_type
+        offset = [[node_slices[src][0]], [node_slices[dst][0]]]
+        offset = torch.tensor(offset, device=store.edge_index.device)
+        edge_indices.append(store.edge_index + offset)
+
+        num_edges = store.num_edges
+        edge_slices[edge_type] = (cumsum, cumsum + num_edges)
+        cumsum += num_edges
+
+    edge_index = None
+    if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
+        edge_index = edge_indices[0]
+    elif len(edge_indices) > 0:
+        edge_index = torch.cat(edge_indices, dim=-1)
+
+    return edge_index, node_slices, edge_slices

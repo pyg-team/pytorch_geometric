@@ -23,7 +23,7 @@ class ToSparseTensor(BaseTransform):
         :obj:`data.edge_index` for now.
 
     Args:
-        attr: (str, optional): The name of the attribute to add as a value to
+        attr (str, optional): The name of the attribute to add as a value to
             the :class:`~torch_sparse.SparseTensor` object (if present).
             (default: :obj:`edge_weight`)
         remove_edge_index (bool, optional): If set to :obj:`False`, the

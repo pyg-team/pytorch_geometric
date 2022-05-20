@@ -5,7 +5,7 @@ Dataset Cheatsheet
 
     This dataset statistics table is a **work in progress**.
     Please consider helping us filling its content by providing statistics for individual datasets.
-    See `here <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/datasets/karate.py#L23-L35>`__ and `here <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/datasets/tu_dataset.py#L56-L108>`__ for examples on how to do so.
+    See `here <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/datasets/karate.py#L25-L37>`__ and `here <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/datasets/tu_dataset.py#L56-L108>`__ for examples on how to do so.
 
 .. list-table::
     :widths: 50 10 10 10 10 10

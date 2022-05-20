@@ -5,6 +5,7 @@ build/
 dist/
 alpha/
 runs/
+wandb/
 .cache/
 .eggs/
 lightning_logs/

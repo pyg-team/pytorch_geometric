@@ -103,10 +103,10 @@ class LightningDataset(LightningDataModule):
             trainer.fit(model, datamodule)
 
     Args:
-        train_dataset: (Dataset) The training dataset.
-        val_dataset: (Dataset, optional) The validation dataset.
+        train_dataset (Dataset): The training dataset.
+        val_dataset (Dataset, optional): The validation dataset.
             (default: :obj:`None`)
-        test_dataset: (Dataset, optional) The test dataset.
+        test_dataset (Dataset, optional): The test dataset.
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
@@ -274,6 +274,7 @@ class LightningNodeData(LightningDataModule):
                 directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
                 time_attr=kwargs.get('time_attr', None),
+                is_sorted=kwargs.get('is_sorted', False),
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes

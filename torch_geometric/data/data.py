@@ -375,7 +375,11 @@ class Data(BaseData):
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
-        setattr(self._store, key, value)
+        propobj = getattr(self.__class__, key, None)
+        if propobj is None or propobj.fset is None:
+            setattr(self._store, key, value)
+        else:
+            propobj.fset(self, value)
 
     def __delattr__(self, key: str):
         delattr(self._store, key)
