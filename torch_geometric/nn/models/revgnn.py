@@ -73,7 +73,7 @@ class InvertibleFunction(torch.autograd.Function):
         if len(ctx.outputs) == 0:
             raise RuntimeError(
                 f"Trying to perform backward on the 'InvertibleFunction' "
-                for more than {ctx.num_bwd_passes} times! \
+                for more than '{ctx.num_bwd_passes}' times. "
                 Try raising 'num_bwd_passes'.")
         inputs = ctx.inputs.pop()
         outputs = ctx.outputs.pop()
