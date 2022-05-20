@@ -17,7 +17,7 @@ class InvertibleFunction(torch.autograd.Function):
 
     Args:
         ctx (torch.autograd.function.InvertibleFunctionBackward):
-            ctx is a context object that can be used
+            A context object that can be used
             to stash information for backward computation.
         fn (nn.Module): fn is the forward function.
         fn_inverse (nn.Module): fn_inverse is the inverse function to
