@@ -10,7 +10,7 @@ from torch_geometric.typing import Adj
 
 
 class InvertibleFunction(torch.autograd.Function):
-    r""" Invertible autograd function. This allows doing autograd in a
+    r"""Invertible autograd function. This allows doing autograd in a
     reversible fashion so that the memory of intermediate results can
     be freed during the forward pass and be constructed on-the-fly
     during the bachward pass.
