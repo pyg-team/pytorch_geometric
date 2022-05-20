@@ -8,7 +8,7 @@ from torch_geometric.nn.dense.linear import Linear
 @pytest.mark.parametrize("num_groups", [2, 4, 8, 16])
 def test_revgnn(num_groups):
     hidden_channels = 32
-    x = torch.randn(4, 32)
+    x = torch.randn(4, hidden_channels)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     seed_gnn = SAGEConv(
         hidden_channels // num_groups,
