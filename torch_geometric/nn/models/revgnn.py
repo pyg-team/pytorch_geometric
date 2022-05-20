@@ -139,7 +139,7 @@ class InvertibleFunction(torch.autograd.Function):
 
 
 class InvertibleModule(nn.Module, ABC):
-    r"""An abstract class for implementing Invertible Modules.
+    r"""An abstract class for implementing invertible modules.
 
     Args:
         disable (bool, optional): This disables using the InvertibleFunction.
