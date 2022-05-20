@@ -112,6 +112,7 @@ def test():
 
     return valid_mrr, test_mrr
 
+
 @torch.no_grad()
 def compute_rank(ranks):
     # fair ranking prediction as the average of optimistic and pessimistic ranking
