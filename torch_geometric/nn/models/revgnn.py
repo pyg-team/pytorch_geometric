@@ -17,10 +17,10 @@ class InvertibleFunction(torch.autograd.Function):
 
     Args:
         ctx (torch.autograd.function.InvertibleFunctionBackward):
-            ctx is a context object that can be used
+            A context object that can be used
             to stash information for backward computation.
-        fn (nn.Module): fn is the forward function.
-        fn_inverse (nn.Module): fn_inverse is the inverse function to
+        fn (nn.Module): The forward function.
+        fn_inverse (nn.Module): The inverse function to
             recompute the freed input node features.
         num_bwd_passes (int): Number of backward passes to retain a link
             with the output. After the last backward pass the output is
@@ -71,8 +71,8 @@ class InvertibleFunction(torch.autograd.Function):
         # Retrieve input and output tensor nodes
         if len(ctx.outputs) == 0:
             raise RuntimeError(
-                f"Trying to perform backward on the InvertibleFunction \
-                for more than {ctx.num_bwd_passes} times! \
+                f"Trying to perform backward on the 'InvertibleFunction' "
+                for more than '{ctx.num_bwd_passes}' times. "
                 Try raising 'num_bwd_passes'.")
         inputs = ctx.inputs.pop()
         outputs = ctx.outputs.pop()
