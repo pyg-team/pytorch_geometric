@@ -76,11 +76,11 @@ class RootedSubgraph(BaseTransform):
         """
         raise NotImplementedError
 
-    def __call__(self, data: Data) -> Data:
-        data = self.extract(data.edge_index, data.num_nodes)
-        for k, v in data.to_dict():
-            data[k] = v
-        return data
+    def __call__(self, data: Data) -> RootedSubgraphData:
+        rooted_data = self.extract(data.edge_index, data.num_nodes)
+        for k, v in data.items():
+            rooted_data[k] = v
+        return rooted_data
 
 
 class RootedEgoNets(RootedSubgraph):

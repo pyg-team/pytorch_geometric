@@ -45,13 +45,10 @@ def test_rooted_rw_subgraph():
     x = torch.randn(3, 1)
     edge_index = torch.tensor([[0, 1, 2], [1, 2, 1]])
     data = Data(x=x, edge_index=edge_index)
-    data_trans = RootedRWSubgraph(2)(data)
-    data_trans.map_features()
+    sub_data = RootedRWSubgraph(2)(data)
 
-    assert 0 not in set(data_trans.subgraph_nodes_mapper[torch.where(
-        data_trans.subgraph_batch == 1)].numpy())
-    assert 0 not in set(data_trans.subgraph_nodes_mapper[torch.where(
-        data_trans.subgraph_batch == 2)].numpy())
+    assert 0 not in sub_data.n_id[sub_data.n_sub_batch == 1].tolist()
+    assert 0 not in sub_data.n_id[sub_data.n_sub_batch == 2].tolist()
 
 
 def test_rooted_subgraph_minibatch():
