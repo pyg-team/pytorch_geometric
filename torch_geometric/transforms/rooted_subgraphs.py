@@ -65,8 +65,8 @@ class RootedSubgraphData(Data):
 
 class RootedSubgraph(BaseTransform):
     r"""
-    Base class for rooted subgraph.
-    The object transforms a Data object to RootedSubgraphData object.
+    Base class for rooted subgraph transform. The object transforms a Data
+    object to RootedSubgraphData object.
     """
     def extract(self, edge_index: torch.Tensor,
                 num_nodes: int) -> RootedSubgraphData:
