@@ -7,6 +7,7 @@ install_requires = [
     'tqdm',
     'numpy',
     'scipy',
+    'sympy',
     'jinja2',
     'requests',
     'pyparsing',
@@ -42,6 +43,7 @@ benchmark_requires = [
 test_requires = [
     'pytest',
     'pytest-cov',
+    'sympy',
 ]
 
 dev_requires = test_requires + [

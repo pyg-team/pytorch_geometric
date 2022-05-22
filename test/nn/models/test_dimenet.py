@@ -1,4 +1,3 @@
-import pytest
 import torch
 import torch.nn as nn
 
@@ -27,8 +26,8 @@ class TestDimeNetPlusPlus:
 
     def test_overfit(self):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=0.1)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode='min', factor=0.5, patience=1, min_lr=0.00001)
+        # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        # optimizer, mode='min', factor=0.5, patience=1, min_lr=0.00001)
         loss_fn = nn.L1Loss()
         y_target = torch.Tensor([1])
         for i in range(1000):
