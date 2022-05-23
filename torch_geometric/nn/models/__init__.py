@@ -21,7 +21,7 @@ from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
 from .mask_label import MaskLabel
-from .revgnn import GroupAddRev
+from .rev_gnn import GroupAddRev
 
 __all__ = [
     'MLP',
