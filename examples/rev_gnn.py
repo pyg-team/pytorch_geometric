@@ -31,7 +31,7 @@ class GNNBlock(torch.nn.Module):
     def forward(self, x, edge_index, dropout_mask=None):
         x = self.norm(x).relu()
         if self.training and dropout_mask is not None:
-            x = x * self.mask
+            x = x * dropout_mask
         return self.conv(x, edge_index)
 
 
