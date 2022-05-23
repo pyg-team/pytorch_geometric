@@ -454,8 +454,8 @@ class DimeNet(torch.nn.Module):
         for interaction in self.interaction_blocks:
             interaction.reset_parameters()
 
-    @staticmethod
-    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
+    @classmethod
+    def from_qm9_pretrained(cls, root: str, dataset: Dataset, target: int):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -465,7 +465,7 @@ class DimeNet(torch.nn.Module):
         path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
 
         makedirs(path)
-        url = f'{DimeNet.url}/{qm9_target_dict[target]}'
+        url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):
             download_url(f'{url}/checkpoint', path)
@@ -476,10 +476,19 @@ class DimeNet(torch.nn.Module):
         path = osp.join(path, 'ckpt')
         reader = tf.train.load_checkpoint(path)
 
-        model = DimeNet(hidden_channels=128, out_channels=1, num_blocks=6,
-                        num_bilinear=8, num_spherical=7, num_radial=6,
-                        cutoff=5.0, envelope_exponent=5, num_before_skip=1,
-                        num_after_skip=2, num_output_layers=3)
+        model = cls(
+            hidden_channels=128,
+            out_channels=1,
+            num_blocks=6,
+            num_bilinear=8,
+            num_spherical=7,
+            num_radial=6,
+            cutoff=5.0,
+            envelope_exponent=5,
+            num_before_skip=1,
+            num_after_skip=2,
+            num_output_layers=3,
+        )
 
         def copy_(src, name, transpose=False):
             init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
@@ -601,8 +610,8 @@ class DimeNetPlusPlus(DimeNet):
     Directional Message Passing for Non-Equilibrium Molecules"
     <https://arxiv.org/abs/2011.14115>`_ paper.
 
-    DimeNet++ is an upgrade to DimeNet model with 8x faster and
-    10% more accurate than DimeNet.
+    :class:`DimeNetPlusPlus` is an upgrade to the :class:`DimeNet` model with
+    8x faster and 10% more accurate than :class:`DimeNet`.
 
     Args:
         hidden_channels (int): Hidden embedding size.
@@ -629,6 +638,7 @@ class DimeNetPlusPlus(DimeNet):
         act: (Callable, optional): The activation funtion.
             (default: :obj:`swish`)
     """
+
     url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
            'master/pretrained/dimenet_pp')
 
@@ -639,22 +649,27 @@ class DimeNetPlusPlus(DimeNet):
                  envelope_exponent: int = 5, num_before_skip: int = 1,
                  num_after_skip: int = 2, num_output_layers: int = 3,
                  act: Callable = swish):
-        super().__init__(hidden_channels=hidden_channels,
-                         out_channels=out_channels, num_blocks=num_blocks,
-                         num_bilinear=int_emb_size,
-                         num_spherical=num_spherical, num_radial=num_radial,
-                         cutoff=cutoff, max_num_neighbors=max_num_neighbors,
-                         envelope_exponent=envelope_exponent,
-                         num_before_skip=num_before_skip,
-                         num_after_skip=num_after_skip,
-                         num_output_layers=num_output_layers, act=act)
+        super().__init__(
+            hidden_channels=hidden_channels,
+            out_channels=out_channels,
+            num_blocks=num_blocks,
+            num_bilinear=1,
+            num_spherical=num_spherical,
+            num_radial=num_radial,
+            cutoff=cutoff,
+            max_num_neighbors=max_num_neighbors,
+            envelope_exponent=envelope_exponent,
+            num_before_skip=num_before_skip,
+            num_after_skip=num_after_skip,
+            num_output_layers=num_output_layers,
+            act=act,
+        )
 
-        # We are using the rbf, sbf and emb layer of DimeNet model and
-        # redefining output_block and interaction_block in DimeNet++
-        # Hence, it is to be noted that in the above initalisation, the
-        # variable num_bilinear do not have any purpose as it is used
-        # in OutputBlock of DimeNet, but it serves no purpose as
-        # OutputPPBlock of DimeNet++ does not use that argument
+        # We are re-using the RBF, SBF and embedding layers of `DimeNet` and
+        # redefine output_block and interaction_block in DimeNet++.
+        # Hence, it is to be noted that in the above initalization, the
+        # variable `num_bilinear` does not have any purpose as it is used
+        # solely in the `OutputBlock` of DimeNet:
         self.output_blocks = torch.nn.ModuleList([
             OutputPPBlock(num_radial, hidden_channels, out_emb_channels,
                           out_channels, num_output_layers, act)
@@ -669,18 +684,18 @@ class DimeNetPlusPlus(DimeNet):
 
         self.reset_parameters()
 
-    @staticmethod
-    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
+    @classmethod
+    def from_qm9_pretrained(cls, root: str, dataset: Dataset, target: int):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
+        path = osp.join(root, 'pretrained_dimenet_pp', qm9_target_dict[target])
 
         makedirs(path)
-        url = f'{DimeNetPlusPlus.url}/{qm9_target_dict[target]}'
+        url = f'{cls.url}/{qm9_target_dict[target]}'
 
         if not osp.exists(osp.join(path, 'checkpoint')):
             download_url(f'{url}/checkpoint', path)
@@ -691,15 +706,24 @@ class DimeNetPlusPlus(DimeNet):
         path = osp.join(path, 'ckpt')
         reader = tf.train.load_checkpoint(path)
 
-        # Configuration from DimeNet++ configuration
-        # Ref:https://github.com/gasteigerjo/dimenet/blob/master/config_pp.yaml
-        model = DimeNetPlusPlus(hidden_channels=128, out_channels=1,
-                                num_blocks=4, int_emb_size=64,
-                                basis_emb_size=8, out_emb_channels=256,
-                                num_spherical=7, num_radial=6, cutoff=5.0,
-                                max_num_neighbors=32, envelope_exponent=5,
-                                num_before_skip=1, num_after_skip=2,
-                                num_output_layers=3)
+        # Configuration from DimeNet++:
+        # https://github.com/gasteigerjo/dimenet/blob/master/config_pp.yaml
+        model = cls(
+            hidden_channels=128,
+            out_channels=1,
+            num_blocks=4,
+            int_emb_size=64,
+            basis_emb_size=8,
+            out_emb_channels=256,
+            num_spherical=7,
+            num_radial=6,
+            cutoff=5.0,
+            max_num_neighbors=32,
+            envelope_exponent=5,
+            num_before_skip=1,
+            num_after_skip=2,
+            num_output_layers=3,
+        )
 
         def copy_(src, name, transpose=False):
             init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
