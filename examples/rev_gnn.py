@@ -8,7 +8,6 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch.nn import LayerNorm, Linear
 from torch_sparse import SparseTensor
 from tqdm import tqdm
@@ -16,7 +15,6 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeSampler
 from torch_geometric.nn import GroupAddRev, SAGEConv
-from torch_geometric.profile.utils import count_parameters
 from torch_geometric.utils import index_to_mask
 
 
@@ -79,6 +77,8 @@ class RevGNN(torch.nn.Module):
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin2(x)
 
+
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
 transform = T.AddSelfLoops()
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
