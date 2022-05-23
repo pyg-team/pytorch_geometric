@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.nn import GroupAddRev, SAGEConv
+from torch_geometric.nn import GraphConv, GroupAddRev, SAGEConv
 from torch_geometric.nn.dense.linear import Linear
 
 
@@ -77,3 +77,19 @@ def test_revgnn_diable(num_groups):
 
     # Memory will not be freed if disable:
     assert h.storage().size() == 4 * 32
+
+
+@pytest.mark.parametrize('num_groups', [2, 4, 8, 16])
+def test_revgnn_with_args(num_groups):
+    x = torch.randn(4, 32)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_weight = torch.rand(4)
+
+    lin = Linear(32, 32)
+    conv = GraphConv(32 // num_groups, 32 // num_groups)
+    conv = GroupAddRev(conv, num_groups=num_groups)
+
+    h = lin(x)
+    out = conv(h, edge_index, edge_weight)
+    target = out.mean()
+    target.backward()
