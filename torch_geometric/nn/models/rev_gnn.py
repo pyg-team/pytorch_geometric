@@ -210,7 +210,7 @@ class GroupAddRev(InvertibleModule):
         rev_gnn.py>`_.
 
     Args:
-        model (torch.nn.Module or torch.nn.ModuleList]): A seed GNN. The input
+        conv (torch.nn.Module or torch.nn.ModuleList]): A seed GNN. The input
             and output feature dimensions need to match.
         split_dim (int optional): The dimension across which to split groups.
             (default: :obj:`-1`)
@@ -225,7 +225,7 @@ class GroupAddRev(InvertibleModule):
     """
     def __init__(
         self,
-        model: Union[torch.nn.Module, torch.nn.ModuleList],
+        conv: Union[torch.nn.Module, torch.nn.ModuleList],
         split_dim: int = -1,
         num_groups: Optional[int] = None,
         disable: bool = False,
@@ -234,29 +234,29 @@ class GroupAddRev(InvertibleModule):
         super().__init__(disable, num_bwd_passes)
         self.split_dim = split_dim
 
-        if isinstance(model, torch.nn.ModuleList):
-            self.models = model
+        if isinstance(conv, torch.nn.ModuleList):
+            self.convs = conv
         else:
             assert num_groups is not None, "Please specific 'num_groups'"
-            self.models = torch.nn.ModuleList([model])
+            self.convs = torch.nn.ModuleList([conv])
             for i in range(num_groups - 1):
-                model = copy.deepcopy(self.models[0])
-                if hasattr(model, 'reset_parameters'):
-                    model.reset_parameters()
-                self.models.append(model)
+                conv = copy.deepcopy(self.convs[0])
+                if hasattr(conv, 'reset_parameters'):
+                    conv.reset_parameters()
+                self.convs.append(conv)
 
-        if len(self.models) < 2:
+        if len(self.convs) < 2:
             raise ValueError(f"The number of groups should not be smaller "
-                             f"than '2' (got '{len(self.models)}'))")
+                             f"than '2' (got '{self.num_groups}'))")
 
     @property
     def num_groups(self) -> int:
         r"""The number of groups :math:`C`."""
-        return len(self.models)
+        return len(self.convs)
 
     def reset_parameters(self):
-        for model in self.models:
-            model.reset_parameters()
+        for conv in self.convs:
+            conv.reset_parameters()
 
     def _forward(self, x: Tensor, edge_index: Adj, *args):
         channels = x.size(self.split_dim)
@@ -267,7 +267,7 @@ class GroupAddRev(InvertibleModule):
         ys = []
         y_in = sum(xs[1:])
         for i in range(self.num_groups):
-            y_in = xs[i] + self.models[i](y_in, edge_index, *args[i])
+            y_in = xs[i] + self.convs[i](y_in, edge_index, *args[i])
             ys.append(y_in)
         return torch.cat(ys, dim=self.split_dim)
 
@@ -283,7 +283,7 @@ class GroupAddRev(InvertibleModule):
                 y_in = ys[i - 1]
             else:
                 y_in = sum(xs)
-            x = ys[i] - self.models[i](y_in, edge_index, *args[i])
+            x = ys[i] - self.convs[i](y_in, edge_index, *args[i])
             xs.append(x)
 
         return torch.cat(xs[::-1], dim=self.split_dim)
@@ -301,5 +301,5 @@ class GroupAddRev(InvertibleModule):
         return torch.chunk(x, self.num_groups, dim=self.split_dim)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.models[0]}, '
+        return (f'{self.__class__.__name__}({self.convs[0]}, '
                 f'num_groups={self.num_groups})')
