@@ -227,10 +227,10 @@ class InteractionPPBlock(torch.nn.Module):
     def __init__(self, hidden_channels, int_emb_size, basis_emb_size,
                  num_spherical, num_radial, num_before_skip, num_after_skip,
                  act=swish):
-        super(InteractionPPBlock, self).__init__()
+        super().__init__()
         self.act = act
 
-        # Transformation of Bessel and spherical basis representations
+        # Transformation of Bessel and spherical basis representations:
         self.lin_rbf1 = Linear(num_radial, basis_emb_size, bias=False)
         self.lin_rbf2 = Linear(basis_emb_size, hidden_channels, bias=False)
 
@@ -238,14 +238,15 @@ class InteractionPPBlock(torch.nn.Module):
                                bias=False)
         self.lin_sbf2 = Linear(basis_emb_size, int_emb_size, bias=False)
 
-        # Hidden transformation of input message
+        # Hidden transformation of input message:
         self.lin_kj = Linear(hidden_channels, hidden_channels)
         self.lin_ji = Linear(hidden_channels, hidden_channels)
 
-        # Embedding projections for interaction triplets
+        # Embedding projections for interaction triplets:
         self.lin_down = Linear(hidden_channels, int_emb_size, bias=False)
         self.lin_up = Linear(int_emb_size, hidden_channels, bias=False)
-        # Residual layers before and after skip connection
+
+        # Residual layers before and after skip connection:
         self.layers_before_skip = torch.nn.ModuleList([
             ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)
         ])
@@ -278,24 +279,24 @@ class InteractionPPBlock(torch.nn.Module):
             res_layer.reset_parameters()
 
     def forward(self, x, rbf, sbf, idx_kj, idx_ji):
-        # Initial transformation
+        # Initial transformation:
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
 
-        # Transformation via Bessel basis
+        # Transformation via Bessel basis:
         rbf = self.lin_rbf1(rbf)
         rbf = self.lin_rbf2(rbf)
         x_kj = x_kj * rbf
 
-        # Down project embedding and generating triple-interactions
+        # Down project embedding and generating triple-interactions:
         x_kj = self.act(self.lin_down(x_kj))
 
-        # Transform via 2D spherical basis
+        # Transform via 2D spherical basis:
         sbf = self.lin_sbf1(sbf)
         sbf = self.lin_sbf2(sbf)
         x_kj = x_kj[idx_kj] * sbf
 
-        # Aggregate interactions and up-project embeddings
+        # Aggregate interactions and up-project embeddings:
         x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0))
         x_kj = self.act(self.lin_up(x_kj))
 
@@ -307,39 +308,6 @@ class InteractionPPBlock(torch.nn.Module):
             h = layer(h)
 
         return h
-
-
-class OutputPPBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, out_emb_channels,
-                 out_channels, num_layers, act=swish):
-        super().__init__()
-        self.act = act
-
-        self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
-        # The up-projection layer
-        self.lin_up = Linear(hidden_channels, out_emb_channels, bias=False)
-        self.lins = torch.nn.ModuleList()
-        for _ in range(num_layers):
-            self.lins.append(Linear(out_emb_channels, out_emb_channels))
-        self.lin = Linear(out_emb_channels, out_channels, bias=False)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
-        glorot_orthogonal(self.lin_up.weight, scale=2.0)
-        for lin in self.lins:
-            glorot_orthogonal(lin.weight, scale=2.0)
-            lin.bias.data.fill_(0)
-        self.lin.weight.data.fill_(0)
-
-    def forward(self, x, rbf, i, num_nodes=None):
-        x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes)
-        x = self.lin_up(x)
-        for lin in self.lins:
-            x = self.act(lin(x))
-        return self.lin(x)
 
 
 class OutputBlock(torch.nn.Module):
@@ -366,6 +334,40 @@ class OutputBlock(torch.nn.Module):
     def forward(self, x, rbf, i, num_nodes=None):
         x = self.lin_rbf(rbf) * x
         x = scatter(x, i, dim=0, dim_size=num_nodes)
+        for lin in self.lins:
+            x = self.act(lin(x))
+        return self.lin(x)
+
+
+class OutputPPBlock(torch.nn.Module):
+    def __init__(self, num_radial, hidden_channels, out_emb_channels,
+                 out_channels, num_layers, act=swish):
+        super().__init__()
+        self.act = act
+
+        self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
+
+        # The up-projection layer:
+        self.lin_up = Linear(hidden_channels, out_emb_channels, bias=False)
+        self.lins = torch.nn.ModuleList()
+        for _ in range(num_layers):
+            self.lins.append(Linear(out_emb_channels, out_emb_channels))
+        self.lin = Linear(out_emb_channels, out_channels, bias=False)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
+        glorot_orthogonal(self.lin_up.weight, scale=2.0)
+        for lin in self.lins:
+            glorot_orthogonal(lin.weight, scale=2.0)
+            lin.bias.data.fill_(0)
+        self.lin.weight.data.fill_(0)
+
+    def forward(self, x, rbf, i, num_nodes=None):
+        x = self.lin_rbf(rbf) * x
+        x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
