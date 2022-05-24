@@ -220,10 +220,6 @@ class InteractionBlock(torch.nn.Module):
 
 
 class InteractionPPBlock(torch.nn.Module):
-    """
-    The interaction block transforms each message embedding using
-    multiple residual blocks.
-    """
     def __init__(self, hidden_channels, int_emb_size, basis_emb_size,
                  num_spherical, num_radial, num_before_skip, num_after_skip,
                  act=swish):
