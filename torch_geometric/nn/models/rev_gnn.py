@@ -1,8 +1,8 @@
 import copy
-import math
 from abc import ABC, abstractmethod
 from typing import Any, List, Optional, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -87,7 +87,7 @@ class InvertibleFunction(torch.autograd.Function):
                 inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
-                elem_orig.storage().resize_(int(math.prod(elem_orig.size())))
+                elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
                 elem_orig.set_(elem_inv)
 
         # Compute gradients with grad enabled:
