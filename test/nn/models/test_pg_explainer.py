@@ -12,7 +12,7 @@ from torch_geometric.nn import (
 )
 
 
-def assert_edgemask_clear(model):
+def assert_mask_clear(model):
     for layer in model.modules():
         if isinstance(layer, MessagePassing):
             assert ~layer._explain
@@ -83,7 +83,7 @@ def test_node(model, return_type):
     explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
                             log=False, return_type=return_type)
     explainer.train_explainer(x, z, edge_index, node_idxs=torch.arange(0, 3))
-    assert_edgemask_clear(model)
+    assert_mask_clear(model)
 
     mask = explainer.explain(x, z, edge_index, node_idx=1)
     assert mask.shape[0] == edge_index.shape[1]
@@ -102,7 +102,7 @@ def test_graph(model, return_type):
     explainer = PGExplainer(model, out_channels=z.shape[1], task='graph',
                             log=False, return_type=return_type)
     explainer.train_explainer(x, z, edge_index, batch=batch)
-    assert_edgemask_clear(model)
+    assert_mask_clear(model)
 
     mask = explainer.explain(x, z, edge_index)
     assert mask.shape[0] == edge_index.shape[1]
