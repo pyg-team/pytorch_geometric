@@ -92,6 +92,15 @@ def test_node(model, return_type):
     assert mask.shape[0] == edge_index.shape[1]
     assert mask.max() <= 1 and mask.min() >= 0
 
+    # test with 2 node 1 edge graph:
+    explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
+                            log=False, return_type=return_type)
+    explainer.train_explainer(x[:2], z[:2], edge_index[:, :1],
+                              node_idxs=torch.arange(0, 1))
+    assert_mask_clear(model)
+    mask = explainer.explain(x[:2], z[:2], edge_index[:, :1], node_idx=1)
+    assert mask.shape[0] == 1
+
 
 @pytest.mark.parametrize('model', [GNN()])
 @pytest.mark.parametrize('return_type', return_types)
@@ -104,6 +113,9 @@ def test_graph(model, return_type):
 
     explainer = PGExplainer(model, out_channels=z.shape[1], task='graph',
                             log=False, return_type=return_type)
+    assert repr(explainer) == (
+        f'PGExplainer({model}'
+        f', {z.shape[1]}, epochs=30, lr=0.003, task=graph)')
     explainer.train_explainer(x, z, edge_index, batch=batch)
     assert_mask_clear(model)
 
