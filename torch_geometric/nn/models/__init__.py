@@ -8,7 +8,7 @@ from .signed_gcn import SignedGCN
 from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
-from .dimenet import DimeNet
+from .dimenet import DimeNet, DimeNetPlusPlus
 from .explainer import Explainer, to_captum
 from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
@@ -43,6 +43,7 @@ __all__ = [
     'GraphUNet',
     'SchNet',
     'DimeNet',
+    'DimeNetPlusPlus',
     'Explainer',
     'to_captum',
     'GNNExplainer',

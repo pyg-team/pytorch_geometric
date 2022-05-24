@@ -22,6 +22,7 @@ graphgym_requires = [
 full_requires = graphgym_requires + [
     'h5py',
     'numba',
+    'sympy',
     'pandas',
     'captum',
     'rdflib',
