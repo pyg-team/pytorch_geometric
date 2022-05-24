@@ -270,4 +270,5 @@ class PGExplainer(Explainer):
                 return full_edge_mask
 
     def __repr__(self):
-        return f'{self.__class__.__name__}()'
+        return (f'{self.__class__.__name__}({self.model}, {self.out_channels}'
+                f', epochs={self.epochs}, lr={self.lr}, task={self.task})')

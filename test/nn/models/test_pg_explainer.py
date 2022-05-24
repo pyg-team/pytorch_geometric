@@ -82,6 +82,9 @@ def test_node(model, return_type):
 
     explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
                             log=False, return_type=return_type)
+    assert repr(explainer) == (
+        f'PGExplainer({model}'
+        f', {z.shape[1]}, epochs=30, lr=0.003, task=node)')
     explainer.train_explainer(x, z, edge_index, node_idxs=torch.arange(0, 3))
     assert_mask_clear(model)
 
