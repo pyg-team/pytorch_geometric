@@ -2,7 +2,7 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable
+from typing import Callable, Union
 
 import numpy as np
 import torch
@@ -13,9 +13,8 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
-
-from ..acts import swish
-from ..inits import glorot_orthogonal
+from torch_geometric.nn.inits import glorot_orthogonal
+from torch_geometric.nn.resolver import activation_resolver
 
 qm9_target_dict = {
     0: 'mu',
@@ -117,7 +116,7 @@ class SphericalBasisLayer(torch.nn.Module):
 
 
 class EmbeddingBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, act=swish):
+    def __init__(self, num_radial, hidden_channels, act):
         super().__init__()
         self.act = act
 
@@ -139,7 +138,7 @@ class EmbeddingBlock(torch.nn.Module):
 
 
 class ResidualLayer(torch.nn.Module):
-    def __init__(self, hidden_channels, act=swish):
+    def __init__(self, hidden_channels, act):
         super().__init__()
         self.act = act
         self.lin1 = Linear(hidden_channels, hidden_channels)
@@ -159,7 +158,7 @@ class ResidualLayer(torch.nn.Module):
 
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels, num_bilinear, num_spherical,
-                 num_radial, num_before_skip, num_after_skip, act=swish):
+                 num_radial, num_before_skip, num_after_skip, act):
         super().__init__()
         self.act = act
 
@@ -222,7 +221,7 @@ class InteractionBlock(torch.nn.Module):
 class InteractionPPBlock(torch.nn.Module):
     def __init__(self, hidden_channels, int_emb_size, basis_emb_size,
                  num_spherical, num_radial, num_before_skip, num_after_skip,
-                 act=swish):
+                 act):
         super().__init__()
         self.act = act
 
@@ -308,7 +307,7 @@ class InteractionPPBlock(torch.nn.Module):
 
 class OutputBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
-                 act=swish):
+                 act):
         super().__init__()
         self.act = act
 
@@ -337,7 +336,7 @@ class OutputBlock(torch.nn.Module):
 
 class OutputPPBlock(torch.nn.Module):
     def __init__(self, num_radial, hidden_channels, out_emb_channels,
-                 out_channels, num_layers, act=swish):
+                 out_channels, num_layers, act):
         super().__init__()
         self.act = act
 
@@ -403,8 +402,8 @@ class DimeNet(torch.nn.Module):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act (Callable, optional): The activation function.
-            (default: :obj:`swish`)
+        act (str or Callable, optional): The activation function.
+            (default: :obj:`"swish"`)
     """
 
     url = ('https://github.com/klicperajo/dimenet/raw/master/pretrained/'
@@ -415,11 +414,13 @@ class DimeNet(torch.nn.Module):
                  num_radial, cutoff: float = 5.0, max_num_neighbors: int = 32,
                  envelope_exponent: int = 5, num_before_skip: int = 1,
                  num_after_skip: int = 2, num_output_layers: int = 3,
-                 act: Callable = swish):
+                 act: Union[str, Callable] = 'swish'):
         super().__init__()
 
         if num_spherical < 2:
             raise ValueError("num_spherical should be greater than 1")
+
+        act = activation_resolver(act)
 
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
@@ -633,8 +634,8 @@ class DimeNetPlusPlus(DimeNet):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers: (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (Callable, optional): The activation funtion.
-            (default: :obj:`swish`)
+        act: (str or Callable, optional): The activation funtion.
+            (default: :obj:`"swish"`)
     """
 
     url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
@@ -646,7 +647,10 @@ class DimeNetPlusPlus(DimeNet):
                  cutoff: float = 5.0, max_num_neighbors: int = 32,
                  envelope_exponent: int = 5, num_before_skip: int = 1,
                  num_after_skip: int = 2, num_output_layers: int = 3,
-                 act: Callable = swish):
+                 act: Union[str, Callable] = 'swish'):
+
+        act = activation_resolver(act)
+
         super().__init__(
             hidden_channels=hidden_channels,
             out_channels=out_channels,
