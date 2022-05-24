@@ -37,6 +37,9 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 <p align="center">
   <a href="https://medium.com/stanford-cs224w"><img style="max-width=: 941px" src="https://data.pyg.org/img/cs224w_tutorials.png" /></a>
 </p>
+<p align="center">
+  <a href="https://ogb.stanford.edu/neurips2022"><img style="max-width=: 941px" src="https://data.pyg.org/img/ogb_at_neurips.png" /></a>
+</p>
 
 --------------------------------------------------------------------------------
 
