@@ -402,7 +402,7 @@ class DimeNet(torch.nn.Module):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act (string or Callable, optional): The activation function.
+        act (str or Callable, optional): The activation function.
             (default: :obj:`"swish"`)
     """
 
@@ -634,7 +634,7 @@ class DimeNetPlusPlus(DimeNet):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers: (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (string or Callable, optional): The activation funtion.
+        act: (str or Callable, optional): The activation funtion.
             (default: :obj:`"swish"`)
     """
 
