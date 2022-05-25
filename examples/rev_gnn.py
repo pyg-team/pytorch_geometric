@@ -20,7 +20,7 @@ from torch_geometric.utils import index_to_mask
 
 class GNNBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super().__init__(in_channels)
+        super().__init__()
         self.norm = LayerNorm(in_channels, elementwise_affine=True)
         self.conv = SAGEConv(in_channels, out_channels)
 
@@ -48,7 +48,7 @@ class RevGNN(torch.nn.Module):
 
         assert hidden_channels % num_groups == 0
         self.convs = torch.nn.ModuleList()
-        for _ in range(self.num_layers):
+        for _ in range(num_layers):
             conv = GNNBlock(
                 hidden_channels // num_groups,
                 hidden_channels // num_groups,
@@ -63,6 +63,8 @@ class RevGNN(torch.nn.Module):
             conv.reset_parameters()
 
     def forward(self, x, edge_index):
+        x = self.lin1(x)
+
         # Generate a dropout mask which will be shared across GNN blocks:
         mask = None
         if self.training and self.dropout > 0:
@@ -70,7 +72,6 @@ class RevGNN(torch.nn.Module):
             mask = mask.requires_grad_(False)
             mask = mask / (1 - self.dropout)
 
-        x = self.lin1(x)
         for conv in self.convs:
             x = conv(x, edge_index, mask)
         x = self.norm(x).relu()
