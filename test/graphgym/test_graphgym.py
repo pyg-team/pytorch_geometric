@@ -154,18 +154,21 @@ def test_graphgym_module(tmpdir):
     keys = {"loss", "true", "pred_score", "step_end_time"}
     # test training step
     batch = next(iter(loaders[0]))
+    batch.to(model.device)
     outputs = model.training_step(batch)
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
     # test validation step
     batch = next(iter(loaders[1]))
+    batch.to(model.device)
     outputs = model.validation_step(batch)
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
     # test test step
     batch = next(iter(loaders[2]))
+    batch.to(model.device)
     outputs = model.test_step(batch)
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
