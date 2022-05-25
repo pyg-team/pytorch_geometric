@@ -43,8 +43,6 @@ def test_gen_aggr(Aggr, learn):
     assert torch.allclose(out, aggr(x, ptr=ptr))
 
     if learn:
-        if any(map(lambda x: x.requires_grad, aggr.parameters())):
-            out.mean().backward()
-            for param in aggr.parameters():
-                print(param.grad)
-                assert not torch.isnan(param.grad).any()
+        out.mean().backward()
+        for param in aggr.parameters():
+            assert not torch.isnan(param.grad).any()

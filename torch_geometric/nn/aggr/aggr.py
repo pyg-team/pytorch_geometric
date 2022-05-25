@@ -96,4 +96,4 @@ class PowerMeanAggr(BaseAggr):
         out = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
         if isinstance(self.p, (int, float)) and self.p == 1:
             return out
-        return out.pow(1. / self.p)
+        return out.clamp_(min=0, max=100).pow(1. / self.p)
