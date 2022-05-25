@@ -1,23 +1,23 @@
-from .base import BaseAggr
-from .aggr import (
-    MeanAggr,
-    SumAggr,
-    MaxAggr,
-    MinAggr,
-    VarAggr,
-    StdAggr,
-    SoftmaxAggr,
-    PowerMeanAggr,
+from .base import Aggregation
+from .basic import (
+    MeanAggregation,
+    SumAggregation,
+    MaxAggregation,
+    MinAggregation,
+    VarAggregation,
+    StdAggregation,
+    SoftmaxAggregation,
+    PowerMeanAggregation,
 )
 
 __all__ = classes = [
-    'BaseAggr',
-    'MeanAggr',
-    'SumAggr',
-    'MaxAggr',
-    'MinAggr',
-    'VarAggr',
-    'StdAggr',
-    'SoftmaxAggr',
-    'PowerMeanAggr',
+    'Aggregation',
+    'MeanAggregation',
+    'SumAggregation',
+    'MaxAggregation',
+    'MinAggregation',
+    'VarAggregation',
+    'StdAggregation',
+    'SoftmaxAggregation',
+    'PowerMeanAggregation',
 ]

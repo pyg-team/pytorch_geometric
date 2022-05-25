@@ -4,39 +4,39 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.aggr import BaseAggr
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
 
-class MeanAggr(BaseAggr):
+class MeanAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
 
 
-class SumAggr(BaseAggr):
+class SumAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
-class MaxAggr(BaseAggr):
+class MaxAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='max')
 
 
-class MinAggr(BaseAggr):
+class MinAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='min')
 
 
-class VarAggr(BaseAggr):
+class VarAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -46,7 +46,7 @@ class VarAggr(BaseAggr):
         return mean_2 - mean * mean
 
 
-class StdAggr(VarAggr):
+class StdAggregation(VarAggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -55,7 +55,7 @@ class StdAggr(VarAggr):
         return torch.sqrt(var.relu() + 1e-5)
 
 
-class SoftmaxAggr(BaseAggr):
+class SoftmaxAggregation(Aggregation):
     def __init__(self, t: float = 1.0, learn: bool = False):
         # TODO Learn distinct `t` per channel.
         super().__init__()
@@ -78,7 +78,7 @@ class SoftmaxAggr(BaseAggr):
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
 
-class PowerMeanAggr(BaseAggr):
+class PowerMeanAggregation(Aggregation):
     def __init__(self, p: float = 1.0, learn: bool = False):
         # TODO Learn distinct `p` per channel.
         super().__init__()
