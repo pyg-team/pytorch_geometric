@@ -9,27 +9,50 @@ from torch_geometric.utils import softmax
 
 
 class MeanAggr(BaseAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-        return self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
 
 
 class SumAggr(BaseAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-        return self.reduce(x, index, dim_size, ptr, dim, reduce='sum')
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
 class MaxAggr(BaseAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-        return self.reduce(x, index, dim_size, ptr, dim, reduce='max')
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='max')
 
 
 class MinAggr(BaseAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-        return self.reduce(x, index, dim_size, ptr, dim, reduce='min')
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='min')
+
+
+class VarAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+
+        mean = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
+        mean_2 = self.reduce(x * x, index, ptr, dim_size, dim, reduce='mean')
+        return mean_2 - mean * mean
+
+
+class StdAggr(VarAggr):
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+
+        var = super().forward(x, index, ptr=ptr, dim_size=dim_size, dim=dim)
+        return torch.sqrt(var.relu() + 1e-5)
 
 
 class SoftmaxAggr(BaseAggr):
@@ -44,13 +67,15 @@ class SoftmaxAggr(BaseAggr):
         if isinstance(self.t, Tensor):
             self.t.data.fill_(self._init_t)
 
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
 
+        alpha = x
         if not isinstance(self.t, (int, float)) or self.t != 1:
             alpha = x * self.t
         alpha = softmax(alpha, index, ptr, dim_size, dim)
-        return self.reduce(x * alpha, index, dim_size, ptr, dim, reduce='sum')
+        return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
 
 class PowerMeanAggr(BaseAggr):
@@ -64,27 +89,11 @@ class PowerMeanAggr(BaseAggr):
         if isinstance(self.p, Tensor):
             self.p.data.fill_(self._init_p)
 
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
 
-        out = self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
+        out = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
         if isinstance(self.p, (int, float)) and self.p == 1:
             return out
         return out.pow(1. / self.p)
-
-
-class VarAggr(BaseAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-
-        mean = self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
-        mean_2 = self.reduce(x * x, index, dim_size, ptr, dim, reduce='mean')
-        return mean_2 - mean * mean
-
-
-class StdAggr(VarAggr):
-    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
-                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
-
-        var = self(x, index, ptr, dim, dim_size)
-        return torch.sqrt(var.relu() + 1e-5)

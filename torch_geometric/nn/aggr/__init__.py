@@ -4,10 +4,10 @@ from .aggr import (
     SumAggr,
     MaxAggr,
     MinAggr,
-    SoftmaxAggr,
-    PowerMeanAggr,
     VarAggr,
     StdAggr,
+    SoftmaxAggr,
+    PowerMeanAggr,
 )
 
 __all__ = classes = [
@@ -16,8 +16,8 @@ __all__ = classes = [
     'SumAggr',
     'MaxAggr',
     'MinAggr',
-    'SoftmaxAggr',
-    'PowerMeanAggr',
     'VarAggr',
     'StdAggr',
+    'SoftmaxAggr',
+    'PowerMeanAggr',
 ]

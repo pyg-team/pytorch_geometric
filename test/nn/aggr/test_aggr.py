@@ -5,7 +5,7 @@ from torch_geometric.nn import (
     MaxAggr,
     MeanAggr,
     MinAggr,
-    PowermeanAggr,
+    PowerMeanAggr,
     SoftmaxAggr,
     StdAggr,
     SumAggr,
@@ -13,35 +13,38 @@ from torch_geometric.nn import (
 )
 
 
-@pytest.mark.parametrize('aggr', [MeanAggr, MaxAggr, MinAggr, SumAggr])
-def test_basic_aggr(aggr):
-    src = torch.randn(6, 64)
-    index = torch.tensor([0, 1, 0, 1, 2, 1])
-    out = aggr()(src, index)
-    assert out.shape[0] == index.unique().shape[0]
+@pytest.mark.parametrize(
+    'Aggr', [MeanAggr, SumAggr, MaxAggr, MinAggr, VarAggr, StdAggr])
+def test_basic_aggr(Aggr):
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    aggr = Aggr()
+    assert str(aggr) == f'{Aggr.__name__}()'
+
+    out = aggr(x, index)
+    assert out.size() == (3, x.size(1))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
 
 
-@pytest.mark.parametrize('aggr', [SoftmaxAggr, PowermeanAggr])
-def test_gen_aggr(aggr):
-    src = torch.randn(6, 64)
-    index = torch.tensor([0, 1, 0, 1, 2, 1])
-    for learn in [True, False]:
-        if issubclass(aggr, SoftmaxAggr):
-            aggregator = aggr(t=1, learn=learn)
-        elif issubclass(aggr, PowermeanAggr):
-            aggregator = aggr(p=1, learn=learn)
-        else:
-            raise NotImplementedError
-        out = aggregator(src, index)
-        if any(map(lambda x: x.requires_grad, aggregator.parameters())):
+@pytest.mark.parametrize('Aggr', [SoftmaxAggr, PowerMeanAggr])
+@pytest.mark.parametrize('learn', [True, False])
+def test_gen_aggr(Aggr, learn):
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    aggr = Aggr(learn=learn)
+    assert str(aggr) == f'{Aggr.__name__}()'
+
+    out = aggr(x, index)
+    assert out.size() == (3, x.size(1))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
+
+    if learn:
+        if any(map(lambda x: x.requires_grad, aggr.parameters())):
             out.mean().backward()
-            for param in aggregator.parameters():
+            for param in aggr.parameters():
+                print(param.grad)
                 assert not torch.isnan(param.grad).any()
-
-
-@pytest.mark.parametrize('aggr', [VarAggr, StdAggr])
-def test_stat_aggr(aggr):
-    src = torch.randn(6, 64)
-    index = torch.tensor([0, 1, 0, 1, 2, 1])
-    out = aggr()(src, index)
-    assert out.shape[0] == index.unique().shape[0]
