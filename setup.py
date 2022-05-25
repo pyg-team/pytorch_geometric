@@ -11,6 +11,7 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
+    'class_resolver',
 ]
 
 graphgym_requires = [
