@@ -24,9 +24,11 @@ def read_tu_data(folder, prefix):
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
 
-    node_attributes = node_labels = None
+    node_attributes = torch.empty((batch.size(0), 0))
     if 'node_attributes' in names:
         node_attributes = read_file(folder, prefix, 'node_attributes')
+
+    node_labels = torch.empty((batch.size(0), 0))
     if 'node_labels' in names:
         node_labels = read_file(folder, prefix, 'node_labels', torch.long)
         if node_labels.dim() == 1:
@@ -35,11 +37,12 @@ def read_tu_data(folder, prefix):
         node_labels = node_labels.unbind(dim=-1)
         node_labels = [F.one_hot(x, num_classes=-1) for x in node_labels]
         node_labels = torch.cat(node_labels, dim=-1).to(torch.float)
-    x = cat([node_attributes, node_labels])
 
-    edge_attributes, edge_labels = None, None
+    edge_attributes = torch.empty((edge_index.size(1), 0))
     if 'edge_attributes' in names:
         edge_attributes = read_file(folder, prefix, 'edge_attributes')
+
+    edge_labels = torch.empty((edge_index.size(1), 0))
     if 'edge_labels' in names:
         edge_labels = read_file(folder, prefix, 'edge_labels', torch.long)
         if edge_labels.dim() == 1:
@@ -48,6 +51,8 @@ def read_tu_data(folder, prefix):
         edge_labels = edge_labels.unbind(dim=-1)
         edge_labels = [F.one_hot(e, num_classes=-1) for e in edge_labels]
         edge_labels = torch.cat(edge_labels, dim=-1).to(torch.float)
+
+    x = cat([node_attributes, node_labels])
     edge_attr = cat([edge_attributes, edge_labels])
 
     y = None
@@ -65,7 +70,14 @@ def read_tu_data(folder, prefix):
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)
 
-    return data, slices
+    sizes = {
+        'num_node_attributes': node_attributes.size(-1),
+        'num_node_labels': node_labels.size(-1),
+        'num_edge_attributes': edge_attributes.size(-1),
+        'num_edge_labels': edge_labels.size(-1),
+    }
+
+    return data, slices, sizes
 
 
 def read_file(folder, prefix, name, dtype=None):
@@ -75,6 +87,7 @@ def read_file(folder, prefix, name, dtype=None):
 
 def cat(seq):
     seq = [item for item in seq if item is not None]
+    seq = [item for item in seq if item.numel() > 0]
     seq = [item.unsqueeze(-1) if item.dim() == 1 else item for item in seq]
     return torch.cat(seq, dim=-1) if len(seq) > 0 else None
 

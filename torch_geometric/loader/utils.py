@@ -21,7 +21,7 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         numel = math.prod(size)
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
-    return torch.index_select(value, 0, index, out=out)
+    return torch.index_select(value, dim, index, out=out)
 
 
 def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
@@ -34,6 +34,7 @@ def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
     share_memory: bool = False,
+    is_sorted: bool = False,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
@@ -47,17 +48,17 @@ def to_csc(
 
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
-        size = data.size()
-        perm = (col * size[0]).add_(row).argsort()
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        row = row[perm]
+        if not is_sorted:
+            perm = (col * data.size(0)).add_(row).argsort()
+            row = row[perm]
+        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
         raise AttributeError("Data object does not contain attributes "
                              "'adj_t' or 'edge_index'")
 
     colptr = colptr.to(device)
     row = row.to(device)
-    perm = perm if perm is not None else perm.to(device)
+    perm = perm.to(device) if perm is not None else None
 
     if not colptr.is_cuda and share_memory:
         colptr.share_memory_()
@@ -72,6 +73,7 @@ def to_hetero_csc(
     data: HeteroData,
     device: Optional[torch.device] = None,
     share_memory: bool = False,
+    is_sorted: bool = False,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -83,7 +85,7 @@ def to_hetero_csc(
 
     for store in data.edge_stores:
         key = edge_type_to_str(store._key)
-        out = to_csc(store, device, share_memory)
+        out = to_csc(store, device, share_memory, is_sorted)
         colptr_dict[key], row_dict[key], perm_dict[key] = out
 
     return colptr_dict, row_dict, perm_dict
@@ -98,7 +100,8 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
         elif store.is_node_attr(key):
             index = index.to(value.device)
-            out_store[key] = index_select(value, index, dim=0)
+            dim = store._parent().__cat_dim__(key, value, store)
+            out_store[key] = index_select(value, index, dim=dim)
 
     return store
 
@@ -129,13 +132,14 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                                            is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
+            dim = store._parent().__cat_dim__(key, value, store)
             if perm is None:
                 index = index.to(value.device)
-                out_store[key] = index_select(value, index, dim=0)
+                out_store[key] = index_select(value, index, dim=dim)
             else:
                 perm = perm.to(value.device)
                 index = index.to(value.device)
-                out_store[key] = index_select(value, perm[index], dim=0)
+                out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store
 

@@ -1,6 +1,4 @@
-numpy
 https://download.pytorch.org/whl/cpu/torch-1.9.0%2Bcpu-cp38-cp38-linux_x86_64.whl
 https://data.pyg.org/whl/torch-1.9.0%2Bcpu/torch_scatter-2.0.7-cp38-cp38-linux_x86_64.whl
 https://data.pyg.org/whl/torch-1.9.0%2Bcpu/torch_sparse-0.6.10-cp38-cp38-linux_x86_64.whl
-sphinx==4.0.2
-sphinx_rtd_theme==0.5.2
+git+https://github.com/pyg-team/pyg_sphinx_theme.git

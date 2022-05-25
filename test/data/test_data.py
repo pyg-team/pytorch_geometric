@@ -213,3 +213,29 @@ def test_data_share_memory():
     for data in data_list:
         assert data.x.is_shared()
         assert torch.allclose(data.x, torch.full((8, ), 4.))
+
+
+def test_data_setter_properties():
+    class MyData(Data):
+        def __init__(self):
+            super().__init__()
+            self.my_attr1 = 1
+            self.my_attr2 = 2
+
+        @property
+        def my_attr1(self):
+            return self._my_attr1
+
+        @my_attr1.setter
+        def my_attr1(self, value):
+            self._my_attr1 = value
+
+    data = MyData()
+    assert data.my_attr2 == 2
+
+    assert 'my_attr1' not in data._store
+    assert data.my_attr1 == 1
+
+    data.my_attr1 = 2
+    assert 'my_attr1' not in data._store
+    assert data.my_attr1 == 2

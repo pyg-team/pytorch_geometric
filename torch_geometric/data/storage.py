@@ -427,7 +427,7 @@ class EdgeStorage(BaseStorage):
         return int((edge_index[0] == edge_index[1]).sum()) > 0
 
     def is_undirected(self) -> bool:
-        if self.is_bipartite():  # TODO check for inverse storage.
+        if self.is_bipartite():
             return False
 
         for value in self.values('adj', 'adj_t'):

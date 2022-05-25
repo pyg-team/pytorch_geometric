@@ -6,7 +6,7 @@ from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
 from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
-                   add_remaining_self_loops)
+                   add_remaining_self_loops, get_self_loop_attr)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
@@ -17,6 +17,7 @@ from .mask import index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import dense_to_sparse
+from .unbatch import unbatch
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
@@ -46,6 +47,7 @@ __all__ = [
     'segregate_self_loops',
     'add_self_loops',
     'add_remaining_self_loops',
+    'get_self_loop_attr',
     'contains_isolated_nodes',
     'remove_isolated_nodes',
     'get_num_hops',
@@ -60,6 +62,7 @@ __all__ = [
     'to_dense_batch',
     'to_dense_adj',
     'dense_to_sparse',
+    'unbatch',
     'normalized_cut',
     'grid',
     'geodesic_distance',

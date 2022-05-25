@@ -24,24 +24,40 @@ class NeighborSampler:
         replace: bool = False,
         directed: bool = True,
         input_type: Optional[Any] = None,
+        time_attr: Optional[str] = None,
+        is_sorted: bool = False,
         share_memory: bool = False,
     ):
         self.data_cls = data.__class__
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
+        self.node_time = None
 
         if isinstance(data, Data):
+            if time_attr is not None:
+                # TODO `time_attr` support for homogeneous graphs
+                raise ValueError(
+                    f"'time_attr' attribute not yet supported for "
+                    f"'{data.__class__.__name__}' object")
+
             # Convert the graph data into a suitable format for sampling.
-            out = to_csc(data, device='cpu', share_memory=share_memory)
+            out = to_csc(data, device='cpu', share_memory=share_memory,
+                         is_sorted=is_sorted)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
         elif isinstance(data, HeteroData):
+            if time_attr is not None:
+                self.node_time_dict = data.collect(time_attr)
+            else:
+                self.node_time_dict = None
+
             # Convert the graph data into a suitable format for sampling.
             # NOTE: Since C++ cannot take dictionaries with tuples as key as
             # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu', share_memory=share_memory)
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
+                                is_sorted=is_sorted)
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
@@ -66,8 +82,8 @@ class NeighborSampler:
             index = torch.LongTensor(index)
 
         if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
-            node, row, col, edge = sample_fn(
+            fn = torch.ops.torch_sparse.neighbor_sample
+            node, row, col, edge = fn(
                 self.colptr,
                 self.row,
                 index,
@@ -78,18 +94,33 @@ class NeighborSampler:
             return node, row, col, edge, index.numel()
 
         elif issubclass(self.data_cls, HeteroData):
-            sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
-            node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                self.node_types,
-                self.edge_types,
-                self.colptr_dict,
-                self.row_dict,
-                {self.input_type: index},
-                self.num_neighbors,
-                self.num_hops,
-                self.replace,
-                self.directed,
-            )
+            if self.node_time_dict is None:
+                fn = torch.ops.torch_sparse.hetero_neighbor_sample
+                node_dict, row_dict, col_dict, edge_dict = fn(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    {self.input_type: index},
+                    self.num_neighbors,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
+            else:
+                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+                node_dict, row_dict, col_dict, edge_dict = fn(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    {self.input_type: index},
+                    self.num_neighbors,
+                    self.node_time_dict,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
             return node_dict, row_dict, col_dict, edge_dict, index.numel()
 
 
@@ -209,9 +240,18 @@ class NeighborLoader(torch.utils.data.DataLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by column. This avoids internal
+            re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -223,7 +263,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
         input_nodes: InputNodes = None,
         replace: bool = False,
         directed: bool = True,
+        time_attr: Optional[str] = None,
         transform: Callable = None,
+        is_sorted: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
@@ -247,8 +289,15 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
-                data, num_neighbors, replace, directed, node_type,
-                share_memory=kwargs.get('num_workers', 0) > 0)
+                data,
+                num_neighbors,
+                replace,
+                directed,
+                input_type=node_type,
+                time_attr=time_attr,
+                is_sorted=is_sorted,
+                share_memory=kwargs.get('num_workers', 0) > 0,
+            )
 
         super().__init__(input_nodes, collate_fn=self.neighbor_sampler,
                          **kwargs)
