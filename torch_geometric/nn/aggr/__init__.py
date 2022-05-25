@@ -1,9 +1,9 @@
+from .base import BaseAggr
 from .aggr import (
-    Aggr,
     MeanAggr,
+    SumAggr,
     MaxAggr,
     MinAggr,
-    SumAggr,
     SoftmaxAggr,
     PowermeanAggr,
     VarAggr,
@@ -11,11 +11,11 @@ from .aggr import (
 )
 
 __all__ = classes = [
-    'Aggr',
+    'BaseAggr',
     'MeanAggr',
+    'SumAggr',
     'MaxAggr',
     'MinAggr',
-    'SumAggr',
     'SoftmaxAggr',
     'PowermeanAggr',
     'VarAggr',

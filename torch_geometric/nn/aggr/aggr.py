@@ -1,200 +1,90 @@
-from abc import ABC
 from typing import Optional
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter, scatter_softmax, segment_csr
+
+from torch_geometric.nn.aggr import BaseAggr
+from torch_geometric.utils import softmax
 
 
-class Aggr(torch.nn.Module, ABC):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        raise NotImplementedError
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+class MeanAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+        return self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
 
 
-class MeanAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            return segment_csr(x, ptr, reduce='mean')
-        else:
-            return scatter(x, index, dim=dim, dim_size=dim_size, reduce='mean')
+class SumAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+        return self.reduce(x, index, dim_size, ptr, dim, reduce='sum')
 
 
-class MaxAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            return segment_csr(x, ptr, reduce='max')
-        else:
-            return scatter(x, index, dim=dim, dim_size=dim_size, reduce='max')
+class MaxAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+        return self.reduce(x, index, dim_size, ptr, dim, reduce='max')
 
 
-class MinAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            return segment_csr(x, ptr, reduce='min')
-        else:
-            return scatter(x, index, dim=dim, dim_size=dim_size, reduce='min')
+class MinAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+        return self.reduce(x, index, dim_size, ptr, dim, reduce='min')
 
 
-class SumAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            return segment_csr(x, ptr, reduce='sum')
-        else:
-            return scatter(x, index, dim=dim, dim_size=dim_size, reduce='sum')
-
-
-class SoftmaxAggr(Aggr):
+class SoftmaxAggr(BaseAggr):
     def __init__(self, t: float = 1.0, learn: bool = False):
+        # TODO Learn distinct `t` per channel.
         super().__init__()
-        self.init_t = t
-        self.learn = learn
-        if learn:
-            self.t = Parameter(torch.Tensor([t]), requires_grad=True)
-        else:
-            self.t = t
+        self._init_t = t
+        self.t = Parameter(torch.Tensor(1)) if learn else t
+        self.reset_parameters()
 
     def reset_parameters(self):
-        if self.t and isinstance(self.t, Tensor):
-            self.t.data.fill_(self.init_t)
+        if isinstance(self.t, Tensor):
+            self.t.data.fill_(self._init_t)
 
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            raise NotImplementedError
-        else:
-            if self.learn:
-                w = scatter_softmax(x * self.t, index, dim=dim)
-            else:
-                with torch.no_grad():
-                    w = scatter_softmax(x * self.t, index, dim=dim)
-            return scatter(x * w, index, dim=dim, dim_size=dim_size,
-                           reduce='add')
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+
+        if not isinstance(self.t, (int, float)) or self.t != 1:
+            alpha = x * self.t
+        alpha = softmax(alpha, index, ptr, dim_size, dim)
+        return self.reduce(x * alpha, index, dim_size, ptr, dim, reduce='sum')
 
 
-class PowermeanAggr(Aggr):
+class PowerMeanAggr(BaseAggr):
     def __init__(self, p: float = 1.0, learn: bool = False):
+        # TODO Learn distinct `p` per channel.
         super().__init__()
-        self.init_p = p
-        if learn:
-            self.p = Parameter(torch.Tensor([p]), requires_grad=True)
-        else:
-            self.p = p
+        self._init_p = p
+        self.p = Parameter(torch.Tensor(1)) if learn else p
+        self.reset_parameters()
 
-    def reset_parameters(self):
-        if self.p and isinstance(self.p, Tensor):
-            self.p.data.fill_(self.init_p)
+        if isinstance(self.p, Tensor):
+            self.p.data.fill_(self._init_p)
 
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        x = torch.pow(torch.abs(x), self.p)
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            return torch.pow(segment_csr(x, ptr, reduce='mean'), 1 / self.p)
-        else:
-            return torch.pow(
-                scatter(x, index, dim=dim, dim_size=dim_size, reduce='mean'),
-                1 / self.p)
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+
+        out = self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
+        if isinstance(self.p, (int, float)) and self.p == 1:
+            return out
+        return out.pow(1. / self.p)
 
 
-class VarAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            mean = segment_csr(x, ptr, reduce='mean')
-            mean_squares = segment_csr(x * x, ptr, reduce='mean')
-        else:
-            mean = scatter(x, index, dim=dim, dim_size=dim_size, reduce='mean')
-            mean_squares = scatter(x * x, index, dim=dim, dim_size=dim_size,
-                                   reduce='mean')
-        return mean_squares - mean * mean
+class VarAggr(BaseAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
+
+        mean = self.reduce(x, index, dim_size, ptr, dim, reduce='mean')
+        mean_2 = self.reduce(x * x, index, dim_size, ptr, dim, reduce='mean')
+        return mean_2 - mean * mean
 
 
-class StdAggr(Aggr):
-    def forward(
-        self,
-        x: Tensor,
-        index: Tensor,
-        ptr: Optional[Tensor] = None,
-        dim: int = -2,
-        dim_size: Optional[None] = None,
-    ) -> Tensor:
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=dim, dims=x.dim())
-            mean = segment_csr(x, ptr, reduce='mean')
-            mean_squares = segment_csr(x * x, ptr, reduce='mean')
-        else:
-            mean = scatter(x, index, dim=dim, dim_size=dim_size, reduce='mean')
-            mean_squares = scatter(x * x, index, dim=dim, dim_size=dim_size,
-                                   reduce='mean')
-        return torch.sqrt(torch.relu(mean_squares - mean * mean) + 1e-5)
+class StdAggr(VarAggr):
+    def forward(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+                ptr: Optional[Tensor] = None, dim: int = -2) -> Tensor:
 
-
-###############################################################################
-
-
-def expand_left(src: torch.Tensor, dim: int, dims: int) -> torch.Tensor:
-    for _ in range(dims + dim if dim < 0 else dim):
-        src = src.unsqueeze(0)
-    return src
+        var = self(x, index, ptr, dim, dim_size)
+        return torch.sqrt(var.relu() + 1e-5)
