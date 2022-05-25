@@ -12,6 +12,7 @@ from .unpool import *  # noqa
 from .dense import *  # noqa
 from .models import *  # noqa
 from .functional import *  # noqa
+from .aggr import *  # noqa
 
 __all__ = [
     'MetaLayer',
