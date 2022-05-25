@@ -7,7 +7,7 @@ from torch_scatter import scatter, segment_csr
 
 
 class Aggregation(torch.nn.Module, ABC):
-    r"""An abstract base class for writing aggregations."""
+    r"""An abstract base class for implementing custom aggregations."""
     @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
