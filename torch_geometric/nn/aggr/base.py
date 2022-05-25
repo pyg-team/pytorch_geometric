@@ -12,6 +12,22 @@ class Aggregation(torch.nn.Module, ABC):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            index (torch.LongTensor, optional): The indices of elements for
+                applying the aggregation.
+                One of :obj:`index` or `ptr` must be defined.
+                (default: :obj:`None`)
+            ptr (torch.LongTensor, optional): If given, computes the
+                aggregation based on sorted inputs in CSR representation.
+                One of :obj:`index` or `ptr` must be defined.
+                (default: :obj:`None`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim` after aggregation. (default: :obj:`None`)
+            dim (int, optional): The dimension in which to aggregate.
+                (default: :obj:`-2`)
+        """
         pass
 
     def reset_parameters(self):
@@ -31,7 +47,7 @@ class Aggregation(torch.nn.Module, ABC):
             return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
 
         raise ValueError(f"Error in '{self.__class__.__name__}': "
-                         f"Both 'index' and 'ptr' are undefined")
+                         f"One of 'index' or 'ptr' must be defined")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
