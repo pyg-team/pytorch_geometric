@@ -16,7 +16,8 @@ class BaseAggr(torch.nn.Module, ABC):
     def reset_parameters(self):
         pass
 
-    def reduce(self, x: Tensor, index: Tensor, dim_size: Optional[int] = None,
+    @staticmethod
+    def reduce(x: Tensor, index: Tensor, dim_size: Optional[int] = None,
                ptr: Optional[Tensor] = None, dim: int = -2,
                reduce: str = 'add') -> Tensor:
 
