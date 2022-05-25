@@ -1,3 +1,5 @@
+from class_resolver import ClassResolver
+
 from .base import Aggregation
 from .basic import (
     MeanAggregation,
@@ -11,7 +13,11 @@ from .basic import (
 )
 
 __all__ = classes = [
+    # Abstract Class
     'Aggregation',
+    # Utilities
+    'aggregation_resolver',
+    # Concrete Classes
     'MeanAggregation',
     'SumAggregation',
     'MaxAggregation',
@@ -21,3 +27,5 @@ __all__ = classes = [
     'SoftmaxAggregation',
     'PowerMeanAggregation',
 ]
+
+aggregation_resolver = ClassResolver.from_subclasses(Aggregation)
