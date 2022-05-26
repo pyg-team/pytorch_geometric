@@ -33,6 +33,21 @@ class Aggregation(torch.nn.Module, ABC):
     def reset_parameters(self):
         pass
 
+    def __call__(self, x: Tensor, index: Optional[Tensor] = None, *,
+                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                 dim: int = -2) -> Tensor:
+
+        if dim >= x.dim() or dim < -x.dim():
+            raise ValueError(f"Encountered invalid dimension '{dim}' of "
+                             f"source tensor with {x.dim()} dimensions")
+
+        if (ptr is not None and dim_size is not None
+                and dim_size != ptr.numel() - 1):
+            raise ValueError(f"Encountered mismatch between 'dim_size' (got "
+                             f"'{dim_size}') and 'ptr' (got '{ptr.size(0)}')")
+
+        return super().__call__(x, index, ptr=ptr, dim_size=dim_size, dim=dim)
+
     def reduce(self, x: Tensor, index: Optional[Tensor] = None,
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'add') -> Tensor:
