@@ -58,7 +58,7 @@ def test_dataloader(num_workers):
     assert len(loader) == 2
 
     for batch in loader:
-        assert len(batch) == 9
+        assert len(batch) == 10
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
