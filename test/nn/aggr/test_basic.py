@@ -13,6 +13,20 @@ from torch_geometric.nn import (
 )
 
 
+def test_validate():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    aggr = MeanAggregation()
+
+    with pytest.raises(ValueError, match='invalid dimension'):
+        aggr(x, index, dim=-3)
+
+    with pytest.raises(ValueError, match='mismatch between'):
+        aggr(x, ptr=ptr, dim_size=2)
+
+
 @pytest.mark.parametrize('Aggregation', [
     MeanAggregation, SumAggregation, MaxAggregation, MinAggregation,
     VarAggregation, StdAggregation
