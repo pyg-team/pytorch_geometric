@@ -9,6 +9,7 @@ from .basic import (
     SoftmaxAggregation,
     PowerMeanAggregation,
 )
+from .lstm import LSTMAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -20,4 +21,5 @@ __all__ = classes = [
     'StdAggregation',
     'SoftmaxAggregation',
     'PowerMeanAggregation',
+    'LSTMAggregation',
 ]

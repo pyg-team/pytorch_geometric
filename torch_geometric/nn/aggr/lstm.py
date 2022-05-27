@@ -23,9 +23,8 @@ class LSTMAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        assert x.dim() == 2
-        assert dim == -2 or dim == 0
         assert index is not None  # TODO
+        assert x.dim() == 2 and dim in [-2, 0]
 
         x, _ = to_dense_batch(x, index, batch_size=dim_size)
         return self.lstm(x)[0][:, -1]
