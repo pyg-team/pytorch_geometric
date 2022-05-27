@@ -8,6 +8,20 @@ from torch_geometric.utils import to_dense_batch
 
 
 class LSTMAggregation(Aggregation):
+    r"""Performs LSTM-style aggregation in which the elements to aggregate are
+    interpreted as a sequence.
+
+    .. note::
+        :class:`LSTMAggregation` is not permutation-invariant.
+
+    .. note::
+        :class:`LSTMAggregation` requires sorted indices.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        **kwargs (optional): Additional arguments of :class:`torch.nn.LSTM`.
+    """
     requires_sorted_index = True
 
     def __init__(self, in_channels: int, out_channels: int, **kwargs):
