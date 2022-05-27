@@ -11,7 +11,7 @@ class LSTMAggregation(Aggregation):
     r"""Performs LSTM-style aggregation in which the elements to aggregate are
     interpreted as a sequence.
 
-    .. note::
+    .. warn::
         :class:`LSTMAggregation` is not permutation-invariant.
 
     .. note::
