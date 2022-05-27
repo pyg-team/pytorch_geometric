@@ -8,6 +8,8 @@ from torch_scatter import scatter, segment_csr
 
 class Aggregation(torch.nn.Module, ABC):
     r"""An abstract base class for implementing custom aggregations."""
+    requires_sorted_index = False
+
     @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -37,6 +39,16 @@ class Aggregation(torch.nn.Module, ABC):
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                  dim: int = -2) -> Tensor:
 
+        if index is None and ptr is None:
+            raise ValueError(f"Expected that either 'index' or 'ptr' is "
+                             f"passed to '{self.__class__.__name__}'")
+
+        if (self.requires_sorted_index and index is not None
+                and not torch.all(index[:-1] <= index[1:])):
+            raise ValueError(f"Can not perform aggregation inside "
+                             f"'{self.__class__.__name__}' since the "
+                             f"'index' tensor is not sorted")
+
         if dim >= x.dim() or dim < -x.dim():
             raise ValueError(f"Encountered invalid dimension '{dim}' of "
                              f"source tensor with {x.dim()} dimensions")
@@ -52,17 +64,12 @@ class Aggregation(torch.nn.Module, ABC):
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                dim: int = -2, reduce: str = 'add') -> Tensor:
 
-        assert index is not None or ptr is not None
-
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment_csr(x, ptr, reduce=reduce)
 
-        if index is not None:
-            return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
-
-        raise ValueError(f"Error in '{self.__class__.__name__}': "
-                         f"One of 'index' or 'ptr' must be defined")
+        assert index is not None
+        return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
