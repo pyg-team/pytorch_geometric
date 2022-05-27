@@ -1,8 +1,8 @@
-# Model Paramters: 206,607
-# Peak GPU memory usage: 1.57 G
-# RevGNN with 7 layers and 160 channels reaches around 0.8200 test accuracy.
-# Final Train: 0.9373, Highest Val: 0.9230, Final Test: 0.8200.
-# Training longer should produces better results.
+# Peak GPU memory usage is around 1.57 G
+# | RevGNN Models           | Test Acc        | Val Acc         |
+# |-------------------------|-----------------|-----------------|
+# | 112 layers 160 channels | 0.8307 ± 0.0030 | 0.9290 ± 0.0007 |
+# | 7 layers 160 channels   | 0.8276 ± 0.0027 | 0.9272 ± 0.0006 |
 
 import os.path as osp
 
@@ -93,7 +93,7 @@ for split in ['train', 'valid', 'test']:
 
 train_loader = RandomNodeSampler(data, num_parts=10, shuffle=True,
                                  num_workers=5)
-# Increase the num_parts of the test loader if you cannot have fix
+# Increase the num_parts of the test loader if you cannot fit
 # the full batch graph into your GPU:
 test_loader = RandomNodeSampler(data, num_parts=1, num_workers=5)
 
@@ -180,8 +180,18 @@ def test(epoch):
     return train_acc, valid_acc, test_acc
 
 
-for epoch in range(1, 501):
+best_val = 0.0
+final_train = 0.0
+final_test = 0.0
+for epoch in range(1, 1001):
     loss = train(epoch)
     train_acc, val_acc, test_acc = test(epoch)
+    if val_acc > best_val:
+        best_val = val_acc
+        final_train = train_acc
+        final_test = test_acc
     print(f'Loss: {loss:.4f}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+
+print(f'Final Train: {final_train:.4f}, Best Val: {best_val:.4f}, '
+      f'Final Test: {final_test:.4f}')
