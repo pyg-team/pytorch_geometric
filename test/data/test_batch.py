@@ -83,6 +83,7 @@ def test_batch():
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1', '2', '3']
     assert batch.s_batch.tolist() == [0, 1, 2]
+    assert batch.s_ptr.tolist() == [0, 1, 2, 3]
     assert batch.array == [['1', '2'], ['3', '4', '5'], ['6', '7', '8', '9']]
     assert batch.num_nodes == 9
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
