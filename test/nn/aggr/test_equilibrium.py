@@ -1,12 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.nn import EquilibriumAggregation
+from torch_geometric.nn.aggr import EquilibriumAggregation
 
 
 @pytest.mark.parametrize('iter', [0, 1, 5])
 @pytest.mark.parametrize('alpha', [0, .1, 5])
-def test_equilibrium_aggregation(iter, alpha):
+def test_equilibrium(iter, alpha):
 
     batch = 10
     feature_channels = 3
@@ -22,7 +22,7 @@ def test_equilibrium_aggregation(iter, alpha):
 
 @pytest.mark.parametrize('iter', [0, 1, 5])
 @pytest.mark.parametrize('alpha', [0, .1, 5])
-def test_equilibrium_aggregation_batch(iter, alpha):
+def test_equilibrium_batch(iter, alpha):
 
     batch_1, batch_2 = 4, 6
     feature_channels = 3
