@@ -10,15 +10,27 @@ class RootedSubgraphData(Data):
     rooted subgraph. It contains several additional properties that hold the
     information to map to batch of every node's rooted subgraph.
 
-    Additional Properties:
+    Additional properties required:
         n_id (Tensor): index of nodes included in combined rooted subgraph.
-        e_id (Tensor): index of edges included in rcombined ooted subgraph.
+        e_id (Tensor): index of edges included in combined rooted subgraph.
         n_sub_batch (Tensor): batch index for nodes in rooted subgraph index.
         e_sub_batch (Tensor): batch index for edges in rooted subgraph index.
     """
+
+    _required_properties = {
+        'n_id', 'e_id', 'n_sub_batch', 'e_sub_batch', 'num_nodes'
+    }
+
+    def __init__(self, *args, **kwargs):
+        if self._required_properties > set(kwargs.keys()):
+            raise ValueError(f"`RootedSubgraphData` requires kwargs:"
+                             f"{self._required_properties}")
+        super().__init__(*args, **kwargs)
+        self.map_edge_index = self.build_map_edge_index()
+
     def __inc__(self, key, value, *args, **kwargs):
         if key in ('n_sub_batch', 'e_sub_batch'):
-            return 1 + getattr(self, 'n_sub_batch')[-1]
+            return 1 + self.n_sub_batch[-1]
         elif key == 'n_id':
             return self.num_nodes
         elif key == 'e_id':
@@ -26,19 +38,18 @@ class RootedSubgraphData(Data):
         else:
             return super().__inc__(key, value, *args, **kwargs)
 
-    def map_edge_index(self) -> torch.Tensor:
+    def build_map_edge_index(self) -> torch.Tensor:
         """
         Map edge_index to the subgraph combined edge_index
         """
         edge_index = self.edge_index[:, self.e_id]
-        n_nodes = self.x.size(0)
+        n_nodes = self.num_nodes
         n_sub_nodes = self.n_id.size(0)
 
         node_map = torch.ones((n_nodes, n_nodes)).long() * -1
         node_map[self.n_sub_batch, self.n_id] = torch.arange(n_sub_nodes)
 
         edge_index += (torch.arange(n_sub_nodes) * n_nodes)[self.e_sub_batch]
-        print(node_map.shape)
         return node_map.reshape(-1)[edge_index]
 
     def map_data(self) -> Data:
@@ -51,7 +62,7 @@ class RootedSubgraphData(Data):
             if k in ('n_sub_batch', 'n_sub_batch', 'n_id', 'e_id'):
                 data[k] = v
             elif k == 'edge_index':
-                data[k] = self.map_edge_index()
+                data[k] = self.map_edge_index
             elif self.is_node_attr(k):
                 data[k] = torch.index_select(v, self.__cat_dim__(k, v),
                                              self.n_id)
@@ -109,7 +120,8 @@ class RootedEgoNets(RootedSubgraph):
             hop_mask = sparse_adj.matmul(hop_mask.float()) > 0
 
         node_mask = (n_hops >= 0)  # N x N dense mask matrix
-        return rooted_subgraph_from_mask(node_mask, edge_index, n_hops)
+        return rooted_subgraph_from_mask(node_mask, edge_index, n_hops,
+                                         num_nodes)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.num_hops})'
@@ -173,7 +185,8 @@ class RootedRWSubgraph(RootedSubgraph):
                 hop_mask = sparse_adj.matmul(hop_mask.float()) > 0
                 if n_hops[node_mask].min() != -1:
                     break
-        return rooted_subgraph_from_mask(node_mask, edge_index, n_hops)
+        return rooted_subgraph_from_mask(node_mask, edge_index, n_hops,
+                                         num_nodes)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(l{self.walk_length}-' \
@@ -181,17 +194,14 @@ class RootedRWSubgraph(RootedSubgraph):
 
 
 def rooted_subgraph_from_mask(node_mask: torch.Tensor,
-                              edge_index: torch.Tensor,
-                              hop_mat: torch.Tensor) -> RootedSubgraphData:
+                              edge_index: torch.Tensor, hop_mat: torch.Tensor,
+                              num_nodes: int) -> RootedSubgraphData:
     n_hops = (hop_mat + 1).nonzero()[:, 1] - 1
     n_sub_batch, n_id = node_mask.nonzero().T
     e_sub_batch, e_id = (node_mask[:, edge_index[0]]
                          & node_mask[:, edge_index[1]]).nonzero().T
 
-    data = RootedSubgraphData()
-    data.n_sub_batch = n_sub_batch
-    data.n_id = n_id
-    data.e_sub_batch = e_sub_batch
-    data.e_id = e_id
-    data.n_hops = n_hops
+    data = RootedSubgraphData(n_sub_batch=n_sub_batch, e_sub_batch=e_sub_batch,
+                              n_id=n_id, e_id=e_id, n_hops=n_hops,
+                              edge_index=edge_index, num_nodes=num_nodes)
     return data
