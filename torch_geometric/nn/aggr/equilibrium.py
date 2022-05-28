@@ -156,7 +156,7 @@ class EquilibriumAggregation(Aggregation):
                            requires_grad=True).float()
 
     def reg(self, y: Tensor) -> float:
-        return self.lamb * y.square().mean(dim=1).sum(dim=0)
+        return self.lamb * y.square().mean(dim=-2).sum(dim=0)
 
     def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor]):
         return self.potential(x, y, index) + self.reg(y)
@@ -164,6 +164,12 @@ class EquilibriumAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
+
+        if ptr is not None:
+            raise ValueError(f"{self.__class__} doesn't support `ptr`")
+
+        if dim_size is not None:
+            raise ValueError(f"{self.__class__} doesn't support `dim_size`")
 
         with torch.enable_grad():
             y = self.optimizer(x, self.init_output(index), index, self.energy,
