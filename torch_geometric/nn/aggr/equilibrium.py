@@ -173,7 +173,7 @@ class EquilibriumAggregation(Aggregation):
 
         with torch.enable_grad():
             y = self.optimizer(x, self.init_output(index), index, self.energy,
-                               dim=dim, iterations=self.grad_iter)
+                               iterations=self.grad_iter)
 
         return y
 
