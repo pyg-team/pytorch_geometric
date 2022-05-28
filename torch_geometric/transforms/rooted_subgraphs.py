@@ -11,7 +11,7 @@ class RootedSubgraphData(Data):
     information to map to batch of every node's rooted subgraph.
 
     Additional Properties:
-        n_id (Tensor): index of nodes includes in combined rooted subgraph.
+        n_id (Tensor): index of nodes included in combined rooted subgraph.
         e_id (Tensor): index of edges included in rcombined ooted subgraph.
         n_sub_batch (Tensor): batch index for nodes in rooted subgraph index.
         e_sub_batch (Tensor): batch index for edges in rooted subgraph index.
