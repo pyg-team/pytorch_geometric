@@ -37,8 +37,17 @@ class LSTMAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        assert index is not None  # TODO
-        assert x.dim() == 2 and dim in [-2, 0]
+        if index is None:  # TODO
+            raise NotImplementedError(f"'{self.__class__.__name__}' with "
+                                      f"'ptr' not yet supported")
+
+        if x.dim() != 2:
+            raise ValueError(f"'{self.__class__.__name__}' requires "
+                             f"two-dimensional inputs (got '{x.dim()}')")
+
+        if dim not in [-2, 0]:
+            raise ValueError(f"'{self.__class__.__name__}' needs to perform "
+                             f"aggregation in first dimension (got '{dim}')")
 
         x, _ = to_dense_batch(x, index, batch_size=dim_size)
         return self.lstm(x)[0][:, -1]
