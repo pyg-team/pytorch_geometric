@@ -38,8 +38,8 @@ class RootedSubgraphData(Data):
         return super().__inc__(key, value, *args, **kwargs)
 
     def map_data(self) -> Data:
-        r"""Maps all feature information of the :class:`Data` object to each
-        rooted subgraph."""
+        # Maps all feature information of the :class:`Data` object to each
+        # rooted subgraph.
         data = copy.copy(self)
 
         for key, value in self.items():
@@ -68,9 +68,9 @@ class RootedSubgraph(BaseTransform, ABC):
         self,
         data: Data,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
-        r"""Returns the tuple
-        :obj:`(sub_edge_index, n_id, e_id, n_sub_batch, e_sub_batch)` of the
-        :class:`RootedSubgraphData` object."""
+        # Returns the tuple:
+        # :obj:`(sub_edge_index, n_id, e_id, n_sub_batch, e_sub_batch)`
+        # of the :class:`RootedSubgraphData` object.
         pass
 
     def map(
