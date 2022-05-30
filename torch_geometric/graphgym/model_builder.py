@@ -1,21 +1,14 @@
 import time
-import warnings
 from typing import Any, Dict, Tuple
 
 import torch
 
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.imports import LightningModule
 from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.register import network_dict, register_network
-
-try:
-    from pytorch_lightning import LightningModule
-except ImportError:
-    LightningModule = torch.nn.Module
-    warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
-                  "experiment manager via 'pip install pytorch_lightning'")
 
 register_network('gnn', GNN)
 
@@ -69,7 +62,7 @@ class GraphGymModule(LightningModule):
         return self.model.pre_mp
 
 
-def create_model(to_device=True, dim_in=None, dim_out=None):
+def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
     r"""Create model for graph machine learning.
 
     Args:

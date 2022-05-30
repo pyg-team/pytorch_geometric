@@ -101,6 +101,7 @@ def collate(
                 repeats = slices[1:] - slices[:-1]
                 batch = repeat_interleave(repeats.tolist(), device=device)
                 out_store[f'{attr}_batch'] = batch
+                out_store[f'{attr}_ptr'] = cumsum(repeats.to(device))
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
