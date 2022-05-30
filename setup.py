@@ -16,12 +16,14 @@ install_requires = [
 graphgym_requires = [
     'yacs',
     'hydra-core',
+    'protobuf<4.21',
     'pytorch-lightning',
 ]
 
 full_requires = graphgym_requires + [
     'h5py',
     'numba',
+    'sympy',
     'pandas',
     'captum',
     'rdflib',
@@ -35,6 +37,7 @@ full_requires = graphgym_requires + [
 ]
 
 benchmark_requires = [
+    'protobuf<4.21',
     'wandb',
 ]
 

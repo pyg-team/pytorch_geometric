@@ -49,10 +49,9 @@ def to_csc(
     elif hasattr(data, 'edge_index'):
         (row, col) = data.edge_index
         if not is_sorted:
-            size = data.size()
-            perm = (col * size[0]).add_(row).argsort()
+            perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
+        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
         raise AttributeError("Data object does not contain attributes "
                              "'adj_t' or 'edge_index'")

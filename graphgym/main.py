@@ -13,11 +13,9 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.graphgym.loader import create_loader
-from torch_geometric.graphgym.logger import create_logger, set_printing
+from torch_geometric.graphgym.loader import GraphGymDataModule
+from torch_geometric.graphgym.logger import set_printing
 from torch_geometric.graphgym.model_builder import create_model
-from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
-from torch_geometric.graphgym.register import train_dict
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
@@ -41,22 +39,15 @@ if __name__ == '__main__':
         seed_everything(cfg.seed)
         auto_select_device()
         # Set machine learning pipeline
-        loaders = create_loader()
-        loggers = create_logger()
+        datamodule = GraphGymDataModule()
         model = create_model()
-        optimizer = create_optimizer(model.parameters(), cfg.optim)
-        scheduler = create_scheduler(optimizer, cfg.optim)
         # Print model info
         logging.info(model)
         logging.info(cfg)
         cfg.params = params_count(model)
         logging.info('Num parameters: %s', cfg.params)
-        # Start training
-        if cfg.train.mode == 'standard':
-            train(loggers, loaders, model, optimizer, scheduler)
-        else:
-            train_dict[cfg.train.mode](loggers, loaders, model, optimizer,
-                                       scheduler)
+        train(model, datamodule, logger=True)
+
     # Aggregate results from different seeds
     agg_runs(cfg.out_dir, cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done

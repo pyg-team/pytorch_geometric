@@ -70,10 +70,10 @@ def test_batch():
 
     assert str(batch) == ('DataBatch(x=[9], edge_index=[2, 12], y=[3], '
                           'x_sp=[9, 1, nnz=9], adj=[9, 9, nnz=12], s=[3], '
-                          's_batch=[3], array=[3], num_nodes=9, batch=[9], '
-                          'ptr=[4])')
+                          's_batch=[3], s_ptr=[4], array=[3], num_nodes=9, '
+                          'batch=[9], ptr=[4])')
     assert batch.num_graphs == 3
-    assert len(batch) == 11
+    assert len(batch) == 12
     assert batch.x.tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
     assert batch.y.tolist() == [1, 2, 3]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
@@ -83,6 +83,7 @@ def test_batch():
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1', '2', '3']
     assert batch.s_batch.tolist() == [0, 1, 2]
+    assert batch.s_ptr.tolist() == [0, 1, 2, 3]
     assert batch.array == [['1', '2'], ['3', '4', '5'], ['6', '7', '8', '9']]
     assert batch.num_nodes == 9
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
