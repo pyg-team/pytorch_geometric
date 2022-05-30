@@ -48,16 +48,8 @@ if __name__ == '__main__':
         logging.info(cfg)
         cfg.params = params_count(model)
         logging.info('Num parameters: %s', cfg.params)
-        # Start training
-        if cfg.train.mode == 'standard':
-            train(model, datamodule, logger=True)
-        else:
-            loaders = create_loader()
-            loggers = create_logger()
-            optimizer = create_optimizer(model.parameters(), cfg.optim)
-            scheduler = create_scheduler(optimizer, cfg.optim)
-            train_dict[cfg.train.mode](loggers, loaders, model, optimizer,
-                                       scheduler)
+        train(model, datamodule, logger=True)
+
     # Aggregate results from different seeds
     agg_runs(cfg.out_dir, cfg.metric_best)
     # When being launched in batch mode, mark a yaml as done
