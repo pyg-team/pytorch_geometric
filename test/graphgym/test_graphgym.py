@@ -81,7 +81,7 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
         cfg.custom_metrics = []
 
     datamodule = GraphGymDataModule()
-    assert len(datamodule._loaders) == 3
+    assert len(datamodule.loaders) == 3
 
     model = create_model()
     assert isinstance(model, torch.nn.Module)

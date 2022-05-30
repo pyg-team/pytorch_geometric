@@ -13,19 +13,19 @@ from torch_geometric.graphgym.model_builder import GraphGymModule
 
 class GraphGymDataModule(LightningDataModule):
     def __init__(self):
-        self._loaders = create_loader()
+        self.loaders = create_loader()
         super().__init__(has_val=True, has_test=True)
 
     def train_dataloader(self) -> DataLoader:
-        return self._loaders[0]
+        return self.loaders[0]
 
     def val_dataloader(self) -> DataLoader:
         # better way would be to test after fit.
         # First call trainer.fit(...) then trainer.test(...)
-        return self._loaders[1]
+        return self.loaders[1]
 
     def test_dataloader(self) -> DataLoader:
-        return self._loaders[2]
+        return self.loaders[2]
 
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
