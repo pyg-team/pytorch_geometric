@@ -162,7 +162,7 @@ class RootedRWSubgraph(RootedSubgraph):
         start = start.view(-1, 1).repeat(1, (self.walk_length + 1)).view(-1)
         n_mask[start, walk.view(-1)] = True
 
-        return self.map(data, n_mask > 0)
+        return self.map(data, n_mask)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(walk_length={self.walk_length})'
