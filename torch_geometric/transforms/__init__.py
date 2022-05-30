@@ -46,6 +46,7 @@ from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .add_metapaths import AddMetaPaths
+from .rooted_subgraph import RootedEgoNets, RootedRWSubgraph
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
@@ -99,6 +100,8 @@ __all__ = [
     'RandomNodeSplit',
     'RandomLinkSplit',
     'AddMetaPaths',
+    'RootedEgoNets',
+    'RootedRWSubgraph',
     'LargestConnectedComponents',
     'VirtualNode',
     'AddLaplacianEigenvectorPE',
