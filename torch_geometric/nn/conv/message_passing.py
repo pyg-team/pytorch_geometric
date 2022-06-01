@@ -14,6 +14,7 @@ from torch.utils.hooks import RemovableHandle
 from torch_scatter import gather_csr, scatter, segment_csr
 from torch_sparse import SparseTensor
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.typing import Adj, Size
 
 from .utils.helpers import expand_left
@@ -85,7 +86,8 @@ class MessagePassing(torch.nn.Module):
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     }
 
-    def __init__(self, aggr: Optional[Union[str, List[str]]] = "add",
+    def __init__(self, aggr: Optional[Union[str, List[str],
+                                            Aggregation]] = "add",
                  flow: str = "source_to_target", node_dim: int = -2,
                  decomposed_layers: int = 1):
 
@@ -99,8 +101,12 @@ class MessagePassing(torch.nn.Module):
             assert len(set(aggr) | AGGRS) == len(AGGRS)
             self.aggr: Optional[str] = None
             self.aggrs: List[str] = aggr
+        elif isinstance(aggr, Aggregation):
+            self.aggr: Optional[Aggregation] = aggr
+            self.aggrs: List[Aggregation] = []
         else:
-            raise ValueError(f"Only strings, list and tuples are valid "
+            raise ValueError(f"Only strings, list, tuples and subclasses of"
+                             f"torch_geometric.nn.aggr.Aggregation are valid "
                              f"aggregation schemes (got '{type(aggr)}')")
 
         self.flow = flow
@@ -480,12 +486,16 @@ class MessagePassing(torch.nn.Module):
         """
         aggr = self.aggr if aggr is None else aggr
         assert aggr is not None
-        if ptr is not None:
-            ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
-            return segment_csr(inputs, ptr, reduce=aggr)
+        if isinstance(self.aggr, Aggregation):
+            return aggr(inputs, index=index, ptr=ptr, dim_size=dim_size,
+                        dim=self.node_dim)
         else:
-            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce=aggr)
+            if ptr is not None:
+                ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
+                return segment_csr(inputs, ptr, reduce=aggr)
+            else:
+                return scatter(inputs, index, dim=self.node_dim,
+                               dim_size=dim_size, reduce=aggr)
 
     def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
