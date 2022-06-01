@@ -26,14 +26,19 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 FeatureTensorType = Union[torch.Tensor, np.ndarray]
 
 # Types for message passing ###################################################
+class ProxyTensor(object):
+    def __init__():
+        return super()
 
-Adj = Union[Tensor, SparseTensor]
-OptTensor = Optional[Tensor]
-PairTensor = Tuple[Tensor, Tensor]
-OptPairTensor = Tuple[Tensor, Optional[Tensor]]
-PairOptTensor = Tuple[Optional[Tensor], Optional[Tensor]]
+AnyTensor = Union[Tensor, ProxyTensor]
+
+Adj = Union[AnyTensor, SparseTensor]
+OptTensor = Optional[AnyTensor]
+PairTensor = Tuple[AnyTensor, AnyTensor]
+OptPairTensor = Tuple[AnyTensor, Optional[AnyTensor]]
+PairOptTensor = Tuple[Optional[AnyTensor], Optional[AnyTensor]]
 Size = Optional[Tuple[int, int]]
-NoneType = Optional[Tensor]
+NoneType = Optional[AnyTensor]
 
 # Types for sampling ##########################################################
 
