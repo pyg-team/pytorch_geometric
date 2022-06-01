@@ -60,10 +60,11 @@ def test_add_metapaths():
     assert list(meta1.metapath_dict.values()) == metapaths
     assert list(meta1.metapath_dict.keys()) == new_edge_types
 
+
 def test_sample_edge_index():
     edge_index = []
     for i in range(1, 10):
-        edge_index.extend([[i, i+1]] * i)
+        edge_index.extend([[i, i + 1]] * i)
     num_edges = len(edge_index)
     edge_index = torch.tensor(edge_index).t()
     mp = AddMetaPaths([])
