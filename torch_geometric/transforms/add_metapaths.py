@@ -100,7 +100,7 @@ class AddMetaPaths(BaseTransform):
         self.keep_same_node_type = keep_same_node_type
         self.drop_unconnected_nodes = drop_unconnected_nodes
 
-    def __call__(self, data: HeteroData) -> HeteroData:
+    def __call__(self, data: HeteroData, max_sample: int=None) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
@@ -110,13 +110,23 @@ class AddMetaPaths(BaseTransform):
                     edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
+
+            edge_index = data[edge_type].edge_index
+            if max_sample is not None:
+                edge_index = self.edge_index_sampling(edge_index, max_sample)
             adj1 = SparseTensor.from_edge_index(
-                edge_index=data[edge_type].edge_index,
+                edge_index=edge_index,
                 sparse_sizes=data[edge_type].size())
 
             for i, edge_type in enumerate(metapath[1:]):
+                print('ADD METAPATH LOOP ========== ', i, edge_type)
+                edge_index = data[edge_type].edge_index
+                print(edge_index.size(), '============== full')
+                if max_sample is not None:
+                    edge_index = self.edge_index_sampling(edge_index, max_sample)
+                print(edge_index.size(), '============== downsample')
                 adj2 = SparseTensor.from_edge_index(
-                    edge_index=data[edge_type].edge_index,
+                    edge_index=edge_index,
                     sparse_sizes=data[edge_type].size())
                 adj1 = adj1 @ adj2
 
@@ -145,3 +155,11 @@ class AddMetaPaths(BaseTransform):
                     del data[node]
 
         return data
+
+    def edge_index_sampling(self, edge_index, max_sample):
+        _, counts = torch.unique(
+            edge_index[0], sorted=False, return_counts=True)
+        sample_prob = torch.repeat_interleave(1 / counts * max_sample, counts)
+        draw = torch.rand(sample_prob.size(), dtype=float)
+        mask = sample_prob > draw
+        return edge_index[:, mask]
