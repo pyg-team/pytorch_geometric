@@ -4,8 +4,9 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
+
+from .base import Aggregation
 
 
 class MeanAggregation(Aggregation):
@@ -36,6 +37,16 @@ class MinAggregation(Aggregation):
         return self.reduce(x, index, ptr, dim_size, dim, reduce='min')
 
 
+class MulAggregation(Aggregation):
+    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        if ptr is not None:  # TODO
+            raise NotImplementedError(f"'{self.__class__.__name__}' with "
+                                      f"'ptr' not yet supported")
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='mul')
+
+
 class VarAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -61,6 +72,7 @@ class SoftmaxAggregation(Aggregation):
         super().__init__()
         self._init_t = t
         self.t = Parameter(torch.Tensor(1)) if learn else t
+        self.learn = learn
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -77,6 +89,9 @@ class SoftmaxAggregation(Aggregation):
         alpha = softmax(alpha, index, ptr, dim_size, dim)
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.learn})')
+
 
 class PowerMeanAggregation(Aggregation):
     def __init__(self, p: float = 1.0, learn: bool = False):
@@ -84,8 +99,10 @@ class PowerMeanAggregation(Aggregation):
         super().__init__()
         self._init_p = p
         self.p = Parameter(torch.Tensor(1)) if learn else p
+        self.learn = learn
         self.reset_parameters()
 
+    def reset_parameters(self):
         if isinstance(self.p, Tensor):
             self.p.data.fill_(self._init_p)
 
@@ -97,3 +114,6 @@ class PowerMeanAggregation(Aggregation):
         if isinstance(self.p, (int, float)) and self.p == 1:
             return out
         return out.clamp_(min=0, max=100).pow(1. / self.p)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.learn})')
