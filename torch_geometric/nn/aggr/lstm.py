@@ -3,8 +3,9 @@ from typing import Optional
 from torch import Tensor
 from torch.nn import LSTM
 
-from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
+
+from .base import Aggregation
 
 
 class LSTMAggregation(Aggregation):
