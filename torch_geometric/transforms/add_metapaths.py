@@ -126,9 +126,9 @@ class AddMetaPaths(BaseTransform):
                     edge_index=edge_index, sparse_sizes=data[edge_type].size())
                 if self.max_sample is not None:
                     adj2 = self.adj_sampling(adj2, self.max_sample)
-                print(adj2.sparse_sizes(), '============== downsample')
+                print(adj2.nnz(), '============== downsample')
                 adj1 = adj1 @ adj2
-                print(adj1, '============= result edges')
+                print(adj1.nnz(), '============= result edges')
 
             row, col, _ = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
