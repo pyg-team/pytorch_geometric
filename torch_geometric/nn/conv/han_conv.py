@@ -135,13 +135,13 @@ class HANConv(MessagePassing):
             edge_type = '__'.join(edge_type)
             lin_src = self.lin_src[edge_type]
             lin_dst = self.lin_dst[edge_type]
+            x_src = x_node_dict[src_type]
             x_dst = x_node_dict[dst_type]
-            alpha_src = (x_node_dict[src_type] * lin_src).sum(dim=-1)
+            alpha_src = (x_src * lin_src).sum(dim=-1)
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
-            alpha = (alpha_src, alpha_dst)
-            # propagate_type: (x_dst: Tensor, alpha: PairTensor)
-            out = self.propagate(edge_index, x_dst=x_dst, alpha=alpha,
-                                 size=None)
+            # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
+            out = self.propagate(edge_index, x=(x_src, x_dst),
+                                 alpha=(alpha_src, alpha_dst), size=None)
 
             out = F.relu(out)
             out_dict[dst_type].append(out)
@@ -157,7 +157,7 @@ class HANConv(MessagePassing):
 
         return out_dict
 
-    def message(self, x_dst_i: Tensor, alpha_i: Tensor, alpha_j: Tensor,
+    def message(self, x_j: Tensor, alpha_i: Tensor, alpha_j: Tensor,
                 index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
 
@@ -165,7 +165,7 @@ class HANConv(MessagePassing):
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        out = x_dst_i * alpha.view(-1, self.heads, 1)
+        out = x_j * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
 
     def __repr__(self) -> str:
