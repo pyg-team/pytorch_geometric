@@ -100,7 +100,7 @@ class AddMetaPaths(BaseTransform):
         self.keep_same_node_type = keep_same_node_type
         self.drop_unconnected_nodes = drop_unconnected_nodes
 
-    def __call__(self, data: HeteroData, max_sample: int=None) -> HeteroData:
+    def __call__(self, data: HeteroData, max_sample: int = None) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
