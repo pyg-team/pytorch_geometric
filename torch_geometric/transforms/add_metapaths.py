@@ -117,7 +117,6 @@ class AddMetaPaths(BaseTransform):
             adj1 = SparseTensor.from_edge_index(
                 edge_index=edge_index,
                 sparse_sizes=data[edge_type].size())
-            adj1 = adj1.coalesce()
 
             for i, edge_type in enumerate(metapath[1:]):
                 print('ADD METAPATH LOOP ========== ', i, edge_type)
@@ -128,10 +127,8 @@ class AddMetaPaths(BaseTransform):
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=edge_index,
                     sparse_sizes=data[edge_type].size())
-                adj2 = adj2.coalesce()
                 print(edge_index.size(), '============== downsample')
                 adj1 = adj1 @ adj2
-                adj1 = adj1.coalesce()
                 print(adj1, '============= result edges')
 
             row, col, _ = adj1.coo()
