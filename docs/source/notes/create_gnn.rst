@@ -44,9 +44,10 @@ The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
 
 .. math::
 
-    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{\Theta}^{\top} \cdot \mathbf{x}_j^{(k-1)} \right),
+    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{W}^{\top} \cdot \mathbf{x}_j^{(k-1)} \right) + \mathbf{b},
 
-where neighboring node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, normalized by their degree, and finally summed up.
+where neighboring node features are first transformed by a weight matrix :math:`\mathbf{W}`, normalized by their degree, and finally summed up.
+Lastly, we apply the bias vector :math:`\mathbf{b}` to the aggregated output.
 This formula can be divided into the following steps:
 
 1. Add self-loops to the adjacency matrix.
@@ -54,6 +55,7 @@ This formula can be divided into the following steps:
 3. Compute normalization coefficients.
 4. Normalize node features in :math:`\phi`.
 5. Sum up neighboring node features (:obj:`"add"` aggregation).
+6. Apply a final bias vector.
 
 Steps 1-3 are typically computed before message passing takes place.
 Steps 4-5 can be easily processed using the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` base class.
@@ -62,13 +64,21 @@ The full layer implementation is shown below:
 .. code-block:: python
 
     import torch
+    from torch.nn import Linear, Parameter
     from torch_geometric.nn import MessagePassing
     from torch_geometric.utils import add_self_loops, degree
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
             super().__init__(aggr='add')  # "Add" aggregation (Step 5).
-            self.lin = torch.nn.Linear(in_channels, out_channels)
+            self.lin = Linear(in_channels, out_channels, bias=False)
+            self.bias = Parameter(torch.Tensor(out_channels))
+
+            self.reset_parameters()
+
+        def reset_parameters(self):
+            self.lin.reset_parameters()
+            self.bias.data.zero_()
 
         def forward(self, x, edge_index):
             # x has shape [N, in_channels]
@@ -88,7 +98,12 @@ The full layer implementation is shown below:
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
             # Step 4-5: Start propagating messages.
-            return self.propagate(edge_index, x=x, norm=norm)
+            out = self.propagate(edge_index, x=x, norm=norm)
+
+            # Step 6: Apply a final bias vector.
+            out += self.bias
+
+            return out
 
         def message(self, x_j, norm):
             # x_j has shape [E, out_channels]
