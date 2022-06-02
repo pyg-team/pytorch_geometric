@@ -2,7 +2,7 @@ from typing import Optional
 
 import torch
 from torch import Tensor, nn
-from torch.nn.functional import nll_loss
+from torch.nn.functional import mse_loss, nll_loss
 from torch_scatter import scatter_mean
 from tqdm import tqdm
 
@@ -113,10 +113,10 @@ class PGExplainer(Explainer):
               edge_index=None):
         if self.return_type == 'regression':
             if node_idx is not None:
-                loss = torch.cdist(log_logits[node_idx],
-                                   prediction[node_idx]).squeeze()
+                loss = mse_loss(log_logits[node_idx], prediction[node_idx],
+                                reduction='sum')
             else:
-                loss = torch.cdist(log_logits, prediction).mean()
+                loss = mse_loss(log_logits, prediction, reduction='sum')
         else:
             if node_idx is not None:
                 loss = nll_loss(log_logits[node_idx], prediction[node_idx])
