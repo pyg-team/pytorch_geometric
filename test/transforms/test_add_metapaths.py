@@ -1,4 +1,5 @@
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths
@@ -67,8 +68,10 @@ def test_sample_adj():
         edge_index.extend([[i, i + 1]] * i)
     num_edges = len(edge_index)
     edge_index = torch.tensor(edge_index).t()
-    edge_index = AddMetaPaths([], max_sample=1).edge_index_sampling(edge_index)
-    assert edge_index.size(0) == 2
-    assert edge_index.size(1) < num_edges
-    edge_index = AddMetaPaths([], max_sample=1).edge_index_sampling(edge_index)
-    assert edge_index.numel() == 0
+    adj = SparseTensor.from_edge_index(edge_index=edge_index)
+    adj = AddMetaPaths([], max_sample=1).sample_adj(adj)
+    assert adj.size(0) == 10  # max num nodes
+    assert adj.size(1) == 11
+    assert adj.nnz() < num_edges
+    adj = AddMetaPaths([], max_sample=0).sample_adj(adj)
+    assert adj.nnz() == 0

@@ -118,7 +118,7 @@ class AddMetaPaths(BaseTransform):
                 edge_index=edge_index, sparse_sizes=data[edge_type].size())
             t = time.time()
             if self.max_sample is not None:
-                adj1 = self.sample_adj(adj1, self.max_sample)
+                adj1 = self.sample_adj(adj1)
             print('sample time ===========  ', time.time() - t)
 
             for i, edge_type in enumerate(metapath[1:]):
@@ -129,7 +129,7 @@ class AddMetaPaths(BaseTransform):
                     edge_index=edge_index, sparse_sizes=data[edge_type].size())
                 t = time.time()
                 if self.max_sample is not None:
-                    adj2 = self.sample_adj(adj2, self.max_sample)
+                    adj2 = self.sample_adj(adj2)
                 print('sample time ===========  ', time.time() - t)
                 print(adj2.nnz(), '============== downsample')
                 t = time.time()
@@ -175,21 +175,20 @@ class AddMetaPaths(BaseTransform):
         mask = sample_prob > draw
         return adj.masked_select_nnz(mask, layout='coo')
 
-    def sample_adj(self, adj: SparseTensor, max_sample: int):
+    def sample_adj(self, adj: SparseTensor):
         r""" Sample the sparse adjacency matrix such that the expected
-        max degree is less the specified max_sample. This is mainly used
+        max degree is less the specified self.max_sample. This is mainly used
         to avoid very dense metapath edges.
 
         Args:
             adj: the sparse tensor to be sampled. It could be the adjacency
             matrix of a bipartite graph specifying the edges for one edge type
             in a heterogeneous graph.
-            max_sample: the expected max degree.
 
         Returns:
             The sampled sparse adjacency matrix.
         """
-        adj = self._edge_index_sampling(adj, max_sample)
+        adj = self._sample_adj(adj, self.max_sample)
         # sample the reverse direction: restrict the destination degree
         # to max_sample in expectation
-        return self._edge_index_sampling(adj, max_sample, backward=True)
+        return self._sample_adj(adj, self.max_sample, backward=True)
