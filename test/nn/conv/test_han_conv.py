@@ -103,8 +103,8 @@ def test_han_conv_empty_tensor():
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     in_channels = {'author': 16, 'paper': 12}
-
     conv = HANConv(in_channels, 16, metadata, heads=2)
+
     out_dict = conv(x_dict, edge_index_dict)
     assert len(out_dict) == 2
     assert out_dict['author'].size() == (6, 16)
