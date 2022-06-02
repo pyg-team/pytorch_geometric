@@ -115,8 +115,7 @@ class AddMetaPaths(BaseTransform):
             if max_sample is not None:
                 edge_index = self.edge_index_sampling(edge_index, max_sample)
             adj1 = SparseTensor.from_edge_index(
-                edge_index=edge_index,
-                sparse_sizes=data[edge_type].size())
+                edge_index=edge_index, sparse_sizes=data[edge_type].size())
 
             for i, edge_type in enumerate(metapath[1:]):
                 print('ADD METAPATH LOOP ========== ', i, edge_type)
@@ -126,8 +125,7 @@ class AddMetaPaths(BaseTransform):
                     edge_index = self.edge_index_sampling(
                         edge_index, max_sample)
                 adj2 = SparseTensor.from_edge_index(
-                    edge_index=edge_index,
-                    sparse_sizes=data[edge_type].size())
+                    edge_index=edge_index, sparse_sizes=data[edge_type].size())
                 print(edge_index.size(), '============== downsample')
                 adj1 = adj1 @ adj2
                 print(adj1, '============= result edges')
