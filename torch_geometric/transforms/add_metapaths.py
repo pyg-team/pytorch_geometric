@@ -1,5 +1,5 @@
-from typing import List
 import time
+from typing import List
 
 import torch
 from torch_sparse import SparseTensor
@@ -176,7 +176,7 @@ class AddMetaPaths(BaseTransform):
         return adj.masked_select_nnz(mask, layout='coo')
 
     def sample_adj(self, adj: SparseTensor, max_sample: int):
-        r""" Sample the sparse adjacency matrix such that the expected 
+        r""" Sample the sparse adjacency matrix such that the expected
         max degree is less the specified max_sample. This is mainly used
         to avoid very dense metapath edges.
 
