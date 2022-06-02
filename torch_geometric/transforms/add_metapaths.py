@@ -87,7 +87,7 @@ class AddMetaPaths(BaseTransform):
     def __init__(self, metapaths: List[List[EdgeType]],
                  drop_orig_edges: bool = False,
                  keep_same_node_type: bool = False,
-                 drop_unconnected_nodes: bool = False):
+                 drop_unconnected_nodes: bool = False, max_sample: int = None):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -99,8 +99,9 @@ class AddMetaPaths(BaseTransform):
         self.drop_orig_edges = drop_orig_edges
         self.keep_same_node_type = keep_same_node_type
         self.drop_unconnected_nodes = drop_unconnected_nodes
+        self.max_sample = max_sample
 
-    def __call__(self, data: HeteroData, max_sample: int = None) -> HeteroData:
+    def __call__(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
@@ -112,23 +113,20 @@ class AddMetaPaths(BaseTransform):
             edge_type = metapath[0]
 
             edge_index = data[edge_type].edge_index
-            if max_sample is not None:
-                edge_index = self.edge_index_sampling(edge_index, max_sample)
             adj1 = SparseTensor.from_edge_index(
-                edge_index=edge_index,
-                sparse_sizes=data[edge_type].size())
+                edge_index=edge_index, sparse_sizes=data[edge_type].size())
+            if self.max_sample is not None:
+                adj1 = self.adj_sampling(adj1, self.max_sample)
 
             for i, edge_type in enumerate(metapath[1:]):
                 print('ADD METAPATH LOOP ========== ', i, edge_type)
                 edge_index = data[edge_type].edge_index
                 print(edge_index.size(), '============== full')
-                if max_sample is not None:
-                    edge_index = self.edge_index_sampling(
-                        edge_index, max_sample)
                 adj2 = SparseTensor.from_edge_index(
-                    edge_index=edge_index,
-                    sparse_sizes=data[edge_type].size())
-                print(edge_index.size(), '============== downsample')
+                    edge_index=edge_index, sparse_sizes=data[edge_type].size())
+                if self.max_sample is not None:
+                    adj2 = self.adj_sampling(adj2, self.max_sample)
+                print(adj2.sparse_sizes(), '============== downsample')
                 adj1 = adj1 @ adj2
                 print(adj1, '============= result edges')
 
@@ -158,19 +156,33 @@ class AddMetaPaths(BaseTransform):
 
         return data
 
-    def _edge_index_sampling(self, edge_index, max_sample, backward=False):
+    def _adj_sampling(self, adj: SparseTensor, max_sample: int,
+                      backward=False):
         if backward:
-            node_idx = edge_index[1]
+            counts = adj.sum(dim=0)
         else:
-            node_idx = edge_index[0]
-        _, counts = torch.unique(node_idx, sorted=False, return_counts=True)
-        sample_prob = torch.repeat_interleave(1 / counts * max_sample, counts)
+            counts = adj.sum(dim=1)
+        counts = counts[counts.nonzero().squeeze()]
+        sample_prob = torch.repeat_interleave(1 / counts * max_sample,
+                                              counts.int())
         draw = torch.rand(sample_prob.size(), dtype=float)
         mask = sample_prob > draw
-        return edge_index[:, mask]
+        return adj.masked_select_nnz(mask, layout='coo')
 
-    def edge_index_sampling(self, edge_index, max_sample):
-        edge_index = self._edge_index_sampling(edge_index, max_sample)
+    def adj_sampling(self, adj: SparseTensor, max_sample: int):
+        r""" Sample the sparse adjacency matrix such that the expected 
+        max degree is less the specified max_sample.
+
+        Args:
+            adj: the sparse tensor to be sampled. It could be the adjacency
+            matrix of a bipartite graph specifying the edges for one edge type
+            in a heterogeneous graph.
+            max_sample: the expected max degree.
+        
+        Returns:
+            The sampled sparse adjacency matrix.
+        """
+        adj = self._edge_index_sampling(adj, max_sample)
         # sample the reverse direction: restrict the destination degree
         # to max_sample in expectation
-        return self._edge_index_sampling(edge_index, max_sample, backward=True)
+        return self._edge_index_sampling(adj, max_sample, backward=True)
