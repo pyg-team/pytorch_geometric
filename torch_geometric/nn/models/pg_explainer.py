@@ -145,7 +145,8 @@ class PGExplainer(Explainer):
             z (Tensor): Node embedding from last :class:`MessagePassing` layer
                 in :obj:`model`.
             edge_index (LongTensor): The edge indices.
-            node_idxs (Optional, LongTensor): The nodes used for training.
+            node_idxs (Optional, LongTensor): The nodes used for training. The
+                original paper uses around 5-30 nodes for training.
                 Only required if :obj:`task` is :obj:`"node"`.
                 (default: :obj:`None`)
             batch (optional, LongTensor): Batch vector :math:`\mathbf{b} \in
