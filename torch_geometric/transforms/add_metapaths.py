@@ -1,4 +1,5 @@
 from typing import List
+import time
 
 import torch
 from torch_sparse import SparseTensor
@@ -115,8 +116,10 @@ class AddMetaPaths(BaseTransform):
             edge_index = data[edge_type].edge_index
             adj1 = SparseTensor.from_edge_index(
                 edge_index=edge_index, sparse_sizes=data[edge_type].size())
+            t = time.time()
             if self.max_sample is not None:
-                adj1 = self.adj_sampling(adj1, self.max_sample)
+                adj1 = self.sample_adj(adj1, self.max_sample)
+            print('sample time ===========  ', time.time() - t)
 
             for i, edge_type in enumerate(metapath[1:]):
                 print('ADD METAPATH LOOP ========== ', i, edge_type)
@@ -124,10 +127,14 @@ class AddMetaPaths(BaseTransform):
                 print(edge_index.size(), '============== full')
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=edge_index, sparse_sizes=data[edge_type].size())
+                t = time.time()
                 if self.max_sample is not None:
-                    adj2 = self.adj_sampling(adj2, self.max_sample)
+                    adj2 = self.sample_adj(adj2, self.max_sample)
+                print('sample time ===========  ', time.time() - t)
                 print(adj2.nnz(), '============== downsample')
+                t = time.time()
                 adj1 = adj1 @ adj2
+                print('mul time ===========  ', time.time() - t)
                 print(adj1.nnz(), '============= result edges')
 
             row, col, _ = adj1.coo()
@@ -156,8 +163,7 @@ class AddMetaPaths(BaseTransform):
 
         return data
 
-    def _adj_sampling(self, adj: SparseTensor, max_sample: int,
-                      backward=False):
+    def _sample_adj(self, adj: SparseTensor, max_sample: int, backward=False):
         if backward:
             counts = adj.sum(dim=0)
         else:
@@ -169,8 +175,8 @@ class AddMetaPaths(BaseTransform):
         mask = sample_prob > draw
         return adj.masked_select_nnz(mask, layout='coo')
 
-    def adj_sampling(self, adj: SparseTensor, max_sample: int):
-        r""" Sample the sparse adjacency matrix such that the expected
+    def sample_adj(self, adj: SparseTensor, max_sample: int):
+        r""" Sample the sparse adjacency matrix such that the expected 
         max degree is less the specified max_sample. This is mainly used
         to avoid very dense metapath edges.
 
