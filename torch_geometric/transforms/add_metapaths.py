@@ -171,7 +171,8 @@ class AddMetaPaths(BaseTransform):
 
     def adj_sampling(self, adj: SparseTensor, max_sample: int):
         r""" Sample the sparse adjacency matrix such that the expected 
-        max degree is less the specified max_sample.
+        max degree is less the specified max_sample. This is mainly used
+        to avoid very dense metapath edges.
 
         Args:
             adj: the sparse tensor to be sampled. It could be the adjacency
