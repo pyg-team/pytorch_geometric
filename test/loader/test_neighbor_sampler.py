@@ -88,4 +88,4 @@ def test_neighbor_sampler_on_cora(get_dataset):
     _, n_id, adjs = next(iter(loader))
     out1 = model.batch(data.x[n_id], adjs)
     out2 = model.full(data.x, data.edge_index)[batch]
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-7)
