@@ -46,7 +46,8 @@ The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
 
     \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{W}^{\top} \cdot \mathbf{x}_j^{(k-1)} \right) + \mathbf{b},
 
-where neighboring node features are first transformed by a weight matrix :math:`\mathbf{W}`, normalized by their degree, and finally summed up and enhanced by a bias vector :math:`\mathbf{b}`.
+where neighboring node features are first transformed by a weight matrix :math:`\mathbf{W}`, normalized by their degree, and finally summed up.
+Lastly, we apply the bias vector :math:`\mathbf{b}`.
 This formula can be divided into the following steps:
 
 1. Add self-loops to the adjacency matrix.
