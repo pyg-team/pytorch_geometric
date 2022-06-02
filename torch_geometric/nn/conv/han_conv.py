@@ -124,9 +124,8 @@ class HANConv(MessagePassing):
         x_node_dict, out_dict = {}, {}
 
         # Iterate over node types:
-        for node_type, x_node in x_dict.items():
-            x_node_dict[node_type] = self.proj[node_type](x_node).view(
-                -1, H, D)
+        for node_type, x in x_dict.items():
+            x_node_dict[node_type] = self.proj[node_type](x).view(-1, H, D)
             out_dict[node_type] = []
 
         # Iterate over edge types:
