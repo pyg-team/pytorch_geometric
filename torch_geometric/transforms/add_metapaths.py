@@ -170,7 +170,7 @@ class AddMetaPaths(BaseTransform):
         return adj.masked_select_nnz(mask, layout='coo')
 
     def adj_sampling(self, adj: SparseTensor, max_sample: int):
-        r""" Sample the sparse adjacency matrix such that the expected 
+        r""" Sample the sparse adjacency matrix such that the expected
         max degree is less the specified max_sample. This is mainly used
         to avoid very dense metapath edges.
 
@@ -179,7 +179,7 @@ class AddMetaPaths(BaseTransform):
             matrix of a bipartite graph specifying the edges for one edge type
             in a heterogeneous graph.
             max_sample: the expected max degree.
-        
+
         Returns:
             The sampled sparse adjacency matrix.
         """
