@@ -115,8 +115,7 @@ class AddMetaPaths(BaseTransform):
             if max_sample is not None:
                 edge_index = self.edge_index_sampling(edge_index, max_sample)
             adj1 = SparseTensor.from_edge_index(
-                edge_index=edge_index,
-                sparse_sizes=data[edge_type].size())
+                edge_index=edge_index, sparse_sizes=data[edge_type].size())
             adj1 = adj1.coalesce()
 
             for i, edge_type in enumerate(metapath[1:]):
@@ -124,10 +123,10 @@ class AddMetaPaths(BaseTransform):
                 edge_index = data[edge_type].edge_index
                 print(edge_index.size(), '============== full')
                 if max_sample is not None:
-                    edge_index = self.edge_index_sampling(edge_index, max_sample)
+                    edge_index = self.edge_index_sampling(
+                        edge_index, max_sample)
                 adj2 = SparseTensor.from_edge_index(
-                    edge_index=edge_index,
-                    sparse_sizes=data[edge_type].size())
+                    edge_index=edge_index, sparse_sizes=data[edge_type].size())
                 adj2 = adj2.coalesce()
                 print(edge_index.size(), '============== downsample')
                 adj1 = adj1 @ adj2
