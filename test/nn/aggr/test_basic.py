@@ -58,7 +58,7 @@ def test_gen_aggregation(Aggregation, learn):
     ptr = torch.tensor([0, 2, 5, 6])
 
     aggr = Aggregation(learn=learn)
-    assert str(aggr) == f'{Aggregation.__name__}({learn})'
+    assert str(aggr) == f'{Aggregation.__name__}(learn={learn})'
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))

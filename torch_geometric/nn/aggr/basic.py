@@ -90,7 +90,7 @@ class SoftmaxAggregation(Aggregation):
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.learn})')
+        return (f'{self.__class__.__name__}(learn={self.learn})')
 
 
 class PowerMeanAggregation(Aggregation):
@@ -116,4 +116,4 @@ class PowerMeanAggregation(Aggregation):
         return out.clamp_(min=0, max=100).pow(1. / self.p)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.learn})')
+        return (f'{self.__class__.__name__}(learn={self.learn})')
