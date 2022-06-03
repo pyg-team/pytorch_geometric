@@ -58,6 +58,16 @@ class Aggregation(torch.nn.Module, ABC):
 
         return super().__call__(x, index, ptr=ptr, dim_size=dim_size, dim=dim)
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
+
+    # Assertions ##############################################################
+
+    def assert_index_present(self, index: Optional[Tensor]):
+        if index is None:
+            raise NotImplementedError(f"'{self.__class__.__name__}' requires "
+                                      f"'index' to be specified")
+
     def assert_two_dimensional_input(self, x: Tensor, dim: int = -2):
         if x.dim() != 2:
             raise ValueError(f"'{self.__class__.__name__}' requires "
@@ -66,6 +76,8 @@ class Aggregation(torch.nn.Module, ABC):
         if dim not in [-2, 0]:
             raise ValueError(f"'{self.__class__.__name__}' needs to perform "
                              f"aggregation in first dimension (got '{dim}')")
+
+    # Helper methods ##########################################################
 
     def reduce(self, x: Tensor, index: Optional[Tensor] = None,
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -83,20 +95,15 @@ class Aggregation(torch.nn.Module, ABC):
                        dim_size: Optional[int] = None,
                        dim: int = -2) -> Tuple[Tensor, Tensor]:
 
-        if index is None:  # TODO
-            raise NotImplementedError(f"'{self.__class__.__name__}' with "
-                                      f"'ptr' not yet supported")
+        self.assert_index_present(index)  # TODO
+        self.assert_two_dimensional_input(x, dim)
 
         if torch.all(index[:-1] <= index[1:]):
             raise ValueError(f"Can not perform aggregation inside "
                              f"'{self.__class__.__name__}' since the "
                              f"'index' tensor is not sorted")
 
-        self.assert_two_dimensional_input(x, dim)
         return to_dense_batch(x, index, batch_size=dim_size)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
 
 
 ###############################################################################

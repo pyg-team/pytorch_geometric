@@ -44,11 +44,8 @@ class Set2Set(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
+        self.assert_index_present(index)  # TODO
         self.assert_two_dimensional_input(x, dim)
-
-        if index is None:  # TODO
-            raise NotImplementedError(f"'{self.__class__.__name__}' with "
-                                      f"'ptr' not yet supported")
 
         h = (x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))),
              x.new_zeros((self.lstm.num_layers, dim_size, x.size(-1))))
