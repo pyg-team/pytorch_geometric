@@ -7,6 +7,7 @@ from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType
+from torch_geometric.utils import degree
 
 
 @functional_transform('add_metapaths')
@@ -162,7 +163,8 @@ class AddMetaPaths(BaseTransform):
         return data
 
     def sample_adj(self, adj: SparseTensor) -> SparseTensor:
-        count = adj.sum(dim=1)
-        prob = (self.max_sample * (1. / count)).repeat_interleave(count.long())
+        row, col, _ = adj.coo()
+        deg = degree(row, num_nodes=adj.size(0))
+        prob = (self.max_sample * (1. / deg))[row]
         mask = torch.rand_like(prob) < prob
         return adj.masked_select_nnz(mask, layout='coo')
