@@ -14,7 +14,7 @@ class PEGConv(MessagePassing):
     r"""The PEG layer from the
     `"Equivariant and Stable Positional Encoding
     for More Powerful Graph Neural Networks"
-    <https://arxiv.org/abs/2203.00199>`_ paper
+    <https://arxiv.org/abs/2203.00199>`_ paper.
 
     $$X^{'},Z^{'}=(\sigma [(\hat{A} \odot M)XW],Z)$$
     where\ $M_{uv}=MLP(||Z_u-Z_v||),\forall u,v \in V$.
