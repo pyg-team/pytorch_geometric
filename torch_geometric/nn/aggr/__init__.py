@@ -10,6 +10,7 @@ from .basic import (
     PowerMeanAggregation,
 )
 from .lstm import LSTMAggregation
+from .set2set import Set2Set
 
 __all__ = classes = [
     'Aggregation',
@@ -22,4 +23,5 @@ __all__ = classes = [
     'SoftmaxAggregation',
     'PowerMeanAggregation',
     'LSTMAggregation',
+    'Set2Set',
 ]
