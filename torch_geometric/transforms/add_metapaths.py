@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import List, Optional
 
 import torch
 from torch_sparse import SparseTensor
@@ -84,11 +84,18 @@ class AddMetaPaths(BaseTransform):
             (default: :obj:`False`)
         drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
             node types not connected by any edge type. (default: :obj:`False`)
+        max_sample (int, optional): If set, will sample at maximum
+            :obj:`max_sample` neighbors within metapaths. Useful in order to
+            tackle very dense metapath edges. (default: :obj:`None`)
     """
-    def __init__(self, metapaths: List[List[EdgeType]],
-                 drop_orig_edges: bool = False,
-                 keep_same_node_type: bool = False,
-                 drop_unconnected_nodes: bool = False, max_sample: int = None):
+    def __init__(
+        self,
+        metapaths: List[List[EdgeType]],
+        drop_orig_edges: bool = False,
+        keep_same_node_type: bool = False,
+        drop_unconnected_nodes: bool = False,
+        max_sample: Optional[int] = None,
+    ):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -112,30 +119,22 @@ class AddMetaPaths(BaseTransform):
                     edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
-
-            edge_index = data[edge_type].edge_index
             adj1 = SparseTensor.from_edge_index(
-                edge_index=edge_index, sparse_sizes=data[edge_type].size())
-            t = time.time()
+                edge_index=data[edge_type].edge_index,
+                sparse_sizes=data[edge_type].size())
+
             if self.max_sample is not None:
                 adj1 = self.sample_adj(adj1)
-            print('sample time ===========  ', time.time() - t)
 
             for i, edge_type in enumerate(metapath[1:]):
-                print('ADD METAPATH LOOP ========== ', i, edge_type)
-                edge_index = data[edge_type].edge_index
-                print(edge_index.size(), '============== full')
                 adj2 = SparseTensor.from_edge_index(
-                    edge_index=edge_index, sparse_sizes=data[edge_type].size())
-                t = time.time()
-                if self.max_sample is not None:
-                    adj2 = self.sample_adj(adj2)
-                print('sample time ===========  ', time.time() - t)
-                print(adj2.nnz(), '============== downsample')
-                t = time.time()
+                    edge_index=data[edge_type].edge_index,
+                    sparse_sizes=data[edge_type].size())
+
                 adj1 = adj1 @ adj2
-                print('mul time ===========  ', time.time() - t)
-                print(adj1.nnz(), '============= result edges')
+
+                if self.max_sample is not None:
+                    adj1 = self.sample_adj(adj1)
 
             row, col, _ = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
@@ -163,32 +162,8 @@ class AddMetaPaths(BaseTransform):
 
         return data
 
-    def _sample_adj(self, adj: SparseTensor, max_sample: int, backward=False):
-        if backward:
-            counts = adj.sum(dim=0)
-        else:
-            counts = adj.sum(dim=1)
-        counts = counts[counts.nonzero().squeeze()]
-        sample_prob = torch.repeat_interleave(1 / counts * max_sample,
-                                              counts.int())
-        draw = torch.rand(sample_prob.size(), dtype=float)
-        mask = sample_prob > draw
+    def sample_adj(self, adj: SparseTensor) -> SparseTensor:
+        count = adj.sum(dim=1)
+        prob = (self.max_sample * (1. / count)).repeat_interleave(count.long())
+        mask = torch.rand_like(prob) < prob
         return adj.masked_select_nnz(mask, layout='coo')
-
-    def sample_adj(self, adj: SparseTensor):
-        r""" Sample the sparse adjacency matrix such that the expected
-        max degree is less the specified self.max_sample. This is mainly used
-        to avoid very dense metapath edges.
-
-        Args:
-            adj: the sparse tensor to be sampled. It could be the adjacency
-            matrix of a bipartite graph specifying the edges for one edge type
-            in a heterogeneous graph.
-
-        Returns:
-            The sampled sparse adjacency matrix.
-        """
-        adj = self._sample_adj(adj, self.max_sample)
-        # sample the reverse direction: restrict the destination degree
-        # to max_sample in expectation
-        return self._sample_adj(adj, self.max_sample, backward=True)
