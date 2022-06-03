@@ -68,7 +68,13 @@ class Aggregation(torch.nn.Module, ABC):
             raise NotImplementedError(f"'{self.__class__.__name__}' requires "
                                       f"'index' to be specified")
 
-    def assert_two_dimensional_input(self, x: Tensor, dim: int = -2):
+    def assert_sorted_index(self, index: Optional[Tensor]):
+        if index is not None and not torch.all(index[:-1] <= index[1:]):
+            raise ValueError(f"Can not perform aggregation inside "
+                             f"'{self.__class__.__name__}' since the "
+                             f"'index' tensor is not sorted")
+
+    def assert_two_dimensional_input(self, x: Tensor, dim: int):
         if x.dim() != 2:
             raise ValueError(f"'{self.__class__.__name__}' requires "
                              f"two-dimensional inputs (got '{x.dim()}')")
@@ -96,13 +102,8 @@ class Aggregation(torch.nn.Module, ABC):
                        dim: int = -2) -> Tuple[Tensor, Tensor]:
 
         self.assert_index_present(index)  # TODO
+        self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
-
-        if not torch.all(index[:-1] <= index[1:]):
-            raise ValueError(f"Can not perform aggregation inside "
-                             f"'{self.__class__.__name__}' since the "
-                             f"'index' tensor is not sorted")
-
         return to_dense_batch(x, index, batch_size=dim_size)
 
 
