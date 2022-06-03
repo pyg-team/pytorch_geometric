@@ -11,7 +11,7 @@ def test_equilibrium(iter, alpha):
 batch_size = 10
     feature_channels = 3
     output_channels = 2
-    x = torch.randn(batch, feature_channels)
+    x = torch.randn(batch_size, feature_channels)
     model = EquilibriumAggregation(feature_channels, output_channels,
                                    num_layers=[10, 10], grad_iter=iter)
 
