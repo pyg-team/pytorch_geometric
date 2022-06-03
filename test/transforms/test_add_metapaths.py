@@ -1,61 +1,89 @@
+import copy
+
 import torch
+from torch import tensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths
 
 
 def test_add_metapaths():
-    dblp = HeteroData()
-    dblp['paper'].x = torch.ones(5)
-    dblp['author'].x = torch.ones(6)
-    dblp['conference'].x = torch.ones(3)
-    dblp['paper', 'cites', 'paper'].edge_index = torch.tensor([[0, 1, 2, 3],
-                                                               [1, 2, 4, 2]])
-    dblp['paper', 'author'].edge_index = torch.tensor([[0, 1, 2, 3, 4],
-                                                       [2, 2, 5, 2, 5]])
-    dblp['author', 'paper'].edge_index = dblp['paper',
-                                              'author'].edge_index[[1, 0]]
-    dblp['conference', 'paper'].edge_index = torch.tensor([[0, 0, 1, 2, 2],
-                                                           [0, 1, 2, 3, 4]])
-    dblp['paper', 'conference'].edge_index = dblp['conference',
-                                                  'paper'].edge_index[[1, 0]]
+    data = HeteroData()
+    data['p'].x = torch.ones(5)
+    data['a'].x = torch.ones(6)
+    data['c'].x = torch.ones(3)
+    data['p', 'p'].edge_index = tensor([[0, 1, 2, 3], [1, 2, 4, 2]])
+    data['p', 'a'].edge_index = tensor([[0, 1, 2, 3, 4], [2, 2, 5, 2, 5]])
+    data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
+    data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
+    data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
 
     # Test transform options:
-    orig_edge_type = dblp.edge_types
-    metapaths = [[('paper', 'conference'), ('conference', 'paper')]]
-    meta1 = AddMetaPaths(metapaths)(dblp.clone())
-    meta2 = AddMetaPaths(metapaths, drop_orig_edges=True)(dblp.clone())
-    meta3 = AddMetaPaths(metapaths, drop_orig_edges=True,
-                         keep_same_node_type=True)(dblp.clone())
-    meta4 = AddMetaPaths(metapaths, drop_orig_edges=True,
-                         keep_same_node_type=True,
-                         drop_unconnected_nodes=True)(dblp.clone())
+    metapaths = [[('p', 'c'), ('c', 'p')]]
 
-    assert meta1['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
-    assert meta2['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
-    assert meta3['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
-    assert meta4['paper', 'metapath_0', 'paper'].edge_index.shape[-1] == 9
+    transform = AddMetaPaths(metapaths)
+    assert str(transform) == 'AddMetaPaths()'
+    meta1 = transform(copy.copy(data))
 
-    assert all([i in meta1.edge_types for i in orig_edge_type])
-    assert meta2.edge_types == [('paper', 'metapath_0', 'paper')]
-    assert meta3.edge_types == [('paper', 'cites', 'paper'),
-                                ('paper', 'metapath_0', 'paper')]
-    assert meta4.edge_types == [('paper', 'cites', 'paper'),
-                                ('paper', 'metapath_0', 'paper')]
+    transform = AddMetaPaths(metapaths, drop_orig_edges=True)
+    assert str(transform) == 'AddMetaPaths()'
+    meta2 = transform(copy.copy(data))
 
-    assert meta3.node_types == ['paper', 'author', 'conference']
-    assert meta4.node_types == ['paper']
+    transform = AddMetaPaths(metapaths, drop_orig_edges=True,
+                             keep_same_node_type=True)
+    assert str(transform) == 'AddMetaPaths()'
+    meta3 = transform(copy.copy(data))
+
+    transform = AddMetaPaths(metapaths, drop_orig_edges=True,
+                             keep_same_node_type=True,
+                             drop_unconnected_nodes=True)
+    assert str(transform) == 'AddMetaPaths()'
+    meta4 = transform(copy.copy(data))
+
+    assert meta1['metapath_0'].edge_index.size() == (2, 9)
+    assert meta2['metapath_0'].edge_index.size() == (2, 9)
+    assert meta3['metapath_0'].edge_index.size() == (2, 9)
+    assert meta4['metapath_0'].edge_index.size() == (2, 9)
+
+    assert all([i in meta1.edge_types for i in data.edge_types])
+    assert meta2.edge_types == [('p', 'metapath_0', 'p')]
+    assert meta3.edge_types == [('p', 'to', 'p'), ('p', 'metapath_0', 'p')]
+    assert meta4.edge_types == [('p', 'to', 'p'), ('p', 'metapath_0', 'p')]
+
+    assert meta3.node_types == ['p', 'a', 'c']
+    assert meta4.node_types == ['p']
 
     # Test 4-hop metapath:
-    metapaths = [[('author', 'paper'), ('paper', 'conference')],
-                 [('author', 'paper'), ('paper', 'conference'),
-                  ('conference', 'paper'), ('paper', 'author')]]
-    meta1 = AddMetaPaths(metapaths)(dblp.clone())
-    new_edge_types = [('author', 'metapath_0', 'conference'),
-                      ('author', 'metapath_1', 'author')]
-    assert meta1[new_edge_types[0]].edge_index.shape[-1] == 4
-    assert meta1[new_edge_types[1]].edge_index.shape[-1] == 4
+    metapaths = [
+        [('a', 'p'), ('p', 'c')],
+        [('a', 'p'), ('p', 'c'), ('c', 'p'), ('p', 'a')],
+    ]
+    transform = AddMetaPaths(metapaths)
+    meta = transform(copy.copy(data))
+    new_edge_types = [('a', 'metapath_0', 'c'), ('a', 'metapath_1', 'a')]
+    assert meta['metapath_0'].edge_index.size() == (2, 4)
+    assert meta['metapath_1'].edge_index.size() == (2, 4)
 
     # Test `metapath_dict` information:
-    assert list(meta1.metapath_dict.values()) == metapaths
-    assert list(meta1.metapath_dict.keys()) == new_edge_types
+    assert list(meta.metapath_dict.values()) == metapaths
+    assert list(meta.metapath_dict.keys()) == new_edge_types
+
+
+def test_add_metapaths_max_sample():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+    data['p'].x = torch.ones(5)
+    data['a'].x = torch.ones(6)
+    data['c'].x = torch.ones(3)
+    data['p', 'p'].edge_index = tensor([[0, 1, 2, 3], [1, 2, 4, 2]])
+    data['p', 'a'].edge_index = tensor([[0, 1, 2, 3, 4], [2, 2, 5, 2, 5]])
+    data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
+    data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
+    data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
+
+    metapaths = [[('p', 'c'), ('c', 'p')]]
+    transform = AddMetaPaths(metapaths, max_sample=1)
+
+    meta = transform(data)
+    assert meta['metapath_0'].edge_index.size(1) < 9
