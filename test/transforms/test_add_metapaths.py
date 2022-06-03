@@ -2,7 +2,6 @@ import copy
 
 import torch
 from torch import tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths
