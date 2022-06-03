@@ -98,7 +98,7 @@ class Aggregation(torch.nn.Module, ABC):
         self.assert_index_present(index)  # TODO
         self.assert_two_dimensional_input(x, dim)
 
-        if torch.all(index[:-1] <= index[1:]):
+        if not torch.all(index[:-1] <= index[1:]):
             raise ValueError(f"Can not perform aggregation inside "
                              f"'{self.__class__.__name__}' since the "
                              f"'index' tensor is not sorted")
