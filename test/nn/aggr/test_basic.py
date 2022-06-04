@@ -45,7 +45,10 @@ def test_basic_aggregation(Aggregation):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
-    if not isinstance(aggr, MulAggregation):
+    if isinstance(aggr, MulAggregation):
+        with pytest.raises(AssertionError, match="'index' is None"):
+            assert torch.allclose(out, aggr(x, ptr=ptr))
+    else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
 
 
