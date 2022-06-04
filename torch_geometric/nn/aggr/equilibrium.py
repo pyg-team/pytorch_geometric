@@ -174,8 +174,8 @@ class EquilibriumAggregation(Aggregation):
         dim_size = index_size if dim_size is None else dim_size
 
         if dim_size < index_size:
-            raise NotImplementedError(f"{self.__class__} doesn't support "
-                                      f"`dim_size`")
+            raise NotImplementedError("`dim_size` is less than `index` "
+                                      "implied size")
 
         with torch.enable_grad():
             y = self.optimizer(x, self.init_output(index), index, self.energy,
