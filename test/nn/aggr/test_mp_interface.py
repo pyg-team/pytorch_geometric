@@ -3,6 +3,8 @@ from itertools import combinations
 import pytest
 import torch
 from torch import Tensor
+from torch_sparse import SparseTensor
+from torch_sparse.matmul import spmm
 
 from torch_geometric.nn import (
     LSTMAggregation,
@@ -29,30 +31,41 @@ class MyConv(MessagePassing):
         # propagate_type: (x: Tensor)
         return self.propagate(edge_index, x=x, size=None)
 
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return spmm(adj_t, x, reduce=self.aggr)
 
-@pytest.mark.parametrize(
-    'aggr', [(MeanAggregation, 'mean'), (SumAggregation, 'sum'),
-             (MaxAggregation, 'max'), (MinAggregation, 'min'),
-             (MulAggregation, 'mul'), VarAggregation, StdAggregation])
+
+@pytest.mark.parametrize('aggr', [(MeanAggregation, 'mean'),
+                                  (SumAggregation, 'sum'),
+                                  (MaxAggregation, 'max'),
+                                  (MinAggregation, 'min'),
+                                  (MulAggregation, 'mul'),
+                                  (VarAggregation, 'var'),
+                                  (StdAggregation, 'std')])
 def test_my_basic_aggr_conv(aggr):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    if isinstance(aggr, tuple):
-        aggr_module, aggr_str = aggr
-        conv1 = MyConv(aggr=aggr_module())
-        out1 = conv1(x, edge_index)
-        assert out1.size() == (4, 16)
+    aggr_module, aggr_str = aggr
+    conv1 = MyConv(aggr=aggr_module())
+    out1 = conv1(x, edge_index)
+    assert out1.size() == (4, 16)
+    assert conv1(x, adj.t()).tolist() == out1.tolist()
+    conv1.fuse = False
+    assert conv1(x, adj.t()).tolist() == out1.tolist()
+    conv1.fuse = True
 
-        conv2 = MyConv(aggr=aggr_str)
-        out2 = conv2(x, edge_index)
-        assert out2.size() == (4, 16)
+    conv2 = MyConv(aggr=aggr_str)
+    out2 = conv2(x, edge_index)
+    assert out2.size() == (4, 16)
+    assert conv2(x, adj.t()).tolist() == out2.tolist()
+    conv2.fuse = False
+    assert conv2(x, adj.t()).tolist() == out2.tolist()
+    conv2.fuse = True
 
-        assert torch.allclose(out1, out2)
-    else:
-        conv = MyConv(aggr=aggr())
-        out = conv(x, edge_index)
-        assert out.size() == (4, 16)
+    assert torch.allclose(out1, out2)
 
 
 @pytest.mark.parametrize('Aggregation',
@@ -89,6 +102,19 @@ def test_my_multiple_aggr_conv(aggrs):
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 
     conv = MyConv(aggr=MultiAggregation(aggrs=aggrs))
+    out = conv(x, edge_index)
+    assert out.size() == (4, 48)
+    assert not torch.allclose(out[:, 0:16], out[:, 16:32])
+    assert not torch.allclose(out[:, 0:16], out[:, 32:48])
+    assert not torch.allclose(out[:, 16:32], out[:, 32:48])
+
+
+@pytest.mark.parametrize('aggrs', aggrs)
+def test_my_list_multiple_aggr_conv(aggrs):
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    conv = MyConv(aggr=aggrs)
     out = conv(x, edge_index)
     assert out.size() == (4, 48)
     assert not torch.allclose(out[:, 0:16], out[:, 16:32])
