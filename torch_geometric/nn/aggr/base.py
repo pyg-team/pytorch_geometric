@@ -68,7 +68,7 @@ class Aggregation(torch.nn.Module, ABC):
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment_csr(x, ptr, reduce=reduce)
 
-        assert index is not None
+        assert index is not None, "'index' is None"
         return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
 
     def __repr__(self) -> str:

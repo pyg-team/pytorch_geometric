@@ -14,6 +14,7 @@ from .lstm import LSTMAggregation
 from .multi import MultiAggregation
 
 __all__ = classes = [
+    'MultiAggregation',
     'Aggregation',
     'MeanAggregation',
     'SumAggregation',
@@ -25,5 +26,4 @@ __all__ = classes = [
     'SoftmaxAggregation',
     'PowerMeanAggregation',
     'LSTMAggregation',
-    'MultiAggregation',
 ]
