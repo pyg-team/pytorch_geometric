@@ -21,9 +21,19 @@ aggrs = [list(aggr) for aggr in combinations(aggr_list, 3)] + \
 
 
 @pytest.mark.parametrize('aggrs', aggrs)
-def test_my_multiple_aggr(aggrs):
+def test_multi_aggr(aggrs):
     x = torch.randn(6, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
     aggr = MultiAggregation(aggrs=aggrs)
     out = aggr(x, index)
     assert out.size() == (3, len(aggrs) * 16)
+
+
+def test_multi_aggr_repr_():
+    aggr = MultiAggregation(
+        aggrs=['max', 'min', PowerMeanAggregation(learn=True)])
+    assert str(aggr) == ('MultiAggregation([\n'
+                         '  MaxAggregation(),\n'
+                         '  MinAggregation(),\n'
+                         '  PowerMeanAggregation(learn=True)\n'
+                         '])')
