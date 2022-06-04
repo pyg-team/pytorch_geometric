@@ -42,3 +42,24 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
         swish,
     ]
     return resolver(acts, query, *args, **kwargs)
+
+
+# Aggregation Resolver ########################################################
+
+
+def aggregation_resolver(query: Union[Any, str] = 'mean', *args, **kwargs):
+    from . import aggr
+
+    # NOTE: Base class name: Aggregation, subclasses name: *Aggregation
+    base_cls = aggr.Aggregation
+    if isinstance(query, str):
+        if normalize_string(query) == 'add':
+            query = 'sum'
+        base_cls_name = normalize_string(base_cls.__name__)
+        if base_cls_name not in normalize_string(query):
+            query += base_cls_name
+    aggrs = [
+        aggr for aggr in vars(aggr).values()
+        if isinstance(aggr, type) and issubclass(aggr, base_cls)
+    ]
+    return resolver(aggrs, query, *args, **kwargs)
