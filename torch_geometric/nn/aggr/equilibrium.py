@@ -90,13 +90,14 @@ class MomentumOptimizer(torch.nn.Module):
         iterations: int = 5,
     ) -> Tuple[Tensor, float]:
 
-        momentum = torch.zeros_like(y)
+        momentum_buffer = torch.zeros_like(y)
         for _ in range(iterations):
             val = func(x, y, index)
             grad = torch.autograd.grad(val, y, create_graph=True,
                                        retain_graph=True)[0]
-            momentum = self.momentum * momentum - self.learning_rate * grad
-            y = y + momentum
+            delta = self.learning_rate * grad
+            momentum_buffer = self.momentum * momentum_buffer - delta
+            y = y + momentum_buffer
         return y
 
 
@@ -166,14 +167,23 @@ class EquilibriumAggregation(Aggregation):
                 dim: int = -2) -> Tensor:
 
         if ptr is not None:
-            raise ValueError(f"{self.__class__} doesn't support `ptr`")
+            raise NotImplementedError(
+                f"{self.__class__} doesn't support `ptr`")
 
-        if dim_size is not None:
-            raise ValueError(f"{self.__class__} doesn't support `dim_size`")
+        index_size = 1 if index is None else index.max() + 1
+        dim_size = index_size if dim_size is None else dim_size
+
+        if dim_size < index_size:
+            raise NotImplementedError(f"{self.__class__} doesn't support "
+                                      f"`dim_size`")
 
         with torch.enable_grad():
             y = self.optimizer(x, self.init_output(index), index, self.energy,
                                iterations=self.grad_iter)
+
+        if dim_size > index_size:
+            zero = torch.zeros(dim_size - index_size, *y.size()[1:])
+            y = torch.cat([y, zero])
 
         return y
 
