@@ -70,6 +70,8 @@ class Aggregation(torch.nn.Module, ABC):
     # Assertions ##############################################################
 
     def assert_index_present(self, index: Optional[Tensor]):
+        # TODO Currently, not all aggregators support `ptr`. This assert helps
+        # to ensure that we require `index` to be passed to the computation:
         if index is None:
             raise NotImplementedError(f"'{self.__class__.__name__}' requires "
                                       f"'index' to be specified")
@@ -107,9 +109,11 @@ class Aggregation(torch.nn.Module, ABC):
                        dim_size: Optional[int] = None,
                        dim: int = -2) -> Tuple[Tensor, Tensor]:
 
-        self.assert_index_present(index)  # TODO
+        # TODO Currently, `to_dense_batch` can only operate on `index`:
+        self.assert_index_present(index)
         self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
+
         return to_dense_batch(x, index, batch_size=dim_size)
 
 
