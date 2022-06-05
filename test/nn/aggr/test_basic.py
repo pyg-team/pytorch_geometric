@@ -20,13 +20,10 @@ def test_validate():
 
     aggr = MeanAggregation()
 
-    with pytest.raises(ValueError, match="either 'index' or 'ptr'"):
-        aggr(x)
-
     with pytest.raises(ValueError, match="invalid dimension"):
         aggr(x, index, dim=-3)
 
-    with pytest.raises(ValueError, match="mismatch between"):
+    with pytest.raises(ValueError, match="invalid 'dim_size'"):
         aggr(x, ptr=ptr, dim_size=2)
 
 
