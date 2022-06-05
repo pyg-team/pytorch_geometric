@@ -42,10 +42,8 @@ class MulAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         if ptr is not None:  # TODO
-            import warnings
-            warnings.warn(f"'{self.__class__.__name__}' with "
-                          f"'ptr' not yet supported, use 'index' instead")
-            ptr = None
+            raise NotImplementedError(f"'{self.__class__.__name__}' with "
+                                      f"'ptr' not yet supported")
         return self.reduce(x, index, ptr, dim_size, dim, reduce='mul')
 
 

@@ -52,29 +52,38 @@ def test_my_basic_aggr_conv(aggr):
     conv1 = MyConv(aggr=aggr_module())
     out1 = conv1(x, edge_index)
     assert out1.size() == (4, 16)
-    assert conv1(x, adj.t()).tolist() == out1.tolist()
-    conv1.fuse = False
-    assert conv1(x, adj.t()).tolist() == out1.tolist()
-    conv1.fuse = True
-
     conv2 = MyConv(aggr=aggr_str)
     out2 = conv2(x, edge_index)
     assert out2.size() == (4, 16)
-    assert conv2(x, adj.t()).tolist() == out2.tolist()
-    conv2.fuse = False
-    assert conv2(x, adj.t()).tolist() == out2.tolist()
-    conv2.fuse = True
-
     assert torch.allclose(out1, out2)
 
+    if aggr == (MulAggregation, 'mul'):
+        with pytest.raises(
+                NotImplementedError, match=f"'{MulAggregation.__name__}' with "
+                f"'ptr' not yet supported"):
+            conv1(x, adj.t())
+        with pytest.raises(
+                NotImplementedError, match=f"'{MulAggregation.__name__}' with "
+                f"'ptr' not yet supported"):
+            conv2(x, adj.t())
+    else:
+        assert conv1(x, adj.t()).tolist() == out1.tolist()
+        conv1.fuse = False
+        assert conv1(x, adj.t()).tolist() == out1.tolist()
+        conv1.fuse = True
+        assert conv2(x, adj.t()).tolist() == out2.tolist()
+        conv2.fuse = False
+        assert conv2(x, adj.t()).tolist() == out2.tolist()
+        conv2.fuse = True
 
-@pytest.mark.parametrize('Aggregation',
+
+@pytest.mark.parametrize('aggr_module',
                          [SoftmaxAggregation, PowerMeanAggregation])
 @pytest.mark.parametrize('learn', [True, False])
-def test_my_gen_aggr_conv(Aggregation, learn):
+def test_my_gen_aggr_conv(aggr_module, learn):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    conv = MyConv(aggr=Aggregation(learn=learn))
+    conv = MyConv(aggr=aggr_module(learn=learn))
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
 
