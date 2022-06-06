@@ -11,8 +11,6 @@ def test_lstm_aggregation():
     aggr = LSTMAggregation(16, 32)
     assert str(aggr) == 'LSTMAggregation(16, 32)'
 
-    aggr.reset_parameters()
-
     with pytest.raises(ValueError, match="is not sorted"):
         aggr(x, torch.tensor([0, 1, 0, 1, 2, 1]))
 
