@@ -14,7 +14,7 @@ class CuGraphData(Data):
     
     def to(self, to_device: TorchDevice) -> Data:
         return CuGraphData(
-            self.__dict__['_store'].gaas_client,
+            self.gaas_client,
             self.__dict__['_store'].gaas_graph_id,
             to_device
         )
