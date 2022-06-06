@@ -220,7 +220,7 @@ class MessagePassing(torch.nn.Module):
 
                 out[arg] = data
 
-        if isinstance(edge_index, Tensor) or isinstance(edge_index, ProxyTensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             out['adj_t'] = None
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
