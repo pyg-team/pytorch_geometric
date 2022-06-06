@@ -184,7 +184,7 @@ class MessagePassing(torch.nn.Module):
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
     def __lift__(self, src, edge_index, dim):
-        if isinstance(edge_index, Tensor) or isinstance(edge_index, ProxyTensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             index = edge_index[dim]
             return src.index_select(self.node_dim, index)
         elif isinstance(edge_index, SparseTensor):
