@@ -10,7 +10,7 @@ class CuGraphData(Data):
         super().__init__()
 
         self._store = CuGraphStorage(gaas_client, graph_id, device=device)
-        self.__dict__['device'] = device
+        self.device = device
     
     def to(self, to_device: TorchDevice) -> Data:
         return CuGraphData(
