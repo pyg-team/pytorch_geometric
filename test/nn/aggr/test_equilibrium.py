@@ -8,7 +8,7 @@ from torch_geometric.nn.aggr import EquilibriumAggregation
 @pytest.mark.parametrize('alpha', [0, .1, 5])
 def test_equilibrium(iter, alpha):
 
-batch_size = 10
+    batch_size = 10
     feature_channels = 3
     output_channels = 2
     x = torch.randn(batch_size, feature_channels)
