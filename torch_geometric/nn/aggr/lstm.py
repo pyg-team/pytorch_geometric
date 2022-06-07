@@ -3,7 +3,7 @@ from typing import Optional
 from torch import Tensor
 from torch.nn import LSTM
 
-from .base import Aggregation
+from torch_geometric.nn.aggr import Aggregation
 
 
 class LSTMAggregation(Aggregation):

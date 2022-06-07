@@ -4,9 +4,8 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
-
-from .base import Aggregation
 
 
 class MeanAggregation(Aggregation):
@@ -41,10 +40,9 @@ class MulAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        if ptr is not None:  # TODO
-            raise NotImplementedError(f"'{self.__class__.__name__}' with "
-                                      f"'ptr' not yet supported")
-        return self.reduce(x, index, ptr, dim_size, dim, reduce='mul')
+        # TODO Currently, `mul` reduction can only operate on `index`:
+        self.assert_index_present()  # TODO
+        return self.reduce(x, index, None, dim_size, dim, reduce='mul')
 
 
 class VarAggregation(Aggregation):

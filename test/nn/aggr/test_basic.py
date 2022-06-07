@@ -42,10 +42,9 @@ def test_basic_aggregation(Aggregation):
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
+
     if isinstance(aggr, MulAggregation):
-        with pytest.raises(
-                NotImplementedError, match=f"'{MulAggregation.__name__}' with "
-                f"'ptr' not yet supported"):
+        with pytest.raises(NotImplementedError, match="not yet supported"):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
