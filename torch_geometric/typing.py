@@ -26,7 +26,8 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 FeatureTensorType = Union[torch.Tensor, np.ndarray]
 
 # Types for message passing ###################################################
-class ProxyTensor(object):
+class ProxyTensor:
+    pass
     def __init__():
         return super()
 
