@@ -86,14 +86,14 @@ class PGExplainer(Explainer):
         temp = self.coeffs['temp']
         return temp[0] * ((temp[1] / temp[0])**(e / self.epochs))
 
-    def _create_explainer_input(self, edge_index, x, node_idx=None) -> Tensor:
+    def _create_explainer_input(self, edge_index, z, node_idx=None) -> Tensor:
         rows, cols = edge_index
-        x_j, x_i = x[rows], x[cols]
+        z_j, z_i = z[rows], z[cols]
         if self.task == 'node':
-            x_node = x[node_idx].repeat(rows.size(0), 1)
-            return torch.cat([x_i, x_j, x_node], 1)
+            z_node = z[node_idx].repeat(rows.size(0), 1)
+            return torch.cat([z_i, z_j, z_node], 1)
         else:
-            return torch.cat([x_i, x_j], 1)
+            return torch.cat([z_i, z_j], 1)
 
     def _compute_edge_mask(self, edge_weight, temperature=1.0, bias=0.0,
                            training=True):
@@ -216,7 +216,7 @@ class PGExplainer(Explainer):
                         edge_index_n, z_n, mapping).detach()
                     self.edge_mask = self._compute_edge_mask(
                         self.explainer_model(explainer_in), t, bias=bias)
-                    # Should this be edge_index_n or edge_index?
+
                     set_masks(self.model, self.edge_mask, edge_index_n)
                     out = self.model(x=x_n, edge_index=edge_index_n,
                                      **kwargs_n)
