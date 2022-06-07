@@ -30,15 +30,13 @@ class ProxyTensor(object):
     def __init__():
         return super()
 
-AnyTensor = Union[Tensor, ProxyTensor]
-
-Adj = Union[AnyTensor, SparseTensor]
-OptTensor = Optional[AnyTensor]
-PairTensor = Tuple[AnyTensor, AnyTensor]
-OptPairTensor = Tuple[AnyTensor, Optional[AnyTensor]]
-PairOptTensor = Tuple[Optional[AnyTensor], Optional[AnyTensor]]
+Adj = Union[Tensor, SparseTensor]
+OptTensor = Optional[Tensor]
+PairTensor = Tuple[Tensor, Tensor]
+OptPairTensor = Tuple[Tensor, Optional[Tensor]]
+PairOptTensor = Tuple[Optional[Tensor], Optional[Tensor]]
 Size = Optional[Tuple[int, int]]
-NoneType = Optional[AnyTensor]
+NoneType = Optional[Tensor]
 
 # Types for sampling ##########################################################
 
