@@ -308,7 +308,7 @@ class MessagePassing(torch.nn.Module):
             out = self.update(out, **update_kwargs)
 
         # Otherwise, run both functions in separation.
-        elif isinstance(edge_index, Tensor) or isinstance(edge_index, ProxyTensor) or not self.fuse:
+        elif isinstance(edge_index, (Tensor, ProxyTensor)) or not self.fuse:
             if decomposed_layers > 1:
                 user_args = self.__user_args__
                 decomp_args = {a[:-2] for a in user_args if a[-2:] == '_j'}
