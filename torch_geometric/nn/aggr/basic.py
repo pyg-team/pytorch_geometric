@@ -41,7 +41,7 @@ class MulAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         # TODO Currently, `mul` reduction can only operate on `index`:
-        self.assert_index_present()  # TODO
+        self.assert_index_present(index)
         return self.reduce(x, index, None, dim_size, dim, reduce='mul')
 
 
