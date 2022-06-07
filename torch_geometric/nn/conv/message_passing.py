@@ -148,7 +148,7 @@ class MessagePassing(torch.nn.Module):
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
-        if isinstance(edge_index, Tensor) or isinstance(edge_index, ProxyTensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             assert edge_index.dtype == torch.long
             assert edge_index.dim() == 2
             assert edge_index.size(0) == 2

@@ -8,8 +8,9 @@ from gaas_client.defaults import graph_id as DEFAULT_GRAPH_ID
 class CuGraphData(Data):
     def __init__(self, gaas_client: GaasClient, graph_id: int=DEFAULT_GRAPH_ID, device=TorchDevice('cpu')):
         super().__init__()
-
-        self._store = CuGraphStorage(gaas_client, graph_id, device=device)
+        
+        # have to access __dict__ here to ensure the store is a CuGraphStorage
+        self.__dict__['_store'] = CuGraphStorage(gaas_client, graph_id, device=device)
         self.device = device
     
     def to(self, to_device: TorchDevice) -> Data:

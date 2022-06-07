@@ -124,10 +124,10 @@ class TorchTensorGaasGraphDataProxy(ProxyTensor):
 class CuGraphStorage(GlobalStorage):
     def __init__(self, gaas_client: GaasClient, gaas_graph_id: int, device: TorchDevice=TorchDevice('cpu')):
         super().__init__()
-        self.gaas_client = gaas_client
-        self.gaas_graph_id = gaas_graph_id
-        self.node_index = TorchTensorGaasGraphDataProxy(gaas_client, gaas_graph_id, 'vertex', device)
-        self.edge_index = TorchTensorGaasGraphDataProxy(gaas_client, gaas_graph_id, 'edge', device, transposed=True)
+        setattr(self, 'gaas_client', gaas_client)
+        setattr(self, 'gaas_graph_id', gaas_graph_id)
+        setattr(self, 'node_index', TorchTensorGaasGraphDataProxy(gaas_client, gaas_graph_id, 'vertex', device))
+        setattr(self, 'edge_index', TorchTensorGaasGraphDataProxy(gaas_client, gaas_graph_id, 'edge', device, transposed=True))
     
     @property
     def num_nodes(self) -> int:
