@@ -17,5 +17,5 @@ def test_multi_aggr():
                          '])')
 
     out = aggr(x, index)
-    assert out.size() == (3, len(aggrs) * 16)
+    assert out.size() == (3, len(aggrs) * x.size(1))
     assert torch.allclose(out, aggr(x, ptr=ptr))
