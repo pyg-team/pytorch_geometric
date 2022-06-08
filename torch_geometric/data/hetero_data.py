@@ -345,7 +345,7 @@ class HeteroData(BaseData):
             if len(edge_types) == 1:
                 args = edge_types[0]
                 return args
-            else:
+            elif len(edge_types) == 0:
                 args = (args[0], self.DEFAULT_REL, args[1])
                 return args
 

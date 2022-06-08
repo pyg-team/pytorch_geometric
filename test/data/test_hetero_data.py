@@ -1,8 +1,10 @@
 import copy
 
+import pytest
 import torch
 
 from torch_geometric.data import HeteroData
+from torch_geometric.data.storage import EdgeStorage
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -382,3 +384,19 @@ def test_to_homogeneous_and_vice_versa():
     assert len(out) == 1
     assert out['paper'].num_nodes == 100
     assert out['author'].num_nodes == 200
+
+
+def test_hetero_data_to_canonical():
+    data = HeteroData()
+    assert isinstance(data['user', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 1
+    assert isinstance(data['user', 'to', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 1
+
+    data = HeteroData()
+    assert isinstance(data['user', 'buys', 'product'], EdgeStorage)
+    assert isinstance(data['user', 'clicks', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 2
+
+    with pytest.raises(TypeError, match="missing 1 required"):
+        data['user', 'product']
