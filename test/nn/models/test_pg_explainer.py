@@ -92,11 +92,12 @@ def test_node(model, return_type):
     assert mask.shape[0] == edge_index.shape[1]
     assert mask.max() <= 1 and mask.min() >= 0
 
-    # test with 2 node 1 edge graph:
+    # test with isolated node:
     explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
                             log=False, return_type=return_type)
-    explainer.train_explainer(x[:2], z[:2], edge_index[:, :1],
-                              node_idxs=torch.arange(0, 1))
+    with torch.autograd.set_detect_anomaly(True):
+        explainer.train_explainer(x[:4], z[:4], edge_index[:, :4],
+                                  node_idxs=torch.arange(2, 4))
     assert_mask_clear(model)
     mask = explainer.explain(x[:2], z[:2], edge_index[:, :1], node_idx=1)
     assert mask.shape[0] == 1

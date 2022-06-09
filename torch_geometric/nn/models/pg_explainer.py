@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 
 import torch
@@ -133,6 +134,20 @@ class PGExplainer(Explainer):
 
         return loss + size_loss + mask_ent_loss
 
+    @staticmethod
+    def _drop_isolated_nodes(node_idxs: Tensor, edge_index: Tensor) -> Tensor:
+        isolated_node_index = []
+        for index, id in enumerate(node_idxs):
+            if id not in edge_index[1]:
+                isolated_node_index.append(index)
+                warnings.warn(
+                    f"Node {id} will not be used for training, as it doesn't"
+                    "have incoming edges")
+
+        mask = torch.ones_like(node_idxs, dtype=torch.bool)
+        mask[isolated_node_index] = 0
+        return node_idxs[mask]
+
     def train_explainer(self, x: Tensor, z: Tensor, edge_index: Tensor,
                         node_idxs: Optional[Tensor] = None,
                         batch: Tensor = None, **kwargs):
@@ -198,6 +213,7 @@ class PGExplainer(Explainer):
 
         else:
             assert node_idxs.unique().shape[0] == node_idxs.shape[0]
+            node_idxs = self._drop_isolated_nodes(node_idxs, edge_index)
             for e in range(0, self.epochs):
                 loss = torch.tensor([0.0], device=x.device).detach()
                 t = self._get_temp(e)
@@ -223,6 +239,7 @@ class PGExplainer(Explainer):
                     loss += self.get_loss(out, prediction, mapping)
                     clear_masks(self.model)
 
+                assert not torch.isnan(loss)
                 loss.backward()
                 optimizer.step()
 
