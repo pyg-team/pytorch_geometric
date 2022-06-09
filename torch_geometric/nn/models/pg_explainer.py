@@ -136,16 +136,11 @@ class PGExplainer(Explainer):
 
     @staticmethod
     def _drop_isolated_nodes(node_idxs: Tensor, edge_index: Tensor) -> Tensor:
-        isolated_node_index = []
-        for index, id in enumerate(node_idxs):
-            if id not in edge_index[1]:
-                isolated_node_index.append(index)
-                warnings.warn(
-                    f"Node {id} will not be used for training, as it doesn't"
-                    "have incoming edges")
 
-        mask = torch.ones_like(node_idxs, dtype=torch.bool)
-        mask[isolated_node_index] = 0
+        mask = torch.isin(node_idxs, edge_index[1])
+        if mask.sum() != node_idxs.size(-1):
+            warnings.warn(f"Dropping nodes {node_idxs[~mask]} from train set."
+                          "As they have no incoming edges")
         return node_idxs[mask]
 
     def train_explainer(self, x: Tensor, z: Tensor, edge_index: Tensor,
