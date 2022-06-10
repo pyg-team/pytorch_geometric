@@ -8,7 +8,7 @@ from .signed_gcn import SignedGCN
 from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
-from .dimenet import DimeNet
+from .dimenet import DimeNet, DimeNetPlusPlus
 from .explainer import Explainer, to_captum
 from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
@@ -22,6 +22,7 @@ from .rect import RECT_L
 from .linkx import LINKX
 from .lightgcn import LightGCN
 from .mask_label import MaskLabel
+from .rev_gnn import GroupAddRev
 
 __all__ = [
     'MLP',
@@ -43,6 +44,7 @@ __all__ = [
     'GraphUNet',
     'SchNet',
     'DimeNet',
+    'DimeNetPlusPlus',
     'Explainer',
     'to_captum',
     'GNNExplainer',
@@ -57,6 +59,7 @@ __all__ = [
     'LINKX',
     'LightGCN',
     'MaskLabel',
+    'GroupAddRev',
 ]
 
 classes = __all__
