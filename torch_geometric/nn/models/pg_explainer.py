@@ -139,7 +139,7 @@ class PGExplainer(Explainer):
 
         mask = torch.isin(node_idxs, edge_index[1])
         if mask.sum() != node_idxs.size(-1):
-            warnings.warn(f"Dropping nodes {node_idxs[~mask]} from train set."
+            warnings.warn(f"Dropping nodes {node_idxs[~mask]} from train set. "
                           "As they have no incoming edges")
         return node_idxs[mask]
 
