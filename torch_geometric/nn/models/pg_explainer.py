@@ -105,7 +105,7 @@ class PGExplainer(Explainer):
                    (1 - bias)) * torch.rand(edge_weight.size()) + (1 - bias)
             eps = eps.to(edge_weight.device)
             return (eps.log() -
-                    (1 - eps).log() + edge_weight).squeeze() / temperature
+                    (1 - eps).log() + edge_weight).squeeze(dim=1) / temperature
 
         else:
             return edge_weight.squeeze()
