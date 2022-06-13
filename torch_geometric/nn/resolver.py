@@ -24,8 +24,8 @@ def resolver(classes: List[Any], query: Union[Any, str],
             else:
                 return cls
 
-    return ValueError(f"Could not resolve '{query}' among the choices "
-                      f"{set(cls.__name__ for cls in classes)}")
+    raise ValueError(f"Could not resolve '{query}' among the choices "
+                     f"{set(cls.__name__ for cls in classes)}")
 
 
 # Activation Resolver #########################################################
@@ -55,7 +55,8 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     import torch_geometric.nn.aggr as aggrs
     base_cls = aggrs.Aggregation
-
+    if not isinstance(query, (str, type(None), base_cls)):
+        raise ValueError(f'{query} is not an instance of {base_cls.__name__}')
     aggrs = [
         aggr for aggr in vars(aggrs).values()
         if isinstance(aggr, type) and issubclass(aggr, base_cls)
