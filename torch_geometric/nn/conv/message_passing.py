@@ -28,10 +28,6 @@ from .utils.typing import (
     split_types_repr,
 )
 
-BASIC_AGGRS = {
-    'add', 'sum', 'mean', 'min', 'max', 'mul', 'var', 'std', 'softmax',
-    'powermean'
-}
 SPMM_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 
 
@@ -101,24 +97,14 @@ class MessagePassing(torch.nn.Module):
 
         super().__init__()
 
-        if aggr is None or isinstance(aggr, str):
-            assert aggr is None or aggr in BASIC_AGGRS
+        if aggr is None or isinstance(aggr, (str, Aggregation)):
             self.aggr_module = aggregation_resolver(aggr)
-            self.aggr: Optional[str] = aggr
+            self.aggr = str(aggr) if aggr is not None else None
         elif isinstance(aggr, (tuple, list)):
-            str_aggrs = set(filter(lambda x: isinstance(x, str), aggr))
-            assert len(str_aggrs | BASIC_AGGRS) == len(BASIC_AGGRS)
-            assert all(
-                map(lambda x: isinstance(x, Aggregation),
-                    set(aggr) - str_aggrs))
-            self.aggr_module: List[Aggregation] = MultiAggregation(
-                list(map(aggregation_resolver, aggr)))
-            self.aggr: Optional[str] = str(self.aggr_module)
-        elif isinstance(aggr, Aggregation):
-            self.aggr_module: Optional[Aggregation] = aggr
-            self.aggr: Optional[str] = str(self.aggr_module)
+            self.aggr_module = MultiAggregation(aggr)
+            self.aggr = str(self.aggr_module)
         else:
-            raise ValueError(f"Only strings, list, tuples and subclasses of"
+            raise ValueError(f"Only strings, list, tuples and instances of"
                              f"torch_geometric.nn.aggr.Aggregation are valid "
                              f"aggregation schemes (got '{type(aggr)}')")
 
@@ -480,8 +466,8 @@ class MessagePassing(torch.nn.Module):
         return inputs * edge_mask.view(size)
 
     def aggregate(self, inputs: Tensor, index: Tensor,
-                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                  aggr: Optional[Aggregation] = None) -> Tensor:
+                  ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -492,10 +478,8 @@ class MessagePassing(torch.nn.Module):
         modules to reduce the messages as specified in :meth:`__init__` by the
         :obj:`aggr` argument.
         """
-        aggr = self.aggr_module if aggr is None else aggr
-        assert aggr is not None
-        return aggr(inputs, index=index, ptr=ptr, dim_size=dim_size,
-                    dim=self.node_dim)
+        return self.aggr_module(inputs, index=index, ptr=ptr,
+                                dim_size=dim_size, dim=self.node_dim)
 
     def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
@@ -506,6 +490,13 @@ class MessagePassing(torch.nn.Module):
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`.
         """
         raise NotImplementedError
+
+    def combine(self, inputs: List[Tensor]) -> Tensor:
+        r"""Combines the outputs from multiple aggregations into a single
+        representation. Will only get called in case :obj:`aggr` holds a list
+        of aggregation schemes to use."""
+        assert len(inputs) > 0
+        return torch.cat(inputs, dim=-1) if len(inputs) > 1 else inputs[0]
 
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
