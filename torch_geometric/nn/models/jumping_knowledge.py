@@ -60,7 +60,7 @@ class JumpingKnowledge(torch.nn.Module):
         if hasattr(self, 'att'):
             self.att.reset_parameters()
 
-    def forward(self, xs):
+    def forward(self, xs: List[Tensor]) -> Tensor:
         # type: (List[Tensor]) -> Tensor  # noqa
         r"""Aggregates representations across different layers.
 
