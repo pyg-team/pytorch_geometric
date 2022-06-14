@@ -1,4 +1,7 @@
+from typing import List
+
 import torch
+from torch import Tensor
 from torch.nn import LSTM, Linear
 
 
@@ -40,13 +43,14 @@ class JumpingKnowledge(torch.nn.Module):
         super().__init__()
         self.mode = mode.lower()
         assert self.mode in ['cat', 'max', 'lstm']
+        # Must declare these here in order to use torch.jit.script
+        self.lstm = LSTM(channels, (num_layers * channels) // 2,
+                         bidirectional=True, batch_first=True)
+        self.att = Linear(2 * ((num_layers * channels) // 2), 1)
 
         if mode == 'lstm':
             assert channels is not None, 'channels cannot be None for lstm'
             assert num_layers is not None, 'num_layers cannot be None for lstm'
-            self.lstm = LSTM(channels, (num_layers * channels) // 2,
-                             bidirectional=True, batch_first=True)
-            self.att = Linear(2 * ((num_layers * channels) // 2), 1)
 
         self.reset_parameters()
 
@@ -57,19 +61,20 @@ class JumpingKnowledge(torch.nn.Module):
             self.att.reset_parameters()
 
     def forward(self, xs):
+        # type: (List[Tensor]) -> Tensor  # noqa
         r"""Aggregates representations across different layers.
 
         Args:
             xs (list or tuple): List containing layer-wise representations.
         """
 
-        assert isinstance(xs, list) or isinstance(xs, tuple)
+        assert isinstance(xs, list)
 
         if self.mode == 'cat':
             return torch.cat(xs, dim=-1)
         elif self.mode == 'max':
             return torch.stack(xs, dim=-1).max(dim=-1)[0]
-        elif self.mode == 'lstm':
+        else:  # elif self.mode == 'lstm' (Must be the case thanks to line 45)
             x = torch.stack(xs, dim=1)  # [num_nodes, num_layers, num_channels]
             alpha, _ = self.lstm(x)
             alpha = self.att(alpha).squeeze(-1)  # [num_nodes, num_layers]
