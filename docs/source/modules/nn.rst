@@ -86,6 +86,9 @@ Global Pooling Layers
    :undoc-members:
    :exclude-members: training
 
+.. autoclass:: torch_geometric.nn.aggr.Set2Set
+   :members:
+
 Pooling Layers
 --------------
 

@@ -14,7 +14,9 @@ __all__ = [
     'GraphMultisetTransformer',
 ]
 
-classes = __all__
+classes = __all__ + [
+    'Set2Set',
+]
 
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.nn.aggr import Set2Set  # noqa
