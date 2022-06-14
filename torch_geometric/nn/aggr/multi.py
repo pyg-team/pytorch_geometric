@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -8,7 +8,8 @@ from torch_geometric.nn.resolver import aggregation_resolver
 
 
 class MultiAggregation(Aggregation):
-    def __init__(self, aggrs: List[Union[Aggregation, str]]):
+    def __init__(self, aggrs: List[Union[Aggregation, str]],
+                 aggrs_kwargs: Optional[List[Dict]] = None):
         super().__init__()
 
         if not isinstance(aggrs, (list, tuple)):
@@ -19,7 +20,13 @@ class MultiAggregation(Aggregation):
             raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
                              f"not be empty")
 
-        self.aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
+        if not aggrs_kwargs:
+            aggrs_kwargs = [{}] * len(aggrs)
+
+        self.aggrs = [
+            aggregation_resolver(aggr, **arg_kwargs)
+            for aggr, arg_kwargs in zip(aggrs, aggrs_kwargs)
+        ]
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,

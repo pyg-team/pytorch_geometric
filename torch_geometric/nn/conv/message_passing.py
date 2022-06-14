@@ -93,15 +93,18 @@ class MessagePassing(torch.nn.Module):
         flow: str = "source_to_target",
         node_dim: int = -2,
         decomposed_layers: int = 1,
+        **kwargs,
     ):
 
         super().__init__()
 
+        aggr_kwargs = kwargs.get("aggr_kwargs", {})
+
         if aggr is None or isinstance(aggr, (str, Aggregation)):
-            self.aggr_module = aggregation_resolver(aggr)
+            self.aggr_module = aggregation_resolver(aggr, **aggr_kwargs)
             self.aggr = str(aggr) if aggr is not None else None
         elif isinstance(aggr, (tuple, list)):
-            self.aggr_module = MultiAggregation(aggr)
+            self.aggr_module = MultiAggregation(aggr, aggr_kwargs)
             self.aggr = str(self.aggr_module)
         else:
             raise ValueError(f"Only strings, list, tuples and instances of"

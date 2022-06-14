@@ -5,6 +5,7 @@ from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 
 from torch_geometric.nn import (
+    GraphConv,
     LSTMAggregation,
     MaxAggregation,
     MeanAggregation,
@@ -83,6 +84,16 @@ def test_lstm_aggr_conv():
     assert out.size() == (4, 32)
 
 
+def test_lstm_aggr_conv_with_kwargs():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    conv = GraphConv(
+        in_channels=16, out_channels=16, aggr='lstm',
+        aggr_kwargs=dict(in_channels=16, out_channels=16, dropout=0.5))
+    out = conv(x, edge_index)
+    assert out.size() == (4, 16)
+
+
 def test_multiple_aggr_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -104,3 +115,16 @@ def test_multiple_aggr_conv():
     assert not torch.allclose(out2[:, 16:32], out2[:, 32:48])
 
     assert torch.allclose(out1, out2)
+
+
+def test_multiple_aggr_conv_with_kwargs():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    conv = GraphConv(
+        in_channels=(16 * 4, 16), out_channels=16 * 4,
+        aggr=['mean', 'softmax', 'sum', 'lstm'],
+        aggr_kwargs=[{},
+                     dict(learn=True), {},
+                     dict(in_channels=16, out_channels=16, dropout=0.5)])
+    out = conv(x, edge_index)
+    assert out.size() == (4, 16 * 4)
