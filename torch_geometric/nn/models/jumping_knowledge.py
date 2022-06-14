@@ -65,7 +65,7 @@ class JumpingKnowledge(torch.nn.Module):
         r"""Aggregates representations across different layers.
 
         Args:
-            xs (list or tuple): List containing layer-wise representations.
+            xs (list): List containing layer-wise representations.
         """
 
         assert isinstance(xs, list)
