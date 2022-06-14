@@ -14,7 +14,7 @@ from torch.utils.hooks import RemovableHandle
 from torch_scatter import gather_csr, scatter, segment_csr
 from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, Size
+from torch_geometric.typing import Adj, ProxyTensor, Size
 
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
@@ -148,7 +148,7 @@ class MessagePassing(torch.nn.Module):
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
-        if isinstance(edge_index, Tensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             assert edge_index.dtype == torch.long
             assert edge_index.dim() == 2
             assert edge_index.size(0) == 2
@@ -184,7 +184,7 @@ class MessagePassing(torch.nn.Module):
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
     def __lift__(self, src, edge_index, dim):
-        if isinstance(edge_index, Tensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             index = edge_index[dim]
             return src.index_select(self.node_dim, index)
         elif isinstance(edge_index, SparseTensor):
@@ -220,7 +220,7 @@ class MessagePassing(torch.nn.Module):
 
                 out[arg] = data
 
-        if isinstance(edge_index, Tensor):
+        if isinstance(edge_index, (Tensor, ProxyTensor)):
             out['adj_t'] = None
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
@@ -308,7 +308,7 @@ class MessagePassing(torch.nn.Module):
             out = self.update(out, **update_kwargs)
 
         # Otherwise, run both functions in separation.
-        elif isinstance(edge_index, Tensor) or not self.fuse:
+        elif isinstance(edge_index, (Tensor, ProxyTensor)) or not self.fuse:
             if decomposed_layers > 1:
                 user_args = self.__user_args__
                 decomp_args = {a[:-2] for a in user_args if a[-2:] == '_j'}
