@@ -10,6 +10,11 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.feature_store import (
+    FeatureStore,
+    FeatureTensorType,
+    TensorAttr,
+)
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, NodeType, QueryType
 from torch_geometric.utils import bipartite_subgraph, is_undirected
@@ -18,7 +23,7 @@ NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData):
+class HeteroData(BaseData, FeatureStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -104,6 +109,10 @@ class HeteroData(BaseData):
                 self[key].update(value)
             else:
                 setattr(self, key, value)
+
+        # `HeteroData` supports group_name, attr_name, and index, so we can
+        # initialize the feature store without modification:
+        FeatureStore.__init__(self)
 
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
@@ -615,6 +624,48 @@ class HeteroData(BaseData):
             data.edge_type = edge_type.repeat_interleave(sizes)
 
         return data
+
+    # :obj:`FeatureStore` interface ###########################################
+
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Stores a feature tensor in node storage."""
+        if not attr.is_set('index'):
+            attr.index = None
+
+        out = self._node_store_dict.get(attr.group_name, None)
+        if out:
+            # Group name exists, handle index:
+            val = getattr(out, attr.attr_name)
+            if val is not None:
+                val[attr.index] = tensor
+        else:
+            # No group name, just store tensor in node storage:
+            setattr(self[attr.group_name], attr.attr_name, tensor)
+        return True
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Obtains a feature tensor from node storage."""
+        # Retrieve tensor and index accordingly:
+        tensor = getattr(self[attr.group_name], attr.attr_name)
+        if tensor is not None:
+            # TODO this behavior is a bit odd, since TensorAttr requires that
+            # we set `index`. So, we assume here that indexing by `None` is
+            # equivalent to not indexing at all, which is not in line with
+            # Python semantics.
+            return tensor[attr.index] if attr.index is not None else tensor
+        return None
+
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        r"""Deletes a feature tensor from node storage."""
+        # Remove tensor entirely:
+        delattr(self[attr.group_name], attr.attr_name)
+        return True
+
+    def __len__(self) -> int:
+        return BaseData.__len__(self)
+
+    def __iter__(self):
+        raise NotImplementedError
 
 
 # Helper functions ############################################################

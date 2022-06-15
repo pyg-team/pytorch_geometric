@@ -1,5 +1,6 @@
 import copy
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import (
     Any,
     Callable,
@@ -17,6 +18,12 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.feature_store import (
+    FeatureStore,
+    FeatureTensorType,
+    TensorAttr,
+    _field_status,
+)
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -300,7 +307,16 @@ class BaseData(object):
 ###############################################################################
 
 
-class Data(BaseData):
+@dataclass
+class DataTensorAttr(TensorAttr):
+    r"""Attribute class for `Data`, which does not require a `group_name`."""
+    def __init__(self, attr_name=_field_status.UNSET,
+                 index=_field_status.UNSET):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(None, attr_name, index)
+
+
+class Data(BaseData, FeatureStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
@@ -364,6 +380,10 @@ class Data(BaseData):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        # `Data` does not support group_nae, so we need to adjust `TensorAttr`
+        # accordingly here to avoid requiring `group_name` to be set:
+        FeatureStore.__init__(self, attr_cls=DataTensorAttr)
 
     def __getattr__(self, key: str) -> Any:
         if '_store' not in self.__dict__:
@@ -691,6 +711,47 @@ class Data(BaseData):
         if 'face' in self._store and isinstance(self.face, Tensor):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
+
+    # :obj:`FeatureStore` interface ###########################################
+
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Stores a feature tensor in node storage."""
+
+        if not attr.is_set('index'):
+            attr.index = None
+
+        out = getattr(self, attr.attr_name, None)
+        if out is not None:
+            # Attr name exists, handle index:
+            out[attr.index] = tensor
+        else:
+            # No attr nane, just store tensor:
+            setattr(self, attr.attr_name, tensor)
+        return True
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Obtains a feature tensor from node storage."""
+        # Retrieve tensor and index accordingly:
+        tensor = getattr(self, attr.attr_name)
+        if tensor is not None:
+            # TODO this behavior is a bit odd, since TensorAttr requires that
+            # we set `index`. So, we assume here that indexing by `None` is
+            # equivalent to not indexing at all, which is not in line with
+            # Python semantics.
+            return tensor[attr.index] if attr.index is not None else tensor
+        return None
+
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        r"""Deletes a feature tensor from node storage."""
+        # Remove tensor entirely:
+        delattr(self, attr.attr_name)
+        return True
+
+    def __len__(self) -> int:
+        return BaseData.__len__(self)
+
+    def __iter__(self):
+        raise NotImplementedError
 
 
 ###############################################################################

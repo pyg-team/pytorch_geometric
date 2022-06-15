@@ -245,7 +245,7 @@ class FeatureStore(MutableMapping):
         attributes by subclassing :class:`TensorAttr` and passing the subclass
         as :obj:`attr_cls`."""
         super().__init__()
-        self._attr_cls = attr_cls
+        self.__dict__['_attr_cls'] = attr_cls
 
     # Core (CRUD) #############################################################
 

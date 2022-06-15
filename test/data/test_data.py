@@ -239,3 +239,28 @@ def test_data_setter_properties():
     data.my_attr1 = 2
     assert 'my_attr1' not in data._store
     assert data.my_attr1 == 2
+
+
+# Feature Store ###############################################################
+
+
+def test_basic_feature_store():
+    data = Data()
+    x = torch.randn(20, 20)
+
+    # Put tensor:
+    assert data.put_tensor(copy.deepcopy(x), attr_name='x', index=None)
+    assert torch.equal(data.x, x)
+
+    # Put (modify) tensor slice:
+    x[15:] = 0
+    data.put_tensor(0, attr_name='x', index=slice(15, None, None))
+
+    # Get tensor:
+    out = data.get_tensor(attr_name='x', index=None)
+    assert torch.equal(x, out)
+
+    # Remove tensor:
+    assert 'x' in data.__dict__['_store']
+    data.remove_tensor(attr_name='x', index=None)
+    assert 'x' not in data.__dict__['_store']
