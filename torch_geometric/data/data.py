@@ -750,9 +750,6 @@ class Data(BaseData, FeatureStore):
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
-    def __iter__(self):
-        raise NotImplementedError
-
 
 ###############################################################################
 
