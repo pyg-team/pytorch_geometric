@@ -97,6 +97,8 @@ class HeteroData(BaseData, FeatureStore):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        super(HeteroData, self).__init__()
+
         self.__dict__['_global_store'] = BaseStorage(_parent=self)
         self.__dict__['_node_store_dict'] = {}
         self.__dict__['_edge_store_dict'] = {}
@@ -109,10 +111,6 @@ class HeteroData(BaseData, FeatureStore):
                 self[key].update(value)
             else:
                 setattr(self, key, value)
-
-        # `HeteroData` supports group_name, attr_name, and index, so we can
-        # initialize the feature store without modification:
-        FeatureStore.__init__(self)
 
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
@@ -639,7 +637,7 @@ class HeteroData(BaseData, FeatureStore):
             if val is not None:
                 val[attr.index] = tensor
         else:
-            # No group name, just store tensor in node storage:
+            # No node storage found, just store tensor in new one:
             setattr(self[attr.group_name], attr.attr_name, tensor)
         return True
 
@@ -652,7 +650,11 @@ class HeteroData(BaseData, FeatureStore):
             # we set `index`. So, we assume here that indexing by `None` is
             # equivalent to not indexing at all, which is not in line with
             # Python semantics.
-            return tensor[attr.index] if attr.index is not None else tensor
+            if attr.index is None:
+                return tensor
+
+            dim = self[attr.group_name].__cat_dim__(attr.attr_name, tensor)
+            return torch.index_select(tensor, attr.index, dim=dim)
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:

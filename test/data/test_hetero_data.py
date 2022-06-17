@@ -424,6 +424,6 @@ def test_basic_feature_store():
     assert torch.equal(x, out)
 
     # Remove tensor:
-    assert 'x' in data.__dict__['_mapping']
+    assert 'x' in data['paper'].__dict__['_mapping']
     data.remove_tensor(group_name='paper', attr_name='x', index=None)
     assert 'x' not in data['paper'].__dict__['_mapping']

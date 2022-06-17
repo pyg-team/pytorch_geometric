@@ -364,7 +364,10 @@ class Data(BaseData, FeatureStore):
     def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
                  edge_attr: OptTensor = None, y: OptTensor = None,
                  pos: OptTensor = None, **kwargs):
-        super().__init__()
+        # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
+        # accordingly here to avoid requiring `group_name` to be set:
+        super(Data, self).__init__(attr_cls=DataTensorAttr)
+
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
         if x is not None:
@@ -380,10 +383,6 @@ class Data(BaseData, FeatureStore):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-        # `Data` does not support group_nae, so we need to adjust `TensorAttr`
-        # accordingly here to avoid requiring `group_name` to be set:
-        FeatureStore.__init__(self, attr_cls=DataTensorAttr)
 
     def __getattr__(self, key: str) -> Any:
         if '_store' not in self.__dict__:
@@ -404,6 +403,9 @@ class Data(BaseData, FeatureStore):
     def __delattr__(self, key: str):
         delattr(self._store, key)
 
+    # TODO consider supporting the feature store interface for
+    # __getitem__, __setitem__, and __delitem__ so, for example, we
+    # can accept key: Union[str, TensorAttr] in __getitem__.
     def __getitem__(self, key: str) -> Any:
         return self._store[key]
 
@@ -712,40 +714,42 @@ class Data(BaseData, FeatureStore):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
-    # :obj:`FeatureStore` interface ###########################################
+    # FeatureStore interface ###########################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""Stores a feature tensor in node storage."""
-
-        if not attr.is_set('index'):
-            attr.index = None
-
         out = getattr(self, attr.attr_name, None)
-        if out is not None:
+        if out is not None and attr.index is not None:
             # Attr name exists, handle index:
             out[attr.index] = tensor
         else:
-            # No attr nane, just store tensor:
+            # No attr name (or None index), just store tensor:
             setattr(self, attr.attr_name, tensor)
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""Obtains a feature tensor from node storage."""
         # Retrieve tensor and index accordingly:
-        tensor = getattr(self, attr.attr_name)
+        tensor = getattr(self, attr.attr_name, None)
         if tensor is not None:
             # TODO this behavior is a bit odd, since TensorAttr requires that
             # we set `index`. So, we assume here that indexing by `None` is
             # equivalent to not indexing at all, which is not in line with
             # Python semantics.
-            return tensor[attr.index] if attr.index is not None else tensor
+            if attr.index is None:
+                return tensor
+
+            dim = self.__cat_dim__(attr.attr_name, tensor)
+            return torch.index_select(tensor, attr.index, dim=dim)
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         r"""Deletes a feature tensor from node storage."""
         # Remove tensor entirely:
-        delattr(self, attr.attr_name)
-        return True
+        if hasattr(self, attr.attr_name):
+            delattr(self, attr.attr_name)
+            return True
+        return False
 
     def __len__(self) -> int:
         return BaseData.__len__(self)
