@@ -66,7 +66,7 @@ class MyTensorAttrNoGroupName(TensorAttr):
 class MyFeatureStoreNoGroupName(MyFeatureStore):
     def __init__(self):
         super().__init__()
-        self._attr_cls = MyTensorAttrNoGroupName
+        self._tensor_attr_cls = MyTensorAttrNoGroupName
 
     @staticmethod
     def key(attr: TensorAttr) -> str:
