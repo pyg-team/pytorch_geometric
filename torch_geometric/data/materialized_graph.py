@@ -82,9 +82,9 @@ class MaterializedGraph(MutableMapping):
         return self._get_edge_index(self._edge_attr_cls.cast(*args, **kwargs))
 
     @abstractmethod
-    def get_all_edge_types(self) -> Optional[List[str]]:
-        r"""Obtain all edge types that are stored in the materialized graph.
-        If there are no edge types (the graph is homogeneous), return None."""
+    def get_all_edge_types(self) -> List[EdgeAttr]:
+        r"""Obtain all edge attributes of edges that are stored in the
+        materialized graph."""
         raise NotImplementedError
 
     def sample(

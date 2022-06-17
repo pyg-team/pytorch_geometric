@@ -15,7 +15,14 @@ class MyMaterializedGraph(MaterializedGraph):
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return attr.edge_type or '<default>'
+        return f'{attr.edge_type or "<default>"}.{attr.layout}'
+
+    @staticmethod
+    def from_key(key: str) -> EdgeAttr:
+        edge_type, layout = key.split('.')
+        if edge_type == '<default>':
+            edge_type = None
+        return EdgeAttr(layout=EdgeLayout(layout), edge_type=edge_type)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
@@ -24,10 +31,8 @@ class MyMaterializedGraph(MaterializedGraph):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return self.store.get(MyMaterializedGraph.key(edge_attr), None)
 
-    def get_all_edge_types(self):
-        if len(self.store) == 0 and self.store[0] == '<default>':
-            return None
-        return list(self.store.keys())
+    def get_all_edge_attrs(self):
+        return [MyMaterializedGraph.from_key(key) for key in self.store]
 
 
 def test_materialized_graph():

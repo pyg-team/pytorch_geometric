@@ -1,5 +1,6 @@
+from collections import defaultdict
 from collections.abc import Sequence
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -7,7 +8,7 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data import materialized_graph
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.materialized_graph import MaterializedGraph
+from torch_geometric.data.materialized_graph import EdgeLayout, MaterializedGraph
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
@@ -78,6 +79,9 @@ class NeighborSampler:
             assert input_type is not None
             self.input_type = input_type
 
+        # NOTE This code will be replaced when we factor out sampling routines
+        # to utilize MaterializedGraph. Until then, the current implementation
+        # simply fetches all edge indices into memory.
         elif isinstance(data, tuple):  # Tuple[FeatureStore, MaterializedGraph]
             feature_store = data[0]
             materialized_graph = data[1]
@@ -88,9 +92,12 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data[0].__class__.__name__}' object")
 
-            # NOTE we assume that the materialized graph has already been
-            # stored in an efficient representation that supports sampling.
-            all_edge_types = materialized_graph.get_all_edge_types()
+            all_edge_attrs = materialized_graph.get_all_edge_types()
+            edge_type_to_layouts: Dict[Any,
+                                       List[EdgeLayout]] = defaultdict(list)
+            for attr in all_edge_attrs:
+                edge_type_to_layouts[attr.edge_type].append(attr.layout)
+
             # TODO continue
 
         else:

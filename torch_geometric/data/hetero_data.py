@@ -695,6 +695,10 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
         return getattr(self[edge_attr.edge_type],
                        self._layout_to_attr_name(edge_attr.layout))
 
+    def get_all_edge_types(self) -> List[EdgeAttr]:
+        # TODO implement
+        raise NotImplementedError
+
 
 # Helper functions ############################################################
 
