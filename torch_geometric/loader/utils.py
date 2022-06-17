@@ -95,6 +95,9 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
                        index: Tensor) -> NodeStorage:
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
+        if key == 'feat' or key == 'discrete_feat':
+            continue
+
         if key == 'num_nodes':
             out_store.num_nodes = index.numel()
 
@@ -103,6 +106,9 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             dim = store._parent().__cat_dim__(key, value, store)
             out_store[key] = index_select(value, index, dim=dim)
 
+    feat_result = store.fetch(index)
+    out_store['feat'] = feat_result['feat']
+    out_store['discrete_feat'] = feat_result['discrete_feat']
     return store
 
 

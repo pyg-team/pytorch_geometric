@@ -108,6 +108,7 @@ class NeighborSampler:
                     self.directed,
                 )
             else:
+                print(2)
                 fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
                 node_dict, row_dict, col_dict, edge_dict = fn(
                     self.node_types,
@@ -311,6 +312,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         elif isinstance(self.data, HeteroData):
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
+            print(out)
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
