@@ -605,7 +605,7 @@ class Data(BaseData, FeatureStore):
         data = HeteroData()
 
         for i, key in enumerate(node_type_names):
-            for attr, value in self.items():
+            for attr, value in self._store.items():
                 if attr == 'node_type' or attr == 'edge_type':
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
@@ -616,7 +616,7 @@ class Data(BaseData, FeatureStore):
 
         for i, key in enumerate(edge_type_names):
             src, _, dst = key
-            for attr, value in self.items():
+            for attr, value in self._store.items():
                 if attr == 'node_type' or attr == 'edge_type':
                     continue
                 elif attr == 'edge_index':
@@ -629,7 +629,7 @@ class Data(BaseData, FeatureStore):
 
         # Add global attributes.
         keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
-        for attr, value in self.items():
+        for attr, value in self._store.items():
             if attr in keys:
                 continue
             if len(data.node_stores) == 1:
