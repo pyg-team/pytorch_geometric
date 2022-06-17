@@ -24,6 +24,11 @@ class MyMaterializedGraph(MaterializedGraph):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return self.store.get(MyMaterializedGraph.key(edge_attr), None)
 
+    def get_all_edge_types(self):
+        if len(self.store) == 0 and self.store[0] == '<default>':
+            return None
+        return list(self.store.keys())
+
 
 def test_materialized_graph():
     m = MyMaterializedGraph()

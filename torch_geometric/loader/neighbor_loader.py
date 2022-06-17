@@ -5,6 +5,9 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import materialized_graph
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.materialized_graph import MaterializedGraph
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
@@ -19,7 +22,8 @@ from torch_geometric.typing import InputNodes, NumNeighbors
 class NeighborSampler:
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
+                                                   MaterializedGraph]],
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
@@ -73,6 +77,21 @@ class NeighborSampler:
 
             assert input_type is not None
             self.input_type = input_type
+
+        elif isinstance(data, tuple):  # Tuple[FeatureStore, MaterializedGraph]
+            feature_store = data[0]
+            materialized_graph = data[1]
+
+            if time_attr is not None:
+                # TODO support `collect` on `FeatureStore`
+                raise ValueError(
+                    f"'time_attr' attribute not yet supported for "
+                    f"'{data[0].__class__.__name__}' object")
+
+            # NOTE we assume that the materialized graph has already been
+            # stored in an efficient representation that supports sampling.
+            all_edge_types = materialized_graph.get_all_edge_types()
+            # TODO continue
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
@@ -258,7 +277,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
+                                                   MaterializedGraph]],
         num_neighbors: NumNeighbors,
         input_nodes: InputNodes = None,
         replace: bool = False,
@@ -328,28 +348,56 @@ class NeighborLoader(torch.utils.data.DataLoader):
 ###############################################################################
 
 
-def get_input_nodes(data: Union[Data, HeteroData],
-                    input_nodes: InputNodes) -> Tuple[Optional[str], Sequence]:
+def get_input_nodes(
+    data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
+                                               MaterializedGraph]],
+    input_nodes: Union[InputNodes, TensorAttr],
+) -> Tuple[Optional[str], Sequence]:
+
+    from_bool_tensor = lambda tensor: tensor.nonzero(as_tuple=False).view(-1)
+
     if isinstance(data, Data):
         if input_nodes is None:
             return None, range(data.num_nodes)
         if input_nodes.dtype == torch.bool:
-            input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
+            input_nodes = from_bool_tensor(input_nodes)
         return None, input_nodes
 
-    assert input_nodes is not None
+    elif isinstance(data, HeteroData):
+        assert input_nodes is not None
 
-    if isinstance(input_nodes, str):
-        return input_nodes, range(data[input_nodes].num_nodes)
+        if isinstance(input_nodes, str):
+            return input_nodes, range(data[input_nodes].num_nodes)
 
-    assert isinstance(input_nodes, (list, tuple))
-    assert len(input_nodes) == 2
-    assert isinstance(input_nodes[0], str)
+        assert isinstance(input_nodes, (list, tuple))
+        assert len(input_nodes) == 2
+        assert isinstance(input_nodes[0], str)
 
-    if input_nodes[1] is None:
-        return input_nodes[0], range(data[input_nodes[0]].num_nodes)
+        if input_nodes[1] is None:
+            return input_nodes[0], range(data[input_nodes[0]].num_nodes)
 
-    node_type, input_nodes = input_nodes
-    if input_nodes.dtype == torch.bool:
-        input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
-    return node_type, input_nodes
+        node_type, input_nodes = input_nodes
+        if input_nodes.dtype == torch.bool:
+            input_nodes = from_bool_tensor(input_nodes)
+        return node_type, input_nodes
+
+    # Tuple
+    else:
+        # NOTE FeatureStore and MaterializedGraph are treated as separate
+        # entities, so we cannot leverage the custom structure in Data and
+        # HeteroData to infer the number of nodes. As a result, here we expect
+        # that the input nodes are either explicitly provided or can be
+        # directly inferred from the feature store.
+
+        # Explicit
+        if isinstance(input_nodes, Tensor):
+            return None, from_bool_tensor(input_nodes)
+
+        if isinstance(input_nodes, tuple) and isinstance(
+                input_nodes[0], str) and isinstance(input_nodes[1], Tensor):
+            return input_nodes[0], from_bool_tensor(input_nodes[1])
+
+        # TensorAttr (TODO support EdgeAttr)
+        assert isinstance(input_nodes, TensorAttr)
+        return getattr(input_nodes, 'group_name',
+                       None), range(data[0].get_tensor_size(input_nodes)[0])

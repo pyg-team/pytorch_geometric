@@ -760,6 +760,9 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
             return True
         return False
 
+    def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
+        return list(self._get_tensor(attr).size())
+
     def __len__(self) -> int:
         return BaseData.__len__(self)
 

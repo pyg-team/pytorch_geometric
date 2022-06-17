@@ -36,7 +36,6 @@ class MyFeatureStore(FeatureStore):
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         index, tensor = self.store.get(MyFeatureStore.key(attr), (None, None))
-
         if tensor is None:
             return None
 
@@ -50,6 +49,10 @@ class MyFeatureStore(FeatureStore):
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         del self.store[MyFeatureStore.key(attr)]
         return True
+
+    def _get_tensor_size(self, attr: TensorAttr):
+        attr.index = None
+        return self._get_tensor(attr).size()
 
     def __len__(self):
         raise NotImplementedError
@@ -73,6 +76,9 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
         return attr.attr_name
 
     def __len__(self):
+        raise NotImplementedError
+
+    def _get_tensor_size(self, attr: TensorAttr):
         raise NotImplementedError
 
 

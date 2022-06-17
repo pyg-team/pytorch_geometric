@@ -2,7 +2,7 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from torch import LongTensor
 
@@ -80,6 +80,12 @@ class MaterializedGraph(MutableMapping):
             attributes, or None if there is no such tensor.
         """
         return self._get_edge_index(self._edge_attr_cls.cast(*args, **kwargs))
+
+    @abstractmethod
+    def get_all_edge_types(self) -> Optional[List[str]]:
+        r"""Obtain all edge types that are stored in the materialized graph.
+        If there are no edge types (the graph is homogeneous), return None."""
+        raise NotImplementedError
 
     def sample(
         self,

@@ -4,6 +4,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.materialized_graph import EdgeLayout
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withRegisteredOp
@@ -275,3 +276,45 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     for batch in loader:
         mask = batch['paper'].time[0] >= batch['paper'].time[1:]
         assert torch.all(mask)
+
+
+def test_feature_store_materialized_graph():
+    # TODO fix this :)
+    import sys
+    sys.path.append("..")
+    from data.test_feature_store import MyFeatureStore
+    from data.test_materialized_graph import MyMaterializedGraph
+
+    feature_store = MyFeatureStore()
+    materialized_graph = MyMaterializedGraph()
+
+    node_size = 100
+    node_types = ['a', 'b', 'c']
+    edge_types = [('a', 'to', 'b'), ('a', 'to', 'c'), ('b', 'to', 'c')]
+
+    # Put features:
+    for node_type in node_types:
+        feature_store.put_tensor(
+            torch.rand((node_size, 10)),
+            group_name=node_type,
+            attr_name='x',
+            index=None,
+        )
+
+    # Put edges:
+    for edge_type in edge_types:
+        edge_index = torch.stack(
+            (torch.arange(0, 100, 1), torch.arange(0, 100, 1)), dim=0)
+        adj_t = SparseTensor.from_edge_index(edge_index).t()
+        materialized_graph.put_edge_index(
+            edge_index=adj_t,
+            layout=EdgeLayout.CSC,
+            edge_type=edge_type,
+        )
+
+    # Construct NeighborLoader
+    loader = NeighborLoader(
+        data=(feature_store, materialized_graph),
+        input_nodes=feature_store._tensor_attr_cls(group_name='a',
+                                                   attr_name='x'),
+        num_neighbors=10)

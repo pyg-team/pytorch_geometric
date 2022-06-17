@@ -25,7 +25,7 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -370,7 +370,17 @@ class FeatureStore(MutableMapping):
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
-    # :obj:`AttrView` methods #################################################
+    # Additional methods ######################################################
+
+    @abstractmethod
+    def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
+        pass
+
+    def get_tensor_size(self, *args, **kwargs) -> List[int]:
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
+        return self._get_tensor_size(attr)
+
+    # `AttrView` methods ######################################################
 
     def view(self, *args, **kwargs) -> AttrView:
         r"""Returns an :class:`AttrView` of the feature store, with the defined
