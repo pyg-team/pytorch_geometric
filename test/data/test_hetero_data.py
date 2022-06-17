@@ -2,9 +2,12 @@ import copy
 
 import pytest
 import torch
+import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
+from torch_geometric.data.materialized_graph import EdgeLayout
+from torch_geometric.utils import sort_edge_index
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -427,3 +430,26 @@ def test_basic_feature_store():
     assert 'x' in data['paper'].__dict__['_mapping']
     data.remove_tensor(group_name='paper', attr_name='x', index=None)
     assert 'x' not in data['paper'].__dict__['_mapping']
+
+
+def test_basic_materialized_graph():
+    data = HeteroData()
+    coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
+    csr = torch_sparse.SparseTensor.from_edge_index(coo)
+    csc = csr.t()
+
+    # COO:
+    data.put_edge_index(coo, layout=EdgeLayout.COO, edge_type=('a', 'to', 'b'))
+    assert torch.equal(data.get_edge_index(edge_type=('a', 'to', 'b')), coo)
+
+    # CSR:
+    data.put_edge_index(csr, layout=EdgeLayout.CSR, edge_type=('a', 'to', 'c'))
+    assert torch.equal(
+        sort_edge_index(data.get_edge_index(csr, edge_type=('a', 'to', 'c'))),
+        sort_edge_index(coo))
+
+    # CSC:
+    data.put_edge_index(csc, layout=EdgeLayout.CSC, edge_type=('a', 'to', 'd'))
+    assert torch.equal(
+        sort_edge_index(data.get_edge_index(csc, edge_type=('a', 'to', 'd'))),
+        sort_edge_index(coo))

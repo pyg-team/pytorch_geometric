@@ -20,10 +20,10 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.feature_store import (
     FeatureStore,
-    FeatureTensorType,
     TensorAttr,
     _field_status,
 )
+from torch_geometric.data.materialized_graph import EdgeAttr, EdgeLayout, MaterializedGraph
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -31,7 +31,13 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    OptTensor,
+)
 from torch_geometric.utils import subgraph
 
 
@@ -316,7 +322,7 @@ class DataTensorAttr(TensorAttr):
         super().__init__(None, attr_name, index)
 
 
-class Data(BaseData, FeatureStore):
+class Data(BaseData, FeatureStore, MaterializedGraph):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
@@ -366,7 +372,7 @@ class Data(BaseData, FeatureStore):
                  pos: OptTensor = None, **kwargs):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
-        super(Data, self).__init__(attr_cls=DataTensorAttr)
+        super(Data, self).__init__(tensor_attr_cls=DataTensorAttr)
 
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -752,6 +758,23 @@ class Data(BaseData, FeatureStore):
 
     def __len__(self) -> int:
         return BaseData.__len__(self)
+
+    # MaterializedGraph interface ###########################################
+
+    def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
+        return {
+            EdgeLayout.COO: 'edge_index',
+            EdgeLayout.CSR: 'adj',
+            EdgeLayout.CSC: 'adj_t',
+        }[layout]
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        setattr(self, self._layout_to_attr_name(edge_attr.layout), edge_index)
+        return True
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
+        return self._store.edge_index
 
 
 ###############################################################################

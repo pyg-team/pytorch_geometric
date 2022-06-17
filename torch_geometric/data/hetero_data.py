@@ -12,18 +12,23 @@ from torch_sparse import SparseTensor
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.feature_store import (
     FeatureStore,
-    FeatureTensorType,
     TensorAttr,
 )
+from torch_geometric.data.materialized_graph import (
+    MaterializedGraph,
+    EdgeLayout,
+    EdgeAttr,
+)
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, NodeType, QueryType
+from torch_geometric.typing import (EdgeType, NodeType, QueryType,
+                                    FeatureTensorType, EdgeTensorType)
 from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData, FeatureStore):
+class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -666,6 +671,23 @@ class HeteroData(BaseData, FeatureStore):
 
     def __iter__(self):
         raise NotImplementedError
+
+    # MaterializedGraph interface #############################################
+
+    def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
+        return {
+            EdgeLayout.COO: 'edge_index',
+            EdgeLayout.CSR: 'adj',
+            EdgeLayout.CSC: 'adj_t',
+        }[layout]
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        setattr(self[edge_attr.edge_type],
+                self._layout_to_attr_name(edge_attr.layout), edge_index)
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
+        return self[edge_attr.edge_type].edge_index
 
 
 # Helper functions ############################################################

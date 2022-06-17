@@ -23,7 +23,9 @@ QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # A representation of a feature tensor
-FeatureTensorType = Union[torch.Tensor, np.ndarray]
+FeatureTensorType = Union[Tensor, np.ndarray]
+
+EdgeTensorType = Union[Tensor, SparseTensor]
 
 # Types for message passing ###################################################
 

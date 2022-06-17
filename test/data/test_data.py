@@ -3,9 +3,12 @@ import copy
 import pytest
 import torch
 import torch.multiprocessing as mp
+import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.materialized_graph import EdgeLayout
+from torch_geometric.utils import sort_edge_index
 
 
 def test_data():
@@ -264,3 +267,30 @@ def test_basic_feature_store():
     assert 'x' in data.__dict__['_store']
     data.remove_tensor(attr_name='x', index=None)
     assert 'x' not in data.__dict__['_store']
+
+
+# Materialized Graph ##########################################################
+
+
+def test_basic_materialized_graph():
+    data = Data()
+    coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
+    csr = torch_sparse.SparseTensor.from_edge_index(coo)
+    csc = csr.t()
+
+    # COO:
+    data.put_edge_index(coo, layout=EdgeLayout.COO)
+    assert torch.equal(data.get_edge_index(), coo)
+    del data._store.edge_index
+
+    # CSR:
+    data.put_edge_index(csr, layout=EdgeLayout.CSR)
+    assert torch.equal(sort_edge_index(data.get_edge_index(csr)),
+                       sort_edge_index(coo))
+    del data._store.adj
+
+    # CSC:
+    data.put_edge_index(csc, layout=EdgeLayout.CSC)
+    assert torch.equal(sort_edge_index(data.get_edge_index(csc)),
+                       sort_edge_index(coo))
+    del data._store.adj_t
