@@ -656,8 +656,7 @@ class HeteroData(BaseData, FeatureStore):
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         r"""Deletes a feature tensor from node storage."""
         # Remove tensor entirely:
-        if (hasattr(self, attr.group_name)
-                and hasattr(self[attr.group_name], attr.attr_name)):
+        if hasattr(self[attr.group_name], attr.attr_name):
             delattr(self[attr.group_name], attr.attr_name)
             return True
         return False
