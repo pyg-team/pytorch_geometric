@@ -280,17 +280,12 @@ def test_basic_materialized_graph():
 
     # COO:
     data.put_edge_index(coo, layout=EdgeLayout.COO)
-    assert torch.equal(data.get_edge_index(), coo)
-    del data._store.edge_index
+    assert torch.equal(data.get_edge_index(layout=EdgeLayout.COO), coo)
 
     # CSR:
     data.put_edge_index(csr, layout=EdgeLayout.CSR)
-    assert torch.equal(sort_edge_index(data.get_edge_index(csr)),
-                       sort_edge_index(coo))
-    del data._store.adj
+    assert data.get_edge_index(layout=EdgeLayout.CSR) == csr
 
     # CSC:
     data.put_edge_index(csc, layout=EdgeLayout.CSC)
-    assert torch.equal(sort_edge_index(data.get_edge_index(csc)),
-                       sort_edge_index(coo))
-    del data._store.adj_t
+    assert data.get_edge_index(layout=EdgeLayout.CSC) == csc

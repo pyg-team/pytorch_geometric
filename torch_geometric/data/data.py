@@ -724,7 +724,7 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
-    # FeatureStore interface ###########################################
+    # FeatureStore interface ##################################################
 
     def items(self):
         return self._store.items()
@@ -766,7 +766,7 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
-    # MaterializedGraph interface ###########################################
+    # MaterializedGraph interface #############################################
 
     def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
         return {
@@ -781,7 +781,8 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        return self._store.edge_index
+        return getattr(self._store,
+                       self._layout_to_attr_name(edge_attr.layout))
 
 
 ###############################################################################

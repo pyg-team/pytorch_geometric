@@ -432,6 +432,9 @@ def test_basic_feature_store():
     assert 'x' not in data['paper'].__dict__['_mapping']
 
 
+# Materialized Graph ##########################################################
+
+
 def test_basic_materialized_graph():
     data = HeteroData()
     coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
@@ -440,16 +443,16 @@ def test_basic_materialized_graph():
 
     # COO:
     data.put_edge_index(coo, layout=EdgeLayout.COO, edge_type=('a', 'to', 'b'))
-    assert torch.equal(data.get_edge_index(edge_type=('a', 'to', 'b')), coo)
+    assert torch.equal(
+        data.get_edge_index(edge_type=('a', 'to', 'b'), layout=EdgeLayout.COO),
+        coo)
 
     # CSR:
     data.put_edge_index(csr, layout=EdgeLayout.CSR, edge_type=('a', 'to', 'c'))
-    assert torch.equal(
-        sort_edge_index(data.get_edge_index(csr, edge_type=('a', 'to', 'c'))),
-        sort_edge_index(coo))
+    assert data.get_edge_index(edge_type=('a', 'to', 'c'),
+                               layout=EdgeLayout.CSR) == csr
 
     # CSC:
     data.put_edge_index(csc, layout=EdgeLayout.CSC, edge_type=('a', 'to', 'd'))
-    assert torch.equal(
-        sort_edge_index(data.get_edge_index(csc, edge_type=('a', 'to', 'd'))),
-        sort_edge_index(coo))
+    assert data.get_edge_index(edge_type=('a', 'to', 'd'),
+                               layout=EdgeLayout.CSC) == csc
