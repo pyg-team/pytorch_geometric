@@ -739,11 +739,7 @@ class Data(BaseData, FeatureStore):
             # we set `index`. So, we assume here that indexing by `None` is
             # equivalent to not indexing at all, which is not in line with
             # Python semantics.
-            if attr.index is None:
-                return tensor
-
-            dim = self.__cat_dim__(attr.attr_name, tensor)
-            return torch.index_select(tensor, attr.index, dim=dim)
+            return tensor[attr.index] if attr.index is not None else tensor
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
