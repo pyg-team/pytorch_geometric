@@ -10,18 +10,20 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
-from torch_geometric.data.feature_store import (
-    FeatureStore,
-    TensorAttr,
-)
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.materialized_graph import (
-    MaterializedGraph,
-    EdgeLayout,
     EdgeAttr,
+    EdgeLayout,
+    MaterializedGraph,
 )
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
-from torch_geometric.typing import (EdgeType, NodeType, QueryType,
-                                    FeatureTensorType, EdgeTensorType)
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    QueryType,
+)
 from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]

@@ -23,7 +23,11 @@ from torch_geometric.data.feature_store import (
     TensorAttr,
     _field_status,
 )
-from torch_geometric.data.materialized_graph import EdgeAttr, EdgeLayout, MaterializedGraph
+from torch_geometric.data.materialized_graph import (
+    EdgeAttr,
+    EdgeLayout,
+    MaterializedGraph,
+)
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
