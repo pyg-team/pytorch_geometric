@@ -783,7 +783,7 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return getattr(self._store,
                        self._layout_to_attr_name(edge_attr.layout))
-    
+
     def get_all_edge_types(self) -> List[EdgeAttr]:
         # TODO implement
         raise NotImplementedError

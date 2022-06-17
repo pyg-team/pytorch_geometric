@@ -5,10 +5,12 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data import materialized_graph
+from torch_geometric.data import Data, HeteroData, materialized_graph
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.materialized_graph import EdgeLayout, MaterializedGraph
+from torch_geometric.data.materialized_graph import (
+    EdgeLayout,
+    MaterializedGraph,
+)
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
