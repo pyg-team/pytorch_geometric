@@ -29,4 +29,5 @@ def test_materialized_graph():
     m = MyMaterializedGraph()
     edge_index = torch.LongTensor([[0, 1], [1, 2]])
     m.put_edge_index(edge_index, layout=EdgeLayout.COO, edge_type='a')
-    assert torch.equal(m.get_edge_index(edge_type='a'), edge_index)
+    assert torch.equal(m.get_edge_index(edge_type='a', layout=EdgeLayout.COO),
+                       edge_index)

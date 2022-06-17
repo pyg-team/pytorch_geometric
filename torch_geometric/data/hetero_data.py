@@ -689,7 +689,8 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
                 self._layout_to_attr_name(edge_attr.layout), edge_index)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        return self[edge_attr.edge_type].edge_index
+        return getattr(self[edge_attr.edge_type],
+                       self._layout_to_attr_name(edge_attr.layout))
 
 
 # Helper functions ############################################################

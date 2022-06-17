@@ -70,7 +70,7 @@ class MaterializedGraph(MutableMapping):
 
     def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously gets an edge_index tensor from the materialized
-        graph, **returning it in COO format**.
+        graph.
 
         Args:
             **attr(EdgeAttr): the edge attributes.
