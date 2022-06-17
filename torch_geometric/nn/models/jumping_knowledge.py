@@ -1,4 +1,7 @@
+from typing import List, Optional
+
 import torch
+from torch import Tensor
 from torch.nn import LSTM, Linear
 
 
@@ -36,7 +39,8 @@ class JumpingKnowledge(torch.nn.Module):
         num_layers (int, optional): The number of layers to aggregate. Needs to
             be only set for LSTM-style aggregation. (default: :obj:`None`)
     """
-    def __init__(self, mode, channels=None, num_layers=None):
+    def __init__(self, mode: str, channels: Optional[int] = None,
+                 num_layers: Optional[int] = None):
         super().__init__()
         self.mode = mode.lower()
         assert self.mode in ['cat', 'max', 'lstm']
@@ -47,29 +51,30 @@ class JumpingKnowledge(torch.nn.Module):
             self.lstm = LSTM(channels, (num_layers * channels) // 2,
                              bidirectional=True, batch_first=True)
             self.att = Linear(2 * ((num_layers * channels) // 2), 1)
+        else:
+            self.lstm = None
+            self.att = None
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        if hasattr(self, 'lstm'):
+        if self.lstm is not None:
             self.lstm.reset_parameters()
-        if hasattr(self, 'att'):
+        if self.att is not None:
             self.att.reset_parameters()
 
-    def forward(self, xs):
+    def forward(self, xs: List[Tensor]) -> Tensor:
         r"""Aggregates representations across different layers.
 
         Args:
-            xs (list or tuple): List containing layer-wise representations.
+            xs (List[Tensor]): List containing layer-wise representations.
         """
-
-        assert isinstance(xs, list) or isinstance(xs, tuple)
-
         if self.mode == 'cat':
             return torch.cat(xs, dim=-1)
         elif self.mode == 'max':
             return torch.stack(xs, dim=-1).max(dim=-1)[0]
-        elif self.mode == 'lstm':
+        else:  # self.mode == 'lstm'
+            assert self.lstm is not None and self.att is not None
             x = torch.stack(xs, dim=1)  # [num_nodes, num_layers, num_channels]
             alpha, _ = self.lstm(x)
             alpha = self.att(alpha).squeeze(-1)  # [num_nodes, num_layers]
