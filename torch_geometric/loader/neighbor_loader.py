@@ -114,7 +114,7 @@ class NeighborSampler:
                 # CSR:
                 elif EdgeLayout.CSR in edge_layouts:
                     adj_t = materialized_graph.get_edge_index(
-                        edge_type=edge_type, layout=EdgeLayout.CSR).t().csr()
+                        edge_type=edge_type, layout=EdgeLayout.CSR).t()
 
                 # COO:
                 else:
