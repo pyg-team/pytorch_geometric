@@ -107,8 +107,17 @@ def test_node(model, return_type):
     explainer.train_explainer(x[:2], z[:2], edge_index[:, :1],
                               node_idxs=torch.arange(0, 2))
     assert_mask_clear(model)
-    mask = explainer.explain(x[:2], z[:2], edge_index[:, :1], node_idx=1)
+    mask = explainer.explain(x[:2], z[:2], edge_index[:, :1], node_idx=0)
     assert mask.shape[0] == 1
+    assert mask[0] == 0
+
+    # test with self loop
+    explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
+                            log=False, return_type=return_type)
+    edge_index = torch.cat(
+        [edge_index[:, :2], torch.tensor([[2], [2]])], dim=1)
+    explainer.train_explainer(x[:3], z[:3], edge_index,
+                              node_idxs=torch.arange(0, 3))
 
 
 @pytest.mark.parametrize('model', [GNN()])

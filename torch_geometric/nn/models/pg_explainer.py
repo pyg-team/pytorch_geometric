@@ -108,7 +108,7 @@ class PGExplainer(Explainer):
                     (1 - eps).log() + edge_weight).squeeze(dim=1) / temperature
 
         else:
-            return edge_weight.squeeze()
+            return edge_weight.squeeze(dim=1)
 
     def _loss(self, log_logits, prediction, node_idx=None, batch=None,
               edge_index=None):
