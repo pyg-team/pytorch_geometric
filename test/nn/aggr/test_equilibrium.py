@@ -19,7 +19,7 @@ def test_equilibrium(iter, alpha):
     out = model(x)
     assert out.size() == (1, 2)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(ValueError):
         model(x, dim_size=0)
 
     out = model(x, dim_size=3)
@@ -45,7 +45,7 @@ def test_equilibrium_batch(iter, alpha):
     out = model(x, batch)
     assert out.size() == (2, 2)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(ValueError):
         model(x, dim_size=0)
 
     out = model(x, dim_size=3)

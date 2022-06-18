@@ -167,15 +167,14 @@ class EquilibriumAggregation(Aggregation):
                 dim: int = -2) -> Tensor:
 
         if ptr is not None:
-            raise NotImplementedError(
-                f"{self.__class__} doesn't support `ptr`")
+            raise ValueError(f"{self.__class__} doesn't support `ptr`")
 
         index_size = 1 if index is None else index.max() + 1
         dim_size = index_size if dim_size is None else dim_size
 
         if dim_size < index_size:
-            raise NotImplementedError("`dim_size` is less than `index` "
-                                      "implied size")
+            raise ValueError("`dim_size` is less than `index` "
+                             "implied size")
 
         with torch.enable_grad():
             y = self.optimizer(x, self.init_output(index), index, self.energy,
