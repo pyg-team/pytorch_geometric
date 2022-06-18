@@ -278,6 +278,7 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
         assert torch.all(mask)
 
 
+@pytest.mark.skip
 def test_feature_store_materialized_graph():
     # TODO fix this :)
     import sys
@@ -313,8 +314,8 @@ def test_feature_store_materialized_graph():
         )
 
     # Construct NeighborLoader
-    # loader = NeighborLoader(
-    #    data=(feature_store, materialized_graph),
-    #    input_nodes=feature_store._tensor_attr_cls(group_name='a',
-    #                                               attr_name='x'),
-    #    num_neighbors=10)
+    _ = NeighborLoader(
+        data=(feature_store, materialized_graph),
+        input_nodes=feature_store._tensor_attr_cls(group_name='a',
+                                                   attr_name='x'),
+        num_neighbors=10)

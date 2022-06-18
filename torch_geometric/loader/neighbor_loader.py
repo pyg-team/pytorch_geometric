@@ -99,7 +99,43 @@ class NeighborSampler:
             for attr in all_edge_attrs:
                 edge_type_to_layouts[attr.edge_type].append(attr.layout)
 
+            self.colptr_dict, self.row_dict, self.perm_dict = {}, {}, {}
+            for edge_type, edge_layouts in edge_type_to_layouts.items():
+                key = edge_type_to_str(edge_type)
+
+                adj_t = None
+                edge_index = None
+
+                # CSC:
+                if EdgeLayout.CSC in edge_layouts:
+                    adj_t = materialized_graph.get_edge_index(
+                        edge_type=edge_type, layout=EdgeLayout.CSC)
+
+                # CSR:
+                elif EdgeLayout.CSR in edge_layouts:
+                    adj_t = materialized_graph.get_edge_index(
+                        edge_type=edge_type, layout=EdgeLayout.CSR).t().csr()
+
+                # COO:
+                else:
+                    edge_index = materialized_graph.get_edge_index(
+                        edge_type=edge_type, layout=EdgeLayout.COO)
+
+                class _DataArgument(object):
+                    pass
+
+                data_argument = _DataArgument()
+                if adj_t:
+                    setattr(data_argument, 'adj_t', adj_t)
+                else:
+                    setattr(data_argument, 'edge_index', edge_index)
+
+                self.colptr_dict[key], self.row_dict[key], self.perm_dict[
+                    key] = to_csc(data_argument, device='cpu',
+                                  share_memory=share_memory, is_sorted=False)
+
             # TODO continue
+            exit(0)
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
