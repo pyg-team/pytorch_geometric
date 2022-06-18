@@ -7,7 +7,6 @@ import torch_sparse
 from torch_geometric.data import HeteroData
 from torch_geometric.data.materialized_graph import EdgeLayout
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.utils import sort_edge_index
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
