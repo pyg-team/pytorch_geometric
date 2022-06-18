@@ -25,7 +25,7 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Union
 
 import numpy as np
 import torch

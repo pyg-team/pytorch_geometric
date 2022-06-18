@@ -8,7 +8,6 @@ import torch_sparse
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.materialized_graph import EdgeLayout
-from torch_geometric.utils import sort_edge_index
 
 
 def test_data():

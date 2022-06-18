@@ -313,8 +313,8 @@ def test_feature_store_materialized_graph():
         )
 
     # Construct NeighborLoader
-    loader = NeighborLoader(
-        data=(feature_store, materialized_graph),
-        input_nodes=feature_store._tensor_attr_cls(group_name='a',
-                                                   attr_name='x'),
-        num_neighbors=10)
+    # loader = NeighborLoader(
+    #    data=(feature_store, materialized_graph),
+    #    input_nodes=feature_store._tensor_attr_cls(group_name='a',
+    #                                               attr_name='x'),
+    #    num_neighbors=10)

@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData, materialized_graph
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.materialized_graph import (
     EdgeLayout,
@@ -85,7 +85,6 @@ class NeighborSampler:
         # to utilize MaterializedGraph. Until then, the current implementation
         # simply fetches all edge indices into memory.
         elif isinstance(data, tuple):  # Tuple[FeatureStore, MaterializedGraph]
-            feature_store = data[0]
             materialized_graph = data[1]
 
             if time_attr is not None:
@@ -362,8 +361,8 @@ def get_input_nodes(
                                                MaterializedGraph]],
     input_nodes: Union[InputNodes, TensorAttr],
 ) -> Tuple[Optional[str], Sequence]:
-
-    from_bool_tensor = lambda tensor: tensor.nonzero(as_tuple=False).view(-1)
+    def from_bool_tensor(tensor):
+        return tensor.nonzero(as_tuple=False).view(-1)
 
     if isinstance(data, Data):
         if input_nodes is None:
