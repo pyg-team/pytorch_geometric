@@ -17,10 +17,10 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn.pool import knn
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet40')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
-train_dataset = ModelNet(path, '10', True, transform, pre_transform)
-test_dataset = ModelNet(path, '10', False, transform, pre_transform)
+train_dataset = ModelNet(path, '40', True, transform, pre_transform)
+test_dataset = ModelNet(path, '40', False, transform, pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
@@ -28,21 +28,30 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 class TransformerBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.lin_in = Lin(in_channels, in_channels)
-        self.lin_out = Lin(out_channels, out_channels)
+        self.lin_in = Lin(in_channels, in_channels, bias=False)
+        self.lin_out = Lin(out_channels, out_channels, bias=False)
 
-        self.pos_nn = MLP([3, 64, out_channels], batch_norm=False)
+        self.pos_nn = Seq(MLP([3, 3]), Lin(3, out_channels))
 
-        self.attn_nn = MLP([out_channels, 64, out_channels], batch_norm=False)
+        self.attn_nn = Seq(BN(out_channels), ReLU(),
+                           MLP([out_channels, out_channels // 8]),
+                           Lin(out_channels // 8, out_channels // 8))
 
         self.transformer = PointTransformerConv(in_channels, out_channels,
                                                 pos_nn=self.pos_nn,
-                                                attn_nn=self.attn_nn)
+                                                attn_nn=self.attn_nn,
+                                                add_self_loops=False)
+
+        self.bn1 = BN(in_channels)
+        self.bn2 = BN(in_channels)
+        self.bn3 = BN(in_channels)
 
     def forward(self, x, pos, edge_index):
-        x = self.lin_in(x).relu()
-        x = self.transformer(x, pos, edge_index)
-        x = self.lin_out(x).relu()
+        x_skip = x.clone()
+        x = self.bn1(self.lin_in(x)).relu()
+        x = self.bn2(self.transformer(x, pos, edge_index)).relu()
+        x = self.bn3(self.lin_out(x))
+        x = (x + x_skip).relu()
         return x
 
 
@@ -55,7 +64,7 @@ class TransitionDown(torch.nn.Module):
         super().__init__()
         self.k = k
         self.ratio = ratio
-        self.mlp = MLP([in_channels, out_channels])
+        self.mlp = MLP([3 + in_channels, out_channels], bias=False)
 
     def forward(self, x, pos, batch):
         # FPS sampling
@@ -67,12 +76,17 @@ class TransitionDown(torch.nn.Module):
         # beware of self loop
         id_k_neighbor = knn(pos, pos[id_clusters], k=self.k, batch_x=batch,
                             batch_y=sub_batch)
+        relative_pos = pos[id_k_neighbor[1]] - pos[id_clusters][
+            id_k_neighbor[0]]
+
+        # get neighbors features and add relative positions as features
+        x = torch.cat([relative_pos, x[id_k_neighbor[1]]], axis=1)
 
         # transformation of features through a simple MLP
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
+        x_out, _ = scatter_max(x, id_k_neighbor[0],
                                dim_size=id_clusters.size(0), dim=0)
 
         # keep only the clusters and their max-pooled features
@@ -80,12 +94,12 @@ class TransitionDown(torch.nn.Module):
         return out, sub_pos, sub_batch
 
 
-def MLP(channels, batch_norm=True):
+def MLP(channels, batch_norm=True, bias=True):
     return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]),
+        Seq(Lin(channels[i - 1], channels[i], bias=bias),
             BN(channels[i]) if batch_norm else Identity(), ReLU())
         for i in range(1, len(channels))
-    ])
+    ])[0]
 
 
 class Net(torch.nn.Module):
@@ -120,10 +134,7 @@ class Net(torch.nn.Module):
                               ReLU(), Lin(64, out_channels))
 
     def forward(self, x, pos, batch=None):
-
-        # add dummy features in case there is none
-        if x is None:
-            x = torch.ones((pos.shape[0], 1), device=pos.get_device())
+        x = pos if x is None else torch.cat([pos, x], dim=1)
 
         # first block
         x = self.mlp_input(x)
@@ -176,7 +187,7 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(0, train_dataset.num_classes,
+    model = Net(0 + 3, train_dataset.num_classes,
                 dim_model=[32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,

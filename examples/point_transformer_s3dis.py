@@ -7,66 +7,15 @@ from point_transformer_classification import (
     TransformerBlock,
     TransitionDown,
 )
+from point_transformer_segmentation import TransitionSummit, TransitionUp
 from torch.nn import Linear as Lin
-from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 from torch_cluster import knn_graph
-from torch_scatter import scatter
-from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
-from torch_geometric.datasets import ShapeNet
+from torch_geometric.datasets import S3DIS
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import global_mean_pool
-from torch_geometric.nn.unpool import knn_interpolate
-
-
-class TransitionUp(torch.nn.Module):
-    '''
-        Reduce features dimensionnality and interpolate back to higher
-        resolution and cardinality
-    '''
-    def __init__(self, in_channels, out_channels):
-        super().__init__()
-        self.mlp_sub = MLP([in_channels, out_channels])
-        self.mlp = MLP([out_channels, out_channels])
-
-    def forward(self, x, x_sub, pos, pos_sub, batch=None, batch_sub=None):
-        # transform low-res features and reduce the number of features
-        x_sub = self.mlp_sub(x_sub)
-
-        # interpolate low-res feats to high-res points
-        x_interpolated = knn_interpolate(x_sub, pos_sub, pos, k=3,
-                                         batch_x=batch_sub, batch_y=batch)
-
-        x = self.mlp(x) + x_interpolated
-
-        return x
-
-
-class TransitionSummit(torch.nn.Module):
-    def __init__(self, in_channels):
-        super().__init__()
-        self.mlp_sub = Seq(Lin(in_channels, in_channels), ReLU())
-        self.mlp = MLP([2 * in_channels, in_channels])
-
-    def forward(self, x, batch=None):
-        if batch is None:
-            batch = torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
-
-        # compute the mean of features batch_wise
-        x_mean = global_mean_pool(x, batch=batch)
-        x_mean = self.mlp_sub(x_mean)  # (batchs, features)
-
-        # reshape back to (N_points, features)
-        counts = batch.unique(return_counts=True)[1]
-        x_mean = torch.cat(
-            [x_mean[i].repeat(counts[i], 1) for i in range(x_mean.shape[0])],
-            dim=0)
-
-        # transform features
-        x = self.mlp(torch.cat((x, x_mean), 1))
-        return x
+from torch_geometric.utils import intersection_and_union as i_and_u
 
 
 class Net(torch.nn.Module):
@@ -201,50 +150,53 @@ def train():
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
+        loss_history.append(total_loss)
         correct_nodes += out.argmax(dim=1).eq(data.y).sum().item()
         total_nodes += data.num_nodes
 
-        if (i + 1) % 10 == 0:
+        if (i + 1) % 100 == 0:
             print(f'[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} '
                   f'Train Acc: {correct_nodes / total_nodes:.4f}')
             total_loss = correct_nodes = total_nodes = 0
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
 
-    ious, categories = [], []
-    y_map = torch.empty(loader.dataset.num_classes, device=device).long()
-    for data in loader:
+    preds = [
+    ]  # to compute IoU on the full dataset instead of a per-batch basis
+    labels = []  # we will stack the predictions and labels
+    for i, data in enumerate(loader):
         data = data.to(device)
-        outs = model(data.x, data.pos, data.batch)
+        pred = model(data.x, data.pos, data.batch).argmax(dim=1)
+        preds.append(pred)
+        labels.append(data.y)
 
-        sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
-        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
-                                    data.category.tolist()):
-            category = list(ShapeNet.seg_classes.keys())[category]
-            part = ShapeNet.seg_classes[category]
-            part = torch.tensor(part, device=device)
+    preds_tensor = torch.hstack(preds).type(torch.LongTensor).cpu()
+    labels_tensor = torch.hstack(labels).type(torch.LongTensor).cpu()
 
-            y_map[part] = torch.arange(part.size(0), device=device)
+    i, u = torch.zeros((13)), torch.zeros((13))
+    # intersection_and_union does one-hot encoding, making the full labels
+    # matrix too large to fit all at once so we do it in two times
 
-            iou = jaccard_index(out[:, part].argmax(dim=-1), y_map[y],
-                                num_classes=part.size(0), absent_score=1.0)
-            ious.append(iou)
+    i_sub, u_sub = i_and_u(preds_tensor[:2000000], labels_tensor[:2000000], 13)
+    i += i_sub
+    u += u_sub
 
-        categories.append(data.category)
+    i_sub, u_sub = i_and_u(preds_tensor[2000000:], labels_tensor[2000000:], 13)
+    i += i_sub
+    u += u_sub
 
-    iou = torch.tensor(ious, device=device)
-    category = torch.cat(categories, dim=0)
-
-    mean_iou = scatter(iou, category, reduce='mean')  # Per-category IoU.
-    return float(mean_iou.mean())  # Global IoU.
+    iou = i / u
+    iou = iou[~torch.isnan(iou)].mean()
+    # Compute mean IoU.
+    return iou
 
 
 if __name__ == '__main__':
-    category = 'Airplane'  # Pass in `None` to train on all categories.
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
-                    'ShapeNet')
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'S3DIS')
+    print(path)
     transform = T.Compose([
         T.RandomTranslate(0.01),
         T.RandomRotate(15, axis=0),
@@ -252,22 +204,25 @@ if __name__ == '__main__':
         T.RandomRotate(15, axis=2),
     ])
     pre_transform = T.NormalizeScale()
-    train_dataset = ShapeNet(path, category, split='trainval',
-                             transform=transform, pre_transform=pre_transform)
-    test_dataset = ShapeNet(path, category, split='test',
-                            pre_transform=pre_transform)
+    train_dataset = S3DIS(path, test_area=5, train=True, transform=transform,
+                          pre_transform=pre_transform)
+    test_dataset = S3DIS(path, test_area=5, train=False,
+                         pre_transform=pre_transform)
     train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
-
+    print('done')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(3 + 3, train_dataset.num_classes,
+    model = Net(6 + 3, train_dataset.num_classes,
                 dim_model=[32, 64, 128, 256, 512], k=16).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
-                                                gamma=0.5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
+                                                gamma=0.1)
 
+    loss_history = []
+    test_iou_history = []
     for epoch in range(1, 100):
         train()
         iou = test(test_loader)
-        print(f'Epoch: {epoch:03d}, Test IoU: {iou:.4f}')
+        test_iou_history.append(iou)
+        print('Epoch: {:02d}, Test IoU: {:.4f}'.format(epoch, iou))
         scheduler.step()
