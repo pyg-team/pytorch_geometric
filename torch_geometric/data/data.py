@@ -24,10 +24,10 @@ from torch_geometric.data.feature_store import (
     TensorAttr,
     _field_status,
 )
-from torch_geometric.data.materialized_graph import (
+from torch_geometric.data.graph_store import (
     EdgeAttr,
     EdgeLayout,
-    MaterializedGraph,
+    GraphStore,
 )
 from torch_geometric.data.storage import (
     BaseStorage,
@@ -327,7 +327,7 @@ class DataTensorAttr(TensorAttr):
         super().__init__(None, attr_name, index)
 
 
-class Data(BaseData, FeatureStore, MaterializedGraph):
+class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
@@ -766,7 +766,7 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
-    # MaterializedGraph interface #############################################
+    # GraphStore interface #############################################
 
     def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
         return {

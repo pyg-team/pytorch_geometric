@@ -5,7 +5,7 @@ import torch
 import torch_sparse
 
 from torch_geometric.data import HeteroData
-from torch_geometric.data.materialized_graph import EdgeLayout
+from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import EdgeStorage
 
 x_paper = torch.randn(10, 16)

@@ -11,10 +11,10 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.materialized_graph import (
+from torch_geometric.data.graph_store import (
     EdgeAttr,
     EdgeLayout,
-    MaterializedGraph,
+    GraphStore,
 )
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
@@ -30,7 +30,7 @@ NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData, FeatureStore, MaterializedGraph):
+class HeteroData(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -676,7 +676,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     def __iter__(self):
         raise NotImplementedError
 
-    # MaterializedGraph interface #############################################
+    # GraphStore interface #############################################
 
     def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
         return {
