@@ -16,16 +16,18 @@ class PEGConv(MessagePassing):
     for More Powerful Graph Neural Networks"
     <https://arxiv.org/abs/2203.00199>`_ paper.
 
-    $$X^{'},Z^{'}=(\sigma [(\hat{A} \odot M)XW],Z)$$
-    where\ $M_{uv}=MLP(||Z_u-Z_v||),\forall u,v \in V$.
-    $\hat{A} = \hat{D}^{-1/2}(A+I)\hat{D}^{-1/2}$ is the
+    .. math::
+    X^{'},Z^{'}=(\sigma [(\hat{A} \odot M)XW],Z)
+
+    where:math:`M_{u,v}=MLP(||Z_u-Z_v||),\forall u,v \in V`.
+    math:`\hat{A} = \hat{D}^{-1/2}(A+I)\hat{D}^{-1/2}` is the
     normalized adjacent matrix and
-    $\hat{D}_{ii} = \Sigma_{j=0}\hat{A}_{ij}$ is diagonal
-    degree matrix. $\odot$ denotes Hadamard product and $Z$
+    math:`\hat{D}_{ii} = \Sigma_{j=0}\hat{A}_{ij}` is diagonal
+    degree matrix. math:`\odot` denotes Hadamard product and math:`Z`
     is the positional encoding.
 
     The adjacency matrix can include other values than 1
-    representing edge weights via the optional edge\_weight tensor.
+    representing edge weights via the optional edge_weight tensor.
 
     Args:
         in_channels (int): Size of input node features.
