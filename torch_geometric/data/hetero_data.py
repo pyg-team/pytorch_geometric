@@ -104,7 +104,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        super(HeteroData, self).__init__()
+        super().__init__()
 
         self.__dict__['_global_store'] = BaseStorage(_parent=self)
         self.__dict__['_node_store_dict'] = {}
@@ -639,10 +639,12 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
 
         out = self._node_store_dict.get(attr.group_name, None)
         if out:
-            # Group name exists, handle index:
+            # Group name exists, handle index or create new attribute name:
             val = getattr(out, attr.attr_name)
             if val is not None:
                 val[attr.index] = tensor
+            else:
+                setattr(self[attr.group_name], attr.attr_name, tensor)
         else:
             # No node storage found, just store tensor in new one:
             setattr(self[attr.group_name], attr.attr_name, tensor)
@@ -651,7 +653,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""Obtains a feature tensor from node storage."""
         # Retrieve tensor and index accordingly:
-        tensor = getattr(self[attr.group_name], attr.attr_name)
+        tensor = getattr(self[attr.group_name], attr.attr_name, None)
         if tensor is not None:
             # TODO this behavior is a bit odd, since TensorAttr requires that
             # we set `index`. So, we assume here that indexing by `None` is

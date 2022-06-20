@@ -19,6 +19,7 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.feature_store import (
+    FeatureTensorType,
     FeatureStore,
     TensorAttr,
     _field_status,
@@ -28,6 +29,7 @@ from torch_geometric.data.materialized_graph import (
     EdgeLayout,
     MaterializedGraph,
 )
+
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -376,7 +378,7 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
                  pos: OptTensor = None, **kwargs):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
-        super(Data, self).__init__(tensor_attr_cls=DataTensorAttr)
+        super().__init__(tensor_attr_cls=DataTensorAttr)
 
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -724,9 +726,11 @@ class Data(BaseData, FeatureStore, MaterializedGraph):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
-    # FeatureStore interface ##################################################
+    # FeatureStore interface ###########################################
 
     def items(self):
+        r"""Returns an `ItemsView` over the stored attributes in the `Data`
+        object."""
         return self._store.items()
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:

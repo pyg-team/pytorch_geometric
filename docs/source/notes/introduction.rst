@@ -330,7 +330,7 @@ In addition, we can use the :obj:`transform` argument to randomly augment a :cla
 
     dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'],
                         pre_transform=T.KNNGraph(k=6),
-                        transform=T.RandomTranslate(0.01))
+                        transform=T.RandomJitter(0.01))
 
     dataset[0]
     >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
