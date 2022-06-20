@@ -19,8 +19,8 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.feature_store import (
-    FeatureTensorType,
     FeatureStore,
+    FeatureTensorType,
     TensorAttr,
     _field_status,
 )
@@ -29,7 +29,6 @@ from torch_geometric.data.materialized_graph import (
     EdgeLayout,
     MaterializedGraph,
 )
-
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
