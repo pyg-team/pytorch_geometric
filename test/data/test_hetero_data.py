@@ -400,3 +400,30 @@ def test_hetero_data_to_canonical():
 
     with pytest.raises(TypeError, match="missing 1 required"):
         data['user', 'product']
+
+
+# Feature Store ###############################################################
+
+
+def test_basic_feature_store():
+    data = HeteroData()
+    x = torch.randn(20, 20)
+
+    # Put tensor:
+    assert data.put_tensor(copy.deepcopy(x), group_name='paper', attr_name='x',
+                           index=None)
+    assert torch.equal(data['paper'].x, x)
+
+    # Put (modify) tensor slice:
+    x[15:] = 0
+    data.put_tensor(0, group_name='paper', attr_name='x',
+                    index=slice(15, None, None))
+
+    # Get tensor:
+    out = data.get_tensor(group_name='paper', attr_name='x', index=None)
+    assert torch.equal(x, out)
+
+    # Remove tensor:
+    assert 'x' in data['paper'].__dict__['_mapping']
+    data.remove_tensor(group_name='paper', attr_name='x', index=None)
+    assert 'x' not in data['paper'].__dict__['_mapping']
