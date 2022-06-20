@@ -11,11 +11,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData, Data, size_repr
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import (
-    EdgeAttr,
-    EdgeLayout,
-    GraphStore,
-)
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeTensorType,
