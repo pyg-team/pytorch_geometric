@@ -1,9 +1,11 @@
+import argparse
+import os.path as osp
+from timeit import default_timer
+
 from ogb.nodeproppred import PygNodePropPredDataset
+
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
-import os.path as osp
-import argparse
-from timeit import default_timer
 from torch_geometric.loader import NeighborLoader
 
 
@@ -13,8 +15,8 @@ def run(args: argparse.ArgumentParser) -> None:
     for dataset_name in args.datasets:
         print("Dataset: ", dataset_name)
 
-        root = osp.join(osp.dirname(osp.realpath(__file__)),
-                        args.root, dataset_name.partition("-")[2])
+        root = osp.join(osp.dirname(osp.realpath(__file__)), args.root,
+                        dataset_name.partition("-")[2])
 
         if dataset_name == 'ogbn-mag':
             transform = T.ToUndirected(merge=True)
@@ -35,12 +37,14 @@ def run(args: argparse.ArgumentParser) -> None:
         for sizes in neighbor_sizes:
             print(f'Sizes={sizes}')
             for batch_size in args.batch_sizes:
-                train_loader = NeighborLoader(data,
-                                              num_neighbors=sizes,
-                                              input_nodes=train_idx,
-                                              batch_size=batch_size,
-                                              shuffle=True,
-                                              num_workers=args.num_workers,)
+                train_loader = NeighborLoader(
+                    data,
+                    num_neighbors=sizes,
+                    input_nodes=train_idx,
+                    batch_size=batch_size,
+                    shuffle=True,
+                    num_workers=args.num_workers,
+                )
                 start = default_timer()
                 iter = 0
                 times = []
@@ -51,16 +55,18 @@ def run(args: argparse.ArgumentParser) -> None:
                     stop = default_timer()
                     times.append(round(stop - start, 3))
                 average_time = round(sum(times) / args.runs, 3)
-                print(f'Batch size={batch_size}   iterations={iter}   '
-                      + f'times={times}    average_time={average_time}')
+                print(f'Batch size={batch_size}   iterations={iter}   ' +
+                      f'times={times}    average_time={average_time}')
         print('Evaluation sampling')
         for batch_size in args.eval_batch_sizes:
-            subgraph_loader = NeighborLoader(data,
-                                             num_neighbors=[-1],
-                                             input_nodes=eval_idx,
-                                             batch_size=batch_size,
-                                             shuffle=False,
-                                             num_workers=args.num_workers,)
+            subgraph_loader = NeighborLoader(
+                data,
+                num_neighbors=[-1],
+                input_nodes=eval_idx,
+                batch_size=batch_size,
+                shuffle=False,
+                num_workers=args.num_workers,
+            )
             start = default_timer()
             iter = 0
             times = []
@@ -71,8 +77,8 @@ def run(args: argparse.ArgumentParser) -> None:
                 stop = default_timer()
                 times.append(round(stop - start, 3))
             average_time = round(sum(times) / args.runs, 3)
-            print(f'Batch size={batch_size}   iterations={iter}   '
-                + f'times={times}    average_time={average_time}')
+            print(f'Batch size={batch_size}   iterations={iter}   ' +
+                  f'times={times}    average_time={average_time}')
 
 
 if __name__ == '__main__':
@@ -80,16 +86,21 @@ if __name__ == '__main__':
 
     argparser.add_argument('--device', default='cpu', type=str)
     argparser.add_argument('--datasets', nargs="+",
-                           default=['ogbn-arxiv', 'ogbn-products', 'ogbn-mag'], type=str)
+                           default=['ogbn-arxiv', 'ogbn-products',
+                                    'ogbn-mag'], type=str)
     argparser.add_argument('--root', default='../../data', type=str)
-    argparser.add_argument(
-        '--batch-sizes', default=[8192, 4096, 2048, 1024, 512], type=int)
-    argparser.add_argument('--homo-neighbor_sizes',
-                           default=[[10, 5], [15, 10, 5], [20, 15, 10]], type=int)
-    argparser.add_argument('--hetero-neighbor_sizes',
-                           default=[[5], [10], [10, 5]], type=int)
+    argparser.add_argument('--batch-sizes',
+                           default=[8192, 4096, 2048, 1024, 512], type=int)
+    argparser.add_argument('--homo-neighbor_sizes', default=[[10, 5],
+                                                             [15, 10, 5],
+                                                             [20, 15, 10]],
+                           type=int)
+    argparser.add_argument('--hetero-neighbor_sizes', default=[[5], [10],
+                                                               [10, 5]],
+                           type=int)
     argparser.add_argument('--eval-batch-sizes',
-                           default=[16384, 8192, 4096, 2048, 1024, 512], type=int)
+                           default=[16384, 8192, 4096, 2048, 1024,
+                                    512], type=int)
     argparser.add_argument('--num-workers', default=0, type=int)
     argparser.add_argument('--runs', default=3, type=int)
 
