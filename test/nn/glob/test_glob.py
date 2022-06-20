@@ -65,3 +65,8 @@ def test_permuted_global_pool():
     assert out.size() == (2, 4)
     assert torch.allclose(out[0], px1.max(dim=0)[0])
     assert torch.allclose(out[1], px2.max(dim=0)[0])
+
+
+def test_dense_global_pool():
+    x = torch.randn(3, 16, 32)
+    assert torch.allclose(global_add_pool(x, None), x.sum(dim=1))
