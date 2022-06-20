@@ -112,5 +112,5 @@ classes = __all__
 
 from torch_geometric.deprecation import deprecated  # noqa
 
-NeighborTranslate = deprecated("use 'transforms.RandomJitter' instead",
-                               'transforms.RandomTranslate')(RandomJitter)
+RandomTranslate = deprecated("use 'transforms.RandomJitter' instead",
+                             'transforms.RandomTranslate')(RandomJitter)
