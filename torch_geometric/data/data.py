@@ -24,11 +24,7 @@ from torch_geometric.data.feature_store import (
     TensorAttr,
     _field_status,
 )
-from torch_geometric.data.graph_store import (
-    EdgeAttr,
-    EdgeLayout,
-    GraphStore,
-)
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
