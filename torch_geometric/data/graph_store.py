@@ -21,11 +21,11 @@ class EdgeLayout(Enum):
 class EdgeAttr(CastMixin):
     r"""Defines the attributes of an :obj:`GraphStore` edge."""
 
-    # The layout of the edge representation
-    layout: Optional[EdgeLayout] = None
-
     # The type of the edge
-    edge_type: Optional[Any] = None
+    edge_type: Optional[Any]
+
+    # The layout of the edge representation
+    layout: EdgeLayout
 
 
 class GraphStore(MutableMapping):
@@ -42,7 +42,7 @@ class GraphStore(MutableMapping):
     @abstractmethod
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        return None
+        pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
@@ -54,15 +54,10 @@ class GraphStore(MutableMapping):
             **attr(EdgeAttr): the edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        if not edge_attr.layout:
-            raise AttributeError(
-                "An edge layout is required to store an edge index, but one "
-                "was not provided.")
 
         # NOTE implementations should take care to ensure that `SparseTensor`
         # objects are treated properly here.
-        return self._put_edge_index(edge_index,
-                                    self._edge_attr_cls.cast(*args, **kwargs))
+        return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:

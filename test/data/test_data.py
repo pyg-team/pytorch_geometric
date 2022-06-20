@@ -271,7 +271,7 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
-def test_basic_materialized_graph():
+def test_basic_graph_store():
     data = Data()
     coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
     csr = torch_sparse.SparseTensor.from_edge_index(coo)

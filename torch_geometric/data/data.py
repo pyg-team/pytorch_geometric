@@ -323,6 +323,15 @@ class DataTensorAttr(TensorAttr):
         super().__init__(None, attr_name, index)
 
 
+@dataclass
+class DataEdgeAttr(EdgeAttr):
+    r"""Edge attribute class for `Data`, which does not require a
+    `edge_type`."""
+    def __init__(self, layout, edge_type=None):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(edge_type, layout)
+
+
 class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
@@ -374,6 +383,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
         super().__init__(tensor_attr_cls=DataTensorAttr)
+        # `Data` doesn't support edge_type, so we need to adjust `EdgeAttr`
+        # accordingly here to avoid requiring `edge_type` to be set:
+        GraphStore.__init__(self, edge_attr_cls=DataEdgeAttr)
 
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -762,7 +774,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
-    # GraphStore interface #############################################
+    # GraphStore interface ####################################################
 
     def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
         return {
