@@ -24,9 +24,9 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
-        return x.sum(dim=0, keepdim=True)
+        return x.sum(dim=-2, keepdim=x.dim() == 2)
     size = int(batch.max().item() + 1) if size is None else size
-    return scatter(x, batch, dim=0, dim_size=size, reduce='add')
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='add')
 
 
 def global_mean_pool(x: Tensor, batch: Optional[Tensor],
@@ -48,9 +48,9 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
-        return x.mean(dim=0, keepdim=True)
+        return x.mean(dim=-2, keepdim=x.dim() == 2)
     size = int(batch.max().item() + 1) if size is None else size
-    return scatter(x, batch, dim=0, dim_size=size, reduce='mean')
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='mean')
 
 
 def global_max_pool(x: Tensor, batch: Optional[Tensor],
@@ -72,9 +72,9 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
-        return x.max(dim=0, keepdim=True)[0]
+        return x.max(dim=-2, keepdim=x.dim() == 2)[0]
     size = int(batch.max().item() + 1) if size is None else size
-    return scatter(x, batch, dim=0, dim_size=size, reduce='max')
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='max')
 
 
 class GlobalPooling(torch.nn.Module):
