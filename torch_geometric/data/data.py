@@ -366,7 +366,7 @@ class Data(BaseData, FeatureStore):
                  pos: OptTensor = None, **kwargs):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
-        super(Data, self).__init__(attr_cls=DataTensorAttr)
+        super().__init__(attr_cls=DataTensorAttr)
 
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -717,6 +717,8 @@ class Data(BaseData, FeatureStore):
     # FeatureStore interface ###########################################
 
     def items(self):
+        r"""Returns an `ItemsView` over the stored attributes in the `Data`
+        object."""
         return self._store.items()
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
