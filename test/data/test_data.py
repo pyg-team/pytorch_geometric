@@ -268,7 +268,7 @@ def test_basic_feature_store():
     assert 'x' not in data.__dict__['_store']
 
 
-# Materialized Graph ##########################################################
+# Graph Store #################################################################
 
 
 def test_basic_materialized_graph():

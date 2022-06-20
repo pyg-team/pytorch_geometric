@@ -630,7 +630,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return data
 
-    # :obj:`FeatureStore` interface ###########################################
+    # FeatureStore interface ##################################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""Stores a feature tensor in node storage."""
@@ -676,7 +676,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __iter__(self):
         raise NotImplementedError
 
-    # GraphStore interface #############################################
+    # GraphStore interface ####################################################
 
     def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
         return {
