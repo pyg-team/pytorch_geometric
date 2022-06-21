@@ -277,7 +277,6 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
         assert torch.all(mask)
 
 
-@pytest.mark.skip
 def test_feature_store_graph_store():
     # TODO fix this :)
     import sys
@@ -303,12 +302,10 @@ def test_feature_store_graph_store():
 
     # Put edges:
     for edge_type in edge_types:
-        edge_index = torch.stack(
-            (torch.arange(0, 100, 1), torch.arange(0, 100, 1)), dim=0)
-        adj_t = SparseTensor.from_edge_index(edge_index).t()
+        edge_index = (torch.arange(0, 100, 1), torch.arange(0, 100, 1))
         graph_store.put_edge_index(
-            edge_index=adj_t,
-            layout='csc',
+            edge_index=edge_index,
+            layout='coo',
             edge_type=edge_type,
         )
 

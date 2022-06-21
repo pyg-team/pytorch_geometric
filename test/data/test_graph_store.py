@@ -16,15 +16,21 @@ class MyGraphStore(GraphStore):
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return (attr.edge_type or '<default>') + '_' + str(attr.layout)
+        prefix = ''
+        if isinstance(attr.edge_type, tuple):
+            prefix = 'tuple:'
+        return (prefix + str(attr.edge_type) or '<default>') + '_' + str(
+            attr.layout.value)
 
     @staticmethod
     def from_key(key: str) -> EdgeAttr:
         edge_type, layout = key.split('_')
+        if edge_type.startswith('tuple:'):
+            from ast import literal_eval
+            edge_type = literal_eval(edge_type.split(':')[1])
         if edge_type == '<default>':
             edge_type = None
-        return EdgeAttr(layout=EdgeLayout(layout.split('.')[1]),
-                        edge_type=edge_type)
+        return EdgeAttr(layout=EdgeLayout(layout), edge_type=edge_type)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:

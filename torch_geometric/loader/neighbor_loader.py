@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.data import edge_tensor_type_to_adj_type, edge_layout_to_attr_name
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import EdgeLayout, GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -22,7 +23,7 @@ from torch_geometric.typing import InputNodes, NumNeighbors
 class NeighborSampler:
     def __init__(
         self,
-        data: Union[Union[Data, HeteroData], Tuple[FeatureStore, GraphStore]],
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
@@ -89,6 +90,7 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data[0].__class__.__name__}' object")
 
+            # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             all_edge_attrs = graph_store.get_all_edge_types()
             edge_type_to_layouts: Dict[Any,
                                        List[EdgeLayout]] = defaultdict(list)
@@ -99,32 +101,29 @@ class NeighborSampler:
             for edge_type, edge_layouts in edge_type_to_layouts.items():
                 key = edge_type_to_str(edge_type)
 
-                adj_t = None
-                edge_index = None
+                # Select the most favorable layout:
+                edge_layout = edge_layouts[0]
+                ordering = {
+                    EdgeLayout.COO: 0,
+                    EdgeLayout.CSR: 1,
+                    EdgeLayout.CSC: 2
+                }
+                for layout in edge_layouts[1:]:
+                    if ordering[layout] > ordering[edge_layout]:
+                        edge_layout = layout
 
-                # CSC:
-                if EdgeLayout.CSC in edge_layouts:
-                    adj_t = graph_store.get_edge_index(edge_type=edge_type,
-                                                       layout=EdgeLayout.CSC)
+                edge_index_tuple = graph_store.get_edge_index(
+                    edge_type=edge_type, layout=edge_layout)
 
-                # CSR:
-                elif EdgeLayout.CSR in edge_layouts:
-                    adj_t = graph_store.get_edge_index(
-                        edge_type=edge_type, layout=EdgeLayout.CSR).t()
-
-                # COO:
-                else:
-                    edge_index = graph_store.get_edge_index(
-                        edge_type=edge_type, layout=EdgeLayout.COO)
-
+                # Convert to format for to_csc:
                 class _DataArgument(object):
                     pass
 
                 data_argument = _DataArgument()
-                if adj_t:
-                    setattr(data_argument, 'adj_t', adj_t)
-                else:
-                    setattr(data_argument, 'edge_index', edge_index)
+                edge_index = edge_tensor_type_to_adj_type(
+                    edge_layout, edge_index_tuple)
+                attr_name = edge_layout_to_attr_name(edge_layout)
+                setattr(data_argument, attr_name, edge_index)
 
                 self.colptr_dict[key], self.row_dict[key], self.perm_dict[
                     key] = to_csc(data_argument, device='cpu',

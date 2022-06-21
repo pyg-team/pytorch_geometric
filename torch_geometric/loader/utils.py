@@ -43,6 +43,9 @@ def to_csc(
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
 
+    if hasattr(data, 'adj'):
+        colptr, row = data.adj.csc()
+
     if hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
