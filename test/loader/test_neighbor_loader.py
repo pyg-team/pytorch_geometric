@@ -4,7 +4,6 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.materialized_graph import EdgeLayout
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withRegisteredOp
@@ -279,15 +278,15 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
 
 
 @pytest.mark.skip
-def test_feature_store_materialized_graph():
+def test_feature_store_graph_store():
     # TODO fix this :)
     import sys
     sys.path.append("..")
     from data.test_feature_store import MyFeatureStore
-    from data.test_materialized_graph import MyMaterializedGraph
+    from data.test_graph_store import MyGraphStore
 
     feature_store = MyFeatureStore()
-    materialized_graph = MyMaterializedGraph()
+    graph_store = MyGraphStore()
 
     node_size = 100
     node_types = ['a', 'b', 'c']
@@ -307,15 +306,15 @@ def test_feature_store_materialized_graph():
         edge_index = torch.stack(
             (torch.arange(0, 100, 1), torch.arange(0, 100, 1)), dim=0)
         adj_t = SparseTensor.from_edge_index(edge_index).t()
-        materialized_graph.put_edge_index(
+        graph_store.put_edge_index(
             edge_index=adj_t,
-            layout=EdgeLayout.CSC,
+            layout='csc',
             edge_type=edge_type,
         )
 
     # Construct NeighborLoader
     _ = NeighborLoader(
-        data=(feature_store, materialized_graph),
+        data=(feature_store, graph_store),
         input_nodes=feature_store._tensor_attr_cls(group_name='a',
                                                    attr_name='x'),
         num_neighbors=10)

@@ -85,7 +85,7 @@ class GraphStore(MutableMapping):
     @abstractmethod
     def get_all_edge_types(self) -> List[EdgeAttr]:
         r"""Obtain all edge attributes of edges that are stored in the
-        materialized graph."""
+        graph store."""
         raise NotImplementedError
 
     def sample(

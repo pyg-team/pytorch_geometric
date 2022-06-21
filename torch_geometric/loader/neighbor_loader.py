@@ -7,9 +7,9 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.materialized_graph import (
+from torch_geometric.data.graph_store import (
     EdgeLayout,
-    MaterializedGraph,
+    GraphStore,
 )
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
@@ -25,8 +25,7 @@ from torch_geometric.typing import InputNodes, NumNeighbors
 class NeighborSampler:
     def __init__(
         self,
-        data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
-                                                   MaterializedGraph]],
+        data: Union[Union[Data, HeteroData], Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
@@ -82,10 +81,10 @@ class NeighborSampler:
             self.input_type = input_type
 
         # NOTE This code will be replaced when we factor out sampling routines
-        # to utilize MaterializedGraph. Until then, the current implementation
+        # to utilize GraphStore. Until then, the current implementation
         # simply fetches all edge indices into memory.
-        elif isinstance(data, tuple):  # Tuple[FeatureStore, MaterializedGraph]
-            materialized_graph = data[1]
+        elif isinstance(data, tuple):  # Tuple[FeatureStore, GraphStore]
+            graph_store = data[1]
 
             if time_attr is not None:
                 # TODO support `collect` on `FeatureStore`
@@ -93,7 +92,7 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data[0].__class__.__name__}' object")
 
-            all_edge_attrs = materialized_graph.get_all_edge_types()
+            all_edge_attrs = graph_store.get_all_edge_types()
             edge_type_to_layouts: Dict[Any,
                                        List[EdgeLayout]] = defaultdict(list)
             for attr in all_edge_attrs:
@@ -108,17 +107,17 @@ class NeighborSampler:
 
                 # CSC:
                 if EdgeLayout.CSC in edge_layouts:
-                    adj_t = materialized_graph.get_edge_index(
-                        edge_type=edge_type, layout=EdgeLayout.CSC)
+                    adj_t = graph_store.get_edge_index(edge_type=edge_type,
+                                                       layout=EdgeLayout.CSC)
 
                 # CSR:
                 elif EdgeLayout.CSR in edge_layouts:
-                    adj_t = materialized_graph.get_edge_index(
+                    adj_t = graph_store.get_edge_index(
                         edge_type=edge_type, layout=EdgeLayout.CSR).t()
 
                 # COO:
                 else:
-                    edge_index = materialized_graph.get_edge_index(
+                    edge_index = graph_store.get_edge_index(
                         edge_type=edge_type, layout=EdgeLayout.COO)
 
                 class _DataArgument(object):
@@ -321,8 +320,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
-                                                   MaterializedGraph]],
+        data: Union[Union[Data, HeteroData], Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         input_nodes: InputNodes = None,
         replace: bool = False,
@@ -393,8 +391,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
 
 def get_input_nodes(
-    data: Union[Union[Data, HeteroData], Tuple[FeatureStore,
-                                               MaterializedGraph]],
+    data: Union[Union[Data, HeteroData], Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
 ) -> Tuple[Optional[str], Sequence]:
     def from_bool_tensor(tensor):
@@ -427,7 +424,7 @@ def get_input_nodes(
 
     # Tuple
     else:
-        # NOTE FeatureStore and MaterializedGraph are treated as separate
+        # NOTE FeatureStore and GraphStore are treated as separate
         # entities, so we cannot leverage the custom structure in Data and
         # HeteroData to infer the number of nodes. As a result, here we expect
         # that the input nodes are either explicitly provided or can be
