@@ -54,6 +54,13 @@ class MyFeatureStore(FeatureStore):
         attr.index = None
         return self._get_tensor(attr).size()
 
+    def get_all_tensor_attrs(self):
+        out = []
+        for key in self.store.keys():
+            group_name, attr_name = key
+            out.append(TensorAttr(group_name=group_name, attr_name=attr_name))
+        return out
+
     def __len__(self):
         raise NotImplementedError
 

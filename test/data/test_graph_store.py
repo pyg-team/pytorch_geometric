@@ -39,7 +39,7 @@ class MyGraphStore(GraphStore):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return self.store.get(MyGraphStore.key(edge_attr), None)
 
-    def get_all_edge_types(self):
+    def get_all_edge_attrs(self):
         return [MyGraphStore.from_key(key) for key in self.store]
 
 

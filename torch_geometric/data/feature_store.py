@@ -373,12 +373,19 @@ class FeatureStore(MutableMapping):
     # Additional methods ######################################################
 
     @abstractmethod
-    def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
+    def _get_tensor_size(self, attr: TensorAttr) -> Optional[List[int]]:
         pass
 
-    def get_tensor_size(self, *args, **kwargs) -> List[int]:
+    def get_tensor_size(self, *args, **kwargs) -> Optional[List[int]]:
+        r"""Obtains the size of a tensor given its attributes, or :obj:`None`
+        if the tensor does not exist."""
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         return self._get_tensor_size(attr)
+
+    @abstractmethod
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        r"""Obtains all tensor attributes stored in this feature store."""
+        pass
 
     # `AttrView` methods ######################################################
 

@@ -44,9 +44,9 @@ def to_csc(
     perm: Optional[Tensor] = None
 
     if hasattr(data, 'adj'):
-        colptr, row = data.adj.csc()
+        colptr, row, _ = data.adj.csc()
 
-    if hasattr(data, 'adj_t'):
+    elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
     elif hasattr(data, 'edge_index'):
@@ -57,7 +57,7 @@ def to_csc(
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
         raise AttributeError("Data object does not contain attributes "
-                             "'adj_t' or 'edge_index'")
+                             "'adj', 'adj_t' or 'edge_index'")
 
     colptr = colptr.to(device)
     row = row.to(device)

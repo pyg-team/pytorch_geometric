@@ -1,3 +1,5 @@
+from re import X
+
 import numpy as np
 import pytest
 import torch
@@ -5,9 +7,10 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader.neighbor_loader import get_input_nodes
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withRegisteredOp
-from torch_geometric.utils import k_hop_subgraph
+from torch_geometric.utils import k_hop_subgraph, sort_edge_index
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -286,32 +289,98 @@ def test_feature_store_graph_store():
 
     feature_store = MyFeatureStore()
     graph_store = MyGraphStore()
+    hetero_data = HeteroData()
+    torch.manual_seed(12345)
 
-    node_size = 100
-    node_types = ['a', 'b', 'c']
-    edge_types = [('a', 'to', 'b'), ('a', 'to', 'c'), ('b', 'to', 'c')]
+    # Set up node features:
+    x = torch.arange(100)
+    hetero_data['paper'].x = x
+    feature_store.put_tensor(x, group_name='paper', attr_name='x', index=None)
 
-    # Put features:
-    for node_type in node_types:
-        feature_store.put_tensor(
-            torch.rand((node_size, 10)),
-            group_name=node_type,
-            attr_name='x',
-            index=None,
-        )
+    x = torch.arange(100, 300)
+    hetero_data['author'].x = x
+    feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
-    # Put edges:
-    for edge_type in edge_types:
-        edge_index = (torch.arange(0, 100, 1), torch.arange(0, 100, 1))
-        graph_store.put_edge_index(
-            edge_index=edge_index,
-            layout='coo',
-            edge_type=edge_type,
-        )
+    # Set up edge indices:
+    def _get_edge_index(num_src, num_dst, num_edges):
+        edge_index = get_edge_index(num_src, num_dst, num_edges)
+        edge_index = sort_edge_index(edge_index)
+        adj = SparseTensor.from_edge_index(edge_index, is_sorted=True)
+        rowptr, col, _ = adj.csr()
+        return edge_index, rowptr, col
+
+    edge_index, rowptr, col = _get_edge_index(100, 100, 500)
+    hetero_data['paper', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=(rowptr, col),
+        layout='csr',
+        edge_type=('paper', 'to', 'paper'),
+    )
+
+    edge_index, rowptr, col = _get_edge_index(100, 200, 1000)
+    hetero_data['paper', 'author'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=(rowptr, col),
+        layout='csr',
+        edge_type=('paper', 'to', 'author'),
+    )
+
+    edge_index, rowptr, col = _get_edge_index(200, 100, 1000)
+    hetero_data['author', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=(rowptr, col),
+        layout='csr',
+        edge_type=('author', 'to', 'paper'),
+    )
+
+    # Construct neighbor loaders:
+    batch_size = 20
+    hetero_data_loader = NeighborLoader(
+        data=hetero_data,
+        num_neighbors=[-1] * 2,
+        input_nodes='paper',
+        batch_size=batch_size,
+        directed=False,
+    )
 
     # Construct NeighborLoader
-    _ = NeighborLoader(
+    custom_data_loader = NeighborLoader(
         data=(feature_store, graph_store),
-        input_nodes=feature_store._tensor_attr_cls(group_name='a',
+        input_nodes=feature_store._tensor_attr_cls(group_name='paper',
                                                    attr_name='x'),
-        num_neighbors=10)
+        num_neighbors=[-1] * 2,
+        batch_size=batch_size,
+        is_sorted=True,
+        directed=False,
+    )
+
+    # Basic assertions:
+    assert str(hetero_data_loader) == 'NeighborLoader()'
+    assert len(hetero_data_loader) == (100 + batch_size - 1) // batch_size
+    assert str(custom_data_loader) == 'NeighborLoader()'
+    assert len(custom_data_loader) == (100 + batch_size - 1) // batch_size
+
+    # Equivalent input nodes:
+    hetero_input_nodes = get_input_nodes(hetero_data,
+                                         hetero_data_loader.input_nodes)
+    custom_input_nodes = get_input_nodes((feature_store, graph_store),
+                                         custom_data_loader.input_nodes)
+
+    assert hetero_input_nodes == custom_input_nodes
+
+    # Equivalent inner representations
+    assert (hetero_data_loader.neighbor_sampler.node_types ==
+            custom_data_loader.neighbor_sampler.node_types)
+    assert (hetero_data_loader.neighbor_sampler.edge_types ==
+            custom_data_loader.neighbor_sampler.edge_types)
+
+    def _assert_tensor_dict_equal(expected, actual):
+        assert expected.keys() == actual.keys()
+        for key in expected:
+            assert torch.equal(expected[key], actual[key])
+
+    expected = hetero_data_loader.neighbor_sampler([0, 1, 2, 3])
+    actual = custom_data_loader.neighbor_sampler([0, 1, 2, 3])
+
+    for i in range(len(expected) - 1):
+        _assert_tensor_dict_equal(expected[i], actual[i])

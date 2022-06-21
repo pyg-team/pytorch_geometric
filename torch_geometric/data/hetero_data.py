@@ -676,6 +676,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
         return list(self._get_tensor(attr).size())
 
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        out = []
+        for group_name, group in self.node_items():
+            for attr_name in group:
+                out.append(
+                    TensorAttr(group_name=group_name, attr_name=attr_name))
+        return out
+
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
@@ -700,7 +708,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
         return attr_val
 
-    def get_all_edge_types(self) -> List[EdgeAttr]:
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
         # TODO implement
         raise NotImplementedError
 
