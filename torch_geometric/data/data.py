@@ -783,7 +783,6 @@ class Data(BaseData, FeatureStore, GraphStore):
             out.append(TensorAttr(group_name=None, attr_name=attr_name))
         return out
 
-
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
