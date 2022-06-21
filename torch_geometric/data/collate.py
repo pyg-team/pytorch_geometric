@@ -96,12 +96,9 @@ def collate(
                 inc_dict[attr] = incs
 
             # Add an additional batch vector for the given attribute:
-            if (attr in follow_batch and isinstance(slices, Tensor)
-                    and slices.dim() == 1):
-                repeats = slices[1:] - slices[:-1]
-                batch = repeat_interleave(repeats.tolist(), device=device)
-                out_store[f'{attr}_batch'] = batch
-                out_store[f'{attr}_ptr'] = cumsum(repeats.to(device))
+            if attr in follow_batch:
+                out_store[f'{attr}_batch'] = _batch(slices, device)
+                out_store[f'{attr}_ptr'] = _ptr(slices, device)
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
@@ -198,6 +195,51 @@ def _collate(
         slices = torch.arange(len(values) + 1)
         return values, slices, None
 
+
+def _batch(
+    slices: Any,
+    device: Optional[torch.device] = None,
+) -> Union[Tensor, Sequence, Mapping, None]:
+    if (isinstance(slices, Tensor) and slices.dim() == 1):
+        # Default case, turn slices tensor into batch.
+        repeats = slices[1:] - slices[:-1]
+        return repeat_interleave(repeats.tolist(), device=device)
+
+    elif isinstance(slices, Mapping):
+        # Recursively batch elements of dictionaries.
+        return {k: _batch(v, device) for k, v in slices.items()}
+
+    elif (isinstance(slices, Sequence) and not isinstance(slices, str)
+          and isinstance(slices[0], Tensor)):
+        # Recursively batch elements of lists.
+        return [_batch(s, device) for s in slices]
+
+    else:
+        # Failure of batching, usually due to slices.dim() != 1
+        return None
+
+
+def _ptr(
+    slices: Any,
+    device: Optional[torch.device] = None,
+) -> Union[Tensor, Sequence, Mapping, None]:
+    if (isinstance(slices, Tensor) and slices.dim() == 1):
+        # Default case, turn slices tensor into ptr.
+        repeats = slices[1:] - slices[:-1]
+        return cumsum(repeats.to(device))
+
+    elif isinstance(slices, Mapping):
+        # Recursively ptr elements of dictionaries.
+        return {k: _ptr(v, device) for k, v in slices.items()}
+
+    elif (isinstance(slices, Sequence) and not isinstance(slices, str)
+          and isinstance(slices[0], Tensor)):
+        # Recursively ptr elements of lists.
+        return [_ptr(s, device) for s in slices]
+
+    else:
+        # Failure of ptr, usually due to slices.dim() != 1
+        return None
 
 ###############################################################################
 
