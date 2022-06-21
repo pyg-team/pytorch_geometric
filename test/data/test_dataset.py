@@ -158,3 +158,29 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+
+class MyTestDataset2(InMemoryDataset):
+    def __init__(self, data_list):
+        super().__init__('/tmp/MyTestDataset2')
+        self.data, self.slices = self.collate(data_list)
+
+
+def test_lists_of_tensors_in_memory_dataset():
+    def tr(n, m):
+        return torch.rand((n, m))
+
+    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)])
+    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)])
+    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)])
+    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)])
+
+    data_list = [d1, d2, d3, d4]
+
+    dataset = MyTestDataset2(data_list)
+    assert len(dataset) == 4
+    assert dataset[0].xs[1].shape == (11, 4)
+    assert dataset[0].xs[2].shape == (1, 2)
+    assert dataset[1].xs[0].shape == (5, 3)
+    assert dataset[2].xs[1].shape == (15, 4)
+    assert dataset[3].xs[1].shape == (16, 4)
