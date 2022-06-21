@@ -7,7 +7,6 @@ import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
-from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.typing import EdgeTensorType
 
 

@@ -5,7 +5,6 @@ import torch
 import torch_sparse
 
 from torch_geometric.data import HeteroData
-from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import EdgeTensorType
 

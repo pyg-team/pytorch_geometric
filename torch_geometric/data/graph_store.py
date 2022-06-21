@@ -14,7 +14,6 @@ class EdgeLayout(Enum):
     COO = 'coo'
     CSC = 'csc'
     CSR = 'csr'
-    LIL = 'lil'
 
 
 @dataclass
@@ -36,7 +35,7 @@ class GraphStore(MutableMapping):
         r"""Initializes the graph store. Implementor classes can customize the
         ordering and required nature of their :class:`EdgeAttr` edge attributes
         by subclassing :class:`EdgeAttr` and passing the subclass as
-        :obj:`attr_cls`."""
+        :obj:`edge_attr_cls`."""
         super().__init__()
         self.__dict__['_edge_attr_cls'] = edge_attr_cls
 
@@ -78,6 +77,10 @@ class GraphStore(MutableMapping):
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
         return self._get_edge_index(edge_attr)
+
+    # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
+    # conversions of edge indices between formats. These conversions can also
+    # automatically be performed in `get_edge_index`
 
     def sample(
         self,

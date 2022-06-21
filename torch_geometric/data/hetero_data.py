@@ -9,9 +9,16 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.data import (
+    BaseData,
+    Data,
+    adj_type_to_edge_tensor_type,
+    edge_layout_to_attr_name,
+    edge_tensor_type_to_adj_type,
+    size_repr,
+)
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
+from torch_geometric.data.graph_store import EdgeAttr, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeTensorType,
@@ -674,21 +681,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
     # GraphStore interface ####################################################
 
-    def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
-        return {
-            EdgeLayout.COO: 'edge_index',
-            EdgeLayout.CSR: 'adj',
-            EdgeLayout.CSC: 'adj_t',
-        }[layout]
-
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        setattr(self[edge_attr.edge_type],
-                self._layout_to_attr_name(edge_attr.layout), edge_index)
+        # Convert the edge index to a recognizable format:
+        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_val = edge_tensor_type_to_adj_type(edge_attr.layout, edge_index)
+        setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        return getattr(self[edge_attr.edge_type],
-                       self._layout_to_attr_name(edge_attr.layout))
+        # Get the requested format and the Adj tensor associated with it:
+        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
 
 
 # Helper functions ############################################################
