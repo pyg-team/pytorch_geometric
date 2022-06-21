@@ -11,29 +11,31 @@ from torch_geometric.utils.mixin import CastMixin
 
 
 class EdgeLayout(Enum):
-    COO = 'COO'
-    CSC = 'CSC'
-    CSR = 'CSR'
-    LIL = 'LIL'
+    COO = 'coo'
+    CSC = 'csc'
+    CSR = 'csr'
 
 
 @dataclass
 class EdgeAttr(CastMixin):
-    r"""Defines the attributes of an :obj:`MaterializedGraph` edge."""
-
-    # The layout of the edge representation
-    layout: Optional[EdgeLayout] = None
+    r"""Defines the attributes of an :obj:`GraphStore` edge."""
 
     # The type of the edge
-    edge_type: Optional[Any] = None
+    edge_type: Optional[Any]
+
+    # The layout of the edge representation
+    layout: EdgeLayout
+
+    # Whether the edge index is sorted
+    is_sorted: bool = False
 
 
-class MaterializedGraph(MutableMapping):
+class GraphStore(MutableMapping):
     def __init__(self, edge_attr_cls: Any = EdgeAttr):
-        r"""Initializes the materialized graph. Implementor classes can
-        customize the ordering and required nature of their :class:`EdgeAttr`
-        edge attributes by subclassing :class:`EdgeAttr` and passing the
-        subclass as :obj:`attr_cls`."""
+        r"""Initializes the graph store. Implementor classes can customize the
+        ordering and required nature of their :class:`EdgeAttr` edge attributes
+        by subclassing :class:`EdgeAttr` and passing the subclass as
+        :obj:`edge_attr_cls`."""
         super().__init__()
         self.__dict__['_edge_attr_cls'] = edge_attr_cls
 
@@ -42,11 +44,11 @@ class MaterializedGraph(MutableMapping):
     @abstractmethod
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        return None
+        pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
-        r"""Synchronously adds an edge_index tensor to the materialized graph.
+        r"""Synchronously adds an edge_index tensor to the graph store.
 
         Args:
             tensor(EdgeTensorType): an edge_index in a format specified in
@@ -54,21 +56,14 @@ class MaterializedGraph(MutableMapping):
             **attr(EdgeAttr): the edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        if not edge_attr.layout:
-            raise AttributeError(
-                "An edge layout is required to store an edge index, but one "
-                "was not provided.")
-
-        # NOTE implementations should take care to ensure that `SparseTensor`
-        # objects are treated properly here.
-        return self._put_edge_index(edge_index,
-                                    self._edge_attr_cls.cast(*args, **kwargs))
+        edge_attr.layout = EdgeLayout(edge_attr.layout)
+        return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return None
 
-    def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
+    def get_edge_index(self, *args, **kwargs) -> Optional[EdgeTensorType]:
         r"""Synchronously gets an edge_index tensor from the materialized
         graph.
 
@@ -79,7 +74,13 @@ class MaterializedGraph(MutableMapping):
             EdgeTensorType: an edge_index tensor corresonding to the provided
             attributes, or None if there is no such tensor.
         """
-        return self._get_edge_index(self._edge_attr_cls.cast(*args, **kwargs))
+        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        edge_attr.layout = EdgeLayout(edge_attr.layout)
+        return self._get_edge_index(edge_attr)
+
+    # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
+    # conversions of edge indices between formats. These conversions can also
+    # automatically be performed in `get_edge_index`
 
     @abstractmethod
     def get_all_edge_types(self) -> List[EdgeAttr]:
@@ -93,8 +94,8 @@ class MaterializedGraph(MutableMapping):
         *args,
         **kwargs,
     ) -> None:
-        r"""Samples the materialized graph to obtain a sampled subgraph,
-        utilizing sampling routines provided by `torch_sparse`.
+        r"""Samples the graph store to obtain a sampled subgraph, utilizing
+        sampling routines provided by `torch_sparse`.
 
         Args:
             input_nodes: the input nodes to sample from, either provided as a

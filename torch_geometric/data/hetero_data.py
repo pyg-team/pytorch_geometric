@@ -9,13 +9,16 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.materialized_graph import (
-    EdgeAttr,
-    EdgeLayout,
-    MaterializedGraph,
+from torch_geometric.data.data import (
+    BaseData,
+    Data,
+    adj_type_to_edge_tensor_type,
+    edge_layout_to_attr_name,
+    edge_tensor_type_to_adj_type,
+    size_repr,
 )
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import EdgeAttr, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeTensorType,
@@ -30,7 +33,7 @@ NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData, FeatureStore, MaterializedGraph):
+class HeteroData(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -104,7 +107,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        super(HeteroData, self).__init__()
+        super().__init__()
 
         self.__dict__['_global_store'] = BaseStorage(_parent=self)
         self.__dict__['_node_store_dict'] = {}
@@ -630,7 +633,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
 
         return data
 
-    # :obj:`FeatureStore` interface ###########################################
+    # FeatureStore interface ##################################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""Stores a feature tensor in node storage."""
@@ -639,10 +642,12 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
 
         out = self._node_store_dict.get(attr.group_name, None)
         if out:
-            # Group name exists, handle index:
+            # Group name exists, handle index or create new attribute name:
             val = getattr(out, attr.attr_name)
             if val is not None:
                 val[attr.index] = tensor
+            else:
+                setattr(self[attr.group_name], attr.attr_name, tensor)
         else:
             # No node storage found, just store tensor in new one:
             setattr(self[attr.group_name], attr.attr_name, tensor)
@@ -651,7 +656,7 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""Obtains a feature tensor from node storage."""
         # Retrieve tensor and index accordingly:
-        tensor = getattr(self[attr.group_name], attr.attr_name)
+        tensor = getattr(self[attr.group_name], attr.attr_name, None)
         if tensor is not None:
             # TODO this behavior is a bit odd, since TensorAttr requires that
             # we set `index`. So, we assume here that indexing by `None` is
@@ -677,23 +682,23 @@ class HeteroData(BaseData, FeatureStore, MaterializedGraph):
     def __iter__(self):
         raise NotImplementedError
 
-    # MaterializedGraph interface #############################################
-
-    def _layout_to_attr_name(self, layout: EdgeLayout) -> str:
-        return {
-            EdgeLayout.COO: 'edge_index',
-            EdgeLayout.CSR: 'adj',
-            EdgeLayout.CSC: 'adj_t',
-        }[layout]
+    # GraphStore interface ####################################################
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        setattr(self[edge_attr.edge_type],
-                self._layout_to_attr_name(edge_attr.layout), edge_index)
+        # Convert the edge index to a recognizable format:
+        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_val = edge_tensor_type_to_adj_type(edge_attr.layout, edge_index)
+        setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        return getattr(self[edge_attr.edge_type],
-                       self._layout_to_attr_name(edge_attr.layout))
+        # Get the requested format and the Adj tensor associated with it:
+        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
 
     def get_all_edge_types(self) -> List[EdgeAttr]:
         # TODO implement

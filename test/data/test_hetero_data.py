@@ -5,8 +5,8 @@ import torch
 import torch_sparse
 
 from torch_geometric.data import HeteroData
-from torch_geometric.data.materialized_graph import EdgeLayout
 from torch_geometric.data.storage import EdgeStorage
+from torch_geometric.typing import EdgeTensorType
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -431,27 +431,36 @@ def test_basic_feature_store():
     assert 'x' not in data['paper'].__dict__['_mapping']
 
 
-# Materialized Graph ##########################################################
+# Graph Store #################################################################
 
 
-def test_basic_materialized_graph():
+def test_basic_graph_store():
     data = HeteroData()
-    coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
-    csr = torch_sparse.SparseTensor.from_edge_index(coo)
-    csc = csr.t()
 
-    # COO:
-    data.put_edge_index(coo, layout=EdgeLayout.COO, edge_type=('a', 'to', 'b'))
-    assert torch.equal(
-        data.get_edge_index(edge_type=('a', 'to', 'b'), layout=EdgeLayout.COO),
-        coo)
+    edge_index = torch.LongTensor([[0, 1], [1, 2]])
+    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
-    # CSR:
-    data.put_edge_index(csr, layout=EdgeLayout.CSR, edge_type=('a', 'to', 'c'))
-    assert data.get_edge_index(edge_type=('a', 'to', 'c'),
-                               layout=EdgeLayout.CSR) == csr
+    def assert_edge_tensor_type_equal(expected: EdgeTensorType,
+                                      actual: EdgeTensorType):
+        assert len(expected) == len(actual)
+        for i in range(len(expected)):
+            assert torch.equal(expected[i], actual[i])
 
-    # CSC:
-    data.put_edge_index(csc, layout=EdgeLayout.CSC, edge_type=('a', 'to', 'd'))
-    assert data.get_edge_index(edge_type=('a', 'to', 'd'),
-                               layout=EdgeLayout.CSC) == csc
+    # We put all three tensor types: COO, CSR, and CSC, and we get them back
+    # to confirm that `GraphStore` works as intended.
+    coo = adj.coo()[:-1]
+    csr = adj.csr()[:-1]
+    csc = adj.t().csr()[:-1]
+
+    # Put:
+    data.put_edge_index(coo, layout='coo', edge_type='1')
+    data.put_edge_index(csr, layout='csr', edge_type='2')
+    data.put_edge_index(csc, layout='csc', edge_type='3')
+
+    # Get:
+    assert_edge_tensor_type_equal(
+        coo, data.get_edge_index(layout='coo', edge_type='1'))
+    assert_edge_tensor_type_equal(
+        csr, data.get_edge_index(layout='csr', edge_type='2'))
+    assert_edge_tensor_type_equal(
+        csc, data.get_edge_index(layout='csc', edge_type='3'))

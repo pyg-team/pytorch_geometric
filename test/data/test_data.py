@@ -7,7 +7,7 @@ import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
-from torch_geometric.data.materialized_graph import EdgeLayout
+from torch_geometric.typing import EdgeTensorType
 
 
 def test_data():
@@ -268,23 +268,33 @@ def test_basic_feature_store():
     assert 'x' not in data.__dict__['_store']
 
 
-# Materialized Graph ##########################################################
+# Graph Store #################################################################
 
 
-def test_basic_materialized_graph():
+def test_basic_graph_store():
     data = Data()
-    coo = torch.LongTensor([[1, 2, 3], [2, 3, 1]])
-    csr = torch_sparse.SparseTensor.from_edge_index(coo)
-    csc = csr.t()
 
-    # COO:
-    data.put_edge_index(coo, layout=EdgeLayout.COO)
-    assert torch.equal(data.get_edge_index(layout=EdgeLayout.COO), coo)
+    edge_index = torch.LongTensor([[0, 1], [1, 2]])
+    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
-    # CSR:
-    data.put_edge_index(csr, layout=EdgeLayout.CSR)
-    assert data.get_edge_index(layout=EdgeLayout.CSR) == csr
+    def assert_edge_tensor_type_equal(expected: EdgeTensorType,
+                                      actual: EdgeTensorType):
+        assert len(expected) == len(actual)
+        for i in range(len(expected)):
+            assert torch.equal(expected[i], actual[i])
 
-    # CSC:
-    data.put_edge_index(csc, layout=EdgeLayout.CSC)
-    assert data.get_edge_index(layout=EdgeLayout.CSC) == csc
+    # We put all three tensor types: COO, CSR, and CSC, and we get them back
+    # to confirm that `GraphStore` works as intended.
+    coo = adj.coo()[:-1]
+    csr = adj.csr()[:-1]
+    csc = adj.t().csr()[:-1]
+
+    # Put:
+    data.put_edge_index(coo, layout='coo')
+    data.put_edge_index(csr, layout='csr')
+    data.put_edge_index(csc, layout='csc')
+
+    # Get:
+    assert_edge_tensor_type_equal(coo, data.get_edge_index('coo'))
+    assert_edge_tensor_type_equal(csr, data.get_edge_index('csr'))
+    assert_edge_tensor_type_equal(csc, data.get_edge_index('csc'))
