@@ -404,7 +404,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             data[self.neighbor_sampler.input_type].batch_size = batch_size
 
         else:
-            feature_store, graph_store = self.data
+            feature_store, _ = self.data
 
             # TODO support for feature stores with no edge types
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
@@ -415,7 +415,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
             # Filter edge storage (TODO something smarter than this...)
             for key in edge_dict:
-                data[key].edge_index = torch.stack(
+                # TODO fix the `split`
+                data[tuple(key.split('__'))].edge_index = torch.stack(
                     (row_dict[key], col_dict[key]))
 
             # Filter node storage

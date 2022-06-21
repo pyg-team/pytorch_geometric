@@ -383,6 +383,22 @@ def test_feature_store_graph_store():
     for i in range(len(expected) - 1):
         _assert_tensor_dict_equal(expected[i], actual[i])
 
+    # TODO a better test here...
+    custom_batches = []
     for batch in custom_data_loader:
         assert isinstance(batch, HeteroData)
-        # TODO a real test here...
+        custom_batches.append(batch)
+
+    hetero_data_batches = []
+    for batch in hetero_data_loader:
+        hetero_data_batches.append(batch)
+
+    for expected, actual in zip(hetero_data_batches, custom_batches):
+        # Check node features:
+        for node_type in actual.node_types:
+            assert torch.equal(expected[node_type].x, actual[node_type].x)
+
+        # Check edge indices:
+        for edge_type in actual.edge_types:
+            assert torch.equal(expected[edge_type].edge_index,
+                               actual[edge_type].edge_index)
