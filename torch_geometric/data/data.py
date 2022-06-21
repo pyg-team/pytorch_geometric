@@ -846,7 +846,7 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
         rowptr, col, _ = edge_index.csr()
         return (rowptr, col)
     else:
-        # CSC is just adj_t.csr()
+        # CSC is just adj_t.csr():
         colptr, row, _ = edge_index.csr()
         return (row, colptr)
 
