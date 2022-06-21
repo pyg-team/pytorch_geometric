@@ -812,7 +812,15 @@ def edge_tensor_type_to_adj_type(
 ) -> Adj:
     r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
     if attr.layout == EdgeLayout.COO:
-        # COO: 2 x n
+        # COO: (row, col)
+        if (tensor_tuple[0].storage().data_ptr() ==
+                tensor_tuple[1].storage().data_ptr()):
+            # Do not copy if the tensor tuple is constructed from the same
+            # storage (instead, return a view):
+            out = torch.empty(0, dtype=tensor_tuple[0].dtype)
+            out.set_(tensor_tuple[0].storage(), storage_offset=0,
+                     size=tensor_tuple[0].size() + tensor_tuple[1].size())
+            return out.view(2, -1)
         return torch.stack(tensor_tuple)
     elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
