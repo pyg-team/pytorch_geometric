@@ -303,6 +303,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
                          **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
+        # NOTE This function will always be executed on the main thread!
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
             data = filter_data(self.data, node, row, col, edge,
