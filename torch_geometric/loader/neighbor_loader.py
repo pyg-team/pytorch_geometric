@@ -404,7 +404,28 @@ class NeighborLoader(torch.utils.data.DataLoader):
             data[self.neighbor_sampler.input_type].batch_size = batch_size
 
         else:
-            pass
+            feature_store, graph_store = self.data
+
+            # TODO support for feature stores with no edge types
+            node_dict, row_dict, col_dict, edge_dict, batch_size = out
+
+            # Construct a new HeteroData object to train on:
+            data = HeteroData()
+            data[self.neighbor_sampler.input_type].batch_size = batch_size
+
+            # Filter edge storage (TODO something smarter than this...)
+            for key in edge_dict:
+                data[key].edge_index = torch.stack(
+                    (row_dict[key], col_dict[key]))
+
+            # Filter node storage
+            for key, value in node_dict.items():
+                # TODO variable attr_name
+                data[key].x = feature_store.get_tensor(
+                    group_name=key,
+                    attr_name='x',
+                    index=value,
+                )
 
         return data if self.transform is None else self.transform(data)
 

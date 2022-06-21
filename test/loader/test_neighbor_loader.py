@@ -384,3 +384,7 @@ def test_feature_store_graph_store():
 
     for i in range(len(expected) - 1):
         _assert_tensor_dict_equal(expected[i], actual[i])
+
+    for batch in custom_data_loader:
+        assert isinstance(batch, HeteroData)
+        # TODO a real test here...
