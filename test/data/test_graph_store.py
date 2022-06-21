@@ -3,6 +3,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import (
     EdgeAttr,
+    EdgeLayout,
     EdgeTensorType,
     GraphStore,
 )
@@ -15,7 +16,15 @@ class MyGraphStore(GraphStore):
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return (attr.edge_type or '<default>') + str(attr.layout)
+        return (attr.edge_type or '<default>') + '_' + str(attr.layout)
+
+    @staticmethod
+    def from_key(key: str) -> EdgeAttr:
+        edge_type, layout = key.split('_')
+        if edge_type == '<default>':
+            edge_type = None
+        return EdgeAttr(layout=EdgeLayout(layout.split('.')[1]),
+                        edge_type=edge_type)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
@@ -23,6 +32,9 @@ class MyGraphStore(GraphStore):
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return self.store.get(MyGraphStore.key(edge_attr), None)
+
+    def get_all_edge_types(self):
+        return [MyGraphStore.from_key(key) for key in self.store]
 
 
 def test_graph_store():
