@@ -783,7 +783,7 @@ class Data(BaseData, FeatureStore, GraphStore):
                         edge_attr: EdgeAttr) -> bool:
         # Convert the edge index to a recognizable format:
         attr_name = edge_layout_to_attr_name(edge_attr.layout)
-        attr_val = edge_tensor_type_to_adj_type(edge_attr.layout, edge_index)
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
         return True
 
@@ -810,21 +810,23 @@ def edge_layout_to_attr_name(layout: EdgeLayout) -> str:
 
 
 def edge_tensor_type_to_adj_type(
-    layout: EdgeLayout,
+    attr: EdgeAttr,
     tensor_tuple: EdgeTensorType,
 ) -> Adj:
     r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
-    if layout == EdgeLayout.COO:
+    if attr.layout == EdgeLayout.COO:
         # COO: 2 x n
         return torch.stack(tensor_tuple)
-    elif layout == EdgeLayout.CSR:
+    elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
-        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1])
-    elif layout == EdgeLayout.CSC:
+        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
+                            is_sorted=attr.is_sorted)
+    elif attr.layout == EdgeLayout.CSC:
         # CSC: (colptr, row) this is a transposed adjacency matrix, so rowptr
         # is the compressed column and col is the uncompressed row.
-        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1])
-    raise ValueError(f"Bad layout: got {layout}")
+        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
+                            is_sorted=attr.is_sorted)
+    raise ValueError(f"Bad layout: got {attr.layout}")
 
 
 def adj_type_to_edge_tensor_type(layout: EdgeLayout,
