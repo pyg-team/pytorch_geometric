@@ -11,10 +11,10 @@ from torch_geometric.utils.mixin import CastMixin
 
 
 class EdgeLayout(Enum):
-    COO = 'COO'
-    CSC = 'CSC'
-    CSR = 'CSR'
-    LIL = 'LIL'
+    COO = 'coo'
+    CSC = 'csc'
+    CSR = 'csr'
+    LIL = 'lil'
 
 
 @dataclass
@@ -26,6 +26,9 @@ class EdgeAttr(CastMixin):
 
     # The layout of the edge representation
     layout: EdgeLayout
+
+    # Whether the edge index is sorted
+    is_sorted: bool = False
 
 
 class GraphStore(MutableMapping):
@@ -54,16 +57,14 @@ class GraphStore(MutableMapping):
             **attr(EdgeAttr): the edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-
-        # NOTE implementations should take care to ensure that `SparseTensor`
-        # objects are treated properly here.
+        edge_attr.layout = EdgeLayout(edge_attr.layout)
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         return None
 
-    def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
+    def get_edge_index(self, *args, **kwargs) -> Optional[EdgeTensorType]:
         r"""Synchronously gets an edge_index tensor from the materialized
         graph.
 
@@ -74,7 +75,9 @@ class GraphStore(MutableMapping):
             EdgeTensorType: an edge_index tensor corresonding to the provided
             attributes, or None if there is no such tensor.
         """
-        return self._get_edge_index(self._edge_attr_cls.cast(*args, **kwargs))
+        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        edge_attr.layout = EdgeLayout(edge_attr.layout)
+        return self._get_edge_index(edge_attr)
 
     def sample(
         self,
