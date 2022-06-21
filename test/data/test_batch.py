@@ -393,14 +393,14 @@ def test_nested_follow_batch():
     def tr(n, m):
         return torch.rand((n, m))
 
-    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)],
-              a={"aa": tr(11, 3)}, x=tr(10, 5))
-    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)],
-              a={"aa": tr(2, 3)}, x=tr(11, 5))
-    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)],
-              a={"aa": tr(4, 3)}, x=tr(9, 5))
-    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)],
-              a={"aa": tr(8, 3)}, x=tr(8, 5))
+    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)], a={"aa": tr(11, 3)},
+              x=tr(10, 5))
+    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)], a={"aa": tr(2, 3)},
+              x=tr(11, 5))
+    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)], a={"aa": tr(4, 3)},
+              x=tr(9, 5))
+    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)], a={"aa": tr(8, 3)},
+              x=tr(8, 5))
 
     # Dataset
     data_list = [d1, d2, d3, d4]
@@ -416,7 +416,7 @@ def test_nested_follow_batch():
     assert len(batch.xs_batch) == 3
     assert len(batch.a_batch) == 1
 
-    # assert _batch
+    # assert _batch, _ptr not tested currently
     assert batch.xs_batch[0].tolist() == \
            [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
     assert batch.xs_batch[1].tolist() == \

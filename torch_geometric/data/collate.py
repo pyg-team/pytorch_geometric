@@ -241,6 +241,7 @@ def _ptr(
         # Failure of ptr, usually due to slices.dim() != 1
         return None
 
+
 ###############################################################################
 
 
