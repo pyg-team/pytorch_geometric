@@ -10,10 +10,10 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import (
+    EDGE_LAYOUT_TO_ATTR_NAME,
     BaseData,
     Data,
     adj_type_to_edge_tensor_type,
-    edge_layout_to_attr_name,
     edge_tensor_type_to_adj_type,
     size_repr,
 )
@@ -695,13 +695,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         # Convert the edge index to a recognizable format:
-        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
         # Get the requested format and the Adj tensor associated with it:
-        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
         if attr_val is not None:
             # Convert from Adj type to Tuple[Tensor, Tensor]

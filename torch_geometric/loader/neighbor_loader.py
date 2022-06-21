@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.data import (
-    edge_layout_to_attr_name,
+    EDGE_LAYOUT_TO_ATTR_NAME,
     edge_tensor_type_to_adj_type,
 )
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
@@ -151,7 +151,7 @@ class NeighborSampler:
                 edge_index = edge_tensor_type_to_adj_type(
                     EdgeAttr(layout=edge_layout, edge_type=edge_type),
                     edge_index_tuple)
-                attr_name = edge_layout_to_attr_name(edge_layout)
+                attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_layout]
                 setattr(data_argument, attr_name, edge_index)
 
                 # TODO fails for `attr_name`=edge_index
