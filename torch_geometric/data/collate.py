@@ -229,12 +229,12 @@ def _ptr(
         return cumsum(repeats.to(device))
 
     elif isinstance(slices, Mapping):
-        # Recursively ptr elements of dictionaries.
+        # Recursively get ptr elements of dictionaries.
         return {k: _ptr(v, device) for k, v in slices.items()}
 
     elif (isinstance(slices, Sequence) and not isinstance(slices, str)
           and isinstance(slices[0], Tensor)):
-        # Recursively ptr elements of lists.
+        # Recursively get ptr elements of lists.
         return [_ptr(s, device) for s in slices]
 
     else:

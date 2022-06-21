@@ -416,7 +416,7 @@ def test_nested_follow_batch():
     assert len(batch.xs_batch) == 3
     assert len(batch.a_batch) == 1
 
-    # assert _batch, _ptr not tested currently
+    # assert _batch
     assert batch.xs_batch[0].tolist() == \
            [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
     assert batch.xs_batch[1].tolist() == \
