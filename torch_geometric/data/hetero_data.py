@@ -688,7 +688,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         edge_attr: EdgeAttr) -> bool:
         # Convert the edge index to a recognizable format:
         attr_name = edge_layout_to_attr_name(edge_attr.layout)
-        attr_val = edge_tensor_type_to_adj_type(edge_attr.layout, edge_index)
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
