@@ -7,10 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import (
-    EdgeLayout,
-    GraphStore,
-)
+from torch_geometric.data.graph_store import EdgeLayout, GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
