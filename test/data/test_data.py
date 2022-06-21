@@ -7,7 +7,6 @@ import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
-from torch_geometric.typing import EdgeTensorType
 
 
 def test_data():
@@ -277,8 +276,7 @@ def test_basic_graph_store():
     edge_index = torch.LongTensor([[0, 1], [1, 2]])
     adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
-    def assert_edge_tensor_type_equal(expected: EdgeTensorType,
-                                      actual: EdgeTensorType):
+    def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
         for i in range(len(expected)):
             assert torch.equal(expected[i], actual[i])
@@ -287,7 +285,7 @@ def test_basic_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = adj.t().csr()[:-1]
+    csc = adj.csc()[:-1]
 
     # Put:
     data.put_edge_index(coo, layout='coo')
@@ -295,6 +293,6 @@ def test_basic_graph_store():
     data.put_edge_index(csc, layout='csc')
 
     # Get:
-    assert_edge_tensor_type_equal(coo, data.get_edge_index('coo'))
-    assert_edge_tensor_type_equal(csr, data.get_edge_index('csr'))
-    assert_edge_tensor_type_equal(csc, data.get_edge_index('csc'))
+    assert_equal_tensor_tuple(coo, data.get_edge_index('coo'))
+    assert_equal_tensor_tuple(csr, data.get_edge_index('csr'))
+    assert_equal_tensor_tuple(csc, data.get_edge_index('csc'))

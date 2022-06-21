@@ -782,14 +782,14 @@ class Data(BaseData, FeatureStore, GraphStore):
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         # Convert the edge index to a recognizable format:
-        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         # Get the requested format and the Adj tensor associated with it:
-        attr_name = edge_layout_to_attr_name(edge_attr.layout)
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self._store, attr_name, None)
         if attr_val is not None:
             # Convert from Adj type to Tuple[Tensor, Tensor]
@@ -799,14 +799,11 @@ class Data(BaseData, FeatureStore, GraphStore):
 
 ###############################################################################
 
-
-def edge_layout_to_attr_name(layout: EdgeLayout) -> str:
-    r"""Maps `EdgeLayout`s to their corresponding PyG key names."""
-    return {
-        EdgeLayout.COO: 'edge_index',
-        EdgeLayout.CSR: 'adj',
-        EdgeLayout.CSC: 'adj_t',
-    }[layout]
+EDGE_LAYOUT_TO_ATTR_NAME = {
+    EdgeLayout.COO: 'edge_index',
+    EdgeLayout.CSR: 'adj',
+    EdgeLayout.CSC: 'adj_t',
+}
 
 
 def edge_tensor_type_to_adj_type(
@@ -820,13 +817,13 @@ def edge_tensor_type_to_adj_type(
     elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
         return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
-                            is_sorted=attr.is_sorted)
+                            is_sorted=True)
     elif attr.layout == EdgeLayout.CSC:
-        # CSC: (colptr, row) this is a transposed adjacency matrix, so rowptr
+        # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
         # is the compressed column and col is the uncompressed row.
-        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
-                            is_sorted=attr.is_sorted)
-    raise ValueError(f"Bad layout: got {attr.layout}")
+        return SparseTensor(rowptr=tensor_tuple[1], col=tensor_tuple[0],
+                            is_sorted=True)
+    raise ValueError(f"Bad edge layout (got '{attr.layout}')")
 
 
 def adj_type_to_edge_tensor_type(layout: EdgeLayout,
@@ -843,7 +840,7 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
     else:
         # CSC is just adj_t.csr()
         colptr, row, _ = edge_index.csr()
-        return (colptr, row)
+        return (row, colptr)
 
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:

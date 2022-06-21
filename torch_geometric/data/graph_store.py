@@ -1,12 +1,9 @@
 from abc import abstractmethod
-from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional
 
-from torch import LongTensor
-
-from torch_geometric.typing import EdgeTensorType, EdgeType
+from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils.mixin import CastMixin
 
 
@@ -26,11 +23,13 @@ class EdgeAttr(CastMixin):
     # The layout of the edge representation
     layout: EdgeLayout
 
-    # Whether the edge index is sorted
+    # Whether the edge index is sorted, by destination node. Useful for
+    # avoiding sorting costs when performing neighbor sampling, and only
+    # meaningful for COO (CSC and CSR are sorted by definition)
     is_sorted: bool = False
 
 
-class GraphStore(MutableMapping):
+class GraphStore:
     def __init__(self, edge_attr_cls: Any = EdgeAttr):
         r"""Initializes the graph store. Implementor classes can customize the
         ordering and required nature of their :class:`EdgeAttr` edge attributes
@@ -57,11 +56,16 @@ class GraphStore(MutableMapping):
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
+
+        # Override is_sorted for CSC and CSR:
+        edge_attr.is_sorted = edge_attr.is_sorted or (edge_attr.layout in [
+            EdgeLayout.CSC, EdgeLayout.CSR
+        ])
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        return None
+        pass
 
     def get_edge_index(self, *args, **kwargs) -> Optional[EdgeTensorType]:
         r"""Synchronously gets an edge_index tensor from the materialized
@@ -82,45 +86,12 @@ class GraphStore(MutableMapping):
     # conversions of edge indices between formats. These conversions can also
     # automatically be performed in `get_edge_index`
 
-    def sample(
-        self,
-        input_nodes: Union[LongTensor, Dict[EdgeType, LongTensor]],
-        *args,
-        **kwargs,
-    ) -> None:
-        r"""Samples the graph store to obtain a sampled subgraph, utilizing
-        sampling routines provided by `torch_sparse`.
-
-        Args:
-            input_nodes: the input nodes to sample from, either provided as a
-                :class:`torch.LongTensor` or a dictionary mapping node type to
-                a list of input nodes.
-
-        Notes:
-            Most sampling methods operate efficiently on sorted edge indices.
-            This class makes no guarantees on the formats of the edge indices
-            that are passed as input. Implementations should account for this
-            (e.g. by converting all edge indices to CSC) before sampling.
-        """
-        # NOTE for the future: this is expected to call a C++ implementation
-        # in pyg-lib.
-        return None
-
     # Python built-ins ########################################################
 
     def __setitem__(self, key: EdgeAttr, value: EdgeTensorType):
         key = self._edge_attr_cls.cast(key)
         self.put_edge_index(value, key)
 
-    def __getitem__(self, key: EdgeAttr) -> EdgeTensorType:
+    def __getitem__(self, key: EdgeAttr) -> Optional[EdgeTensorType]:
         key = self._edge_attr_cls.cast(key)
         return self.get_edge_index(key)
-
-    def __delitem__(self, key):
-        raise NotImplementedError
-
-    def __iter__(self):
-        raise NotImplementedError
-
-    def __len__(self):
-        raise NotImplementedError
