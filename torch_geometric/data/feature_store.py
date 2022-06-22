@@ -239,13 +239,13 @@ class AttrView(CastMixin):
 
 
 class FeatureStore(MutableMapping):
-    def __init__(self, attr_cls: Any = TensorAttr):
+    def __init__(self, tensor_attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
         the ordering and required nature of their :class:`TensorAttr` tensor
         attributes by subclassing :class:`TensorAttr` and passing the subclass
         as :obj:`attr_cls`."""
         super().__init__()
-        self.__dict__['_attr_cls'] = attr_cls
+        self.__dict__['_tensor_attr_cls'] = tensor_attr_cls
 
     # Core (CRUD) #############################################################
 
@@ -270,7 +270,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: Whether insertion was successful.
         """
-        attr = self._attr_cls.cast(*args, **kwargs)
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
             raise ValueError(f"The input TensorAttr '{attr}' is not fully "
                              f"specified. Please fully specify the input by "
@@ -310,7 +310,7 @@ class FeatureStore(MutableMapping):
                 return tensor.numpy()
             return tensor
 
-        attr = self._attr_cls.cast(*args, **kwargs)
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if isinstance(attr.index, slice):
             if attr.index.start == attr.index.stop == attr.index.step is None:
                 attr.index = None
@@ -341,7 +341,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: Whether deletion was succesful.
         """
-        attr = self._attr_cls.cast(*args, **kwargs)
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
             raise ValueError(f"The input TensorAttr '{attr}' is not fully "
                              f"specified. Please fully specify the input by "
@@ -366,7 +366,7 @@ class FeatureStore(MutableMapping):
         Returns:
             bool: Whether the update was succesful.
         """
-        attr = self._attr_cls.cast(*args, **kwargs)
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
@@ -375,7 +375,7 @@ class FeatureStore(MutableMapping):
     def view(self, *args, **kwargs) -> AttrView:
         r"""Returns an :class:`AttrView` of the feature store, with the defined
         attributes set."""
-        attr = self._attr_cls.cast(*args, **kwargs)
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
         return AttrView(self, attr)
 
     # Python built-ins ########################################################
@@ -384,7 +384,7 @@ class FeatureStore(MutableMapping):
         r"""Supports store[tensor_attr] = tensor."""
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
-        key = self._attr_cls.cast(key)
+        key = self._tensor_attr_cls.cast(key)
         # We need to fully specify the key for __setitem__ as it does not make
         # sense to work with a view here:
         key.fully_specify()
@@ -403,7 +403,7 @@ class FeatureStore(MutableMapping):
         """
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
-        attr = self._attr_cls.cast(key)
+        attr = self._tensor_attr_cls.cast(key)
         if attr.is_fully_specified():
             return self.get_tensor(attr)
         # If the view is not fully specified, return a :class:`AttrView`:
@@ -413,7 +413,7 @@ class FeatureStore(MutableMapping):
         r"""Supports del store[tensor_attr]."""
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
-        key = self._attr_cls.cast(key)
+        key = self._tensor_attr_cls.cast(key)
         key.fully_specify()
         self.remove_tensor(key)
 

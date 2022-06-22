@@ -1,7 +1,6 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
@@ -23,7 +22,13 @@ QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # A representation of a feature tensor
-FeatureTensorType = Union[torch.Tensor, np.ndarray]
+FeatureTensorType = Union[Tensor, np.ndarray]
+
+# A representation of an edge index, following the possible formats:
+#   * COO: (row, col)
+#   * CSC: (row, colptr)
+#   * CSR: (rowptr, col)
+EdgeTensorType = Tuple[Tensor, Tensor]
 
 # Types for message passing ###################################################
 

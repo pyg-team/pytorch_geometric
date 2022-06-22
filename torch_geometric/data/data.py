@@ -24,6 +24,7 @@ from torch_geometric.data.feature_store import (
     TensorAttr,
     _field_status,
 )
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -31,7 +32,14 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    OptTensor,
+)
 from torch_geometric.utils import subgraph
 
 
@@ -316,7 +324,17 @@ class DataTensorAttr(TensorAttr):
         super().__init__(None, attr_name, index)
 
 
-class Data(BaseData, FeatureStore):
+@dataclass
+class DataEdgeAttr(EdgeAttr):
+    r"""Edge attribute class for `Data`, which does not require a
+    `edge_type`."""
+    def __init__(self, layout: EdgeLayout, is_sorted: bool = False,
+                 edge_type: EdgeType = None):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(edge_type, layout, is_sorted)
+
+
+class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
@@ -366,7 +384,11 @@ class Data(BaseData, FeatureStore):
                  pos: OptTensor = None, **kwargs):
         # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
         # accordingly here to avoid requiring `group_name` to be set:
-        super().__init__(attr_cls=DataTensorAttr)
+        super().__init__(tensor_attr_cls=DataTensorAttr)
+
+        # `Data` doesn't support edge_type, so we need to adjust `EdgeAttr`
+        # accordingly here to avoid requiring `edge_type` to be set:
+        GraphStore.__init__(self, edge_attr_cls=DataEdgeAttr)
 
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
@@ -755,8 +777,78 @@ class Data(BaseData, FeatureStore):
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
+    # GraphStore interface ####################################################
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        # Convert the edge index to a recognizable format:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
+        setattr(self, attr_name, attr_val)
+        return True
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        # Get the requested format and the Adj tensor associated with it:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = getattr(self._store, attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
+
 
 ###############################################################################
+
+EDGE_LAYOUT_TO_ATTR_NAME = {
+    EdgeLayout.COO: 'edge_index',
+    EdgeLayout.CSR: 'adj',
+    EdgeLayout.CSC: 'adj_t',
+}
+
+
+def edge_tensor_type_to_adj_type(
+    attr: EdgeAttr,
+    tensor_tuple: EdgeTensorType,
+) -> Adj:
+    r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
+    if attr.layout == EdgeLayout.COO:
+        # COO: (row, col)
+        if (tensor_tuple[0].storage().data_ptr() ==
+                tensor_tuple[1].storage().data_ptr()):
+            # Do not copy if the tensor tuple is constructed from the same
+            # storage (instead, return a view):
+            out = torch.empty(0, dtype=tensor_tuple[0].dtype)
+            out.set_(tensor_tuple[0].storage(), storage_offset=0,
+                     size=tensor_tuple[0].size() + tensor_tuple[1].size())
+            return out.view(2, -1)
+        return torch.stack(tensor_tuple)
+    elif attr.layout == EdgeLayout.CSR:
+        # CSR: (rowptr, col)
+        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
+                            is_sorted=True)
+    elif attr.layout == EdgeLayout.CSC:
+        # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
+        # is the compressed column and col is the uncompressed row.
+        return SparseTensor(rowptr=tensor_tuple[1], col=tensor_tuple[0],
+                            is_sorted=True)
+    raise ValueError(f"Bad edge layout (got '{attr.layout}')")
+
+
+def adj_type_to_edge_tensor_type(layout: EdgeLayout,
+                                 edge_index: Adj) -> EdgeTensorType:
+    r"""Converts a PyG Adj tensor to an EdgeTensorType equivalent."""
+    if isinstance(edge_index, Tensor):
+        return (edge_index[0], edge_index[1])
+    if layout == EdgeLayout.COO:
+        row, col, _ = edge_index.coo()
+        return (row, col)
+    elif layout == EdgeLayout.CSR:
+        rowptr, col, _ = edge_index.csr()
+        return (rowptr, col)
+    else:
+        # CSC is just adj_t.csr():
+        colptr, row, _ = edge_index.csr()
+        return (row, colptr)
 
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:
