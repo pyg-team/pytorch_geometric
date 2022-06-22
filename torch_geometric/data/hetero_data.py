@@ -11,6 +11,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import (
     EDGE_LAYOUT_TO_ATTR_NAME,
+    ATTR_NAME_TO_EDGE_LAYOUT,
     BaseData,
     Data,
     adj_type_to_edge_tensor_type,
@@ -674,7 +675,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return False
 
     def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
-        return list(self._get_tensor(attr).size())
+        if not attr.is_set('index'):
+            attr.index = None
+        tensor = self._get_tensor(attr)
+        return list(tensor.size()) if tensor is not None else []
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         out = []
@@ -694,13 +698,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        # Convert the edge index to a recognizable format:
+        r"""Stores an edge index in edge storage, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        # Get the requested format and the Adj tensor associated with it:
+        r"""Obtains an edge index from edge storage, in the specified layout."""
+        # Get the requested layout and the Adj tensor associated with it:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
         if attr_val is not None:
@@ -709,8 +715,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return attr_val
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        # TODO implement
-        raise NotImplementedError
+        r"""Returns a list of `EdgeAttr` objects corresponding to the edge
+        indices stored in `HeteroData` and their layouts."""
+        out = []
+        for edge_type, edge_store in self.edge_items():
+            for layout_attr, layout in ATTR_NAME_TO_EDGE_LAYOUT.items():
+                if layout_attr in edge_store:
+                    out.append(EdgeAttr(edge_type=edge_type, layout=layout))
+        return out
 
 
 # Helper functions ############################################################

@@ -736,11 +736,13 @@ class Data(BaseData, FeatureStore, GraphStore):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
-    # FeatureStore interface ###########################################
+    # FeatureStore interface ##################################################
 
     def items(self):
         r"""Returns an `ItemsView` over the stored attributes in the `Data`
         object."""
+        # NOTE this is necessary to override the default `MutableMapping`
+        # items() method.
         return self._store.items()
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
@@ -775,12 +777,18 @@ class Data(BaseData, FeatureStore, GraphStore):
         return False
 
     def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
-        return list(self._get_tensor(attr).size())
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        if not attr.is_set('index'):
+            attr.index = None
+        tensor = self._get_tensor(attr)
+        return list(tensor.size()) if tensor is not None else []
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        r"""Obtains all feature attributes stored in `Data`."""
         out = []
-        for attr_name in self.items():
-            out.append(TensorAttr(group_name=None, attr_name=attr_name))
+        for attr_name in self._store.keys():
+            if attr_name not in ATTR_NAME_TO_EDGE_LAYOUT.keys():
+                out.append(TensorAttr(group_name=None, attr_name=attr_name))
         return out
 
     def __len__(self) -> int:
@@ -790,14 +798,17 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        # Convert the edge index to a recognizable format:
+        r"""Stores `edge_index` in `Data`, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        # Get the requested format and the Adj tensor associated with it:
+        r"""Obtains the edge index corresponding to `edge_attr` in `Data`,
+        in the specified layout."""
+        # Get the requested layout and the Adj tensor associated with it:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self._store, attr_name, None)
         if attr_val is not None:
@@ -806,8 +817,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         return attr_val
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        # TODO implement
-        raise NotImplementedError
+        r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
+        in `Data` and their layouts"""
+        out = []
+        for attr_name in ATTR_NAME_TO_EDGE_LAYOUT.keys():
+            if attr_name in self:
+                out.append(
+                    EdgeAttr(edge_type=None,
+                             layout=ATTR_NAME_TO_EDGE_LAYOUT[attr_name]))
+        return out
 
 
 ###############################################################################
@@ -817,6 +835,9 @@ EDGE_LAYOUT_TO_ATTR_NAME = {
     EdgeLayout.CSR: 'adj',
     EdgeLayout.CSC: 'adj_t',
 }
+
+ATTR_NAME_TO_EDGE_LAYOUT = dict(
+    (v, k) for k, v in EDGE_LAYOUT_TO_ATTR_NAME.items())
 
 
 def edge_tensor_type_to_adj_type(

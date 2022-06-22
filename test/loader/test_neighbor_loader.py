@@ -13,8 +13,9 @@ from torch_geometric.testing import withRegisteredOp
 from torch_geometric.utils import k_hop_subgraph, sort_edge_index
 
 sys.path.append("..")
-from data.test_feature_store import MyFeatureStore
-from data.test_graph_store import MyGraphStore
+# pylint: disable=wrong-import-order,wrong-import-position,no-name-in-module
+from data.test_feature_store import MyFeatureStore  # noqa: E402
+from data.test_graph_store import MyGraphStore  # noqa: E402
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):

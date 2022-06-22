@@ -58,7 +58,7 @@ def test_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = adj.csc()[:-1]
+    csc = list(adj.csc()[:-1])[::-1]  # (row, colptr)
 
     # Put:
     graph_store['edge', EdgeLayout.COO] = coo

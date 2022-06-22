@@ -90,7 +90,7 @@ class NeighborSampler:
             self.input_type = input_type
 
         # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
-        # obtain edges from the GraphStore and convert them to CSC if necessary,
+        # obtain edges from GraphStore and convert them to CSC if necessary,
         # storing the resulting representations:
         elif isinstance(data, tuple):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
