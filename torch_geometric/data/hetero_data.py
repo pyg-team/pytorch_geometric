@@ -674,11 +674,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             return True
         return False
 
-    def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
-        if not attr.is_set('index'):
-            attr.index = None
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
         tensor = self._get_tensor(attr)
-        return list(tensor.size()) if tensor is not None else []
+        return tuple(tensor.size())
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         out = []

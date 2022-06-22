@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, OptTensor
 
@@ -179,3 +180,44 @@ def filter_hetero_data(
                            edge_dict[edge_type_str], perm_dict[edge_type_str])
 
     return out
+
+
+def filter_feature_store(
+    feature_store: FeatureStore,
+    node_dict: Dict[str, Tensor],
+    row_dict: Dict[str, Tensor],
+    col_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, Tensor],
+) -> HeteroData:
+    r"""Constructs a `HeteroData` object from a feature store that only holds
+    nodes in `node` end edges in `edge` for each node and edge type,
+    respectively."""
+
+    # Construct a new HeteroData object:
+    data = HeteroData()
+
+    # Filter edge storage:
+    for key in edge_dict:
+        key_tuple = key if isinstance(key, tuple) else tuple(key.split('__'))
+        data[key_tuple].edge_index = torch.stack(
+            (row_dict[key], col_dict[key]))
+
+    # Filter node storage:
+    tensor_attrs = feature_store.get_all_tensor_attrs()
+
+    for attr in tensor_attrs:
+        group_name = attr.group_name
+        attr_name = attr.attr_name
+
+        # If we have sampled nodes from this group, index into the
+        # feature store for these nodes' features:
+        if group_name in node_dict:
+            index = node_dict[group_name]
+            feature_tensor = feature_store.get_tensor(
+                group_name=group_name,
+                attr_name=attr_name,
+                index=index,
+            )
+            data[group_name][attr_name] = feature_tensor
+
+    return data

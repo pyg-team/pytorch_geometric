@@ -776,12 +776,10 @@ class Data(BaseData, FeatureStore, GraphStore):
             return True
         return False
 
-    def _get_tensor_size(self, attr: TensorAttr) -> List[int]:
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
         r"""Returns the size of the tensor corresponding to `attr`."""
-        if not attr.is_set('index'):
-            attr.index = None
         tensor = self._get_tensor(attr)
-        return list(tensor.size()) if tensor is not None else []
+        return tuple(tensor.size())
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         r"""Obtains all feature attributes stored in `Data`."""

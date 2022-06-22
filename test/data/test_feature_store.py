@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import pytest
 import torch
@@ -50,11 +50,10 @@ class MyFeatureStore(FeatureStore):
         del self.store[MyFeatureStore.key(attr)]
         return True
 
-    def _get_tensor_size(self, attr: TensorAttr):
-        attr.index = None
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
         return self._get_tensor(attr).size()
 
-    def get_all_tensor_attrs(self):
+    def get_all_tensor_attrs(self) -> List[str]:
         out = []
         for key in self.store.keys():
             group_name, attr_name = key

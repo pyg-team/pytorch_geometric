@@ -426,7 +426,7 @@ def test_basic_feature_store():
     assert torch.equal(x, out)
 
     # Get tensor size:
-    assert data.get_tensor_size(group_name='paper', attr_name='x') == [20, 20]
+    assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
 
     # Get tensor attrs:
     tensor_attrs = data.get_all_tensor_attrs()
@@ -460,7 +460,7 @@ def test_basic_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = list(adj.csc()[:-1])[::-1]  # (row, colptr)
+    csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
     data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'))

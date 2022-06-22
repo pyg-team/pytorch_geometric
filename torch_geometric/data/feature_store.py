@@ -25,7 +25,7 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -373,13 +373,15 @@ class FeatureStore(MutableMapping):
     # Additional methods ######################################################
 
     @abstractmethod
-    def _get_tensor_size(self, attr: TensorAttr) -> Optional[List[int]]:
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
         pass
 
-    def get_tensor_size(self, *args, **kwargs) -> Optional[List[int]]:
+    def get_tensor_size(self, *args, **kwargs) -> Tuple:
         r"""Obtains the size of a tensor given its attributes, or :obj:`None`
         if the tensor does not exist."""
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
+        if not attr.is_set('index'):
+            attr.index = None
         return self._get_tensor_size(attr)
 
     @abstractmethod

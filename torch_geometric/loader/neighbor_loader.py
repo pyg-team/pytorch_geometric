@@ -16,6 +16,7 @@ from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
     filter_data,
+    filter_feature_store,
     filter_hetero_data,
     to_csc,
     to_hetero_csc,
@@ -415,38 +416,13 @@ class NeighborLoader(torch.utils.data.DataLoader):
                                       self.neighbor_sampler.perm_dict)
             data[self.neighbor_sampler.input_type].batch_size = batch_size
 
-        else:
-            feature_store, _ = self.data
-
+        else:  # Tuple[FeatureStore, GraphStore]
             # TODO support for feature stores with no edge types
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
-
-            # Construct a new HeteroData object:
-            data = HeteroData()
+            feature_store, _ = self.data
+            data = filter_feature_store(feature_store, node_dict, row_dict,
+                                        col_dict, edge_dict)
             data[self.neighbor_sampler.input_type].batch_size = batch_size
-
-            # Filter edge storage:
-            for key in edge_dict:
-                key_tuple = key if isinstance(key, tuple) else tuple(
-                    key.split('__'))
-                data[key_tuple].edge_index = torch.stack(
-                    (row_dict[key], col_dict[key]))
-
-            # Filter node storage:
-            tensor_attrs = feature_store.get_all_tensor_attrs()
-            tensor_attrs_by_group_name = defaultdict(list)
-            for attr in tensor_attrs:
-                tensor_attrs_by_group_name[attr.group_name].append(
-                    attr.attr_name)
-
-            for key, value in node_dict.items():
-                for attr_name in tensor_attrs_by_group_name[key]:
-                    feature_tensor = feature_store.get_tensor(
-                        group_name=key,
-                        attr_name=attr_name,
-                        index=value,
-                    )
-                    setattr(data[key], attr_name, feature_tensor)
 
         return data if self.transform is None else self.transform(data)
 
