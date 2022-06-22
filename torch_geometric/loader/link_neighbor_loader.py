@@ -348,7 +348,6 @@ def get_edge_label_index(
 
     edge_type, edge_label_index = edge_label_index
     edge_type = data._to_canonical(*edge_type)
-    assert edge_type in data.edge_types
 
     if edge_label_index is None:
         return edge_type, data[edge_type].edge_index

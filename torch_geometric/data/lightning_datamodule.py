@@ -4,6 +4,7 @@ from typing import Optional, Union
 import torch
 
 from torch_geometric.data import Data, Dataset, HeteroData
+from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
@@ -222,19 +223,31 @@ class LightningNodeData(LightningDataModule):
         **kwargs,
     ):
 
-        assert loader in ['full', 'neighbor']
+        assert loader in ['full', 'neighbor', 'link_neighbor']
 
         if input_train_nodes is None:
-            input_train_nodes = infer_input_nodes(data, split='train')
+            if loader == 'link_neighbor':
+                input_train_nodes = kwargs['edge_label_index_train']
+                del kwargs['edge_label_index_train']
+            else:
+                input_train_nodes = infer_input_nodes(data, split='train')
 
         if input_val_nodes is None:
-            input_val_nodes = infer_input_nodes(data, split='val')
+            if loader == 'link_neighbor':
+                input_val_nodes = kwargs['edge_label_index_val']
+                del kwargs['edge_label_index_val']
+            else:
+                input_val_nodes = infer_input_nodes(data, split='val')
 
         if input_val_nodes is None:
             input_val_nodes = infer_input_nodes(data, split='valid')
 
         if input_test_nodes is None:
-            input_test_nodes = infer_input_nodes(data, split='test')
+            if loader == 'link_neighbor':
+                input_test_nodes = kwargs['edge_label_index_test']
+                del kwargs['edge_label_index_test']
+            else:
+                input_test_nodes = infer_input_nodes(data, split='test')
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
@@ -309,6 +322,11 @@ class LightningNodeData(LightningDataModule):
                                   neighbor_sampler=self.neighbor_sampler,
                                   shuffle=shuffle, **self.kwargs)
 
+        if self.loader == 'link_neighbor':
+            return LinkNeighborLoader(data=self.data,
+                                      edge_label_index=input_nodes,
+                                      shuffle=shuffle, **self.kwargs)
+
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
@@ -341,6 +359,7 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
         attr_name = f'{split}_index'
 
     if attr_name is None:
+        print(f'Returning none for split {split}')
         return None
 
     if isinstance(data, Data):
@@ -351,6 +370,7 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
             raise ValueError(f"Could not automatically determine the input "
                              f"nodes of {data} since there exists multiple "
                              f"types with attribute '{attr_name}'")
+        print(f'located data for split {split}')
         return list(input_nodes_dict.items())[0]
     return None
 
