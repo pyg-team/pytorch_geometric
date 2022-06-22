@@ -68,7 +68,7 @@ def dense_diff_pool(x, adj, s, mask=None, normalize=True):
 
     link_loss = adj - torch.matmul(s, s.transpose(1, 2))
     link_loss = torch.norm(link_loss, p=2)
-    if normalize == True:
+    if normalize is True:
         link_loss = link_loss / adj.numel()
 
     ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
