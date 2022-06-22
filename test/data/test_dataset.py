@@ -1,4 +1,5 @@
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
 
@@ -184,3 +185,31 @@ def test_lists_of_tensors_in_memory_dataset():
     assert dataset[1].xs[0].shape == (5, 3)
     assert dataset[2].xs[1].shape == (15, 4)
     assert dataset[3].xs[1].shape == (16, 4)
+
+
+class MyTestDataset3(InMemoryDataset):
+    def __init__(self, data_list):
+        super().__init__('/tmp/MyTestDataset3')
+        self.data, self.slices = self.collate(data_list)
+
+
+def test_lists_of_SparseTensors():
+    e1 = torch.tensor([[4, 1, 3, 2, 2, 3], [1, 3, 2, 3, 3, 2]])
+    e2 = torch.tensor([[0, 1, 4, 7, 2, 9], [7, 2, 2, 1, 4, 7]])
+    e3 = torch.tensor([[3, 5, 1, 2, 3, 3], [5, 0, 2, 1, 3, 7]])
+    e4 = torch.tensor([[0, 1, 9, 2, 0, 3], [1, 1, 2, 1, 3, 2]])
+    adj1 = SparseTensor.from_edge_index(e1, sparse_sizes=(11, 11))
+    adj2 = SparseTensor.from_edge_index(e2, sparse_sizes=(22, 22))
+    adj3 = SparseTensor.from_edge_index(e3, sparse_sizes=(12, 12))
+    adj4 = SparseTensor.from_edge_index(e4, sparse_sizes=(15, 15))
+
+    d1 = Data(adj_test=[adj1, adj2])
+    d2 = Data(adj_test=[adj3, adj4])
+
+    data_list = [d1, d2]
+    dataset = MyTestDataset3(data_list)
+    assert len(dataset) == 2
+    assert dataset[0].adj_test[0].sparse_sizes() == (11, 11)
+    assert dataset[0].adj_test[1].sparse_sizes() == (22, 22)
+    assert dataset[1].adj_test[0].sparse_sizes() == (12, 12)
+    assert dataset[1].adj_test[1].sparse_sizes() == (15, 15)
