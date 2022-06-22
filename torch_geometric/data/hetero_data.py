@@ -10,8 +10,8 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import (
-    EDGE_LAYOUT_TO_ATTR_NAME,
     ATTR_NAME_TO_EDGE_LAYOUT,
+    EDGE_LAYOUT_TO_ATTR_NAME,
     BaseData,
     Data,
     adj_type_to_edge_tensor_type,
