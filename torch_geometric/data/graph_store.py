@@ -28,6 +28,9 @@ class EdgeAttr(CastMixin):
     # meaningful for COO (CSC and CSR are sorted by definition)
     is_sorted: bool = False
 
+    # TODO support num_nodes here, default None, so users can specify this
+    # instead of relying on default inferral
+
 
 class GraphStore:
     def __init__(self, edge_attr_cls: Any = EdgeAttr):
