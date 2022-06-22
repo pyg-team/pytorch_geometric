@@ -195,6 +195,7 @@ class TUDataset(InMemoryDataset):
                 data_list = [self.pre_transform(d) for d in data_list]
 
             self.data, self.slices = self.collate(data_list)
+            self._data_list = None  # Reset cache.
 
         torch.save((self.data, self.slices, sizes), self.processed_paths[0])
 
