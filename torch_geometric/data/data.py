@@ -818,11 +818,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
         in `Data` and their layouts"""
         out = []
-        for attr_name in ATTR_NAME_TO_EDGE_LAYOUT.keys():
+        for attr_name, layout in ATTR_NAME_TO_EDGE_LAYOUT.items():
             if attr_name in self:
-                out.append(
-                    EdgeAttr(edge_type=None,
-                             layout=ATTR_NAME_TO_EDGE_LAYOUT[attr_name]))
+                out.append(EdgeAttr(edge_type=None, layout=layout))
         return out
 
 

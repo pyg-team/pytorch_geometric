@@ -282,7 +282,7 @@ class FeatureStore(MutableMapping):
         r"""To be implemented by :class:`FeatureStore` subclasses."""
         pass
 
-    def get_tensor(self, *args, **kwargs) -> Optional[FeatureTensorType]:
+    def get_tensor(self, *args, **kwargs) -> FeatureTensorType:
         r"""Synchronously obtains a :class:`FeatureTensorType` object from the
         feature store. Feature store implementors guarantee that the call
         :obj:`get_tensor(put_tensor(tensor, attr), attr) = tensor` holds.
@@ -298,10 +298,11 @@ class FeatureStore(MutableMapping):
         Returns:
             FeatureTensorType, optional: a Tensor of the same type as the
             index, or :obj:`None` if no tensor was found.
+
+        Raises:
+            KeyError: if the tensor corresponding to attr was not found.
         """
         def to_type(tensor: FeatureTensorType) -> FeatureTensorType:
-            if tensor is None:
-                return None
             if (isinstance(attr.index, torch.Tensor)
                     and isinstance(tensor, np.ndarray)):
                 return torch.from_numpy(tensor)
@@ -320,7 +321,12 @@ class FeatureStore(MutableMapping):
                              f"specified. Please fully specify the input by "
                              f"specifying all 'UNSET' fields.")
 
-        return to_type(self._get_tensor(attr))
+        tensor = self._get_tensor(attr)
+        if tensor is None:
+            raise KeyError(
+                f"A tensor corresponding to TensorAttr '{attr}' was not found."
+            )
+        return to_type(tensor)
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:

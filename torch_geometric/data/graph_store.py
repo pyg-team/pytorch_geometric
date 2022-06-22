@@ -67,10 +67,10 @@ class GraphStore:
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
-    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         pass
 
-    def get_edge_index(self, *args, **kwargs) -> Optional[EdgeTensorType]:
+    def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously gets an edge_index tensor from the materialized
         graph.
 
@@ -80,10 +80,18 @@ class GraphStore:
         Returns:
             EdgeTensorType: an edge_index tensor corresonding to the provided
             attributes, or None if there is no such tensor.
+
+        Raises:
+            KeyError: if the edge index corresponding to attr was not found.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
-        return self._get_edge_index(edge_attr)
+        edge_index = self._get_edge_index(edge_attr)
+        if edge_index is None:
+            raise KeyError(
+                f"An edge corresponding to EdgeAttr '{edge_attr}' was not "
+                f"found.")
+        return edge_index
 
     # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
     # conversions of edge indices between formats. These conversions can also

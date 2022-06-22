@@ -105,9 +105,9 @@ def test_feature_store():
         store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
-    assert store.get_tensor(None, None, index) is None
     store.remove_tensor(group_name, attr_name, None)
-    assert store.get_tensor(attr) is None
+    with pytest.raises(KeyError):
+        _ = store.get_tensor(attr)
 
     # Views:
     view = store.view(group_name=group_name)
@@ -143,9 +143,11 @@ def test_feature_store():
 
     # Deletion:
     del store[group_name, attr_name, index]
-    assert store[group_name, attr_name, index] is None
+    with pytest.raises(KeyError):
+        _ = store[group_name, attr_name, index]
     del store[group_name]
-    assert store[group_name]() is None
+    with pytest.raises(KeyError):
+        _ = store[group_name]()
 
 
 def test_feature_store_override():

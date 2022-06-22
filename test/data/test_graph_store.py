@@ -1,5 +1,6 @@
 from typing import Optional
 
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -69,3 +70,6 @@ def test_graph_store():
     assert_equal_tensor_tuple(coo, graph_store['edge', 'coo'])
     assert_equal_tensor_tuple(csr, graph_store['edge', 'csr'])
     assert_equal_tensor_tuple(csc, graph_store['edge', 'csc'])
+
+    with pytest.raises(KeyError):
+        _ = graph_store['edge_2', 'coo']
