@@ -42,6 +42,11 @@ class NeighborSampler:
         self.directed = directed
         self.node_time = None
 
+        # TODO Unify the following conditionals behind the `FeatureStore`
+        # and `GraphStore` API
+
+        # If we are working with a `Data` object, convert the edge_index to
+        # CSC and store it:
         if isinstance(data, Data):
             if time_attr is not None:
                 # TODO `time_attr` support for homogeneous graphs
@@ -55,6 +60,8 @@ class NeighborSampler:
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
+        # If we are working with a `HeteroData` object, convert each edge
+        # type's edge_index to CSC and store it:
         elif isinstance(data, HeteroData):
             if time_attr is not None:
                 self.node_time_dict = data.collect(time_attr)
@@ -82,7 +89,10 @@ class NeighborSampler:
             assert input_type is not None
             self.input_type = input_type
 
-        elif isinstance(data, tuple):  # Tuple[FeatureStore, GraphStore]
+        # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
+        # obtain edges from the GraphStore and convert them to CSC if necessary,
+        # storing the resulting representations:
+        elif isinstance(data, tuple):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             feature_store, graph_store = data
 
@@ -118,7 +128,7 @@ class NeighborSampler:
             # Obtain CSC representation of graph for in-memory sampling:
             # TODO this code will be replaced with a `GraphStore.sample` call
             # when sampling routines are factored out to work with pyg-lib and
-            # GraphStore.
+            # GraphStore
             edge_type_to_layouts: Dict[Any,
                                        List[EdgeLayout]] = defaultdict(list)
             for attr in edge_attrs:
@@ -144,17 +154,18 @@ class NeighborSampler:
                     edge_type=edge_type, layout=edge_layout)
 
                 # Convert to format for to_csc:
+                # TODO currently only works for CSC and CSR edge layouts
                 class _DataArgument(object):
                     pass
 
                 data_argument = _DataArgument()
+                attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_layout]
                 edge_index = edge_tensor_type_to_adj_type(
                     EdgeAttr(layout=edge_layout, edge_type=edge_type),
                     edge_index_tuple)
-                attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_layout]
+
                 setattr(data_argument, attr_name, edge_index)
 
-                # TODO fails for `attr_name`=edge_index
                 self.colptr_dict[key], self.row_dict[key], self.perm_dict[
                     key] = to_csc(data_argument, device='cpu',
                                   share_memory=share_memory,
@@ -409,24 +420,32 @@ class NeighborLoader(torch.utils.data.DataLoader):
             # TODO support for feature stores with no edge types
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
 
-            # Construct a new HeteroData object to train on:
+            # Construct a new HeteroData object:
             data = HeteroData()
             data[self.neighbor_sampler.input_type].batch_size = batch_size
 
-            # Filter edge storage (TODO something smarter than this...)
+            # Filter edge storage:
             for key in edge_dict:
-                # TODO fix the `split`
-                data[tuple(key.split('__'))].edge_index = torch.stack(
+                key_tuple = key if isinstance(key, tuple) else tuple(
+                    key.split('__'))
+                data[key_tuple].edge_index = torch.stack(
                     (row_dict[key], col_dict[key]))
 
-            # Filter node storage
+            # Filter node storage:
+            tensor_attrs = feature_store.get_all_tensor_attrs()
+            tensor_attrs_by_group_name = defaultdict(list)
+            for attr in tensor_attrs:
+                tensor_attrs_by_group_name[attr.group_name].append(
+                    attr.attr_name)
+
             for key, value in node_dict.items():
-                # TODO variable attr_name
-                data[key].x = feature_store.get_tensor(
-                    group_name=key,
-                    attr_name='x',
-                    index=value,
-                )
+                for attr_name in tensor_attrs_by_group_name[key]:
+                    feature_tensor = feature_store.get_tensor(
+                        group_name=key,
+                        attr_name=attr_name,
+                        index=value,
+                    )
+                    setattr(data[key], attr_name, feature_tensor)
 
         return data if self.transform is None else self.transform(data)
 
@@ -441,7 +460,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
 
 def get_input_nodes(
-    data: Union[Union[Data, HeteroData], Tuple[FeatureStore, GraphStore]],
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
 ) -> Tuple[Optional[str], Sequence]:
     def from_bool_tensor(tensor):
@@ -472,15 +491,15 @@ def get_input_nodes(
             input_nodes = from_bool_tensor(input_nodes)
         return node_type, input_nodes
 
-    # Tuple
-    else:
+    else:  # Tuple[FeatureStore, GraphStore]
         # NOTE FeatureStore and GraphStore are treated as separate
         # entities, so we cannot leverage the custom structure in Data and
         # HeteroData to infer the number of nodes. As a result, here we expect
         # that the input nodes are either explicitly provided or can be
         # directly inferred from the feature store.
+        feature_store, _ = data
 
-        # Explicit
+        # Explicit tensor:
         if isinstance(input_nodes, Tensor):
             return None, from_bool_tensor(input_nodes)
 
@@ -488,7 +507,10 @@ def get_input_nodes(
                 input_nodes[0], str) and isinstance(input_nodes[1], Tensor):
             return input_nodes[0], from_bool_tensor(input_nodes[1])
 
-        # TensorAttr (TODO support EdgeAttr)
+        # Implicit from TensorAttr (infer number of nodes from feature tensor):
         assert isinstance(input_nodes, TensorAttr)
-        return getattr(input_nodes, 'group_name',
-                       None), range(data[0].get_tensor_size(input_nodes)[0])
+        assert input_nodes.is_set('attr_name')
+        return getattr(input_nodes, 'group_name', None), range(
+            feature_store.get_tensor_size(input_nodes)[0])
+
+        # TODO support implicit from EdgeAttr
