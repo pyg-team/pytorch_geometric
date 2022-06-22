@@ -705,7 +705,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        r"""Obtains an edge index from edge storage, in the specified layout."""
+        r"""Gets an edge index from edge storage, in the specified layout."""
         # Get the requested layout and the Adj tensor associated with it:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
