@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils.mixin import CastMixin
@@ -85,6 +85,12 @@ class GraphStore:
     # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
     # conversions of edge indices between formats. These conversions can also
     # automatically be performed in `get_edge_index`
+
+    # Additional methods ######################################################
+
+    @abstractmethod
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        pass
 
     # Python built-ins ########################################################
 
