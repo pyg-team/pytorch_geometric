@@ -246,7 +246,6 @@ def test_data_setter_properties():
 
 
 def test_basic_feature_store():
-    r"""Test the core feature store API."""
     data = Data()
     x = torch.randn(20, 20)
 

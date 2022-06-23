@@ -407,7 +407,6 @@ def test_hetero_data_to_canonical():
 
 
 def test_basic_feature_store():
-    r"""Test basic feature store API."""
     data = HeteroData()
     x = torch.randn(20, 20)
 
@@ -444,7 +443,6 @@ def test_basic_feature_store():
 
 
 def test_basic_graph_store():
-    r"""Test basic graph store API."""
     data = HeteroData()
 
     edge_index = torch.LongTensor([[0, 1], [1, 2]])

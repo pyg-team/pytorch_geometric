@@ -76,7 +76,6 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
 
 
 def test_feature_store():
-    r"""Tests basic API and indexing functionality of a feature store."""
     store = MyFeatureStore()
     tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
 
