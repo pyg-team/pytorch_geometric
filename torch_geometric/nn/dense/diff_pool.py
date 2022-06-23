@@ -44,8 +44,9 @@ def dense_diff_pool(x, adj, s, mask=None, normalize=True):
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
-        normalize (Bool, optional): Normalization indicator
-            :if True, will divide link_loss by size of graph. (default: True)
+        normalize (bool, optional): If set to :obj:`False`, the link
+            prediction loss is not divided by :obj:`adj.numel()`.
+            (default: :obj:`True`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
