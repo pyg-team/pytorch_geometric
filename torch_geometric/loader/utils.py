@@ -208,23 +208,18 @@ def filter_feature_store(
 
     # Filter node storage:
     attrs = feature_store.get_all_tensor_attrs()
-    attrs_by_group_name = defaultdict(list)
+    required_attrs = []
     for attr in attrs:
-        attrs_by_group_name[attr.group_name].append(attr)
+        if attr.group_name in node_dict:
+            attr.index = node_dict[attr.group_name]
+            required_attrs.append(attr)
 
-    # NOTE Here, we utilize `feature_store.multi_get` by grouping attrs by
-    # group name, as many feature store implementations may have efficient
-    # implementations of obtaining multiple attr names for the same group name
-    for group_name in node_dict:
-        attrs = attrs_by_group_name[group_name]
+    # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
+    # full control over optimizing how it returns features (since the call is
+    # synchronous, this amounts to giving the feature store control over all
+    # iteration).
+    tensors = feature_store.multi_get_tensor(required_attrs)
+    for i, attr in enumerate(required_attrs):
+        data[attr.group_name][attr.attr_name] = tensors[i]
 
-        # Get tensors at the necessary indices:
-        index = node_dict[group_name]
-        for attr in attrs:
-            attr.index = index
-        tensors = feature_store.multi_get_tensor(attrs)
-
-        # Store responses in `data`:
-        for i, attr in enumerate(attrs):
-            data[group_name][attr.attr_name] = tensors[i]
     return data
