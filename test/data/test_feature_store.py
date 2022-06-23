@@ -41,7 +41,8 @@ class MyFeatureStore(FeatureStore):
             return None
 
         # None indices return the whole tensor:
-        if attr.index is None:
+        if attr.index is None or isinstance(
+                attr.index, slice) and attr.index == slice(None, None, None):
             return tensor
 
         idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)

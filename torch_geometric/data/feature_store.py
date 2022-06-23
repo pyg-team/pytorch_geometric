@@ -280,6 +280,17 @@ class FeatureStore(MutableMapping):
                              f"specifying all 'UNSET' fields")
         return self._put_tensor(tensor, attr)
 
+    @staticmethod
+    def _to_type(attr: TensorAttr,
+                 tensor: FeatureTensorType) -> FeatureTensorType:
+        if (isinstance(attr.index, torch.Tensor)
+                and isinstance(tensor, np.ndarray)):
+            return torch.from_numpy(tensor)
+        if (isinstance(attr.index, np.ndarray)
+                and isinstance(tensor, torch.Tensor)):
+            return tensor.numpy()
+        return tensor
+
     @abstractmethod
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
@@ -305,20 +316,8 @@ class FeatureStore(MutableMapping):
             KeyError: if the tensor corresponding to attr was not found.
             ValueError: if the input `TensorAttr` is not fully specified.
         """
-        def to_type(tensor: FeatureTensorType) -> FeatureTensorType:
-            if (isinstance(attr.index, torch.Tensor)
-                    and isinstance(tensor, np.ndarray)):
-                return torch.from_numpy(tensor)
-            if (isinstance(attr.index, np.ndarray)
-                    and isinstance(tensor, torch.Tensor)):
-                return tensor.numpy()
-            return tensor
 
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        if isinstance(attr.index, slice):
-            if attr.index.start == attr.index.stop == attr.index.step is None:
-                attr.index = None
-
         if not attr.is_fully_specified():
             raise ValueError(f"The input TensorAttr '{attr}' is not fully "
                              f"specified. Please fully specify the input by "
@@ -327,7 +326,19 @@ class FeatureStore(MutableMapping):
         tensor = self._get_tensor(attr)
         if tensor is None:
             raise KeyError(f"A tensor corresponding to '{attr}' was not found")
-        return to_type(tensor)
+        return FeatureStore._to_type(attr, tensor)
+
+    def _multi_get_tensor(
+            self, attrs: List[TensorAttr]) -> Optional[FeatureTensorType]:
+        r"""To be implemented by :class:`FeatureStore` subclasses."""
+
+        # NOTE The default implementation simply iterates over calls to
+        # `get_tensor`: implementor classes that can provide additional, more
+        # performant functionality are recommended to override this method.
+        out: List[FeatureTensorType] = []
+        for attr in attrs:
+            out.append(self._get_tensor(attr))
+        return out
 
     def multi_get_tensor(self,
                          attrs: List[TensorAttr]) -> List[FeatureTensorType]:
@@ -347,13 +358,18 @@ class FeatureStore(MutableMapping):
             KeyError: if a tensor corresponding to an attr was not found.
             ValueError: if any input `TensorAttr` is not fully specified.
         """
-        # NOTE The default implementation simply iterates over calls to
-        # `get_tensor`: implementor classes that can provide additional, more
-        # performant functionality are recommended to override this method.
-        out: List[FeatureTensorType] = []
+        attrs = [self._tensor_attr_cls.cast(attr) for attr in attrs]
         for attr in attrs:
-            out.append(self.get_tensor(attr))
-        return out
+            if not attr.is_fully_specified():
+                raise ValueError(
+                    f"The input TensorAttr '{attr}' is not fully "
+                    f"specified. Please fully specify the input by "
+                    f"specifying all 'UNSET' fields.")
+        tensors = self._multi_get_tensor(attrs)
+        return [
+            FeatureStore._to_type(attr, tensor)
+            for attr, tensor in zip(attrs, tensors)
+        ]
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
