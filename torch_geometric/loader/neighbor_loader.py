@@ -150,12 +150,23 @@ class NeighborSampler:
                     if ordering[layout] > ordering[edge_layout]:
                         edge_layout = layout
 
+                # TODO the below logic currently only works for CSC and CSR
+                # edge layouts, so throw an exception of our best format is
+                # COO:
+                if edge_layout == EdgeLayout.COO:
+                    raise ValueError(
+                        f"NeighborSampler currently only supports CSC and "
+                        f"CSR edge index types in the GraphStore, but "
+                        f"edge {edge_type} has format "
+                        f"{edge_layout.value.upper()}. Please convert "
+                        f"{edge_type} to either CSC or CSR formats "
+                        f"in order to use it with NeighborSampler.")
+
                 # Obtain edge index from backing GraphStore:
                 edge_index_tuple = graph_store.get_edge_index(
                     edge_type=edge_type, layout=edge_layout)
 
                 # Convert to format for to_csc:
-                # TODO currently only works for CSC and CSR edge layouts
                 class _DataArgument(object):
                     pass
 

@@ -326,6 +326,7 @@ def test_custom_neighbor_loader(directed):
         feature_store.put_tensor(x, group_name='author', attr_name='x',
                                  index=None)
 
+        # Set up edge indices:
         edge_index, rowptr, col = _get_edge_index(100, 100, 500)
         hetero_data['paper', 'to', 'paper'].edge_index = edge_index
         graph_store.put_edge_index(
