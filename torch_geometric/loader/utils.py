@@ -31,6 +31,10 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
+def str_to_edge_type(key: Union[EdgeType, str]) -> EdgeType:
+    return key if isinstance(key, tuple) else tuple(key.split('__'))
+
+
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
@@ -193,31 +197,22 @@ def filter_feature_store(
     nodes in `node` end edges in `edge` for each node and edge type,
     respectively."""
 
-    # Construct a new HeteroData object:
+    # Construct a new `HeteroData` object:
     data = HeteroData()
 
     # Filter edge storage:
     for key in edge_dict:
-        key_tuple = key if isinstance(key, tuple) else tuple(key.split('__'))
-        data[key_tuple].edge_index = torch.stack(
-            (row_dict[key], col_dict[key]))
+        edge_type = str_to_edge_type(key)
+        edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+        data[edge_type].edge_index = edge_index
 
     # Filter node storage:
-    tensor_attrs = feature_store.get_all_tensor_attrs()
-
-    for attr in tensor_attrs:
-        group_name = attr.group_name
-        attr_name = attr.attr_name
-
-        # If we have sampled nodes from this group, index into the
-        # feature store for these nodes' features:
-        if group_name in node_dict:
-            index = node_dict[group_name]
-            feature_tensor = feature_store.get_tensor(
-                group_name=group_name,
-                attr_name=attr_name,
-                index=index,
-            )
-            data[group_name][attr_name] = feature_tensor
+    for attr in feature_store.get_all_tensor_attrs():
+        if attr.group_name in node_dict:
+            # If we have sampled nodes from this group, index into the
+            # feature store for these nodes' features:
+            attr.index = node_dict[attr.group_name]
+            tensor = feature_store.get_tensor(attr)
+            data[attr.group_name][attr.attr_name] = tensor
 
     return data
