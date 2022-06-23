@@ -290,7 +290,7 @@ class LoggerCallback(Callback):
             true=outputs['true'].detach().cpu(),
             pred=outputs['pred_score'].detach().cpu(),
             loss=float(outputs['loss']),
-            lr=trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0],
+            lr=trainer.lr_schedulers[0]['scheduler'].get_last_lr()[0],
             time_used=time.time() - epoch_start_time,
             params=cfg.params,
         )

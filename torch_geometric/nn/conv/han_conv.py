@@ -18,6 +18,8 @@ def group(xs: List[Tensor], q: nn.Parameter,
     else:
         num_edge_types = len(xs)
         out = torch.stack(xs)
+        if out.numel() == 0:
+            return out.view(0, out.size(-1))
         attn_score = (q * torch.tanh(k_lin(out)).mean(1)).sum(-1)
         attn = F.softmax(attn_score, dim=0)
         out = torch.sum(attn.view(num_edge_types, 1, -1) * out, dim=0)
