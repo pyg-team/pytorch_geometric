@@ -177,7 +177,27 @@ class Batch(metaclass=DynamicInheritance):
         state = self.__dict__.copy()
         return DynamicInheritanceGetter(), self.__class__.__bases__, state
 
-    def subbatch(self, mask):
+    def subbatch(self, idx):
+        # convert index to mask
+        if isinstance(idx, slice) or \
+           (isinstance(idx, Tensor) and idx.dtype == torch.long) or \
+           (isinstance(idx, np.ndarray) and idx.dtype == np.int64) or \
+           (isinstance(idx, Sequence) and not isinstance(idx, str)):
+            mask = torch.zeros(self.num_graphs, dtype=torch.bool)
+            mask[idx] = True
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
+            mask = torch.from_numpy(idx)
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            mask = idx
+
+        else:
+            raise IndexError(
+                f"Only slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
+                f"'{type(idx).__name__}')")
+
         node_mask = mask[self.batch]
 
         subbatch = self.subgraph(node_mask)
