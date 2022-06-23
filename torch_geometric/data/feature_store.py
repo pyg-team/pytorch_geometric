@@ -269,6 +269,9 @@ class FeatureStore(MutableMapping):
 
         Returns:
             bool: Whether insertion was successful.
+
+        Raises:
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
@@ -296,11 +299,12 @@ class FeatureStore(MutableMapping):
                 from a :class:`TensorAttr` object.
 
         Returns:
-            FeatureTensorType, optional: a Tensor of the same type as the
-            index, or :obj:`None` if no tensor was found.
+            FeatureTensorType: a Tensor of the same type as the index, or
+                :obj:`None` if no tensor was found.
 
         Raises:
             KeyError: if the tensor corresponding to attr was not found.
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         def to_type(tensor: FeatureTensorType) -> FeatureTensorType:
             if (isinstance(attr.index, torch.Tensor)
@@ -344,6 +348,9 @@ class FeatureStore(MutableMapping):
 
         Returns:
             bool: Whether deletion was succesful.
+
+        Raises:
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():

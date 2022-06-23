@@ -441,7 +441,8 @@ def get_input_nodes(
     input_nodes: Union[InputNodes, TensorAttr],
 ) -> Tuple[Optional[str], Sequence]:
     def from_bool_tensor(tensor):
-        return tensor.nonzero(as_tuple=False).view(-1)
+        return tensor.nonzero(
+            as_tuple=False).view(-1) if tensor.dtype == torch.bool else tensor
 
     if isinstance(data, Data):
         if input_nodes is None:
