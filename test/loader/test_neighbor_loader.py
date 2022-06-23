@@ -294,9 +294,8 @@ def test_custom_neighbor_loader(directed):
     torch.manual_seed(12345)
 
     # Possible feature and graph stores:
-    feature_stores = [MyFeatureStore(), HeteroData()]
-    graph_stores = [MyGraphStore(), HeteroData()]
-    hetero_data = HeteroData()
+    feature_stores = [MyFeatureStore, HeteroData]
+    graph_stores = [MyGraphStore, HeteroData]
 
     # Set up edge indices:
     def _get_edge_index(num_src, num_dst, num_edges):
@@ -316,6 +315,12 @@ def test_custom_neighbor_loader(directed):
     # `HeteroData` and `Data` both override dunder methods:
     for feature_store, graph_store in itertools.product(
             feature_stores, graph_stores):
+
+        # Initialize feature store, graph store, and reference:
+        feature_store = feature_store()
+        graph_store = graph_store()
+        hetero_data = HeteroData()
+
         # Set up node features:
         x = torch.arange(100)
         hetero_data['paper'].x = x
