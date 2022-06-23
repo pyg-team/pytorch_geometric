@@ -121,4 +121,5 @@ However, if you want your own GNN module to be jittable, you need to account for
 
 .. warning::
 
-   Importantly, due to TorchScript limitations, one also has to pass in the :obj:`size` attribute to :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate`. In most cases, this can be simply set to :obj:`None` in which case it will be automatically inferred.
+   Importantly, due to TorchScript limitations, one also has to pass in the :obj:`size` attribute to :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate`.
+   In most cases, this can be simply set to :obj:`None` in which case it will be automatically inferred.
