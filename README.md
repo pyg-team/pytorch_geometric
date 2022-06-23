@@ -346,6 +346,8 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
+PyG is available for Python 3.7 to Python 3.10.
+
 ### Anaconda
 
 **Update:** You can now install PyG via [Anaconda](https://anaconda.org/pyg/pyg) for all major OS/PyTorch/CUDA combinations 🤗
