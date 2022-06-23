@@ -31,6 +31,12 @@ class EdgeAttr(CastMixin):
     # TODO support num_nodes here, default None, so users can specify this
     # instead of relying on default inferral
 
+    def __init__(self, edge_type: Optional[Any], layout: EdgeLayout,
+                 is_sorted: bool = False):
+        self.edge_type = edge_type
+        self.layout = EdgeLayout(layout)
+        self.is_sorted = is_sorted
+
 
 class GraphStore:
     def __init__(self, edge_attr_cls: Any = EdgeAttr):
