@@ -202,9 +202,8 @@ def filter_feature_store(
 
     # Filter edge storage:
     for key in edge_dict:
-        edge_type = str_to_edge_type(key)
         edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
-        data[edge_type].edge_index = edge_index
+        data[str_to_edge_type(key)].edge_index = edge_index
 
     # Filter node storage:
     for attr in feature_store.get_all_tensor_attrs():
