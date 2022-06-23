@@ -330,6 +330,31 @@ class FeatureStore(MutableMapping):
             raise KeyError(f"A tensor corresponding to '{attr}' was not found")
         return to_type(tensor)
 
+    def multi_get_tensor(self,
+                         attrs: List[TensorAttr]) -> List[FeatureTensorType]:
+        r"""Synchronously obtains a :class:`FeatureTensorType` object from the
+        feature store for each tensor associated with the attributes in `attr`.
+
+        Args:
+            attrs (List[TensorAttr]): a list of :class:`TensorAttr` attributes
+                that identify the tensors to get.
+        
+        Returns:
+            List[FeatureTensorType]: a Tensor of the same type as the index for
+                each attribute, or :obj:`None` if no tensor was found.
+
+        Raises:
+            KeyError: if the tensor corresponding to attr was not found.
+            ValueError: if any input `TensorAttr` is not fully specified.
+        """
+        # NOTE The default implementation simply iterates over calls to
+        # `get_tensor`: implementor classes that can provide additional, more
+        # performant functionality are recommended to override this method.
+        out: List[FeatureTensorType] = []
+        for attr in attrs:
+            out.append(self.get_tensor(attr))
+        return out
+
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         r"""To be implemented by :obj:`FeatureStore` subclasses."""

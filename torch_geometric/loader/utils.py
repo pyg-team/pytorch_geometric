@@ -1,5 +1,6 @@
 import copy
 import math
+from collections import defaultdict
 from typing import Dict, Optional, Tuple, Union
 
 import torch
@@ -206,12 +207,24 @@ def filter_feature_store(
         data[str_to_edge_type(key)].edge_index = edge_index
 
     # Filter node storage:
-    for attr in feature_store.get_all_tensor_attrs():
-        if attr.group_name in node_dict:
-            # If we have sampled nodes from this group, index into the
-            # feature store for these nodes' features:
-            attr.index = node_dict[attr.group_name]
-            tensor = feature_store.get_tensor(attr)
-            data[attr.group_name][attr.attr_name] = tensor
+    attrs = feature_store.get_all_tensor_attrs()
+    attrs_by_group_name = defaultdict(list)
+    for attr in attrs:
+        attrs_by_group_name[attr.group_name].append(attr)
 
+    # NOTE Here, we utilize `feature_store.multi_get` by grouping attrs by
+    # group name, as many feature store implementations may have efficient
+    # implementations of obtaining multiple attr names for the same group name
+    for group_name in node_dict:
+        attrs = attrs_by_group_name[group_name]
+
+        # Get tensors at the necessary indices:
+        index = node_dict[group_name]
+        for attr in attrs:
+            attr.index = index
+        tensors = feature_store.multi_get_tensor(attrs)
+
+        # Store responses in `data`:
+        for i, attr in enumerate(attrs):
+            data[group_name][attr.attr_name] = tensors[i]
     return data
