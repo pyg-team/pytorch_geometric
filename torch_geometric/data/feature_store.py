@@ -338,7 +338,7 @@ class FeatureStore(MutableMapping):
         Args:
             attrs (List[TensorAttr]): a list of :class:`TensorAttr` attributes
                 that identify the tensors to get.
-        
+
         Returns:
             List[FeatureTensorType]: a Tensor of the same type as the index for
                 each attribute, or :obj:`None` if no tensor was found.
