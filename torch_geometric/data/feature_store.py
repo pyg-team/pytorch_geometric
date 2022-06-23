@@ -299,8 +299,7 @@ class FeatureStore(MutableMapping):
                 from a :class:`TensorAttr` object.
 
         Returns:
-            FeatureTensorType: a Tensor of the same type as the index, or
-                :obj:`None` if no tensor was found.
+            FeatureTensorType: a Tensor of the same type as the index.
 
         Raises:
             KeyError: if the tensor corresponding to attr was not found.
@@ -333,7 +332,8 @@ class FeatureStore(MutableMapping):
     def multi_get_tensor(self,
                          attrs: List[TensorAttr]) -> List[FeatureTensorType]:
         r"""Synchronously obtains a :class:`FeatureTensorType` object from the
-        feature store for each tensor associated with the attributes in `attr`.
+        feature store for each tensor associated with the attributes in
+        `attrs`.
 
         Args:
             attrs (List[TensorAttr]): a list of :class:`TensorAttr` attributes
@@ -341,10 +341,10 @@ class FeatureStore(MutableMapping):
 
         Returns:
             List[FeatureTensorType]: a Tensor of the same type as the index for
-                each attribute, or :obj:`None` if no tensor was found.
+                each attribute.
 
         Raises:
-            KeyError: if the tensor corresponding to attr was not found.
+            KeyError: if a tensor corresponding to an attr was not found.
             ValueError: if any input `TensorAttr` is not fully specified.
         """
         # NOTE The default implementation simply iterates over calls to

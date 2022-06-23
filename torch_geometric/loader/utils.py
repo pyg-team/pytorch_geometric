@@ -1,6 +1,5 @@
 import copy
 import math
-from collections import defaultdict
 from typing import Dict, Optional, Tuple, Union
 
 import torch
