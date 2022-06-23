@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, OptTensor
 
@@ -30,6 +31,10 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
+def str_to_edge_type(key: Union[EdgeType, str]) -> EdgeType:
+    return key if isinstance(key, tuple) else tuple(key.split('__'))
+
+
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
@@ -43,7 +48,10 @@ def to_csc(
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
 
-    if hasattr(data, 'adj_t'):
+    if hasattr(data, 'adj'):
+        colptr, row, _ = data.adj.csc()
+
+    elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
     elif hasattr(data, 'edge_index'):
@@ -54,7 +62,7 @@ def to_csc(
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
         raise AttributeError("Data object does not contain attributes "
-                             "'adj_t' or 'edge_index'")
+                             "'adj', 'adj_t' or 'edge_index'")
 
     colptr = colptr.to(device)
     row = row.to(device)
@@ -176,3 +184,34 @@ def filter_hetero_data(
                            edge_dict[edge_type_str], perm_dict[edge_type_str])
 
     return out
+
+
+def filter_feature_store(
+    feature_store: FeatureStore,
+    node_dict: Dict[str, Tensor],
+    row_dict: Dict[str, Tensor],
+    col_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, Tensor],
+) -> HeteroData:
+    r"""Constructs a `HeteroData` object from a feature store that only holds
+    nodes in `node` end edges in `edge` for each node and edge type,
+    respectively."""
+
+    # Construct a new `HeteroData` object:
+    data = HeteroData()
+
+    # Filter edge storage:
+    for key in edge_dict:
+        edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+        data[str_to_edge_type(key)].edge_index = edge_index
+
+    # Filter node storage:
+    for attr in feature_store.get_all_tensor_attrs():
+        if attr.group_name in node_dict:
+            # If we have sampled nodes from this group, index into the
+            # feature store for these nodes' features:
+            attr.index = node_dict[attr.group_name]
+            tensor = feature_store.get_tensor(attr)
+            data[attr.group_name][attr.attr_name] = tensor
+
+    return data

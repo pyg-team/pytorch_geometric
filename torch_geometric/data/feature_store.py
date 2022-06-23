@@ -25,7 +25,7 @@ from abc import abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -269,6 +269,9 @@ class FeatureStore(MutableMapping):
 
         Returns:
             bool: Whether insertion was successful.
+
+        Raises:
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
@@ -282,7 +285,7 @@ class FeatureStore(MutableMapping):
         r"""To be implemented by :class:`FeatureStore` subclasses."""
         pass
 
-    def get_tensor(self, *args, **kwargs) -> Optional[FeatureTensorType]:
+    def get_tensor(self, *args, **kwargs) -> FeatureTensorType:
         r"""Synchronously obtains a :class:`FeatureTensorType` object from the
         feature store. Feature store implementors guarantee that the call
         :obj:`get_tensor(put_tensor(tensor, attr), attr) = tensor` holds.
@@ -296,12 +299,14 @@ class FeatureStore(MutableMapping):
                 from a :class:`TensorAttr` object.
 
         Returns:
-            FeatureTensorType, optional: a Tensor of the same type as the
-            index, or :obj:`None` if no tensor was found.
+            FeatureTensorType: a Tensor of the same type as the index, or
+                :obj:`None` if no tensor was found.
+
+        Raises:
+            KeyError: if the tensor corresponding to attr was not found.
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         def to_type(tensor: FeatureTensorType) -> FeatureTensorType:
-            if tensor is None:
-                return None
             if (isinstance(attr.index, torch.Tensor)
                     and isinstance(tensor, np.ndarray)):
                 return torch.from_numpy(tensor)
@@ -320,7 +325,10 @@ class FeatureStore(MutableMapping):
                              f"specified. Please fully specify the input by "
                              f"specifying all 'UNSET' fields.")
 
-        return to_type(self._get_tensor(attr))
+        tensor = self._get_tensor(attr)
+        if tensor is None:
+            raise KeyError(f"A tensor corresponding to '{attr}' was not found")
+        return to_type(tensor)
 
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
@@ -340,6 +348,9 @@ class FeatureStore(MutableMapping):
 
         Returns:
             bool: Whether deletion was succesful.
+
+        Raises:
+            ValueError: if the input `TensorAttr` is not fully specified.
         """
         attr = self._tensor_attr_cls.cast(*args, **kwargs)
         if not attr.is_fully_specified():
@@ -370,7 +381,26 @@ class FeatureStore(MutableMapping):
         self.remove_tensor(attr)
         return self.put_tensor(tensor, attr)
 
-    # :obj:`AttrView` methods #################################################
+    # Additional methods ######################################################
+
+    @abstractmethod
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        pass
+
+    def get_tensor_size(self, *args, **kwargs) -> Tuple:
+        r"""Obtains the size of a tensor given its attributes, or :obj:`None`
+        if the tensor does not exist."""
+        attr = self._tensor_attr_cls.cast(*args, **kwargs)
+        if not attr.is_set('index'):
+            attr.index = None
+        return self._get_tensor_size(attr)
+
+    @abstractmethod
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        r"""Obtains all tensor attributes stored in this feature store."""
+        pass
+
+    # `AttrView` methods ######################################################
 
     def view(self, *args, **kwargs) -> AttrView:
         r"""Returns an :class:`AttrView` of the feature store, with the defined

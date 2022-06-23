@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import Dict, Optional, Tuple
 
+import pytest
 import torch
+from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import (
@@ -14,11 +16,11 @@ from torch_geometric.data.graph_store import (
 class MyGraphStore(GraphStore):
     def __init__(self):
         super().__init__()
-        self.store = {}
+        self.store: Dict[EdgeAttr, Tuple[Tensor, Tensor]] = {}
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return f"{attr.edge_type or '<default>'}_{attr.layout}"
+        return (attr.edge_type, attr.layout.value)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
@@ -26,6 +28,9 @@ class MyGraphStore(GraphStore):
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         return self.store.get(MyGraphStore.key(edge_attr), None)
+
+    def get_all_edge_attrs(self):
+        return [EdgeAttr(*key) for key in self.store.keys()]
 
 
 def test_graph_store():
@@ -42,7 +47,7 @@ def test_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = adj.csc()[:-1]
+    csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
     graph_store['edge', EdgeLayout.COO] = coo
@@ -53,3 +58,10 @@ def test_graph_store():
     assert_equal_tensor_tuple(coo, graph_store['edge', 'coo'])
     assert_equal_tensor_tuple(csr, graph_store['edge', 'csr'])
     assert_equal_tensor_tuple(csc, graph_store['edge', 'csc'])
+
+    # Get attrs:
+    edge_attrs = graph_store.get_all_edge_attrs()
+    assert len(edge_attrs) == 3
+
+    with pytest.raises(KeyError):
+        _ = graph_store['edge_2', 'coo']

@@ -736,11 +736,13 @@ class Data(BaseData, FeatureStore, GraphStore):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
-    # FeatureStore interface ###########################################
+    # FeatureStore interface ##################################################
 
     def items(self):
         r"""Returns an `ItemsView` over the stored attributes in the `Data`
         object."""
+        # NOTE this is necessary to override the default `MutableMapping`
+        # items() method.
         return self._store.items()
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
@@ -774,6 +776,14 @@ class Data(BaseData, FeatureStore, GraphStore):
             return True
         return False
 
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        return self._get_tensor(attr).size()
+
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        r"""Obtains all feature attributes stored in `Data`."""
+        return [TensorAttr(attr_name=name) for name in self._store.keys()]
+
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
@@ -781,20 +791,32 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        # Convert the edge index to a recognizable format:
+        r"""Stores `edge_index` in `Data`, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        # Get the requested format and the Adj tensor associated with it:
+        r"""Obtains the edge index corresponding to `edge_attr` in `Data`,
+        in the specified layout."""
+        # Get the requested layout and the edge tensor type associated with it:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self._store, attr_name, None)
         if attr_val is not None:
             # Convert from Adj type to Tuple[Tensor, Tensor]
             attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
         return attr_val
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
+        in `Data` and their layouts"""
+        out = []
+        for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+            if attr_name in self:
+                out.append(EdgeAttr(edge_type=None, layout=layout))
+        return out
 
 
 ###############################################################################
@@ -811,26 +833,25 @@ def edge_tensor_type_to_adj_type(
     tensor_tuple: EdgeTensorType,
 ) -> Adj:
     r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
+    src, dst = tensor_tuple
+
     if attr.layout == EdgeLayout.COO:
         # COO: (row, col)
-        if (tensor_tuple[0].storage().data_ptr() ==
-                tensor_tuple[1].storage().data_ptr()):
+        if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()):
             # Do not copy if the tensor tuple is constructed from the same
             # storage (instead, return a view):
-            out = torch.empty(0, dtype=tensor_tuple[0].dtype)
-            out.set_(tensor_tuple[0].storage(), storage_offset=0,
-                     size=tensor_tuple[0].size() + tensor_tuple[1].size())
+            out = torch.empty(0, dtype=src.dtype)
+            out.set_(src.storage(), storage_offset=0,
+                     size=src.size() + dst.size())
             return out.view(2, -1)
         return torch.stack(tensor_tuple)
     elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
-        return SparseTensor(rowptr=tensor_tuple[0], col=tensor_tuple[1],
-                            is_sorted=True)
+        return SparseTensor(rowptr=src, col=dst, is_sorted=True)
     elif attr.layout == EdgeLayout.CSC:
         # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
         # is the compressed column and col is the uncompressed row.
-        return SparseTensor(rowptr=tensor_tuple[1], col=tensor_tuple[0],
-                            is_sorted=True)
+        return SparseTensor(rowptr=dst, col=src, is_sorted=True)
     raise ValueError(f"Bad edge layout (got '{attr.layout}')")
 
 
@@ -838,17 +859,13 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
                                  edge_index: Adj) -> EdgeTensorType:
     r"""Converts a PyG Adj tensor to an EdgeTensorType equivalent."""
     if isinstance(edge_index, Tensor):
-        return (edge_index[0], edge_index[1])
+        return (edge_index[0], edge_index[1])  # (row, col)
     if layout == EdgeLayout.COO:
-        row, col, _ = edge_index.coo()
-        return (row, col)
+        return edge_index.coo()[:-1]  # (row, col
     elif layout == EdgeLayout.CSR:
-        rowptr, col, _ = edge_index.csr()
-        return (rowptr, col)
+        return edge_index.csr()[:-1]  # (rowptr, col)
     else:
-        # CSC is just adj_t.csr():
-        colptr, row, _ = edge_index.csr()
-        return (row, colptr)
+        return edge_index.csr()[-2::-1]  # (row, colptr)
 
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:
