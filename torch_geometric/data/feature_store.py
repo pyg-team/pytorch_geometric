@@ -323,9 +323,7 @@ class FeatureStore(MutableMapping):
 
         tensor = self._get_tensor(attr)
         if tensor is None:
-            raise KeyError(
-                f"A tensor corresponding to TensorAttr '{attr}' was not found."
-            )
+            raise KeyError(f"A tensor corresponding to '{attr}' was not found")
         return to_type(tensor)
 
     @abstractmethod

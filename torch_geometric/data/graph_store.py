@@ -88,9 +88,8 @@ class GraphStore:
         edge_attr.layout = EdgeLayout(edge_attr.layout)
         edge_index = self._get_edge_index(edge_attr)
         if edge_index is None:
-            raise KeyError(
-                f"An edge corresponding to EdgeAttr '{edge_attr}' was not "
-                f"found.")
+            raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
+                           f"found")
         return edge_index
 
     # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
