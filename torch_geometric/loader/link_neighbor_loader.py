@@ -80,7 +80,8 @@ class LinkNeighborSampler(NeighborSampler):
                 self.directed,
             )
 
-            return node, row, col, edge, edge_label_index, edge_label
+            return (node, row, col, edge, edge_label_index, edge_label,
+                    edge_label_index.shape[1])
 
         elif issubclass(self.data_cls, HeteroData):
             sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
@@ -114,7 +115,7 @@ class LinkNeighborSampler(NeighborSampler):
             )
 
             return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-                    edge_label)
+                    edge_label, edge_label_index.shape[1])
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
@@ -279,21 +280,24 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
-            node, row, col, edge, edge_label_index, edge_label = out
+            (node, row, col, edge, edge_label_index, edge_label,
+             batch_size) = out
             data = filter_data(self.data, node, row, col, edge,
                                self.neighbor_sampler.perm)
             data.edge_label_index = edge_label_index
+            data.batch_size = batch_size
             if edge_label is not None:
                 data.edge_label = edge_label
 
         elif isinstance(self.data, HeteroData):
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-             edge_label) = out
+             edge_label, batch_size) = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
+            data[edge_type].batch_size = batch_size
             if edge_label is not None:
                 data[edge_type].edge_label = edge_label
 
