@@ -365,7 +365,13 @@ class FeatureStore(MutableMapping):
                     f"The input TensorAttr '{attr}' is not fully "
                     f"specified. Please fully specify the input by "
                     f"specifying all 'UNSET' fields.")
+
         tensors = self._multi_get_tensor(attrs)
+        if None in tensors:
+            bad_attrs = [attrs[i] for i, v in enumerate(tensors) if v is None]
+            raise KeyError(f"A tensor corresponding to attributes "
+                           f"'{bad_attrs}' was not found")
+
         return [
             FeatureStore._to_type(attr, tensor)
             for attr, tensor in zip(attrs, tensors)
