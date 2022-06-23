@@ -359,18 +359,18 @@ class FeatureStore(MutableMapping):
             ValueError: if any input `TensorAttr` is not fully specified.
         """
         attrs = [self._tensor_attr_cls.cast(attr) for attr in attrs]
-        for attr in attrs:
-            if not attr.is_fully_specified():
-                raise ValueError(
-                    f"The input TensorAttr '{attr}' is not fully "
-                    f"specified. Please fully specify the input by "
-                    f"specifying all 'UNSET' fields.")
+        bad_attrs = [attr for attr in attrs if not attr.is_fully_specified()]
+        if len(bad_attrs) > 0:
+            raise ValueError(
+                f"The input TensorAttr(s) '{bad_attrs}' are not fully "
+                f"specified. Please fully specify the input attrs by "
+                f"specifying all 'UNSET' fields.")
 
         tensors = self._multi_get_tensor(attrs)
         if None in tensors:
             bad_attrs = [attrs[i] for i, v in enumerate(tensors) if v is None]
-            raise KeyError(f"A tensor corresponding to attributes "
-                           f"'{bad_attrs}' was not found")
+            raise KeyError(f"Tensors corresponding to attributes "
+                           f"'{bad_attrs}' were not found")
 
         return [
             FeatureStore._to_type(attr, tensor)
