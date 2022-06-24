@@ -67,7 +67,7 @@ def run(args: argparse.ArgumentParser) -> None:
             num_iterations = 0
             for run in range(args.runs):
                 start = default_timer()
-                for batch in subgraph_loader:
+                for batch in tqdm.tqdm(subgraph_loader):
                     num_iterations += 1
                 stop = default_timer()
                 runtimes.append(round(stop - start, 3))
