@@ -108,9 +108,8 @@ class NeighborSampler:
             node_attrs = feature_store.get_all_tensor_attrs()
             edge_attrs = graph_store.get_all_edge_attrs()
 
-            self.node_types = [
-                node_attr.group_name for node_attr in node_attrs
-            ]
+            self.node_types = list(
+                set(node_attr.group_name for node_attr in node_attrs))
             self.edge_types = [edge_attr.edge_type for edge_attr in edge_attrs]
 
             # Set other required parameters:
