@@ -451,16 +451,16 @@ def get_input_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
 ) -> Tuple[Optional[str], Sequence]:
-    def from_bool_tensor(tensor):
-        return tensor.nonzero(
-            as_tuple=False).view(-1) if tensor.dtype == torch.bool else tensor
+    def to_index(tensor):
+        if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
+            return torch.nonzero(as_tuple=False).view(-1)
+        else:
+            return tensor
 
     if isinstance(data, Data):
         if input_nodes is None:
             return None, range(data.num_nodes)
-        if input_nodes.dtype == torch.bool:
-            input_nodes = from_bool_tensor(input_nodes)
-        return None, input_nodes
+        return None, to_index(input_nodes)
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
@@ -472,13 +472,10 @@ def get_input_nodes(
         assert len(input_nodes) == 2
         assert isinstance(input_nodes[0], str)
 
-        if input_nodes[1] is None:
-            return input_nodes[0], range(data[input_nodes[0]].num_nodes)
-
         node_type, input_nodes = input_nodes
-        if input_nodes.dtype == torch.bool:
-            input_nodes = from_bool_tensor(input_nodes)
-        return node_type, input_nodes
+        if input_nodes is None:
+            return input_nodes[0], range(data[input_nodes[0]].num_nodes)
+        return node_type, to_index(input_nodes)
 
     else:  # Tuple[FeatureStore, GraphStore]
         # NOTE FeatureStore and GraphStore are treated as separate
@@ -488,18 +485,30 @@ def get_input_nodes(
         # directly inferred from the feature store.
         feature_store, _ = data
 
-        # Explicit tensor:
+        assert input_nodes is not None
+
         if isinstance(input_nodes, Tensor):
-            return None, from_bool_tensor(input_nodes)
+            return None, to_index(input_nodes)
 
-        if isinstance(input_nodes, tuple) and isinstance(
-                input_nodes[0], str) and isinstance(input_nodes[1], Tensor):
-            return input_nodes[0], from_bool_tensor(input_nodes[1])
+        if isinstance(input_nodes, str):
+            num_nodes = feature_store.get_tensor_size(input_nodes)[0]
+            return input_nodes, range(num_nodes)
 
-        # Implicit from TensorAttr (infer number of nodes from feature tensor):
+        if isinstance(input_nodes, (list, tuple)):
+            assert len(input_nodes) == 2
+            assert isinstance(input_nodes[0], str)
+
+            node_type, input_nodes = input_nodes
+            if input_nodes is None:
+                num_nodes = feature_store.get_tensor_size(input_nodes)[0]
+                return input_nodes[0], range(num_nodes)
+            return node_type, to_index(input_nodes)
+
         assert isinstance(input_nodes, TensorAttr)
         assert input_nodes.is_set('attr_name')
-        return getattr(input_nodes, 'group_name', None), range(
-            feature_store.get_tensor_size(input_nodes)[0])
 
-        # TODO support implicit from EdgeAttr
+        node_type = getattr(input_nodes, 'group_name', None)
+        if not input_nodes.is_set('index') or input_nodes.index is None:
+            num_nodes = feature_store.get_tensor_size(input_nodes)[0]
+            return node_type, range(num_nodes)
+        return node_type, input_nodes.index
