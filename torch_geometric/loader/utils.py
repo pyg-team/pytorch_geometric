@@ -206,12 +206,19 @@ def filter_feature_store(
         data[str_to_edge_type(key)].edge_index = edge_index
 
     # Filter node storage:
-    for attr in feature_store.get_all_tensor_attrs():
+    attrs = feature_store.get_all_tensor_attrs()
+    required_attrs = []
+    for attr in attrs:
         if attr.group_name in node_dict:
-            # If we have sampled nodes from this group, index into the
-            # feature store for these nodes' features:
             attr.index = node_dict[attr.group_name]
-            tensor = feature_store.get_tensor(attr)
-            data[attr.group_name][attr.attr_name] = tensor
+            required_attrs.append(attr)
+
+    # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
+    # full control over optimizing how it returns features (since the call is
+    # synchronous, this amounts to giving the feature store control over all
+    # iteration).
+    tensors = feature_store.multi_get_tensor(required_attrs)
+    for i, attr in enumerate(required_attrs):
+        data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
