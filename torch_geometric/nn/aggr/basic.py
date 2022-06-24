@@ -22,8 +22,9 @@ class SumAggregation(Aggregation):
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
-AddAggregation = type('AddAggregation', SumAggregation.__bases__,
-                      dict(SumAggregation.__dict__))  # Alias
+class AddAggregation(SumAggregation):
+    r"""Alias for :class:`SumAggregation`."""
+    pass
 
 
 class MaxAggregation(Aggregation):
