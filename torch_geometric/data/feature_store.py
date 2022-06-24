@@ -329,7 +329,8 @@ class FeatureStore(MutableMapping):
         return self._to_type(attr, tensor)
 
     def _multi_get_tensor(
-            self, attrs: List[TensorAttr]) -> Optional[FeatureTensorType]:
+            self,
+            attrs: List[TensorAttr]) -> List[Optional[FeatureTensorType]]:
         r"""To be implemented by :class:`FeatureStore` subclasses.
 
         .. note::
