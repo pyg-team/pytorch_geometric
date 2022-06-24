@@ -1,6 +1,3 @@
-import itertools
-import sys
-
 import numpy as np
 import pytest
 import torch
@@ -8,15 +5,11 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.loader.neighbor_loader import get_input_nodes
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withRegisteredOp
-from torch_geometric.utils import k_hop_subgraph, sort_edge_index
-
-sys.path.append("..")
-# pylint: disable=wrong-import-order,wrong-import-position,no-name-in-module
-from data.test_feature_store import MyFeatureStore  # noqa: E402
-from data.test_graph_store import MyGraphStore  # noqa: E402
+from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.utils import k_hop_subgraph
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -286,139 +279,69 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
         assert torch.all(mask)
 
 
-@pytest.mark.parametrize('directed', [True, False])
-def test_custom_neighbor_loader(directed):
-    r"""This test evaluates the correctness of a `NeighborLoader` constructed
-    from a feature store and graph store by comparing it to a `NeighborLoader`
-    constructed from a `HeteroData` object."""
-    torch.manual_seed(12345)
+@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
+@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
+def test_custom_neighbor_loader(FeatureStore, GraphStore):
+    # Initialize feature store, graph store, and reference:
+    feature_store = FeatureStore()
+    graph_store = GraphStore()
+    data = HeteroData()
 
-    # Possible feature and graph stores:
-    feature_stores = [MyFeatureStore, HeteroData]
-    graph_stores = [MyGraphStore, HeteroData]
+    # Set up node features:
+    x = torch.arange(100)
+    data['paper'].x = x
+    feature_store.put_tensor(x, group_name='paper', attr_name='x', index=None)
+
+    x = torch.arange(100, 300)
+    data['author'].x = x
+    feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # Set up edge indices:
-    def _get_edge_index(num_src, num_dst, num_edges):
-        edge_index = get_edge_index(num_src, num_dst, num_edges)
-        edge_index = sort_edge_index(edge_index)
-        adj = SparseTensor.from_edge_index(edge_index, is_sorted=True)
-        rowptr, col, _ = adj.csr()
-        return edge_index, rowptr, col
+    edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
+        edge_type=('paper', 'to', 'paper'),
+        layout='csr',
+    )
 
-    # Assertion utility:
-    def _assert_tensor_dict_equal(expected, actual):
-        assert expected.keys() == actual.keys()
-        for key in expected:
-            assert torch.equal(expected[key], actual[key])
+    edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'to', 'author'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
+        edge_type=('paper', 'to', 'author'),
+        layout='csr',
+    )
 
-    # NOTE in this test, here we solely use explicit APIs, since
-    # `HeteroData` and `Data` both override dunder methods:
-    for feature_store, graph_store in itertools.product(
-            feature_stores, graph_stores):
+    edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(
+        edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
+        edge_type=('author', 'to', 'paper'),
+        layout='csr',
+    )
 
-        # Initialize feature store, graph store, and reference:
-        feature_store = feature_store()
-        graph_store = graph_store()
-        hetero_data = HeteroData()
+    # Construct neighbor loaders:
+    loader1 = NeighborLoader(data, batch_size=20,
+                             input_nodes=('paper', range(100)),
+                             num_neighbors=[-1] * 2)
 
-        # Set up node features:
-        x = torch.arange(100)
-        hetero_data['paper'].x = x
-        feature_store.put_tensor(x, group_name='paper', attr_name='x',
-                                 index=None)
-        x = torch.arange(100, 300)
-        hetero_data['author'].x = x
-        feature_store.put_tensor(x, group_name='author', attr_name='x',
-                                 index=None)
+    loader2 = NeighborLoader((feature_store, graph_store), batch_size=20,
+                             input_nodes=('paper', range(100)),
+                             num_neighbors=[-1] * 2)
 
-        # Set up edge indices:
-        edge_index, rowptr, col = _get_edge_index(100, 100, 500)
-        hetero_data['paper', 'to', 'paper'].edge_index = edge_index
-        graph_store.put_edge_index(
-            edge_index=(rowptr, col),
-            edge_type=('paper', 'to', 'paper'),
-            layout='csr',
-        )
+    assert str(loader1) == str(loader2)
+    assert len(loader1) == len(loader2)
 
-        edge_index, rowptr, col = _get_edge_index(100, 200, 1000)
-        hetero_data['paper', 'to', 'author'].edge_index = edge_index
-        graph_store.put_edge_index(
-            edge_index=(rowptr, col),
-            edge_type=('paper', 'to', 'author'),
-            layout='csr',
-        )
+    for batch1, batch2 in zip(loader1, loader2):
+        assert len(batch1) == len(batch2)
+        assert batch1['paper'].batch_size == batch2['paper'].batch_size
+        assert torch.allclose(batch1['paper'].x, batch2['paper'].x)
+        assert torch.allclose(batch1['author'].x, batch2['author'].x)
 
-        edge_index, rowptr, col = _get_edge_index(200, 100, 1000)
-        hetero_data['author', 'to', 'paper'].edge_index = edge_index
-        graph_store.put_edge_index(
-            edge_index=(rowptr, col),
-            edge_type=('author', 'to', 'paper'),
-            layout='csr',
-        )
-
-        # Construct neighbor loaders:
-        batch_size = 20
-        input_type = 'paper'
-        hetero_data_loader = NeighborLoader(
-            data=hetero_data,
-            num_neighbors=[-1] * 2,
-            input_nodes=input_type,
-            batch_size=batch_size,
-            directed=directed,
-        )
-
-        input_type = feature_store._tensor_attr_cls(group_name='paper',
-                                                    attr_name='x')
-        custom_loader = NeighborLoader(
-            data=(feature_store, graph_store),
-            input_nodes=input_type,
-            num_neighbors=[-1] * 2,
-            batch_size=batch_size,
-            is_sorted=True,
-            directed=directed,
-        )
-
-        # Basic assertions:
-        assert str(custom_loader) == 'NeighborLoader()'
-        assert len(custom_loader) == (100 + batch_size - 1) // batch_size
-
-        # Equivalent input nodes:
-        hetero_input_nodes = get_input_nodes(hetero_data,
-                                             hetero_data_loader.input_nodes)
-        custom_input_nodes = get_input_nodes((feature_store, graph_store),
-                                             custom_loader.input_nodes)
-
-        assert hetero_input_nodes == custom_input_nodes
-
-        # Equivalent inner representations:
-        assert (hetero_data_loader.neighbor_sampler.node_types ==
-                custom_loader.neighbor_sampler.node_types)
-        assert (hetero_data_loader.neighbor_sampler.edge_types ==
-                custom_loader.neighbor_sampler.edge_types)
-
-        # Equivalent neighbor sampler outputs:
-        expected = hetero_data_loader.neighbor_sampler([0, 1, 2, 3])
-        actual = custom_loader.neighbor_sampler([0, 1, 2, 3])
-
-        for i in range(len(expected) - 1):
-            _assert_tensor_dict_equal(expected[i], actual[i])
-
-        # Equivalent outputs when iterating the `DataLoader`:
-        custom_batches = []
-        for batch in custom_loader:
-            assert isinstance(batch, HeteroData)
-            custom_batches.append(batch)
-
-        hetero_data_batches = []
-        for batch in hetero_data_loader:
-            hetero_data_batches.append(batch)
-
-        for expected, actual in zip(hetero_data_batches, custom_batches):
-            # Check node features:
-            for node_type in actual.node_types:
-                assert torch.equal(expected[node_type].x, actual[node_type].x)
-
-            # Check edge indices:
-            for edge_type in actual.edge_types:
-                assert torch.equal(expected[edge_type].edge_index,
-                                   actual[edge_type].edge_index)
+        assert torch.allclose(batch1['paper', 'to', 'paper'].edge_index,
+                              batch2['paper', 'to', 'paper'].edge_index)
+        assert torch.allclose(batch1['paper', 'to', 'author'].edge_index,
+                              batch2['paper', 'to', 'author'].edge_index)
+        assert torch.allclose(batch1['author', 'to', 'paper'].edge_index,
+                              batch2['author', 'to', 'paper'].edge_index)
