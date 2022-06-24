@@ -335,8 +335,8 @@ class FeatureStore(MutableMapping):
         .. note::
             The default implementation simply iterates over all calls to
             :meth:`get_tensor`. Implementor classes that can provide
-            additional, more performant performant functionality are
-            recommended to override this method.
+            additional, more performant functionality are recommended to
+            to override this method.
         """
         return [self._get_tensor(attr) for attr in attrs]
 
