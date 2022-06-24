@@ -336,12 +336,16 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     for batch1, batch2 in zip(loader1, loader2):
         assert len(batch1) == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
-        assert torch.allclose(batch1['paper'].x, batch2['paper'].x)
-        assert torch.allclose(batch1['author'].x, batch2['author'].x)
 
-        assert torch.allclose(batch1['paper', 'to', 'paper'].edge_index,
-                              batch2['paper', 'to', 'paper'].edge_index)
-        assert torch.allclose(batch1['paper', 'to', 'author'].edge_index,
-                              batch2['paper', 'to', 'author'].edge_index)
-        assert torch.allclose(batch1['author', 'to', 'paper'].edge_index,
-                              batch2['author', 'to', 'paper'].edge_index)
+        # Mapped indices of neighbors may be differently sorted:
+        assert torch.allclose(batch1['paper'].x.sort()[0],
+                              batch2['paper'].x.sort()[0])
+        assert torch.allclose(batch1['author'].x.sort()[0],
+                              batch2['author'].x.sort()[0])
+
+        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
+            'paper', 'to', 'paper'].edge_index.size())
+        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
+            'paper', 'to', 'author'].edge_index.size())
+        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
+            'author', 'to', 'paper'].edge_index.size())
