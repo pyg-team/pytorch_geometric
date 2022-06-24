@@ -1,5 +1,3 @@
-import itertools
-
 import numpy as np
 import pytest
 import torch
@@ -7,12 +5,11 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.loader.neighbor_loader import get_input_nodes
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withRegisteredOp
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
-from torch_geometric.utils import k_hop_subgraph, sort_edge_index
+from torch_geometric.utils import k_hop_subgraph
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
