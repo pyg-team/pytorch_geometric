@@ -20,12 +20,17 @@ class MultiAggregation(Aggregation):
             raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
                              f"not be empty")
 
-        if not aggrs_kwargs:
+        if aggrs_kwargs is None:
             aggrs_kwargs = [{}] * len(aggrs)
+        elif len(aggrs) != len(aggrs_kwargs):
+            raise ValueError(f"'aggrs_kwargs' with invalid length passed to "
+                             f"'{self.__class__.__name__}' "
+                             f"(got '{len(aggrs_kwargs)}', "
+                             f"expected '{len(aggrs)}')")
 
         self.aggrs = [
-            aggregation_resolver(aggr, **arg_kwargs)
-            for aggr, arg_kwargs in zip(aggrs, aggrs_kwargs)
+            aggregation_resolver(aggr, **aggr_kwargs)
+            for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
         ]
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
