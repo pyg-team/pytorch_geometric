@@ -1,36 +1,9 @@
-from typing import Dict, Optional, Tuple
-
 import pytest
 import torch
-from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.graph_store import (
-    EdgeAttr,
-    EdgeLayout,
-    EdgeTensorType,
-    GraphStore,
-)
-
-
-class MyGraphStore(GraphStore):
-    def __init__(self):
-        super().__init__()
-        self.store: Dict[EdgeAttr, Tuple[Tensor, Tensor]] = {}
-
-    @staticmethod
-    def key(attr: EdgeAttr) -> str:
-        return (attr.edge_type, attr.layout.value)
-
-    def _put_edge_index(self, edge_index: EdgeTensorType,
-                        edge_attr: EdgeAttr) -> bool:
-        self.store[MyGraphStore.key(edge_attr)] = edge_index
-
-    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        return self.store.get(MyGraphStore.key(edge_attr), None)
-
-    def get_all_edge_attrs(self):
-        return [EdgeAttr(*key) for key in self.store.keys()]
+from torch_geometric.data.graph_store import EdgeLayout
+from torch_geometric.testing.graph_store import MyGraphStore
 
 
 def test_graph_store():
