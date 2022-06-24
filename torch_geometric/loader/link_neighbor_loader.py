@@ -278,6 +278,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                          collate_fn=self.neighbor_sampler, **kwargs)
 
     def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
+        # NOTE This function will always be executed on the main thread!
         if isinstance(self.data, Data):
             node, row, col, edge, edge_label_index, edge_label = out
             data = filter_data(self.data, node, row, col, edge,

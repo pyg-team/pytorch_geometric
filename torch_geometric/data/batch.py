@@ -23,8 +23,16 @@ class DynamicInheritance(type):
             new_cls = base_cls
         else:
             name = f'{base_cls.__name__}{cls.__name__}'
+
+            # NOTE `MetaResolver` is necessary to resolve metaclass conflict
+            # problems between `DynamicInheritance` and the metaclass of
+            # `base_cls`. In particular, it creates a new common metaclass
+            # from the defined metaclasses.
+            class MetaResolver(type(cls), type(base_cls)):
+                pass
+
             if name not in globals():
-                globals()[name] = type(name, (cls, base_cls), {})
+                globals()[name] = MetaResolver(name, (cls, base_cls), {})
             new_cls = globals()[name]
 
         params = list(inspect.signature(base_cls.__init__).parameters.items())

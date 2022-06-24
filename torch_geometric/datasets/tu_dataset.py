@@ -185,15 +185,17 @@ class TUDataset(InMemoryDataset):
     def process(self):
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
 
-        if self.pre_filter is not None:
+        if self.pre_filter is not None or self.pre_transform is not None:
             data_list = [self.get(idx) for idx in range(len(self))]
-            data_list = [data for data in data_list if self.pre_filter(data)]
-            self.data, self.slices = self.collate(data_list)
 
-        if self.pre_transform is not None:
-            data_list = [self.get(idx) for idx in range(len(self))]
-            data_list = [self.pre_transform(data) for data in data_list]
+            if self.pre_filter is not None:
+                data_list = [d for d in data_list if self.pre_filter(d)]
+
+            if self.pre_transform is not None:
+                data_list = [self.pre_transform(d) for d in data_list]
+
             self.data, self.slices = self.collate(data_list)
+            self._data_list = None  # Reset cache.
 
         torch.save((self.data, self.slices, sizes), self.processed_paths[0])
 

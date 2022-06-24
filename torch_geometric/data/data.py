@@ -1,5 +1,6 @@
 import copy
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import (
     Any,
     Callable,
@@ -17,6 +18,13 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.feature_store import (
+    FeatureStore,
+    FeatureTensorType,
+    TensorAttr,
+    _field_status,
+)
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -24,7 +32,14 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    OptTensor,
+)
 from torch_geometric.utils import subgraph
 
 
@@ -300,7 +315,26 @@ class BaseData(object):
 ###############################################################################
 
 
-class Data(BaseData):
+@dataclass
+class DataTensorAttr(TensorAttr):
+    r"""Attribute class for `Data`, which does not require a `group_name`."""
+    def __init__(self, attr_name=_field_status.UNSET,
+                 index=_field_status.UNSET):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(None, attr_name, index)
+
+
+@dataclass
+class DataEdgeAttr(EdgeAttr):
+    r"""Edge attribute class for `Data`, which does not require a
+    `edge_type`."""
+    def __init__(self, layout: EdgeLayout, is_sorted: bool = False,
+                 edge_type: EdgeType = None):
+        # Treat group_name as optional, and move it to the end
+        super().__init__(edge_type, layout, is_sorted)
+
+
+class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
@@ -348,7 +382,14 @@ class Data(BaseData):
     def __init__(self, x: OptTensor = None, edge_index: OptTensor = None,
                  edge_attr: OptTensor = None, y: OptTensor = None,
                  pos: OptTensor = None, **kwargs):
-        super().__init__()
+        # `Data` doesn't support group_name, so we need to adjust `TensorAttr`
+        # accordingly here to avoid requiring `group_name` to be set:
+        super().__init__(tensor_attr_cls=DataTensorAttr)
+
+        # `Data` doesn't support edge_type, so we need to adjust `EdgeAttr`
+        # accordingly here to avoid requiring `edge_type` to be set:
+        GraphStore.__init__(self, edge_attr_cls=DataEdgeAttr)
+
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
         if x is not None:
@@ -384,6 +425,9 @@ class Data(BaseData):
     def __delattr__(self, key: str):
         delattr(self._store, key)
 
+    # TODO consider supporting the feature store interface for
+    # __getitem__, __setitem__, and __delitem__ so, for example, we
+    # can accept key: Union[str, TensorAttr] in __getitem__.
     def __getitem__(self, key: str) -> Any:
         return self._store[key]
 
@@ -692,8 +736,136 @@ class Data(BaseData):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
+    # FeatureStore interface ##################################################
+
+    def items(self):
+        r"""Returns an `ItemsView` over the stored attributes in the `Data`
+        object."""
+        # NOTE this is necessary to override the default `MutableMapping`
+        # items() method.
+        return self._store.items()
+
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Stores a feature tensor in node storage."""
+        out = getattr(self, attr.attr_name, None)
+        if out is not None and attr.index is not None:
+            # Attr name exists, handle index:
+            out[attr.index] = tensor
+        else:
+            # No attr name (or None index), just store tensor:
+            setattr(self, attr.attr_name, tensor)
+        return True
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Obtains a feature tensor from node storage."""
+        # Retrieve tensor and index accordingly:
+        tensor = getattr(self, attr.attr_name, None)
+        if tensor is not None:
+            # TODO this behavior is a bit odd, since TensorAttr requires that
+            # we set `index`. So, we assume here that indexing by `None` is
+            # equivalent to not indexing at all, which is not in line with
+            # Python semantics.
+            return tensor[attr.index] if attr.index is not None else tensor
+        return None
+
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        r"""Deletes a feature tensor from node storage."""
+        # Remove tensor entirely:
+        if hasattr(self, attr.attr_name):
+            delattr(self, attr.attr_name)
+            return True
+        return False
+
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        return self._get_tensor(attr).size()
+
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        r"""Obtains all feature attributes stored in `Data`."""
+        return [TensorAttr(attr_name=name) for name in self._store.keys()]
+
+    def __len__(self) -> int:
+        return BaseData.__len__(self)
+
+    # GraphStore interface ####################################################
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        r"""Stores `edge_index` in `Data`, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
+        setattr(self, attr_name, attr_val)
+        return True
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""Obtains the edge index corresponding to `edge_attr` in `Data`,
+        in the specified layout."""
+        # Get the requested layout and the edge tensor type associated with it:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = getattr(self._store, attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
+        in `Data` and their layouts"""
+        out = []
+        for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+            if attr_name in self:
+                out.append(EdgeAttr(edge_type=None, layout=layout))
+        return out
+
 
 ###############################################################################
+
+EDGE_LAYOUT_TO_ATTR_NAME = {
+    EdgeLayout.COO: 'edge_index',
+    EdgeLayout.CSR: 'adj',
+    EdgeLayout.CSC: 'adj_t',
+}
+
+
+def edge_tensor_type_to_adj_type(
+    attr: EdgeAttr,
+    tensor_tuple: EdgeTensorType,
+) -> Adj:
+    r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
+    src, dst = tensor_tuple
+
+    if attr.layout == EdgeLayout.COO:
+        # COO: (row, col)
+        if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()):
+            # Do not copy if the tensor tuple is constructed from the same
+            # storage (instead, return a view):
+            out = torch.empty(0, dtype=src.dtype)
+            out.set_(src.storage(), storage_offset=0,
+                     size=src.size() + dst.size())
+            return out.view(2, -1)
+        return torch.stack(tensor_tuple)
+    elif attr.layout == EdgeLayout.CSR:
+        # CSR: (rowptr, col)
+        return SparseTensor(rowptr=src, col=dst, is_sorted=True)
+    elif attr.layout == EdgeLayout.CSC:
+        # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
+        # is the compressed column and col is the uncompressed row.
+        return SparseTensor(rowptr=dst, col=src, is_sorted=True)
+    raise ValueError(f"Bad edge layout (got '{attr.layout}')")
+
+
+def adj_type_to_edge_tensor_type(layout: EdgeLayout,
+                                 edge_index: Adj) -> EdgeTensorType:
+    r"""Converts a PyG Adj tensor to an EdgeTensorType equivalent."""
+    if isinstance(edge_index, Tensor):
+        return (edge_index[0], edge_index[1])  # (row, col)
+    if layout == EdgeLayout.COO:
+        return edge_index.coo()[:-1]  # (row, col
+    elif layout == EdgeLayout.CSR:
+        return edge_index.csr()[:-1]  # (rowptr, col)
+    else:
+        return edge_index.csr()[-2::-1]  # (row, colptr)
 
 
 def size_repr(key: Any, value: Any, indent: int = 0) -> str:

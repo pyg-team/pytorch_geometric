@@ -38,7 +38,7 @@ class SAGEConv(MessagePassing):
         out_channels (int): Size of each output sample.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"mean"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"add"`)
+            (default: :obj:`"mean"`)
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
             :math:`\frac{\mathbf{x}^{\prime}_i}

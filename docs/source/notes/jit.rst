@@ -99,7 +99,8 @@ However, if you want your own GNN module to be jittable, you need to account for
             def forward(self, x: Tensor, edge_index: Tensor,
                         edge_weight: Optional[Tensor]) -> Tensor:
 
-                return self.propagate(edge_index, x=x, edge_weight=edge_weight)
+                return self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                                      size=None)
 
    2. Declaring the type of propagation arguments as a comment anywhere inside your module:
 
@@ -115,4 +116,10 @@ However, if you want your own GNN module to be jittable, you need to account for
                         edge_weight: Optional[Tensor]) -> Tensor:
 
                 # propagate_type: (x: Tensor, edge_weight: Optional[Tensor])
-                return self.propagate(edge_index, x=x, edge_weight=edge_weight)
+                return self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                                      size=None)
+
+.. warning::
+
+   Importantly, due to TorchScript limitations, one also has to pass in the :obj:`size` attribute to :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate`.
+   In most cases, this can be simply set to :obj:`None` in which case it will be automatically inferred.
