@@ -33,7 +33,13 @@ class MyFeatureStore(FeatureStore):
         if tensor is None:
             return None
 
-        if attr.index is None:  # None indices return the whole tensor:
+        # None indices return the whole tensor:
+        if attr.index is None:
+            return tensor
+
+        # Empty slices return the whole tensor:
+        if (isinstance(attr.index, slice)
+                and attr.index == slice(None, None, None)):
             return tensor
 
         idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
