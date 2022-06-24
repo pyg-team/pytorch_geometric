@@ -453,9 +453,8 @@ def get_input_nodes(
 ) -> Tuple[Optional[str], Sequence]:
     def to_index(tensor):
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
-            return torch.nonzero(as_tuple=False).view(-1)
-        else:
-            return tensor
+            return tensor.nonzero(as_tuple=False).view(-1)
+        return tensor
 
     if isinstance(data, Data):
         if input_nodes is None:
