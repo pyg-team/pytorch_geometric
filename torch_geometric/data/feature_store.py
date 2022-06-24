@@ -288,7 +288,7 @@ class FeatureStore(MutableMapping):
             return torch.from_numpy(tensor)
         if (isinstance(attr.index, np.ndarray)
                 and isinstance(tensor, torch.Tensor)):
-            return tensor.numpy()
+            return tensor.detach().cpu().numpy()
         return tensor
 
     @abstractmethod
@@ -326,19 +326,19 @@ class FeatureStore(MutableMapping):
         tensor = self._get_tensor(attr)
         if tensor is None:
             raise KeyError(f"A tensor corresponding to '{attr}' was not found")
-        return FeatureStore._to_type(attr, tensor)
+        return self._to_type(attr, tensor)
 
     def _multi_get_tensor(
             self, attrs: List[TensorAttr]) -> Optional[FeatureTensorType]:
-        r"""To be implemented by :class:`FeatureStore` subclasses."""
+        r"""To be implemented by :class:`FeatureStore` subclasses.
 
-        # NOTE The default implementation simply iterates over calls to
-        # `get_tensor`: implementor classes that can provide additional, more
-        # performant functionality are recommended to override this method.
-        out: List[FeatureTensorType] = []
-        for attr in attrs:
-            out.append(self._get_tensor(attr))
-        return out
+        .. note::
+            The default implementation simply iterates over all calls to
+            :meth:`get_tensor`. Implementor classes that can provide
+            additional, more performant performant functionality are
+            recommended to override this method.
+        """
+        return [self._get_tensor(attr) for attr in attrs]
 
     def multi_get_tensor(self,
                          attrs: List[TensorAttr]) -> List[FeatureTensorType]:
@@ -363,8 +363,8 @@ class FeatureStore(MutableMapping):
         if len(bad_attrs) > 0:
             raise ValueError(
                 f"The input TensorAttr(s) '{bad_attrs}' are not fully "
-                f"specified. Please fully specify the input attrs by "
-                f"specifying all 'UNSET' fields.")
+                f"specified. Please fully specify them by specifying all "
+                f"'UNSET' fields")
 
         tensors = self._multi_get_tensor(attrs)
         if None in tensors:
@@ -373,7 +373,7 @@ class FeatureStore(MutableMapping):
                            f"'{bad_attrs}' were not found")
 
         return [
-            FeatureStore._to_type(attr, tensor)
+            self._to_type(attr, tensor)
             for attr, tensor in zip(attrs, tensors)
         ]
 
