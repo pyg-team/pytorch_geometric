@@ -110,7 +110,8 @@ class NeighborSampler:
 
             self.node_types = list(
                 set(node_attr.group_name for node_attr in node_attrs))
-            self.edge_types = [edge_attr.edge_type for edge_attr in edge_attrs]
+            self.edge_types = list(
+                set(edge_attr.edge_type for edge_attr in edge_attrs))
 
             # Set other required parameters:
             if isinstance(num_neighbors, (list, tuple)):
