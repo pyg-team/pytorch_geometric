@@ -11,7 +11,7 @@ def normalize_string(s: str) -> str:
 def resolver(classes: List[Any], class_dict: Dict[str, Any],
              query: Union[Any, str], base_cls: Optional[Any], *args, **kwargs):
 
-    if isinstance(query, str):
+    if not isinstance(query, str):
         return query
 
     query_repr = normalize_string(query)
@@ -65,13 +65,13 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
 
 
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
-    import torch_geometric.nn.aggr as aggrs
-    base_cls = aggrs.Aggregation
+    import torch_geometric.nn.aggr as aggr
+    base_cls = aggr.Aggregation
     aggrs = [
-        aggr for aggr in vars(aggrs).values()
+        aggr for aggr in vars(aggr).values()
         if isinstance(aggr, type) and issubclass(aggr, base_cls)
     ]
     aggr_dict = {
-        'add': aggrs.SumAggregation,
+        'add': aggr.SumAggregation,
     }
     return resolver(aggrs, aggr_dict, query, base_cls, *args, **kwargs)
