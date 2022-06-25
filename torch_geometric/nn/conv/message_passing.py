@@ -60,7 +60,7 @@ class MessagePassing(torch.nn.Module):
             to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
             In addition, can be a :class:`~torch_geometric.nn.aggr.Aggregation`
-            module (any any string that automatically resolves to it).
+            module (or any string that automatically resolves to it).
             If given as a list, will make use of multiple aggregations in which
             different outputs will get concatenated in the last dimension.
             If set to :obj:`None`, the :class:`MessagePassing` instantiation is
