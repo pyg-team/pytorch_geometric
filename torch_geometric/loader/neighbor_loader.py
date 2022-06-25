@@ -473,7 +473,7 @@ def get_input_nodes(
 
         node_type, input_nodes = input_nodes
         if input_nodes is None:
-            return input_nodes[0], range(data[input_nodes[0]].num_nodes)
+            return node_type, range(data[node_type].num_nodes)
         return node_type, to_index(input_nodes)
 
     else:  # Tuple[FeatureStore, GraphStore]
