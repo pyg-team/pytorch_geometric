@@ -154,6 +154,7 @@ class MessagePassing(torch.nn.Module):
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
+        self.fuse &= self.aggr in SPMM_AGGRS
 
         # Support for explainability.
         self._explain = False
@@ -316,7 +317,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and self.aggr in SPMM_AGGRS and not self.explain):
+                and not self.explain):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -765,7 +766,7 @@ class MessagePassing(torch.nn.Module):
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
             prop_return_type=prop_return_type,
-            fuse=self.fuse and self.aggr in SPMM_AGGRS,
+            fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
             edge_user_args=self.__edge_user_args__,
