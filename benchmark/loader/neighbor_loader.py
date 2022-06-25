@@ -11,7 +11,6 @@ from torch_geometric.loader import NeighborLoader
 
 
 def run(args: argparse.ArgumentParser) -> None:
-    print(args.hetero_neighbor_sizes)
     for dataset_name in args.datasets:
         print(f"Dataset: {dataset_name}")
         root = osp.join(args.root, dataset_name)
