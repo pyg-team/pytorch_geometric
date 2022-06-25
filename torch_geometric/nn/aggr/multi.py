@@ -29,17 +29,17 @@ class MultiAggregation(Aggregation):
                              f"expected '{len(aggrs)}'). Ensure that both "
                              f"'aggrs' and 'aggrs_kwargs' are consistent")
 
-        self.aggrs = [
+        self.aggrs = torch.nn.ModuleList([
             aggregation_resolver(aggr, **aggr_kwargs)
             for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
-        ]
+        ])
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         outs = []
         for aggr in self.aggrs:
-            outs.append(aggr(x, index, ptr=ptr, dim_size=dim_size, dim=dim))
+            outs.append(aggr(x, index, ptr, dim_size, dim))
         return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]
 
     def __repr__(self) -> str:

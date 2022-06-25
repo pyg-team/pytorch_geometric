@@ -37,7 +37,7 @@ from .utils.typing import (
     split_types_repr,
 )
 
-SPMM_AGGRS = {'add', 'sum', 'mean', 'min', 'max', None}
+FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 
 
 class MessagePassing(torch.nn.Module):
@@ -154,7 +154,8 @@ class MessagePassing(torch.nn.Module):
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
-        self.fuse &= self.aggr in SPMM_AGGRS
+        if self.aggr is not None:
+            self.fuse &= isinstance(self.aggr, str) and self.aggr in FUSE_AGGRS
 
         # Support for explainability.
         self._explain = False
