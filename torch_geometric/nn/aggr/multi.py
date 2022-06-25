@@ -26,7 +26,8 @@ class MultiAggregation(Aggregation):
             raise ValueError(f"'aggrs_kwargs' with invalid length passed to "
                              f"'{self.__class__.__name__}' "
                              f"(got '{len(aggrs_kwargs)}', "
-                             f"expected '{len(aggrs)}')")
+                             f"expected '{len(aggrs)}'). Ensure that both "
+                             f"'aggrs' and 'aggrs_kwargs' are consistent")
 
         self.aggrs = [
             aggregation_resolver(aggr, **aggr_kwargs)
