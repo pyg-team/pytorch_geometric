@@ -2,6 +2,7 @@ import copy
 
 import pytest
 import torch
+import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
@@ -400,3 +401,78 @@ def test_hetero_data_to_canonical():
 
     with pytest.raises(TypeError, match="missing 1 required"):
         data['user', 'product']
+
+
+# Feature Store ###############################################################
+
+
+def test_basic_feature_store():
+    data = HeteroData()
+    x = torch.randn(20, 20)
+
+    # Put tensor:
+    assert data.put_tensor(copy.deepcopy(x), group_name='paper', attr_name='x',
+                           index=None)
+    assert torch.equal(data['paper'].x, x)
+
+    # Put (modify) tensor slice:
+    x[15:] = 0
+    data.put_tensor(0, group_name='paper', attr_name='x',
+                    index=slice(15, None, None))
+
+    # Get tensor:
+    out = data.get_tensor(group_name='paper', attr_name='x', index=None)
+    assert torch.equal(x, out)
+
+    # Get tensor size:
+    assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
+
+    # Get tensor attrs:
+    tensor_attrs = data.get_all_tensor_attrs()
+    assert len(tensor_attrs) == 1
+    assert tensor_attrs[0].group_name == 'paper'
+    assert tensor_attrs[0].attr_name == 'x'
+
+    # Remove tensor:
+    assert 'x' in data['paper'].__dict__['_mapping']
+    data.remove_tensor(group_name='paper', attr_name='x', index=None)
+    assert 'x' not in data['paper'].__dict__['_mapping']
+
+
+# Graph Store #################################################################
+
+
+def test_basic_graph_store():
+    data = HeteroData()
+
+    edge_index = torch.LongTensor([[0, 1], [1, 2]])
+    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
+                                    sparse_sizes=(3, 3))
+
+    def assert_equal_tensor_tuple(expected, actual):
+        assert len(expected) == len(actual)
+        for i in range(len(expected)):
+            assert torch.equal(expected[i], actual[i])
+
+    # We put all three tensor types: COO, CSR, and CSC, and we get them back
+    # to confirm that `GraphStore` works as intended.
+    coo = adj.coo()[:-1]
+    csr = adj.csr()[:-1]
+    csc = adj.csc()[-2::-1]  # (row, colptr)
+
+    # Put:
+    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'))
+    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'))
+    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'))
+
+    # Get:
+    assert_equal_tensor_tuple(
+        coo, data.get_edge_index(layout='coo', edge_type=('a', 'to', 'b')))
+    assert_equal_tensor_tuple(
+        csr, data.get_edge_index(layout='csr', edge_type=('a', 'to', 'c')))
+    assert_equal_tensor_tuple(
+        csc, data.get_edge_index(layout='csc', edge_type=('b', 'to', 'c')))
+
+    # Get attrs:
+    edge_attrs = data.get_all_edge_attrs()
+    assert len(edge_attrs) == 3
