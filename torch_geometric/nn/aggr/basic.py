@@ -9,38 +9,35 @@ from torch_geometric.utils import softmax
 
 
 class MeanAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
 
 
 class SumAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
-AddAggregation = SumAggregation  # Alias
-
-
 class MaxAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='max')
 
 
 class MinAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='min')
 
 
 class MulAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         # TODO Currently, `mul` reduction can only operate on `index`:
@@ -49,21 +46,19 @@ class MulAggregation(Aggregation):
 
 
 class VarAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-
         mean = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
         mean_2 = self.reduce(x * x, index, ptr, dim_size, dim, reduce='mean')
         return mean_2 - mean * mean
 
 
 class StdAggregation(VarAggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-
-        var = super().forward(x, index, ptr=ptr, dim_size=dim_size, dim=dim)
+        var = super().forward(x, index, ptr, dim_size, dim)
         return torch.sqrt(var.relu() + 1e-5)
 
 
@@ -80,7 +75,7 @@ class SoftmaxAggregation(Aggregation):
         if isinstance(self.t, Tensor):
             self.t.data.fill_(self._init_t)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
@@ -107,7 +102,7 @@ class PowerMeanAggregation(Aggregation):
         if isinstance(self.p, Tensor):
             self.p.data.fill_(self._init_p)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
