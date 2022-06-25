@@ -22,11 +22,6 @@ class SumAggregation(Aggregation):
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
-class AddAggregation(SumAggregation):
-    r"""Alias for :class:`SumAggregation`."""
-    pass
-
-
 class MaxAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
