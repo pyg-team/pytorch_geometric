@@ -5,7 +5,16 @@ import re
 from collections import OrderedDict
 from inspect import Parameter
 from itertools import chain
-from typing import Callable, List, Optional, Set, Union, get_type_hints
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Set,
+    Union,
+    get_type_hints,
+)
 from uuid import uuid1
 
 import torch
@@ -15,7 +24,7 @@ from torch_scatter import gather_csr
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
-from torch_geometric.nn.resolver import aggregation_resolver
+from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size
 
 from .utils.helpers import expand_left
@@ -28,7 +37,7 @@ from .utils.typing import (
     split_types_repr,
 )
 
-SPMM_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
+SPMM_AGGRS = {'add', 'sum', 'mean', 'min', 'max', None}
 
 
 class MessagePassing(torch.nn.Module):
@@ -47,11 +56,19 @@ class MessagePassing(torch.nn.Module):
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string or list, optional): The aggregation scheme to use
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"` or :obj:`None`). If given as a list, will make use of
-            multiple aggregations in which different outputs will get
-            concatenated in the last dimension. (default: :obj:`"add"`)
+        aggr (string or list or Aggregation, optional): The aggregation scheme
+            to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
+            :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
+            In addition, can be a :class:`~torch_geometric.nn.aggr.Aggregation`
+            module (any any string that automatically resolves to it).
+            If given as a list, will make use of multiple aggregations in which
+            different outputs will get concatenated in the last dimension.
+            If set to :obj:`None`, the :class:`MessagePassing` instantiation is
+            expected to implement its own aggregation logic via
+            :meth:`aggregate`. (default: :obj:`"add"`)
+        aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective aggregation function in case it gets automatically
+            resolved. (default: :obj:`None`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
@@ -90,26 +107,28 @@ class MessagePassing(torch.nn.Module):
     def __init__(
         self,
         aggr: Optional[Union[str, List[str], Aggregation]] = "add",
+        *,
+        aggr_kwargs: Optional[Dict[str, Any]] = None,
         flow: str = "source_to_target",
         node_dim: int = -2,
         decomposed_layers: int = 1,
         **kwargs,
     ):
-
         super().__init__()
 
-        aggr_kwargs = kwargs.get("aggr_kwargs", {})
-
-        if aggr is None or isinstance(aggr, (str, Aggregation)):
-            self.aggr_module = aggregation_resolver(aggr, **aggr_kwargs)
-            self.aggr = str(aggr) if aggr is not None else None
+        if aggr is None:
+            self.aggr = None
+            self.aggr_module = None
+        elif isinstance(aggr, (str, Aggregation)):
+            self.aggr = str(aggr)
+            self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
+            self.aggr = [str(x) for x in aggr]
             self.aggr_module = MultiAggregation(aggr, aggr_kwargs)
-            self.aggr = str(self.aggr_module)
         else:
             raise ValueError(f"Only strings, list, tuples and instances of"
-                             f"torch_geometric.nn.aggr.Aggregation are valid "
-                             f"aggregation schemes (got '{type(aggr)}')")
+                             f"`torch_geometric.nn.aggr.Aggregation` are "
+                             f"valid aggregation schemes (got '{type(aggr)}')")
 
         self.flow = flow
         assert flow in ['source_to_target', 'target_to_source']
@@ -296,7 +315,7 @@ class MessagePassing(torch.nn.Module):
 
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
-                and not self.explain and (self.aggr in SPMM_AGGRS)):
+                and self.aggr in SPMM_AGGRS and not self.explain):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -315,10 +334,7 @@ class MessagePassing(torch.nn.Module):
             update_kwargs = self.inspector.distribute('update', coll_dict)
             out = self.update(out, **update_kwargs)
 
-        # Otherwise, run both functions in separation.
-        elif isinstance(
-                edge_index,
-                Tensor) or not self.fuse or not (self.aggr in SPMM_AGGRS):
+        else:  # Otherwise, run both functions in separation.
             if decomposed_layers > 1:
                 user_args = self.__user_args__
                 decomp_args = {a[:-2] for a in user_args if a[-2:] == '_j'}
@@ -477,12 +493,12 @@ class MessagePassing(torch.nn.Module):
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.
 
-        By default, this function will delegate its call to `Aggregation`
-        modules to reduce the messages as specified in :meth:`__init__` by the
-        :obj:`aggr` argument.
+        By default, this function will delegate its call to the
+        :class:`~torch_geometric.nn.aggr.Aggregation` modules to reduce the
+        messages as specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
-        return self.aggr_module(inputs, index=index, ptr=ptr,
-                                dim_size=dim_size, dim=self.node_dim)
+        return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
+                                dim=self.node_dim)
 
     def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
@@ -493,13 +509,6 @@ class MessagePassing(torch.nn.Module):
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`.
         """
         raise NotImplementedError
-
-    def combine(self, inputs: List[Tensor]) -> Tensor:
-        r"""Combines the outputs from multiple aggregations into a single
-        representation. Will only get called in case :obj:`aggr` holds a list
-        of aggregation schemes to use."""
-        assert len(inputs) > 0
-        return torch.cat(inputs, dim=-1) if len(inputs) > 1 else inputs[0]
 
     def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
@@ -755,8 +764,7 @@ class MessagePassing(torch.nn.Module):
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
             prop_return_type=prop_return_type,
-            fuse=self.fuse,
-            single_aggr=isinstance(self.aggr_module, MultiAggregation),
+            fuse=self.fuse and self.aggr in SPMM_AGGRS,
             collect_types=collect_types,
             user_args=self.__user_args__,
             edge_user_args=self.__edge_user_args__,
