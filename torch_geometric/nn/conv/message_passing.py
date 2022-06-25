@@ -494,9 +494,9 @@ class MessagePassing(torch.nn.Module):
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.
 
-        By default, this function will delegate its call to the
-        :class:`~torch_geometric.nn.aggr.Aggregation` modules to reduce the
-        messages as specified in :meth:`__init__` by the :obj:`aggr` argument.
+        By default, this function will delegate its call to the underlying
+        :class:`~torch_geometric.nn.aggr.Aggregation` module to reduce messages
+        as specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
         return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
                                 dim=self.node_dim)
