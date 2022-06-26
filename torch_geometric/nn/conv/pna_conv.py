@@ -132,6 +132,9 @@ class PNAConv(MessagePassing):
 
         self.lin = Linear(out_channels, out_channels)
 
+        # scale hook
+        self.register_aggregate_forward_hook(self.scale_hook)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -176,26 +179,24 @@ class PNAConv(MessagePassing):
         hs = [nn(h[:, i]) for i, nn in enumerate(self.pre_nns)]
         return torch.stack(hs, dim=1)
 
-    def aggregate(self, inputs: Tensor, index: Tensor,
-                  dim_size: Optional[int] = None) -> Tensor:
+    @staticmethod
+    def scale_hook(module, inputs, out: Tensor) -> Tensor:
 
-        out = super().aggregate(inputs, index, dim_size=dim_size)
-
-        deg = degree(index, dim_size, dtype=inputs.dtype)
+        deg = degree(inputs[0]['index'], dtype=out.dtype)
         deg = deg.clamp_(1).view(-1, 1, 1)
 
         outs = []
-        for scaler in self.scalers:
+        for scaler in module.scalers:
             if scaler == 'identity':
                 pass
             elif scaler == 'amplification':
-                out = out * (torch.log(deg + 1) / self.avg_deg['log'])
+                out = out * (torch.log(deg + 1) / module.avg_deg['log'])
             elif scaler == 'attenuation':
-                out = out * (self.avg_deg['log'] / torch.log(deg + 1))
+                out = out * (module.avg_deg['log'] / torch.log(deg + 1))
             elif scaler == 'linear':
-                out = out * (deg / self.avg_deg['lin'])
+                out = out * (deg / module.avg_deg['lin'])
             elif scaler == 'inverse_linear':
-                out = out * (self.avg_deg['lin'] / deg)
+                out = out * (module.avg_deg['lin'] / deg)
             else:
                 raise ValueError(f'Unknown scaler "{scaler}".')
             outs.append(out)
