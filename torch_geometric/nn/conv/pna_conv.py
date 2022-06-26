@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 import torch
 from torch import Tensor
 from torch.nn import ModuleList, ReLU, Sequential
-from torch_scatter import scatter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -86,7 +85,7 @@ class PNAConv(MessagePassing):
                  pre_layers: int = 1, post_layers: int = 1,
                  divide_input: bool = False, **kwargs):
 
-        kwargs.setdefault('aggr', None)
+        kwargs.setdefault('aggr', aggregators)
         super().__init__(node_dim=0, **kwargs)
 
         if divide_input:
@@ -95,7 +94,6 @@ class PNAConv(MessagePassing):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.aggregators = aggregators
         self.scalers = scalers
         self.edge_dim = edge_dim
         self.towers = towers
@@ -181,27 +179,7 @@ class PNAConv(MessagePassing):
     def aggregate(self, inputs: Tensor, index: Tensor,
                   dim_size: Optional[int] = None) -> Tensor:
 
-        outs = []
-        for aggregator in self.aggregators:
-            if aggregator == 'sum':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='sum')
-            elif aggregator == 'mean':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-            elif aggregator == 'min':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='min')
-            elif aggregator == 'max':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='max')
-            elif aggregator == 'var' or aggregator == 'std':
-                mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-                mean_squares = scatter(inputs * inputs, index, 0, None,
-                                       dim_size, reduce='mean')
-                out = mean_squares - mean * mean
-                if aggregator == 'std':
-                    out = torch.sqrt(torch.relu(out) + 1e-5)
-            else:
-                raise ValueError(f'Unknown aggregator "{aggregator}".')
-            outs.append(out)
-        out = torch.cat(outs, dim=-1)
+        out = super().aggregate(inputs, index, dim_size=dim_size)
 
         deg = degree(index, dim_size, dtype=inputs.dtype)
         deg = deg.clamp_(1).view(-1, 1, 1)
