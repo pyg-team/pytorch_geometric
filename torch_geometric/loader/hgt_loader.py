@@ -135,6 +135,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         return node_dict, row_dict, col_dict, edge_dict, len(indices)
 
     def transform_fn(self, out: Any) -> HeteroData:
+        # NOTE This function will always be executed on the main thread!
         node_dict, row_dict, col_dict, edge_dict, batch_size = out
 
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,

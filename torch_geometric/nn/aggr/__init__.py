@@ -3,7 +3,6 @@ from .multi import MultiAggregation
 from .basic import (
     MeanAggregation,
     SumAggregation,
-    AddAggregation,
     MaxAggregation,
     MinAggregation,
     MulAggregation,
@@ -20,7 +19,6 @@ __all__ = classes = [
     'MultiAggregation',
     'MeanAggregation',
     'SumAggregation',
-    'AddAggregation',
     'MaxAggregation',
     'MinAggregation',
     'MulAggregation',

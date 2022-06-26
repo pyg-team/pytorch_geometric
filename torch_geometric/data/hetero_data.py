@@ -9,16 +9,31 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.data import (
+    EDGE_LAYOUT_TO_ATTR_NAME,
+    BaseData,
+    Data,
+    adj_type_to_edge_tensor_type,
+    edge_tensor_type_to_adj_type,
+    size_repr,
+)
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import EdgeAttr, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, NodeType, QueryType
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    QueryType,
+)
 from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData):
+class HeteroData(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -92,6 +107,8 @@ class HeteroData(BaseData):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        super().__init__()
+
         self.__dict__['_global_store'] = BaseStorage(_parent=self)
         self.__dict__['_node_store_dict'] = {}
         self.__dict__['_edge_store_dict'] = {}
@@ -615,6 +632,94 @@ class HeteroData(BaseData):
             data.edge_type = edge_type.repeat_interleave(sizes)
 
         return data
+
+    # FeatureStore interface ##################################################
+
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Stores a feature tensor in node storage."""
+        if not attr.is_set('index'):
+            attr.index = None
+
+        out = self._node_store_dict.get(attr.group_name, None)
+        if out:
+            # Group name exists, handle index or create new attribute name:
+            val = getattr(out, attr.attr_name)
+            if val is not None:
+                val[attr.index] = tensor
+            else:
+                setattr(self[attr.group_name], attr.attr_name, tensor)
+        else:
+            # No node storage found, just store tensor in new one:
+            setattr(self[attr.group_name], attr.attr_name, tensor)
+        return True
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Obtains a feature tensor from node storage."""
+        # Retrieve tensor and index accordingly:
+        tensor = getattr(self[attr.group_name], attr.attr_name, None)
+        if tensor is not None:
+            # TODO this behavior is a bit odd, since TensorAttr requires that
+            # we set `index`. So, we assume here that indexing by `None` is
+            # equivalent to not indexing at all, which is not in line with
+            # Python semantics.
+            return tensor[attr.index] if attr.index is not None else tensor
+        return None
+
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        r"""Deletes a feature tensor from node storage."""
+        # Remove tensor entirely:
+        if hasattr(self[attr.group_name], attr.attr_name):
+            delattr(self[attr.group_name], attr.attr_name)
+            return True
+        return False
+
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        return self._get_tensor(attr).size()
+
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        out = []
+        for group_name, group in self.node_items():
+            for attr_name in group:
+                out.append(TensorAttr(group_name, attr_name))
+        return out
+
+    def __len__(self) -> int:
+        return BaseData.__len__(self)
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    # GraphStore interface ####################################################
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        r"""Stores an edge index in edge storage, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
+        setattr(self[edge_attr.edge_type], attr_name, attr_val)
+        return True
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""Gets an edge index from edge storage, in the specified layout."""
+        # Get the requested layout and the Adj tensor associated with it:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns a list of `EdgeAttr` objects corresponding to the edge
+        indices stored in `HeteroData` and their layouts."""
+        out = []
+        for edge_type, edge_store in self.edge_items():
+            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+                if attr_name in edge_store:
+                    out.append(EdgeAttr(edge_type=edge_type, layout=layout))
+        return out
 
 
 # Helper functions ############################################################

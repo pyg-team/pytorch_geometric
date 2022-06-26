@@ -16,7 +16,7 @@ from .local_degree_profile import LocalDegreeProfile
 from .center import Center
 from .normalize_rotation import NormalizeRotation
 from .normalize_scale import NormalizeScale
-from .random_translate import RandomTranslate
+from .random_jitter import RandomJitter
 from .random_flip import RandomFlip
 from .linear_transformation import LinearTransformation
 from .random_scale import RandomScale
@@ -70,7 +70,7 @@ __all__ = [
     'Center',
     'NormalizeRotation',
     'NormalizeScale',
-    'RandomTranslate',
+    'RandomJitter',
     'RandomFlip',
     'LinearTransformation',
     'RandomScale',
@@ -109,3 +109,8 @@ __all__ = [
 ]
 
 classes = __all__
+
+from torch_geometric.deprecation import deprecated  # noqa
+
+RandomTranslate = deprecated("use 'transforms.RandomJitter' instead",
+                             'transforms.RandomTranslate')(RandomJitter)
