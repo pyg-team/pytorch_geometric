@@ -196,7 +196,7 @@ def _collate(
         return values, slices, None
 
 
-def _batch(
+def _get_batch_info(...) -> Tuple:
     slices: Any,
     device: Optional[torch.device] = None,
 ) -> Union[Tensor, Sequence, Mapping, None]:

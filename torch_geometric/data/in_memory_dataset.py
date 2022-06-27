@@ -135,7 +135,7 @@ def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
         for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-    if isinstance(node, Sequence):
+    elif isinstance(node, Sequence):
         for i, inner_value in enumerate(node):
             yield i, inner_value
     else:
