@@ -38,4 +38,4 @@ def test_dimenet_plus_plus():
         loss = F.l1_loss(out, data.y)
         loss.backward()
         optimizer.step()
-    assert loss < 1
+    assert loss < 2

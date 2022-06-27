@@ -11,7 +11,7 @@ from torch_geometric.utils import to_dense_batch
 class Aggregation(torch.nn.Module, ABC):
     r"""An abstract base class for implementing custom aggregations."""
     @abstractmethod
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         r"""
@@ -35,7 +35,7 @@ class Aggregation(torch.nn.Module, ABC):
     def reset_parameters(self):
         pass
 
-    def __call__(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                  dim: int = -2) -> Tensor:
 
@@ -62,7 +62,7 @@ class Aggregation(torch.nn.Module, ABC):
                                  f"'{dim_size}' but expected "
                                  f">= '{int(index.max()) + 1}')")
 
-        return super().__call__(x, index, ptr=ptr, dim_size=dim_size, dim=dim)
+        return super().__call__(x, index, ptr, dim_size, dim)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

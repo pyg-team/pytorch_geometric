@@ -1,6 +1,8 @@
 Installation
 ============
 
+PyG is available for Python 3.7 to Python 3.10.
+
 .. note::
     We do not recommend installation as a root user on your system Python.
     Please setup a `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_ environment or create a `Docker image <https://www.docker.com/>`_.

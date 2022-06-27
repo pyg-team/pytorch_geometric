@@ -1,18 +1,14 @@
 from typing import List, Optional, Union
 
-import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import (
     BatchNorm1d,
     Dropout,
     InstanceNorm1d,
     LayerNorm,
-    Parameter,
     ReLU,
     Sequential,
 )
-from torch_scatter import scatter, scatter_softmax
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
@@ -72,8 +68,8 @@ class GENConv(MessagePassing):
             dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
-            :obj:`"softmax_sg"`, :obj:`"power"`, :obj:`"add"`, :obj:`"mean"`,
-            :obj:`max`). (default: :obj:`"softmax"`)
+            :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`, :obj:`max`).
+            (default: :obj:`"softmax"`)
         t (float, optional): Initial inverse temperature for softmax
             aggregation. (default: :obj:`1.0`)
         learn_t (bool, optional): If set to :obj:`True`, will learn the value
@@ -113,15 +109,21 @@ class GENConv(MessagePassing):
                  learn_msg_scale: bool = False, norm: str = 'batch',
                  num_layers: int = 2, eps: float = 1e-7, **kwargs):
 
-        kwargs.setdefault('aggr', None)
-        super().__init__(**kwargs)
+        # Backward compatibility:
+        aggr = 'softmax' if aggr == 'softmax_sg' else aggr
+        aggr = 'powermean' if aggr == 'power' else aggr
+
+        aggr_kwargs = {}
+        if aggr == 'softmax':
+            aggr_kwargs = dict(t=t, learn=learn_t)
+        elif aggr == 'powermean':
+            aggr_kwargs = dict(p=p, learn=learn_p)
+
+        super().__init__(aggr=aggr, aggr_kwargs=aggr_kwargs, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.aggr = aggr
         self.eps = eps
-
-        assert aggr in ['softmax', 'softmax_sg', 'power', 'add', 'mean', 'max']
 
         channels = [in_channels]
         for i in range(num_layers - 1):
@@ -131,32 +133,15 @@ class GENConv(MessagePassing):
 
         self.msg_norm = MessageNorm(learn_msg_scale) if msg_norm else None
 
-        self.initial_t = t
-        self.initial_p = p
-
-        if learn_t and aggr == 'softmax':
-            self.t = Parameter(torch.Tensor([t]), requires_grad=True)
-        else:
-            self.t = t
-
-        if learn_p:
-            self.p = Parameter(torch.Tensor([p]), requires_grad=True)
-        else:
-            self.p = p
-
     def reset_parameters(self):
         reset(self.mlp)
+        self.aggr_module.reset_parameters()
         if self.msg_norm is not None:
             self.msg_norm.reset_parameters()
-        if self.t and isinstance(self.t, Tensor):
-            self.t.data.fill_(self.initial_t)
-        if self.p and isinstance(self.p, Tensor):
-            self.p.data.fill_(self.initial_p)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
         """"""
-
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -183,33 +168,7 @@ class GENConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
         msg = x_j if edge_attr is None else x_j + edge_attr
-        return F.relu(msg) + self.eps
-
-    def aggregate(self, inputs: Tensor, index: Tensor,
-                  dim_size: Optional[int] = None) -> Tensor:
-
-        if self.aggr == 'softmax':
-            out = scatter_softmax(inputs * self.t, index, dim=self.node_dim)
-            return scatter(inputs * out, index, dim=self.node_dim,
-                           dim_size=dim_size, reduce='sum')
-
-        elif self.aggr == 'softmax_sg':
-            out = scatter_softmax(inputs * self.t, index,
-                                  dim=self.node_dim).detach()
-            return scatter(inputs * out, index, dim=self.node_dim,
-                           dim_size=dim_size, reduce='sum')
-
-        elif self.aggr == 'power':
-            min_value, max_value = 1e-7, 1e1
-            torch.clamp_(inputs, min_value, max_value)
-            out = scatter(torch.pow(inputs, self.p), index, dim=self.node_dim,
-                          dim_size=dim_size, reduce='mean')
-            torch.clamp_(out, min_value, max_value)
-            return torch.pow(out, 1 / self.p)
-
-        else:
-            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce=self.aggr)
+        return msg.relu() + self.eps
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

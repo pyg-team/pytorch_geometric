@@ -3,7 +3,7 @@ import torch
 EPS = 1e-15
 
 
-def dense_diff_pool(x, adj, s, mask=None):
+def dense_diff_pool(x, adj, s, mask=None, normalize=True):
     r"""The differentiable pooling operator from the `"Hierarchical Graph
     Representation Learning with Differentiable Pooling"
     <https://arxiv.org/abs/1806.08804>`_ paper
@@ -44,6 +44,9 @@ def dense_diff_pool(x, adj, s, mask=None):
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        normalize (bool, optional): If set to :obj:`False`, the link
+            prediction loss is not divided by :obj:`adj.numel()`.
+            (default: :obj:`True`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
@@ -66,7 +69,8 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     link_loss = adj - torch.matmul(s, s.transpose(1, 2))
     link_loss = torch.norm(link_loss, p=2)
-    link_loss = link_loss / adj.numel()
+    if normalize is True:
+        link_loss = link_loss / adj.numel()
 
     ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
 

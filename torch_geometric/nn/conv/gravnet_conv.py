@@ -1,8 +1,8 @@
+import warnings
 from typing import Optional, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -35,9 +35,6 @@ class GravNetConv(MessagePassing):
            between the vertices; referred to as :math:`F_{\textrm{LR}}` in the
            paper.
         k (int): The number of nearest neighbors.
-        num_workers (int): Number of workers to use for k-NN computation.
-            Has no effect in case :obj:`batch` is not :obj:`None`, or the input
-            lies on the GPU. (default: :obj:`1`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -51,21 +48,24 @@ class GravNetConv(MessagePassing):
           *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
-
-
     """
     def __init__(self, in_channels: int, out_channels: int,
                  space_dimensions: int, propagate_dimensions: int, k: int,
-                 num_workers: int = 1, **kwargs):
-        super().__init__(flow='source_to_target', **kwargs)
+                 num_workers: Optional[int] = None, **kwargs):
+        super().__init__(aggr=['mean', 'max'], flow='source_to_target',
+                         **kwargs)
 
         if knn is None:
             raise ImportError('`GravNetConv` requires `torch-cluster`.')
 
+        if num_workers is not None:
+            warnings.warn(
+                "'num_workers' attribute in '{self.__class__.__name__}' is "
+                "deprecated and will be removed in a future release")
+
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.k = k
-        self.num_workers = num_workers
 
         self.lin_s = Linear(in_channels, space_dimensions)
         self.lin_h = Linear(in_channels, propagate_dimensions)
@@ -122,14 +122,6 @@ class GravNetConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return x_j * edge_weight.unsqueeze(1)
-
-    def aggregate(self, inputs: Tensor, index: Tensor,
-                  dim_size: Optional[int] = None) -> Tensor:
-        out_mean = scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce='mean')
-        out_max = scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                          reduce='max')
-        return torch.cat([out_mean, out_max], dim=-1)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
