@@ -97,8 +97,9 @@ def collate(
 
             # Add an additional batch vector for the given attribute:
             if attr in follow_batch:
-                out_store[f'{attr}_batch'] = _batch(slices, device)
-                out_store[f'{attr}_ptr'] = _ptr(slices, device)
+                batch, ptr = _batch_and_ptr(slices, device)
+                out_store[f'{attr}_batch'] = batch
+                out_store[f'{attr}_ptr'] = ptr
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
@@ -196,50 +197,38 @@ def _collate(
         return values, slices, None
 
 
-def _get_batch_info(...) -> Tuple:
+def _batch_and_ptr(
     slices: Any,
     device: Optional[torch.device] = None,
 ) -> Union[Tensor, Sequence, Mapping, None]:
     if (isinstance(slices, Tensor) and slices.dim() == 1):
         # Default case, turn slices tensor into batch.
         repeats = slices[1:] - slices[:-1]
-        return repeat_interleave(repeats.tolist(), device=device)
+        batch = repeat_interleave(repeats.tolist(), device=device)
+        ptr = cumsum(repeats.to(device))
+        return batch, ptr
 
     elif isinstance(slices, Mapping):
         # Recursively batch elements of dictionaries.
-        return {k: _batch(v, device) for k, v in slices.items()}
+        batch, ptr = {}, {}
+        for k, v in slices.items():
+            batch[k], ptr[k] = _batch_and_ptr(v, device)
+        return batch, ptr
 
     elif (isinstance(slices, Sequence) and not isinstance(slices, str)
           and isinstance(slices[0], Tensor)):
         # Recursively batch elements of lists.
-        return [_batch(s, device) for s in slices]
+        # outer list comprehension to convert list of tuples to list of lists
+        batch, ptr = [], []
+        for s in slices:
+            sub_batch, sub_ptr = _batch_and_ptr(s, device)
+            batch.append(sub_batch)
+            ptr.append(sub_ptr)
+        return batch, ptr
 
     else:
         # Failure of batching, usually due to slices.dim() != 1
-        return None
-
-
-def _ptr(
-    slices: Any,
-    device: Optional[torch.device] = None,
-) -> Union[Tensor, Sequence, Mapping, None]:
-    if (isinstance(slices, Tensor) and slices.dim() == 1):
-        # Default case, turn slices tensor into ptr.
-        repeats = slices[1:] - slices[:-1]
-        return cumsum(repeats.to(device))
-
-    elif isinstance(slices, Mapping):
-        # Recursively get ptr elements of dictionaries.
-        return {k: _ptr(v, device) for k, v in slices.items()}
-
-    elif (isinstance(slices, Sequence) and not isinstance(slices, str)
-          and isinstance(slices[0], Tensor)):
-        # Recursively get ptr elements of lists.
-        return [_ptr(s, device) for s in slices]
-
-    else:
-        # Failure of ptr, usually due to slices.dim() != 1
-        return None
+        return None, None
 
 
 ###############################################################################
