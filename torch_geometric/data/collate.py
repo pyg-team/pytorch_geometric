@@ -200,7 +200,7 @@ def _collate(
 def _batch_and_ptr(
     slices: Any,
     device: Optional[torch.device] = None,
-) -> Union[Tensor, Sequence, Mapping, None]:
+) -> Tuple[Any, Any]:
     if (isinstance(slices, Tensor) and slices.dim() == 1):
         # Default case, turn slices tensor into batch.
         repeats = slices[1:] - slices[:-1]
