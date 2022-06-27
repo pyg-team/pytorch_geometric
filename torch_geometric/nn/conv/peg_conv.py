@@ -17,14 +17,18 @@ class PEGConv(MessagePassing):
     <https://arxiv.org/abs/2203.00199>`_ paper.
 
     .. math::
-        \mathbf{X}^{'}, \mathbf{Z}^{'} = (\mathbf{\sigma} [(\hat{A} \odot M)XW],Z)
+        \mathbf{X}^{'}, \mathbf{Z}^{'} = (\mathbf{\sigma}
+         [(\mathbf{\hat{A}} \odot \mathbf{M})\mathbf{XW}],
+         \mathbf{Z})
 
-    where:math:`M_{u,v}=MLP(||Z_u-Z_v||),\forall u,v \in V`.
-    math:`\hat{A} = \hat{D}^{-1/2}(A+I)\hat{D}^{-1/2}` is the
+    where:math:`\mathbf{M}_{u,v}=MLP(||\mathbf{Z}_u-
+    \mathbf{Z}_v||),\forall u,v \in \mathbf{V}`.
+    math:`\mathbf{\hat{A}} = \mathbf{\hat{D}}^{-1/2}(\mathbf{A}
+    +\mathbf{I})\mathbf{\hat{D}}^{-1/2}` is the
     normalized adjacent matrix and
-    math:`\hat{D}_{ii} = \Sigma_{j=0}\hat{A}_{ij}` is diagonal
-    degree matrix. math:`\odot` denotes Hadamard product and math:`Z`
-    is the positional encoding.
+    math:`\mathbf{\hat{D}}_{ii} = \Sigma_{j=0}\mathbf{\hat{A}}_{ij}`
+    is diagonal degree matrix. math:`\odot` denotes Hadamard 
+    product and math:`\mathbf{Z}` is the positional encoding.
 
     The adjacency matrix can include other values than 1
     representing edge weights via the optional edge_weight tensor.
