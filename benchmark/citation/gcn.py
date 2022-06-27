@@ -17,6 +17,8 @@ parser.add_argument('--early_stopping', type=int, default=10)
 parser.add_argument('--hidden', type=int, default=16)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--normalize_features', type=bool, default=True)
+parser.add_argument('--inference', type=bool, default=False)
+parser.add_argument('--profile', type=bool, default=False) # Currently support profile in inference
 args = parser.parse_args()
 
 
@@ -41,4 +43,13 @@ class Net(torch.nn.Module):
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
-    args.early_stopping, permute_masks)
+    args.early_stopping, args.inference, args.profile, permute_masks)
+
+if args.profile:
+    import os
+    import pathlib
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    profile_file = profile_dir + 'profile-citation-GCN-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.log'
+    timeline_file = profile_dir + 'profile-citation-GCN-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.json'
+    os.rename('profile.log', profile_file)
+    os.rename('timeline.json', timeline_file)
