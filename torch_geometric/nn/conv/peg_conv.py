@@ -21,14 +21,14 @@ class PEGConv(MessagePassing):
          [(\mathbf{\hat{A}} \odot \mathbf{M})\mathbf{XW}],
          \mathbf{Z})
 
-    where:math:`\mathbf{M}_{u,v}=MLP(||\mathbf{Z}_u-
+    where :math:`\mathbf{M}_{u,v}=MLP(||\mathbf{Z}_u-
     \mathbf{Z}_v||),\forall u,v \in \mathbf{V}`.
-    math:`\mathbf{\hat{A}} = \mathbf{\hat{D}}^{-1/2}(\mathbf{A}
+    :math:`\mathbf{\hat{A}} = \mathbf{\hat{D}}^{-1/2}(\mathbf{A}
     +\mathbf{I})\mathbf{\hat{D}}^{-1/2}` is the
     normalized adjacent matrix and
-    math:`\mathbf{\hat{D}}_{ii} = \Sigma_{j=0}\mathbf{\hat{A}}_{ij}`
-    is diagonal degree matrix. math:`\odot` denotes Hadamard 
-    product and math:`\mathbf{Z}` is the positional encoding.
+    :math:`\mathbf{\hat{D}}_{ii} = \Sigma_{j=0}\mathbf{\hat{A}}_{ij}`
+    is diagonal degree matrix. :math:`\odot` denotes Hadamard 
+    product and :math:`\mathbf{Z}` is the positional encoding.
 
     The adjacency matrix can include other values than 1
     representing edge weights via the optional edge_weight tensor.
