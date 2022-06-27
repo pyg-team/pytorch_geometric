@@ -27,7 +27,7 @@ class PEGConv(MessagePassing):
     +\mathbf{I})\mathbf{\hat{D}}^{-1/2}` is the
     normalized adjacent matrix and
     math:`\mathbf{\hat{D}}_{ii} = \Sigma_{j=0}\mathbf{\hat{A}}_{ij}`
-    is diagonal degree matrix. math:`\odot` denotes Hadamard 
+    is diagonal degree matrix. math:`\odot` denotes Hadamard
     product and math:`\mathbf{Z}` is the positional encoding.
 
     The adjacency matrix can include other values than 1
