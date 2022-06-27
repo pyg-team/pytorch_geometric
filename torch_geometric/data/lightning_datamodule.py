@@ -169,8 +169,7 @@ class LightningNodeData(LightningDataModule):
     automatically used as a :obj:`datamodule` for multi-GPU node-level
     training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
-    :class:`~torch_geometric.loader.NeighborLoader` or
-    :class:`~torch_geometric.loader.LinkNeighborLoader`.
+    :class:`~torch_geometric.loader.NeighborLoader`.
 
     .. note::
 
@@ -193,20 +192,16 @@ class LightningNodeData(LightningDataModule):
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
         input_train_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of training nodes. If not given, and loader is not
-            :obj:`"link_neighbor"`, will try to automatically infer them from
-            the :obj:`data` object. (default: :obj:`None`)
+            indices of training nodes. If not given, will try to automatically
+            infer them from the :obj:`data` object. (default: :obj:`None`)
         input_val_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of validation nodes. If not given, and loader is not
-            :obj:`"link_neighbor"`, will try to automatically infer them from
-            the :obj:`data` object. (default: :obj:`None`)
+            indices of validation nodes. If not given will try to automatically
+            infer them from the :obj:`data` object. (default: :obj:`None`)
         input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of test nodes. If not given, If not given, and loader is
-            not :obj:`"link_neighbor"`, will try to automatically infer them
-            from the :obj:`data` object. (default: :obj:`None`)
+            indices of test nodes. If not given, will try to automatically
+            infer them from the :obj:`data` object. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"neighbor"`, :obj:`"link_neighbor"`).
-            (default: :obj:`"neighbor"`)
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -218,26 +213,26 @@ class LightningNodeData(LightningDataModule):
     def __init__(
         self,
         data: Union[Data, HeteroData],
-        input_train_nodes: Union[InputEdges, InputNodes] = None,
-        input_val_nodes: Union[InputEdges, InputNodes] = None,
-        input_test_nodes: Union[InputEdges, InputNodes] = None,
+        input_train_nodes: InputNodes = None,
+        input_val_nodes: InputNodes = None,
+        input_test_nodes: InputNodes = None,
         loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
 
-        assert loader in ['full', 'neighbor', 'link_neighbor']
+        assert loader in ['full', 'neighbor']
 
-        if input_train_nodes is None and loader != 'link_neighbor':
+        if input_train_nodes is None:
             input_train_nodes = infer_input_nodes(data, split='train')
 
-        if input_val_nodes is None and loader != 'link_neighbor':
+        if input_val_nodes is None:
             input_val_nodes = kwargs.pop('edge_label_index_val', None)
             if input_val_nodes is None:
                 input_val_nodes = infer_input_nodes(data, split='valid')
 
-        if input_test_nodes is None and loader != 'link_neighbor':
+        if input_test_nodes is None:
             input_test_nodes = infer_input_nodes(data, split='test')
 
         if loader == 'full' and batch_size != 1:
@@ -313,11 +308,6 @@ class LightningNodeData(LightningDataModule):
                                   neighbor_sampler=self.neighbor_sampler,
                                   shuffle=shuffle, **self.kwargs)
 
-        if self.loader == 'link_neighbor':
-            return LinkNeighborLoader(data=self.data,
-                                      edge_label_index=input_nodes,
-                                      shuffle=shuffle, **self.kwargs)
-
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
@@ -331,6 +321,148 @@ class LightningNodeData(LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_test_nodes, shuffle=False)
+
+    def __repr__(self) -> str:
+        kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
+        return f'{self.__class__.__name__}({kwargs})'
+
+
+class LightningLinkData(LightningDataModule):
+    r"""Converts a :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` object into a
+    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    automatically used as a :obj:`datamodule` for multi-GPU link-level
+    training (such as for link prediction) via `PyTorch Lightning 
+    <https://www.pytorchlightning.ai>`_. :class:`LightningDataset` will 
+    take care of providing mini-batches via
+    :class:`~torch_geometric.loader.LinkNeighborLoader`.
+
+    .. note::
+
+        Currently only the
+        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
+        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        strategies of `PyTorch Lightning
+        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
+        speed.html>`__ are supported in order to correctly share data across
+        all devices/processes:
+
+        .. code-block::
+
+            import pytorch_lightning as pl
+            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+                                 devices=4)
+            trainer.fit(model, datamodule)
+
+    Args:
+        data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` graph object.
+        input_train_edges (torch.Tensor or str or (str, torch.Tensor)): The
+            training edges. (default: :obj:`None`)
+        input_val_edges (torch.Tensor or str or (str, torch.Tensor)): The
+            validation edges. (default: :obj:`None`)
+        input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+            test edges. (default: :obj:`None`)
+        loader (str): The scalability technique to use (:obj:`"full"`,
+            :obj:`"link_neighbor"`). (default: :obj:`"link_neighbor"`)
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        num_workers: How many subprocesses to use for data loading.
+            :obj:`0` means that the data will be loaded in the main process.
+            (default: :obj:`0`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.loader.LinkNeighborLoader`.
+    """
+    def __init__(
+        self,
+        data: Union[Data, HeteroData],
+        input_train_edges: InputEdges = None,
+        input_val_edges: InputEdges = None,
+        input_test_edges: InputEdges = None,
+        loader: str = "link_neighbor",
+        batch_size: int = 1,
+        num_workers: int = 0,
+        **kwargs,
+    ):
+
+        assert loader in ['full', 'link_neighbor']
+
+        if loader == 'full' and batch_size != 1:
+            warnings.warn(f"Re-setting 'batch_size' to 1 in "
+                          f"'{self.__class__.__name__}' for loader='full' "
+                          f"(got '{batch_size}')")
+            batch_size = 1
+
+        if loader == 'full' and num_workers != 0:
+            warnings.warn(f"Re-setting 'num_workers' to 0 in "
+                          f"'{self.__class__.__name__}' for loader='full' "
+                          f"(got '{num_workers}')")
+            num_workers = 0
+
+        super().__init__(
+            has_val=input_val_edges is not None,
+            has_test=input_test_edges is not None,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            **kwargs,
+        )
+
+        if loader == 'full':
+            if kwargs.get('pin_memory', False):
+                warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
+                              f"'{self.__class__.__name__}' for loader='full' "
+                              f"(got 'True')")
+            self.kwargs['pin_memory'] = False
+
+        self.data = data
+        self.loader = loader
+
+        self.input_train_edges = input_train_edges
+        self.input_val_edges = input_val_edges
+        self.input_test_edges = input_test_edges
+
+    def prepare_data(self):
+        """"""
+        if self.loader == 'full':
+            try:
+                num_devices = self.trainer.num_devices
+            except AttributeError:
+                # PyTorch Lightning < 1.6 backward compatibility:
+                num_devices = self.trainer.num_processes
+                num_devices = max(num_devices, self.trainer.num_gpus)
+
+            if num_devices > 1:
+                raise ValueError(
+                    f"'{self.__class__.__name__}' with loader='full' requires "
+                    f"training on a single device")
+        super().prepare_data()
+
+    def dataloader(self, input_edges: InputEdges, shuffle: bool) -> DataLoader:
+        if self.loader == 'full':
+            warnings.filterwarnings('ignore', '.*does not have many workers.*')
+            warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
+            return torch.utils.data.DataLoader([self.data], shuffle=False,
+                                               collate_fn=lambda xs: xs[0],
+                                               **self.kwargs)
+
+        if self.loader == 'link_neighbor':
+            return LinkNeighborLoader(data=self.data,
+                                      edge_label_index=input_edges,
+                                      shuffle=shuffle, **self.kwargs)
+
+        raise NotImplementedError
+
+    def train_dataloader(self) -> DataLoader:
+        """"""
+        return self.dataloader(self.input_train_edges, shuffle=True)
+
+    def val_dataloader(self) -> DataLoader:
+        """"""
+        return self.dataloader(self.input_val_edges, shuffle=False)
+
+    def test_dataloader(self) -> DataLoader:
+        """"""
+        return self.dataloader(self.input_test_edges, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
