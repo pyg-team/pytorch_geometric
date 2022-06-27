@@ -9,7 +9,7 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
@@ -487,3 +487,33 @@ def test_explain_message():
     conv._edge_mask = torch.tensor([0, 0, 0, 0], dtype=torch.float)
     conv._apply_sigmoid = False
     assert conv(x, edge_index).abs().sum() == 0.
+
+
+class MyAggregatorConv(MessagePassing):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        # propagate_type: (x: TEnsor)
+        return self.propagate(edge_index, x=x, size=None)
+
+
+@pytest.mark.parametrize('aggr_module', [
+    aggr.MeanAggregation(),
+    aggr.SumAggregation(),
+    aggr.MaxAggregation(),
+    aggr.SoftmaxAggregation(),
+    aggr.PowerMeanAggregation(),
+    aggr.MultiAggregation(['mean', 'max'])
+])
+def test_message_passing_with_aggr_module(aggr_module):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyAggregatorConv(aggr=aggr_module)
+    assert isinstance(conv.aggr_module, aggr.Aggregation)
+    out = conv(x, edge_index)
+    assert out.size(0) == 4 and out.size(1) in {8, 16}
+    assert torch.allclose(conv(x, adj.t()), out)

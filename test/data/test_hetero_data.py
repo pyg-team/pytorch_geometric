@@ -424,6 +424,15 @@ def test_basic_feature_store():
     out = data.get_tensor(group_name='paper', attr_name='x', index=None)
     assert torch.equal(x, out)
 
+    # Get tensor size:
+    assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
+
+    # Get tensor attrs:
+    tensor_attrs = data.get_all_tensor_attrs()
+    assert len(tensor_attrs) == 1
+    assert tensor_attrs[0].group_name == 'paper'
+    assert tensor_attrs[0].attr_name == 'x'
+
     # Remove tensor:
     assert 'x' in data['paper'].__dict__['_mapping']
     data.remove_tensor(group_name='paper', attr_name='x', index=None)
@@ -437,7 +446,8 @@ def test_basic_graph_store():
     data = HeteroData()
 
     edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
+    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
+                                    sparse_sizes=(3, 3))
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -448,17 +458,21 @@ def test_basic_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = adj.csc()[:-1]
+    csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo', edge_type='1')
-    data.put_edge_index(csr, layout='csr', edge_type='2')
-    data.put_edge_index(csc, layout='csc', edge_type='3')
+    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'))
+    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'))
+    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'))
 
     # Get:
-    assert_equal_tensor_tuple(coo,
-                              data.get_edge_index(layout='coo', edge_type='1'))
-    assert_equal_tensor_tuple(csr,
-                              data.get_edge_index(layout='csr', edge_type='2'))
-    assert_equal_tensor_tuple(csc,
-                              data.get_edge_index(layout='csc', edge_type='3'))
+    assert_equal_tensor_tuple(
+        coo, data.get_edge_index(layout='coo', edge_type=('a', 'to', 'b')))
+    assert_equal_tensor_tuple(
+        csr, data.get_edge_index(layout='csr', edge_type=('a', 'to', 'c')))
+    assert_equal_tensor_tuple(
+        csc, data.get_edge_index(layout='csc', edge_type=('b', 'to', 'c')))
+
+    # Get attrs:
+    edge_attrs = data.get_all_edge_attrs()
+    assert len(edge_attrs) == 3

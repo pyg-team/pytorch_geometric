@@ -673,6 +673,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             return True
         return False
 
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        return self._get_tensor(attr).size()
+
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        out = []
+        for group_name, group in self.node_items():
+            for attr_name in group:
+                out.append(TensorAttr(group_name, attr_name))
+        return out
+
     def __len__(self) -> int:
         return BaseData.__len__(self)
 
@@ -683,19 +694,32 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        # Convert the edge index to a recognizable format:
+        r"""Stores an edge index in edge storage, in the specified layout."""
+        # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
+        return True
 
-    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
-        # Get the requested format and the Adj tensor associated with it:
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""Gets an edge index from edge storage, in the specified layout."""
+        # Get the requested layout and the Adj tensor associated with it:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
         if attr_val is not None:
             # Convert from Adj type to Tuple[Tensor, Tensor]
             attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
         return attr_val
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns a list of `EdgeAttr` objects corresponding to the edge
+        indices stored in `HeteroData` and their layouts."""
+        out = []
+        for edge_type, edge_store in self.edge_items():
+            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+                if attr_name in edge_store:
+                    out.append(EdgeAttr(edge_type=edge_type, layout=layout))
+        return out
 
 
 # Helper functions ############################################################

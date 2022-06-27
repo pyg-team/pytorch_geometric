@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils.mixin import CastMixin
@@ -27,6 +27,15 @@ class EdgeAttr(CastMixin):
     # avoiding sorting costs when performing neighbor sampling, and only
     # meaningful for COO (CSC and CSR are sorted by definition)
     is_sorted: bool = False
+
+    # TODO support num_nodes here, default None, so users can specify this
+    # instead of relying on default inferral
+
+    def __init__(self, edge_type: Optional[Any], layout: EdgeLayout,
+                 is_sorted: bool = False):
+        self.edge_type = edge_type
+        self.layout = EdgeLayout(layout)
+        self.is_sorted = is_sorted
 
 
 class GraphStore:
@@ -64,10 +73,10 @@ class GraphStore:
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
-    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType:
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         pass
 
-    def get_edge_index(self, *args, **kwargs) -> Optional[EdgeTensorType]:
+    def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously gets an edge_index tensor from the materialized
         graph.
 
@@ -77,14 +86,27 @@ class GraphStore:
         Returns:
             EdgeTensorType: an edge_index tensor corresonding to the provided
             attributes, or None if there is no such tensor.
+
+        Raises:
+            KeyError: if the edge index corresponding to attr was not found.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
-        return self._get_edge_index(edge_attr)
+        edge_index = self._get_edge_index(edge_attr)
+        if edge_index is None:
+            raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
+                           f"found")
+        return edge_index
 
     # TODO implement coo(), csc(), csr() methods on GraphStore, which perform
     # conversions of edge indices between formats. These conversions can also
     # automatically be performed in `get_edge_index`
+
+    # Additional methods ######################################################
+
+    @abstractmethod
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        pass
 
     # Python built-ins ########################################################
 

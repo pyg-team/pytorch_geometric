@@ -21,6 +21,7 @@ def test_activation_resolver():
 @pytest.mark.parametrize('aggr_tuple', [
     (torch_geometric.nn.aggr.MeanAggregation, 'mean'),
     (torch_geometric.nn.aggr.SumAggregation, 'sum'),
+    (torch_geometric.nn.aggr.SumAggregation, 'add'),
     (torch_geometric.nn.aggr.MaxAggregation, 'max'),
     (torch_geometric.nn.aggr.MinAggregation, 'min'),
     (torch_geometric.nn.aggr.MulAggregation, 'mul'),

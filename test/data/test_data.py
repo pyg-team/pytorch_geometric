@@ -261,6 +261,14 @@ def test_basic_feature_store():
     out = data.get_tensor(attr_name='x', index=None)
     assert torch.equal(x, out)
 
+    # Get tensor size:
+    assert data.get_tensor_size(attr_name='x') == (20, 20)
+
+    # Get tensor attrs:
+    tensor_attrs = data.get_all_tensor_attrs()
+    assert len(tensor_attrs) == 1
+    assert tensor_attrs[0].attr_name == 'x'
+
     # Remove tensor:
     assert 'x' in data.__dict__['_store']
     data.remove_tensor(attr_name='x', index=None)
@@ -271,6 +279,7 @@ def test_basic_feature_store():
 
 
 def test_basic_graph_store():
+    r"""Test the core graph store API."""
     data = Data()
 
     edge_index = torch.LongTensor([[0, 1], [1, 2]])
@@ -285,7 +294,7 @@ def test_basic_graph_store():
     # to confirm that `GraphStore` works as intended.
     coo = adj.coo()[:-1]
     csr = adj.csr()[:-1]
-    csc = adj.csc()[:-1]
+    csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
     data.put_edge_index(coo, layout='coo')
@@ -296,3 +305,7 @@ def test_basic_graph_store():
     assert_equal_tensor_tuple(coo, data.get_edge_index('coo'))
     assert_equal_tensor_tuple(csr, data.get_edge_index('csr'))
     assert_equal_tensor_tuple(csc, data.get_edge_index('csc'))
+
+    # Get attrs:
+    edge_attrs = data.get_all_edge_attrs()
+    assert len(edge_attrs) == 3
