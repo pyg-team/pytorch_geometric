@@ -332,8 +332,8 @@ class LightningLinkData(LightningDataModule):
     :class:`~torch_geometric.data.HeteroData` object into a
     :class:`pytorch_lightning.LightningDataModule` variant, which can be
     automatically used as a :obj:`datamodule` for multi-GPU link-level
-    training (such as for link prediction) via `PyTorch Lightning 
-    <https://www.pytorchlightning.ai>`_. :class:`LightningDataset` will 
+    training (such as for link prediction) via `PyTorch Lightning
+    <https://www.pytorchlightning.ai>`_. :class:`LightningDataset` will
     take care of providing mini-batches via
     :class:`~torch_geometric.loader.LinkNeighborLoader`.
 
