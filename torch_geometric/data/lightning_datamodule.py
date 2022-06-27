@@ -1,9 +1,11 @@
 import warnings
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import torch
 
 from torch_geometric.data import Data, Dataset, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
@@ -212,7 +214,7 @@ class LightningNodeData(LightningDataModule):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         input_train_nodes: InputNodes = None,
         input_val_nodes: InputNodes = None,
         input_test_nodes: InputNodes = None,
@@ -331,7 +333,13 @@ class LightningNodeData(LightningDataModule):
 ###############################################################################
 
 
-def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
+def infer_input_nodes(
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+        split: str) -> InputNodes:
+    if isinstance(data, Tuple):
+        # The GraphStore is the HeteroData at the moment.
+        data = data[1]
+
     attr_name: Optional[str] = None
     if f'{split}_mask' in data:
         attr_name = f'{split}_mask'

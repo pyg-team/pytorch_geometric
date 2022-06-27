@@ -196,7 +196,6 @@ def filter_feature_store(
     r"""Constructs a `HeteroData` object from a feature store that only holds
     nodes in `node` end edges in `edge` for each node and edge type,
     respectively."""
-
     # Construct a new `HeteroData` object:
     data = HeteroData()
 
