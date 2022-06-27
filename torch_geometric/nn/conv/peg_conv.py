@@ -17,7 +17,7 @@ class PEGConv(MessagePassing):
     <https://arxiv.org/abs/2203.00199>`_ paper.
 
     .. math::
-    \mathbf{X^{'}}, \mathbf{Z^{'}} =\mathbf{(\sigma [(\hat{A} \odot M)XW],Z)}
+        \mathbf{X}^{'}, \mathbf{Z}^{'} = (\mathbf{\sigma} [(\hat{A} \odot M)XW],Z)
 
     where:math:`M_{u,v}=MLP(||Z_u-Z_v||),\forall u,v \in V`.
     math:`\hat{A} = \hat{D}^{-1/2}(A+I)\hat{D}^{-1/2}` is the
