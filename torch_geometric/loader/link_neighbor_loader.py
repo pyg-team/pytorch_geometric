@@ -266,7 +266,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.directed = directed
         self.neg_sampling_ratio = neg_sampling_ratio
         self.transform = transform
-        self.neighbor_sampler = neighbor_sampler
+        self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
 
         edge_type, edge_label_index = get_edge_label_index(

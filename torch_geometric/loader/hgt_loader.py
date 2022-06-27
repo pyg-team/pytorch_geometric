@@ -130,7 +130,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
             data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
 
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
+        super().__init__(input_nodes[1].tolist(), collate_fn=self.collate_fn,
                          **kwargs)
 
     def sample(self, indices: List[int]) -> HeteroData:
