@@ -228,7 +228,7 @@ class LightningNodeData(LightningDataModule):
             input_train_nodes = infer_input_nodes(data, split='train')
 
         if input_val_nodes is None:
-            input_val_nodes = kwargs.pop('edge_label_index_val', None)
+            input_val_nodes = infer_input_nodes(data, split='val')
             if input_val_nodes is None:
                 input_val_nodes = infer_input_nodes(data, split='valid')
 
