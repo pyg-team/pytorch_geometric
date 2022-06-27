@@ -147,9 +147,7 @@ class PEGConv(MessagePassing):
     def message(self, x_i: Tensor, x_j: Tensor, edge_weight: OptTensor,
                 pos) -> Tensor:
         PE_edge_weight = self.edge_mlp(pos)
-        return x_j if edge_weight is None else (PE_edge_weight *
-                                                edge_weight.view(-1, 1) * x_j)
+        out = PE_edge_weight * x_j
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * out)
 
-    def __repr__(self):
-        return '{}({},{})'.format(self.__class__.__name__, self.in_channels,
-                                  self.out_channels)
+
