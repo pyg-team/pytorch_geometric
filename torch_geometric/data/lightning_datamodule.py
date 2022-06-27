@@ -333,9 +333,9 @@ class LightningNodeData(LightningDataModule):
 ###############################################################################
 
 
-def infer_input_nodes(
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        split: str) -> InputNodes:
+def infer_input_nodes(data: Union[Data, HeteroData, Tuple[FeatureStore,
+                                                          GraphStore]],
+                      split: str) -> InputNodes:
     if isinstance(data, Tuple):
         # The GraphStore is the HeteroData at the moment.
         data = data[1]
