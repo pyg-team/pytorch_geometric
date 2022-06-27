@@ -218,7 +218,15 @@ class NeighborSampler:
                     self.directed,
                 )
             else:
-                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+                try:
+                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+                except RuntimeError as e:
+                    raise RuntimeError(
+                        "'torch_sparse' operator "
+                        "'hetero_temporal_neighbor_sample' not "
+                        "found. Currently requires building "
+                        "'torch_sparse' from master.", e)
+
                 node_dict, row_dict, col_dict, edge_dict = fn(
                     self.node_types,
                     self.edge_types,
