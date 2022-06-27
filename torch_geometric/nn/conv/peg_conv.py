@@ -149,5 +149,3 @@ class PEGConv(MessagePassing):
         PE_edge_weight = self.edge_mlp(pos)
         out = PE_edge_weight * x_j
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * out)
-
-
