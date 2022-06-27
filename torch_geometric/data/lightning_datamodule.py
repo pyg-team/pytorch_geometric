@@ -1,4 +1,5 @@
 import warnings
+from multiprocessing.sharedctypes import Value
 from typing import Optional, Union
 
 import torch
@@ -11,7 +12,7 @@ from torch_geometric.loader.neighbor_loader import (
     NeighborSampler,
     get_input_nodes,
 )
-from torch_geometric.typing import InputNodes
+from torch_geometric.typing import InputEdges, InputNodes
 
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
@@ -169,7 +170,8 @@ class LightningNodeData(LightningDataModule):
     automatically used as a :obj:`datamodule` for multi-GPU node-level
     training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
     :class:`LightningDataset` will take care of providing mini-batches via
-    :class:`~torch_geometric.loader.NeighborLoader`.
+    :class:`~torch_geometric.loader.NeighborLoader` or
+    :class:`~torch_geometric.loader.LinkNeighborLoader`.
 
     .. note::
 
@@ -192,17 +194,20 @@ class LightningNodeData(LightningDataModule):
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
         input_train_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of training nodes. If not given, will try to automatically
-            infer them from the :obj:`data` object. (default: :obj:`None`)
+            indices of training nodes. If not given, and loader is not
+            :obj:`"link_neighbor"`, will try to automatically infer them from
+            the :obj:`data` object. (default: :obj:`None`)
         input_val_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of validation nodes. If not given, will try to
-            automatically infer them from the :obj:`data` object.
-            (default: :obj:`None`)
+            indices of validation nodes. If not given, and loader is not
+            :obj:`"link_neighbor"`, will try to automatically infer them from
+            the :obj:`data` object. (default: :obj:`None`)
         input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of test nodes. If not given, will try to automatically
-            infer them from the :obj:`data` object. (default: :obj:`None`)
+            indices of test nodes. If not given, If not given, and loader is
+            not :obj:`"link_neighbor"`, will try to automatically infer them
+            from the :obj:`data` object. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+            :obj:`"neighbor"`, :obj:`"link_neighbor"`).
+            (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -214,9 +219,9 @@ class LightningNodeData(LightningDataModule):
     def __init__(
         self,
         data: Union[Data, HeteroData],
-        input_train_nodes: InputNodes = None,
-        input_val_nodes: InputNodes = None,
-        input_test_nodes: InputNodes = None,
+        input_train_nodes: Union[InputEdges, InputNodes] = None,
+        input_val_nodes: Union[InputEdges, InputNodes] = None,
+        input_test_nodes: Union[InputEdges, InputNodes] = None,
         loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
@@ -225,29 +230,16 @@ class LightningNodeData(LightningDataModule):
 
         assert loader in ['full', 'neighbor', 'link_neighbor']
 
-        if input_train_nodes is None:
-            if loader == 'link_neighbor':
-                input_train_nodes = kwargs['edge_label_index_train']
-                del kwargs['edge_label_index_train']
-            else:
-                input_train_nodes = infer_input_nodes(data, split='train')
+        if input_train_nodes is None and loader != 'link_neighbor':
+            input_train_nodes = infer_input_nodes(data, split='train')
 
-        if input_val_nodes is None:
-            if loader == 'link_neighbor':
-                input_val_nodes = kwargs['edge_label_index_val']
-                del kwargs['edge_label_index_val']
-            else:
-                input_val_nodes = infer_input_nodes(data, split='val')
+        if input_val_nodes is None and loader != 'link_neighbor':
+            input_val_nodes = kwargs.pop('edge_label_index_val', None)
+            if input_val_nodes is None:
+                input_val_nodes = infer_input_nodes(data, split='valid')
 
-        if input_val_nodes is None:
-            input_val_nodes = infer_input_nodes(data, split='valid')
-
-        if input_test_nodes is None:
-            if loader == 'link_neighbor':
-                input_test_nodes = kwargs['edge_label_index_test']
-                del kwargs['edge_label_index_test']
-            else:
-                input_test_nodes = infer_input_nodes(data, split='test')
+        if input_test_nodes is None and loader != 'link_neighbor':
+            input_test_nodes = infer_input_nodes(data, split='test')
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
@@ -359,7 +351,6 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
         attr_name = f'{split}_index'
 
     if attr_name is None:
-        print(f'Returning none for split {split}')
         return None
 
     if isinstance(data, Data):
@@ -370,7 +361,6 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
             raise ValueError(f"Could not automatically determine the input "
                              f"nodes of {data} since there exists multiple "
                              f"types with attribute '{attr_name}'")
-        print(f'located data for split {split}')
         return list(input_nodes_dict.items())[0]
     return None
 
