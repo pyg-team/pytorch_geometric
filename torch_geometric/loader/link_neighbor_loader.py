@@ -154,6 +154,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         :obj:`neg_sampling_ratio` is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+        :obj:`time_attr` is currently implemented such that for an edge
+        `(src_node, dst_node)`, the neighbors of `src_node` can have a later
+        timestamp than `dst_node` or vice-versa.
+
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
