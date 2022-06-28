@@ -225,7 +225,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
-        time_attr: str = None,
+        time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
