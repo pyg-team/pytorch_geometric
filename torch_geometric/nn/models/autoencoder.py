@@ -94,10 +94,10 @@ class GAE(torch.nn.Module):
         pos_loss = -torch.log(
             self.decoder(z, pos_edge_index, sigmoid=True) + EPS).mean()
 
-        # Do not include self-loops in negative samples
-        pos_edge_index, _ = remove_self_loops(pos_edge_index)
-        pos_edge_index, _ = add_self_loops(pos_edge_index)
         if neg_edge_index is None:
+            # Do not include self-loops in negative samples
+            pos_edge_index, _ = remove_self_loops(pos_edge_index)
+            pos_edge_index, _ = add_self_loops(pos_edge_index)
             neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
         neg_loss = -torch.log(1 -
                               self.decoder(z, neg_edge_index, sigmoid=True) +
