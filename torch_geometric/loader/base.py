@@ -3,7 +3,7 @@ from typing import Any, Callable
 from torch.utils.data.dataloader import _BaseDataLoaderIter
 
 
-class DataLoaderIterator(object):
+class DataLoaderIterator:
     r"""A data loader iterator extended by a simple post transformation
     function :meth:`transform_fn`. While the iterator may request items from
     different sub-processes, :meth:`transform_fn` will always be executed in
