@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.testing import withRegisteredOp
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -187,3 +188,26 @@ def test_link_neighbor_loader_edge_label():
         assert batch.edge_label.dtype == torch.long
         assert torch.all(batch.edge_label[:10] == 2)
         assert torch.all(batch.edge_label[10:] == 0)
+
+
+@withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
+def test_temporal_heterogeneous_link_neighbor_loader():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(100)
+    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['author'].x = torch.arange(100, 300)
+
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                edge_label_index=('paper', 'paper'),
+                                batch_size=1, time_attr='time')
+
+    for batch in loader:
+        mask = batch['paper'].time[0] >= batch['paper'].time[1:]
+        assert torch.all(mask)
