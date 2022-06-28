@@ -248,6 +248,8 @@ def test_data_setter_properties():
 def test_basic_feature_store():
     data = Data()
     x = torch.randn(20, 20)
+    data.not_a_tensor_attr = 10  # don't include, not a tensor attr
+    data.bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
 
     # Put tensor:
     assert data.put_tensor(copy.deepcopy(x), attr_name='x', index=None)
