@@ -223,6 +223,14 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -238,6 +246,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         neg_sampling_ratio: float = 0.0,
         transform: Callable = None,
         is_sorted: bool = False,
+        filter_per_worker: bool = False,
         neighbor_sampler: Optional[LinkNeighborSampler] = None,
         **kwargs,
     ):
@@ -255,9 +264,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.edge_label = edge_label
         self.replace = replace
         self.directed = directed
-        self.transform = transform
-        self.neighbor_sampler = neighbor_sampler
         self.neg_sampling_ratio = neg_sampling_ratio
+        self.transform = transform
+        self.filter_per_worker = filter_per_worker
+        self.neighbor_sampler = neighbor_sampler
 
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
@@ -275,10 +285,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             )
 
         super().__init__(Dataset(edge_label_index, edge_label),
-                         collate_fn=self.neighbor_sampler, **kwargs)
+                         collate_fn=self.collate_fn, **kwargs)
 
-    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        # NOTE This function will always be executed on the main thread!
+    def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
             node, row, col, edge, edge_label_index, edge_label = out
             data = filter_data(self.data, node, row, col, edge,
@@ -300,8 +309,18 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
+    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
+        out = self.neighbor_sampler(index)
+        if self.filter_per_worker:
+            # We execute `filter_fn` in the worker process.
+            out = self.filter_fn(out)
+        return out
+
     def _get_iterator(self) -> Iterator:
-        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
+        if self.filter_per_worker:
+            return super()._get_iterator()
+        # We execute `filter_fn` in the main process.
+        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
