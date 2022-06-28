@@ -65,22 +65,12 @@ class LinkNeighborSampler(NeighborSampler):
             edge_label_index, edge_label)
 
         if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
 
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
             edge_label_index = reverse.view(2, -1)
-
-            node, row, col, edge = sample_fn(
-                self.colptr,
-                self.row,
-                query_nodes,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-
-            return node, row, col, edge, edge_label_index, edge_label
+            return self._sparse_neighbor_sample(query_nodes) + (
+                edge_label_index, edge_label)
 
         elif issubclass(self.data_cls, HeteroData):
 
@@ -99,45 +89,8 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-
-            if self.node_time_dict is None:
-                sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
-                node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    query_node_dict,
-                    self.num_neighbors,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-            else:
-                try:
-                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                except RuntimeError as e:
-                    raise RuntimeError(
-                        "'torch_sparse' operator "
-                        "'hetero_temporal_neighbor_sample' not "
-                        "found. Currently requires building "
-                        "'torch_sparse' from master.", e)
-
-                node_dict, row_dict, col_dict, edge_dict = fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    query_node_dict,
-                    self.num_neighbors,
-                    self.node_time_dict,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-
-            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-                    edge_label)
+            return self._hetero_sparse_neighbor_sample(query_node_dict) + (
+                edge_label_index, edge_label)
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
