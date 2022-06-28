@@ -83,7 +83,6 @@ class LinkNeighborSampler(NeighborSampler):
             return node, row, col, edge, edge_label_index, edge_label
 
         elif issubclass(self.data_cls, HeteroData):
-            sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
 
             if self.input_type[0] != self.input_type[-1]:
                 query_src = edge_label_index[0]
@@ -101,17 +100,41 @@ class LinkNeighborSampler(NeighborSampler):
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
 
-            node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                self.node_types,
-                self.edge_types,
-                self.colptr_dict,
-                self.row_dict,
-                query_node_dict,
-                self.num_neighbors,
-                self.num_hops,
-                self.replace,
-                self.directed,
-            )
+            if self.node_time_dict is None:
+                sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
+                node_dict, row_dict, col_dict, edge_dict = sample_fn(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    query_node_dict,
+                    self.num_neighbors,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
+            else:
+                try:
+                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+                except RuntimeError as e:
+                    raise RuntimeError(
+                        "'torch_sparse' operator "
+                        "'hetero_temporal_neighbor_sample' not "
+                        "found. Currently requires building "
+                        "'torch_sparse' from master.", e)
+
+                node_dict, row_dict, col_dict, edge_dict = fn(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    query_node_dict,
+                    self.num_neighbors,
+                    self.node_time_dict,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
 
             return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
                     edge_label)
@@ -216,6 +239,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :meth:`F.binary_cross_entropy`) and of type
             :obj:`torch.long` for multi-class classification (to facilitate the
             ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -244,6 +272,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
+        time_attr: str = None,
         transform: Callable = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
@@ -281,6 +310,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
+                time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
