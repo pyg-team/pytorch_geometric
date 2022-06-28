@@ -77,6 +77,14 @@ class HGTLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -87,6 +95,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
         input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
         transform: Callable = None,
+        filter_per_worker: bool = False,
         **kwargs,
     ):
         if 'collate_fn' in kwargs:
@@ -112,6 +121,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.input_nodes = input_nodes
         self.num_hops = max([len(v) for v in num_samples.values()])
         self.transform = transform
+        self.filter_per_worker = filter_per_worker
         self.sample_fn = torch.ops.torch_sparse.hgt_sample
 
         # Convert the graph data into a suitable format for sampling.
@@ -120,7 +130,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
             data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
 
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
+        super().__init__(input_nodes[1].tolist(), collate_fn=self.collate_fn,
                          **kwargs)
 
     def sample(self, indices: List[int]) -> HeteroData:
@@ -134,8 +144,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         )
         return node_dict, row_dict, col_dict, edge_dict, len(indices)
 
-    def transform_fn(self, out: Any) -> HeteroData:
-        # NOTE This function will always be executed on the main thread!
+    def filter_fn(self, out: Any) -> HeteroData:
         node_dict, row_dict, col_dict, edge_dict, batch_size = out
 
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
@@ -144,8 +153,18 @@ class HGTLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
+    def collate_fn(self, indices: List[int]) -> Any:
+        out = self.sample(indices)
+        if self.filter_per_worker:
+            # We execute `filter_fn` in the worker process.
+            out = self.filter_fn(out)
+        return out
+
     def _get_iterator(self) -> Iterator:
-        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
+        if self.filter_per_worker:
+            return super()._get_iterator()
+        # We execute `filter_fn` in the main process.
+        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
