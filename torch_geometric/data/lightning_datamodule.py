@@ -202,7 +202,7 @@ class LightningNodeData(LightningDataModule):
             infer them from the :obj:`data` object. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
-        batch_size (int, optional): How many samples per batch to load.
+        batch_size (List[int], optional): How many samples per batch to load for train,val,test and predict data
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
@@ -296,7 +296,7 @@ class LightningNodeData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes, shuffle: bool) -> DataLoader:
+    def dataloader(self, input_nodes: InputNodes, shuffle: bool,data_type='train') -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -313,6 +313,7 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
+
         return self.dataloader(self.input_train_nodes, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
