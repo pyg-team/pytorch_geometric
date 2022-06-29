@@ -115,6 +115,10 @@ class GraphStore:
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
+        # Override is_sorted for CSC and CSR:
+        edge_attr.is_sorted = edge_attr.is_sorted or (edge_attr.layout in [
+            EdgeLayout.CSC, EdgeLayout.CSR
+        ])
         edge_index = self._get_edge_index(edge_attr)
         if edge_index is None:
             raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
@@ -167,7 +171,8 @@ class GraphStore:
                     else:
                         adj = SparseTensor(rowptr=from_tuple[1],
                                            col=from_tuple[0]).t()
-                    row, col = adj.coo()
+                    out = adj.coo()
+                    row, col = out[0], out[1]
                     perm = None
 
                 elif to_layout == EdgeLayout.CSR:
@@ -186,9 +191,11 @@ class GraphStore:
                     setattr(data_argument, attr_name, adj)
 
                     # Actually rowptr, col, perm
+                    # NOTE we set is_sorted=False here as is_sorted refers to
+                    # the edge_index being sorted by the destination node
+                    # (column), but here we deal with the transpose
                     row, col, perm = to_csc(
-                        data_argument, device='cpu',
-                        is_sorted=from_attr.is_sorted,
+                        data_argument, device='cpu', is_sorted=False,
                         num_nodes=from_attr.num_nodes_tuple)
 
                 else:
@@ -280,11 +287,12 @@ def edge_tensor_type_to_adj_type(
 
     if attr.layout == EdgeLayout.COO:
         # COO: (row, col)
-        if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()):
+        if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()
+                and src.storage_offset() < dst.storage_offset()):
             # Do not copy if the tensor tuple is constructed from the same
             # storage (instead, return a view):
             out = torch.empty(0, dtype=src.dtype)
-            out.set_(src.storage(), storage_offset=0,
+            out.set_(src.storage(), storage_offset=src.storage_offset(),
                      size=(src.size()[0] + dst.size()[0], ))
             return out.view(2, -1)
         return torch.stack(tensor_tuple)
