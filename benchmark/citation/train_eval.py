@@ -40,10 +40,6 @@ def trace_handler(p):
     print(output)
     import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
-    profile_file = profile_dir + 'profile' + '.log'
-    with open(profile_file, 'w') as f:
-        f.write(output)
-        f.close()
     timeline_file = profile_dir + 'timeline' + '.json'
     p.export_chrome_trace(timeline_file)
 
@@ -112,8 +108,6 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
 
-            t_start = time.perf_counter()
-
             for epoch in range(1, epochs + 1):
                 if profiling and i == int(runs / 2) and epoch == int(epochs / 2):
                     with profile(activities=[
@@ -126,13 +120,6 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
-
-            t_end = time.perf_counter()
-            durations.append(t_end - t_start)
-
-        duration = tensor(durations)
-        print(f'Inference Duration: {float(duration.mean()):.3f}s')
-
 
 def train(model, optimizer, data):
     model.train()

@@ -1,4 +1,5 @@
 import argparse
+import time
 
 import torch
 import torch.nn.functional as F
@@ -42,14 +43,16 @@ class Net(torch.nn.Module):
 
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
+t_start = time.time()
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
+t_end = time.time()
+duration = t_end - t_start
+print("gcn-{}-{}: End-to-End time: {} s".format(args.dataset, args.random_splits, duration))
 
 if args.profile:
     import os
     import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
-    profile_file = profile_dir + 'profile-citation-GCN-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.log'
     timeline_file = profile_dir + 'profile-citation-GCN-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.json'
-    os.rename('profile.log', profile_file)
     os.rename('timeline.json', timeline_file)
