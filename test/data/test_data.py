@@ -299,7 +299,7 @@ def test_basic_graph_store():
     csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo')
+    data.put_edge_index(coo, layout='coo', size=(3, 3))
     data.put_edge_index(csr, layout='csr')
     data.put_edge_index(csc, layout='csc')
 

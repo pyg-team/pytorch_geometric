@@ -17,9 +17,9 @@ from torch_geometric.utils.mixin import CastMixin
 # dictionaries: row, col, and perm. The dictionaries are keyed by the edge
 # type of the input edge attribute.
 #   * The row dictionary contains the row tensor for COO, the row pointer for
-#     CSR, and the row tensor for CSC
+#     CSR, or the row tensor for CSC
 #   * The col dictionary contains the col tensor for COO, the col tensor for
-#     CSR, and the colptr for CSC
+#     CSR, or the col pointer for CSC
 #   * The perm dictionary contains the permutation of edges that was applied
 #     in converting between formats, if applicable.
 ConversionOutputType = Tuple[Dict[str, Tensor], Dict[str, Tensor],

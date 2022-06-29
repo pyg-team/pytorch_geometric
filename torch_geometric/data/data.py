@@ -334,10 +334,15 @@ class DataTensorAttr(TensorAttr):
 class DataEdgeAttr(EdgeAttr):
     r"""Edge attribute class for `Data`, which does not require a
     `edge_type`."""
-    def __init__(self, layout: EdgeLayout, is_sorted: bool = False,
-                 edge_type: EdgeType = None):
-        # Treat group_name as optional, and move it to the end
-        super().__init__(edge_type, layout, is_sorted)
+    def __init__(
+        self,
+        layout: EdgeLayout,
+        is_sorted: bool = False,
+        size: Optional[Tuple[int, int]] = None,
+        edge_type: EdgeType = None,
+    ):
+        # Treat edge_type as optional, and move it to the end
+        super().__init__(edge_type, layout, is_sorted, size)
 
 
 class Data(BaseData, FeatureStore, GraphStore):

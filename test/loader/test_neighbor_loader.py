@@ -301,7 +301,8 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     # COO:
     edge_index = get_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
-    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo,
                                edge_type=('paper', 'to', 'paper'),
                                layout='coo', size=(100, 100))
 
