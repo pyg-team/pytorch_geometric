@@ -218,7 +218,6 @@ def _batch_and_ptr(
     elif (isinstance(slices, Sequence) and not isinstance(slices, str)
           and isinstance(slices[0], Tensor)):
         # Recursively batch elements of lists.
-        # outer list comprehension to convert list of tuples to list of lists
         batch, ptr = [], []
         for s in slices:
             sub_batch, sub_ptr = _batch_and_ptr(s, device)
