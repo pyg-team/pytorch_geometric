@@ -681,7 +681,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         out = []
         for group_name, group in self.node_items():
             for attr_name in group:
-                out.append(TensorAttr(group_name, attr_name))
+                if group.is_node_attr(attr_name):
+                    out.append(TensorAttr(group_name, attr_name))
         return out
 
     def __len__(self) -> int:
