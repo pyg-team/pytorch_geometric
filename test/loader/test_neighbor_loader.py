@@ -299,14 +299,16 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     # Set up edge indices:
     edge_index = get_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
-    graph_store.put_edge_index(
-        edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
-        edge_type=('paper', 'to', 'paper'),
-        layout='csr',
-    )
+
+    # COO:
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('paper', 'to', 'paper'),
+                               layout='coo', num_nodes=(100, 100))
 
     edge_index = get_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
+
+    # CSR:
     graph_store.put_edge_index(
         edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
         edge_type=('paper', 'to', 'author'),
@@ -315,10 +317,13 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
 
     edge_index = get_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
+
+    # CSC:
     graph_store.put_edge_index(
-        edge_index=SparseTensor.from_edge_index(edge_index).csr()[:2],
+        edge_index=SparseTensor(row=edge_index[1],
+                                col=edge_index[0]).csr()[-2::-1],
         edge_type=('author', 'to', 'paper'),
-        layout='csr',
+        layout='csc',
     )
 
     # Construct neighbor loaders:

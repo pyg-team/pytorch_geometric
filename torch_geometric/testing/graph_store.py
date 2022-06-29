@@ -16,7 +16,8 @@ class MyGraphStore(GraphStore):
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return (attr.edge_type, attr.layout.value)
+        return (attr.edge_type, attr.layout.value, attr.is_sorted,
+                attr.num_nodes)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:

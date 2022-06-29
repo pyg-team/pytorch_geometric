@@ -35,6 +35,7 @@ def str_to_edge_type(key: Union[EdgeType, str]) -> EdgeType:
     return key if isinstance(key, tuple) else tuple(key.split('__'))
 
 
+# TODO deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
@@ -201,6 +202,7 @@ def filter_feature_store(
     data = HeteroData()
 
     # Filter edge storage:
+    # TODO support edge attributes
     for key in edge_dict:
         edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
         data[str_to_edge_type(key)].edge_index = edge_index

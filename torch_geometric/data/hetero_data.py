@@ -9,16 +9,15 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import (
+from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import (
     EDGE_LAYOUT_TO_ATTR_NAME,
-    BaseData,
-    Data,
+    EdgeAttr,
+    GraphStore,
     adj_type_to_edge_tensor_type,
     edge_tensor_type_to_adj_type,
-    size_repr,
 )
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import EdgeAttr, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeTensorType,
@@ -695,10 +694,22 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         r"""Stores an edge index in edge storage, in the specified layout."""
+
         # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
+
+        # Handle num_nodes, if possible:
+        num_nodes_tuple = edge_attr.num_nodes_tuple
+        if num_nodes_tuple is not None:
+            # TODO handle pure string edge types
+            src = edge_attr.edge_type[0]
+            dst = edge_attr.edge_type[2] if len(
+                edge_attr.edge_type) > 2 else edge_attr.edge_type[1]
+            setattr(self[src], 'num_nodes', num_nodes_tuple[0])
+            setattr(self[dst], 'num_nodes', num_nodes_tuple[0])
+
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
@@ -718,7 +729,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type, edge_store in self.edge_items():
             for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
                 if attr_name in edge_store:
-                    out.append(EdgeAttr(edge_type=edge_type, layout=layout))
+                    # TODO handle pure string edge types
+                    src = edge_type[0]
+                    dst = edge_type[2] if len(edge_type) > 2 else edge_type[1]
+                    src_nodes = getattr(self[src], 'num_nodes', None)
+                    dst_nodes = getattr(self[dst], 'num_nodes', None)
+                    num_nodes = (src_nodes, dst_nodes)
+                    out.append(
+                        EdgeAttr(edge_type=edge_type, layout=layout,
+                                 num_nodes=num_nodes))
         return out
 
 
