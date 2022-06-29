@@ -105,21 +105,28 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
 
             model.to(device).reset_parameters()
 
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-
             for epoch in range(1, epochs + 1):
-                if profiling and i == int(runs / 2) and epoch == int(epochs / 2):
-                    with profile(activities=[
-                        ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                        on_trace_ready=trace_handler) as p:
+                if i == int(runs / 2) and epoch == int(epochs / 2):
+                    if profiling:
+                        with profile(activities=[
+                            ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                            on_trace_ready=trace_handler) as p:
+                            test(model, data)
+                            p.step()
+                    else:
+                        if torch.cuda.is_available():
+                            torch.cuda.synchronize()
+                        t_start = time.time()
+
                         test(model, data)
-                        p.step()
+
+                        if torch.cuda.is_available():
+                            torch.cuda.synchronize()
+                        t_end = time.time()
+                        duration = t_end - t_start
+                        print("End-to-End time: {} s".format(duration), flush=True)
                 else:
                     test(model, data)
-
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
 
 def train(model, optimizer, data):
     model.train()
@@ -151,4 +158,4 @@ def evaluate(model, data):
 def test(model, data):
     model.eval()
     with torch.no_grad():
-        logits = model(data)
+        model(data)

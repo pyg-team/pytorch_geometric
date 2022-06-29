@@ -1,5 +1,4 @@
 import argparse
-import time
 
 import torch
 import torch.nn.functional as F
@@ -49,12 +48,9 @@ class Net(torch.nn.Module):
 
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
-t_start = time.time()
+print("appnp-{}-{}:".format(args.dataset, args.random_splits), end=' ')
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
-t_end = time.time()
-duration = t_end - t_start
-print("appnp-", args.dataset, "-", args.random_splits, ": End-to-End time: ", duration, " s")
 
 if args.profile:
     import os
