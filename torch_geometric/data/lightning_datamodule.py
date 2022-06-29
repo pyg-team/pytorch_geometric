@@ -361,7 +361,7 @@ class LightningLinkData(LightningDataModule):
             training edges. (default: :obj:`None`)
         input_val_edges (torch.Tensor or str or (str, torch.Tensor)): The
             validation edges. (default: :obj:`None`)
-        input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+        input_test_edges (torch.Tensor or str or (str, torch.Tensor)): The
             test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"link_neighbor"`). (default: :obj:`"link_neighbor"`)
