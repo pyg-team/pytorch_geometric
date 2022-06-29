@@ -27,4 +27,4 @@ class MyGraphStore(GraphStore):
         return self.store.get(MyGraphStore.key(edge_attr), None)
 
     def get_all_edge_attrs(self):
-        return [EdgeAttr(*key) for key in self.store.keys()]
+        return [EdgeAttr(*key) for key in self.store]

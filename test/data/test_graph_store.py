@@ -51,22 +51,23 @@ def test_graph_store_conversion():
     graph_store = MyGraphStore()
     edge_index = sort_edge_index(get_edge_index(100, 100, 300), num_nodes=100,
                                  sort_by_row=False)
-
-    coo = (edge_index[0], edge_index[1])
-    csr = SparseTensor.from_edge_index(edge_index).csr()[:2]
-    csc = SparseTensor.from_edge_index(edge_index.flip([0])).csr()[-2::-1]
     num_nodes = (100, 100)
+    coo = (edge_index[0], edge_index[1])
+    csr = SparseTensor.from_edge_index(edge_index,
+                                       sparse_sizes=num_nodes).csr()[:2]
+    csc = SparseTensor.from_edge_index(edge_index.flip([0]), sparse_sizes=list(
+        reversed(num_nodes))).csr()[-2::-1]
 
-    # Put all edge indices
+    # Put all edge indices:
     graph_store.put_edge_index(edge_index=coo, edge_type=('1', 'to', '2'),
                                layout='coo', num_nodes=num_nodes,
                                is_sorted=True)
 
     graph_store.put_edge_index(edge_index=csr, edge_type=('2', 'to', '3'),
-                               layout='csr')
+                               layout='csr', num_nodes=num_nodes)
 
     graph_store.put_edge_index(edge_index=csc, edge_type=('3', 'to', '1'),
-                               layout='csc')
+                               layout='csc', num_nodes=num_nodes)
 
     def _assert_edge_index_equal(expected: torch.Tensor, actual: torch.Tensor):
         assert torch.equal(sort_edge_index(expected), sort_edge_index(actual))

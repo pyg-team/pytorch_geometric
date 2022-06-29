@@ -1,3 +1,4 @@
+import copy
 import warnings
 from abc import abstractmethod
 from collections import defaultdict
@@ -56,7 +57,7 @@ class EdgeAttr(CastMixin):
 
     @property
     def num_nodes_tuple(self):
-        if isinstance(self.num_nodes, tuple):
+        if isinstance(self.num_nodes, (list, tuple)):
             return self.num_nodes
         return (self.num_nodes, self.num_nodes)
 
@@ -163,11 +164,14 @@ class GraphStore:
                 # Convert to the new layout:
                 if to_layout == EdgeLayout.COO:
                     if from_attr.layout == EdgeLayout.CSR:
-                        adj = SparseTensor(rowptr=from_tuple[0],
-                                           col=from_tuple[1])
+                        adj = SparseTensor(
+                            rowptr=from_tuple[0], col=from_tuple[1],
+                            sparse_sizes=from_attr.num_nodes_tuple)
                     else:
-                        adj = SparseTensor(rowptr=from_tuple[1],
-                                           col=from_tuple[0]).t()
+                        adj = SparseTensor(
+                            rowptr=from_tuple[1], col=from_tuple[0],
+                            sparse_sizes=list(
+                                reversed(from_attr.num_nodes_tuple))).t()
                     out = adj.coo()
                     row, col = out[0], out[1]
                     perm = None
@@ -179,16 +183,18 @@ class GraphStore:
                             from_attr, (from_tuple[1], from_tuple[0]))
                     else:
                         adj = edge_tensor_type_to_adj_type(
-                            from_attr, from_tuple)
-                        adj = adj.t()
+                            from_attr, from_tuple).t()
 
                     # NOTE we set is_sorted=False here as is_sorted refers to
                     # the edge_index being sorted by the destination node
                     # (column), but here we deal with the transpose
-                    from_attr.is_sorted = False
+                    from_attr_copy = copy.copy(from_attr)
+                    from_attr_copy.is_sorted = False
+                    from_attr_copy.num_nodes = list(
+                        reversed(from_attr.num_nodes_tuple))
 
                     # Actually rowptr, col, perm
-                    row, col, perm = to_csc(adj, from_attr, device='cpu')
+                    row, col, perm = to_csc(adj, from_attr_copy, device='cpu')
 
                 else:
                     adj = edge_tensor_type_to_adj_type(from_attr, from_tuple)
@@ -285,11 +291,13 @@ def edge_tensor_type_to_adj_type(
         return torch.stack(tensor_tuple)
     elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
-        return SparseTensor(rowptr=src, col=dst, is_sorted=True)
+        return SparseTensor(rowptr=src, col=dst, is_sorted=True,
+                            sparse_sizes=attr.num_nodes_tuple)
     elif attr.layout == EdgeLayout.CSC:
         # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
         # is the compressed column and col is the uncompressed row.
-        return SparseTensor(rowptr=dst, col=src, is_sorted=True)
+        return SparseTensor(rowptr=dst, col=src, is_sorted=True,
+                            sparse_sizes=list(reversed(attr.num_nodes_tuple)))
     raise ValueError(f"Bad edge layout (got '{attr.layout}')")
 
 

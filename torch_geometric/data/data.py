@@ -809,7 +809,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         # Set number of nodes, if possible:
         num_nodes_tuple = edge_attr.num_nodes_tuple
-        if num_nodes_tuple is not (None, None):
+        if num_nodes_tuple != (None, None):
             assert num_nodes_tuple[0] == num_nodes_tuple[1]
             self.num_nodes = num_nodes_tuple[0]
         return True
