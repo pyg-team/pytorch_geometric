@@ -108,7 +108,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
     .. code-block:: python
 
         from torch_geometric.datasets import Planetoid
-        from torch_geometric.loader import NeighborLoader
+        from torch_geometric.loader import LinkNeighborLoader
 
         data = Planetoid(path, name='Cora')[0]
 
@@ -276,7 +276,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
-            node, row, col, edge, edge_label_index, edge_label = out
+            (node, row, col, edge, edge_label_index, edge_label) = out
             data = filter_data(self.data, node, row, col, edge,
                                self.neighbor_sampler.perm)
             data.edge_label_index = edge_label_index
@@ -355,7 +355,6 @@ def get_edge_label_index(
 
     edge_type, edge_label_index = edge_label_index
     edge_type = data._to_canonical(*edge_type)
-    assert edge_type in data.edge_types
 
     if edge_label_index is None:
         return edge_type, data[edge_type].edge_index
