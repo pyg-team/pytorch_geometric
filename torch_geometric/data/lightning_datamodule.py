@@ -237,9 +237,6 @@ class LightningNodeData(LightningDataModule):
         if input_test_nodes is None:
             input_test_nodes = infer_input_nodes(data, split='test')
 
-
-
-
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
                           f"'{self.__class__.__name__}' for loader='full' "
@@ -301,7 +298,8 @@ class LightningNodeData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes, shuffle: bool,data_type='train') -> DataLoader:
+    def dataloader(self, input_nodes: InputNodes, shuffle: bool,
+                   data_type='train') -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -332,7 +330,6 @@ class LightningNodeData(LightningDataModule):
     def predict_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_predict_nodes, shuffle=False)
-
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
