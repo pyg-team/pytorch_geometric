@@ -186,60 +186,67 @@ class NeighborSampler:
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
 
+    def _sparse_neighbor_sample(self, index: Tensor):
+        fn = torch.ops.torch_sparse.neighbor_sample
+        node, row, col, edge = fn(
+            self.colptr,
+            self.row,
+            index,
+            self.num_neighbors,
+            self.replace,
+            self.directed,
+        )
+        return node, row, col, edge
+
+    def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str, Tensor]):
+        if self.node_time_dict is None:
+            fn = torch.ops.torch_sparse.hetero_neighbor_sample
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        else:
+            try:
+                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+            except RuntimeError as e:
+                raise RuntimeError(
+                    "'torch_sparse' operator "
+                    "'hetero_temporal_neighbor_sample' not "
+                    "found. Currently requires building "
+                    "'torch_sparse' from master.", e)
+
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                self.node_time_dict,
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        return node_dict, row_dict, col_dict, edge_dict
+
     def __call__(self, index: Union[List[int], Tensor]):
         if not isinstance(index, torch.LongTensor):
             index = torch.LongTensor(index)
 
         if self.data_cls != 'custom' and issubclass(self.data_cls, Data):
-            fn = torch.ops.torch_sparse.neighbor_sample
-            node, row, col, edge = fn(
-                self.colptr,
-                self.row,
-                index,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-            return node, row, col, edge, index.numel()
+            return self._sparse_neighbor_sample(index) + (index.numel(), )
 
         elif self.data_cls == 'custom' or issubclass(self.data_cls,
                                                      HeteroData):
-            if self.node_time_dict is None:
-                fn = torch.ops.torch_sparse.hetero_neighbor_sample
-                node_dict, row_dict, col_dict, edge_dict = fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    {self.input_type: index},
-                    self.num_neighbors,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-            else:
-                try:
-                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                except RuntimeError as e:
-                    raise RuntimeError(
-                        "'torch_sparse' operator "
-                        "'hetero_temporal_neighbor_sample' not "
-                        "found. Currently requires building "
-                        "'torch_sparse' from master.", e)
-
-                node_dict, row_dict, col_dict, edge_dict = fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    {self.input_type: index},
-                    self.num_neighbors,
-                    self.node_time_dict,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-            return node_dict, row_dict, col_dict, edge_dict, index.numel()
+            return self._hetero_sparse_neighbor_sample(
+                {self.input_type: index}) + (index.numel(), )
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
