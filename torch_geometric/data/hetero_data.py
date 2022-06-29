@@ -701,10 +701,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
-        # TODO handle pure string edge types
-        src = edge_attr.edge_type[0]
-        dst = edge_attr.edge_type[2] if len(
-            edge_attr.edge_type) > 2 else edge_attr.edge_type[1]
+        key = self._to_canonical(edge_attr.edge_type)
+        src, _, dst = key
 
         # Handle num_nodes, if possible:
         size = edge_attr.size
