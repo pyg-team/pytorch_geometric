@@ -127,9 +127,6 @@ class GraphStore:
 
     def _to_layout(self, to_layout: EdgeLayout,
                    store: bool = False) -> ConversionOutputType:
-        class _DataArgument(object):
-            pass
-
         # Obtain all edge attributes, grouped by type:
         edge_attrs = self.get_all_edge_attrs()
         edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
@@ -149,7 +146,7 @@ class GraphStore:
                 row, col = self.get_edge_index(from_attr)
                 perm = None
 
-            # Convert otherwise
+            # Convert otherwise:
             else:
                 # Pick the most favorable layout to convert from. We always
                 # prefer CSR or CSC to COO:
@@ -219,9 +216,10 @@ class GraphStore:
                                   f"index and set 'is_sorted=True' to avoid "
                                   f"this warning.")
                 else:
+                    is_sorted = (to_layout != EdgeLayout.COO)
                     self._put_edge_index(
                         (row, col),
-                        EdgeAttr(from_attr.edge_type, to_layout, True,
+                        EdgeAttr(from_attr.edge_type, to_layout, is_sorted,
                                  from_attr.num_nodes))
 
         return row_dict, col_dict, perm_dict

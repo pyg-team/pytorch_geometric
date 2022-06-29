@@ -702,13 +702,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         # Handle num_nodes, if possible:
         num_nodes_tuple = edge_attr.num_nodes_tuple
-        if num_nodes_tuple is not None:
-            # TODO handle pure string edge types
-            src = edge_attr.edge_type[0]
-            dst = edge_attr.edge_type[2] if len(
-                edge_attr.edge_type) > 2 else edge_attr.edge_type[1]
-            setattr(self[src], 'num_nodes', num_nodes_tuple[0])
-            setattr(self[dst], 'num_nodes', num_nodes_tuple[0])
+
+        # TODO handle pure string edge types
+        src = edge_attr.edge_type[0]
+        dst = edge_attr.edge_type[2] if len(
+            edge_attr.edge_type) > 2 else edge_attr.edge_type[1]
+
+        self[src].num_nodes = self[src].num_nodes or num_nodes_tuple[0]
+        self[dst].num_nodes = self[dst].num_nodes or num_nodes_tuple[1]
 
         return True
 
@@ -729,10 +730,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type, edge_store in self.edge_items():
             for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
                 if attr_name in edge_store:
-                    # TODO handle pure string edge types
-                    src = edge_type[0]
-                    dst = edge_type[2] if len(edge_type) > 2 else edge_type[1]
-                    num_nodes = (self[src].num_nodes, self[dst].num_nodes)
+                    num_nodes = self[edge_type].size()
                     out.append(
                         EdgeAttr(edge_type=edge_type, layout=layout,
                                  num_nodes=num_nodes))
