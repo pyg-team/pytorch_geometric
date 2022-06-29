@@ -121,16 +121,20 @@ class NeighborSampler:
             assert input_type is not None
             self.input_type = input_type
 
-            def update_keys(dict_: Dict, update_fn: Callable):
-                original_keys = list(dict_.keys())
-                for key in original_keys:
-                    dict_[update_fn(key)] = dict_.pop(key)
-
             # Obtain CSC representations for in-memory sampling:
-            self.row_dict, self.colptr_dict, self.perm_dict = graph_store.csc()
-            update_keys(self.row_dict, edge_type_to_str)
-            update_keys(self.colptr_dict, edge_type_to_str)
-            update_keys(self.perm_dict, edge_type_to_str)
+            row_dict, colptr_dict, perm_dict = graph_store.csc()
+            self.row_dict = {
+                edge_type_to_str(k): v
+                for k, v in row_dict.items()
+            }
+            self.colptr_dict = {
+                edge_type_to_str(k): v
+                for k, v in colptr_dict.items()
+            }
+            self.perm_dict = {
+                edge_type_to_str(k): v
+                for k, v in perm_dict.items()
+            }
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')

@@ -13,6 +13,15 @@ from torch_sparse import SparseTensor
 from torch_geometric.typing import Adj, EdgeTensorType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
+# The output of converting between two types in the GraphStore is a Tuple of
+# dictionaries: row, col, and perm. The dictionaries are keyed by the edge
+# type of the input edge attribute.
+#   * The row dictionary contains the row tensor for COO, the row pointer for
+#     CSR, and the row tensor for CSC
+#   * The col dictionary contains the col tensor for COO, the col tensor for
+#     CSR, and the colptr for CSC
+#   * The perm dictionary contains the permutation of edges that was applied
+#     in converting between formats, if applicable.
 ConversionOutputType = Tuple[Dict[str, Tensor], Dict[str, Tensor],
                              Dict[str, OptTensor]]
 
@@ -120,7 +129,10 @@ class GraphStore:
                            f"found")
         return edge_index
 
-    def _to_layout(self, to_layout: EdgeLayout,
+    # Layout Conversion #######################################################
+
+    # TODO support `replace` to replace the existing edge index.
+    def _to_layout(self, layout: EdgeLayout,
                    store: bool = False) -> ConversionOutputType:
         # Obtain all edge attributes, grouped by type:
         edge_attrs = self.get_all_edge_attrs()
@@ -136,15 +148,15 @@ class GraphStore:
             edge_layouts = [edge_attr.layout for edge_attr in edge_attrs]
 
             # Ignore if requested layout is already present:
-            if to_layout in edge_layouts:
-                from_attr = edge_attrs[edge_layouts.index(to_layout)]
+            if layout in edge_layouts:
+                from_attr = edge_attrs[edge_layouts.index(layout)]
                 row, col = self.get_edge_index(from_attr)
                 perm = None
 
             # Convert otherwise:
             else:
-                # Pick the most favorable layout to convert from. We always
-                # prefer COO to CSC/CSR:
+                # Pick the most favorable layout to convert from. We prefer
+                # COO to CSC/CSR:
                 from_attr = None
                 if EdgeLayout.COO in edge_layouts:
                     from_attr = edge_attrs[edge_layouts.index(EdgeLayout.COO)]
@@ -156,23 +168,18 @@ class GraphStore:
                 from_tuple = self.get_edge_index(from_attr)
 
                 # Convert to the new layout:
-                if to_layout == EdgeLayout.COO:
+                if layout == EdgeLayout.COO:
                     if from_attr.layout == EdgeLayout.CSR:
-                        sparse_sizes = from_attr.size
-                        adj = SparseTensor(rowptr=from_tuple[0],
-                                           col=from_tuple[1],
-                                           sparse_sizes=sparse_sizes)
+                        col = from_tuple[1]
+                        row = torch.ops.torch_sparse.ptr2ind(
+                            from_tuple[0], col.numel())
                     else:
-                        sparse_sizes = None if from_attr.size is None else (
-                            from_attr.size[1], from_attr.size[0])
-                        adj = SparseTensor(rowptr=from_tuple[1],
-                                           col=from_tuple[0],
-                                           sparse_sizes=sparse_sizes).t()
-                    out = adj.coo()
-                    row, col = out[0], out[1]
+                        row = from_tuple[0]
+                        col = torch.ops.torch_sparse.ptr2ind(
+                            from_tuple[1], row.numel())
                     perm = None
 
-                elif to_layout == EdgeLayout.CSR:
+                elif layout == EdgeLayout.CSR:
                     # We convert to CSR by converting to CSC on the transpose
                     if from_attr.layout == EdgeLayout.COO:
                         adj = edge_tensor_type_to_adj_type(
@@ -202,7 +209,7 @@ class GraphStore:
             col_dict[from_attr.edge_type] = col
             perm_dict[from_attr.edge_type] = perm
 
-            if store and to_layout not in edge_layouts:
+            if store and layout not in edge_layouts:
                 # We do not store converted edge indices if this conversion
                 # results in a permutation of nodes in the original edge index.
                 # This is to exercise an abundance of caution in the case that
@@ -211,18 +218,17 @@ class GraphStore:
                     warnings.warn(f"Edge index {from_attr.edge_type} with "
                                   f"layout {from_attr.layout} was not sorted "
                                   f"by destination node, so conversion to "
-                                  f"{to_layout} resulted in a permutation of "
+                                  f"{layout} resulted in a permutation of "
                                   f"the order of edges. As a result, the "
                                   f"converted edge is not being re-stored in "
                                   f"the graph store. Please sort the edge "
                                   f"index and set 'is_sorted=True' to avoid "
                                   f"this warning.")
                 else:
-                    is_sorted = (to_layout != EdgeLayout.COO)
-                    self._put_edge_index(
-                        (row, col),
-                        EdgeAttr(from_attr.edge_type, to_layout, is_sorted,
-                                 from_attr.size))
+                    is_sorted = (layout != EdgeLayout.COO)
+                    self._put_edge_index((row, col),
+                                         EdgeAttr(from_attr.edge_type, layout,
+                                                  is_sorted, from_attr.size))
 
         return row_dict, col_dict, perm_dict
 
