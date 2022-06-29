@@ -49,46 +49,48 @@ def test_graph_store():
 
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
-    edge_index = sort_edge_index(get_edge_index(100, 100, 300), num_nodes=100,
-                                 sort_by_row=False)
-    num_nodes = (100, 100)
+    edge_index = get_edge_index(100, 100, 300)
+    edge_index = sort_edge_index(edge_index, sort_by_row=False)
+    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(100, 100))
+
     coo = (edge_index[0], edge_index[1])
-    csr = SparseTensor.from_edge_index(edge_index,
-                                       sparse_sizes=num_nodes).csr()[:2]
-    csc = SparseTensor.from_edge_index(edge_index.flip([0]), sparse_sizes=list(
-        reversed(num_nodes))).csr()[-2::-1]
+    csr = adj.csr()[:2]
+    csc = adj.csc()[-2::-1]
 
     # Put all edge indices:
-    graph_store.put_edge_index(edge_index=coo, edge_type=('1', 'to', '2'),
-                               layout='coo', num_nodes=num_nodes,
+    graph_store.put_edge_index(edge_index=coo, edge_type=('v', '1', 'v'),
+                               layout='coo', num_nodes=(100, 100),
                                is_sorted=True)
 
-    graph_store.put_edge_index(edge_index=csr, edge_type=('2', 'to', '3'),
-                               layout='csr', num_nodes=num_nodes)
+    graph_store.put_edge_index(edge_index=csr, edge_type=('v', '2', 'v'),
+                               layout='csr', num_nodes=(100, 100))
 
-    graph_store.put_edge_index(edge_index=csc, edge_type=('3', 'to', '1'),
-                               layout='csc', num_nodes=num_nodes)
+    graph_store.put_edge_index(edge_index=csc, edge_type=('v', '3', 'v'),
+                               layout='csc', num_nodes=(100, 100))
 
-    def _assert_edge_index_equal(expected: torch.Tensor, actual: torch.Tensor):
+    def assert_edge_index_equal(expected: torch.Tensor, actual: torch.Tensor):
         assert torch.equal(sort_edge_index(expected), sort_edge_index(actual))
 
     # Convert to COO:
     row_dict, col_dict, perm_dict = graph_store.coo()
-    for key in row_dict:
+    assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
+    for key in row_dict.keys():
         actual = torch.stack((row_dict[key], col_dict[key]))
-        _assert_edge_index_equal(actual, edge_index)
+        assert_edge_index_equal(actual, edge_index)
         assert perm_dict[key] is None
 
     # Convert to CSR:
     row_dict, col_dict, perm_dict = graph_store.csr()
+    assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
     for key in row_dict:
         assert torch.equal(row_dict[key], csr[0])
         assert torch.equal(col_dict[key], csr[1])
-        if key == ('1', 'to', '2'):
+        if key == ('v', '1', 'v'):
             assert perm_dict[key] is not None
 
     # Convert to CSC:
     row_dict, col_dict, perm_dict = graph_store.csc()
+    assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
     for key in row_dict:
         assert torch.equal(row_dict[key], csc[0])
         assert torch.equal(col_dict[key], csc[1])
