@@ -191,18 +191,33 @@ class LightningNodeData(LightningDataModule):
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
         input_train_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of training nodes. If not given, will try to automatically
-            infer them from the :obj:`data` object. (default: :obj:`None`)
+            indices of training nodes.
+            If not given, will try to automatically infer them from the
+            :obj:`data` object by searching for :obj:`train_mask`,
+            :obj:`train_idx`, or :obj:`train_index` attributes.
+            (default: :obj:`None`)
         input_val_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of validation nodes. If not given, will try to
-            automatically infer them from the :obj:`data` object.
+            indices of validation nodes.
+            If not given, will try to automatically infer them from the
+            :obj:`data` object by searching for :obj:`val_mask`,
+            :obj:`valid_mask`, :obj:`val_idx`, :obj:`valid_idx`,
+            :obj:`val_index`, or :obj:`valid_index` attributes.
             (default: :obj:`None`)
         input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
-            indices of test nodes. If not given, will try to automatically
-            infer them from the :obj:`data` object. (default: :obj:`None`)
+            indices of test nodes.
+            If not given, will try to automatically infer them from the
+            :obj:`data` object by searching for :obj:`test_mask`,
+            :obj:`test_idx`, or :obj:`test_index` attributes.
+            (default: :obj:`None`)
+        input_pred_nodes (torch.Tensor or str or (str, torch.Tensor)): The
+            indices of prediction nodes.
+            If not given, will try to automatically infer them from the
+            :obj:`data` object by searching for :obj:`pred_mask`,
+            :obj:`pred_idx`, or :obj:`pred_index` attributes.
+            (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
-        batch_size (List[int], optional): How many samples per batch to load for train,val,test and predict data
+        batch_size (List[int], optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
@@ -216,7 +231,7 @@ class LightningNodeData(LightningDataModule):
         input_train_nodes: InputNodes = None,
         input_val_nodes: InputNodes = None,
         input_test_nodes: InputNodes = None,
-        input_predict_nodes: InputNodes = None,
+        input_pred_nodes: InputNodes = None,
         loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
@@ -236,6 +251,9 @@ class LightningNodeData(LightningDataModule):
 
         if input_test_nodes is None:
             input_test_nodes = infer_input_nodes(data, split='test')
+
+        if input_pred_nodes is None:
+            input_pred_nodes = infer_input_nodes(data, split='pred')
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
@@ -280,7 +298,7 @@ class LightningNodeData(LightningDataModule):
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
-        self.input_predict_nodes = input_predict_nodes
+        self.input_pred_nodes = input_pred_nodes
 
     def prepare_data(self):
         """"""
@@ -298,8 +316,7 @@ class LightningNodeData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes, shuffle: bool,
-                   data_type='train') -> DataLoader:
+    def dataloader(self, input_nodes: InputNodes, shuffle: bool) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -316,7 +333,6 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-
         return self.dataloader(self.input_train_nodes, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
@@ -329,7 +345,7 @@ class LightningNodeData(LightningDataModule):
 
     def predict_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_predict_nodes, shuffle=False)
+        return self.dataloader(self.input_pred_nodes, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
