@@ -217,7 +217,7 @@ class LightningNodeData(LightningDataModule):
             (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
-        batch_size (List[int], optional): How many samples per batch to load.
+        batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
