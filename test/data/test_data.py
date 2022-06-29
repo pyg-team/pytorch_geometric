@@ -15,6 +15,7 @@ def test_data():
     x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t()
     edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
     data = Data(x=x, edge_index=edge_index).to(torch.device('cpu'))
+    data.validate(raise_on_error=True)
 
     N = data.num_nodes
     assert N == 3
