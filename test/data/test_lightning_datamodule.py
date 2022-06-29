@@ -11,7 +11,6 @@ from torch_geometric.data import (
 )
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
-from torch_geometric.typing import EdgeType
 
 try:
     from pytorch_lightning import LightningModule
@@ -275,8 +274,6 @@ def test_lightning_hetero_node_data(get_dataset):
 @onlyFullTest
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data(get_dataset):
-    import pytorch_lightning as pl
-
     # TODO: Add more datasets.
     dataset = get_dataset(name='DBLP')
     data = dataset[0]
