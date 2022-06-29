@@ -357,7 +357,7 @@ class LightningLinkData(LightningDataModule):
     Args:
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
-        input_train_edges (torch.Tensor or str or (str, torch.Tensor)): The
+        input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]): The
             training edges. (default: :obj:`None`)
         input_val_edges (torch.Tensor or str or (str, torch.Tensor)): The
             validation edges. (default: :obj:`None`)
