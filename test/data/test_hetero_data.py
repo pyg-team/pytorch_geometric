@@ -428,6 +428,9 @@ def test_basic_feature_store():
     assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
 
     # Get tensor attrs:
+    data['paper'].num_nodes = 20  # don't include, not a tensor attr
+    data['paper'].bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
+
     tensor_attrs = data.get_all_tensor_attrs()
     assert len(tensor_attrs) == 1
     assert tensor_attrs[0].group_name == 'paper'
@@ -461,9 +464,12 @@ def test_basic_graph_store():
     csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'))
-    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'))
-    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'))
+    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),
+                        size=(3, 3))
+    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'),
+                        size=(3, 3))
+    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'),
+                        size=(3, 3))
 
     # Get:
     assert_equal_tensor_tuple(

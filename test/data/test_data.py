@@ -248,6 +248,8 @@ def test_data_setter_properties():
 def test_basic_feature_store():
     data = Data()
     x = torch.randn(20, 20)
+    data.not_a_tensor_attr = 10  # don't include, not a tensor attr
+    data.bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
 
     # Put tensor:
     assert data.put_tensor(copy.deepcopy(x), attr_name='x', index=None)
@@ -297,7 +299,7 @@ def test_basic_graph_store():
     csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo')
+    data.put_edge_index(coo, layout='coo', size=(3, 3))
     data.put_edge_index(csr, layout='csr')
     data.put_edge_index(csc, layout='csc')
 
