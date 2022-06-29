@@ -515,7 +515,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
                           raise_on_error)
 
-        if self.edge_index.numel() > 0:
+        if 'edge_index' in self and self.edge_index.numel() > 0:
             if self.edge_index.min() < 0:
                 status = False
                 warn_or_raise(
