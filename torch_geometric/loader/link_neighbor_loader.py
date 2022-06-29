@@ -65,25 +65,14 @@ class LinkNeighborSampler(NeighborSampler):
             edge_label_index, edge_label)
 
         if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
 
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
             edge_label_index = reverse.view(2, -1)
-
-            node, row, col, edge = sample_fn(
-                self.colptr,
-                self.row,
-                query_nodes,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-
-            return node, row, col, edge, edge_label_index, edge_label
+            return self._sparse_neighbor_sample(query_nodes) + (
+                edge_label_index, edge_label)
 
         elif issubclass(self.data_cls, HeteroData):
-            sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
 
             if self.input_type[0] != self.input_type[-1]:
                 query_src = edge_label_index[0]
@@ -100,21 +89,8 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-
-            node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                self.node_types,
-                self.edge_types,
-                self.colptr_dict,
-                self.row_dict,
-                query_node_dict,
-                self.num_neighbors,
-                self.num_hops,
-                self.replace,
-                self.directed,
-            )
-
-            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-                    edge_label)
+            return self._hetero_sparse_neighbor_sample(query_node_dict) + (
+                edge_label_index, edge_label)
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
@@ -178,6 +154,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         :obj:`neg_sampling_ratio` is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+        :obj:`time_attr` is currently implemented such that for an edge
+        `(src_node, dst_node)`, the neighbors of `src_node` can have a later
+        timestamp than `dst_node` or vice-versa.
+
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
@@ -216,6 +196,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :meth:`F.binary_cross_entropy`) and of type
             :obj:`torch.long` for multi-class classification (to facilitate the
             ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -244,6 +229,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
+        time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
@@ -281,6 +267,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
+                time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 

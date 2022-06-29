@@ -782,7 +782,10 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         r"""Obtains all feature attributes stored in `Data`."""
-        return [TensorAttr(attr_name=name) for name in self._store.keys()]
+        return [
+            TensorAttr(attr_name=name) for name in self._store.keys()
+            if self._store.is_node_attr(name)
+        ]
 
     def __len__(self) -> int:
         return BaseData.__len__(self)
