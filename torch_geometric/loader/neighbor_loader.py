@@ -35,6 +35,7 @@ class NeighborSampler:
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
+        disjoint: bool = False,
     ):
         self.data_cls = data.__class__ if isinstance(
             data, (Data, HeteroData)) else 'custom'
@@ -42,6 +43,7 @@ class NeighborSampler:
         self.replace = replace
         self.directed = directed
         self.node_time = None
+        self.disjoint = disjoint
 
         # TODO Unify the following conditionals behind the `FeatureStore`
         # and `GraphStore` API
