@@ -383,15 +383,18 @@ class LightningLinkData(LightningDataModule):
     Args:
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
-        input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor], optional):
+        input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
-        input_train_edge_label (Tensor, optional): The labels of train edge indices.
-        input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor], optional):
+        input_train_edge_label (Tensor, optional):
+            The labels of train edge indices.
+        input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
-        input_val_edge_label (Tensor, optional): The labels of val edge indices.
-        input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor], optional):
+        input_val_edge_label (Tensor, optional):
+            The labels of val edge indices.
+        input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
-        input_test_edge_label (Tensor, optional): The labels of train edge indices.
+        input_test_edge_label (Tensor, optional):
+            The labels of train edge indices.
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"link_neighbor"`). (default: :obj:`"link_neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
