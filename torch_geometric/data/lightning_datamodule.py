@@ -216,6 +216,7 @@ class LightningNodeData(LightningDataModule):
         input_train_nodes: InputNodes = None,
         input_val_nodes: InputNodes = None,
         input_test_nodes: InputNodes = None,
+        input_predict_nodes: InputNodes = None,
         loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
@@ -235,6 +236,9 @@ class LightningNodeData(LightningDataModule):
 
         if input_test_nodes is None:
             input_test_nodes = infer_input_nodes(data, split='test')
+
+
+
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
@@ -279,6 +283,7 @@ class LightningNodeData(LightningDataModule):
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
+        self.input_predict_nodes = input_predict_nodes
 
     def prepare_data(self):
         """"""
@@ -323,6 +328,11 @@ class LightningNodeData(LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_test_nodes, shuffle=False)
+
+    def predict_dataloader(self) -> DataLoader:
+        """"""
+        return self.dataloader(self.input_predict_nodes, shuffle=False)
+
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
