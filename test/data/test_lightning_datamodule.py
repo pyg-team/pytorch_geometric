@@ -277,6 +277,7 @@ def test_lightning_hetero_node_data(get_dataset):
 def test_lightning_hetero_link_data(get_dataset):
     import pytorch_lightning as pl
 
+    # TODO: Add more datasets.
     dataset = get_dataset(name='DBLP')
     data = dataset[0]
     datamodule = LightningLinkData(data, loader='link_neighbor',

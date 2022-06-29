@@ -327,6 +327,7 @@ class LightningNodeData(LightningDataModule):
         return f'{self.__class__.__name__}({kwargs})'
 
 
+# TODO: Unify implementation with LightningNodeData via a common base class.
 class LightningLinkData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
@@ -357,12 +358,12 @@ class LightningLinkData(LightningDataModule):
     Args:
         data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
-        input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]): The
-            training edges. (default: :obj:`None`)
-        input_val_edges (torch.Tensor or str or (str, torch.Tensor)): The
-            validation edges. (default: :obj:`None`)
-        input_test_edges (torch.Tensor or str or (str, torch.Tensor)): The
-            test edges. (default: :obj:`None`)
+        input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor],
+            optional): The training edges. (default: :obj:`None`)
+        input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor],
+            optional): The validation edges. (default: :obj:`None`)
+        input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor],
+            optional): The test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"link_neighbor"`). (default: :obj:`"link_neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
@@ -386,7 +387,8 @@ class LightningLinkData(LightningDataModule):
     ):
 
         assert loader in ['full', 'link_neighbor']
-
+        # TODO: Handle or document behavior where none of train, val, test
+        # edges are specified.
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
                           f"'{self.__class__.__name__}' for loader='full' "
