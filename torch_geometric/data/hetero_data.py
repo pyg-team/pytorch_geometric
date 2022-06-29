@@ -732,9 +732,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     # TODO handle pure string edge types
                     src = edge_type[0]
                     dst = edge_type[2] if len(edge_type) > 2 else edge_type[1]
-                    src_nodes = getattr(self[src], 'num_nodes', None)
-                    dst_nodes = getattr(self[dst], 'num_nodes', None)
-                    num_nodes = (src_nodes, dst_nodes)
+                    num_nodes = (self[src].num_nodes, self[dst].num_nodes)
                     out.append(
                         EdgeAttr(edge_type=edge_type, layout=layout,
                                  num_nodes=num_nodes))

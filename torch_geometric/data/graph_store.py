@@ -176,8 +176,6 @@ class GraphStore:
                     perm = None
 
                 elif to_layout == EdgeLayout.CSR:
-                    data_argument = _DataArgument()
-
                     # We convert to CSR by converting to CSC on the transpose
                     if from_attr.layout == EdgeLayout.COO:
                         adj = edge_tensor_type_to_adj_type(
@@ -187,28 +185,19 @@ class GraphStore:
                             from_attr, from_tuple)
                         adj = adj.t()
 
-                    attr_name = EDGE_LAYOUT_TO_ATTR_NAME[from_attr.layout]
-                    setattr(data_argument, attr_name, adj)
-
-                    # Actually rowptr, col, perm
                     # NOTE we set is_sorted=False here as is_sorted refers to
                     # the edge_index being sorted by the destination node
                     # (column), but here we deal with the transpose
-                    row, col, perm = to_csc(
-                        data_argument, device='cpu', is_sorted=False,
-                        num_nodes=from_attr.num_nodes_tuple)
+                    from_attr.is_sorted = False
+
+                    # Actually rowptr, col, perm
+                    row, col, perm = to_csc(adj, from_attr, device='cpu')
 
                 else:
-                    data_argument = _DataArgument()
                     adj = edge_tensor_type_to_adj_type(from_attr, from_tuple)
-                    attr_name = EDGE_LAYOUT_TO_ATTR_NAME[from_attr.layout]
-                    setattr(data_argument, attr_name, adj)
 
                     # Actually colptr, row, perm
-                    col, row, perm = to_csc(
-                        data_argument, device='cpu',
-                        is_sorted=from_attr.is_sorted,
-                        num_nodes=from_attr.num_nodes_tuple)
+                    col, row, perm = to_csc(adj, from_attr, device='cpu')
 
             row_dict[from_attr.edge_type] = row
             col_dict[from_attr.edge_type] = col
@@ -323,11 +312,10 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
 
 
 def to_csc(
-    data: Any,
+    adj: Adj,
+    edge_attr: EdgeAttr,
     device: Optional[torch.device] = None,
     share_memory: bool = False,
-    is_sorted: bool = False,
-    num_nodes: Optional[Tuple[int, int]] = None,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
@@ -335,23 +323,26 @@ def to_csc(
     # Since no permutation of edges is applied when using `SparseTensor`,
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
+    layout = edge_attr.layout
+    is_sorted = edge_attr.is_sorted
+    num_nodes = edge_attr.num_nodes_tuple
 
-    if hasattr(data, 'adj'):
-        colptr, row, _ = data.adj.csc()
-
-    elif hasattr(data, 'adj_t'):
-        colptr, row, _ = data.adj_t.csr()
-
-    elif hasattr(data, 'edge_index'):
-        (row, col) = data.edge_index
-        size = (num_nodes[0] or data.size(0), num_nodes[1] or data.size(1))
-        if not is_sorted:
-            perm = (col * size[0]).add_(row).argsort()
-            row = row[perm]
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
+    if layout == EdgeLayout.CSR:
+        colptr, row, _ = adj.csc()
+    elif layout == EdgeLayout.CSC:
+        colptr, row, _ = adj.csr()
     else:
-        raise AttributeError("Data object does not contain attributes "
-                             "'adj', 'adj_t' or 'edge_index'")
+        if None in num_nodes:
+            raise ValueError(
+                f"Edge {edge_attr.edge_type} cannot be converted "
+                f"to a different type without specifying 'num_nodes' for "
+                f"the source and destination node types (got {num_nodes}). "
+                f"Please specify these parameters for successful execution. ")
+        (row, col) = adj
+        if not is_sorted:
+            perm = (col * num_nodes[0]).add_(row).argsort()
+            row = row[perm]
+        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], num_nodes[1])
 
     colptr = colptr.to(device)
     row = row.to(device)
