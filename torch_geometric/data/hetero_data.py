@@ -701,16 +701,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
-        # Handle num_nodes, if possible:
-        num_nodes_tuple = edge_attr.num_nodes_tuple
-
         # TODO handle pure string edge types
         src = edge_attr.edge_type[0]
         dst = edge_attr.edge_type[2] if len(
             edge_attr.edge_type) > 2 else edge_attr.edge_type[1]
 
-        self[src].num_nodes = self[src].num_nodes or num_nodes_tuple[0]
-        self[dst].num_nodes = self[dst].num_nodes or num_nodes_tuple[1]
+        # Handle num_nodes, if possible:
+        size = edge_attr.size
+        if size is not None:
+            # TODO better warning in the case of overwriting 'num_nodes'
+            self[src].num_nodes = size[0]
+            self[dst].num_nodes = size[1]
 
         return True
 
@@ -731,10 +732,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type, edge_store in self.edge_items():
             for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
                 if attr_name in edge_store:
-                    num_nodes = self[edge_type].size()
                     out.append(
                         EdgeAttr(edge_type=edge_type, layout=layout,
-                                 num_nodes=num_nodes))
+                                 size=self[edge_type].size()))
         return out
 
 

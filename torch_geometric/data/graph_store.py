@@ -4,7 +4,7 @@ from abc import abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -40,7 +40,7 @@ class EdgeAttr(CastMixin):
 
     # The number of nodes in this edge type. If set to None, will attempt to
     # infer with the simple heuristic int(self.edge_index.max()) + 1
-    num_nodes: Optional[Union[int, Tuple[int, int]]] = None
+    size: Optional[Tuple[int, int]] = None
 
     # NOTE we define __init__ to force-cast layout
     def __init__(
@@ -48,18 +48,12 @@ class EdgeAttr(CastMixin):
         edge_type: Optional[Any],
         layout: EdgeLayout,
         is_sorted: bool = False,
-        num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+        size: Optional[Tuple[int, int]] = None,
     ):
         self.edge_type = edge_type
         self.layout = EdgeLayout(layout)
         self.is_sorted = is_sorted
-        self.num_nodes = num_nodes
-
-    @property
-    def num_nodes_tuple(self):
-        if isinstance(self.num_nodes, (list, tuple)):
-            return self.num_nodes
-        return (self.num_nodes, self.num_nodes)
+        self.size = size
 
 
 class GraphStore:
@@ -138,7 +132,7 @@ class GraphStore:
         # layout to the desired layout. Store permutations of edges if
         # necessary as part of the conversion:
         row_dict, col_dict, perm_dict = {}, {}, {}
-        for _, edge_attrs in edge_type_to_attrs.items():
+        for edge_attrs in edge_type_to_attrs.values():
             edge_layouts = [edge_attr.layout for edge_attr in edge_attrs]
 
             # Ignore if requested layout is already present:
@@ -150,28 +144,30 @@ class GraphStore:
             # Convert otherwise:
             else:
                 # Pick the most favorable layout to convert from. We always
-                # prefer CSR or CSC to COO:
+                # prefer COO to CSC/CSR:
                 from_attr = None
-                if EdgeLayout.CSC in edge_layouts:
-                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSC)]
-                elif EdgeLayout.CSR in edge_layouts:
-                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSR)]
-                else:
+                if EdgeLayout.COO in edge_layouts:
                     from_attr = edge_attrs[edge_layouts.index(EdgeLayout.COO)]
+                elif EdgeLayout.CSC in edge_layouts:
+                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSC)]
+                else:
+                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSR)]
 
                 from_tuple = self.get_edge_index(from_attr)
 
                 # Convert to the new layout:
                 if to_layout == EdgeLayout.COO:
                     if from_attr.layout == EdgeLayout.CSR:
-                        adj = SparseTensor(
-                            rowptr=from_tuple[0], col=from_tuple[1],
-                            sparse_sizes=from_attr.num_nodes_tuple)
+                        sparse_sizes = from_attr.size
+                        adj = SparseTensor(rowptr=from_tuple[0],
+                                           col=from_tuple[1],
+                                           sparse_sizes=sparse_sizes)
                     else:
-                        adj = SparseTensor(
-                            rowptr=from_tuple[1], col=from_tuple[0],
-                            sparse_sizes=list(
-                                reversed(from_attr.num_nodes_tuple))).t()
+                        sparse_sizes = None if from_attr.size is None else (
+                            from_attr.size[1], from_attr.size[0])
+                        adj = SparseTensor(rowptr=from_tuple[1],
+                                           col=from_tuple[0],
+                                           sparse_sizes=sparse_sizes).t()
                     out = adj.coo()
                     row, col = out[0], out[1]
                     perm = None
@@ -190,8 +186,8 @@ class GraphStore:
                     # (column), but here we deal with the transpose
                     from_attr_copy = copy.copy(from_attr)
                     from_attr_copy.is_sorted = False
-                    from_attr_copy.num_nodes = list(
-                        reversed(from_attr.num_nodes_tuple))
+                    from_attr_copy.size = None if from_attr.size is None else (
+                        from_attr.size[1], from_attr.size[0])
 
                     # Actually rowptr, col, perm
                     row, col, perm = to_csc(adj, from_attr_copy, device='cpu')
@@ -226,7 +222,7 @@ class GraphStore:
                     self._put_edge_index(
                         (row, col),
                         EdgeAttr(from_attr.edge_type, to_layout, is_sorted,
-                                 from_attr.num_nodes))
+                                 from_attr.size))
 
         return row_dict, col_dict, perm_dict
 
@@ -292,12 +288,14 @@ def edge_tensor_type_to_adj_type(
     elif attr.layout == EdgeLayout.CSR:
         # CSR: (rowptr, col)
         return SparseTensor(rowptr=src, col=dst, is_sorted=True,
-                            sparse_sizes=attr.num_nodes_tuple)
+                            sparse_sizes=attr.size)
     elif attr.layout == EdgeLayout.CSC:
-        # CSC: (row, colptr) this is a transposed adjacency matrix, so rowptr
+        # CSC: (row, colptr) is a transposed adjacency matrix, so rowptr
         # is the compressed column and col is the uncompressed row.
+        sparse_sizes = None if attr.size is None else (attr.size[1],
+                                                       attr.size[0])
         return SparseTensor(rowptr=dst, col=src, is_sorted=True,
-                            sparse_sizes=list(reversed(attr.num_nodes_tuple)))
+                            sparse_sizes=sparse_sizes)
     raise ValueError(f"Bad edge layout (got '{attr.layout}')")
 
 
@@ -331,24 +329,24 @@ def to_csc(
     perm: Optional[Tensor] = None
     layout = edge_attr.layout
     is_sorted = edge_attr.is_sorted
-    num_nodes = edge_attr.num_nodes_tuple
+    size = edge_attr.size
 
     if layout == EdgeLayout.CSR:
         colptr, row, _ = adj.csc()
     elif layout == EdgeLayout.CSC:
         colptr, row, _ = adj.csr()
     else:
-        if None in num_nodes:
+        if size is None:
             raise ValueError(
                 f"Edge {edge_attr.edge_type} cannot be converted "
-                f"to a different type without specifying 'num_nodes' for "
-                f"the source and destination node types (got {num_nodes}). "
+                f"to a different type without specifying 'size' for "
+                f"the source and destination node types (got {size}). "
                 f"Please specify these parameters for successful execution. ")
         (row, col) = adj
         if not is_sorted:
-            perm = (col * num_nodes[0]).add_(row).argsort()
+            perm = (col * size[0]).add_(row).argsort()
             row = row[perm]
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], num_nodes[1])
+        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
 
     colptr = colptr.to(device)
     row = row.to(device)

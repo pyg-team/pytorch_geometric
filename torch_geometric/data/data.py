@@ -807,11 +807,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
 
-        # Set number of nodes, if possible:
-        num_nodes_tuple = edge_attr.num_nodes_tuple
-        if num_nodes_tuple != (None, None):
-            assert num_nodes_tuple[0] == num_nodes_tuple[1]
-            self.num_nodes = num_nodes_tuple[0]
+        # Set size, if possible:
+        size = edge_attr.size
+        if size is not None:
+            if size[0] != size[1]:
+                raise ValueError(
+                    f"'Data' requires size[0] == size[1], but received "
+                    f"the tuple {size}.")
+            self.num_nodes = size[0]
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
@@ -833,7 +836,7 @@ class Data(BaseData, FeatureStore, GraphStore):
             if attr_name in self:
                 out.append(
                     EdgeAttr(edge_type=None, layout=layout,
-                             num_nodes=self.num_nodes))
+                             size=(self.num_nodes, self.num_nodes)))
         return out
 
 

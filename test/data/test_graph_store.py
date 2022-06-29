@@ -59,14 +59,13 @@ def test_graph_store_conversion():
 
     # Put all edge indices:
     graph_store.put_edge_index(edge_index=coo, edge_type=('v', '1', 'v'),
-                               layout='coo', num_nodes=(100, 100),
-                               is_sorted=True)
+                               layout='coo', size=(100, 100), is_sorted=True)
 
     graph_store.put_edge_index(edge_index=csr, edge_type=('v', '2', 'v'),
-                               layout='csr', num_nodes=(100, 100))
+                               layout='csr', size=(100, 100))
 
     graph_store.put_edge_index(edge_index=csc, edge_type=('v', '3', 'v'),
-                               layout='csc', num_nodes=(100, 100))
+                               layout='csc', size=(100, 100))
 
     def assert_edge_index_equal(expected: torch.Tensor, actual: torch.Tensor):
         assert torch.equal(sort_edge_index(expected), sort_edge_index(actual))
@@ -80,18 +79,18 @@ def test_graph_store_conversion():
         assert perm_dict[key] is None
 
     # Convert to CSR:
-    row_dict, col_dict, perm_dict = graph_store.csr()
-    assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
-    for key in row_dict:
-        assert torch.equal(row_dict[key], csr[0])
+    rowptr_dict, col_dict, perm_dict = graph_store.csr()
+    assert len(rowptr_dict) == len(col_dict) == len(perm_dict) == 3
+    for key in rowptr_dict:
+        assert torch.equal(rowptr_dict[key], csr[0])
         assert torch.equal(col_dict[key], csr[1])
         if key == ('v', '1', 'v'):
             assert perm_dict[key] is not None
 
     # Convert to CSC:
-    row_dict, col_dict, perm_dict = graph_store.csc()
-    assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
+    row_dict, colptr_dict, perm_dict = graph_store.csc()
+    assert len(row_dict) == len(colptr_dict) == len(perm_dict) == 3
     for key in row_dict:
         assert torch.equal(row_dict[key], csc[0])
-        assert torch.equal(col_dict[key], csc[1])
+        assert torch.equal(colptr_dict[key], csc[1])
         assert perm_dict[key] is None
