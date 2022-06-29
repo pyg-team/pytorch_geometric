@@ -56,7 +56,7 @@ class EdgeAttr(CastMixin):
 
     @property
     def num_nodes_tuple(self):
-        if self.num_nodes is None or isinstance(self.num_nodes, tuple):
+        if isinstance(self.num_nodes, tuple):
             return self.num_nodes
         return (self.num_nodes, self.num_nodes)
 
