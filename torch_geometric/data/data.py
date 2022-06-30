@@ -1,4 +1,5 @@
 import copy
+import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import (
@@ -514,6 +515,34 @@ class Data(BaseData, FeatureStore, GraphStore):
         else:
             return 0
 
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the data."""
+        cls_name = self.__class__.__name__
+        status = True
+
+        num_nodes = self.num_nodes
+        if num_nodes is None:
+            status = False
+            warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
+                          raise_on_error)
+
+        if 'edge_index' in self and self.edge_index.numel() > 0:
+            if self.edge_index.min() < 0:
+                status = False
+                warn_or_raise(
+                    f"'edge_index' contains negative indices in "
+                    f"'{cls_name}' (found {int(self.edge_index.min())})",
+                    raise_on_error)
+
+            if num_nodes is not None and self.edge_index.max() >= num_nodes:
+                status = False
+                warn_or_raise(
+                    f"'edge_index' contains larger indices than the number "
+                    f"of nodes ({num_nodes}) in '{cls_name}' "
+                    f"(found {int(self.edge_index.max())})", raise_on_error)
+
+        return status
+
     def debug(self):
         pass  # TODO
 
@@ -879,3 +908,10 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         return f'{pad}\033[1m{key}\033[0m={out}'
     else:
         return f'{pad}{key}={out}'
+
+
+def warn_or_raise(msg: str, raise_on_error: bool = True):
+    if raise_on_error:
+        raise ValueError(msg)
+    else:
+        warnings.warn(msg)

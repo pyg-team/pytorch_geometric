@@ -9,7 +9,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import (
     EDGE_LAYOUT_TO_ATTR_NAME,
@@ -324,6 +324,59 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns :obj:`True` if graph edges are undirected."""
         edge_index, _, _ = to_homogeneous_edge_index(self)
         return is_undirected(edge_index, num_nodes=self.num_nodes)
+
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the data."""
+        cls_name = self.__class__.__name__
+        status = True
+
+        for edge_type, store in self._edge_store_dict.items():
+            src, _, dst = edge_type
+
+            num_src_nodes = self[src].num_nodes
+            num_dst_nodes = self[dst].num_nodes
+            if num_src_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{src}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if num_dst_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{dst}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if 'edge_index' in store and store.edge_index.numel() > 0:
+                if store.edge_index.min() < 0:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"negative indices in '{cls_name}' "
+                        f"(found {int(store.edge_index.min())})",
+                        raise_on_error)
+
+                if (num_src_nodes is not None
+                        and store.edge_index[0].max() >= num_src_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger source indices than the number of nodes"
+                        f"({num_src_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[0].max())})",
+                        raise_on_error)
+
+                if (num_dst_nodes is not None
+                        and store.edge_index[1].max() >= num_dst_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger destination indices than the number of nodes"
+                        f"({num_dst_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[1].max())})",
+                        raise_on_error)
+
+        return status
 
     def debug(self):
         pass  # TODO
