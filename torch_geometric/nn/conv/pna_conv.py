@@ -4,10 +4,10 @@ import torch
 from torch import Tensor
 from torch.nn import ModuleList, ReLU, Sequential
 
+from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import degree
 
 from ..inits import reset
 
@@ -85,7 +85,9 @@ class PNAConv(MessagePassing):
                  pre_layers: int = 1, post_layers: int = 1,
                  divide_input: bool = False, **kwargs):
 
-        kwargs.setdefault('aggr', aggregators)
+        aggr = DegreeScalerAggregation(aggregators, scalers, deg)
+        kwargs.setdefault('aggr', aggr)
+
         super().__init__(node_dim=0, **kwargs)
 
         if divide_input:
@@ -94,7 +96,6 @@ class PNAConv(MessagePassing):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.scalers = scalers
         self.edge_dim = edge_dim
         self.towers = towers
         self.divide_input = divide_input
@@ -131,9 +132,6 @@ class PNAConv(MessagePassing):
             self.post_nns.append(Sequential(*modules))
 
         self.lin = Linear(out_channels, out_channels)
-
-        # scale hook
-        self.register_aggregate_forward_hook(self.scale_hook)
 
         self.reset_parameters()
 
@@ -178,29 +176,6 @@ class PNAConv(MessagePassing):
 
         hs = [nn(h[:, i]) for i, nn in enumerate(self.pre_nns)]
         return torch.stack(hs, dim=1)
-
-    @staticmethod
-    def scale_hook(module, inputs, out: Tensor) -> Tensor:
-
-        deg = degree(inputs[0]['index'], dtype=out.dtype)
-        deg = deg.clamp_(1).view(-1, 1, 1)
-
-        outs = []
-        for scaler in module.scalers:
-            if scaler == 'identity':
-                pass
-            elif scaler == 'amplification':
-                out = out * (torch.log(deg + 1) / module.avg_deg['log'])
-            elif scaler == 'attenuation':
-                out = out * (module.avg_deg['log'] / torch.log(deg + 1))
-            elif scaler == 'linear':
-                out = out * (deg / module.avg_deg['lin'])
-            elif scaler == 'inverse_linear':
-                out = out * (module.avg_deg['lin'] / deg)
-            else:
-                raise ValueError(f'Unknown scaler "{scaler}".')
-            outs.append(out)
-        return torch.cat(outs, dim=-1)
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
