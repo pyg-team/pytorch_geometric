@@ -9,16 +9,15 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import (
+from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import (
     EDGE_LAYOUT_TO_ATTR_NAME,
-    BaseData,
-    Data,
+    EdgeAttr,
+    GraphStore,
     adj_type_to_edge_tensor_type,
     edge_tensor_type_to_adj_type,
-    size_repr,
 )
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import EdgeAttr, GraphStore
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeTensorType,
@@ -325,6 +324,59 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns :obj:`True` if graph edges are undirected."""
         edge_index, _, _ = to_homogeneous_edge_index(self)
         return is_undirected(edge_index, num_nodes=self.num_nodes)
+
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the data."""
+        cls_name = self.__class__.__name__
+        status = True
+
+        for edge_type, store in self._edge_store_dict.items():
+            src, _, dst = edge_type
+
+            num_src_nodes = self[src].num_nodes
+            num_dst_nodes = self[dst].num_nodes
+            if num_src_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{src}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if num_dst_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{dst}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if 'edge_index' in store and store.edge_index.numel() > 0:
+                if store.edge_index.min() < 0:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"negative indices in '{cls_name}' "
+                        f"(found {int(store.edge_index.min())})",
+                        raise_on_error)
+
+                if (num_src_nodes is not None
+                        and store.edge_index[0].max() >= num_src_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger source indices than the number of nodes"
+                        f"({num_src_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[0].max())})",
+                        raise_on_error)
+
+                if (num_dst_nodes is not None
+                        and store.edge_index[1].max() >= num_dst_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger destination indices than the number of nodes"
+                        f"({num_dst_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[1].max())})",
+                        raise_on_error)
+
+        return status
 
     def debug(self):
         pass  # TODO
@@ -696,10 +748,22 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         r"""Stores an edge index in edge storage, in the specified layout."""
+
         # Convert the edge index to a recognizable layout:
         attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
+
+        key = self._to_canonical(edge_attr.edge_type)
+        src, _, dst = key
+
+        # Handle num_nodes, if possible:
+        size = edge_attr.size
+        if size is not None:
+            # TODO better warning in the case of overwriting 'num_nodes'
+            self[src].num_nodes = size[0]
+            self[dst].num_nodes = size[1]
+
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
@@ -719,7 +783,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type, edge_store in self.edge_items():
             for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
                 if attr_name in edge_store:
-                    out.append(EdgeAttr(edge_type=edge_type, layout=layout))
+                    out.append(
+                        EdgeAttr(edge_type=edge_type, layout=layout,
+                                 size=self[edge_type].size()))
         return out
 
 

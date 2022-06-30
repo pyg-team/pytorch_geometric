@@ -1,4 +1,3 @@
-from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
@@ -6,12 +5,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.data import (
-    EDGE_LAYOUT_TO_ATTR_NAME,
-    edge_tensor_type_to_adj_type,
-)
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
@@ -126,62 +121,20 @@ class NeighborSampler:
             assert input_type is not None
             self.input_type = input_type
 
-            # Obtain CSC representation of graph for in-memory sampling:
-            # TODO this code will be replaced with a `GraphStore.sample` call
-            # when sampling routines are factored out to work with pyg-lib and
-            # GraphStore
-            edge_type_to_layouts: Dict[Any,
-                                       List[EdgeLayout]] = defaultdict(list)
-            for attr in edge_attrs:
-                edge_type_to_layouts[attr.edge_type].append(attr.layout)
-
-            self.colptr_dict, self.row_dict, self.perm_dict = {}, {}, {}
-            for edge_type, edge_layouts in edge_type_to_layouts.items():
-                key = edge_type_to_str(edge_type)
-
-                # Select the most favorable layout, if multiple exist:
-                edge_layout = edge_layouts[0]
-                ordering = {
-                    EdgeLayout.COO: 0,
-                    EdgeLayout.CSR: 1,
-                    EdgeLayout.CSC: 2
-                }
-                for layout in edge_layouts[1:]:
-                    if ordering[layout] > ordering[edge_layout]:
-                        edge_layout = layout
-
-                # TODO the below logic currently only works for CSC and CSR
-                # edge layouts, so throw an exception of our best format is
-                # COO:
-                if edge_layout == EdgeLayout.COO:
-                    raise ValueError(
-                        f"NeighborSampler currently only supports CSC and "
-                        f"CSR edge index types in the GraphStore, but "
-                        f"edge {edge_type} has format "
-                        f"{edge_layout.value.upper()}. Please convert "
-                        f"{edge_type} to either CSC or CSR formats "
-                        f"in order to use it with NeighborSampler.")
-
-                # Obtain edge index from backing GraphStore:
-                edge_index_tuple = graph_store.get_edge_index(
-                    edge_type=edge_type, layout=edge_layout)
-
-                # Convert to format for to_csc:
-                class _DataArgument(object):
-                    pass
-
-                data_argument = _DataArgument()
-                attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_layout]
-                edge_index = edge_tensor_type_to_adj_type(
-                    EdgeAttr(layout=edge_layout, edge_type=edge_type),
-                    edge_index_tuple)
-
-                setattr(data_argument, attr_name, edge_index)
-
-                self.colptr_dict[key], self.row_dict[key], self.perm_dict[
-                    key] = to_csc(data_argument, device='cpu',
-                                  share_memory=share_memory,
-                                  is_sorted=is_sorted)
+            # Obtain CSC representations for in-memory sampling:
+            row_dict, colptr_dict, perm_dict = graph_store.csc()
+            self.row_dict = {
+                edge_type_to_str(k): v
+                for k, v in row_dict.items()
+            }
+            self.colptr_dict = {
+                edge_type_to_str(k): v
+                for k, v in colptr_dict.items()
+            }
+            self.perm_dict = {
+                edge_type_to_str(k): v
+                for k, v in perm_dict.items()
+            }
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
