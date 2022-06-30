@@ -4,7 +4,11 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import LightningDataset, LightningNodeData
+from torch_geometric.data import (
+    LightningDataset,
+    LightningLinkData,
+    LightningNodeData,
+)
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
@@ -264,3 +268,22 @@ def test_lightning_hetero_node_data(get_dataset):
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
+
+
+@withCUDA
+@onlyFullTest
+@withPackage('pytorch_lightning')
+def test_lightning_hetero_link_data(get_dataset):
+    # TODO: Add more datasets.
+    dataset = get_dataset(name='DBLP')
+    data = dataset[0]
+    datamodule = LightningLinkData(data, loader='link_neighbor',
+                                   num_neighbors=[5], batch_size=32,
+                                   num_workers=3)
+    input_edges = (('author', 'dummy', 'paper'), data['author',
+                                                      'paper']['edge_index'])
+    loader = datamodule.dataloader(input_edges=input_edges, input_labels=None,
+                                   shuffle=True)
+    batch = next(iter(loader))
+    assert (batch['author', 'dummy',
+                  'paper']['edge_label_index'].shape[1] == 32)

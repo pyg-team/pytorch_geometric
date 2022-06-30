@@ -96,12 +96,10 @@ def collate(
                 inc_dict[attr] = incs
 
             # Add an additional batch vector for the given attribute:
-            if (attr in follow_batch and isinstance(slices, Tensor)
-                    and slices.dim() == 1):
-                repeats = slices[1:] - slices[:-1]
-                batch = repeat_interleave(repeats.tolist(), device=device)
+            if attr in follow_batch:
+                batch, ptr = _batch_and_ptr(slices, device)
                 out_store[f'{attr}_batch'] = batch
-                out_store[f'{attr}_ptr'] = cumsum(repeats.to(device))
+                out_store[f'{attr}_ptr'] = ptr
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
@@ -197,6 +195,39 @@ def _collate(
         # Other-wise, just return the list of values as it is.
         slices = torch.arange(len(values) + 1)
         return values, slices, None
+
+
+def _batch_and_ptr(
+    slices: Any,
+    device: Optional[torch.device] = None,
+) -> Tuple[Any, Any]:
+    if (isinstance(slices, Tensor) and slices.dim() == 1):
+        # Default case, turn slices tensor into batch.
+        repeats = slices[1:] - slices[:-1]
+        batch = repeat_interleave(repeats.tolist(), device=device)
+        ptr = cumsum(repeats.to(device))
+        return batch, ptr
+
+    elif isinstance(slices, Mapping):
+        # Recursively batch elements of dictionaries.
+        batch, ptr = {}, {}
+        for k, v in slices.items():
+            batch[k], ptr[k] = _batch_and_ptr(v, device)
+        return batch, ptr
+
+    elif (isinstance(slices, Sequence) and not isinstance(slices, str)
+          and isinstance(slices[0], Tensor)):
+        # Recursively batch elements of lists.
+        batch, ptr = [], []
+        for s in slices:
+            sub_batch, sub_ptr = _batch_and_ptr(s, device)
+            batch.append(sub_batch)
+            ptr.append(sub_ptr)
+        return batch, ptr
+
+    else:
+        # Failure of batching, usually due to slices.dim() != 1
+        return None, None
 
 
 ###############################################################################

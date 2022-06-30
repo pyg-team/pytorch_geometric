@@ -1,4 +1,5 @@
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
 
@@ -158,3 +159,57 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+
+class MyTestDataset2(InMemoryDataset):
+    def __init__(self, data_list):
+        super().__init__('/tmp/MyTestDataset2')
+        self.data, self.slices = self.collate(data_list)
+
+
+def test_lists_of_tensors_in_memory_dataset():
+    def tr(n, m):
+        return torch.rand((n, m))
+
+    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)])
+    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)])
+    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)])
+    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)])
+
+    data_list = [d1, d2, d3, d4]
+
+    dataset = MyTestDataset2(data_list)
+    assert len(dataset) == 4
+    assert dataset[0].xs[1].shape == (11, 4)
+    assert dataset[0].xs[2].shape == (1, 2)
+    assert dataset[1].xs[0].shape == (5, 3)
+    assert dataset[2].xs[1].shape == (15, 4)
+    assert dataset[3].xs[1].shape == (16, 4)
+
+
+class MyTestDataset3(InMemoryDataset):
+    def __init__(self, data_list):
+        super().__init__('/tmp/MyTestDataset3')
+        self.data, self.slices = self.collate(data_list)
+
+
+def test_lists_of_SparseTensors():
+    e1 = torch.tensor([[4, 1, 3, 2, 2, 3], [1, 3, 2, 3, 3, 2]])
+    e2 = torch.tensor([[0, 1, 4, 7, 2, 9], [7, 2, 2, 1, 4, 7]])
+    e3 = torch.tensor([[3, 5, 1, 2, 3, 3], [5, 0, 2, 1, 3, 7]])
+    e4 = torch.tensor([[0, 1, 9, 2, 0, 3], [1, 1, 2, 1, 3, 2]])
+    adj1 = SparseTensor.from_edge_index(e1, sparse_sizes=(11, 11))
+    adj2 = SparseTensor.from_edge_index(e2, sparse_sizes=(22, 22))
+    adj3 = SparseTensor.from_edge_index(e3, sparse_sizes=(12, 12))
+    adj4 = SparseTensor.from_edge_index(e4, sparse_sizes=(15, 15))
+
+    d1 = Data(adj_test=[adj1, adj2])
+    d2 = Data(adj_test=[adj3, adj4])
+
+    data_list = [d1, d2]
+    dataset = MyTestDataset3(data_list)
+    assert len(dataset) == 2
+    assert dataset[0].adj_test[0].sparse_sizes() == (11, 11)
+    assert dataset[0].adj_test[1].sparse_sizes() == (22, 22)
+    assert dataset[1].adj_test[0].sparse_sizes() == (12, 12)
+    assert dataset[1].adj_test[1].sparse_sizes() == (15, 15)
