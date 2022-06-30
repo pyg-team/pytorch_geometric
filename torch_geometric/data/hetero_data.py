@@ -9,7 +9,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import (
     EDGE_LAYOUT_TO_ATTR_NAME,
@@ -17,7 +17,6 @@ from torch_geometric.data.graph_store import (
     GraphStore,
     adj_type_to_edge_tensor_type,
     edge_tensor_type_to_adj_type,
-    warn_or_raise,
 )
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
