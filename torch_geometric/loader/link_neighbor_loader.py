@@ -65,25 +65,14 @@ class LinkNeighborSampler(NeighborSampler):
             edge_label_index, edge_label)
 
         if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
 
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
             edge_label_index = reverse.view(2, -1)
-
-            node, row, col, edge = sample_fn(
-                self.colptr,
-                self.row,
-                query_nodes,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-
-            return node, row, col, edge, edge_label_index, edge_label
+            return self._sparse_neighbor_sample(query_nodes) + (
+                edge_label_index, edge_label)
 
         elif issubclass(self.data_cls, HeteroData):
-            sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
 
             if self.input_type[0] != self.input_type[-1]:
                 query_src = edge_label_index[0]
@@ -100,21 +89,8 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-
-            node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                self.node_types,
-                self.edge_types,
-                self.colptr_dict,
-                self.row_dict,
-                query_node_dict,
-                self.num_neighbors,
-                self.num_hops,
-                self.replace,
-                self.directed,
-            )
-
-            return (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-                    edge_label)
+            return self._hetero_sparse_neighbor_sample(query_node_dict) + (
+                edge_label_index, edge_label)
 
 
 class LinkNeighborLoader(torch.utils.data.DataLoader):
@@ -132,7 +108,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
     .. code-block:: python
 
         from torch_geometric.datasets import Planetoid
-        from torch_geometric.loader import NeighborLoader
+        from torch_geometric.loader import LinkNeighborLoader
 
         data = Planetoid(path, name='Cora')[0]
 
@@ -178,6 +154,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         :obj:`neg_sampling_ratio` is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+        :obj:`time_attr` is currently implemented such that for an edge
+        `(src_node, dst_node)`, the neighbors of `src_node` can have a later
+        timestamp than `dst_node` or vice-versa.
+
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
@@ -216,6 +196,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :meth:`F.binary_cross_entropy`) and of type
             :obj:`torch.long` for multi-class classification (to facilitate the
             ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -223,6 +208,14 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -236,8 +229,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
+        time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
+        filter_per_worker: bool = False,
         neighbor_sampler: Optional[LinkNeighborSampler] = None,
         **kwargs,
     ):
@@ -255,9 +250,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.edge_label = edge_label
         self.replace = replace
         self.directed = directed
-        self.transform = transform
-        self.neighbor_sampler = neighbor_sampler
         self.neg_sampling_ratio = neg_sampling_ratio
+        self.transform = transform
+        self.filter_per_worker = filter_per_worker
+        self.neighbor_sampler = neighbor_sampler
 
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
@@ -271,16 +267,16 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
+                time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
         super().__init__(Dataset(edge_label_index, edge_label),
-                         collate_fn=self.neighbor_sampler, **kwargs)
+                         collate_fn=self.collate_fn, **kwargs)
 
-    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        # NOTE This function will always be executed on the main thread!
+    def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
-            node, row, col, edge, edge_label_index, edge_label = out
+            (node, row, col, edge, edge_label_index, edge_label) = out
             data = filter_data(self.data, node, row, col, edge,
                                self.neighbor_sampler.perm)
             data.edge_label_index = edge_label_index
@@ -300,8 +296,18 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
+    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
+        out = self.neighbor_sampler(index)
+        if self.filter_per_worker:
+            # We execute `filter_fn` in the worker process.
+            out = self.filter_fn(out)
+        return out
+
     def _get_iterator(self) -> Iterator:
-        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
+        if self.filter_per_worker:
+            return super()._get_iterator()
+        # We execute `filter_fn` in the main process.
+        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -349,7 +355,6 @@ def get_edge_label_index(
 
     edge_type, edge_label_index = edge_label_index
     edge_type = data._to_canonical(*edge_type)
-    assert edge_type in data.edge_types
 
     if edge_label_index is None:
         return edge_type, data[edge_type].edge_index

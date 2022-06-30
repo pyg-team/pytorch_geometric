@@ -16,7 +16,7 @@ class MyGraphStore(GraphStore):
 
     @staticmethod
     def key(attr: EdgeAttr) -> str:
-        return (attr.edge_type, attr.layout.value)
+        return (attr.edge_type, attr.layout.value, attr.is_sorted, attr.size)
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
@@ -26,4 +26,4 @@ class MyGraphStore(GraphStore):
         return self.store.get(MyGraphStore.key(edge_attr), None)
 
     def get_all_edge_attrs(self):
-        return [EdgeAttr(*key) for key in self.store.keys()]
+        return [EdgeAttr(*key) for key in self.store]

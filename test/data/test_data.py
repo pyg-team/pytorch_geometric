@@ -15,6 +15,7 @@ def test_data():
     x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t()
     edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
     data = Data(x=x, edge_index=edge_index).to(torch.device('cpu'))
+    data.validate(raise_on_error=True)
 
     N = data.num_nodes
     assert N == 3
@@ -248,6 +249,8 @@ def test_data_setter_properties():
 def test_basic_feature_store():
     data = Data()
     x = torch.randn(20, 20)
+    data.not_a_tensor_attr = 10  # don't include, not a tensor attr
+    data.bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
 
     # Put tensor:
     assert data.put_tensor(copy.deepcopy(x), attr_name='x', index=None)
@@ -297,7 +300,7 @@ def test_basic_graph_store():
     csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo')
+    data.put_edge_index(coo, layout='coo', size=(3, 3))
     data.put_edge_index(csr, layout='csr')
     data.put_edge_index(csc, layout='csc')
 

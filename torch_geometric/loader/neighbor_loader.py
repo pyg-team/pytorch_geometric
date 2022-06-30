@@ -1,4 +1,3 @@
-from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
@@ -6,12 +5,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.data import (
-    EDGE_LAYOUT_TO_ATTR_NAME,
-    edge_tensor_type_to_adj_type,
-)
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout, GraphStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
@@ -126,120 +121,85 @@ class NeighborSampler:
             assert input_type is not None
             self.input_type = input_type
 
-            # Obtain CSC representation of graph for in-memory sampling:
-            # TODO this code will be replaced with a `GraphStore.sample` call
-            # when sampling routines are factored out to work with pyg-lib and
-            # GraphStore
-            edge_type_to_layouts: Dict[Any,
-                                       List[EdgeLayout]] = defaultdict(list)
-            for attr in edge_attrs:
-                edge_type_to_layouts[attr.edge_type].append(attr.layout)
-
-            self.colptr_dict, self.row_dict, self.perm_dict = {}, {}, {}
-            for edge_type, edge_layouts in edge_type_to_layouts.items():
-                key = edge_type_to_str(edge_type)
-
-                # Select the most favorable layout, if multiple exist:
-                edge_layout = edge_layouts[0]
-                ordering = {
-                    EdgeLayout.COO: 0,
-                    EdgeLayout.CSR: 1,
-                    EdgeLayout.CSC: 2
-                }
-                for layout in edge_layouts[1:]:
-                    if ordering[layout] > ordering[edge_layout]:
-                        edge_layout = layout
-
-                # TODO the below logic currently only works for CSC and CSR
-                # edge layouts, so throw an exception of our best format is
-                # COO:
-                if edge_layout == EdgeLayout.COO:
-                    raise ValueError(
-                        f"NeighborSampler currently only supports CSC and "
-                        f"CSR edge index types in the GraphStore, but "
-                        f"edge {edge_type} has format "
-                        f"{edge_layout.value.upper()}. Please convert "
-                        f"{edge_type} to either CSC or CSR formats "
-                        f"in order to use it with NeighborSampler.")
-
-                # Obtain edge index from backing GraphStore:
-                edge_index_tuple = graph_store.get_edge_index(
-                    edge_type=edge_type, layout=edge_layout)
-
-                # Convert to format for to_csc:
-                class _DataArgument(object):
-                    pass
-
-                data_argument = _DataArgument()
-                attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_layout]
-                edge_index = edge_tensor_type_to_adj_type(
-                    EdgeAttr(layout=edge_layout, edge_type=edge_type),
-                    edge_index_tuple)
-
-                setattr(data_argument, attr_name, edge_index)
-
-                self.colptr_dict[key], self.row_dict[key], self.perm_dict[
-                    key] = to_csc(data_argument, device='cpu',
-                                  share_memory=share_memory,
-                                  is_sorted=is_sorted)
+            # Obtain CSC representations for in-memory sampling:
+            row_dict, colptr_dict, perm_dict = graph_store.csc()
+            self.row_dict = {
+                edge_type_to_str(k): v
+                for k, v in row_dict.items()
+            }
+            self.colptr_dict = {
+                edge_type_to_str(k): v
+                for k, v in colptr_dict.items()
+            }
+            self.perm_dict = {
+                edge_type_to_str(k): v
+                for k, v in perm_dict.items()
+            }
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
+
+    def _sparse_neighbor_sample(self, index: Tensor):
+        fn = torch.ops.torch_sparse.neighbor_sample
+        node, row, col, edge = fn(
+            self.colptr,
+            self.row,
+            index,
+            self.num_neighbors,
+            self.replace,
+            self.directed,
+        )
+        return node, row, col, edge
+
+    def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str, Tensor]):
+        if self.node_time_dict is None:
+            fn = torch.ops.torch_sparse.hetero_neighbor_sample
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        else:
+            try:
+                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+            except RuntimeError as e:
+                raise RuntimeError(
+                    "'torch_sparse' operator "
+                    "'hetero_temporal_neighbor_sample' not "
+                    "found. Currently requires building "
+                    "'torch_sparse' from master.", e)
+
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                self.node_time_dict,
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        return node_dict, row_dict, col_dict, edge_dict
 
     def __call__(self, index: Union[List[int], Tensor]):
         if not isinstance(index, torch.LongTensor):
             index = torch.LongTensor(index)
 
         if self.data_cls != 'custom' and issubclass(self.data_cls, Data):
-            fn = torch.ops.torch_sparse.neighbor_sample
-            node, row, col, edge = fn(
-                self.colptr,
-                self.row,
-                index,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-            return node, row, col, edge, index.numel()
+            return self._sparse_neighbor_sample(index) + (index.numel(), )
 
         elif self.data_cls == 'custom' or issubclass(self.data_cls,
                                                      HeteroData):
-            if self.node_time_dict is None:
-                fn = torch.ops.torch_sparse.hetero_neighbor_sample
-                node_dict, row_dict, col_dict, edge_dict = fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    {self.input_type: index},
-                    self.num_neighbors,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-            else:
-                try:
-                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                except RuntimeError as e:
-                    raise RuntimeError(
-                        "'torch_sparse' operator "
-                        "'hetero_temporal_neighbor_sample' not "
-                        "found. Currently requires building "
-                        "'torch_sparse' from master.", e)
-
-                node_dict, row_dict, col_dict, edge_dict = fn(
-                    self.node_types,
-                    self.edge_types,
-                    self.colptr_dict,
-                    self.row_dict,
-                    {self.input_type: index},
-                    self.num_neighbors,
-                    self.node_time_dict,
-                    self.num_hops,
-                    self.replace,
-                    self.directed,
-                )
-            return node_dict, row_dict, col_dict, edge_dict, index.numel()
+            return self._hetero_sparse_neighbor_sample(
+                {self.input_type: index}) + (index.numel(), )
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
@@ -370,6 +330,14 @@ class NeighborLoader(torch.utils.data.DataLoader):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -384,6 +352,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
+        filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
@@ -401,6 +370,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self.replace = replace
         self.directed = directed
         self.transform = transform
+        self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
 
         node_type, input_nodes = get_input_nodes(data, input_nodes)
@@ -417,11 +387,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(input_nodes, collate_fn=self.neighbor_sampler,
-                         **kwargs)
+        super().__init__(input_nodes, collate_fn=self.collate_fn, **kwargs)
 
-    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        # NOTE This function will always be executed on the main thread!
+    def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
             node, row, col, edge, batch_size = out
             data = filter_data(self.data, node, row, col, edge,
@@ -445,8 +413,18 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
+    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
+        out = self.neighbor_sampler(index)
+        if self.filter_per_worker:
+            # We execute `filter_fn` in the worker process.
+            out = self.filter_fn(out)
+        return out
+
     def _get_iterator(self) -> Iterator:
-        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
+        if self.filter_per_worker:
+            return super()._get_iterator()
+        # We execute `filter_fn` in the main process.
+        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
