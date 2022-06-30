@@ -204,8 +204,10 @@ def filter_hetero_data_disjoint(
         for edge_type in data.edge_types:
             edge_type_str = edge_type_to_str(edge_type)
             filter_edge_store_(data[edge_type], out[edge_type],
-                            row_dict[edge_type_str], col_dict[edge_type_str],
-                            edge_dict[edge_type_str], perm_dict[edge_type_str])
+                               row_dict[edge_type_str],
+                               col_dict[edge_type_str],
+                               edge_dict[edge_type_str],
+                               perm_dict[edge_type_str])
     # TODO: collate the filtered data object (out) from each iteration
     return out
 
