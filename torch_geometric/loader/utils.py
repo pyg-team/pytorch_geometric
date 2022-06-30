@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -184,6 +184,29 @@ def filter_hetero_data(
                            row_dict[edge_type_str], col_dict[edge_type_str],
                            edge_dict[edge_type_str], perm_dict[edge_type_str])
 
+    return out
+
+
+def filter_hetero_data_disjoint(
+    data: HeteroData,
+    node_dicts: List[Dict[str, Tensor]],
+    row_dicts: List[Dict[str, Tensor]],
+    col_dicts: List[Dict[str, Tensor]],
+    edge_dicts: List[Dict[str, Tensor]],
+    perm_dict: Dict[str, OptTensor],
+) -> HeteroData:
+    for node_dict, row_dict, col_dict, edge_dict in zip(
+            node_dicts, row_dicts, col_dicts, edge_dicts):
+        out = copy.copy(data)
+        for node_type in data.node_types:
+            filter_node_store_(data[node_type], out[node_type],
+                               node_dict[node_type])
+        for edge_type in data.edge_types:
+            edge_type_str = edge_type_to_str(edge_type)
+            filter_edge_store_(data[edge_type], out[edge_type],
+                            row_dict[edge_type_str], col_dict[edge_type_str],
+                            edge_dict[edge_type_str], perm_dict[edge_type_str])
+    # TODO: collate the filtered data object (out) from each iteration
     return out
 
 

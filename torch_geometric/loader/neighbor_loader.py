@@ -86,6 +86,11 @@ class NeighborSampler:
 
             assert input_type is not None
             self.input_type = input_type
+            if self.node_time_dict is not None:
+                # if temporal sampling is enabled, we force disjoint sampling
+                # to avoid the issue where a node is sampled multiple times
+                # and its associated timestamps are overridden each time.
+                self.disjoint = True
 
         # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
         # obtain edges from GraphStore and convert them to CSC if necessary,
@@ -200,8 +205,15 @@ class NeighborSampler:
 
         elif self.data_cls == 'custom' or issubclass(self.data_cls,
                                                      HeteroData):
-            return self._hetero_sparse_neighbor_sample(
-                {self.input_type: index}) + (index.numel(), )
+            if not self.disjoint:
+                return self._hetero_sparse_neighbor_sample(
+                    {self.input_type: index}) + (index.numel(), )
+            else:
+                result = []
+                for i in index.size(0):
+                    result.append(self._hetero_sparse_neighbor_sample(
+                        {self.input_type: index[i:i+1]}))
+                return tuple(map(list, zip(*result))) + (index.numel(), )
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
@@ -356,6 +368,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
+        disjoint: bool = False,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
