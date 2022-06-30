@@ -50,7 +50,6 @@ class DegreeScalerAggregation(Aggregation):
                 dim: int = -2) -> Tensor:
 
         out = self.agg(x, index, ptr, dim_size, dim)
-
         deg = degree(index, dtype=out.dtype)
         deg = deg.clamp_(1).view(-1, 1, 1)
 
