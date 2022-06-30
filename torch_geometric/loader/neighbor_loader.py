@@ -211,8 +211,9 @@ class NeighborSampler:
             else:
                 result = []
                 for i in index.size(0):
-                    result.append(self._hetero_sparse_neighbor_sample(
-                        {self.input_type: index[i:i+1]}))
+                    result.append(
+                        self._hetero_sparse_neighbor_sample(
+                            {self.input_type: index[i:i + 1]}))
                 return tuple(map(list, zip(*result))) + (index.numel(), )
 
 
