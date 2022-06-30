@@ -38,7 +38,7 @@ class Net(torch.nn.Module):
 
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
-print("gcn-{}-{}:".format(args.dataset, args.random_splits), end=' ')
+print("sgc-{}-{}:".format(args.dataset, args.random_splits), end=' ')
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
 
