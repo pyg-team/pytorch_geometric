@@ -1,5 +1,5 @@
 import copy
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
@@ -130,10 +130,13 @@ class InMemoryDataset(Dataset):
         return dataset
 
 
-def nested_iter(mapping: Mapping) -> Iterable:
-    for key, value in mapping.items():
-        if isinstance(value, Mapping):
+def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+    if isinstance(node, Mapping):
+        for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-        else:
-            yield key, value
+    elif isinstance(node, Sequence):
+        for i, inner_value in enumerate(node):
+            yield i, inner_value
+    else:
+        yield None, node
