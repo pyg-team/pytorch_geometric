@@ -34,7 +34,7 @@ class DegreeScalerAggregation(Aggregation):
         super().__init__()
 
         self.agg = MultiAggregation(aggrs, aggrs_kwargs)
-        self.scalersz = scalers
+        self.scalers = scalers
 
         deg = deg.to(torch.float)
         num_nodes = int(deg.sum())
