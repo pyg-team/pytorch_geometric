@@ -206,8 +206,10 @@ def test_temporal_heterogeneous_link_neighbor_loader():
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'paper'),
-                                batch_size=1, time_attr='time')
+                                batch_size=32, time_attr='time')
 
     for batch in loader:
-        mask = batch['paper'].time[0] >= batch['paper'].time[1:]
-        assert torch.all(mask)
+        max_time = batch['paper'].time.max()
+        seed_nodes = batch['paper', 'paper'].edge_label_index.view(-1)
+        seed_max_time = batch['paper'].time[seed_nodes].max()
+        assert seed_max_time >= max_time
