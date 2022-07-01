@@ -4,12 +4,13 @@ import torch
 import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
-from torch.profiler import profile, ProfilerActivity
+from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-profile_sort = "self_cuda_time_total" if torch.cuda.is_available() else "self_cpu_time_total"
+profile_sort = "self_cuda_time_total" if torch.cuda.is_available(
+) else "self_cpu_time_total"
 
 
 def random_planetoid_splits(data, num_classes):
@@ -35,6 +36,7 @@ def random_planetoid_splits(data, num_classes):
 
     return data
 
+
 def trace_handler(p):
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
@@ -43,8 +45,9 @@ def trace_handler(p):
     timeline_file = profile_dir + 'timeline' + '.json'
     p.export_chrome_trace(timeline_file)
 
-def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inference, profiling,
-        permute_masks=None, logger=None):
+
+def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+        inference, profiling, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
     if not inference:
         for _ in range(runs):
@@ -54,7 +57,8 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
             data = data.to(device)
 
             model.to(device).reset_parameters()
-            optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+            optimizer = Adam(model.parameters(), lr=lr,
+                             weight_decay=weight_decay)
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
@@ -91,9 +95,11 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
             val_losses.append(best_val_loss)
             accs.append(test_acc)
             durations.append(t_end - t_start)
-        loss, acc, duration = tensor(val_losses), tensor(accs), tensor(durations)
+        loss, acc, duration = tensor(val_losses), tensor(accs), tensor(
+            durations)
 
-        print(f'Val Loss: {float(loss.mean()):.4f}, '
+        print(
+            f'Val Loss: {float(loss.mean()):.4f}, '
             f'Test Accuracy: {float(acc.mean()):.3f} ± {float(acc.std()):.3f}, '
             f'Duration: {float(duration.mean()):.3f}s')
     else:
@@ -108,9 +114,10 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
             for epoch in range(1, epochs + 1):
                 if i == int(runs / 2) and epoch == int(epochs / 2):
                     if profiling:
-                        with profile(activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                            on_trace_ready=trace_handler) as p:
+                        with profile(
+                                activities=[
+                                    ProfilerActivity.CPU, ProfilerActivity.CUDA
+                                ], on_trace_ready=trace_handler) as p:
                             test(model, data)
                             p.step()
                     else:
@@ -124,9 +131,11 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping, inferenc
                             torch.cuda.synchronize()
                         t_end = time.time()
                         duration = t_end - t_start
-                        print("End-to-End time: {} s".format(duration), flush=True)
+                        print("End-to-End time: {} s".format(duration),
+                              flush=True)
                 else:
                     test(model, data)
+
 
 def train(model, optimizer, data):
     model.train()
@@ -154,6 +163,7 @@ def evaluate(model, data):
         outs[f'{key}_acc'] = acc
 
     return outs
+
 
 def test(model, data):
     model.eval()

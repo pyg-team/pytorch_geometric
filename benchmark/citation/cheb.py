@@ -19,7 +19,8 @@ parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--normalize_features', type=bool, default=True)
 parser.add_argument('--num_hops', type=int, default=3)
 parser.add_argument('--inference', type=bool, default=False)
-parser.add_argument('--profile', type=bool, default=False) # Currently support profile in inference
+parser.add_argument('--profile', type=bool,
+                    default=False)  # Currently support profile in inference
 args = parser.parse_args()
 
 
@@ -51,5 +52,6 @@ if args.profile:
     import os
     import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'profile-citation-CHEBY-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.json'
+    timeline_file = profile_dir + 'profile-citation-CHEBY-' + args.dataset + '-random_splits-' + str(
+        args.random_splits) + '.json'
     os.rename('timeline.json', timeline_file)

@@ -22,7 +22,8 @@ parser.add_argument('--num_layers', type=int, default=1)
 parser.add_argument('--shared_weights', type=bool, default=False)
 parser.add_argument('--skip_dropout', type=float, default=0.75)
 parser.add_argument('--inference', type=bool, default=False)
-parser.add_argument('--profile', type=bool, default=False) # Currently support profile in inference
+parser.add_argument('--profile', type=bool,
+                    default=False)  # Currently support profile in inference
 args = parser.parse_args()
 
 
@@ -58,5 +59,6 @@ if args.profile:
     import os
     import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'profile-citation-ARMA-' + args.dataset + '-random_splits-' + str(args.random_splits) + '.json'
+    timeline_file = profile_dir + 'profile-citation-ARMA-' + args.dataset + '-random_splits-' + str(
+        args.random_splits) + '.json'
     os.rename('timeline.json', timeline_file)

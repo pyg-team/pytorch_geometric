@@ -5,8 +5,8 @@ import time
 import torch
 import torch.nn.functional as F
 from torch.nn import ReLU
+from torch.profiler import ProfilerActivity, profile
 from tqdm import tqdm
-from torch.profiler import profile, ProfilerActivity
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
@@ -16,11 +16,13 @@ from torch_geometric.nn import Linear, SAGEConv, Sequential, to_hetero
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
 parser.add_argument('--inference', type=bool, default=False)
-parser.add_argument('--profile', type=bool, default=False) # Currently support profile in inference
+parser.add_argument('--profile', type=bool,
+                    default=False)  # Currently support profile in inference
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-profile_sort = "self_cuda_time_total" if torch.cuda.is_available() else "self_cpu_time_total"
+profile_sort = "self_cuda_time_total" if torch.cuda.is_available(
+) else "self_cpu_time_total"
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
 transform = T.ToUndirected(merge=True)
@@ -53,6 +55,7 @@ model = Sequential('x, edge_index', [
 ])
 model = to_hetero(model, data.metadata(), aggr='sum').to(device)
 
+
 def trace_handler(p):
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
@@ -60,6 +63,7 @@ def trace_handler(p):
     profile_dir = str(pathlib.Path.cwd()) + '/'
     timeline_file = profile_dir + 'timeline-to-hetero-mag' + '.json'
     p.export_chrome_trace(timeline_file)
+
 
 @torch.no_grad()
 def init_params():
@@ -104,6 +108,7 @@ def test(loader):
 
     return total_correct / total_examples
 
+
 @torch.no_grad()
 def inference(loader):
     model.eval()
@@ -111,6 +116,7 @@ def inference(loader):
         batch = batch.to(device, 'edge_index')
         batch_size = batch['paper'].batch_size
         model(batch.x_dict, batch.edge_index_dict)
+
 
 init_params()  # Initialize parameters.
 if not args.inference:
@@ -124,11 +130,12 @@ else:
     for epoch in range(1, 21):
         if epoch == 20:
             if args.profile:
-                with profile(activities=[
-                    ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                    on_trace_ready=trace_handler) as p:
-                     inference(val_loader)
-                     p.step()
+                with profile(
+                        activities=[
+                            ProfilerActivity.CPU, ProfilerActivity.CUDA
+                        ], on_trace_ready=trace_handler) as p:
+                    inference(val_loader)
+                    p.step()
             else:
                 if torch.cuda.is_available():
                     torch.cuda.synchronize()
