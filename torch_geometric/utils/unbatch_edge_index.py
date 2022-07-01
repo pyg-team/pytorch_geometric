@@ -23,12 +23,8 @@ def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
 
     edge_assignments = torch.bucketize(edge_index, boundary, right=True)
 
-    out = [
-        (
-            edge_index[edge_assignments == batch_idx].view(2, -1)
-            - inc[batch_idx]
-        ).to(torch.int64)
-        for batch_idx in range(batch.max().item() + 1)
-    ]
+    out = [(edge_index[edge_assignments == batch_idx].view(2, -1) -
+            inc[batch_idx]).to(torch.int64)
+           for batch_idx in range(batch.max().item() + 1)]
 
     return out
