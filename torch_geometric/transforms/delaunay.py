@@ -10,16 +10,16 @@ class Delaunay(BaseTransform):
     r"""Computes the delaunay triangulation of a set of points
     (functional name: :obj:`delaunay`)."""
     def __call__(self, data):
-        if data.pos.size(0) < 2:
+        if data.pos.size(1) < 2:
             data.edge_index = torch.tensor([], dtype=torch.long,
                                            device=data.pos.device).view(2, 0)
-        if data.pos.size(0) == 2:
+        if data.pos.size(1) == 2:
             data.edge_index = torch.tensor([[0, 1], [1, 0]], dtype=torch.long,
                                            device=data.pos.device)
-        elif data.pos.size(0) == 3:
+        elif data.pos.size(1) == 3:
             data.face = torch.tensor([[0], [1], [2]], dtype=torch.long,
                                      device=data.pos.device)
-        if data.pos.size(0) > 3:
+        if data.pos.size(1) > 3:
             pos = data.pos.cpu().numpy()
             tri = scipy.spatial.Delaunay(pos, qhull_options='QJ')
             face = torch.from_numpy(tri.simplices)
