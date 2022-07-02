@@ -49,10 +49,13 @@ class DegreeScalerAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
+        # TODO: Does not currently support ptr because `degree` doesn't.
+        if index is None:
+            raise NotImplementedError("ptr not currently supported")
+
         out = self.agg(x, index, ptr, dim_size, dim)
         deg = degree(index, dtype=out.dtype)
-        deg = deg.clamp_(1).view(-1, 1, 1)
-
+        deg = deg.clamp_(1).view(*([-1] + [1] * (len(out.shape) - 1)))
         outs = []
         for scaler in self.scalers:
             if scaler == 'identity':
