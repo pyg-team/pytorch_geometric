@@ -14,7 +14,7 @@ class DegreeScalerAggregation(Aggregation):
     in-degree of the training set and so must be provided at construction.
 
     Args:
-        aggr (string or list or Aggregation, optional): The list of
+        aggrs (list of string or list or Aggregation): The list of
             aggregations given as :class:`~torch_geometric.nn.aggr.Aggregation`
             (or any string that automatically resolves to it).
         scalers (list of str): Set of scaling function identifiers, namely
@@ -33,7 +33,11 @@ class DegreeScalerAggregation(Aggregation):
 
         super().__init__()
 
-        self.agg = MultiAggregation(aggrs, aggrs_kwargs)
+        # TODO: Support non-lists
+        if not isinstance(aggrs, list):
+            raise RuntimeError("`aggrs` must be a list of aggregations ")
+
+        self.aggr = MultiAggregation(aggrs, aggrs_kwargs)
         self.scalers = scalers
 
         deg = deg.to(torch.float)
@@ -49,13 +53,14 @@ class DegreeScalerAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        # TODO: Does not currently support ptr because `degree` doesn't.
-        if index is None:
-            raise NotImplementedError("ptr not currently supported")
+        self.assert_index_present(index)
 
-        out = self.agg(x, index, ptr, dim_size, dim)
-        deg = degree(index, dtype=out.dtype)
-        deg = deg.clamp_(1).view(*([-1] + [1] * (len(out.shape) - 1)))
+        out = self.aggr(x, index, ptr, dim_size, dim)
+        deg = degree(index, dtype=out.dtype).clamp_(1)
+
+        size = [1] * len(out.size())
+        size[dim] = -1
+        deg = deg.view(*size)
         outs = []
         for scaler in self.scalers:
             if scaler == 'identity':
@@ -71,4 +76,4 @@ class DegreeScalerAggregation(Aggregation):
             else:
                 raise ValueError(f'Unknown scaler "{scaler}".')
             outs.append(out)
-        return torch.cat(outs, dim=-1)
+        return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]
