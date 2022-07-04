@@ -10,6 +10,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 profile_sort = "self_cuda_time_total" if torch.cuda.is_available(
 ) else "self_cpu_time_total"
 
+
 def trace_handler(p):
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
@@ -18,8 +19,10 @@ def trace_handler(p):
     timeline_file = profile_dir + 'timeline' + '.json'
     p.export_chrome_trace(timeline_file)
 
+
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
-        lr_decay_factor, lr_decay_step_size, weight_decay, inference, profiling):
+        lr_decay_factor, lr_decay_step_size, weight_decay, inference,
+        profiling):
 
     model = model.to(device)
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -43,7 +46,7 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
             t_end = time.perf_counter()
 
             print(f'Epoch: {epoch:03d}, Test: {test_acc:.4f}, '
-                f'Duration: {t_end - t_start:.2f}')
+                  f'Duration: {t_end - t_start:.2f}')
 
             if epoch % lr_decay_step_size == 0:
                 for param_group in optimizer.param_groups:
@@ -53,9 +56,9 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
             if epoch == epochs:
                 if profiling:
                     with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
+                            activities=[
+                                ProfilerActivity.CPU, ProfilerActivity.CUDA
+                            ], on_trace_ready=trace_handler) as p:
                         inference(model, test_loader, device)
                         p.step()
                 else:
@@ -69,8 +72,7 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
                         torch.cuda.synchronize()
                     t_end = time.time()
                     duration = t_end - t_start
-                    print("End-to-End time: {} s".format(duration),
-                              flush=True)
+                    print("End-to-End time: {} s".format(duration), flush=True)
             else:
                 inference(model, test_loader, device)
 
@@ -98,6 +100,7 @@ def test(model, test_loader, device):
     test_acc = correct / len(test_loader.dataset)
 
     return test_acc
+
 
 def inference(model, test_loader, device):
     model.eval()

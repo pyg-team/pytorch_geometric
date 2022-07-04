@@ -59,7 +59,8 @@ train_dataset, test_dataset = get_dataset(num_points=1024)
 model = Net(train_dataset.num_classes)
 print("edge_cnn", end=' ')
 run(train_dataset, test_dataset, model, args.epochs, args.batch_size, args.lr,
-    args.lr_decay_factor, args.lr_decay_step_size, args.weight_decay, args.inference, args.profile)
+    args.lr_decay_factor, args.lr_decay_step_size, args.weight_decay,
+    args.inference, args.profile)
 
 if args.profile:
     import os
