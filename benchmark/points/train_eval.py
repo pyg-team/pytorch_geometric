@@ -3,6 +3,7 @@ import time
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
+from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.loader import DataLoader
 
@@ -59,14 +60,14 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
                             activities=[
                                 ProfilerActivity.CPU, ProfilerActivity.CUDA
                             ], on_trace_ready=trace_handler) as p:
-                        inference(model, test_loader, device)
+                        inference_run(model, test_loader, device)
                         p.step()
                 else:
                     if torch.cuda.is_available():
                         torch.cuda.synchronize()
                     t_start = time.time()
 
-                    inference(model, test_loader, device)
+                    inference_run(model, test_loader, device)
 
                     if torch.cuda.is_available():
                         torch.cuda.synchronize()
@@ -74,7 +75,7 @@ def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
                     duration = t_end - t_start
                     print("End-to-End time: {} s".format(duration), flush=True)
             else:
-                inference(model, test_loader, device)
+                inference_run(model, test_loader, device)
 
 
 def train(model, optimizer, train_loader, device):
@@ -102,7 +103,7 @@ def test(model, test_loader, device):
     return test_acc
 
 
-def inference(model, test_loader, device):
+def inference_run(model, test_loader, device):
     model.eval()
     for data in test_loader:
         data = data.to(device)
