@@ -1,6 +1,6 @@
+import argparse
 import os.path as osp
 import time
-import argparse
 
 import torch
 import torch.nn.functional as F
@@ -83,6 +83,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
                               min_lr=0.00001)
 
+
 def trace_handler(p):
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
@@ -118,12 +119,14 @@ def test(loader):
         total_error += (out.squeeze() - data.y).abs().sum().item()
     return total_error / len(loader.dataset)
 
+
 @torch.no_grad()
 def inference(loader):
     model.eval()
     for data in loader:
         data = data.to(device)
         model(data.x, data.edge_index, data.edge_attr, data.batch)
+
 
 if not args.inference:
     for epoch in range(1, 301):
@@ -132,15 +135,15 @@ if not args.inference:
         test_mae = test(test_loader)
         scheduler.step(val_mae)
         print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_mae:.4f}, '
-            f'Test: {test_mae:.4f}')
+              f'Test: {test_mae:.4f}')
 else:
     for epoch in range(1, 301):
         if epoch == 300:
             if args.profile:
                 with profile(
-                    activities=[
-                        ProfilerActivity.CPU, ProfilerActivity.CUDA
-                    ], on_trace_ready=trace_handler) as p:
+                        activities=[
+                            ProfilerActivity.CPU, ProfilerActivity.CUDA
+                        ], on_trace_ready=trace_handler) as p:
                     inference(test_loader)
                     p.step()
             else:
