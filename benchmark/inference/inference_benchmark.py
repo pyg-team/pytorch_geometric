@@ -1,11 +1,12 @@
-from ogb.nodeproppred import PygNodePropPredDataset
+import argparse
+import copy
+from timeit import default_timer
 
 import torch
-import argparse
-from timeit import default_timer
+from ogb.nodeproppred import PygNodePropPredDataset
+from utils import get_dataset, get_degree, get_model
+
 from torch_geometric.loader import NeighborLoader
-from utils import get_dataset, get_model, get_degree
-import copy
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -64,8 +65,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         params['degree'] = degree
 
                     model = get_model(
-                        model_name, params,
-                        metadata=data.metadata()
+                        model_name, params, metadata=data.metadata()
                         if dataset_name == 'ogbn-mag' else None)
 
                     for batch_size in args.eval_batch_sizes:

@@ -1,14 +1,16 @@
 import os.path as osp
+
 import torch
-from torch_geometric.datasets import OGB_MAG, Reddit
-import torch_geometric.transforms as T
-from torch_geometric.utils import degree
+from edgeconv import EdgeConvNet
 from gat import GATNet
 from gcn import GCN
-from edgeconv import EdgeConvNet
 from graphsage import SAGE_HETERO
 from pna import PNANet
 from rgat import GAT_HETERO
+
+import torch_geometric.transforms as T
+from torch_geometric.datasets import OGB_MAG, Reddit
+from torch_geometric.utils import degree
 
 models_dict = {
     'edge_conv': EdgeConvNet,

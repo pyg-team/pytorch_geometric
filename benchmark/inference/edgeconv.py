@@ -1,10 +1,11 @@
 import torch
 import torch.nn.functional as F
-from tqdm import tqdm
-from torch_geometric.nn import EdgeConv
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
+from tqdm import tqdm
+
+from torch_geometric.nn import EdgeConv
 
 
 class EdgeConvNet(torch.nn.Module):

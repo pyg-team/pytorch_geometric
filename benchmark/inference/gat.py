@@ -1,10 +1,9 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
+from tqdm import tqdm
 
 from torch_geometric.nn import GATConv
-
-from tqdm import tqdm
 
 
 class GATBlock(torch.nn.Module):
