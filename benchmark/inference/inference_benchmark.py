@@ -34,9 +34,8 @@ def run(args: argparse.ArgumentParser) -> None:
 
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:
-                print(
-                    f'Configuration of {dataset_name} + {model_name} not supported. Skipping.'
-                )
+                print(f'Configuration of {dataset_name} + {model_name} '
+                      f'not supported. Skipping.')
                 continue
             print(f'Evaluation bench for {model_name}:')
             if model_name == 'pna_conv':
@@ -50,35 +49,37 @@ def run(args: argparse.ArgumentParser) -> None:
                 )
                 degree = get_degree(loader)
 
-            for layers in args.num_layers:
-                print(f'Layers amount={layers}')
-                for hidden_channels in args.num_hidden_channels:
-                    print(f'Hidden features size={hidden_channels}')
-                    params = {
-                        'inputs_channels': inputs_channels,
-                        'hidden_channels': hidden_channels,
-                        'output_channels': dataset.num_classes,
-                        'num_heads': args.num_heads,
-                        'num_layers': layers,
-                    }
-                    if model_name == 'pna_conv':
-                        params['degree'] = degree
+            for batch_size in args.eval_batch_sizes:
+                subgraph_loader = NeighborLoader(
+                    copy.copy(data),
+                    num_neighbors=[-1],
+                    input_nodes=mask,
+                    batch_size=batch_size,
+                    shuffle=False,
+                    num_workers=args.num_workers,
+                )
+                subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
-                    model = get_model(
-                        model_name, params, metadata=data.metadata()
-                        if dataset_name == 'ogbn-mag' else None)
+                for layers in args.num_layers:
+                    for hidden_channels in args.num_hidden_channels:
+                        print(
+                            '-----------------------------------------------')
+                        print(f'Batch size={batch_size}, '
+                              f'Layers amount={layers}, '
+                              f'Hidden features size={hidden_channels}')
+                        params = {
+                            'inputs_channels': inputs_channels,
+                            'hidden_channels': hidden_channels,
+                            'output_channels': dataset.num_classes,
+                            'num_heads': args.num_heads,
+                            'num_layers': layers,
+                        }
+                        if model_name == 'pna_conv':
+                            params['degree'] = degree
 
-                    for batch_size in args.eval_batch_sizes:
-                        subgraph_loader = NeighborLoader(
-                            copy.copy(data),
-                            num_neighbors=[-1],
-                            input_nodes=mask,
-                            batch_size=batch_size,
-                            shuffle=False,
-                            num_workers=args.num_workers,
-                        )
-                        subgraph_loader.data.n_id = torch.arange(
-                            data.num_nodes)
+                        model = get_model(
+                            model_name, params, metadata=data.metadata()
+                            if dataset_name == 'ogbn-mag' else None)
 
                         if args.pure_gnn_mode:
                             prebatched_samples = []
@@ -91,9 +92,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         start = default_timer()
                         model.inference(subgraph_loader, args.device)
                         stop = default_timer()
-                        print(
-                            f'Batch size={batch_size} Inference time={stop-start:.3f}'
-                        )
+                        print(f'Inference time={stop-start:.3f}\n')
 
 
 if __name__ == '__main__':
