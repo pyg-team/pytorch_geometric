@@ -90,6 +90,11 @@ def _separate(
           and not isinstance(value[0], str) and len(value[0]) > 0
           and isinstance(value[0][0], (Tensor, SparseTensor))):
         # Recursively separate elements of lists of lists.
+        return [elem[idx] for elem in value]
+
+    elif (isinstance(value, Sequence) and not isinstance(value, str)
+          and isinstance(value[0], (Tensor, SparseTensor))):
+        # Recursively separate elements of lists of Tensors/SparseTensors.
         return [
             _separate(key, elem, idx, slices[i],
                       incs[i] if decrement else None, batch, store, decrement)

@@ -13,6 +13,7 @@ from .basic import (
 )
 from .lstm import LSTMAggregation
 from .set2set import Set2Set
+from .scaler import DegreeScalerAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -28,4 +29,5 @@ __all__ = classes = [
     'PowerMeanAggregation',
     'LSTMAggregation',
     'Set2Set',
+    'DegreeScalerAggregation',
 ]
