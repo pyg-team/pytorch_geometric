@@ -695,7 +695,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         out = self._node_store_dict.get(attr.group_name, None)
         if out:
             # Group name exists, handle index or create new attribute name:
-            val = getattr(out, attr.attr_name)
+            val = getattr(out, attr.attr_name, None)
             if val is not None:
                 val[attr.index] = tensor
             else:
