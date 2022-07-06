@@ -132,8 +132,12 @@ class GraphStore:
     # Layout Conversion #######################################################
 
     # TODO support `replace` to replace the existing edge index.
-    def _to_layout(self, layout: EdgeLayout,
-                   store: bool = False) -> ConversionOutputType:
+    def _to_layout(
+        self,
+        layout: EdgeLayout,
+        store: bool = False,
+        is_sorted: bool = False,
+    ) -> ConversionOutputType:
         # Obtain all edge attributes, grouped by type:
         edge_attrs = self.get_all_edge_attrs()
         edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
@@ -200,6 +204,8 @@ class GraphStore:
                     row, col, perm = to_csc(adj, from_attr_copy, device='cpu')
 
                 else:
+                    # Respect is_sorted override (sorted by col):
+                    from_attr.is_sorted = from_attr.is_sorted or is_sorted
                     adj = edge_tensor_type_to_adj_type(from_attr, from_tuple)
 
                     # Actually colptr, row, perm
@@ -242,10 +248,11 @@ class GraphStore:
         optionally storing the converted edge indices in the graph store."""
         return self._to_layout(EdgeLayout.CSR, store)
 
-    def csc(self, store: bool = False) -> ConversionOutputType:
+    def csc(self, store: bool = False,
+            is_sorted: bool = False) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to CSC format,
         optionally storing the converted edge indices in the graph store."""
-        return self._to_layout(EdgeLayout.CSC, store)
+        return self._to_layout(EdgeLayout.CSC, store, is_sorted)
 
     # Additional methods ######################################################
 
