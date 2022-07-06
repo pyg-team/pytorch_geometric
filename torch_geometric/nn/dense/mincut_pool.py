@@ -4,8 +4,9 @@ EPS = 1e-15
 
 
 def dense_mincut_pool(x, adj, s, mask=None):
-    r"""The MinCUt pooling operator from the `"Mincut Pooling in Graph Neural
-    Networks" <https://arxiv.org/abs/1907.00481>`_ paper
+    r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
+    Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
+    paper
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -17,7 +18,7 @@ def dense_mincut_pool(x, adj, s, mask=None):
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
     Returns the pooled node feature matrix, the coarsened and symmetrically
-    normalized adjacency matrix and two auxiliary objectives: (1) The minCUT
+    normalized adjacency matrix and two auxiliary objectives: (1) The MinCut
     loss
 
     .. math::
@@ -67,7 +68,7 @@ def dense_mincut_pool(x, adj, s, mask=None):
     out = torch.matmul(s.transpose(1, 2), x)
     out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
-    # MinCUT regularization.
+    # MinCut regularization.
     mincut_num = _rank3_trace(out_adj)
     d_flat = torch.einsum('ijk->ij', adj)
     d = _rank3_diag(d_flat)
