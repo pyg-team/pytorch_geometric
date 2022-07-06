@@ -322,6 +322,15 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                edge_type=('author', 'to', 'paper'),
                                layout='csc', size=(200, 100))
 
+    # COO (sorted):
+    edge_index = get_edge_index(200, 200, 100)
+    edge_index = edge_index[:, edge_index[1].argsort()]
+    data['author', 'to', 'author'].edge_index = edge_index
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=('author', 'to', 'author'),
+                               layout='coo', size=(200, 200), is_sorted=True)
+
     # Construct neighbor loaders:
     loader1 = NeighborLoader(data, batch_size=20,
                              input_nodes=('paper', range(100)),

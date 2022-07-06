@@ -701,6 +701,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
+        # Set edge attributes:
+        setattr(self[edge_attr.edge_type], f'{attr_name}_edge_attr', edge_attr)
+
         key = self._to_canonical(edge_attr.edge_type)
         src, _, dst = key
 
@@ -730,8 +733,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type, edge_store in self.edge_items():
             for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
                 if attr_name in edge_store:
+                    attr_val = getattr(self[edge_type],
+                                       f'{attr_name}_edge_attr')
                     out.append(
                         EdgeAttr(edge_type=edge_type, layout=layout,
+                                 is_sorted=attr_val.is_sorted,
                                  size=self[edge_type].size()))
         return out
 

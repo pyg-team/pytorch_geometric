@@ -122,8 +122,7 @@ class NeighborSampler:
             self.input_type = input_type
 
             # Obtain CSC representations for in-memory sampling:
-            row_dict, colptr_dict, perm_dict = graph_store.csc(
-                is_sorted=is_sorted)
+            row_dict, colptr_dict, perm_dict = graph_store.csc()
             self.row_dict = {
                 edge_type_to_str(k): v
                 for k, v in row_dict.items()

@@ -812,6 +812,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
 
+        # Set edge attributes:
+        setattr(self, f'{attr_name}_edge_attr', edge_attr)
+
         # Set size, if possible:
         size = edge_attr.size
         if size is not None:
@@ -839,8 +842,10 @@ class Data(BaseData, FeatureStore, GraphStore):
         out = []
         for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
             if attr_name in self:
+                attr_val = self[f'{attr_name}_edge_attr']
                 out.append(
                     EdgeAttr(edge_type=None, layout=layout,
+                             is_sorted=attr_val.is_sorted,
                              size=(self.num_nodes, self.num_nodes)))
         return out
 
