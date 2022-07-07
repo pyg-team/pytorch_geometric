@@ -657,7 +657,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         node_ids, index_map = {}, torch.empty_like(node_type)
         for i, key in enumerate(node_type_names):
             node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
-            index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
+            index_map[node_ids[i]] = torch.arange(len(node_ids[i]),
+                                                  device=index_map.device)
 
         # We iterate over edge types to find the local edge indices:
         edge_ids = {}
