@@ -38,14 +38,14 @@ def test_aggregation_resolver(aggr_tuple):
 
 
 @pytest.mark.parametrize('norm_tuple', [
-    (torch_geometric.nn.norm.BatchNorm, 'batchnorm', (16, )),
-    (torch_geometric.nn.norm.InstanceNorm, 'instancenorm', (16, )),
-    (torch_geometric.nn.norm.LayerNorm, 'layernorm', (16, )),
-    (torch_geometric.nn.norm.GraphNorm, 'graphnorm', (16, )),
-    (torch_geometric.nn.norm.GraphSizeNorm, 'graphsizenorm', ()),
-    (torch_geometric.nn.norm.PairNorm, 'pairnorm', ()),
-    (torch_geometric.nn.norm.MessageNorm, 'messagenorm', ()),
-    (torch_geometric.nn.norm.DiffGroupNorm, 'diffgroupnorm', (16, 4)),
+    (torch_geometric.nn.norm.BatchNorm, 'batch_norm', (16, )),
+    (torch_geometric.nn.norm.InstanceNorm, 'instance_norm', (16, )),
+    (torch_geometric.nn.norm.LayerNorm, 'layer_norm', (16, )),
+    (torch_geometric.nn.norm.GraphNorm, 'graph_norm', (16, )),
+    (torch_geometric.nn.norm.GraphSizeNorm, 'graphsize_norm', ()),
+    (torch_geometric.nn.norm.PairNorm, 'pair_norm', ()),
+    (torch_geometric.nn.norm.MessageNorm, 'message_norm', ()),
+    (torch_geometric.nn.norm.DiffGroupNorm, 'diffgroup_norm', (16, 4)),
 ])
 def test_normalization_resolver(norm_tuple):
     norm_module, norm_repr, norm_args = norm_tuple
