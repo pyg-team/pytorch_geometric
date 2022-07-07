@@ -1,12 +1,13 @@
 from typing import Optional
 
 import torch
+from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
 
 
-def degree(index, num_nodes: Optional[int] = None,
-           dtype: Optional[torch.dtype] = None):
+def degree(index: Tensor, num_nodes: Optional[int] = None,
+           dtype: Optional[torch.dtype] = None) -> Tensor:
     r"""Computes the (unweighted) degree of a given one-dimensional index
     tensor.
 

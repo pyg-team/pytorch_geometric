@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from typing import Optional, Tuple
 
 import torch
@@ -8,9 +7,10 @@ from torch_scatter import scatter, segment_csr
 from torch_geometric.utils import to_dense_batch
 
 
-class Aggregation(torch.nn.Module, ABC):
+class Aggregation(torch.nn.Module):
     r"""An abstract base class for implementing custom aggregations."""
-    @abstractmethod
+
+    # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -73,23 +73,22 @@ class Aggregation(torch.nn.Module, ABC):
         # TODO Currently, not all aggregators support `ptr`. This assert helps
         # to ensure that we require `index` to be passed to the computation:
         if index is None:
-            raise NotImplementedError(f"'{self.__class__.__name__}' requires "
-                                      f"'index' to be specified")
+            raise NotImplementedError(
+                "Aggregation requires 'index' to be specified")
 
     def assert_sorted_index(self, index: Optional[Tensor]):
         if index is not None and not torch.all(index[:-1] <= index[1:]):
-            raise ValueError(f"Can not perform aggregation inside "
-                             f"'{self.__class__.__name__}' since the "
-                             f"'index' tensor is not sorted")
+            raise ValueError("Can not perform aggregation since the 'index' "
+                             "tensor is not sorted")
 
     def assert_two_dimensional_input(self, x: Tensor, dim: int):
         if x.dim() != 2:
-            raise ValueError(f"'{self.__class__.__name__}' requires "
-                             f"two-dimensional inputs (got '{x.dim()}')")
+            raise ValueError(f"Aggregation requires two-dimensional inputs "
+                             f"(got '{x.dim()}')")
 
         if dim not in [-2, 0]:
-            raise ValueError(f"'{self.__class__.__name__}' needs to perform "
-                             f"aggregation in first dimension (got '{dim}')")
+            raise ValueError(f"Aggregation needs to perform aggregation in "
+                             f"first dimension (got '{dim}')")
 
     # Helper methods ##########################################################
 
