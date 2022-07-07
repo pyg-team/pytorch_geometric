@@ -244,8 +244,8 @@ class GIN(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -284,8 +284,8 @@ class GAT(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -338,8 +338,8 @@ class PNA(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
