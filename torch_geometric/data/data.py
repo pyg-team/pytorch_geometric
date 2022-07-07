@@ -842,6 +842,12 @@ class Data(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
 
+        # Set edge attributes:
+        if not hasattr(self, '_edge_attrs'):
+            self._edge_attrs = {}
+
+        self._edge_attrs[edge_attr.layout.value] = edge_attr
+
         # Set size, if possible:
         size = edge_attr.size
         if size is not None:
@@ -866,13 +872,13 @@ class Data(BaseData, FeatureStore, GraphStore):
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
         in `Data` and their layouts"""
-        out = []
-        for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
-            if attr_name in self:
-                out.append(
-                    EdgeAttr(edge_type=None, layout=layout,
-                             size=(self.num_nodes, self.num_nodes)))
-        return out
+        if not hasattr(self, '_edge_attrs'):
+            return []
+
+        edge_attrs = self._edge_attrs.values()
+        for attr in edge_attrs:
+            attr.size = (self.num_nodes, self.num_nodes)
+        return edge_attrs
 
 
 ###############################################################################
