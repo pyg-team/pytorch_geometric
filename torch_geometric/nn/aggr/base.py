@@ -1,4 +1,4 @@
-# from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod
 from typing import Optional, Tuple
 
 import torch
@@ -8,10 +8,9 @@ from torch_scatter import scatter, segment_csr
 from torch_geometric.utils import to_dense_batch
 
 
-class Aggregation(torch.nn.Module):
+class Aggregation(torch.nn.Module, ABC):
     r"""An abstract base class for implementing custom aggregations."""
-
-    # @abstractmethod
+    @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
