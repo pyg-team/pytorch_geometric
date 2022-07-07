@@ -874,10 +874,23 @@ class Data(BaseData, FeatureStore, GraphStore):
         in `Data` and their layouts"""
         if not hasattr(self, '_edge_attrs'):
             return []
+        added_attrs = set()
 
+        # Check edges added via _put_edge_index:
         edge_attrs = self._edge_attrs.values()
         for attr in edge_attrs:
             attr.size = (self.num_nodes, self.num_nodes)
+            added_attrs.add(attr.layout)
+
+        # Check edges added through regular interface:
+        # TODO deprecate this and store edge attributes for all edges in
+        # EdgeStorage
+        for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+            if attr_name in self and layout not in added_attrs:
+                edge_attrs.append(
+                    EdgeAttr(edge_type=None, layout=layout,
+                             size=(self.num_nodes, self.num_nodes)))
+
         return edge_attrs
 
 

@@ -107,8 +107,8 @@ class NeighborSampler:
                     attr.index = None
                 time_tensors = feature_store.multi_get_tensor(time_attrs)
                 self.node_time_dict = {
-                    time_attrs[i].group_name: time_tensors[i]
-                    for i in range(len(time_tensors))
+                    time_attr.group_name: time_tensor
+                    for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
 
             # Obtain all node and edge metadata:

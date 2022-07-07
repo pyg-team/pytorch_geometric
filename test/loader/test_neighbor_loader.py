@@ -392,20 +392,15 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
     loader1 = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
                              input_nodes='paper', time_attr='time',
-                             batch_size=1)
+                             batch_size=128)
 
     loader2 = NeighborLoader(
         (feature_store, graph_store),
         num_neighbors=[-1, -1],
         input_nodes=TensorAttr(group_name='paper', attr_name='x'),
         time_attr='time',
-        batch_size=1,
+        batch_size=128,
     )
 
-    num_iter = 10
-    for i, (batch1, batch2) in enumerate(zip(loader1, loader2)):
-        mask1 = batch1['paper'].time[0] >= batch1['paper'].time[1:]
-        mask2 = batch2['paper'].time[0] >= batch2['paper'].time[1:]
-        assert torch.all(mask1 & mask2)
-        if i > num_iter:
-            break
+    for batch1, batch2 in zip(loader1, loader2):
+        assert torch.equal(batch1['paper'].time, batch2['paper'].time)
