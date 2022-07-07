@@ -1,5 +1,12 @@
 FROM ubuntu:18.04
 
+# metainformation
+LABEL org.opencontainers.image.version = "2.0.4"
+LABEL org.opencontainers.image.authors = "Matthias Fey"
+LABEL org.opencontainers.image.source = "https://github.com/pyg-team/pytorch_geometric"
+LABEL org.opencontainers.image.licenses = "MIT"
+LABEL org.opencontainers.image.base.name="docker.io/library/ubuntu:18.04"
+
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 

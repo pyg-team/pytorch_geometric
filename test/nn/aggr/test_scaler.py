@@ -10,15 +10,16 @@ def test_degree_scaler_aggregation():
     ptr = torch.tensor([0, 2, 5, 6])
     deg = torch.tensor([0, 3, 0, 1, 1, 0])
 
-    aggrs = ['mean', 'sum', 'max']
-    scalers = [
+    aggr = ['mean', 'sum', 'max']
+    scaler = [
         'identity', 'amplification', 'attenuation', 'linear', 'inverse_linear'
     ]
-    aggr = DegreeScalerAggregation(aggrs, scalers, deg)
+    aggr = DegreeScalerAggregation(aggr, scaler, deg)
     assert str(aggr) == 'DegreeScalerAggregation()'
 
     out = aggr(x, index)
     assert out.size() == (3, 240)
+    assert torch.allclose(torch.jit.script(aggr)(x, index), out)
 
     with pytest.raises(NotImplementedError):
         aggr(x, ptr=ptr)

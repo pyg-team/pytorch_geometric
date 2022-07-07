@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import torch
 from torch import Tensor
@@ -86,9 +86,7 @@ class PNAConv(MessagePassing):
                  divide_input: bool = False, **kwargs):
 
         aggr = DegreeScalerAggregation(aggregators, scalers, deg)
-        kwargs.setdefault('aggr', aggr)
-
-        super().__init__(node_dim=0, **kwargs)
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if divide_input:
             assert in_channels % towers == 0
@@ -102,15 +100,6 @@ class PNAConv(MessagePassing):
 
         self.F_in = in_channels // towers if divide_input else in_channels
         self.F_out = self.out_channels // towers
-
-        deg = deg.to(torch.float)
-        num_nodes = int(deg.sum())
-        bin_degrees = torch.arange(deg.numel())
-        self.avg_deg: Dict[str, float] = {
-            'lin': float((bin_degrees * deg).sum()) / num_nodes,
-            'log': float(((bin_degrees + 1).log() * deg).sum()) / num_nodes,
-            'exp': float((bin_degrees.exp() * deg).sum()) / num_nodes,
-        }
 
         if self.edge_dim is not None:
             self.edge_encoder = Linear(edge_dim, self.F_in)
@@ -147,7 +136,6 @@ class PNAConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
         """"""
-
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
         else:
