@@ -61,6 +61,22 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
     return resolver(acts, act_dict, query, base_cls, *args, **kwargs)
 
 
+# Normalization Resolver ######################################################
+
+
+def normalization_resolver(query: Union[Any, str], *args, **kwargs):
+    import torch
+
+    import torch_geometric.nn.norm as norm
+    base_cls = torch.nn.Module
+    norms = [
+        norm for norm in vars(norm).values()
+        if isinstance(norm, type) and issubclass(norm, base_cls)
+    ]
+    norm_dict = {}
+    return resolver(norms, norm_dict, query, base_cls, *args, **kwargs)
+
+
 # Aggregation Resolver ########################################################
 
 
