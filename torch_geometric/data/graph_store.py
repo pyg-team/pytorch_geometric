@@ -139,7 +139,6 @@ class GraphStore:
         attr: EdgeAttr,
         layout: EdgeLayout,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
-        print(attr)
         from_tuple = self.get_edge_index(attr)
 
         if layout == EdgeLayout.COO:
