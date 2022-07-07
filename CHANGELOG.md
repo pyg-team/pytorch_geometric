@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for graph-level outputs in `to_hetero` ([#4582](https://github.com/pyg-team/pytorch_geometric/pull/4582))
 - Added `CHANGELOG.md` ([#4581](https://github.com/pyg-team/pytorch_geometric/pull/4581))
 ### Changed
+- Fixed `data.subgraph` generation for 0-dim tensors ([#4932](https://github.com/pyg-team/pytorch_geometric/pull/4932))
 - Removed unnecssary inclusion of self-loops when sampling negative edges ([#4880](https://github.com/pyg-team/pytorch_geometric/pull/4880))
 - Fixed `InMemoryDataset` inferring wrong `len` for lists of tensors ([#4837](https://github.com/pyg-team/pytorch_geometric/pull/4837))
 - Fixed `Batch.separate` when using it for lists of tensors ([#4837](https://github.com/pyg-team/pytorch_geometric/pull/4837))
