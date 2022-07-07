@@ -52,8 +52,7 @@ def test_batch():
     assert str(batch) == ('DataBatch(x=[3], edge_index=[2, 4], y=[1], '
                           'x_sp=[3, 1, nnz=3], adj=[3, 3, nnz=4], s=[1], '
                           'array=[1], num_nodes=3, batch=[3], ptr=[2])')
-    assert batch.num_graphs == 1
-    assert len(batch) == 10
+    assert batch.num_graphs == len(batch) == 1
     assert batch.x.tolist() == [1, 2, 3]
     assert batch.y.tolist() == [1]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
@@ -72,8 +71,7 @@ def test_batch():
                           'x_sp=[9, 1, nnz=9], adj=[9, 9, nnz=12], s=[3], '
                           's_batch=[3], s_ptr=[4], array=[3], num_nodes=9, '
                           'batch=[9], ptr=[4])')
-    assert batch.num_graphs == 3
-    assert len(batch) == 12
+    assert batch.num_graphs == len(batch) == 3
     assert batch.x.tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
     assert batch.y.tolist() == [1, 2, 3]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
@@ -174,7 +172,7 @@ def test_batching_with_new_dimension():
 
     assert str(batch) == ('MyDataBatch(x=[5], y=[2], foo=[2, 4], batch=[5], '
                           'ptr=[3])')
-    assert len(batch) == 5
+    assert batch.num_graphs == len(batch) == 2
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.foo.size() == (2, 4)
     assert batch.foo[0].tolist() == foo1.tolist()
@@ -208,7 +206,7 @@ def test_pickling():
     assert batch.num_nodes == 20
 
     assert batch.__class__.__name__ == 'DataBatch'
-    assert len(batch) == 3
+    assert batch.num_graphs == len(batch) == 4
 
     os.remove(path)
 
@@ -230,8 +228,7 @@ def test_recursive_batch():
 
     batch = Batch.from_data_list([data1, data2])
 
-    assert len(batch) == 5
-    assert batch.num_graphs == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.num_nodes == 90
 
     assert torch.allclose(batch.x['1'],
@@ -267,7 +264,7 @@ def test_batching_of_batches():
     batch = Batch.from_data_list([data, data])
 
     batch = Batch.from_data_list([batch, batch])
-    assert len(batch) == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.x[0:2].tolist() == data.x.tolist()
     assert batch.x[2:4].tolist() == data.x.tolist()
     assert batch.x[4:6].tolist() == data.x.tolist()
@@ -296,8 +293,7 @@ def test_hetero_batch():
 
     batch = Batch.from_data_list([data1, data2])
 
-    assert len(batch) == 5
-    assert batch.num_graphs == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.num_nodes == 450
 
     assert torch.allclose(batch['p'].x[:100], data1['p'].x)

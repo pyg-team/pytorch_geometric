@@ -180,6 +180,9 @@ class Batch(metaclass=DynamicInheritance):
         else:
             raise ValueError("Can not infer the number of graphs")
 
+    def __len__(self) -> int:
+        return self.num_graphs
+
     def __reduce__(self):
         state = self.__dict__.copy()
         return DynamicInheritanceGetter(), self.__class__.__bases__, state
