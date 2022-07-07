@@ -6,7 +6,7 @@ from torch_geometric.testing import is_full_test
 
 aggregators = ['sum', 'mean', 'min', 'max', 'var', 'std']
 scalers = [
-    'identity',  # 'amplification', 'attenuation', 'linear', 'inverse_linear'
+    'identity', 'amplification', 'attenuation', 'linear', 'inverse_linear'
 ]
 
 
