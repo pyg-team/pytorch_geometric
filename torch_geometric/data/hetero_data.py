@@ -695,7 +695,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         out = self._node_store_dict.get(attr.group_name, None)
         if out:
             # Group name exists, handle index or create new attribute name:
-            val = getattr(out, attr.attr_name)
+            val = getattr(out, attr.attr_name, None)
             if val is not None:
                 val[attr.index] = tensor
             else:
@@ -787,13 +787,30 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns a list of `EdgeAttr` objects corresponding to the edge
         indices stored in `HeteroData` and their layouts."""
         out = []
-        for edge_type, edge_store in self.edge_items():
+        added_attrs = set()
+
+        # Check edges added via _put_edge_index:
+        for edge_type, _ in self.edge_items():
             if not hasattr(self[edge_type], '_edge_attrs'):
                 continue
             edge_attrs = self[edge_type]._edge_attrs.values()
             for attr in edge_attrs:
                 attr.size = self[edge_type].size()
+                added_attrs.add((attr.edge_type, attr.layout))
             out.extend(edge_attrs)
+
+        # Check edges added through regular interface:
+        # TODO deprecate this and store edge attributes for all edges in
+        # EdgeStorage
+        for edge_type, edge_store in self.edge_items():
+            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+                # Don't double count:
+                if attr_name in edge_store and ((edge_type, layout)
+                                                not in added_attrs):
+                    out.append(
+                        EdgeAttr(edge_type=edge_type, layout=layout,
+                                 size=self[edge_type].size()))
+
         return out
 
 
