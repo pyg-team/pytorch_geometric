@@ -142,7 +142,12 @@ def _collate(
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
             storage = elem.storage()._new_shared(numel)
-            out = elem.new(storage)
+            shape = list(elem.size())
+            if cat_dim is None or elem.dim() == 0:
+                shape = [len(values)] + shape
+            else:
+                shape[cat_dim] = int(slices[-1])
+            out = elem.new(storage).resize_(*shape)
         else:
             out = None
 
