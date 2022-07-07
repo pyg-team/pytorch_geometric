@@ -54,11 +54,15 @@ class VarAggregation(Aggregation):
         return mean_2 - mean * mean
 
 
-class StdAggregation(VarAggregation):
+class StdAggregation(Aggregation):
+    def __init__(self):
+        super().__init__()
+        self.var_aggr = VarAggregation()
+
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        var = super().forward(x, index, ptr, dim_size, dim)
+        var = self.var_aggr(x, index, ptr, dim_size, dim)
         return torch.sqrt(var.relu() + 1e-5)
 
 
