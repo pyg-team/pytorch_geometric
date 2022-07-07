@@ -32,7 +32,7 @@ class DegreeScalerAggregation(Aggregation):
     def __init__(
         self,
         aggr: Union[str, List[str], Aggregation],
-        scaler: List[str],
+        scaler: Union[str, List[str]],
         deg: Tensor,
         aggr_kwargs: Optional[List[Dict[str, Any]]] = None,
     ):
@@ -67,13 +67,11 @@ class DegreeScalerAggregation(Aggregation):
 
         out = self.aggr(x, index, ptr, dim_size, dim)
 
-        outs = [out] * len(self.scaler)
-        return torch.cat(outs, dim=-1)
-
+        assert index is not None
         deg = degree(index, dtype=out.dtype).clamp_(1)
         size = [1] * len(out.size())
         size[dim] = -1
-        deg = deg.view(*size)
+        deg = deg.view(size)
 
         outs = []
         for scaler in self.scaler:
@@ -88,8 +86,7 @@ class DegreeScalerAggregation(Aggregation):
             elif scaler == 'inverse_linear':
                 out = out * (self.avg_deg['lin'] / deg)
             else:
-                raise ValueError(f"Unknown scaler '{scaler}' in "
-                                 f"'{self.__class__.__name__}'")
+                raise ValueError(f"Unknown scaler '{scaler}'")
             outs.append(out)
 
         return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]
