@@ -56,7 +56,7 @@ class DegreeScalerAggregation(Aggregation):
         self.assert_index_present(index)
 
         out = self.aggr(x, index, ptr, dim_size, dim)
-        deg = degree(index, dtype=out.dtype).clamp_(1)
+        deg = degree(index, num_nodes=dim_size, dtype=out.dtype).clamp_(1)
 
         size = [1] * len(out.size())
         size[dim] = -1
