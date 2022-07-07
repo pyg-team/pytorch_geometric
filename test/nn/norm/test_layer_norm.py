@@ -6,12 +6,13 @@ from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('affine', [True, False])
-def test_layer_norm(affine):
+@pytest.mark.parametrize('mode', ['graph', 'node'])
+def test_layer_norm(affine, mode):
     x = torch.randn(100, 16)
     batch = torch.zeros(100, dtype=torch.long)
 
-    norm = LayerNorm(16, affine=affine)
-    assert norm.__repr__() == 'LayerNorm(16)'
+    norm = LayerNorm(16, affine=affine, mode=mode)
+    assert norm.__repr__() == f'LayerNorm(16, mode={mode})'
 
     if is_full_test():
         torch.jit.script(norm)
