@@ -58,7 +58,8 @@ def test_gin(out_dim, dropout, act, norm, jk):
 
 
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk,num_layer',
-                         product(out_dims, dropouts, acts, norms, jks, num_layers))
+                         product(out_dims, dropouts, acts, norms, jks,
+                                 num_layers))
 def test_gat(out_dim, dropout, act, norm, jk, num_layer):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
