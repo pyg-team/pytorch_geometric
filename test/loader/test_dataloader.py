@@ -39,7 +39,7 @@ def test_dataloader(num_workers):
     assert len(loader) == 2
 
     for batch in loader:
-        assert len(batch) == 8
+        assert batch.num_graphs == len(batch) == 2
         assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1]
         assert batch.ptr.tolist() == [0, 3, 6]
         assert batch.x.tolist() == [[1], [1], [1], [1], [1], [1]]
@@ -58,7 +58,7 @@ def test_dataloader(num_workers):
     assert len(loader) == 2
 
     for batch in loader:
-        assert len(batch) == 10
+        assert batch.num_graphs == len(batch) == 2
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
@@ -72,10 +72,10 @@ def test_multiprocessing():
         queue.put(batch)
 
     batch = queue.get()
-    assert len(batch) == 3
+    assert batch.num_graphs == len(batch) == 2
 
     batch = queue.get()
-    assert len(batch) == 3
+    assert batch.num_graphs == len(batch) == 2
 
 
 def test_pin_memory():
@@ -104,7 +104,7 @@ def test_heterogeneous_dataloader(num_workers):
     assert len(loader) == 2
 
     for batch in loader:
-        assert len(batch) == 5
+        assert batch.num_graphs == len(batch) == 2
         assert batch.num_nodes == 600
 
         for store in batch.stores:
