@@ -754,6 +754,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self[edge_attr.edge_type], attr_name, attr_val)
 
+        # Set edge attributes:
+        if not hasattr(self[edge_attr.edge_type], '_edge_attrs'):
+            self[edge_attr.edge_type]._edge_attrs = {}
+
+        self[edge_attr.edge_type]._edge_attrs[
+            edge_attr.layout.value] = edge_attr
+
         key = self._to_canonical(edge_attr.edge_type)
         src, _, dst = key
 
@@ -781,11 +788,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         indices stored in `HeteroData` and their layouts."""
         out = []
         for edge_type, edge_store in self.edge_items():
-            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
-                if attr_name in edge_store:
-                    out.append(
-                        EdgeAttr(edge_type=edge_type, layout=layout,
-                                 size=self[edge_type].size()))
+            if not hasattr(self[edge_type], '_edge_attrs'):
+                continue
+            edge_attrs = self[edge_type]._edge_attrs.values()
+            for attr in edge_attrs:
+                attr.size = self[edge_type].size()
+            out.extend(edge_attrs)
         return out
 
 
