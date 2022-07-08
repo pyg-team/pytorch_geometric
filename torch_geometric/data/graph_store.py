@@ -117,9 +117,12 @@ class GraphStore:
         Raises:
             KeyError: if the edge index corresponding to attr was not found.
         """
+
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_attr.layout = EdgeLayout(edge_attr.layout)
         # Override is_sorted for CSC and CSR:
+        # TODO treat is_sorted specially in this function, where is_sorted=True
+        # returns an edge index sorted by column.
         edge_attr.is_sorted = edge_attr.is_sorted or (edge_attr.layout in [
             EdgeLayout.CSC, EdgeLayout.CSR
         ])
@@ -131,9 +134,57 @@ class GraphStore:
 
     # Layout Conversion #######################################################
 
+    def _edge_to_layout(
+        self,
+        attr: EdgeAttr,
+        layout: EdgeLayout,
+    ) -> Tuple[Tensor, Tensor, OptTensor]:
+        from_tuple = self.get_edge_index(attr)
+
+        if layout == EdgeLayout.COO:
+            if attr.layout == EdgeLayout.CSR:
+                col = from_tuple[1]
+                row = torch.ops.torch_sparse.ptr2ind(from_tuple[0],
+                                                     col.numel())
+            else:
+                row = from_tuple[0]
+                col = torch.ops.torch_sparse.ptr2ind(from_tuple[1],
+                                                     row.numel())
+            perm = None
+
+        elif layout == EdgeLayout.CSR:
+            # We convert to CSR by converting to CSC on the transpose
+            if attr.layout == EdgeLayout.COO:
+                adj = edge_tensor_type_to_adj_type(
+                    attr, (from_tuple[1], from_tuple[0]))
+            else:
+                adj = edge_tensor_type_to_adj_type(attr, from_tuple).t()
+
+            # NOTE we set is_sorted=False here as is_sorted refers to
+            # the edge_index being sorted by the destination node
+            # (column), but here we deal with the transpose
+            attr_copy = copy.copy(attr)
+            attr_copy.is_sorted = False
+            attr_copy.size = None if attr.size is None else (attr.size[1],
+                                                             attr.size[0])
+
+            # Actually rowptr, col, perm
+            row, col, perm = to_csc(adj, attr_copy, device='cpu')
+
+        else:
+            adj = edge_tensor_type_to_adj_type(attr, from_tuple)
+
+            # Actually colptr, row, perm
+            col, row, perm = to_csc(adj, attr, device='cpu')
+
+        return row, col, perm
+
     # TODO support `replace` to replace the existing edge index.
-    def _to_layout(self, layout: EdgeLayout,
-                   store: bool = False) -> ConversionOutputType:
+    def _all_edges_to_layout(
+        self,
+        layout: EdgeLayout,
+        store: bool = False,
+    ) -> ConversionOutputType:
         # Obtain all edge attributes, grouped by type:
         edge_attrs = self.get_all_edge_attrs()
         edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
@@ -165,45 +216,7 @@ class GraphStore:
                 else:
                     from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSR)]
 
-                from_tuple = self.get_edge_index(from_attr)
-
-                # Convert to the new layout:
-                if layout == EdgeLayout.COO:
-                    if from_attr.layout == EdgeLayout.CSR:
-                        col = from_tuple[1]
-                        row = torch.ops.torch_sparse.ptr2ind(
-                            from_tuple[0], col.numel())
-                    else:
-                        row = from_tuple[0]
-                        col = torch.ops.torch_sparse.ptr2ind(
-                            from_tuple[1], row.numel())
-                    perm = None
-
-                elif layout == EdgeLayout.CSR:
-                    # We convert to CSR by converting to CSC on the transpose
-                    if from_attr.layout == EdgeLayout.COO:
-                        adj = edge_tensor_type_to_adj_type(
-                            from_attr, (from_tuple[1], from_tuple[0]))
-                    else:
-                        adj = edge_tensor_type_to_adj_type(
-                            from_attr, from_tuple).t()
-
-                    # NOTE we set is_sorted=False here as is_sorted refers to
-                    # the edge_index being sorted by the destination node
-                    # (column), but here we deal with the transpose
-                    from_attr_copy = copy.copy(from_attr)
-                    from_attr_copy.is_sorted = False
-                    from_attr_copy.size = None if from_attr.size is None else (
-                        from_attr.size[1], from_attr.size[0])
-
-                    # Actually rowptr, col, perm
-                    row, col, perm = to_csc(adj, from_attr_copy, device='cpu')
-
-                else:
-                    adj = edge_tensor_type_to_adj_type(from_attr, from_tuple)
-
-                    # Actually colptr, row, perm
-                    col, row, perm = to_csc(adj, from_attr, device='cpu')
+                row, col, perm = self._edge_to_layout(from_attr, layout)
 
             row_dict[from_attr.edge_type] = row
             col_dict[from_attr.edge_type] = col
@@ -235,17 +248,17 @@ class GraphStore:
     def coo(self, store: bool = False) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to COO format,
         optionally storing the converted edge indices in the graph store."""
-        return self._to_layout(EdgeLayout.COO, store)
+        return self._all_edges_to_layout(EdgeLayout.COO, store)
 
     def csr(self, store: bool = False) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to CSR format,
         optionally storing the converted edge indices in the graph store."""
-        return self._to_layout(EdgeLayout.CSR, store)
+        return self._all_edges_to_layout(EdgeLayout.CSR, store)
 
     def csc(self, store: bool = False) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to CSC format,
         optionally storing the converted edge indices in the graph store."""
-        return self._to_layout(EdgeLayout.CSC, store)
+        return self._all_edges_to_layout(EdgeLayout.CSC, store)
 
     # Additional methods ######################################################
 
