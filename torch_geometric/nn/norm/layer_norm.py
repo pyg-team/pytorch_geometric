@@ -31,7 +31,7 @@ class LayerNorm(torch.nn.Module):
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
         mode (str, optinal): The normalization mode to use in layer norm
-            (`"graph"` or `"node"`). If `"graph"` is used, each graph will
+            (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"` is used, each graph will
             be considered as an element to be normalized. If `"node"` is used,
             each node will be considered as an element to be normalized.
             (default: :obj:`"graph"`)
