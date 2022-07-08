@@ -36,7 +36,7 @@ class LayerNorm(torch.nn.Module):
             each node will be considered as an element to be normalized.
             (default: :obj:`"graph"`)
     """
-    def __init__(self, in_channels, eps=1e-5, affine=True, mode='graph'):
+    def __init__(self, in_channels: int, eps: float=1e-5, affine: bool=True, mode:str='graph'):
         super().__init__()
 
         self.in_channels = in_channels
