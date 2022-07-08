@@ -83,6 +83,8 @@ class LayerNorm(torch.nn.Module):
 
             if self.weight is not None and self.bias is not None:
                 out = out * self.weight + self.bias
+                
+                return out
 
         elif self.mode == 'node':
             out = F.layer_norm(x, (self.in_channels, ), self.weight, self.bias,
