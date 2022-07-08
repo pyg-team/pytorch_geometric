@@ -30,11 +30,11 @@ class LayerNorm(torch.nn.Module):
         affine (bool, optional): If set to :obj:`True`, this module has
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
-        mode (str, optinal): The normalization mode to use for layer normalization.
-            (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"` is used, each graph will
-            be considered as an element to be normalized. If `"node"` is used,
-            each node will be considered as an element to be normalized.
-            (default: :obj:`"graph"`)
+        mode (str, optinal): The normalization mode to use for layer
+            normalization. (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"`
+            is used, each graph will be considered as an element to be
+            normalized. If `"node"` is used, each node will be considered as
+            an element to be normalized. (default: :obj:`"graph"`)
     """
     def __init__(self, in_channels: int, eps: float = 1e-5,
                  affine: bool = True, mode: str = 'graph'):
@@ -84,15 +84,13 @@ class LayerNorm(torch.nn.Module):
             if self.weight is not None and self.bias is not None:
                 out = out * self.weight + self.bias
 
-                return out
+            return out
 
         if self.mode == 'node':
-            return F.layer_norm(x, (self.in_channels, ), self.weight, self.bias,
-                               self.eps)
+            return F.layer_norm(x, (self.in_channels, ), self.weight,
+                                self.bias, self.eps)
 
-            raise ValueError(f"Unknow normalization mode: {self.mode}")
-
-        return out
+        raise ValueError(f"Unknow normalization mode: {self.mode}")
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
