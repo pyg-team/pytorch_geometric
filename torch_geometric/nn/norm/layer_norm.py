@@ -86,7 +86,7 @@ class LayerNorm(torch.nn.Module):
                 
                 return out
 
-        elif self.mode == 'node':
+        if self.mode == 'node':
             return F.layer_norm(x, (self.in_channels, ), self.weight, self.bias,
                                self.eps)
 
