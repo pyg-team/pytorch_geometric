@@ -90,7 +90,6 @@ class LayerNorm(torch.nn.Module):
             return F.layer_norm(x, (self.in_channels, ), self.weight, self.bias,
                                self.eps)
 
-        else:
             raise ValueError(f"Unknow normalization mode: {self.mode}")
 
         return out
