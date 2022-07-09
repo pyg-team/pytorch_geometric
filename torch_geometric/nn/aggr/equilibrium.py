@@ -162,12 +162,11 @@ class EquilibriumAggregation(Aggregation):
     def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor]):
         return self.potential(x, y, index) + self.reg(y)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        if ptr is not None:
-            raise ValueError(f"{self.__class__} doesn't support `ptr`")
+        self.assert_index_present(index)
 
         index_size = 1 if index is None else index.max() + 1
         dim_size = index_size if dim_size is None else dim_size
