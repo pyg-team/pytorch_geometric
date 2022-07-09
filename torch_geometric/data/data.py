@@ -657,7 +657,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         node_ids, index_map = {}, torch.empty_like(node_type)
         for i, key in enumerate(node_type_names):
             node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
-            index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
+            index_map[node_ids[i]] = torch.arange(len(node_ids[i]),
+                                                  device=index_map.device)
 
         # We iterate over edge types to find the local edge indices:
         edge_ids = {}
@@ -841,6 +842,12 @@ class Data(BaseData, FeatureStore, GraphStore):
         attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
         setattr(self, attr_name, attr_val)
 
+        # Set edge attributes:
+        if not hasattr(self, '_edge_attrs'):
+            self._edge_attrs = {}
+
+        self._edge_attrs[edge_attr.layout.value] = edge_attr
+
         # Set size, if possible:
         size = edge_attr.size
         if size is not None:
@@ -865,13 +872,26 @@ class Data(BaseData, FeatureStore, GraphStore):
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
         in `Data` and their layouts"""
-        out = []
+        if not hasattr(self, '_edge_attrs'):
+            return []
+        added_attrs = set()
+
+        # Check edges added via _put_edge_index:
+        edge_attrs = self._edge_attrs.values()
+        for attr in edge_attrs:
+            attr.size = (self.num_nodes, self.num_nodes)
+            added_attrs.add(attr.layout)
+
+        # Check edges added through regular interface:
+        # TODO deprecate this and store edge attributes for all edges in
+        # EdgeStorage
         for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
-            if attr_name in self:
-                out.append(
+            if attr_name in self and layout not in added_attrs:
+                edge_attrs.append(
                     EdgeAttr(edge_type=None, layout=layout,
                              size=(self.num_nodes, self.num_nodes)))
-        return out
+
+        return edge_attrs
 
 
 ###############################################################################
