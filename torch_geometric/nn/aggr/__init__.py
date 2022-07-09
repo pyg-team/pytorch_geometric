@@ -17,19 +17,9 @@ from .scaler import DegreeScalerAggregation
 from .equilibrium import EquilibriumAggregation
 
 __all__ = classes = [
-    'Aggregation',
-    'MultiAggregation',
-    'MeanAggregation',
-    'SumAggregation',
-    'MaxAggregation',
-    'MinAggregation',
-    'MulAggregation',
-    'VarAggregation',
-    'StdAggregation',
-    'SoftmaxAggregation',
-    'PowerMeanAggregation',
-    'LSTMAggregation',
-    'Set2Set',
-    'DegreeScalerAggregation',
+    'Aggregation', 'MultiAggregation', 'MeanAggregation', 'SumAggregation',
+    'MaxAggregation', 'MinAggregation', 'MulAggregation', 'VarAggregation',
+    'StdAggregation', 'SoftmaxAggregation', 'PowerMeanAggregation',
+    'LSTMAggregation', 'Set2Set', 'DegreeScalerAggregation',
     'EquilibriumAggregation'
 ]
