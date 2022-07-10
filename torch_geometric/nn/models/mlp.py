@@ -67,7 +67,7 @@ class MLP(torch.nn.Module):
             well. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the module will not
             learn additive biases. (default: :obj:`True`)
-        **kwargs (optional): Additional arguments of the MLP layer.
+        **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
         self,
