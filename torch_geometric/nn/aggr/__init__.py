@@ -20,5 +20,5 @@ __all__ = classes = [
     'Aggregation', 'MultiAggregation', 'MeanAggregation', 'SumAggregation',
     'MaxAggregation', 'MinAggregation', 'MulAggregation', 'VarAggregation',
     'StdAggregation', 'SoftmaxAggregation', 'PowerMeanAggregation',
-    'LSTMAggregation', 'Set2Set', 'DegreeScalerAggregation', 'GlobalSortAggr'
+    'LSTMAggregation', 'Set2Set', 'DegreeScalerAggregation', 'GlobalSortAggr',
 ]
