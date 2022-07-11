@@ -95,9 +95,21 @@ class NeighborSampler:
             # TODO support `collect` on `FeatureStore`
             self.node_time_dict = None
             if time_attr is not None:
-                raise ValueError(
-                    f"'time_attr' attribute not yet supported for "
-                    f"'{data[0].__class__.__name__}' object")
+                # We need to obtain all features with 'attr_name=time_attr'
+                # from the feature store and store them in node_time_dict. To
+                # do so, we make an explicit feature store GET call here with
+                # the relevant 'TensorAttr's
+                time_attrs = [
+                    attr for attr in feature_store.get_all_tensor_attrs()
+                    if attr.attr_name == time_attr
+                ]
+                for attr in time_attrs:
+                    attr.index = None
+                time_tensors = feature_store.multi_get_tensor(time_attrs)
+                self.node_time_dict = {
+                    time_attr.group_name: time_tensor
+                    for time_attr, time_tensor in zip(time_attrs, time_tensors)
+                }
 
             # Obtain all node and edge metadata:
             node_attrs = feature_store.get_all_tensor_attrs()
@@ -475,9 +487,12 @@ def get_input_nodes(
         if isinstance(input_nodes, Tensor):
             return None, to_index(input_nodes)
 
+        # Can't infer number of nodes from a group_name; need an attr_name
         if isinstance(input_nodes, str):
-            num_nodes = feature_store.get_tensor_size(input_nodes)[0]
-            return input_nodes, range(num_nodes)
+            raise NotImplementedError(
+                f"Cannot infer the number of nodes from a single string "
+                f"(got '{input_nodes}'). Please pass a more explicit "
+                f"representation. ")
 
         if isinstance(input_nodes, (list, tuple)):
             assert len(input_nodes) == 2
@@ -485,8 +500,10 @@ def get_input_nodes(
 
             node_type, input_nodes = input_nodes
             if input_nodes is None:
-                num_nodes = feature_store.get_tensor_size(input_nodes)[0]
-                return input_nodes[0], range(num_nodes)
+                raise NotImplementedError(
+                    f"Cannot infer the number of nodes from a node type alone "
+                    f"(got '{input_nodes}'). Please pass a more explicit "
+                    f"representation. ")
             return node_type, to_index(input_nodes)
 
         assert isinstance(input_nodes, TensorAttr)

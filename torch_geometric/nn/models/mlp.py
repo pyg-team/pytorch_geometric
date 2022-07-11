@@ -1,12 +1,16 @@
+import warnings
 from typing import Any, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import BatchNorm1d, Identity
+from torch.nn import Identity
 
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.nn.resolver import (
+    activation_resolver,
+    normalization_resolver,
+)
 from torch_geometric.typing import NoneType
 
 
@@ -48,23 +52,22 @@ class MLP(torch.nn.Module):
             embedding. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        batch_norm (bool, optional): If set to :obj:`False`, will not make use
-            of batch normalization. (default: :obj:`True`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
-        batch_norm_kwargs (Dict[str, Any], optional): Arguments passed to
-            :class:`torch.nn.BatchNorm1d` in case :obj:`batch_norm == True`.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`"batch_norm"`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         plain_last (bool, optional): If set to :obj:`False`, will apply
             non-linearity, batch normalization and dropout to the last layer as
             well. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the module will not
             learn additive biases. (default: :obj:`True`)
-        relu_first (bool, optional): Deprecated in favor of :obj:`act_first`.
-            (default: :obj:`False`)
+        **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
         self,
@@ -76,18 +79,25 @@ class MLP(torch.nn.Module):
         num_layers: Optional[int] = None,
         dropout: float = 0.,
         act: str = "relu",
-        batch_norm: bool = True,
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
-        batch_norm_kwargs: Optional[Dict[str, Any]] = None,
+        norm: Optional[str] = 'batch_norm',
+        norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
         bias: bool = True,
-        relu_first: bool = False,
+        **kwargs,
     ):
         super().__init__()
 
-        act_first = act_first or relu_first  # Backward compatibility.
-        batch_norm_kwargs = batch_norm_kwargs or {}
+        # Backward compatibility:
+        act_first = act_first or kwargs.get("relu_first", False)
+        batch_norm = kwargs.get("batch_norm", None)
+        if batch_norm is not None and isinstance(batch_norm, bool):
+            warnings.warn("Argument `batch_norm` is deprecated, "
+                          "please use `norm` to specify normalization layer.")
+            norm = 'batch_norm' if batch_norm else None
+            batch_norm_kwargs = kwargs.get("batch_norm_kwargs", None)
+            norm_kwargs = batch_norm_kwargs or {}
 
         if isinstance(channel_list, int):
             in_channels = channel_list
@@ -114,11 +124,15 @@ class MLP(torch.nn.Module):
         self.norms = torch.nn.ModuleList()
         iterator = channel_list[1:-1] if plain_last else channel_list[1:]
         for hidden_channels in iterator:
-            if batch_norm:
-                norm = BatchNorm1d(hidden_channels, **batch_norm_kwargs)
+            if norm is not None:
+                norm_layer = normalization_resolver(
+                    norm,
+                    hidden_channels,
+                    **(norm_kwargs or {}),
+                )
             else:
-                norm = Identity()
-            self.norms.append(norm)
+                norm_layer = Identity()
+            self.norms.append(norm_layer)
 
         self.reset_parameters()
 
