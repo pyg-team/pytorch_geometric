@@ -21,11 +21,21 @@ def global_sort_pool(x, batch, k):
     """
     fill_value = x.min().item() - 1
     batch_x, _ = to_dense_batch(x, batch, fill_value)
+    print("")
+    print(x.shape)
+    print(fill_value)
+    print(batch)
+    print(batch_x.shape)
+
     B, N, D = batch_x.size()
 
     _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
+    print(perm)
     arange = torch.arange(B, dtype=torch.long, device=perm.device) * N
     perm = perm + arange.view(-1, 1)
+
+    print(perm)
+    print(arange)
 
     batch_x = batch_x.view(B * N, D)
     batch_x = batch_x[perm]
