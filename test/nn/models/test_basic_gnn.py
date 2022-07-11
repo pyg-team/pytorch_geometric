@@ -15,7 +15,6 @@ dropouts = [0.0, 0.5]
 acts = [None, 'leaky_relu', torch.relu_, F.elu, ReLU()]
 norms = [None, BatchNorm1d(16), LayerNorm(16)]
 jks = [None, 'last', 'cat', 'max', 'lstm']
-num_layers = [2, 1]
 
 
 @pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
@@ -57,23 +56,22 @@ def test_gin(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk,num_layer',
-                         product(out_dims, dropouts, acts, norms, jks,
-                                 num_layers))
-def test_gat(out_dim, dropout, act, norm, jk, num_layer):
+@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
+                         product(out_dims, dropouts, acts, norms, jks))
+def test_gat(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
     for v2 in [False, True]:
-        model = GAT(8, 16, num_layers=num_layer, out_channels=out_dim, v2=v2,
+        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk)
-        assert str(model) == f'GAT(8, {out_channels}, num_layers={num_layer})'
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
         assert model(x, edge_index).size() == (3, out_channels)
 
-        model = GAT(8, 16, num_layers=num_layer, out_channels=out_dim, v2=v2,
+        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
-        assert str(model) == f'GAT(8, {out_channels}, num_layers={num_layer})'
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
         assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -93,6 +91,16 @@ def test_pna(out_dim, dropout, act, norm, jk):
                 act=act, norm=norm, jk=jk, aggregators=aggregators,
                 scalers=scalers, deg=deg)
     assert str(model) == f'PNA(8, {out_channels}, num_layers=2)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+
+@pytest.mark.parametrize('out_dim,jk', product(out_dims, jks))
+def test_one_layer_gnn(out_dim, jk):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    out_channels = 16 if out_dim is None else out_dim
+
+    model = GraphSAGE(8, 16, num_layers=1, out_channels=out_dim, jk=jk)
     assert model(x, edge_index).size() == (3, out_channels)
 
 
