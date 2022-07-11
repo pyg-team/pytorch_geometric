@@ -81,7 +81,7 @@ class MLP(torch.nn.Module):
         act: str = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
-        norm: Optional[str] = 'batch_norm',
+        norm: Optional[str] = "batch_norm",
         norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
         bias: bool = True,
