@@ -92,7 +92,7 @@ class CorrectAndSmooth(torch.nn.Module):
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 
-        if y_true.dtype == torch.long:
+        if y_true.dtype == torch.long and y_true.size(0) == y_true.numel():
             y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
             y_true = y_true.to(y_soft.dtype)
 
@@ -125,7 +125,7 @@ class CorrectAndSmooth(torch.nn.Module):
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 
-        if y_true.dtype == torch.long:
+        if y_true.dtype == torch.long and y_true.size(0) == y_true.numel():
             y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
             y_true = y_true.to(y_soft.dtype)
 
