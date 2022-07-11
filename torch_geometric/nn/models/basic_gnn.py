@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
@@ -104,21 +105,16 @@ class BasicGNN(torch.nn.Module):
 
         self.norms = None
         if norm is not None:
+            norm_layer = normalization_resolver(
+                norm,
+                hidden_channels,
+                **(norm_kwargs or {}),
+            )
             self.norms = ModuleList()
             for _ in range(num_layers - 1):
-                norm_layer = normalization_resolver(
-                    norm,
-                    hidden_channels,
-                    **(norm_kwargs or {}),
-                )
-                self.norms.append(norm_layer)
+                self.norms.append(copy.deepcopy(norm_layer))
             if jk is not None:
-                norm_layer = normalization_resolver(
-                    norm,
-                    hidden_channels,
-                    **(norm_kwargs or {}),
-                )
-                self.norms.append(norm_layer)
+                self.norms.append(copy.deepcopy(norm_layer))
 
         if jk is not None and jk != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
