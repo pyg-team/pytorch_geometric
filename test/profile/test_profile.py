@@ -1,8 +1,15 @@
 import torch
 import torch.nn.functional as F
+from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.profile import get_stats_summary, profileit, timeit
+from torch_geometric.profile import (
+    get_stats_summary,
+    profileit,
+    rename_profile_file,
+    timeit,
+    trace_handler,
+)
 from torch_geometric.testing import withCUDA
 
 
@@ -41,7 +48,11 @@ def test_profile(get_dataset):
         assert stats.nvidia_smi_free_cuda > 0
         assert stats.nvidia_smi_used_cuda > 0
 
-        _, time = test(model, data.x, data.edge_index, data.y)
+        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                     on_trace_ready=trace_handler) as p:
+            _, time = test(model, data.x, data.edge_index, data.y)
+            p.step()
+
         assert time > 0
 
         if epoch >= 2:  # Warm-up
@@ -56,3 +67,7 @@ def test_profile(get_dataset):
     assert stats_summary.max_active_cuda > 0
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
+
+    rename_profile_file('test_profile')
+    import os.path
+    assert os.path.exists('profile-test_profile.json')
