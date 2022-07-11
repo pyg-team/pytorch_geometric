@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric.data import Batch, Data
 from torch_geometric.utils import unbatch, unbatch_edge_index
 
 
@@ -15,17 +14,12 @@ def test_unbatch():
 
 
 def test_unbatch_edge_index():
-    a = Data(
-        edge_index=torch.randint(0, 100, [2, 100], dtype=torch.int64),
-        num_nodes=100,
-    )
-    b = Data(
-        edge_index=torch.randint(10, 50, [2, 70], dtype=torch.int64),
-        num_nodes=50,
-    )
-    c = Batch.from_data_list([a, b])
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 4, 5, 5, 6],
+        [1, 0, 2, 1, 3, 2, 5, 4, 6, 5],
+    ])
+    batch = torch.tensor([0, 0, 0, 0, 1, 1, 1])
 
-    a_edge_index, b_edge_index = unbatch_edge_index(c.edge_index, c.batch)
-
-    assert torch.equal(a.edge_index, a_edge_index)
-    assert torch.equal(b.edge_index, b_edge_index)
+    edge_indices = unbatch_edge_index(edge_index, batch)
+    assert edge_indices[0].tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
+    assert edge_indices[1].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
