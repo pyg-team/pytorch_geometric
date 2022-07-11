@@ -6,19 +6,9 @@ from torch.optim import Adam
 from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.loader import DataLoader
+from torch_geometric.profile import trace_handler
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-profile_sort = "self_cuda_time_total" if torch.cuda.is_available(
-) else "self_cpu_time_total"
-
-
-def trace_handler(p):
-    output = p.key_averages().table(sort_by=profile_sort)
-    print(output)
-    import pathlib
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'timeline' + '.json'
-    p.export_chrome_trace(timeline_file)
 
 
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
@@ -103,6 +93,7 @@ def test(model, test_loader, device):
     return test_acc
 
 
+@torch.no_grad()
 def inference_run(model, test_loader, device):
     model.eval()
     for data in test_loader:

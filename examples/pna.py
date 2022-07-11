@@ -11,12 +11,12 @@ from torch.profiler import ProfilerActivity, profile
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import BatchNorm, PNAConv, global_add_pool
+from torch_geometric.profile import rename_profile_file, trace_handler
 from torch_geometric.utils import degree
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--inference', type=bool, default=False)
-parser.add_argument('--profile', type=bool,
-                    default=False)  # Currently support profile in inference
+parser.add_argument('--inference', action='store_true')
+parser.add_argument('--profile', action='store_true')
 args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC')
@@ -77,20 +77,9 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-profile_sort = "self_cuda_time_total" if torch.cuda.is_available(
-) else "self_cpu_time_total"
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
                               min_lr=0.00001)
-
-
-def trace_handler(p):
-    output = p.key_averages().table(sort_by=profile_sort)
-    print(output)
-    import pathlib
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'timeline-to-pna' + '.json'
-    p.export_chrome_trace(timeline_file)
 
 
 def train(epoch):
@@ -146,6 +135,7 @@ else:
                         ], on_trace_ready=trace_handler) as p:
                     inference(test_loader)
                     p.step()
+                rename_profile_file('pna')
             else:
                 if torch.cuda.is_available():
                     torch.cuda.synchronize()

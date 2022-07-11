@@ -4,7 +4,8 @@ import torch
 import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
 
-from torch_geometric.nn import ChebConv
+from torch_geometric.nn import ChebConv as Conv
+from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
@@ -18,17 +19,16 @@ parser.add_argument('--hidden', type=int, default=16)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--normalize_features', type=bool, default=True)
 parser.add_argument('--num_hops', type=int, default=3)
-parser.add_argument('--inference', type=bool, default=False)
-parser.add_argument('--profile', type=bool,
-                    default=False)  # Currently support profile in inference
+parser.add_argument('--inference', action='store_true')
+parser.add_argument('--profile', action='store_true')
 args = parser.parse_args()
 
 
 class Net(torch.nn.Module):
     def __init__(self, dataset):
         super().__init__()
-        self.conv1 = ChebConv(dataset.num_features, args.hidden, args.num_hops)
-        self.conv2 = ChebConv(args.hidden, dataset.num_classes, args.num_hops)
+        self.conv1 = Conv(dataset.num_features, args.hidden, args.num_hops)
+        self.conv2 = Conv(args.hidden, dataset.num_classes, args.num_hops)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -44,14 +44,9 @@ class Net(torch.nn.Module):
 
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
-print("cheby-{}-{}:".format(args.dataset, args.random_splits), end=' ')
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
 
 if args.profile:
-    import os
-    import pathlib
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'profile-citation-CHEBY-' + args.dataset + '-random_splits-' + str(
-        args.random_splits) + '.json'
-    os.rename('timeline.json', timeline_file)
+    rename_profile_file('citation', Conv.__name__, args.dataset,
+                        str(args.random_splits))
