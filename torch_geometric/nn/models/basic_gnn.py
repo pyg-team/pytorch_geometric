@@ -187,7 +187,7 @@ class GCN(BasicGNN):
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
+            use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
@@ -225,7 +225,7 @@ class GraphSAGE(BasicGNN):
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
+            use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
@@ -263,7 +263,7 @@ class GIN(BasicGNN):
         act (Callable, optional): The non-linear activation function to use.
             (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
+            use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
@@ -308,7 +308,7 @@ class GAT(BasicGNN):
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
+            use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
@@ -367,7 +367,7 @@ class PNA(BasicGNN):
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
+            use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
