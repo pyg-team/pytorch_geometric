@@ -80,18 +80,21 @@ class BasicGNN(torch.nn.Module):
             self.out_channels = hidden_channels
 
         self.convs = ModuleList()
-        self.convs.append(
-            self.init_conv(in_channels, hidden_channels, **kwargs))
+        if num_layers > 1:
+            self.convs.append(
+                self.init_conv(in_channels, hidden_channels, **kwargs))
+            in_channels = hidden_channels
         for _ in range(num_layers - 2):
             self.convs.append(
-                self.init_conv(hidden_channels, hidden_channels, **kwargs))
+                self.init_conv(in_channels, hidden_channels, **kwargs))
+            in_channels = hidden_channels
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
             self.convs.append(
-                self.init_conv(hidden_channels, out_channels, **kwargs))
+                self.init_conv(in_channels, out_channels, **kwargs))
         else:
             self.convs.append(
-                self.init_conv(hidden_channels, hidden_channels, **kwargs))
+                self.init_conv(in_channels, hidden_channels, **kwargs))
 
         self.norms = None
         if norm is not None:
@@ -169,9 +172,11 @@ class GCN(BasicGNN):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -202,9 +207,11 @@ class GraphSAGE(BasicGNN):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -235,9 +242,11 @@ class GIN(BasicGNN):
             (default: :obj:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -275,9 +284,11 @@ class GAT(BasicGNN):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -329,9 +340,11 @@ class PNA(BasicGNN):
             use. (default: :obj:`"relu"`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
-        jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"lstm"`).
-            (default: :obj:`"last"`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
