@@ -80,26 +80,21 @@ class BasicGNN(torch.nn.Module):
             self.out_channels = hidden_channels
 
         self.convs = ModuleList()
-        if num_layers == 1:
-            if out_channels is not None and jk is None:
-                self.convs.append(
-                    self.init_conv(in_channels, out_channels, **kwargs))
-            else:
-                self.convs.append(
-                    self.init_conv(in_channels, hidden_channels, **kwargs))
+        if num_layers > 1:
+            self.convs.append(
+                self.init_conv(in_channels, hidden_channels, **kwargs))
+            in_channels = hidden_channels
+        for _ in range(num_layers - 2):
+            self.convs.append(
+                self.init_conv(in_channels, hidden_channels, **kwargs))
+            in_channels = hidden_channels
+        if out_channels is not None and jk is None:
+            self._is_conv_to_out = True
+            self.convs.append(
+                self.init_conv(in_channels, out_channels, **kwargs))
         else:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
-            for _ in range(num_layers - 2):
-                self.convs.append(
-                    self.init_conv(hidden_channels, hidden_channels, **kwargs))
-            if out_channels is not None and jk is None:
-                self._is_conv_to_out = True
-                self.convs.append(
-                    self.init_conv(hidden_channels, out_channels, **kwargs))
-            else:
-                self.convs.append(
-                    self.init_conv(hidden_channels, hidden_channels, **kwargs))
 
         self.norms = None
         if norm is not None:
