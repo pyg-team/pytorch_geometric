@@ -41,4 +41,4 @@ def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
     edge_batch = batch[edge_index[0]]
     edge_index = edge_index - ptr[edge_batch]
     sizes = degree(edge_batch, dtype=torch.int64).cpu().tolist()
-    return edge_index.split(sizes)
+    return edge_index.split(sizes, dim=1)
