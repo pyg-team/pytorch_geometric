@@ -25,8 +25,8 @@ class GlobalSortAggr(Aggregation):
                 dim: int = -2) -> Tensor:
 
         fill_value = x.min().item() - 1
-        batch_x = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                      fill_value=fill_value)
+        batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                         fill_value=fill_value)
         B, N, D = batch_x.size()
 
         _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
