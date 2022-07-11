@@ -4,7 +4,6 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.utils import to_dense_batch
 
 
 class GlobalSortAggr(Aggregation):
@@ -25,10 +24,9 @@ class GlobalSortAggr(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        self.assert_index_present(index)
-
         fill_value = x.min().item() - 1
-        batch_x, _ = to_dense_batch(x, index, fill_value)
+        batch_x = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                      fill_value=fill_value)
         B, N, D = batch_x.size()
 
         _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
