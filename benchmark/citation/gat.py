@@ -19,6 +19,9 @@ parser.add_argument('--dropout', type=float, default=0.6)
 parser.add_argument('--normalize_features', type=bool, default=True)
 parser.add_argument('--heads', type=int, default=8)
 parser.add_argument('--output_heads', type=int, default=1)
+parser.add_argument('--inference', type=bool, default=False)
+parser.add_argument('--profile', type=bool,
+                    default=False)  # Currently support profile in inference
 args = parser.parse_args()
 
 
@@ -46,5 +49,14 @@ class Net(torch.nn.Module):
 
 dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
+print("gat-{}-{}:".format(args.dataset, args.random_splits), end=' ')
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
-    args.early_stopping, permute_masks)
+    args.early_stopping, args.inference, args.profile, permute_masks)
+
+if args.profile:
+    import os
+    import pathlib
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'profile-citation-GAT-' + args.dataset + '-random_splits-' + str(
+        args.random_splits) + '.json'
+    os.rename('timeline.json', timeline_file)

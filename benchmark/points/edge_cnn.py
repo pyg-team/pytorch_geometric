@@ -17,6 +17,9 @@ parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--lr_decay_factor', type=float, default=0.5)
 parser.add_argument('--lr_decay_step_size', type=int, default=50)
 parser.add_argument('--weight_decay', type=float, default=0)
+parser.add_argument('--inference', type=bool, default=False)
+parser.add_argument('--profile', type=bool,
+                    default=False)  # Currently support profile in inference
 args = parser.parse_args()
 
 
@@ -54,5 +57,14 @@ class Net(torch.nn.Module):
 
 train_dataset, test_dataset = get_dataset(num_points=1024)
 model = Net(train_dataset.num_classes)
+print("edge_cnn", end=' ')
 run(train_dataset, test_dataset, model, args.epochs, args.batch_size, args.lr,
-    args.lr_decay_factor, args.lr_decay_step_size, args.weight_decay)
+    args.lr_decay_factor, args.lr_decay_step_size, args.weight_decay,
+    args.inference, args.profile)
+
+if args.profile:
+    import os
+    import pathlib
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'profile-points-edge_cnn.json'
+    os.rename('timeline.json', timeline_file)
