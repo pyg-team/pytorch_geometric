@@ -17,7 +17,10 @@ from torch_geometric.nn.conv import (
 )
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
-from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.nn.resolver import (
+    activation_resolver,
+    normalization_resolver,
+)
 from torch_geometric.typing import Adj
 
 
@@ -34,18 +37,21 @@ class BasicGNN(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
@@ -57,10 +63,11 @@ class BasicGNN(torch.nn.Module):
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
-        norm: Optional[torch.nn.Module] = None,
-        jk: Optional[str] = None,
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
+        norm: Union[str, Callable, None] = None,
+        norm_kwargs: Optional[Dict[str, Any]] = None,
+        jk: Optional[str] = None,
         **kwargs,
     ):
         super().__init__()
@@ -98,11 +105,16 @@ class BasicGNN(torch.nn.Module):
 
         self.norms = None
         if norm is not None:
+            norm_layer = normalization_resolver(
+                norm,
+                hidden_channels,
+                **(norm_kwargs or {}),
+            )
             self.norms = ModuleList()
             for _ in range(num_layers - 1):
-                self.norms.append(copy.deepcopy(norm))
+                self.norms.append(copy.deepcopy(norm_layer))
             if jk is not None:
-                self.norms.append(copy.deepcopy(norm))
+                self.norms.append(copy.deepcopy(norm_layer))
 
         if jk is not None and jk != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
@@ -170,7 +182,10 @@ class GCN(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
@@ -205,7 +220,10 @@ class GraphSAGE(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
@@ -240,7 +258,10 @@ class GIN(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :obj:`torch.nn.ReLU(inplace=True)`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
@@ -257,7 +278,7 @@ class GIN(BasicGNN):
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
-        mlp = MLP([in_channels, out_channels, out_channels], batch_norm=True)
+        mlp = MLP([in_channels, out_channels, out_channels], norm="batch_norm")
         return GINConv(mlp, **kwargs)
 
 
@@ -282,7 +303,10 @@ class GAT(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
@@ -338,7 +362,10 @@ class PNA(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        norm (torch.nn.Module, optional): The normalization operator to use.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
