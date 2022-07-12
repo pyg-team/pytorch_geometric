@@ -295,6 +295,13 @@ def edge_tensor_type_to_adj_type(
 
     if attr.layout == EdgeLayout.COO:
         # COO: (row, col)
+
+        # Size checks:
+        assert src.dim() == 1 and dst.dim() == 1
+        assert src.size(0) == dst.size(0)
+        if src.size(0) == 0:
+            return torch.stack(src, dst)  # Can't index
+
         if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()
                 and src.storage_offset() < dst.storage_offset()):
             # Do not copy if the tensor tuple is constructed from the same
