@@ -7,7 +7,7 @@ from torch_geometric.nn.aggr import Aggregation
 
 
 class SortAggr(Aggregation):
-    r"""The global pooling operator from the `"An End-to-End Deep Learning
+    r"""The pooling operator from the `"An End-to-End Deep Learning
     Architecture for Graph Classification"
     <https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf>`_ paper,
     where node features are sorted in descending order based on their last

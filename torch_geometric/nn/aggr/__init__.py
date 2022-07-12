@@ -14,7 +14,7 @@ from .basic import (
 from .lstm import LSTMAggregation
 from .set2set import Set2Set
 from .scaler import DegreeScalerAggregation
-from .sort import GlobalSortAggr
+from .sort import SortAggr
 
 __all__ = classes = [
     'Aggregation',
@@ -31,5 +31,5 @@ __all__ = classes = [
     'LSTMAggregation',
     'Set2Set',
     'DegreeScalerAggregation',
-    'GlobalSortAggr',
+    'SortAggr',
 ]
