@@ -94,35 +94,35 @@ def run_inference(dataset, model, runs, epochs, profiling, permute_masks=None,
                   logger=None):
     for i in range(runs):
         data = dataset[0]
-    if permute_masks is not None:
-        data = permute_masks(data, dataset.num_classes)
-    data = data.to(device)
+        if permute_masks is not None:
+            data = permute_masks(data, dataset.num_classes)
+        data = data.to(device)
 
-    model.to(device).reset_parameters()
+        model.to(device).reset_parameters()
 
-    for epoch in range(1, epochs + 1):
-        if i == runs - 1 and epoch == epochs:
-            if profiling:
-                with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
+        for epoch in range(1, epochs + 1):
+            if i == runs - 1 and epoch == epochs:
+                if profiling:
+                    with profile(
+                            activities=[
+                                ProfilerActivity.CPU, ProfilerActivity.CUDA
+                            ], on_trace_ready=trace_handler) as p:
+                        inference(model, data)
+                        p.step()
+                else:
+                    if torch.cuda.is_available():
+                        torch.cuda.synchronize()
+                    t_start = time.time()
+
                     inference(model, data)
-                    p.step()
+
+                    if torch.cuda.is_available():
+                        torch.cuda.synchronize()
+                    t_end = time.time()
+                    duration = t_end - t_start
+                    print("End-to-End time: {} s".format(duration), flush=True)
             else:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_start = time.time()
-
                 inference(model, data)
-
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_end = time.time()
-                duration = t_end - t_start
-                print("End-to-End time: {} s".format(duration), flush=True)
-        else:
-            inference(model, data)
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
@@ -166,5 +166,4 @@ def evaluate(model, data):
 @torch.no_grad()
 def inference(model, data):
     model.eval()
-    with torch.no_grad():
-        model(data)
+    model(data)

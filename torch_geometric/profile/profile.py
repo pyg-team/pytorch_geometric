@@ -1,3 +1,5 @@
+import os
+import pathlib
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
@@ -181,15 +183,12 @@ def trace_handler(p):
         profile_sort = 'self_cpu_time_total'
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
-    import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
     timeline_file = profile_dir + 'timeline' + '.json'
     p.export_chrome_trace(timeline_file)
 
 
 def rename_profile_file(*args):
-    import os
-    import pathlib
     profile_dir = str(pathlib.Path.cwd()) + '/'
     timeline_file = profile_dir + 'profile'
     for arg in args:
