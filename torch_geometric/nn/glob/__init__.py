@@ -16,7 +16,7 @@ classes = __all__
 
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.nn.aggr import Set2Set  # noqa
-from torch_geometric.nn.aggr import GlobalSortAggr  # noqa
+from torch_geometric.nn.glob import sort  # noqa
 
 Set2Set = deprecated(
     details="use 'nn.aggr.Set2Set' instead",
@@ -26,4 +26,4 @@ Set2Set = deprecated(
 global_sort_pool = deprecated(
     details="use 'nn.aggr.GlobalSortAggr' instead",
     func_name='nn.glob.global_sort_pool',
-)(GlobalSortAggr)
+)(sort.global_sort_pool)
