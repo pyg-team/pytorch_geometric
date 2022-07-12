@@ -8,7 +8,7 @@ from torch_geometric.nn import GCNConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
-parser.add_argument('--random_splits', type=bool, default=False)
+parser.add_argument('--random_splits', action='store_true')
 parser.add_argument('--runs', type=int, default=100)
 parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--lr', type=float, default=0.01)
@@ -16,7 +16,7 @@ parser.add_argument('--weight_decay', type=float, default=0.0005)
 parser.add_argument('--early_stopping', type=int, default=10)
 parser.add_argument('--hidden', type=int, default=16)
 parser.add_argument('--dropout', type=float, default=0.5)
-parser.add_argument('--normalize_features', type=bool, default=True)
+parser.add_argument('--no_normalize_features', action='store_true')
 args = parser.parse_args()
 
 
@@ -38,7 +38,7 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-dataset = get_planetoid_dataset(args.dataset, args.normalize_features)
+dataset = get_planetoid_dataset(args.dataset, args.no_normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, permute_masks)
