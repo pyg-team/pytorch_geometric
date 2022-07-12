@@ -1,3 +1,5 @@
+import os.path
+
 import torch
 import torch.nn.functional as F
 from torch.profiler import ProfilerActivity, profile
@@ -48,11 +50,7 @@ def test_profile(get_dataset):
         assert stats.nvidia_smi_free_cuda > 0
         assert stats.nvidia_smi_used_cuda > 0
 
-        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                     on_trace_ready=trace_handler) as p:
-            _, time = test(model, data.x, data.edge_index, data.y)
-            p.step()
-
+        _, time = test(model, data.x, data.edge_index, data.y)
         assert time > 0
 
         if epoch >= 2:  # Warm-up
@@ -68,6 +66,20 @@ def test_profile(get_dataset):
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
+
+def test_trace_handler(get_dataset):
+    dataset = get_dataset(name='PubMed')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    data = dataset[0].to(device)
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).to(device)
+    model.eval()
+
+    for epoch in range(3):
+        print("epoch ", epoch)
+        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                     on_trace_ready=trace_handler) as p:
+            model(data.x, data.edge_index)
+            p.step()
     rename_profile_file('test_profile')
-    import os.path
     assert os.path.exists('profile-test_profile.json')
