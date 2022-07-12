@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -78,10 +78,10 @@ class MLP(torch.nn.Module):
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
         dropout: float = 0.,
-        act: str = "relu",
+        act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
-        norm: Optional[str] = 'batch_norm',
+        norm: Union[str, Callable, None] = "batch_norm",
         norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
         bias: bool = True,

@@ -293,8 +293,12 @@ def edge_tensor_type_to_adj_type(
     r"""Converts an EdgeTensorType tensor tuple to a PyG Adj tensor."""
     src, dst = tensor_tuple
 
-    if attr.layout == EdgeLayout.COO:
-        # COO: (row, col)
+    if attr.layout == EdgeLayout.COO:  # COO: (row, col)
+        assert src.dim() == 1 and dst.dim() == 1 and src.numel() == dst.numel()
+
+        if src.numel() == 0:
+            return torch.stack(tensor_tuple, dim=0)
+
         if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()
                 and src.storage_offset() < dst.storage_offset()):
             # Do not copy if the tensor tuple is constructed from the same
@@ -303,14 +307,16 @@ def edge_tensor_type_to_adj_type(
             out.set_(src.storage(), storage_offset=src.storage_offset(),
                      size=(src.size()[0] + dst.size()[0], ))
             return out.view(2, -1)
-        return torch.stack(tensor_tuple)
-    elif attr.layout == EdgeLayout.CSR:
-        # CSR: (rowptr, col)
+
+        return torch.stack(tensor_tuple, dim=0)
+
+    elif attr.layout == EdgeLayout.CSR:  # CSR: (rowptr, col)
         return SparseTensor(rowptr=src, col=dst, is_sorted=True,
                             sparse_sizes=attr.size)
-    elif attr.layout == EdgeLayout.CSC:
-        # CSC: (row, colptr) is a transposed adjacency matrix, so rowptr
-        # is the compressed column and col is the uncompressed row.
+
+    elif attr.layout == EdgeLayout.CSC:  # CSC: (row, colptr)
+        # CSC is a transposed adjacency matrix, so rowptr is the compressed
+        # column and col is the uncompressed row.
         sparse_sizes = None if attr.size is None else (attr.size[1],
                                                        attr.size[0])
         return SparseTensor(rowptr=dst, col=src, is_sorted=True,
