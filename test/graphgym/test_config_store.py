@@ -41,7 +41,7 @@ def test_config_store():
     assert cfg.dataset.transform.AddSelfLoops.fill_value is None
 
     # Check `cfg.model`:
-    assert len(cfg.model) == 11
+    assert len(cfg.model) == 12
     assert cfg.model._target_.split('.')[-1] == 'GCN'
     assert cfg.model.in_channels == 34
     assert cfg.model.out_channels == 4
@@ -50,6 +50,7 @@ def test_config_store():
     assert cfg.model.dropout == 0.0
     assert cfg.model.act == 'relu'
     assert cfg.model.norm is None
+    assert cfg.model.norm_kwargs is None
     assert cfg.model.jk is None
     assert not cfg.model.act_first
     assert cfg.model.act_kwargs is None

@@ -24,9 +24,9 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GCN(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
+    model = GCN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
-    assert str(model) == f'GCN(8, {out_channels}, num_layers=2)'
+    assert str(model) == f'GCN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -37,9 +37,9 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GraphSAGE(8, 16, num_layers=2, out_channels=out_dim,
+    model = GraphSAGE(8, 16, num_layers=3, out_channels=out_dim,
                       dropout=dropout, act=act, norm=norm, jk=jk)
-    assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=2)'
+    assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -50,9 +50,9 @@ def test_gin(out_dim, dropout, act, norm, jk):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
-    model = GIN(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
+    model = GIN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
-    assert str(model) == f'GIN(8, {out_channels}, num_layers=2)'
+    assert str(model) == f'GIN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -64,14 +64,14 @@ def test_gat(out_dim, dropout, act, norm, jk):
     out_channels = 16 if out_dim is None else out_dim
 
     for v2 in [False, True]:
-        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
+        model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk)
-        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
-        model = GAT(8, 16, num_layers=2, out_channels=out_dim, v2=v2,
+        model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
-        assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
+        assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -87,10 +87,20 @@ def test_pna(out_dim, dropout, act, norm, jk):
         'identity', 'amplification', 'attenuation', 'linear', 'inverse_linear'
     ]
 
-    model = PNA(8, 16, num_layers=2, out_channels=out_dim, dropout=dropout,
+    model = PNA(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk, aggregators=aggregators,
                 scalers=scalers, deg=deg)
-    assert str(model) == f'PNA(8, {out_channels}, num_layers=2)'
+    assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+
+@pytest.mark.parametrize('out_dim,jk', product(out_dims, jks))
+def test_one_layer_gnn(out_dim, jk):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    out_channels = 16 if out_dim is None else out_dim
+
+    model = GraphSAGE(8, 16, num_layers=1, out_channels=out_dim, jk=jk)
     assert model(x, edge_index).size() == (3, out_channels)
 
 
@@ -100,7 +110,7 @@ def test_packaging():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    model = GraphSAGE(8, 16, num_layers=2)
+    model = GraphSAGE(8, 16, num_layers=3)
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
@@ -108,7 +118,7 @@ def test_packaging():
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 
-    model = GraphSAGE(8, 16, num_layers=2)
+    model = GraphSAGE(8, 16, num_layers=3)
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
