@@ -38,7 +38,7 @@ class LabelPropagation(MessagePassing):
     ) -> Tensor:
         """"""
 
-        if y.dtype == torch.long:
+        if y.dtype == torch.long and y.size(0) == y.numel():
             y = F.one_hot(y.view(-1)).to(torch.float)
 
         out = y

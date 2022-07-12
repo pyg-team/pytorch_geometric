@@ -34,7 +34,7 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-dataset = get_planetoid_dataset(args.dataset, args.no_normalize_features)
+dataset = get_planetoid_dataset(args.dataset, not args.no_normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, permute_masks)
