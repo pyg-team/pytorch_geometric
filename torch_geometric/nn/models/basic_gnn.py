@@ -37,6 +37,11 @@ class BasicGNN(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -47,11 +52,6 @@ class BasicGNN(torch.nn.Module):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
@@ -63,11 +63,11 @@ class BasicGNN(torch.nn.Module):
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
+        act_first: bool = False,
+        act_kwargs: Optional[Dict[str, Any]] = None,
         norm: Union[str, Callable, None] = None,
         norm_kwargs: Optional[Dict[str, Any]] = None,
         jk: Optional[str] = None,
-        act_first: bool = False,
-        act_kwargs: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         super().__init__()
