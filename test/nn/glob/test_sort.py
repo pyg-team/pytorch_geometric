@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn import global_sort_pool
+from torch_geometric.nn.glob import global_sort_pool
 
 
 def test_global_sort_pool():
