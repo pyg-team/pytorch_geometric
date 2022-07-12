@@ -3,7 +3,6 @@ import copy
 from timeit import default_timer
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
 from utils import get_dataset, get_degree, get_model
 
 from torch_geometric.loader import NeighborLoader
@@ -17,18 +16,19 @@ supported_sets = {
 
 def run(args: argparse.ArgumentParser) -> None:
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     print('BENCHMARK STARTS')
     if args.pure_gnn_mode:
         print('PURE GNN MODE ACTIVATED')
     for dataset_name in args.datasets:
         print(f'Dataset: {dataset_name}')
-        dataset = get_dataset(
-            dataset_name, args.root, PygNodePropPredDataset
-            if dataset_name == 'ogbn-products' else None)
+        dataset = get_dataset(dataset_name, args.root)
 
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
+        degree = None
 
-        data = dataset[0].to(args.device)
+        data = dataset[0].to(device)
         inputs_channels = data.x_dict['paper'].size(
             -1) if dataset_name == 'ogbn-mag' else dataset.num_features
 
@@ -38,16 +38,6 @@ def run(args: argparse.ArgumentParser) -> None:
                       f'not supported. Skipping.')
                 continue
             print(f'Evaluation bench for {model_name}:')
-            if model_name == 'pna_conv':
-                loader = NeighborLoader(
-                    copy.copy(data),
-                    num_neighbors=[-1],
-                    input_nodes=mask,
-                    batch_size=1024,
-                    shuffle=False,
-                    num_workers=args.num_workers,
-                )
-                degree = get_degree(loader)
 
             for batch_size in args.eval_batch_sizes:
                 subgraph_loader = NeighborLoader(
@@ -74,12 +64,17 @@ def run(args: argparse.ArgumentParser) -> None:
                             'num_heads': args.num_heads,
                             'num_layers': layers,
                         }
+
                         if model_name == 'pna_conv':
+                            if degree is None:
+                                degree = get_degree(subgraph_loader)
+                                print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
                         model = get_model(
                             model_name, params, metadata=data.metadata()
                             if dataset_name == 'ogbn-mag' else None)
+                        model = model.to(device)
 
                         if args.pure_gnn_mode:
                             prebatched_samples = []
@@ -90,15 +85,13 @@ def run(args: argparse.ArgumentParser) -> None:
                             subgraph_loader = prebatched_samples
 
                         start = default_timer()
-                        model.inference(subgraph_loader, args.device)
+                        model.inference(subgraph_loader, device)
                         stop = default_timer()
                         print(f'Inference time={stop-start:.3f}\n')
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
-
-    argparser.add_argument('--device', default='cpu', type=str)
     argparser.add_argument(
         '--pure-gnn-mode', action='store_true',
         help='turn on pure gnn efficiency bench - firstly prepare batches')

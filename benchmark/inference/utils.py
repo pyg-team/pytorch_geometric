@@ -5,6 +5,7 @@ from edgeconv import EdgeConvNet
 from gat import GATNet
 from gcn import GCN
 from graphsage import SAGE_HETERO
+from ogb.nodeproppred import PygNodePropPredDataset
 from pna import PNANet
 from rgat import GAT_HETERO
 
@@ -22,8 +23,7 @@ models_dict = {
 }
 
 
-# TODO: remove ogb_node_dataset; it's a hack to fix hang on ogb import
-def get_dataset(name, root, ogb_node_dataset=None):
+def get_dataset(name, root):
     path = osp.dirname(osp.realpath(__file__))
 
     if name == 'ogbn-mag':
@@ -31,8 +31,8 @@ def get_dataset(name, root, ogb_node_dataset=None):
         dataset = OGB_MAG(root=osp.join(path, root, 'mag'),
                           preprocess='metapath2vec', transform=transform)
     elif name == 'ogbn-products':
-        dataset = ogb_node_dataset('ogbn-products',
-                                   root=osp.join(path, root, 'products'))
+        dataset = PygNodePropPredDataset('ogbn-products',
+                                         root=osp.join(path, root, 'products'))
     elif name == 'reddit':
         dataset = Reddit(root=osp.join(path, root, 'reddit'))
 

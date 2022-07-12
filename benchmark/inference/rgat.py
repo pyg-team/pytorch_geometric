@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from tqdm import tqdm
 
 from torch_geometric.nn import GATConv, to_hetero
@@ -19,13 +18,17 @@ class GAT_HETERO:
                                self.num_layers, self.num_heads)
         self.model = to_hetero(model, metadata, aggr='sum')
 
+    def to(self, device):
+        self.model = self.model.to(device)
+        return self
+
     def inference(self, loader, device):
         self.model.eval()
         for batch in tqdm(loader):
             batch = batch.to(device)
             batch_size = batch['paper'].batch_size
-            out = self.model(batch.x_dict,
-                             batch.edge_index_dict)['paper'][:batch_size]
+            self.model(batch.x_dict,
+                       batch.edge_index_dict)['paper'][:batch_size]
 
 
 class GAT_FOR_HETERO(torch.nn.Module):
