@@ -22,5 +22,5 @@ def test_mem_pool():
     assert out1.size() == (5, 2, 8)
     assert out2.size() == (5, 1, 4)
     assert S[~mask].sum() == 0
-    assert S[mask].sum() == x.size(0)
+    assert round(S[mask].sum().item()) == x.size(0)
     assert float(loss) > 0
