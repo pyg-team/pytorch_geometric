@@ -21,7 +21,7 @@ class Model(pl.LightningModule):
                        dropout=dropout, jk='cat')
 
         self.classifier = MLP([hidden_channels, hidden_channels, out_channels],
-                              batch_norm=True, dropout=dropout)
+                              norm="batch_norm", dropout=dropout)
 
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()

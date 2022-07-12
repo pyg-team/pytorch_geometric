@@ -65,7 +65,7 @@ class DMoNPooling(torch.nn.Module):
             channels = [channels]
 
         from torch_geometric.nn.models.mlp import MLP
-        self.mlp = MLP(channels + [k], act='selu', batch_norm=False)
+        self.mlp = MLP(channels + [k], act='selu', norm=None)
 
         self.dropout = dropout
 
