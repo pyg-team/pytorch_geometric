@@ -12,7 +12,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import HGTLoader, NeighborLoader
 from torch_geometric.nn import Linear, SAGEConv, Sequential, to_hetero
-from torch_geometric.profile import trace_handler
+from torch_geometric.profile import rename_profile_file, trace_handler
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
@@ -124,6 +124,7 @@ else:
                         ], on_trace_ready=trace_handler) as p:
                     inference(val_loader)
                     p.step()
+                    rename_profile_file('to_hetero_mag')
             else:
                 if torch.cuda.is_available():
                     torch.cuda.synchronize()
