@@ -63,7 +63,7 @@ class BasicGNN(torch.nn.Module):
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
-        norm: Optional[str] = None,
+        norm: Union[str, Callable, None] = None,
         norm_kwargs: Optional[Dict[str, Any]] = None,
         jk: Optional[str] = None,
         act_first: bool = False,
