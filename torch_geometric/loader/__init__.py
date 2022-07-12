@@ -15,22 +15,10 @@ from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
 
 __all__ = classes = [
-    'DataLoader',
-    'NeighborLoader',
-    'LinkNeighborLoader',
-    'HGTLoader',
-    'ClusterData',
-    'ClusterLoader',
-    'GraphSAINTSampler',
-    'GraphSAINTNodeSampler',
-    'GraphSAINTEdgeSampler',
-    'GraphSAINTRandomWalkSampler',
-    'ShaDowKHopSampler',
-    'RandomNodeSampler',
-    'DataListLoader',
-    'DenseDataLoader',
-    'TemporalDataLoader',
-    'NeighborSampler',
-    'ImbalancedSampler',
-    'DynamicBatchSampler'
+    'DataLoader', 'NeighborLoader', 'LinkNeighborLoader', 'HGTLoader',
+    'ClusterData', 'ClusterLoader', 'GraphSAINTSampler',
+    'GraphSAINTNodeSampler', 'GraphSAINTEdgeSampler',
+    'GraphSAINTRandomWalkSampler', 'ShaDowKHopSampler', 'RandomNodeSampler',
+    'DataListLoader', 'DenseDataLoader', 'TemporalDataLoader',
+    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler'
 ]
