@@ -136,7 +136,7 @@ def test_graphgym_module(tmpdir):
     assert isinstance(scheduler[0], torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)
-    assert cfg.params == 23880
+    assert cfg.params == 23883
 
     keys = {"loss", "true", "pred_score", "step_end_time"}
     # test training step
