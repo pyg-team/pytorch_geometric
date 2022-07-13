@@ -105,12 +105,13 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-def test_basic_gnn_inference(get_dataset):
+@pytest.mark.parametrize('jk', [None, 'last'])
+def test_basic_gnn_inference(get_dataset, jk):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
     model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
-                      out_channels=dataset.num_classes)
+                      out_channels=dataset.num_classes, jk=jk)
     model.eval()
 
     out1 = model(data.x, data.edge_index)
@@ -120,6 +121,8 @@ def test_basic_gnn_inference(get_dataset):
     out2 = model.inference(loader)
     assert out1.size() == out2.size()
     assert torch.allclose(out1, out2)
+
+    assert 'n_id' not in data
 
 
 def test_packaging():

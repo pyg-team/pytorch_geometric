@@ -205,7 +205,7 @@ class BasicGNN(torch.nn.Module):
 
         del loader.data.n_id
 
-        return x
+        return x_all
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
