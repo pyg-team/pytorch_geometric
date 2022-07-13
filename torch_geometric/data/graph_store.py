@@ -297,7 +297,7 @@ def edge_tensor_type_to_adj_type(
         assert src.dim() == 1 and dst.dim() == 1 and src.numel() == dst.numel()
 
         if src.numel() == 0:
-            return torch.stack(tensor_tuple, dim=0)
+            return torch.empty((2, 0), dtype=torch.long, device=src.device)
 
         if (src[0].storage().data_ptr() == dst[1].storage().data_ptr()
                 and src.storage_offset() < dst.storage_offset()):
@@ -308,7 +308,7 @@ def edge_tensor_type_to_adj_type(
                      size=(src.size()[0] + dst.size()[0], ))
             return out.view(2, -1)
 
-        return torch.stack(tensor_tuple, dim=0)
+        return torch.stack([src, dst], dim=0)
 
     elif attr.layout == EdgeLayout.CSR:  # CSR: (rowptr, col)
         return SparseTensor(rowptr=src, col=dst, is_sorted=True,
