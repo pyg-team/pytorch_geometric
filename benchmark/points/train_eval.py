@@ -13,12 +13,13 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
               lr_decay_factor, lr_decay_step_size, weight_decay):
+    model = model.to(device)
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
     for epoch in range(1, epochs + 1):
-        print("Epoch {} starts".format(epoch))
         if torch.cuda.is_available():
             torch.cuda.synchronize()
 
@@ -40,34 +41,31 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
                 param_group['lr'] = lr_decay_factor * param_group['lr']
 
 
+@torch.no_grad()
 def run_inference(test_dataset, model, epochs, batch_size, profiling):
     model = model.to(device)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
     for epoch in range(1, epochs + 1):
-        print("Epoch {} starts".format(epoch))
         if epoch == epochs:
-            if profiling:
-                with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
-                    inference(model, test_loader, device)
-                    p.step()
-            else:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_start = time.time()
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_start = time.time()
 
-                inference(model, test_loader, device)
+        inference(model, test_loader, device)
 
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_end = time.time()
-                duration = t_end - t_start
-                print("End-to-End time: {} s".format(duration), flush=True)
-        else:
+        if epoch == epochs:
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_end = time.time()
+            duration = t_end - t_start
+            print(f'End-to-End Inference Time: {duration:.8f}s', flush=True)
+
+    if profiling:
+        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                     on_trace_ready=trace_handler) as p:
             inference(model, test_loader, device)
+            p.step()
 
 
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
@@ -92,6 +90,7 @@ def train(model, optimizer, train_loader, device):
         optimizer.step()
 
 
+@torch.no_grad()
 def test(model, test_loader, device):
     model.eval()
 
