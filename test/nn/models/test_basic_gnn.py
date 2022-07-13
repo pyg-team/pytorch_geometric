@@ -120,7 +120,7 @@ def test_basic_gnn_inference(get_dataset, jk):
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=128)
     out2 = model.inference(loader)
     assert out1.size() == out2.size()
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-4)
 
     assert 'n_id' not in data
 
