@@ -62,4 +62,4 @@ run(train_dataset, test_dataset, model, args.epochs, args.batch_size, args.lr,
     args.inference, args.profile)
 
 if args.profile:
-    rename_profile_file('points', 'DynamicEdgeConv')
+    rename_profile_file('points', DynamicEdgeConv.__name__)
