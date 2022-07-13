@@ -6,7 +6,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import torch_geometric as pyg
-import torch_geometric.graphgym.models.act
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.contrib.layer.generalconv import (
     GeneralConvLayer,
