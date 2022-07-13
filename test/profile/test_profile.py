@@ -12,10 +12,11 @@ from torch_geometric.profile import (
     timeit,
     trace_handler,
 )
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import onlyFullTest, withCUDA
 
 
 @withCUDA
+@onlyFullTest
 def test_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
     data = dataset[0].cuda()
@@ -67,6 +68,7 @@ def test_profile(get_dataset):
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
 
+@onlyFullTest
 def test_trace_handler(get_dataset):
     dataset = get_dataset(name='PubMed')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -76,7 +78,6 @@ def test_trace_handler(get_dataset):
     model.eval()
 
     for epoch in range(3):
-        print("epoch ", epoch)
         with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
                      on_trace_ready=trace_handler) as p:
             model(data.x, data.edge_index)
