@@ -225,7 +225,6 @@ def register(
 
         pattern = re.compile(group or '', re.IGNORECASE)
         if group is not None and pattern.search(name):
-            name = pattern.sub('', name)
             get_config_store().store(name, data_cls, group)
             get_node(name)._metadata.orig_type = cls
 
