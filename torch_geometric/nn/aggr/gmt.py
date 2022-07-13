@@ -6,6 +6,7 @@ from torch import Tensor
 from torch.nn import LayerNorm, Linear
 
 from torch_geometric.nn import GCNConv
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
 
 
@@ -132,8 +133,8 @@ class PMA(torch.nn.Module):
         return self.mab(self.S.repeat(x.size(0), 1, 1), x, graph, mask)
 
 
-class GraphMultisetTransformer(torch.nn.Module):
-    r"""The global Graph Multiset Transformer pooling operator from the
+class GraphMultisetTransformer(Aggregation):
+    r"""The Graph Multiset Transformer pooling operator from the
     `"Accurate Learning of Graph Representations
     with Graph Multiset Pooling" <https://arxiv.org/abs/2102.11533>`_ paper.
 
@@ -238,15 +239,16 @@ class GraphMultisetTransformer(torch.nn.Module):
         for pool in self.pools:
             pool.reset_parameters()
 
-    def forward(self, x: Tensor, batch: Tensor,
-                edge_index: Optional[Tensor] = None) -> Tensor:
-        """"""
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2, edge_index: Optional[Tensor] = None) -> Tensor:
+
         x = self.lin1(x)
-        batch_x, mask = to_dense_batch(x, batch)
+        batch_x, mask = self.to_dense_batch(x, index)
         mask = (~mask).unsqueeze(1).to(dtype=x.dtype) * -1e9
 
         for i, (name, pool) in enumerate(zip(self.pool_sequences, self.pools)):
-            graph = (x, edge_index, batch) if name == 'GMPool_G' else None
+            graph = (x, edge_index, index) if name == 'GMPool_G' else None
             batch_x = pool(batch_x, graph, mask)
             mask = None
 
