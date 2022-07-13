@@ -223,11 +223,6 @@ def register(
         get_config_store().store(name, data_cls, group)
         get_node(name)._metadata.orig_type = cls
 
-        pattern = re.compile(group or '', re.IGNORECASE)
-        if group is not None and pattern.search(name):
-            get_config_store().store(name, data_cls, group)
-            get_node(name)._metadata.orig_type = cls
-
         return data_cls
 
     def bounded_register(cls: Any) -> Any:  # Other-wise, return a decorator:
