@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
 
 from torch_geometric.nn import GATConv
+from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
@@ -19,6 +20,8 @@ parser.add_argument('--dropout', type=float, default=0.6)
 parser.add_argument('--no_normalize_features', action='store_true')
 parser.add_argument('--heads', type=int, default=8)
 parser.add_argument('--output_heads', type=int, default=1)
+parser.add_argument('--inference', action='store_true')
+parser.add_argument('--profile', action='store_true')
 args = parser.parse_args()
 
 
@@ -47,4 +50,8 @@ class Net(torch.nn.Module):
 dataset = get_planetoid_dataset(args.dataset, not args.no_normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
-    args.early_stopping, permute_masks)
+    args.early_stopping, args.inference, args.profile, permute_masks)
+
+if args.profile:
+    rename_profile_file('citation', GATConv.__name__, args.dataset,
+                        str(args.random_splits))
