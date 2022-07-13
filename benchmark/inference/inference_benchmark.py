@@ -3,9 +3,10 @@ import copy
 from timeit import default_timer
 
 import torch
-from utils import get_dataset, get_degree, get_model
+from utils import get_dataset, get_model
 
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import PNAConv
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -67,7 +68,7 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         if model_name == 'pna_conv':
                             if degree is None:
-                                degree = get_degree(subgraph_loader)
+                                degree = PNAConv.get_degree(subgraph_loader)
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 

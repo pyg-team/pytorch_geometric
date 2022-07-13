@@ -1,6 +1,5 @@
 import os.path as osp
 
-import torch
 from edgeconv import EdgeConvNet
 from gat import GATNet
 from gcn import GCN
@@ -11,7 +10,6 @@ from rgat import GAT_HETERO
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
-from torch_geometric.utils import degree
 
 models_dict = {
     'edge_conv': EdgeConvNet,
@@ -72,19 +70,3 @@ def get_model(name, params, metadata=None):
                            params['hidden_channels'],
                            params['output_channels'], params['num_layers'])
     return model
-
-
-def get_degree(loader):
-    max_degree = -1
-    for data in loader:
-        d = degree(data.edge_index[1], num_nodes=data.num_nodes,
-                   dtype=torch.long)
-        max_degree = max(max_degree, int(d.max()))
-
-    # Compute the in-degree histogram tensor
-    deg = torch.zeros(max_degree + 1, dtype=torch.long)
-    for data in loader:
-        d = degree(data.edge_index[1], num_nodes=data.num_nodes,
-                   dtype=torch.long)
-        deg += torch.bincount(d, minlength=deg.numel())
-    return deg
