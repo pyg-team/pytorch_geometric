@@ -1,23 +1,14 @@
-import argparse
 import os.path as osp
-import time
 
 import torch
 import torch.nn.functional as F
 from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import BatchNorm, PNAConv, global_add_pool
-from torch_geometric.profile import rename_profile_file, trace_handler
 from torch_geometric.utils import degree
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--inference', action='store_true')
-parser.add_argument('--profile', action='store_true')
-args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC')
 train_dataset = ZINC(path, subset=True, split='train')
@@ -109,42 +100,10 @@ def test(loader):
     return total_error / len(loader.dataset)
 
 
-@torch.no_grad()
-def inference(loader):
-    model.eval()
-    for data in loader:
-        data = data.to(device)
-        model(data.x, data.edge_index, data.edge_attr, data.batch)
-
-
-if not args.inference:
-    for epoch in range(1, 301):
-        loss = train(epoch)
-        val_mae = test(val_loader)
-        test_mae = test(test_loader)
-        scheduler.step(val_mae)
-        print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_mae:.4f}, '
-              f'Test: {test_mae:.4f}')
-else:
-    for epoch in range(1, 301):
-        if epoch == 300:
-            if args.profile:
-                with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
-                    inference(test_loader)
-                    p.step()
-                rename_profile_file('pna')
-            else:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_start = time.time()
-                inference(test_loader)
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_end = time.time()
-                duration = t_end - t_start
-                print("End-to-End time: {} s".format(duration), flush=True)
-        else:
-            inference(test_loader)
+for epoch in range(1, 301):
+    loss = train(epoch)
+    val_mae = test(val_loader)
+    test_mae = test(test_loader)
+    scheduler.step(val_mae)
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_mae:.4f}, '
+          f'Test: {test_mae:.4f}')

@@ -1,23 +1,18 @@
 import argparse
 import os.path as osp
-import time
 
 import torch
 import torch.nn.functional as F
 from torch.nn import ReLU
-from torch.profiler import ProfilerActivity, profile
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import HGTLoader, NeighborLoader
 from torch_geometric.nn import Linear, SAGEConv, Sequential, to_hetero
-from torch_geometric.profile import rename_profile_file, trace_handler
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
-parser.add_argument('--inference', action='store_true')
-parser.add_argument('--profile', action='store_true')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -98,42 +93,10 @@ def test(loader):
     return total_correct / total_examples
 
 
-@torch.no_grad()
-def inference(loader):
-    model.eval()
-    for batch in tqdm(loader):
-        batch = batch.to(device, 'edge_index')
-        model(batch.x_dict, batch.edge_index_dict)
-
-
 init_params()  # Initialize parameters.
-if not args.inference:
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    for epoch in range(1, 21):
-        loss = train()
-        val_acc = test(val_loader)
-        print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_acc:.4f}')
-else:
-    for epoch in range(1, 21):
-        if epoch == 20:
-            if args.profile:
-                with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
-                    inference(val_loader)
-                    p.step()
-                    rename_profile_file('to_hetero_mag')
-            else:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_start = time.time()
-                inference(val_loader)
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_end = time.time()
-                duration = t_end - t_start
-                print("End-to-End time: {} s".format(duration), flush=True)
-        else:
-            inference(val_loader)
+for epoch in range(1, 21):
+    loss = train()
+    val_acc = test(val_loader)
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_acc:.4f}')
