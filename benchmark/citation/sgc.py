@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
 
-from torch_geometric.nn import SGConv as Conv
+from torch_geometric.nn import SGConv
 from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
@@ -25,8 +25,8 @@ args = parser.parse_args()
 class Net(torch.nn.Module):
     def __init__(self, dataset):
         super().__init__()
-        self.conv1 = Conv(dataset.num_features, dataset.num_classes, K=args.K,
-                          cached=True)
+        self.conv1 = SGConv(dataset.num_features, dataset.num_classes,
+                            K=args.K, cached=True)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -43,5 +43,5 @@ run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
 
 if args.profile:
-    rename_profile_file('citation', Conv.__name__, args.dataset,
+    rename_profile_file('citation', SGConv.__name__, args.dataset,
                         str(args.random_splits))

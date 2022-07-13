@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
 from torch.nn import Linear
 
-from torch_geometric.nn import APPNP as Conv
+from torch_geometric.nn import APPNP
 from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
@@ -31,7 +31,7 @@ class Net(torch.nn.Module):
         super().__init__()
         self.lin1 = Linear(dataset.num_features, args.hidden)
         self.lin2 = Linear(args.hidden, dataset.num_classes)
-        self.prop1 = Conv(args.K, args.alpha)
+        self.prop1 = APPNP(args.K, args.alpha)
 
     def reset_parameters(self):
         self.lin1.reset_parameters()
@@ -53,5 +53,5 @@ run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
 
 if args.profile:
-    rename_profile_file('citation', Conv.__name__, args.dataset,
+    rename_profile_file('citation', APPNP.__name__, args.dataset,
                         str(args.random_splits))

@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from citation import get_planetoid_dataset, random_planetoid_splits, run
 
-from torch_geometric.nn import ARMAConv as Conv
+from torch_geometric.nn import ARMAConv
 from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
@@ -30,12 +30,12 @@ args = parser.parse_args()
 class Net(torch.nn.Module):
     def __init__(self, dataset):
         super().__init__()
-        self.conv1 = Conv(dataset.num_features, args.hidden, args.num_stacks,
-                          args.num_layers, args.shared_weights,
-                          dropout=args.skip_dropout)
-        self.conv2 = Conv(args.hidden, dataset.num_classes, args.num_stacks,
-                          args.num_layers, args.shared_weights,
-                          dropout=args.skip_dropout)
+        self.conv1 = ARMAConv(dataset.num_features, args.hidden,
+                              args.num_stacks, args.num_layers,
+                              args.shared_weights, dropout=args.skip_dropout)
+        self.conv2 = ARMAConv(args.hidden, dataset.num_classes,
+                              args.num_stacks, args.num_layers,
+                              args.shared_weights, dropout=args.skip_dropout)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -55,5 +55,5 @@ run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
     args.early_stopping, args.inference, args.profile, permute_masks)
 
 if args.profile:
-    rename_profile_file('citation', Conv.__name__, args.dataset,
+    rename_profile_file('citation', ARMAConv.__name__, args.dataset,
                         str(args.random_splits))
