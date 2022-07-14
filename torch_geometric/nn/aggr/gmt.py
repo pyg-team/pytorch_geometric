@@ -5,7 +5,6 @@ import torch
 from torch import Tensor
 from torch.nn import LayerNorm, Linear
 
-from torch_geometric.nn import GCNConv
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
 
@@ -14,6 +13,7 @@ class MAB(torch.nn.Module):
     r"""Multihead-Attention Block."""
     def __init__(self, dim_Q: int, dim_K: int, dim_V: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
+
         super().__init__()
         self.dim_V = dim_V
         self.num_heads = num_heads
@@ -192,6 +192,7 @@ class GraphMultisetTransformer(Aggregation):
         num_heads: int = 4,
         layer_norm: bool = False,
     ):
+        from torch_geometric.nn import GCNConv  # noqa: avoid circular import
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
