@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn import BatchNorm1d, ReLU
 
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import LayerNorm
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, GraphSAGE
 
@@ -102,6 +103,26 @@ def test_one_layer_gnn(out_dim, jk):
 
     model = GraphSAGE(8, 16, num_layers=1, out_channels=out_dim, jk=jk)
     assert model(x, edge_index).size() == (3, out_channels)
+
+
+@pytest.mark.parametrize('jk', [None, 'last'])
+def test_basic_gnn_inference(get_dataset, jk):
+    dataset = get_dataset(name='Cora')
+    data = dataset[0]
+
+    model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
+                      out_channels=dataset.num_classes, jk=jk)
+    model.eval()
+
+    out1 = model(data.x, data.edge_index)
+    assert out1.size() == (data.num_nodes, dataset.num_classes)
+
+    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=128)
+    out2 = model.inference(loader)
+    assert out1.size() == out2.size()
+    assert torch.allclose(out1, out2, atol=1e-4)
+
+    assert 'n_id' not in data
 
 
 def test_packaging():

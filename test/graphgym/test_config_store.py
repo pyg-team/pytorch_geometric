@@ -56,7 +56,6 @@ def test_config_store():
     assert cfg.model.act_kwargs is None
 
     # Check `cfg.optimizer`:
-    assert len(cfg.optimizer) in {6, 7}  # Arguments changed across 1.10/1.11
     assert cfg.optimizer._target_.split('.')[-1] == 'Adam'
     assert cfg.optimizer.lr == 0.001
     assert cfg.optimizer.betas == [0.9, 0.999]
@@ -67,7 +66,6 @@ def test_config_store():
         assert not cfg.optimizer.maximize
 
     # Check `cfg.lr_scheduler`:
-    assert len(cfg.lr_scheduler) == 10
     assert cfg.lr_scheduler._target_.split('.')[-1] == 'ReduceLROnPlateau'
     assert cfg.lr_scheduler.mode == 'min'
     assert cfg.lr_scheduler.factor == 0.1
