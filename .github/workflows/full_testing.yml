@@ -20,6 +20,8 @@ jobs:
         include:
           - torch-version: 1.12.0
             torchvision-version: 0.13.0
+          - os: windows-latest
+            python-version: '3.7'
 
     steps:
       - uses: actions/checkout@v3
