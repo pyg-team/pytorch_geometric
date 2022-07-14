@@ -4,7 +4,9 @@ import torch
 import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
+from torch.profiler import ProfilerActivity, profile
 
+from torch_geometric.profile import trace_handler
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -34,9 +36,8 @@ def random_planetoid_splits(data, num_classes):
     return data
 
 
-def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        permute_masks=None, logger=None):
-
+def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+              permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
     for _ in range(runs):
         data = dataset[0]
@@ -82,12 +83,52 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         val_losses.append(best_val_loss)
         accs.append(test_acc)
         durations.append(t_end - t_start)
-
     loss, acc, duration = tensor(val_losses), tensor(accs), tensor(durations)
 
     print(f'Val Loss: {float(loss.mean()):.4f}, '
           f'Test Accuracy: {float(acc.mean()):.3f} ± {float(acc.std()):.3f}, '
-          f'Duration: {float(duration.mean()):.3f}')
+          f'Duration: {float(duration.mean()):.3f}s')
+
+
+@torch.no_grad()
+def run_inference(dataset, model, epochs, profiling, permute_masks=None,
+                  logger=None):
+    data = dataset[0]
+    if permute_masks is not None:
+        data = permute_masks(data, dataset.num_classes)
+    data = data.to(device)
+
+    model.to(device).reset_parameters()
+
+    for epoch in range(1, epochs + 1):
+        if epoch == epochs:
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_start = time.time()
+
+        inference(model, data)
+
+        if epoch == epochs:
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_end = time.time()
+            duration = t_end - t_start
+            print(f'End-to-End Inference Time: {duration:.8f}s', flush=True)
+
+    if profiling:
+        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                     on_trace_ready=trace_handler) as p:
+            inference(model, data)
+            p.step()
+
+
+def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+        inference, profiling, permute_masks=None, logger=None):
+    if not inference:
+        run_train(dataset, model, runs, epochs, lr, weight_decay,
+                  early_stopping, permute_masks, logger)
+    else:
+        run_inference(dataset, model, epochs, profiling, permute_masks, logger)
 
 
 def train(model, optimizer, data):
@@ -116,3 +157,9 @@ def evaluate(model, data):
         outs[f'{key}_acc'] = acc
 
     return outs
+
+
+@torch.no_grad()
+def inference(model, data):
+    model.eval()
+    model(data)

@@ -96,7 +96,7 @@ class GeneralLayer(nn.Module):
                 nn.Dropout(p=layer_config.dropout,
                            inplace=layer_config.mem_inplace))
         if layer_config.has_act:
-            layer_wrapper.append(register.act_dict[layer_config.act])
+            layer_wrapper.append(register.act_dict[layer_config.act]())
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):
