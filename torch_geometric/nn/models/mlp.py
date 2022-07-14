@@ -48,8 +48,10 @@ class MLP(torch.nn.Module):
             Will override :attr:`channel_list`. (default: :obj:`None`)
         num_layers (int, optional): The number of layers.
             Will override :attr:`channel_list`. (default: :obj:`None`)
-        dropout (float, optional): Dropout probability of each hidden
-            embedding. (default: :obj:`0.`)
+        dropout (float or List[float], optional): Dropout probability of each 
+            hidden embedding. If List[float] is provided, set dropout value per
+             layer.  This overrides :attr:`plain_last` dropout behaviour. 
+            (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         act_first (bool, optional): If set to :obj:`True`, activation is
@@ -64,9 +66,11 @@ class MLP(torch.nn.Module):
             (default: :obj:`None`)
         plain_last (bool, optional): If set to :obj:`False`, will apply
             non-linearity, batch normalization and dropout to the last layer as
-            well. (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`, the module will not
-            learn additive biases. (default: :obj:`True`)
+             well. Dropout will be overridden if :attr:`dropout` is provided as
+             a list. (default: :obj:`True`)
+        bias (bool or List[bool], optional): If set to :obj:`False`, the module will not
+            learn additive biases. If List[bool] is provided, the additive bias 
+            per layer can be specified. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
@@ -77,14 +81,14 @@ class MLP(torch.nn.Module):
         hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
-        dropout: float = 0.,
+        dropout: Optional[Union[List[float], float]] = 0.,
         act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
         norm: Union[str, Callable, None] = "batch_norm",
         norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
-        bias: bool = True,
+        bias: Optional[Union[List[bool], bool]] = True,
         **kwargs,
     ):
         super().__init__()
@@ -111,14 +115,31 @@ class MLP(torch.nn.Module):
         assert len(channel_list) >= 2
         self.channel_list = channel_list
 
-        self.dropout = dropout
+        if isinstance(dropout, float):
+            self.dropout = [dropout] * (len(channel_list) - 1)
+            if plain_last:
+                self.dropout[-1] = 0.
+        else:
+            if len(dropout) is not (len(channel_list) - 1):
+                raise ValueError(f"Number of dropouts provided does not match "
+                                 f"the number of layers specified")
+            self.dropout = dropout
+
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
         self.plain_last = plain_last
 
+        if isinstance(bias, bool):
+            bias_list = [bias] * (len(channel_list) - 1)
+        else:
+            if len(bias) is not (len(channel_list) - 1):
+                raise ValueError(f"Number of biases provided does not match the"
+                                 f" number of layers specified")
+            bias_list = bias
+
         self.lins = torch.nn.ModuleList()
-        iterator = zip(channel_list[:-1], channel_list[1:])
-        for in_channels, out_channels in iterator:
+        iterator = zip(channel_list[:-1], channel_list[1:], bias_list)
+        for in_channels, out_channels, bias in iterator:
             self.lins.append(Linear(in_channels, out_channels, bias=bias))
 
         self.norms = torch.nn.ModuleList()
@@ -160,18 +181,19 @@ class MLP(torch.nn.Module):
 
     def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
         """"""
-        for lin, norm in zip(self.lins, self.norms):
+        for lin, norm, dropout in zip(self.lins, self.norms, self.dropout):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
+            x = F.dropout(x, p=dropout, training=self.training)
             emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)
+            x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
         return (x, emb) if isinstance(return_emb, bool) else x
 
