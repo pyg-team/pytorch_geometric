@@ -48,9 +48,9 @@ class MLP(torch.nn.Module):
             Will override :attr:`channel_list`. (default: :obj:`None`)
         num_layers (int, optional): The number of layers.
             Will override :attr:`channel_list`. (default: :obj:`None`)
-        dropout (float or List[float], optional): Dropout probability of each 
+        dropout (float or List[float], optional): Dropout probability of each
             hidden embedding. If List[float] is provided, set dropout value per
-             layer.  This overrides :attr:`plain_last` dropout behaviour. 
+             layer.  This overrides :attr:`plain_last` dropout behaviour.
             (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
@@ -69,7 +69,7 @@ class MLP(torch.nn.Module):
              well. Dropout will be overridden if :attr:`dropout` is provided as
              a list. (default: :obj:`True`)
         bias (bool or List[bool], optional): If set to :obj:`False`, the module will not
-            learn additive biases. If List[bool] is provided, the additive bias 
+            learn additive biases. If List[bool] is provided, the additive bias
             per layer can be specified. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
@@ -133,8 +133,9 @@ class MLP(torch.nn.Module):
             bias_list = [bias] * (len(channel_list) - 1)
         else:
             if len(bias) is not (len(channel_list) - 1):
-                raise ValueError(f"Number of biases provided does not match the"
-                                 f" number of layers specified")
+                raise ValueError(
+                    f"Number of biases provided does not match the"
+                    f" number of layers specified")
             bias_list = bias
 
         self.lins = torch.nn.ModuleList()
