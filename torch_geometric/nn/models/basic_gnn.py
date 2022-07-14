@@ -173,7 +173,7 @@ class BasicGNN(torch.nn.Module):
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
         """
-        assert not hasattr(self, 'jk')
+        assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
         assert len(loader.dataset) == loader.data.num_nodes
         assert len(loader.num_neighbors) == 1
