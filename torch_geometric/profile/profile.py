@@ -1,3 +1,5 @@
+import os
+import pathlib
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
@@ -172,3 +174,24 @@ def std(values: List[float]):
 
 def mean(values: List[float]):
     return float(torch.tensor(values).mean())
+
+
+def trace_handler(p):
+    if torch.cuda.is_available():
+        profile_sort = 'self_cuda_time_total'
+    else:
+        profile_sort = 'self_cpu_time_total'
+    output = p.key_averages().table(sort_by=profile_sort)
+    print(output)
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'timeline' + '.json'
+    p.export_chrome_trace(timeline_file)
+
+
+def rename_profile_file(*args):
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'profile'
+    for arg in args:
+        timeline_file += '-' + arg
+    timeline_file += '.json'
+    os.rename('timeline.json', timeline_file)
