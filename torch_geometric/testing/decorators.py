@@ -1,4 +1,5 @@
 import os
+import sys
 from importlib.util import find_spec
 from typing import Callable
 
@@ -18,6 +19,20 @@ def onlyFullTest(func: Callable) -> Callable:
         not is_full_test(),
         reason="Fast test run",
     )(func)
+
+
+def withPython(*args) -> Callable:
+    r"""A decorator to skip tests for any Python version not listed."""
+    def decorator(func: Callable) -> Callable:
+        import pytest
+
+        python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
+        return pytest.mark.skipif(
+            python_version not in args,
+            reason=f"Python {python_version} not supported",
+        )(func)
+
+    return decorator
 
 
 def withPackage(*args) -> Callable:

@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.conv import (
     GATConv,
     GATv2Conv,
@@ -160,6 +161,51 @@ class BasicGNN(torch.nn.Module):
         x = self.jk(xs) if hasattr(self, 'jk') else x
         x = self.lin(x) if hasattr(self, 'lin') else x
         return x
+
+    @torch.no_grad()
+    def inference(self, loader: NeighborLoader,
+                  device: Optional[torch.device] = None) -> Tensor:
+        r"""Performs layer-wise inference on large-graphs using
+        :class:`~torch_geometric.loader.NeighborLoader`.
+        :class:`~torch_geometric.loader.NeighborLoader` should sample the the
+        full neighborhood for only one layer.
+        This is an efficient way to compute the output embeddings for all
+        nodes in the graph.
+        Only applicable in case :obj:`jk=None` or `jk='last'`.
+        """
+        assert self.jk_mode is None or self.jk_mode == 'last'
+        assert isinstance(loader, NeighborLoader)
+        assert len(loader.dataset) == loader.data.num_nodes
+        assert len(loader.num_neighbors) == 1
+        assert not self.training
+        # assert not loader.shuffle  # TODO (matthias) does not work :(
+
+        x_all = loader.data.x.cpu()
+        loader.data.n_id = torch.arange(x_all.size(0))
+
+        for i in range(self.num_layers):
+            xs: List[Tensor] = []
+            for batch in loader:
+                x = x_all[batch.n_id].to(device)
+                edge_index = batch.edge_index.to(device)
+                x = self.convs[i](x, edge_index)[:batch.batch_size]
+                if i == self.num_layers - 1 and self.jk_mode is None:
+                    xs.append(x.cpu())
+                    continue
+                if self.act is not None and self.act_first:
+                    x = self.act(x)
+                if self.norms is not None:
+                    x = self.norms[i](x)
+                if self.act is not None and not self.act_first:
+                    x = self.act(x)
+                if i == self.num_layers - 1 and hasattr(self, 'lin'):
+                    x = self.lin(x)
+                xs.append(x.cpu())
+            x_all = torch.cat(xs, dim=0)
+
+        del loader.data.n_id
+
+        return x_all
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

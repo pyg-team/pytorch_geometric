@@ -37,7 +37,7 @@ class Aggregation(torch.nn.Module):
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                 dim: int = -2) -> Tensor:
+                 dim: int = -2, **kwargs) -> Tensor:
 
         if dim >= x.dim() or dim < -x.dim():
             raise ValueError(f"Encountered invalid dimension '{dim}' of "
@@ -62,7 +62,7 @@ class Aggregation(torch.nn.Module):
                                  f"'{dim_size}' but expected "
                                  f">= '{int(index.max()) + 1}')")
 
-        return super().__call__(x, index, ptr, dim_size, dim)
+        return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
