@@ -483,3 +483,6 @@ class EdgeCNN(BasicGNN):
             norm_kwargs=self.norm_kwargs,
         )
         return EdgeConv(mlp, **kwargs)
+
+
+__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA', 'EdgeCNN']
