@@ -4,13 +4,14 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_add
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
 from ..inits import reset
 
 
-class GlobalAttention(torch.nn.Module):
-    r"""Global soft attention layer from the `"Gated Graph Sequence Neural
+class AttentionAggregation(Aggregation):
+    r"""Soft attention aggregation layer from the `"Gated Graph Sequence Neural
     Networks" <https://arxiv.org/abs/1511.05493>`_ paper
 
     .. math::
@@ -53,28 +54,21 @@ class GlobalAttention(torch.nn.Module):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                size: Optional[int] = None) -> Tensor:
-        r"""
-        Args:
-            x (Tensor): The input node features.
-            batch (LongTensor, optional): A vector that maps each node to its
-                respective graph identifier. (default: :obj:`None`)
-            size (int, optional): The number of graphs in the batch.
-                (default: :obj:`None`)
-        """
-        if batch is None:
-            batch = x.new_zeros(x.size(0), dtype=torch.int64)
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+
+        self.assert_index_present(index)
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        size = int(batch.max()) + 1 if size is None else size
+        size = int(index.max()) + 1 if dim_size is None else dim_size
 
         gate = self.gate_nn(x).view(-1, 1)
         x = self.nn(x) if self.nn is not None else x
         assert gate.dim() == x.dim() and gate.size(0) == x.size(0)
 
-        gate = softmax(gate, batch, num_nodes=size)
-        out = scatter_add(gate * x, batch, dim=0, dim_size=size)
+        gate = softmax(gate, index, num_nodes=size)
+        out = scatter_add(gate * x, index, dim=0, dim_size=size)
 
         return out
 
