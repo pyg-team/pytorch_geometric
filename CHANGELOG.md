@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.0.5] - 2022-MM-DD
 ### Added
+- Added `EdgeCNN` model ([#4991](https://github.com/pyg-team/pytorch_geometric/pull/4991))
 - Added scalable `inference` mode in `BasicGNN` with layer-wise neighbor loading ([#4977](https://github.com/pyg-team/pytorch_geometric/pull/4977))
 - Added inference benchmarks ([#4892](https://github.com/pyg-team/pytorch_geometric/pull/4892))
 - Added PyTorch 1.12 support  ([#4975](https://github.com/pyg-team/pytorch_geometric/pull/4975))
