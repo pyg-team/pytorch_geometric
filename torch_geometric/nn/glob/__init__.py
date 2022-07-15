@@ -26,6 +26,7 @@ GraphMultisetTransformer = deprecated(
     details="use 'nn.aggr.GraphMultisetTransformer' instead",
     func_name='nn.glob.GraphMultisetTransformer')(GraphMultisetTransformer)
 
+
 @deprecated(
     details="use 'nn.aggr.GlobalSortAggr' instead",
     func_name='nn.glob.global_sort_pool',
