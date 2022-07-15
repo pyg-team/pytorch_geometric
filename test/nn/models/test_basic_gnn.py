@@ -5,17 +5,15 @@ from itertools import product
 import pytest
 import torch
 import torch.nn.functional as F
-from torch.nn import BatchNorm1d, ReLU
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import LayerNorm
-from torch_geometric.nn.models import GAT, GCN, GIN, PNA, GraphSAGE
+from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.testing import withPython
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
-acts = [None, 'leaky_relu', torch.relu_, F.elu, ReLU()]
-norms = [None, BatchNorm1d(16), LayerNorm(16)]
+acts = [None, 'leaky_relu', torch.relu_, F.elu, torch.nn.ReLU()]
+norms = [None, 'batch_norm', 'layer_norm']
 jks = [None, 'last', 'cat', 'max', 'lstm']
 
 
@@ -93,6 +91,19 @@ def test_pna(out_dim, dropout, act, norm, jk):
                 act=act, norm=norm, jk=jk, aggregators=aggregators,
                 scalers=scalers, deg=deg)
     assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
+    assert model(x, edge_index).size() == (3, out_channels)
+
+
+@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
+                         product(out_dims, dropouts, acts, norms, jks))
+def test_edge_cnn(out_dim, dropout, act, norm, jk):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    out_channels = 16 if out_dim is None else out_dim
+
+    model = EdgeCNN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
+                    act=act, norm=norm, jk=jk)
+    assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
 
