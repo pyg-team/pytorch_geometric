@@ -82,7 +82,7 @@ class BasicGNN(torch.nn.Module):
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
-        self.norm = norm
+        self.norm = norm if isinstance(norm, str) else None
         self.norm_kwargs = norm_kwargs
 
         if out_channels is not None:
@@ -331,7 +331,7 @@ class GIN(BasicGNN):
             [in_channels, out_channels, out_channels],
             act=self.act,
             act_first=self.act_first,
-            norm=self.norm if isinstance(self.norm, str) else 'batch_norm',
+            norm=self.norm,
             norm_kwargs=self.norm_kwargs,
         )
         return GINConv(mlp, **kwargs)
@@ -479,7 +479,7 @@ class EdgeCNN(BasicGNN):
             [2 * in_channels, out_channels, out_channels],
             act=self.act,
             act_first=self.act_first,
-            norm=self.norm if isinstance(self.norm, str) else None,
+            norm=self.norm,
             norm_kwargs=self.norm_kwargs,
         )
         return EdgeConv(mlp, **kwargs)
