@@ -81,7 +81,7 @@ class MLP(torch.nn.Module):
         hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
-        dropout: Optional[Union[List[float], float]] = 0.,
+        dropout: Union[List[float], float] = 0.,
         act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
