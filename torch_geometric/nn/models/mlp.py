@@ -37,41 +37,41 @@ class MLP(torch.nn.Module):
        creates a three-layer MLP with **equally** sized hidden layers.
 
     Args:
-        channel_list (List[int] or int, optional): List of input, intermediate
-            and output channels such that :obj:`len(channel_list) - 1` denotes
-            the number of layers of the MLP (default: :obj:`None`)
-        in_channels (int, optional): Size of each input sample.
-            Will override :attr:`channel_list`. (default: :obj:`None`)
-        hidden_channels (int, optional): Size of each hidden sample.
-            Will override :attr:`channel_list`. (default: :obj:`None`)
-        out_channels (int, optional): Size of each output sample.
-            Will override :attr:`channel_list`. (default: :obj:`None`)
-        num_layers (int, optional): The number of layers.
-            Will override :attr:`channel_list`. (default: :obj:`None`)
-        dropout (float or List[float], optional): Dropout probability of each
-            hidden embedding. If List[float] is provided, set dropout value per
-             layer.  This overrides :attr:`plain_last` dropout behaviour.
-            (default: :obj:`0.`)
-        act (str or Callable, optional): The non-linear activation function to
-            use. (default: :obj:`"relu"`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
-        norm (str or Callable, optional): The normalization function to
-            use. (default: :obj:`"batch_norm"`)
-        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective normalization function defined by :obj:`norm`.
-            (default: :obj:`None`)
-        plain_last (bool, optional): If set to :obj:`False`, will apply
-            non-linearity, batch normalization and dropout to the last layer as
-             well. Dropout will be overridden if :attr:`dropout` is provided as
-             a list. (default: :obj:`True`)
-        bias (bool or List[bool], optional): If set to :obj:`False`, the module will not
-            learn additive biases. If List[bool] is provided, the additive bias
-            per layer can be specified. (default: :obj:`True`)
-        **kwargs (optional): Additional deprecated arguments of the MLP layer.
+       channel_list (List[int] or int, optional): List of input, intermediate
+          and output channels such that :obj:`len(channel_list) - 1` denotes
+          the number of layers of the MLP (default: :obj:`None`)
+       in_channels (int, optional): Size of each input sample.
+          Will override :attr:`channel_list`. (default: :obj:`None`)
+       hidden_channels (int, optional): Size of each hidden sample.
+          Will override :attr:`channel_list`. (default: :obj:`None`)
+       out_channels (int, optional): Size of each output sample.
+          Will override :attr:`channel_list`. (default: :obj:`None`)
+       num_layers (int, optional): The number of layers.
+          Will override :attr:`channel_list`. (default: :obj:`None`)
+       dropout (float or List[float], optional): Dropout probability of each
+          hidden embedding. If List[float] is provided, set dropout value per
+          layer.  This overrides :attr:`plain_last` dropout behaviour.
+         (default: :obj:`0.`)
+       act (str or Callable, optional): The non-linear activation function to
+          use. (default: :obj:`"relu"`)
+       act_first (bool, optional): If set to :obj:`True`, activation is
+          applied before normalization. (default: :obj:`False`)
+       act_kwargs (Dict[str, Any], optional): Arguments passed to the
+          respective activation function defined by :obj:`act`.
+          (default: :obj:`None`)
+       norm (str or Callable, optional): The normalization function to
+          use. (default: :obj:`"batch_norm"`)
+       norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+          respective normalization function defined by :obj:`norm`.
+          (default: :obj:`None`)
+       plain_last (bool, optional): If set to :obj:`False`, will apply
+          non-linearity, batch normalization and dropout to the last layer as
+          well. Dropout will be overridden if :attr:`dropout` is provided as
+          a list. (default: :obj:`True`)
+       bias (bool or List[bool], optional): If set to :obj:`False`, the module
+          will not learn additive biases. If List[bool] is provided, the
+          additive bias per layer can be specified. (default: :obj:`True`)
+       **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
         self,
@@ -121,8 +121,10 @@ class MLP(torch.nn.Module):
                 self.dropout[-1] = 0.
         else:
             if len(dropout) is not (len(channel_list) - 1):
-                raise ValueError(f"Number of dropouts provided does not match "
-                                 f"the number of layers specified")
+                raise ValueError(
+                    f"Number of dropouts provided ({len(dropout)} does not "
+                    f"match the number of layers specified "
+                    f"({len(channel_list)-1})")
             self.dropout = dropout
 
         self.act = activation_resolver(act, **(act_kwargs or {}))
@@ -134,8 +136,8 @@ class MLP(torch.nn.Module):
         else:
             if len(bias) is not (len(channel_list) - 1):
                 raise ValueError(
-                    f"Number of biases provided does not match the"
-                    f" number of layers specified")
+                    f"Number of biases provided ({len(bias)})does not match "
+                    f"the number of layers specified ({len(channel_list)-1})")
             bias_list = bias
 
         self.lins = torch.nn.ModuleList()
