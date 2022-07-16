@@ -1,38 +1,21 @@
 import torch
-from torch.nn import Linear as Lin
-from torch.nn import ReLU
-from torch.nn import Sequential as Seq
 
-from torch_geometric.nn.aggr import AttentionAggregation
-from torch_geometric.nn.glob import GlobalAttention
+from torch_geometric.nn import MLP
+from torch_geometric.nn.aggr import AttentionalAggregation
 
 
 def test_attention_aggregation():
-    channels, dim_size = (32, 10)
-    gate_nn = Seq(Lin(channels, channels), ReLU(), Lin(channels, 1))
-    nn = Seq(Lin(channels, channels), ReLU(), Lin(channels, channels))
+    channels = 16
+    x = torch.randn(6, channels)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
 
-    aggr = AttentionAggregation(gate_nn, nn)
-    assert aggr.__repr__() == (
-        'AttentionAggregation(gate_nn=Sequential(\n'
-        '  (0): Linear(in_features=32, out_features=32, bias=True)\n'
-        '  (1): ReLU()\n'
-        '  (2): Linear(in_features=32, out_features=1, bias=True)\n'
-        '), nn=Sequential(\n'
-        '  (0): Linear(in_features=32, out_features=32, bias=True)\n'
-        '  (1): ReLU()\n'
-        '  (2): Linear(in_features=32, out_features=32, bias=True)\n'
-        '))')
+    gate_nn = MLP([channels, 1], act='relu')
+    nn = MLP([channels, channels], act='relu')
+    aggr = AttentionalAggregation(gate_nn, nn)
+    assert str(aggr) == (f'AttentionalAggregation(gate_nn=MLP({channels}, 1),'
+                         f' nn=MLP({channels}, {channels}))')
 
-    x = torch.randn((dim_size**2, channels))
-    index = torch.arange(dim_size, dtype=torch.long)
-    index = index.view(-1, 1).repeat(1, dim_size).view(-1)
-
-    assert aggr(x, index).size() == (dim_size, channels)
-    assert aggr(x, index,
-                dim_size=dim_size + 1).size() == (dim_size + 1, channels)
-
-    # test depreciated
-    aggr = GlobalAttention(gate_nn, nn)
-    assert aggr(x, index).size() == (dim_size, channels)
-    assert aggr(x, index, dim_size + 1).size() == (dim_size + 1, channels)
+    out = aggr(x, index)
+    assert out.size() == (3, channels)
+    torch.allclose(aggr(x, ptr=ptr, dim_size=3), out)

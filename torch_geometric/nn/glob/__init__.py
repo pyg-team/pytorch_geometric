@@ -15,7 +15,7 @@ classes = __all__
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.nn.aggr import Set2Set  # noqa
 from torch_geometric.nn.aggr import GraphMultisetTransformer  # noqa
-from torch_geometric.nn.aggr import AttentionAggregation  # noqa
+from torch_geometric.nn.aggr import AttentionalAggregation  # noqa
 
 Set2Set = deprecated(
     details="use 'nn.aggr.Set2Set' instead",
@@ -32,6 +32,6 @@ GraphMultisetTransformer = deprecated(
     details="use 'nn.aggr.GlobalAttention' instead",
     func_name='nn.glob.GlobalAttention',
 )
-class GlobalAttention(AttentionAggregation):
+class GlobalAttention(AttentionalAggregation):
     def __call__(self, x, batch=None, size=None):
         return super().__call__(x, batch, dim_size=size)

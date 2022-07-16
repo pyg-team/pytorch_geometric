@@ -2,7 +2,6 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
@@ -10,7 +9,7 @@ from torch_geometric.utils import softmax
 from ..inits import reset
 
 
-class AttentionAggregation(Aggregation):
+class AttentionalAggregation(Aggregation):
     r"""Soft attention aggregation layer from the `"Gated Graph Sequence Neural
     Networks" <https://arxiv.org/abs/1511.05493>`_ paper
 
@@ -47,7 +46,6 @@ class AttentionAggregation(Aggregation):
         super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
-
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -58,19 +56,11 @@ class AttentionAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        self.assert_index_present(index)
-
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        size = int(index.max()) + 1 if dim_size is None else dim_size
-
+        self.assert_two_dimensional_input(x, dim)
         gate = self.gate_nn(x).view(-1, 1)
         x = self.nn(x) if self.nn is not None else x
-        assert gate.dim() == x.dim() and gate.size(0) == x.size(0)
-
-        gate = softmax(gate, index, num_nodes=size)
-        out = scatter_add(gate * x, index, dim=0, dim_size=size)
-
-        return out
+        gate = softmax(gate, index, ptr, dim_size, dim)
+        return self.reduce(gate * x, index, ptr, dim_size, dim)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(gate_nn={self.gate_nn}, '
