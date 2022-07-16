@@ -14,6 +14,8 @@ from .basic import (
 from .lstm import LSTMAggregation
 from .set2set import Set2Set
 from .scaler import DegreeScalerAggregation
+from .gmt import GraphMultisetTransformer
+from .attention import AttentionalAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -30,4 +32,6 @@ __all__ = classes = [
     'LSTMAggregation',
     'Set2Set',
     'DegreeScalerAggregation',
+    'GraphMultisetTransformer',
+    'AttentionalAggregation',
 ]

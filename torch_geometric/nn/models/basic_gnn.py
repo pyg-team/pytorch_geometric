@@ -6,7 +6,9 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.conv import (
+    EdgeConv,
     GATConv,
     GATv2Conv,
     GCNConv,
@@ -80,6 +82,8 @@ class BasicGNN(torch.nn.Module):
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
+        self.norm = norm if isinstance(norm, str) else None
+        self.norm_kwargs = norm_kwargs
 
         if out_channels is not None:
             self.out_channels = out_channels
@@ -161,6 +165,51 @@ class BasicGNN(torch.nn.Module):
         x = self.lin(x) if hasattr(self, 'lin') else x
         return x
 
+    @torch.no_grad()
+    def inference(self, loader: NeighborLoader,
+                  device: Optional[torch.device] = None) -> Tensor:
+        r"""Performs layer-wise inference on large-graphs using
+        :class:`~torch_geometric.loader.NeighborLoader`.
+        :class:`~torch_geometric.loader.NeighborLoader` should sample the the
+        full neighborhood for only one layer.
+        This is an efficient way to compute the output embeddings for all
+        nodes in the graph.
+        Only applicable in case :obj:`jk=None` or `jk='last'`.
+        """
+        assert self.jk_mode is None or self.jk_mode == 'last'
+        assert isinstance(loader, NeighborLoader)
+        assert len(loader.dataset) == loader.data.num_nodes
+        assert len(loader.num_neighbors) == 1
+        assert not self.training
+        # assert not loader.shuffle  # TODO (matthias) does not work :(
+
+        x_all = loader.data.x.cpu()
+        loader.data.n_id = torch.arange(x_all.size(0))
+
+        for i in range(self.num_layers):
+            xs: List[Tensor] = []
+            for batch in loader:
+                x = x_all[batch.n_id].to(device)
+                edge_index = batch.edge_index.to(device)
+                x = self.convs[i](x, edge_index)[:batch.batch_size]
+                if i == self.num_layers - 1 and self.jk_mode is None:
+                    xs.append(x.cpu())
+                    continue
+                if self.act is not None and self.act_first:
+                    x = self.act(x)
+                if self.norms is not None:
+                    x = self.norms[i](x)
+                if self.act is not None and not self.act_first:
+                    x = self.act(x)
+                if i == self.num_layers - 1 and hasattr(self, 'lin'):
+                    x = self.lin(x)
+                xs.append(x.cpu())
+            x_all = torch.cat(xs, dim=0)
+
+        del loader.data.n_id
+
+        return x_all
+
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, num_layers={self.num_layers})')
@@ -182,6 +231,11 @@ class GCN(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -192,11 +246,6 @@ class GCN(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
@@ -220,6 +269,11 @@ class GraphSAGE(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -230,11 +284,6 @@ class GraphSAGE(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
@@ -256,8 +305,13 @@ class GIN(BasicGNN):
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
-        act (Callable, optional): The non-linear activation function to use.
-            (default: :obj:`torch.nn.ReLU(inplace=True)`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -268,17 +322,18 @@ class GIN(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
-        mlp = MLP([in_channels, out_channels, out_channels], norm="batch_norm")
+        mlp = MLP(
+            [in_channels, out_channels, out_channels],
+            act=self.act,
+            act_first=self.act_first,
+            norm=self.norm,
+            norm_kwargs=self.norm_kwargs,
+        )
         return GINConv(mlp, **kwargs)
 
 
@@ -303,6 +358,11 @@ class GAT(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -313,11 +373,6 @@ class GAT(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv` or
             :class:`torch_geometric.nn.conv.GATv2Conv`.
@@ -362,6 +417,11 @@ class PNA(BasicGNN):
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
         norm (str or Callable, optional): The normalization function to
             use. (default: :obj:`None`)
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -372,11 +432,6 @@ class PNA(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        act_first (bool, optional): If set to :obj:`True`, activation is
-            applied before normalization. (default: :obj:`False`)
-        act_kwargs (Dict[str, Any], optional): Arguments passed to the
-            respective activation function defined by :obj:`act`.
-            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
@@ -385,4 +440,49 @@ class PNA(BasicGNN):
         return PNAConv(in_channels, out_channels, **kwargs)
 
 
-__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA']
+class EdgeCNN(BasicGNN):
+    r"""The Graph Neural Network from the `"Dynamic Graph CNN for Learning on
+    Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper, using the
+    :class:`~torch_geometric.nn.conv.EdgeConv` operator for message passing.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
+        out_channels (int, optional): If not set to :obj:`None`, will apply a
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.`)
+        act (str or Callable, optional): The non-linear activation function to
+            use. (default: :obj:`"relu"`)
+        act_first (bool, optional): If set to :obj:`True`, activation is
+            applied before normalization. (default: :obj:`False`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`None`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
+            (default: :obj:`None`)
+        jk (str, optional): The Jumping Knowledge mode. If specified, the model
+            will additionally apply a final linear transformation to transform
+            node embeddings to the expected output feature dimensionality.
+            (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
+            :obj:`"lstm"`). (default: :obj:`None`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.EdgeConv`.
+    """
+    def init_conv(self, in_channels: int, out_channels: int,
+                  **kwargs) -> MessagePassing:
+        mlp = MLP(
+            [2 * in_channels, out_channels, out_channels],
+            act=self.act,
+            act_first=self.act_first,
+            norm=self.norm,
+            norm_kwargs=self.norm_kwargs,
+        )
+        return EdgeConv(mlp, **kwargs)
+
+
+__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA', 'EdgeCNN']
