@@ -66,7 +66,7 @@ def test_gen_conv(aggr):
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out21,
                               atol=1e-6)
         assert torch.allclose(jit((x1, x2), edge_index, value), out22,
-                              atol=1 - 6)
+                              atol=1e-6)
         assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out22,
                               atol=1e-6)
 
