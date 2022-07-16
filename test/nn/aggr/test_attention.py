@@ -4,7 +4,7 @@ from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import AttentionalAggregation
 
 
-def test_attention_aggregation():
+def test_attentional_aggregation():
     channels = 16
     x = torch.randn(6, channels)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
