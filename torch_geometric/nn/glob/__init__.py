@@ -1,6 +1,5 @@
 from .glob import global_add_pool, global_mean_pool, global_max_pool
 from .glob import GlobalPooling
-from .sort import global_sort_pool
 
 __all__ = [
     'global_add_pool',
