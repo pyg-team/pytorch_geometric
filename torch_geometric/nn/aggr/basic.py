@@ -72,9 +72,11 @@ class SoftmaxAggregation(Aggregation):
      GCNs" <https://arxiv.org/abs/2006.07739>`_ paper
 
     .. math::
-        \mathrm{SoftMax}_{t}(\cdot) =\sum_{u \in \mathcal{N}(v)}
-        \frac{\exp(t\mathbf{m}_{vu})}{\sum_{i \in \mathcal{N}(v)}
-        \exp(t\mathbf{m}_{vi})}\cdot \mathbf{m}_{vu},
+        \mathrm{SoftMax}_{t}(\set{\mathbf{m}_{vu}|u \in \mathcal{N}(v)})
+        = \sum_{u \in \mathcal{N}(v)}
+        \frac{\exp(t \cdot \mathbf{m}_{vu})}
+        {\sum_{i \in \mathcal{N}(v)}\exp(t \cdot \mathbf{m}_{vi})}
+        \cdot \mathbf{m}_{vu},
 
     where :math:`t` controls the softness of softmax aggregation.
 
