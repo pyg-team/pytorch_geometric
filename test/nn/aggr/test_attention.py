@@ -13,8 +13,8 @@ def test_attentional_aggregation():
     gate_nn = MLP([channels, 1], act='relu')
     nn = MLP([channels, channels], act='relu')
     aggr = AttentionalAggregation(gate_nn, nn)
-    assert str(aggr) == (f'AttentionalAggregation(gate_nn=MLP({channels}, 1),'
-                         f' nn=MLP({channels}, {channels}))')
+    assert str(aggr) == (f'AttentionalAggregation(gate_nn=MLP({channels}, 1), '
+                         f'nn=MLP({channels}, {channels}))')
 
     out = aggr(x, index)
     assert out.size() == (3, channels)
