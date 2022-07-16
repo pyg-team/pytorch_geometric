@@ -88,7 +88,7 @@ class MLP(torch.nn.Module):
         norm: Union[str, Callable, None] = "batch_norm",
         norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
-        bias: Optional[Union[List[bool], bool]] = True,
+        bias: Union[List[bool], bool] = True,
         **kwargs,
     ):
         super().__init__()
