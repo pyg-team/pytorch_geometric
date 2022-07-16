@@ -67,12 +67,37 @@ class StdAggregation(Aggregation):
 
 
 class SoftmaxAggregation(Aggregation):
-    def __init__(self, t: float = 1.0, learn: bool = False):
+    r"""The softmax aggregation operator based on a temperature term
+    , as described in the `"DeeperGCN: All You Need to Train Deeper
+     GCNs" <https://arxiv.org/abs/2006.07739>`_ paper
+
+    .. math::
+        \mathrm{SoftMax}_{t}(\cdot) =\sum_{u \in \mathcal{N}(v)}
+        \frac{\exp(t\mathbf{m}_{vu})}{\sum_{i \in \mathcal{N}(v)}
+        \exp(t\mathbf{m}_{vi})}\cdot \mathbf{m}_{vu},
+
+    where :math:`t` controls the softness of softmax aggregation.
+
+    Args:
+        t (float, optional): Initial inverse temperature for softmax
+            aggregation. (default: :obj:`1.0`)
+        learn (bool, optional): If set to :obj:`True`, will learn the value
+            :obj:`t` for softmax aggregation dynamically.
+            (default: :obj:`False`)
+        semi_grad (bool, optional): This is only used to save memory when the
+            :obj:`t` is not learnable. If set to :obj:`True`, will turn off
+            the gradient calculation in softmax. Therefore, only semi-gradient
+            is used for the backpropagation.
+            (default: :obj:`True`)
+    """
+    def __init__(self, t: float = 1.0, learn: bool = False,
+                 semi_grad: bool = True):
         # TODO Learn distinct `t` per channel.
         super().__init__()
         self._init_t = t
         self.t = Parameter(torch.Tensor(1)) if learn else t
         self.learn = learn
+        self.semi_grad = semi_grad
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -86,7 +111,11 @@ class SoftmaxAggregation(Aggregation):
         alpha = x
         if not isinstance(self.t, (int, float)) or self.t != 1:
             alpha = x * self.t
-        alpha = softmax(alpha, index, ptr, dim_size, dim)
+        if not self.learn and self.semi_grad:
+            with torch.no_grad():
+                alpha = softmax(alpha, index, ptr, dim_size, dim)
+        else:
+            alpha = softmax(alpha, index, ptr, dim_size, dim)
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
     def __repr__(self) -> str:
