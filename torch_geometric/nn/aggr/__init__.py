@@ -16,6 +16,7 @@ from .set2set import Set2Set
 from .scaler import DegreeScalerAggregation
 from .sort import SortAggr
 from .gmt import GraphMultisetTransformer
+from .attention import AttentionalAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -34,4 +35,5 @@ __all__ = classes = [
     'DegreeScalerAggregation',
     'SortAggr',
     'GraphMultisetTransformer',
+    'AttentionalAggregation',
 ]

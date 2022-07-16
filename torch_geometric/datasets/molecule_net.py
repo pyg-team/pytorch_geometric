@@ -9,7 +9,7 @@ from torch_geometric.utils import from_smiles
 
 
 class MoleculeNet(InMemoryDataset):
-    r"""The `MoleculeNet <http://moleculenet.ai/datasets-1>`_ benchmark
+    r"""The `MoleculeNet <http://moleculenet.org/datasets-1>`_ benchmark
     collection  from the `"MoleculeNet: A Benchmark for Molecular Machine
     Learning" <https://arxiv.org/abs/1703.00564>`_ paper, containing datasets
     from physical chemistry, biophysics and physiology.
