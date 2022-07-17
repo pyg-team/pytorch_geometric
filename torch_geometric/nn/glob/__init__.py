@@ -4,6 +4,7 @@ from .glob import (
     global_max_pool,
     global_mean_pool,
 )
+from .sort import global_sort_pool
 
 __all__ = [
     'global_add_pool',
