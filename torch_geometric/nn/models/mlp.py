@@ -49,9 +49,8 @@ class MLP(torch.nn.Module):
         num_layers (int, optional): The number of layers.
             Will override :attr:`channel_list`. (default: :obj:`None`)
         dropout (float or List[float], optional): Dropout probability of each
-            hidden embedding. If List[float] is provided, set dropout value per
-            layer.  This overrides :attr:`plain_last` dropout behaviour.
-           (default: :obj:`0.`)
+            hidden embedding. If a list is provided, sets the dropout value per
+            layer. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         act_first (bool, optional): If set to :obj:`True`, activation is
@@ -69,8 +68,8 @@ class MLP(torch.nn.Module):
             well. Dropout will be overridden if :attr:`dropout` is provided as
             a list. (default: :obj:`True`)
         bias (bool or List[bool], optional): If set to :obj:`False`, the module
-            will not learn additive biases. If List[bool] is provided, the
-            additive bias per layer can be specified. (default: :obj:`True`)
+            will not learn additive biases. If a list is provided, sets the
+            bias per layer. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
@@ -81,14 +80,14 @@ class MLP(torch.nn.Module):
         hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
-        dropout: Union[List[float], float] = 0.,
+        dropout: Union[float, List[float]] = 0.,
         act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
         norm: Union[str, Callable, None] = "batch_norm",
         norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
-        bias: Union[List[bool], bool] = True,
+        bias: Union[bool, List[bool]] = True,
         **kwargs,
     ):
         super().__init__()
@@ -115,35 +114,32 @@ class MLP(torch.nn.Module):
         assert len(channel_list) >= 2
         self.channel_list = channel_list
 
-        if isinstance(dropout, float):
-            self.dropout = [dropout] * (len(channel_list) - 1)
-            if plain_last:
-                self.dropout[-1] = 0.
-        else:
-            if len(dropout) is not (len(channel_list) - 1):
-                raise ValueError(
-                    f"Number of dropouts provided ({len(dropout)} does not "
-                    f"match the number of layers specified "
-                    f"({len(channel_list)-1})")
-            self.dropout = dropout
-
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
         self.plain_last = plain_last
 
+        if isinstance(dropout, float):
+            self.dropout = [dropout] * (len(channel_list) - 1)
+            if plain_last:
+                self.dropout[-1] = 0.
+        if len(dropout) != len(channel_list) - 1:
+            raise ValueError(
+                f"Number of dropout values provided ({len(dropout)} does not "
+                f"match the number of layers specified "
+                f"({len(channel_list)-1})")
+        self.dropout = dropout
+
         if isinstance(bias, bool):
-            bias_list = [bias] * (len(channel_list) - 1)
-        else:
-            if len(bias) is not (len(channel_list) - 1):
-                raise ValueError(
-                    f"Number of biases provided ({len(bias)})does not match "
-                    f"the number of layers specified ({len(channel_list)-1})")
-            bias_list = bias
+            bias = [bias] * (len(channel_list) - 1)
+        if len(bias) != len(channel_list) - 1:
+            raise ValueError(
+                f"Number of bias values provided ({len(bias)}) does not match "
+                f"the number of layers specified ({len(channel_list)-1})")
 
         self.lins = torch.nn.ModuleList()
-        iterator = zip(channel_list[:-1], channel_list[1:], bias_list)
-        for in_channels, out_channels, bias in iterator:
-            self.lins.append(Linear(in_channels, out_channels, bias=bias))
+        iterator = zip(channel_list[:-1], channel_list[1:], bias)
+        for in_channels, out_channels, _bias in iterator:
+            self.lins.append(Linear(in_channels, out_channels, bias=_bias))
 
         self.norms = torch.nn.ModuleList()
         iterator = channel_list[1:-1] if plain_last else channel_list[1:]
