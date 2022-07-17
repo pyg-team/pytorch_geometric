@@ -67,8 +67,8 @@ class StdAggregation(Aggregation):
 
 
 class SoftmaxAggregation(Aggregation):
-    r"""The softmax aggregation operator based on a temperature term
-    , as described in the `"DeeperGCN: All You Need to Train Deeper
+    r"""The softmax aggregation operator based on a temperature term,
+    as described in the `"DeeperGCN: All You Need to Train Deeper
      GCNs" <https://arxiv.org/abs/2006.07739>`_ paper
 
     .. math::
