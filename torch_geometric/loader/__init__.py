@@ -20,5 +20,5 @@ __all__ = classes = [
     'GraphSAINTNodeSampler', 'GraphSAINTEdgeSampler',
     'GraphSAINTRandomWalkSampler', 'ShaDowKHopSampler', 'RandomNodeSampler',
     'DataListLoader', 'DenseDataLoader', 'TemporalDataLoader',
-    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler'
+    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler',
 ]
