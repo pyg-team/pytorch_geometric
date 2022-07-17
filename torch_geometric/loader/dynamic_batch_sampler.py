@@ -6,7 +6,7 @@ from torch_geometric.data import Dataset
 
 
 class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
-    r"""Dynamically adds samples to mini-batch up to a maximum size (number of
+    r"""Dynamically adds samples to a mini-batch up to a maximum size (number of
     nodes). When data samples have a wide range in sizes, specifying a
     mini-batch size in terms of number of samples is not ideal and can cause
     CUDA OOM errors.
