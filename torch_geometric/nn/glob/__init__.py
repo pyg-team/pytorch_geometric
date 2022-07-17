@@ -1,5 +1,9 @@
-from .glob import global_add_pool, global_mean_pool, global_max_pool
-from .glob import GlobalPooling
+from .glob import (
+    GlobalPooling,
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
 from .sort import global_sort_pool
 
 __all__ = [
@@ -13,9 +17,9 @@ __all__ = [
 classes = __all__
 
 from torch_geometric.deprecation import deprecated  # noqa
-from torch_geometric.nn.aggr import Set2Set  # noqa
-from torch_geometric.nn.aggr import GraphMultisetTransformer  # noqa
 from torch_geometric.nn.aggr import AttentionalAggregation  # noqa
+from torch_geometric.nn.aggr import GraphMultisetTransformer  # noqa
+from torch_geometric.nn.aggr import Set2Set  # noqa
 
 Set2Set = deprecated(
     details="use 'nn.aggr.Set2Set' instead",
