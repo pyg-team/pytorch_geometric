@@ -67,18 +67,18 @@ class StdAggregation(Aggregation):
 
 
 class SoftmaxAggregation(Aggregation):
-    r"""The softmax aggregation operator based on a temperature term,
-    as described in the `"DeeperGCN: All You Need to Train Deeper
-     GCNs" <https://arxiv.org/abs/2006.07739>`_ paper
+    r"""The softmax aggregation operator based on a temperature term, as
+    described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
+    <https://arxiv.org/abs/2006.07739>`_ paper
 
     .. math::
-        \mathrm{SoftMax}_{t}(\set{\mathbf{m}_{vu}|u \in \mathcal{N}(v)})
-        = \sum_{u \in \mathcal{N}(v)}
-        \frac{\exp(t \cdot \mathbf{m}_{vu})}
-        {\sum_{i \in \mathcal{N}(v)}\exp(t \cdot \mathbf{m}_{vi})}
-        \cdot \mathbf{m}_{vu},
+        \mathrm{softmax}(\{ \mathbf{x}_i : i \in |\mathcal{X}| \}, t)
+        = \sum_{i \in |\mathcal{X}|} \frac{ \exp( t \cdot \mathbf{x}_i)}
+        {\sum_{j \in |\mathcal{X}|} \exp(t \cdot \mathbf{x}_j)}
+        \cdot \mathbf{x}_{i},
 
-    where :math:`t` controls the softness of softmax aggregation.
+    where :math:`t` controls the softness of the softmax when aggregating over
+    a set of features :math:`\mathcal{X}`.
 
     Args:
         t (float, optional): Initial inverse temperature for softmax
@@ -86,16 +86,21 @@ class SoftmaxAggregation(Aggregation):
         learn (bool, optional): If set to :obj:`True`, will learn the value
             :obj:`t` for softmax aggregation dynamically.
             (default: :obj:`False`)
-        semi_grad (bool, optional): This is only used to save memory when the
-            :obj:`t` is not learnable. If set to :obj:`True`, will turn off
-            the gradient calculation in softmax. Therefore, only semi-gradient
-            is used for the backpropagation.
-            (default: :obj:`True`)
+        semi_grad (bool, optional): If set to :obj:`True`, will turn off
+            gradient calculation during softmax computation. Therefore, only
+            semi-gradient is used during backpropagation. Useful for saving
+            memory when :obj:`t` is not learnable. (default: :obj:`False`)
     """
     def __init__(self, t: float = 1.0, learn: bool = False,
-                 semi_grad: bool = True):
+                 semi_grad: bool = False):
         # TODO Learn distinct `t` per channel.
         super().__init__()
+
+        if learn and not semi_grad:
+            raise ValueError(
+                f"Cannot set 'semi_grad' in '{self.__class__.__name__}' in "
+                f"case the temperature term 't' is learnable")
+
         self._init_t = t
         self.t = Parameter(torch.Tensor(1)) if learn else t
         self.learn = learn
