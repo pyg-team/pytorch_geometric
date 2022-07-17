@@ -96,7 +96,7 @@ class SoftmaxAggregation(Aggregation):
         # TODO Learn distinct `t` per channel.
         super().__init__()
 
-        if learn and not semi_grad:
+        if learn and semi_grad:
             raise ValueError(
                 f"Cannot enable 'semi_grad' in '{self.__class__.__name__}' in "
                 f"case the temperature term 't' is learnable")
