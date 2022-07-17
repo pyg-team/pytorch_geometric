@@ -65,8 +65,7 @@ class MLP(torch.nn.Module):
             (default: :obj:`None`)
         plain_last (bool, optional): If set to :obj:`False`, will apply
             non-linearity, batch normalization and dropout to the last layer as
-            well. Dropout will be overridden if :attr:`dropout` is provided as
-            a list. (default: :obj:`True`)
+            well. (default: :obj:`True`)
         bias (bool or List[bool], optional): If set to :obj:`False`, the module
             will not learn additive biases. If a list is provided, sets the
             bias per layer. (default: :obj:`True`)
