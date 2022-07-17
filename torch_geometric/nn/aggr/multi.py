@@ -44,7 +44,7 @@ class MultiAggregation(Aggregation):
             if in_channels is None:
                 raise ValueError(
                     f"'Combine mode '{combine_mode}' must "
-                    f"have in channels specified (got '{in_channels}')")
+                    f"have `in_channels` specified (got '{in_channels}')")
             if out_channels is None:
                 out_channels = in_channels
             self.lin = Linear(in_channels * len(aggrs), out_channels,
