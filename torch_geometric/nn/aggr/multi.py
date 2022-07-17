@@ -2,6 +2,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
+from torch.nn import Linear
+from torch_scatter import scatter
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver
@@ -9,7 +11,10 @@ from torch_geometric.nn.resolver import aggregation_resolver
 
 class MultiAggregation(Aggregation):
     def __init__(self, aggrs: List[Union[Aggregation, str]],
-                 aggrs_kwargs: Optional[List[Dict[str, Any]]] = None):
+                 aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
+                 combine_mode: str = 'cat', in_channels: Optional[int] = None,
+                 out_channels: Optional[int] = None):
+
         super().__init__()
 
         if not isinstance(aggrs, (list, tuple)):
@@ -34,14 +39,55 @@ class MultiAggregation(Aggregation):
             for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
         ])
 
+        self.combine_mode = combine_mode
+        if combine_mode == 'proj':
+            if in_channels is None:
+                raise ValueError(
+                    f"'Combine mode '{combine_mode}' must "
+                    f"have in channels specified (got '{in_channels}')")
+            if out_channels is None:
+                out_channels = in_channels
+            self.lin = Linear(in_channels * len(aggrs), out_channels,
+                              bias=True)
+        else:
+            if (in_channels or out_channels) is not None:
+                raise ValueError("Channel projection is only supported in "
+                                 "the `'proj'` combine mode")
+
+    def reset_parameters(self):
+        for aggr in self.aggrs:
+            aggr.reset_parameters()
+        if self.combine_mode == 'proj':
+            self.lin.reset_parameters()
+
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         outs = []
         for aggr in self.aggrs:
             outs.append(aggr(x, index, ptr, dim_size, dim))
-        return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]
+
+        if len(outs) > 1:
+            return self.combine(outs)
+        else:
+            return outs[0]
+
+    def combine(self, inputs: List[Tensor]) -> Tensor:
+        if self.combine_mode in ['cat', 'proj']:
+            out = torch.cat(inputs, dim=-1)
+            return out if self.combine_mode == 'cat' else self.lin(out)
+        elif self.combine_mode in ['sum', 'add', 'mul', 'mean', 'min', 'max']:
+            return scatter(torch.stack(inputs, dim=0),
+                           torch.tensor([0] * len(inputs)), dim=0,
+                           reduce=self.combine_mode).squeeze_()
+        else:
+            raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
+                             f"supported")
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
-        return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
+        return '{}([\n{}\n], combine_mode={})'.format(
+            self.__class__.__name__,
+            ',\n'.join(args),
+            self.combine_mode,
+        )
