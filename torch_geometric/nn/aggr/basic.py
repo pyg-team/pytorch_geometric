@@ -98,7 +98,7 @@ class SoftmaxAggregation(Aggregation):
 
         if learn and not semi_grad:
             raise ValueError(
-                f"Cannot set 'semi_grad' in '{self.__class__.__name__}' in "
+                f"Cannot enable 'semi_grad' in '{self.__class__.__name__}' in "
                 f"case the temperature term 't' is learnable")
 
         self._init_t = t
