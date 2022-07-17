@@ -118,9 +118,9 @@ class MLP(torch.nn.Module):
         self.plain_last = plain_last
 
         if isinstance(dropout, float):
-            self.dropout = [dropout] * (len(channel_list) - 1)
+            dropout = [dropout] * (len(channel_list) - 1)
             if plain_last:
-                self.dropout[-1] = 0.
+                dropout[-1] = 0.
         if len(dropout) != len(channel_list) - 1:
             raise ValueError(
                 f"Number of dropout values provided ({len(dropout)} does not "
