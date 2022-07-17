@@ -1,15 +1,11 @@
-from torch_geometric.nn.aggr import SoftmaxAggregation
-
 from .glob import (
     GlobalPooling,
     global_add_pool,
     global_max_pool,
     global_mean_pool,
 )
-from .sort import global_sort_pool
 
 __all__ = [
-    'SoftmaxAggregation',
     'global_add_pool',
     'global_mean_pool',
     'global_max_pool',
