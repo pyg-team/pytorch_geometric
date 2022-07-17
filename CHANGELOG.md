@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.0.5] - 2022-MM-DD
 ### Added
+- Added fine grained options for setting `bias` and `dropout` per layer in the `MLP` model ([#4981](https://github.com/pyg-team/pytorch_geometric/pull/4981)
 - Added `EdgeCNN` model ([#4991](https://github.com/pyg-team/pytorch_geometric/pull/4991))
 - Added scalable `inference` mode in `BasicGNN` with layer-wise neighbor loading ([#4977](https://github.com/pyg-team/pytorch_geometric/pull/4977))
 - Added inference benchmarks ([#4892](https://github.com/pyg-team/pytorch_geometric/pull/4892))
