@@ -1,24 +1,9 @@
-from .glob import (
-    GlobalPooling,
-    global_add_pool,
-    global_max_pool,
-    global_mean_pool,
-)
-
-__all__ = [
-    'global_add_pool',
-    'global_mean_pool',
-    'global_max_pool',
-    'GlobalPooling',
-]
-
-classes = __all__
-
-from torch_geometric.deprecation import deprecated  # noqa
-from torch_geometric.nn.aggr import AttentionalAggregation  # noqa
-from torch_geometric.nn.aggr import GraphMultisetTransformer  # noqa
-from torch_geometric.nn.aggr import SortAggr  # noqa
-from torch_geometric.nn.aggr import Set2Set  # noqa
+from torch_geometric.deprecation import deprecated
+from torch_geometric.nn.aggr import (SumAggregation, MeanAggregation,
+                                     MaxAggregation, AttentionalAggregation,
+                                     GraphMultisetTransformer, Set2Set,
+                                     SortAggr)
+from torch_geometric.nn.resolver import aggregation_resolver
 
 Set2Set = deprecated(
     details="use 'nn.aggr.Set2Set' instead",
@@ -47,3 +32,48 @@ def global_sort_pool(x, index, k):
 class GlobalAttention(AttentionalAggregation):
     def __call__(self, x, batch=None, size=None):
         return super().__call__(x, batch, dim_size=size)
+
+
+sum_aggr = SumAggregation()
+
+
+@deprecated(
+    details="use 'nn.aggr.SumAggregation' instead",
+    func_name='nn.glob.global_add_pool',
+)
+def global_add_pool(x, index, size):
+    return sum_aggr(x, index, dim_size=size)
+
+
+mean_aggr = MeanAggregation()
+
+
+@deprecated(
+    details="use 'nn.aggr.MeanAggregation' instead",
+    func_name='nn.glob.global_mean_pool',
+)
+def global_mean_pool(x, index, size):
+    return mean_aggr(x, index, dim_size=size)
+
+
+max_aggr = MaxAggregation()
+
+
+@deprecated(
+    details="use 'nn.aggr.MaxAggregation' instead",
+    func_name='nn.glob.global_max_pool',
+)
+def global_max_pool(x, index, size):
+    return max_aggr(x, index, dim_size=size)
+
+
+@deprecated(
+    details="use 'nn.aggr' operators instead instead",
+    func_name='nn.glob.GlobalPooling',
+)
+class GlobalPooling:
+    def __init__(self, aggr):
+        self.aggr = aggregation_resolver(aggr)
+
+    def __call__(self, x, index, size):
+        return self.aggr(x, index, dim_size=size)
