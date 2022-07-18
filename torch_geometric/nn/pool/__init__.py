@@ -11,6 +11,8 @@ from .edge_pool import EdgePooling
 from .asap import ASAPooling
 from .pan_pool import PANPooling
 from .mem_pool import MemPooling
+from .glob import (global_max_pool, global_mean_pool, global_add_pool,
+                   GraphMultisetTransformer, Set2Set, GlobalAttention)
 
 try:
     import torch_cluster
@@ -263,6 +265,12 @@ __all__ = [
     'radius',
     'radius_graph',
     'nearest',
+    'global_max_pool',
+    'global_add_pool',
+    'global_mean_pool',
+    'GraphMultisetTransformer',
+    'Set2Set',
+    'GlobalAttention',
 ]
 
 classes = __all__
