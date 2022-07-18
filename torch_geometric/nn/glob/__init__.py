@@ -4,14 +4,12 @@ from .glob import (
     global_max_pool,
     global_mean_pool,
 )
-from .sort import global_sort_pool
 
 __all__ = [
     'global_add_pool',
     'global_mean_pool',
     'global_max_pool',
     'GlobalPooling',
-    'global_sort_pool',
 ]
 
 classes = __all__
@@ -19,6 +17,7 @@ classes = __all__
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.nn.aggr import AttentionalAggregation  # noqa
 from torch_geometric.nn.aggr import GraphMultisetTransformer  # noqa
+from torch_geometric.nn.aggr import SortAggr  # noqa
 from torch_geometric.nn.aggr import Set2Set  # noqa
 
 Set2Set = deprecated(
@@ -30,6 +29,15 @@ GraphMultisetTransformer = deprecated(
     details="use 'nn.aggr.GraphMultisetTransformer' instead",
     func_name='nn.glob.GraphMultisetTransformer',
 )(GraphMultisetTransformer)
+
+
+@deprecated(
+    details="use 'nn.aggr.GlobalSortAggr' instead",
+    func_name='nn.glob.global_sort_pool',
+)
+def global_sort_pool(x, index, k):
+    module = SortAggr(k=k)
+    return module(x, index=index)
 
 
 @deprecated(
