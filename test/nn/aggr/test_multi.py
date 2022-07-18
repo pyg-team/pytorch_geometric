@@ -4,33 +4,31 @@ import torch
 from torch_geometric.nn import MultiAggregation
 
 
-@pytest.mark.parametrize('combine_mode', [
-    'cat',
-    'sum',
-    'add',
-    'mul',
-    'mean',
-    'min',
-    'max',
-    'proj',
+@pytest.mark.parametrize('multi_aggr_tuple', [
+    (dict(combine_mode='cat'), 3),
+    (dict(combine_mode='sum'), 1),
+    (dict(combine_mode='add'), 1),
+    (dict(combine_mode='mul'), 1),
+    (dict(combine_mode='mean'), 1),
+    (dict(combine_mode='min'), 1),
+    (dict(combine_mode='max'), 1),
+    (dict(combine_mode='proj', in_channels=16), 1),
 ])
-def test_multi_aggr(combine_mode):
+def test_multi_aggr(multi_aggr_tuple):
+    multi_aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(6, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
     ptr = torch.tensor([0, 2, 5, 6])
 
     aggrs = ['mean', 'sum', 'max']
-    in_channels = 16 if combine_mode == 'proj' else None
-    aggr = MultiAggregation(aggrs, combine_mode=combine_mode,
-                            in_channels=in_channels)
-    assert str(aggr) == ('MultiAggregation([\n'
-                         '  MeanAggregation(),\n'
-                         '  SumAggregation(),\n'
-                         '  MaxAggregation()\n'
-                         f'], combine_mode={combine_mode})')
+    aggr = MultiAggregation(aggrs, **multi_aggr_kwargs)
+    assert str(aggr) == (
+        'MultiAggregation([\n'
+        '  MeanAggregation(),\n'
+        '  SumAggregation(),\n'
+        '  MaxAggregation()\n'
+        f"], combine_mode={multi_aggr_kwargs['combine_mode']})")
 
     out = aggr(x, index)
     assert torch.allclose(out, aggr(x, ptr=ptr))
-
-    expand = len(aggrs) if combine_mode == 'cat' else 1
     assert out.size() == (3, expand * x.size(1))
