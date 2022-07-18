@@ -75,7 +75,7 @@ class MultiAggregation(Aggregation):
     def combine(self, inputs: List[Tensor]) -> Tensor:
         if self.combine_mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
-            return out if self.combine_mode == 'cat' else self.lin(out)
+            return self.lin(out) if hasattr(self, 'lin') else out
         elif self.combine_mode in ['sum', 'add', 'mul', 'mean', 'min', 'max']:
             return scatter(torch.stack(inputs, dim=0),
                            torch.tensor([0] * len(inputs)), dim=0,
