@@ -40,3 +40,13 @@ def test_mlp(norm, act_first, plain_last):
         plain_last=plain_last,
     )
     assert torch.allclose(mlp(x), out)
+
+
+@pytest.mark.parametrize('plain_last', [False, True])
+def test_fine_grained_mlp(plain_last):
+    mlp = MLP(
+        [16, 32, 32, 64],
+        dropout=[0.1, 0.2, 0.3],
+        bias=[False, True, False],
+    )
+    assert mlp(torch.randn(4, 16)).size() == (4, 64)

@@ -19,11 +19,11 @@ class Aggregation(torch.nn.Module):
             x (torch.Tensor): The source tensor.
             index (torch.LongTensor, optional): The indices of elements for
                 applying the aggregation.
-                One of :obj:`index` or `ptr` must be defined.
+                One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             ptr (torch.LongTensor, optional): If given, computes the
                 aggregation based on sorted inputs in CSR representation.
-                One of :obj:`index` or `ptr` must be defined.
+                One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             dim_size (int, optional): The size of the output tensor at
                 dimension :obj:`dim` after aggregation. (default: :obj:`None`)
