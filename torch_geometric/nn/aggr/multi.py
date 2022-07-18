@@ -67,10 +67,7 @@ class MultiAggregation(Aggregation):
         for aggr in self.aggrs:
             outs.append(aggr(x, index, ptr, dim_size, dim))
 
-        if len(outs) > 1:
-            return self.combine(outs)
-        else:
-            return outs[0]
+        return self.combine(outs) if len(outs) > 1 else outs[0]
 
     def combine(self, inputs: List[Tensor]) -> Tensor:
         if self.combine_mode in ['cat', 'proj']:
