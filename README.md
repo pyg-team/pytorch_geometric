@@ -357,9 +357,36 @@ Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started
 conda install pyg -c pyg
 ```
 
+**Note:** Conda packages are not published for PyTorch 1.12 yet.
+
 ### Pip Wheels
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
+
+#### PyTorch 1.12
+
+To install the binaries for PyTorch 1.12.0, simply run
+
+```
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install torch-sparse -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install torch-geometric
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu102`, `cu113`, or `cu116` depending on your PyTorch installation.
+
+|             | `cpu` | `cu102` | `cu113` | `cu116` |
+|-------------|-------|---------|---------|---------|
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    |         | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
+For additional but optional functionality, run
+
+```
+pip install torch-cluster -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+```
 
 #### PyTorch 1.11
 
@@ -386,32 +413,7 @@ pip install torch-cluster -f https://data.pyg.org/whl/torch-1.11.0+${CUDA}.html
 pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.11.0+${CUDA}.html
 ```
 
-#### PyTorch 1.10
-
-To install the binaries for PyTorch 1.10.0, PyTorch 1.10.1 and 1.10.2, simply run
-
-```
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
-pip install torch-geometric
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu102`, `cu111` or `cu113` depending on your PyTorch installation (`torch.version.cuda`).
-
-|             | `cpu` | `cu102` | `cu111` | `cu113` |
-|-------------|-------|---------|---------|---------|
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-For additional but optional functionality, run
-
-```
-pip install torch-cluster -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
-pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
-```
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1 and PyTorch 1.9.0 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, and PyTorch 1.10.0/1.10.1/1.10.2 (following the same procedure).
 For older versions, you might need to explicitly specify the latest supported version number in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 

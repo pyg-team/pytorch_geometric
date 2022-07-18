@@ -2,15 +2,15 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
 from ..inits import reset
 
 
-class GlobalAttention(torch.nn.Module):
-    r"""Global soft attention layer from the `"Gated Graph Sequence Neural
+class AttentionalAggregation(Aggregation):
+    r"""Soft attention aggregation layer from the `"Gated Graph Sequence Neural
     Networks" <https://arxiv.org/abs/1511.05493>`_ paper
 
     .. math::
@@ -46,37 +46,21 @@ class GlobalAttention(torch.nn.Module):
         super().__init__()
         self.gate_nn = gate_nn
         self.nn = nn
-
         self.reset_parameters()
 
     def reset_parameters(self):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                size: Optional[int] = None) -> Tensor:
-        r"""
-        Args:
-            x (Tensor): The input node features.
-            batch (LongTensor, optional): A vector that maps each node to its
-                respective graph identifier. (default: :obj:`None`)
-            size (int, optional): The number of graphs in the batch.
-                (default: :obj:`None`)
-        """
-        if batch is None:
-            batch = x.new_zeros(x.size(0), dtype=torch.int64)
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
 
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        size = int(batch.max()) + 1 if size is None else size
-
+        self.assert_two_dimensional_input(x, dim)
         gate = self.gate_nn(x).view(-1, 1)
         x = self.nn(x) if self.nn is not None else x
-        assert gate.dim() == x.dim() and gate.size(0) == x.size(0)
-
-        gate = softmax(gate, batch, num_nodes=size)
-        out = scatter_add(gate * x, batch, dim=0, dim_size=size)
-
-        return out
+        gate = softmax(gate, index, ptr, dim_size, dim)
+        return self.reduce(gate * x, index, ptr, dim_size, dim)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(gate_nn={self.gate_nn}, '
