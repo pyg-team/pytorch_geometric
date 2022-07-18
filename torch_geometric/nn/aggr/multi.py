@@ -19,11 +19,11 @@ class MultiAggregation(Aggregation):
 
         if not isinstance(aggrs, (list, tuple)):
             raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
-                             f"be a list or tuple (got '{type(aggrs)}')")
+                             f"be a list or tuple (got '{type(aggrs)}').")
 
         if len(aggrs) == 0:
             raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
-                             f"not be empty")
+                             f"not be empty.")
 
         if aggrs_kwargs is None:
             aggrs_kwargs = [{}] * len(aggrs)
@@ -32,7 +32,7 @@ class MultiAggregation(Aggregation):
                              f"'{self.__class__.__name__}' "
                              f"(got '{len(aggrs_kwargs)}', "
                              f"expected '{len(aggrs)}'). Ensure that both "
-                             f"'aggrs' and 'aggrs_kwargs' are consistent")
+                             f"'aggrs' and 'aggrs_kwargs' are consistent.")
 
         self.aggrs = torch.nn.ModuleList([
             aggregation_resolver(aggr, **aggr_kwargs)
@@ -44,7 +44,7 @@ class MultiAggregation(Aggregation):
             if in_channels is None:
                 raise ValueError(
                     f"'Combine mode '{combine_mode}' must "
-                    f"have `in_channels` specified (got '{in_channels}')")
+                    f"have `in_channels` specified (got '{in_channels}').")
             if out_channels is None:
                 out_channels = in_channels
             self.lin = Linear(in_channels * len(aggrs), out_channels,
@@ -52,7 +52,7 @@ class MultiAggregation(Aggregation):
         else:
             if (in_channels or out_channels) is not None:
                 raise ValueError("Channel projection is only supported in "
-                                 "the `'proj'` combine mode")
+                                 "the `'proj'` combine mode.")
 
     def reset_parameters(self):
         for aggr in self.aggrs:
@@ -79,7 +79,7 @@ class MultiAggregation(Aggregation):
                            reduce=self.combine_mode).squeeze_()
         else:
             raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
-                             f"supported")
+                             f"supported.")
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
