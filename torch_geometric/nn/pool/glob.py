@@ -1,3 +1,7 @@
+from typing import Optional
+
+from torch import Tensor
+
 from torch_geometric.deprecation import deprecated
 from torch_geometric.nn.aggr import (
     AttentionalAggregation,
@@ -12,21 +16,24 @@ from torch_geometric.nn.aggr import (
 sum_aggr = SumAggregation()
 
 
-def global_add_pool(x, index, size):
+def global_add_pool(x: Tensor, index: Optional[Tensor],
+                    size: Optional[int] = None) -> Tensor:
     return sum_aggr(x, index, dim_size=size)
 
 
 mean_aggr = MeanAggregation()
 
 
-def global_mean_pool(x, index, size):
+def global_mean_pool(x: Tensor, index: Optional[Tensor],
+                     size: Optional[int] = None) -> Tensor:
     return mean_aggr(x, index, dim_size=size)
 
 
 max_aggr = MaxAggregation()
 
 
-def global_max_pool(x, index, size):
+def global_max_pool(x: Tensor, index: Optional[Tensor],
+                    size: Optional[int] = None) -> Tensor:
     return max_aggr(x, index, dim_size=size)
 
 

@@ -42,7 +42,7 @@ class Transformer(object):
     #. It subdivides :func:`call_module` into nodes that call a regular
        :class:`torch.nn.Module` (:func:`call_module`), a
        :class:`MessagePassing` module (:func:`call_message_passing_module`),
-       or a :class:`GlobalPooling` module (:func:`call_global_pooling_module`).
+       or a :class:`Aggregation` module (:func:`call_aggregation_module`).
 
     #. It allows to customize or initialize new children modules via
        :func:`init_submodule`
@@ -85,7 +85,7 @@ class Transformer(object):
     def call_message_passing_module(self, node: Node, target: Any, name: str):
         pass
 
-    def call_global_pooling_module(self, node: Node, target: Any, name: str):
+    def call_aggregation_module(self, node: Node, target: Any, name: str):
         pass
 
     def call_module(self, node: Node, target: Any, name: str):
@@ -135,7 +135,7 @@ class Transformer(object):
                         self._state[node.name] = 'node'
             elif is_message_passing_op(self.module, node.op, node.target):
                 self._state[node.name] = 'node'
-            elif is_global_pooling_op(self.module, node.op, node.target):
+            elif is_aggregation_op(self.module, node.op, node.target):
                 self._state[node.name] = 'graph'
             elif node.op in ['call_module', 'call_method', 'call_function']:
                 if self.has_edge_level_arg(node):
@@ -152,7 +152,7 @@ class Transformer(object):
             op = node.op
             if is_message_passing_op(self.module, op, node.target):
                 op = 'call_message_passing_module'
-            elif is_global_pooling_op(self.module, op, node.target):
+            elif is_aggregation_op(self.module, op, node.target):
                 op = 'call_global_pooling_module'
 
             getattr(self, op)(node, node.target, node.name)
@@ -283,8 +283,8 @@ def is_message_passing_op(module: Module, op: str, target: str) -> bool:
     return False
 
 
-def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
-    from torch_geometric.nn import GlobalPooling
+def is_aggregation_op(module: Module, op: str, target: str) -> bool:
+    from torch_geometric.nn import Aggregation
     if op == 'call_module':
-        return isinstance(get_submodule(module, target), GlobalPooling)
+        return isinstance(get_submodule(module, target), Aggregation)
     return False
