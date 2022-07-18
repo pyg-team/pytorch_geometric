@@ -23,15 +23,15 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
 
         from torch_geometric.loader import DataLoader, DynamicBatchSampler
 
-        batch_sampler = DynamicBatchSampler(10000, dataset)
+        batch_sampler = DynamicBatchSampler(dataset, max_num=10000)
         loader = DataLoader(dataset, batch_sampler=sampler, ...)
 
     Args:
-        max_num (int): size of mini-batch to aim for in number of nodes or
-            edges.
         data_source (Dataset): dataset to sample from, need this so that
             potential samples can be sized to create the dynamic batch.
-        entity (str, optional): `nodes` or `edges` to measure batch size.
+        max_num (int): size of mini-batch to aim for in number of nodes or
+            edges.
+        mode (str, optional): `nodes` or `edges` to measure batch size.
             (default: `nodes`)
         shuffle (bool, optional): set to ``True`` to have the data reshuffled
             at every epoch (default: ``False``).
@@ -42,15 +42,15 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
             underlying data, but __len__ will be :obj:`None` since it will be
             ambiguous. (default: :obj:`None`)
     """
-    def __init__(self, max_num: int, data_source: Dataset,
-                 entity: str = 'nodes', shuffle: bool = False,
+    def __init__(self, data_source: Dataset, max_num: int,
+                 mode: str = 'nodes', shuffle: bool = False,
                  skip_too_big: bool = False, num_steps: Optional[int] = None):
         if not isinstance(max_num, int) or max_num <= 0:
             raise ValueError("`max_num` should be a positive integer value, "
                              "but got max_num={max_num}.")
-        if entity not in ['nodes', 'edges']:
-            raise ValueError("`entity` choice should be either "
-                             f"`nodes` or `edges, not {entity}.")
+        if mode not in ['nodes', 'edges']:
+            raise ValueError("`mode` choice should be either "
+                             f"`nodes` or `edges, not {mode}.")
 
         self.max_num = max_num
         self.data_source = data_source
@@ -60,7 +60,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
             num_steps = len(data_source)
         self.num_steps = num_steps
 
-        self.entity = f"num_{entity}"
+        self.mode = f"num_{mode}"
 
     def __iter__(self) -> Iterator[List[int]]:
         batch = []
@@ -79,7 +79,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
             # Fill batch
             for idx in self.idxs[current_place:]:
                 # Size of sample
-                n = getattr(self.data_source[idx], self.entity)
+                n = getattr(self.data_source[idx], self.mode)
 
                 if batch_n + n > self.max_num:
                     if batch_n == 0:

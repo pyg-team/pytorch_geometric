@@ -12,7 +12,7 @@ def test_dataloader_with_dynamic_batches():
         data_list.append(Data(num_nodes=i))
 
     torch.manual_seed(12345)
-    batch_sampler = DynamicBatchSampler(300, data_list, shuffle=True)
+    batch_sampler = DynamicBatchSampler(data_list, 300, shuffle=True)
     loader = DataLoader(data_list, batch_sampler=batch_sampler)
 
     num_nodes_total = 0
@@ -21,7 +21,7 @@ def test_dataloader_with_dynamic_batches():
     assert num_nodes_total == 1045
 
     data_list = [Data(num_nodes=400)] + data_list
-    batch_sampler = DynamicBatchSampler(300, data_list, skip_too_big=True,
+    batch_sampler = DynamicBatchSampler(data_list, 300, skip_too_big=True,
                                         num_steps=2)
     loader = DataLoader(data_list, batch_sampler=batch_sampler)
 
