@@ -110,6 +110,7 @@ class MessagePassing(torch.nn.Module):
         aggr: Optional[Union[str, List[str], Aggregation]] = "add",
         *,
         aggr_kwargs: Optional[Dict[str, Any]] = None,
+        multi_aggr_kwargs: Optional[Dict[str, Any]] = None,
         flow: str = "source_to_target",
         node_dim: int = -2,
         decomposed_layers: int = 1,
@@ -125,7 +126,8 @@ class MessagePassing(torch.nn.Module):
             self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, aggr_kwargs)
+            self.aggr_module = MultiAggregation(aggr, aggrs_kwargs=aggr_kwargs,
+                                                **(multi_aggr_kwargs or {}))
         else:
             raise ValueError(f"Only strings, list, tuples and instances of"
                              f"`torch_geometric.nn.aggr.Aggregation` are "
