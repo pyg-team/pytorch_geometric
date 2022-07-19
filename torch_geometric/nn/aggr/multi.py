@@ -75,8 +75,8 @@ class MultiAggregation(Aggregation):
             return self.lin(out) if hasattr(self, 'lin') else out
         elif self.combine_mode in ['sum', 'add', 'mul', 'mean', 'min', 'max']:
             return self.reduce(torch.stack(inputs, dim=0),
-                           torch.tensor([0] * len(inputs)), dim=0,
-                           reduce=self.combine_mode).squeeze_()
+                               torch.tensor([0] * len(inputs)), dim=0,
+                               reduce=self.combine_mode).squeeze_()
         else:
             raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
                              f"supported.")
