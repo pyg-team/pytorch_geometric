@@ -9,6 +9,26 @@ from torch_geometric.nn.resolver import aggregation_resolver
 
 
 class MultiAggregation(Aggregation):
+    r"""Performs aggregations with one or more aggregators and combines and
+        aggregated results.
+
+    Args:
+        aggrs (list): The list of aggregation schemes to use.
+        aggrs_kwargs (list, optional): Arguments passed to the
+            respective aggregation function in case it gets automatically
+            resolved. (default: :obj:`None`)
+        combine_mode (string or Aggregation, optional): The combine mode
+            to use for combining aggregated results from multiple aggregations
+            (:obj:`"cat"`, :obj:`"proj"`, :obj:`Aggregation`).
+            (default: :obj:`"cat"`)
+        in_channels (int, optional): Size of each input sample. Need to be
+            specified when :obj:`"proj"` is used as the `combine_mode`.
+            (default: :obj:`None`)
+        out_channels (int, optional): Size of each output sample after
+            combination. It is only used when :obj:`"proj"` is used as the
+            `combine_mode`. It will be set as the same as `in_channels` if not
+            specified. (default: :obj:`None`)
+    """
     def __init__(
         self,
         aggrs: List[Union[Aggregation, str]],
