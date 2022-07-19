@@ -50,8 +50,8 @@ class MultiAggregation(Aggregation):
                     f"have `in_channels` specified (got '{in_channels}').")
             if out_channels is None:
                 out_channels = in_channels
-            self.lin = Linear(in_channels * len(aggrs), out_channels,
-                              bias=True)
+            self.combine_lin = Linear(in_channels * len(aggrs), out_channels,
+                                      bias=True)
         else:
             if (in_channels or out_channels) is not None:
                 raise ValueError("Channel projection is only supported in "
@@ -63,7 +63,7 @@ class MultiAggregation(Aggregation):
         for aggr in self.aggrs:
             aggr.reset_parameters()
         if self.combine_mode == 'proj':
-            self.lin.reset_parameters()
+            self.combine_lin.reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -77,7 +77,10 @@ class MultiAggregation(Aggregation):
     def combine(self, inputs: List[Tensor]) -> Tensor:
         if self.combine_mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
-            return self.lin(out) if hasattr(self, 'lin') else out
+            if hasattr(self, 'combine_lin'):
+                return self.combine_lin(out)
+            else:
+                return out
         elif hasattr(self, 'combine_aggr'):
             out = torch.cat(inputs, dim=-2)
             index = torch.arange(inputs[0].size(-2),
