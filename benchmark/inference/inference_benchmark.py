@@ -81,7 +81,8 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         if model_name == 'pna_conv':
                             if degree is None:
-                                degree = PNAConv.get_degree(subgraph_loader)
+                                degree = PNAConv.get_degree_histogram(
+                                    subgraph_loader)
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 

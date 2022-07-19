@@ -172,17 +172,17 @@ class PNAConv(MessagePassing):
                 f'edge_dim={self.edge_dim})')
 
     @staticmethod
-    def get_degree(loader):
-        max_degree = -1
+    def get_degree_histogram(loader) -> Tensor:
+        max_degree = 0
         for data in loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes,
                        dtype=torch.long)
             max_degree = max(max_degree, int(d.max()))
-
         # Compute the in-degree histogram tensor
-        deg = torch.zeros(max_degree + 1, dtype=torch.long)
+        deg_histogram = torch.zeros(max_degree + 1, dtype=torch.long)
         for data in loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes,
                        dtype=torch.long)
-            deg += torch.bincount(d, minlength=deg.numel())
-        return deg
+            deg_histogram += torch.bincount(d, minlength=deg_histogram.numel())
+
+        return deg_histogram

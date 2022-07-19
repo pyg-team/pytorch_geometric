@@ -1,7 +1,7 @@
 import os.path as osp
 
-from hetero_gat import HETERO_GAT
-from hetero_sage import HETERO_SAGE
+from hetero_gat import HeteroGAT
+from hetero_sage import HeteroGraphSAGE
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
@@ -13,8 +13,8 @@ models_dict = {
     'gat': GAT,
     'gcn': GCN,
     'pna_conv': PNA,
-    'rgat': HETERO_GAT,
-    'rgcn': HETERO_SAGE,
+    'rgat': HeteroGAT,
+    'rgcn': HeteroGraphSAGE,
 }
 
 
@@ -40,14 +40,14 @@ def get_model(name, params, metadata=None):
     except KeyError:
         print(f'Model {name} not supported!')
 
-    if name in ['rgat', 'rgcn']:
-        if name == 'rgat':
-            model = model_type(params['hidden_channels'], params['num_layers'],
-                               params['output_channels'], params['num_heads'])
-        elif name == 'rgcn':
-            model = model_type(params['hidden_channels'], params['num_layers'],
-                               params['output_channels'])
-        model.create_hetero(metadata)
+    if name == 'rgat':
+        model = model_type(metadata, params['hidden_channels'],
+                           params['num_layers'], params['output_channels'],
+                           params['num_heads'])
+
+    elif name == 'rgcn':
+        model = model_type(metadata, params['hidden_channels'],
+                           params['num_layers'], params['output_channels'])
 
     elif name == 'gat':
         kwargs = {}
