@@ -2,7 +2,6 @@ import pytest
 import torch
 
 from torch_geometric.nn import MultiAggregation
-from torch_geometric.nn.resolver import aggregation_resolver
 
 
 @pytest.mark.parametrize('multi_aggr_tuple', [
@@ -20,15 +19,12 @@ def test_multi_aggr(multi_aggr_tuple):
 
     aggrs = ['mean', 'sum', 'max']
     aggr = MultiAggregation(aggrs, **multi_aggr_kwargs)
-    try:
-        mode = str(aggregation_resolver(multi_aggr_kwargs['combine_mode']))
-    except ValueError:
-        mode = multi_aggr_kwargs['combine_mode']
-    assert str(aggr) == ('MultiAggregation([\n'
-                         '  MeanAggregation(),\n'
-                         '  SumAggregation(),\n'
-                         '  MaxAggregation()\n'
-                         f"], combine_mode={mode})")
+    assert str(aggr) == (
+        'MultiAggregation([\n'
+        '  MeanAggregation(),\n'
+        '  SumAggregation(),\n'
+        '  MaxAggregation()\n'
+        f"], combine_mode={multi_aggr_kwargs['combine_mode']})")
 
     out = aggr(x, index)
     assert torch.allclose(out, aggr(x, ptr=ptr))

@@ -57,7 +57,7 @@ class MultiAggregation(Aggregation):
                 raise ValueError("Channel projection is only supported in "
                                  "the `'proj'` combine mode.")
             if combine_mode != "cat":
-                self.combine_mode = aggregation_resolver(combine_mode)
+                self.combine_aggr = aggregation_resolver(combine_mode)
 
     def reset_parameters(self):
         for aggr in self.aggrs:
@@ -78,11 +78,14 @@ class MultiAggregation(Aggregation):
         if self.combine_mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
             return self.lin(out) if hasattr(self, 'lin') else out
-        else:
+        elif hasattr(self, 'combine_aggr'):
             out = torch.cat(inputs, dim=-2)
             index = torch.arange(inputs[0].size(-2),
                                  device=out.device).tile(len(inputs))
-            return self.combine_mode(out, index=index, dim=-2)
+            return self.combine_aggr(out, index=index, dim=-2)
+        else:
+            raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
+                             f"supported")
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
