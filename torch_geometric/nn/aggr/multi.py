@@ -3,17 +3,20 @@ from typing import Any, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 
 
 class MultiAggregation(Aggregation):
-    def __init__(self, aggrs: List[Union[Aggregation, str]],
-                 aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
-                 combine_mode: str = 'cat', in_channels: Optional[int] = None,
-                 out_channels: Optional[int] = None):
+    def __init__(
+        self,
+        aggrs: List[Union[Aggregation, str]],
+        aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
+        combine_mode: Optional[Union[str, Aggregation]] = 'cat',
+        in_channels: Optional[int] = None,
+        out_channels: Optional[int] = None,
+    ):
 
         super().__init__()
 
@@ -53,6 +56,8 @@ class MultiAggregation(Aggregation):
             if (in_channels or out_channels) is not None:
                 raise ValueError("Channel projection is only supported in "
                                  "the `'proj'` combine mode.")
+            if combine_mode != "cat":
+                self.combine_mode = aggregation_resolver(combine_mode)
 
     def reset_parameters(self):
         for aggr in self.aggrs:
@@ -73,13 +78,11 @@ class MultiAggregation(Aggregation):
         if self.combine_mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
             return self.lin(out) if hasattr(self, 'lin') else out
-        elif self.combine_mode in ['sum', 'add', 'mul', 'mean', 'min', 'max']:
-            return self.reduce(torch.stack(inputs, dim=0),
-                           torch.tensor([0] * len(inputs)), dim=0,
-                           reduce=self.combine_mode).squeeze_()
         else:
-            raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
-                             f"supported.")
+            out = torch.cat(inputs, dim=-2)
+            index = torch.arange(inputs[0].size(-2),
+                                 device=out.device).tile(len(inputs))
+            return self.combine_mode(out, index=index, dim=-2)
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
