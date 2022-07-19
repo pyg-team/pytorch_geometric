@@ -1,4 +1,5 @@
 import argparse
+import time
 from itertools import product
 
 import torch
@@ -6,11 +7,18 @@ from datasets import get_dataset
 from gcn import GCN
 from gin import GIN
 from graph_sage import GraphSAGE
-from train_eval import eval_acc, train
+from torch.profiler import ProfilerActivity, profile
+from train_eval import eval_acc, inference_run, train
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
-from torch_geometric.profile import get_stats_summary, profileit, timeit
+from torch_geometric.profile import (
+    get_stats_summary,
+    profileit,
+    rename_profile_file,
+    timeit,
+    trace_handler,
+)
 
 seed_everything(0)
 
@@ -22,6 +30,8 @@ parser.add_argument('--warmup_profile', type=int, default=1,
                     help='Skip the first few runs')
 parser.add_argument('--goal_accuracy', type=int, default=1,
                     help='The goal test accuracy')
+parser.add_argument('--inference', action='store_true')
+parser.add_argument('--profile', action='store_true')
 args = parser.parse_args()
 
 layers = [1, 2, 3]
@@ -37,40 +47,90 @@ nets = [
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Decorate train and eval functions:
-train = profileit(print_layer_stats=False)(train)
-eval_acc = timeit()(eval_acc)
 
-for dataset_name, Net in product(datasets, nets):
-    dataset = get_dataset(dataset_name, sparse=True)
-    num_train = int(len(dataset) * 0.8)
-    num_val = int(len(dataset) * 0.1)
+def run_train():
+    for dataset_name, Net in product(datasets, nets):
+        dataset = get_dataset(dataset_name, sparse=True)
+        num_train = int(len(dataset) * 0.8)
+        num_val = int(len(dataset) * 0.1)
 
-    train_dataset = dataset[:num_train]
-    val_dataset = dataset[num_train:num_train + num_val]
-    test_dataset = dataset[num_train + num_val:]
+        train_dataset = dataset[:num_train]
+        val_dataset = dataset[num_train:num_train + num_val]
+        test_dataset = dataset[num_train + num_val:]
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
-                              shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
-                            shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
-                             shuffle=False)
+        train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                                  shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
+                                shuffle=False)
+        test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                                 shuffle=False)
 
-    for num_layers, hidden in product(layers, hiddens):
-        print(f'--\n{dataset_name} - {Net.__name__} - {num_layers} - {hidden}')
+        for num_layers, hidden in product(layers, hiddens):
+            print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
+                                                 num_layers, hidden))
 
-        model = Net(dataset, num_layers, hidden).to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+            model = Net(dataset, num_layers, hidden).to(device)
+            optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-        stats_list = []
-        for epoch in range(1, args.epochs + 1):
-            loss, stats = train(model, optimizer, train_loader)
-            val_acc, val_time = eval_acc(model, val_loader)
-            test_acc, test_time = eval_acc(model, test_loader)
+            stats_list = []
+            for epoch in range(1, args.epochs + 1):
+                loss, stats = train(model, optimizer, train_loader)
+                val_acc, val_time = eval_acc(model, val_loader)
+                test_acc, test_time = eval_acc(model, test_loader)
 
-            if epoch >= args.warmup_profile:
-                stats_list.append(stats)
+                if epoch >= args.warmup_profile:
+                    stats_list.append(stats)
 
-        stats_summary = get_stats_summary(stats_list)
-        print(stats_summary)
+            stats_summary = get_stats_summary(stats_list)
+            print(stats_summary)
+
+
+def run_inference():
+    for dataset_name, Net in product(datasets, nets):
+        dataset = get_dataset(dataset_name, sparse=True)
+        num_train = int(len(dataset) * 0.8)
+        num_val = int(len(dataset) * 0.1)
+        test_dataset = dataset[num_train + num_val:]
+        test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                                 shuffle=False)
+
+        for num_layers, hidden in product(layers, hiddens):
+            print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
+                                                 num_layers, hidden))
+
+            model = Net(dataset, num_layers, hidden).to(device)
+
+            for epoch in range(1, args.epochs + 1):
+                if epoch == args.epochs:
+                    if torch.cuda.is_available():
+                        torch.cuda.synchronize()
+                    t_start = time.time()
+
+                    inference_run(model, test_loader)
+
+                if epoch == args.epochs:
+                    if torch.cuda.is_available():
+                        torch.cuda.synchronize()
+                    t_end = time.time()
+                    duration = t_end - t_start
+                    print(f'End-to-End Inference time: {duration:.8f}s',
+                          flush=True)
+
+            if args.profile:
+                with profile(
+                        activities=[
+                            ProfilerActivity.CPU, ProfilerActivity.CUDA
+                        ], on_trace_ready=trace_handler) as p:
+                    inference_run(model, test_loader)
+                    p.step()
+                rename_profile_file(Net.__name__, dataset_name,
+                                    str(num_layers), str(hidden))
+
+
+if not args.inference:
+    # Decorate train and eval functions:
+    train = profileit(print_layer_stats=False)(train)
+    eval_acc = timeit()(eval_acc)
+    run_train()
+else:
+    run_inference()
