@@ -41,9 +41,9 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
             underlying data, but :meth:`__len__` will be :obj:`None` since it
             will be ambiguous. (default: :obj:`None`)
     """
-    def __init__(self, dataset: Dataset, max_num: int,
-                 mode: str = 'node', shuffle: bool = False,
-                 skip_too_big: bool = False, num_steps: Optional[int] = None):
+    def __init__(self, dataset: Dataset, max_num: int, mode: str = 'node',
+                 shuffle: bool = False, skip_too_big: bool = False,
+                 num_steps: Optional[int] = None):
         if not isinstance(max_num, int) or max_num <= 0:
             raise ValueError("`max_num` should be a positive integer value, "
                              "(got max_num={max_num}).")
