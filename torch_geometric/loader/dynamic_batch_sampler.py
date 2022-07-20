@@ -6,16 +6,16 @@ from torch_geometric.data import Dataset
 
 
 class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
-    r"""Dynamically adds samples to a mini-batch up to a maximum size (number of
-    nodes). When data samples have a wide range in sizes, specifying a
-    mini-batch size in terms of number of samples is not ideal and can cause
-    CUDA OOM errors.
+    r"""Dynamically adds samples to a mini-batch up to a maximum size (either
+    based on number of nodes or number of edges). When data samples have a
+    wide range in sizes, specifying a mini-batch size in terms of number of
+    samples is not ideal and can cause CUDA OOM errors.
 
-    Therefore, the number of steps per epoch is ambiguous, depending on the
-    order of the samples. By default the ``__len__()`` will be None, fine for
-    most cases but progress bars will be `infinite`. Alternatively,
-    ``num_steps`` can be supplied to cap the number of mini-batches produced
-    by the sampler.
+    Within the :class:`DynamicBatchSampler`, the number of steps per epoch is
+    ambiguous, depending on the order of the samples. By default the
+    :meth:`__len__` will be undefined. This is fine for most cases but
+    progress bars will be `infinite`. Alternatively, :obj:`num_steps` can be
+    supplied to cap the number of mini-batches produced by the sampler.
 
     **Usage:**
 
@@ -27,59 +27,61 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
         loader = DataLoader(dataset, batch_sampler=sampler, ...)
 
     Args:
-        data_source (Dataset): dataset to sample from, need this so that
-            potential samples can be sized to create the dynamic batch.
+        dataset (Dataset): Dataset to sample from.
         max_num (int): size of mini-batch to aim for in number of nodes or
             edges.
-        mode (str, optional): `nodes` or `edges` to measure batch size.
-            (default: `nodes`)
-        shuffle (bool, optional): set to ``True`` to have the data reshuffled
-            at every epoch (default: ``False``).
-        skip_too_big (bool, optional): set to ``True`` to skip samples which
-            can't fit in a batch by itself. (default: ``False``).
+        mode (str, optional): :obj:`node` or :obj:`edge` to measure batch
+            size. (default: :obj:`node`)
+        shuffle (bool, optional): set to :obj:`True` to have the data
+            reshuffled at every epoch (default: :obj:`False`).
+        skip_too_big (bool, optional): set to :obj:`True` to skip samples
+            which can't fit in a batch by itself. (default: :obj:`False`).
         num_steps (int, optional): The number of mini-batches to draw for a
             single epoch. If set to :obj:`None`, will iterate through all the
-            underlying data, but __len__ will be :obj:`None` since it will be
-            ambiguous. (default: :obj:`None`)
+            underlying data, but :meth:`__len__` will be :obj:`None` since it
+            will be ambiguous. (default: :obj:`None`)
     """
-    def __init__(self, data_source: Dataset, max_num: int, mode: str = 'nodes',
-                 shuffle: bool = False, skip_too_big: bool = False,
-                 num_steps: Optional[int] = None):
+    def __init__(self, dataset: Dataset, max_num: int,
+                 mode: str = 'node', shuffle: bool = False,
+                 skip_too_big: bool = False, num_steps: Optional[int] = None):
         if not isinstance(max_num, int) or max_num <= 0:
             raise ValueError("`max_num` should be a positive integer value, "
-                             "but got max_num={max_num}.")
-        if mode not in ['nodes', 'edges']:
+                             "(got max_num={max_num}).")
+        if mode not in ['node', 'edge']:
             raise ValueError("`mode` choice should be either "
                              f"`nodes` or `edges, not {mode}.")
 
         self.max_num = max_num
-        self.data_source = data_source
+        self.dataset = dataset
         self.shuffle = shuffle
         self.skip_too_big = skip_too_big
         if num_steps is None:
-            num_steps = len(data_source)
+            num_steps = len(dataset)
         self.num_steps = num_steps
 
-        self.mode = f"num_{mode}"
+        self.mode = mode
 
     def __iter__(self) -> Iterator[List[int]]:
         batch = []
         batch_n = 0
         num_steps = 0
-        current_place = 0
+        num_processed = 0
 
         if self.shuffle:
-            self.idxs = torch.randperm(len(self.data_source), dtype=torch.long)
+            indices = torch.randperm(len(self.dataset), dtype=torch.long)
         else:
-            self.idxs = torch.arange(len(self.data_source), dtype=torch.long)
+            indices = torch.arange(len(self.dataset), dtype=torch.long)
 
         # Main iteration loop
-        while (current_place < len(self.data_source)
+        while (num_processed < len(self.dataset)
                and num_steps < self.num_steps):
             # Fill batch
-            for idx in self.idxs[current_place:]:
+            for idx in indices[num_processed:]:
                 # Size of sample
-                n = getattr(self.data_source[idx], self.mode)
+                if self.mode == 'node':
+                    n = self.dataset[idx].num_nodes
+                else:
+                    n = self.dataset[idx].num_edges
 
                 if batch_n + n > self.max_num:
                     if batch_n == 0:
@@ -96,7 +98,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
 
                 # Add sample to current batch
                 batch.append(idx.item())
-                current_place += 1
+                num_processed += 1
                 batch_n += n
 
             yield batch

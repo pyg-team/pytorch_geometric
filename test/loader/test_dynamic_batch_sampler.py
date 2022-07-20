@@ -8,8 +8,8 @@ from torch_geometric.loader import DataLoader, DynamicBatchSampler
 
 def test_dataloader_with_dynamic_batches():
     data_list: List[Data] = []
-    for i in range(100, 110):
-        data_list.append(Data(num_nodes=i))
+    for num_nodes in range(100, 110):
+        data_list.append(Data(num_nodes=num_nodes))
 
     torch.manual_seed(12345)
     batch_sampler = DynamicBatchSampler(data_list, 300, shuffle=True)
@@ -17,6 +17,7 @@ def test_dataloader_with_dynamic_batches():
 
     num_nodes_total = 0
     for data in loader:
+        assert data.num_nodes <= 300
         num_nodes_total += data.num_nodes
     assert num_nodes_total == 1045
 
