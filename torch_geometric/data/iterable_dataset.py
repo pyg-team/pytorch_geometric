@@ -38,7 +38,6 @@ class IterableDataset(torch.utils.data.IterableDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
@@ -109,10 +108,8 @@ class IterableDataset(torch.utils.data.IterableDataset):
         data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, "num_node_features"):
             return data.num_node_features
-        raise AttributeError(
-            f"'{data.__class__.__name__}' object has no "
-            f"attribute 'num_node_features'"
-        )
+        raise AttributeError(f"'{data.__class__.__name__}' object has no "
+                             f"attribute 'num_node_features'")
 
     @property
     def num_features(self) -> int:
@@ -127,10 +124,8 @@ class IterableDataset(torch.utils.data.IterableDataset):
         data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, "num_edge_features"):
             return data.num_edge_features
-        raise AttributeError(
-            f"'{data.__class__.__name__}' object has no "
-            f"attribute 'num_edge_features'"
-        )
+        raise AttributeError(f"'{data.__class__.__name__}' object has no "
+                             f"attribute 'num_edge_features'")
 
     @property
     def raw_paths(self) -> List[str]:
@@ -160,8 +155,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
                 f"The `pre_transform` argument differs from the one used in "
                 f"the pre-processed version of this dataset. If you want to "
                 f"make use of another pre-processing technique, make sure to "
-                f"delete '{self.processed_dir}' first"
-            )
+                f"delete '{self.processed_dir}' first")
 
         f = osp.join(self.processed_dir, "pre_filter.pt")
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
@@ -169,8 +163,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
                 "make use of another pre-fitering technique, make sure to "
-                "delete '{self.processed_dir}' first"
-            )
+                "delete '{self.processed_dir}' first")
 
         if files_exist(self.processed_paths):  # pragma: no cover
             return
