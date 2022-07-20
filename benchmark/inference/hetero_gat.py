@@ -11,7 +11,6 @@ class HeteroGAT(torch.nn.Module):
         self.model = to_hetero(
             GATForHetero(hidden_channels, num_layers, output_channels,
                          num_heads), metadata)
-        self.training = False
 
     @torch.no_grad()
     def inference(self, loader, device, progress_bar=False):

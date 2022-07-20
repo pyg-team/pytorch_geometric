@@ -22,16 +22,17 @@ def run(args: argparse.ArgumentParser) -> None:
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
+        assert dataset_name in supported_sets.keys(
+        ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
-        dataset = get_dataset(dataset_name, args.root)
-
+        dataset, num_classes = get_dataset(dataset_name, args.root)
+        data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
-        mask = ('paper', None) if hetero else None
+        mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
 
-        data = dataset[0].to(device)
         inputs_channels = data.x_dict['paper'].size(
-            -1) if hetero else dataset.num_features
+            -1) if dataset_name == 'ogbn-mag' else dataset.num_features
 
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:
@@ -68,13 +69,15 @@ def run(args: argparse.ArgumentParser) -> None:
                     for hidden_channels in args.num_hidden_channels:
                         print(
                             '-----------------------------------------------')
-                        print(f'Batch size={batch_size}, '
-                              f'Layers amount={layers}, '
-                              f'Hidden features size={hidden_channels}')
+                        print(
+                            f'Batch size={batch_size}, '
+                            f'Layers amount={layers}, '
+                            f'Num_neighbors={subgraph_loader.num_neighbors}, '
+                            f'Hidden features size={hidden_channels}')
                         params = {
                             'inputs_channels': inputs_channels,
                             'hidden_channels': hidden_channels,
-                            'output_channels': dataset.num_classes,
+                            'output_channels': num_classes,
                             'num_heads': args.num_heads,
                             'num_layers': layers,
                         }
@@ -90,12 +93,12 @@ def run(args: argparse.ArgumentParser) -> None:
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
-                        model.training = False
+                        model.eval()
 
                         start = default_timer()
                         model.inference(subgraph_loader, device, progress_bar)
                         stop = default_timer()
-                        print(f'Inference time={stop-start:.3f}\n')
+                        print(f'Inference time={stop-start:.3f} seconds\n')
 
 
 if __name__ == '__main__':
@@ -107,7 +110,8 @@ if __name__ == '__main__':
         '--models', nargs='+',
         default=['edge_conv', 'gat', 'gcn', 'pna_conv', 'rgat',
                  'rgcn'], type=str)
-    argparser.add_argument('--root', default='../../data', type=str)
+    argparser.add_argument('--root', default='../../data', type=str,
+                           help='relative path to look for the datasets')
     argparser.add_argument('--eval-batch-sizes', nargs='+',
                            default=[512, 1024, 2048, 4096, 8192], type=int)
     argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)

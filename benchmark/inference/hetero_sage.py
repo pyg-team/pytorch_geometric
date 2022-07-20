@@ -10,7 +10,6 @@ class HeteroGraphSAGE(torch.nn.Module):
         self.model = to_hetero(
             SAGEForHetero(hidden_channels, num_layers, output_channels),
             metadata)
-        self.training = False
 
     @torch.no_grad()
     def inference(self, loader, device, progress_bar=False):

@@ -186,7 +186,7 @@ class BasicGNN(torch.nn.Module):
         # assert not loader.shuffle  # TODO (matthias) does not work :(
         if progress_bar:
             pbar = tqdm(total=len(self.convs) * len(loader))
-            pbar.set_description('Evaluating')
+            pbar.set_description('Inference')
 
         x_all = loader.data.x.cpu()
         loader.data.n_id = torch.arange(x_all.size(0))

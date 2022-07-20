@@ -58,8 +58,8 @@ def test_pna_conv_get_degree_histogram():
 
     x = torch.randn(5, 16)
 
-    data_1 = Data(x=x, edge_index=edge_index_1)  # deg_hist = [1, 1, 3]
-    data_2 = Data(x=x, edge_index=edge_index_2)  # deg_hist = [1, 2 ,1 ,1]
+    data_1 = Data(x=x, edge_index=edge_index_1)  # deg_hist = [1, 2 ,1 ,1]
+    data_2 = Data(x=x, edge_index=edge_index_2)  # deg_hist = [1, 1, 3]
     data_3 = Data(x=x, edge_index=edge_index_3)  # deg_hist = [0, 3, 2]
     data_4 = Data(x=x, edge_index=edge_index_4)  # deg_hist = [1, 1, 3]
 

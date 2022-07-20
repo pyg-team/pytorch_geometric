@@ -31,7 +31,7 @@ def get_dataset(name, root):
     elif name == 'reddit':
         dataset = Reddit(root=osp.join(path, root, 'reddit'))
 
-    return dataset
+    return dataset[0], dataset.num_classes
 
 
 def get_model(name, params, metadata=None):
