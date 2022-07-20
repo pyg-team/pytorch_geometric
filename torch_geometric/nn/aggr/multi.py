@@ -23,11 +23,11 @@ class MultiAggregation(Aggregation):
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
         in_channels (int or tuple, optional): Size of each input sample to
-            combine from the repsective aggregation outputs. Need to be
+            combine from the repsective aggregation outputs. Needs to be
             specified when :obj:`"proj"` is used as the combine `mode`.
             (default: :obj:`None`)
         out_channels (int, optional): Size of each output sample after
-            combination. Need to be specified when :obj:`"proj"` is used as
+            combination. Needs to be specified when :obj:`"proj"` is used as
             the combine `mode`. (default: :obj:`None`)
         num_heads (int, optional): Number of parallel attention heads for
             attention-based :obj:`"attn"` combine. (default: :obj:`None`)
