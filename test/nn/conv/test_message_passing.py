@@ -169,9 +169,10 @@ class MyMultipleAggrConv(MessagePassing):
         return self.propagate(edge_index, x=x, size=None)
 
 
-@pytest.mark.parametrize('multi_aggr_tuple',
-                         [(dict(combine_mode='cat'), 3),
-                          (dict(combine_mode='proj', in_channels=16), 1)])
+@pytest.mark.parametrize(
+    'multi_aggr_tuple',
+    [(dict(mode='cat'), 3),
+     (dict(mode='proj', in_channels=16, out_channels=16), 1)])
 def test_my_multiple_aggr_conv(multi_aggr_tuple):
     multi_aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)

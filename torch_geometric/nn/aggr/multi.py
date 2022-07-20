@@ -2,14 +2,14 @@ from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Linear
+from torch.nn import Linear, MultiheadAttention
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 
 
 class MultiAggregation(Aggregation):
-    r"""Performs aggregations with one or more aggregators and combines and
+    r"""Performs aggregations with one or more aggregators and combines
         aggregated results.
 
     Args:
@@ -17,25 +17,32 @@ class MultiAggregation(Aggregation):
         aggrs_kwargs (list, optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
-        combine_mode (string or Aggregation, optional): The combine mode
-            to use for combining aggregated results from multiple aggregations
-            (:obj:`"cat"`, :obj:`"proj"`, :obj:`Aggregation`).
-            (default: :obj:`"cat"`)
-        in_channels (int, optional): Size of each input sample. Need to be
-            specified when :obj:`"proj"` is used as the `combine_mode`.
+        mode (string, optional): The combine mode to use for combining
+            aggregated results from multiple aggregations (:obj:`"cat"`,
+            :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
+            :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
+            :obj:`"attn"`). (default: :obj:`"cat"`)
+        in_channels (int or tuple, optional): Size of each input sample to
+            combine from the repsective aggregation outputs. Need to be
+            specified when :obj:`"proj"` is used as the combine `mode`.
             (default: :obj:`None`)
         out_channels (int, optional): Size of each output sample after
-            combination. It is only used when :obj:`"proj"` is used as the
-            `combine_mode`. It will be set as the same as `in_channels` if not
-            specified. (default: :obj:`None`)
+            combination. Need to be specified when :obj:`"proj"` is used as
+            the combine `mode`. (default: :obj:`None`)
+        num_heads (int, optional): Number of parallel attention heads for
+            attention-based :obj:`"attn"` combine. (default: :obj:`None`)
+        mode_kwargs (dict, optional): Additional arguments for combine `mode`.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
         aggrs: List[Union[Aggregation, str]],
         aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
-        combine_mode: Optional[Union[str, Aggregation]] = 'cat',
+        mode: Optional[str] = 'cat',
         in_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
+        num_heads: Optional[int] = None,
+        mode_kwargs: Optional[Dict[str, Any]] = None,
     ):
 
         super().__init__()
@@ -62,28 +69,54 @@ class MultiAggregation(Aggregation):
             for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
         ])
 
-        self.combine_mode = combine_mode
-        if combine_mode == 'proj':
-            if in_channels is None:
+        self.mode = mode
+        mode_kwargs = mode_kwargs or {}
+        if mode == 'proj' or mode == 'attn':
+            if (in_channels and out_channels) is None:
                 raise ValueError(
-                    f"'Combine mode '{combine_mode}' must "
-                    f"have `in_channels` specified (got '{in_channels}').")
-            if out_channels is None:
-                out_channels = in_channels
-            self.combine_lin = Linear(in_channels * len(aggrs), out_channels,
-                                      bias=True)
-        else:
-            if (in_channels or out_channels) is not None:
-                raise ValueError("Channel projection is only supported in "
-                                 "the `'proj'` combine mode.")
-            if combine_mode != "cat":
-                self.combine_aggr = aggregation_resolver(combine_mode)
+                    f"'Combine mode: '{mode}' must have `in_channels`"
+                    f"and `out_channels` specified.")
+
+            if isinstance(in_channels, int):
+                in_channels = (in_channels, ) * len(aggrs)
+
+            if mode == 'proj':
+                self.lin = Linear(sum(in_channels), out_channels, bias=True)
+
+            if mode == 'attn':
+                if num_heads is None:
+                    raise ValueError(
+                        f"'Combine mode: '{mode}' must have `num_heads` "
+                        f"specified.")
+                self.need_weights = mode_kwargs.pop('need_weights', False)
+                self.lin_heads = torch.nn.ModuleList([
+                    Linear(channels, out_channels, bias=True)
+                    for channels in in_channels
+                ])
+                self.multihead_attn = MultiheadAttention(
+                    out_channels,
+                    num_heads,
+                    **mode_kwargs,
+                )
+
+        dense_combine_modes = [
+            'sum', 'mean', 'max', 'min', 'logsumexp', 'std', 'var'
+        ]
+        if mode in dense_combine_modes:
+            if (in_channels or out_channels or num_heads) is not None:
+                raise ValueError("Channel transformation is only supported in "
+                                 "the `'proj'` and `'attn'` combine mode.")
+            self.dense_combine = getattr(torch, mode)
 
     def reset_parameters(self):
         for aggr in self.aggrs:
             aggr.reset_parameters()
-        if self.combine_mode == 'proj':
-            self.combine_lin.reset_parameters()
+        if self.mode == 'proj':
+            self.lin.reset_parameters()
+        if self.mode == 'att':
+            for lin in self.lin_heads:
+                lin.reset_parameters()
+            self.multihead_attn.reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -95,25 +128,29 @@ class MultiAggregation(Aggregation):
         return self.combine(outs) if len(outs) > 1 else outs[0]
 
     def combine(self, inputs: List[Tensor]) -> Tensor:
-        if self.combine_mode in ['cat', 'proj']:
+        if self.mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
-            if hasattr(self, 'combine_lin'):
-                return self.combine_lin(out)
-            else:
-                return out
-        elif hasattr(self, 'combine_aggr'):
-            out = torch.cat(inputs, dim=-2)
-            index = torch.arange(inputs[0].size(-2),
-                                 device=out.device).tile(len(inputs))
-            return self.combine_aggr(out, index=index, dim=-2)
+            return self.lin(out) if hasattr(self, 'lin') else out
+        elif hasattr(self, 'multihead_attn'):
+            self.lin_heads
+            x = torch.stack(
+                [head(x) for x, head in zip(inputs, self.lin_heads)],
+                dim=0,
+            )
+            attn_out, attn_weights = self.multihead_attn(x, x, x)
+            out = torch.mean(attn_out, dim=0)
+            return (out, attn_weights) if self.need_weights else out
+        elif hasattr(self, 'dense_combine'):
+            out = self.dense_combine(torch.stack(inputs, dim=0), dim=0)
+            return out if isinstance(out, Tensor) else out[0]
         else:
-            raise ValueError(f"'Combine mode: '{self.combine_mode}' is not "
+            raise ValueError(f"'Combine mode: '{self.mode}' is not "
                              f"supported")
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
-        return '{}([\n{}\n], combine_mode={})'.format(
+        return '{}([\n{}\n], mode={})'.format(
             self.__class__.__name__,
             ',\n'.join(args),
-            self.combine_mode,
+            self.mode,
         )
