@@ -1,5 +1,5 @@
-from typing import Iterator, List, Optional
 import warnings
+from typing import Iterator, List, Optional
 
 import torch
 
