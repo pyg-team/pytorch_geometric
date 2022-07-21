@@ -18,20 +18,27 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
     progress bars will be infinite. Alternatively, :obj:`num_steps` can be
     supplied to cap the number of mini-batches produced by the sampler.
 
+    .. code-block:: python
+
+        from torch_geometric.loader import DataLoader, DynamicBatchSampler
+
+        sampler = DynamicBatchSampler(dataset, max_num=10000, mode="node")
+        loader = DataLoader(dataset, batch_sampler=sampler, ...)
+
     Args:
         dataset (Dataset): Dataset to sample from.
-        max_num (int): size of mini-batch to aim for in number of nodes or
+        max_num (int): Size of mini-batch to aim for in number of nodes or
             edges.
-        mode (str, optional): :obj:`node` or :obj:`edge` to measure batch
-            size. (default: :obj:`node`)
-        shuffle (bool, optional): set to :obj:`True` to have the data
-            reshuffled at every epoch (default: :obj:`False`).
-        skip_too_big (bool, optional): set to :obj:`True` to skip samples
-            which can't fit in a batch by itself. (default: :obj:`False`).
+        mode (str, optional): :obj:`"node"` or :obj:`"edge"` to measure
+            batch size. (default: :obj:`"node"`)
+        shuffle (bool, optional): If set to :obj:`True`, will have the data
+            reshuffled at every epoch. (default: :obj:`False`)
+        skip_too_big (bool, optional): If set to :obj:`True`, skip samples
+            which cannot fit in a batch by itself. (default: :obj:`False`)
         num_steps (int, optional): The number of mini-batches to draw for a
             single epoch. If set to :obj:`None`, will iterate through all the
-            underlying data, but :meth:`__len__` will be :obj:`None` since it
-            will be ambiguous. (default: :obj:`None`)
+            underlying examples, but :meth:`__len__` will be :obj:`None` since
+            it is be ambiguous. (default: :obj:`None`)
     """
     def __init__(self, dataset: Dataset, max_num: int, mode: str = 'node',
                  shuffle: bool = False, skip_too_big: bool = False,
@@ -41,17 +48,17 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                              "(got {max_num}).")
         if mode not in ['node', 'edge']:
             raise ValueError("`mode` choice should be either "
-                             f"`node` or `edge` (got {mode}).")
+                             f"'node' or 'edge' (got '{mode}').")
 
-        self.max_num = max_num
-        self.dataset = dataset
-        self.shuffle = shuffle
-        self.skip_too_big = skip_too_big
         if num_steps is None:
             num_steps = len(dataset)
-        self.num_steps = num_steps
 
+        self.dataset = dataset
+        self.max_num = max_num
         self.mode = mode
+        self.shuffle = shuffle
+        self.skip_too_big = skip_too_big
+        self.num_steps = num_steps
 
     def __iter__(self) -> Iterator[List[int]]:
         batch = []
@@ -64,16 +71,13 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
         else:
             indices = torch.arange(len(self.dataset), dtype=torch.long)
 
-        # Main iteration loop
         while (num_processed < len(self.dataset)
                and num_steps < self.num_steps):
             # Fill batch
             for idx in indices[num_processed:]:
                 # Size of sample
-                if self.mode == 'node':
-                    n = self.dataset[idx].num_nodes
-                else:
-                    n = self.dataset[idx].num_edges
+                data = self.dataset[idx]
+                n = data.num_nodes if self.mode == 'node' else data.num_edges
 
                 if batch_n + n > self.max_num:
                     if batch_n == 0:
@@ -81,9 +85,9 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                             continue
                         else:
                             warnings.warn("Size of data sample at index "
-                                          f"{idx} is larger than max_num"
-                                          f"({self.max_num}). This mini-batch"
-                                          f" will have {n} {self.mode}s.")
+                                          f"{idx} is larger than "
+                                          f"{self.max_num} {self.mode}s "
+                                          f"(got {n} {self.mode}s.")
                     else:
                         # Mini-batch filled
                         break
