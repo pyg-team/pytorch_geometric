@@ -179,14 +179,14 @@ class MLP(torch.nn.Module):
 
     def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
         """"""
-        for lin, norm, dropout in zip(self.lins, self.norms, self.dropout):
+        for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
-            x = F.dropout(x, p=dropout, training=self.training)
+            x = F.dropout(x, p=self.dropout[i], training=self.training)
             emb = x
 
         if self.plain_last:
