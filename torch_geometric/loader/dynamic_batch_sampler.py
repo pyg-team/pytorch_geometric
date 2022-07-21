@@ -49,7 +49,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                              "(got max_num={max_num}).")
         if mode not in ['node', 'edge']:
             raise ValueError("`mode` choice should be either "
-                             f"`nodes` or `edges, not {mode}.")
+                             f"`node` or `edge` (got {mode}).")
 
         self.max_num = max_num
         self.dataset = dataset
