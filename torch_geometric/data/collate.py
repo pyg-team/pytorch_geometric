@@ -124,12 +124,16 @@ def _collate(
     if isinstance(elem, Tensor):
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
-        cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
+        if isinstance(key, str):
+            str_key = key
+        else:
+            str_key = str(key)
+        cat_dim = data_list[0].__cat_dim__(str_key, elem, stores[0])
         if cat_dim is None or elem.dim() == 0:
             values = [value.unsqueeze(0) for value in values]
         slices = cumsum([value.size(cat_dim or 0) for value in values])
         if increment:
-            incs = get_incs(key, values, data_list, stores)
+            incs = get_incs(str_key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
                 values = [
                     value + inc.to(value.device)
