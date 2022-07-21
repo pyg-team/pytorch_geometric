@@ -174,6 +174,9 @@ class MyMultipleAggrConv(MessagePassing):
     [(dict(mode='cat'), 3),
      (dict(mode='proj', in_channels=16, out_channels=16), 1)])
 def test_my_multiple_aggr_conv(multi_aggr_tuple):
+    # The 'cat' combine mode will expand the output dimensions by
+    # the number of aggregators which is 3 here, while the 'proj'
+    # mode keep output dimensions unchanged.
     multi_aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -183,10 +186,6 @@ def test_my_multiple_aggr_conv(multi_aggr_tuple):
     conv = MyMultipleAggrConv(multi_aggr_kwargs=multi_aggr_kwargs)
     out = conv(x, edge_index)
     assert out.size() == (4, 16 * expand)
-    for i in range(expand):
-        for j in range(i + 1, expand):
-            assert not torch.allclose(out[:, (16 * i):(16 * (i + 1))],
-                                      out[:, (16 * j):(16 * (j + 1))])
     assert torch.allclose(conv(x, adj.t()), out)
 
 

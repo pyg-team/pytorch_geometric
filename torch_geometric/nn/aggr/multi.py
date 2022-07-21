@@ -23,12 +23,13 @@ class MultiAggregation(Aggregation):
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
         in_channels (int or tuple, optional): Size of each input sample to
-            combine from the repsective aggregation outputs. Needs to be
-            specified when :obj:`"proj"` is used as the combine `mode`.
-            (default: :obj:`None`)
+            combine from the respective aggregation outputs. Needs to be
+            specified when :obj:`"proj"` or  :obj:`"attn"` is used as the
+            combine `mode`. (default: :obj:`None`)
         out_channels (int, optional): Size of each output sample after
-            combination. Needs to be specified when :obj:`"proj"` is used as
-            the combine `mode`. (default: :obj:`None`)
+            combination. Needs to be specified when :obj:`"proj"` or
+            :obj:`"attn"` is used as the combine `mode`.
+            (default: :obj:`None`)
         num_heads (int, optional): Number of parallel attention heads for
             attention-based :obj:`"attn"` combine. (default: :obj:`None`)
         mode_kwargs (dict, optional): Additional arguments for combine `mode`.
@@ -74,7 +75,7 @@ class MultiAggregation(Aggregation):
         if mode == 'proj' or mode == 'attn':
             if (in_channels and out_channels) is None:
                 raise ValueError(
-                    f"'Combine mode: '{mode}' must have `in_channels`"
+                    f"'Combine mode '{mode}' must have `in_channels`"
                     f"and `out_channels` specified.")
 
             if isinstance(in_channels, int):
@@ -86,7 +87,7 @@ class MultiAggregation(Aggregation):
             if mode == 'attn':
                 if num_heads is None:
                     raise ValueError(
-                        f"'Combine mode: '{mode}' must have `num_heads` "
+                        f"'Combine mode '{mode}' must have `num_heads` "
                         f"specified.")
                 self.need_weights = mode_kwargs.pop('need_weights', False)
                 self.lin_heads = torch.nn.ModuleList([
@@ -113,10 +114,10 @@ class MultiAggregation(Aggregation):
             aggr.reset_parameters()
         if self.mode == 'proj':
             self.lin.reset_parameters()
-        if self.mode == 'att':
+        if self.mode == 'attn':
             for lin in self.lin_heads:
                 lin.reset_parameters()
-            self.multihead_attn.reset_parameters()
+            self.multihead_attn._reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -132,7 +133,6 @@ class MultiAggregation(Aggregation):
             out = torch.cat(inputs, dim=-1)
             return self.lin(out) if hasattr(self, 'lin') else out
         elif hasattr(self, 'multihead_attn'):
-            self.lin_heads
             x = torch.stack(
                 [head(x) for x, head in zip(inputs, self.lin_heads)],
                 dim=0,
@@ -144,7 +144,7 @@ class MultiAggregation(Aggregation):
             out = self.dense_combine(torch.stack(inputs, dim=0), dim=0)
             return out if isinstance(out, Tensor) else out[0]
         else:
-            raise ValueError(f"'Combine mode: '{self.mode}' is not "
+            raise ValueError(f"'Combine mode '{self.mode}' is not "
                              f"supported")
 
     def __repr__(self) -> str:

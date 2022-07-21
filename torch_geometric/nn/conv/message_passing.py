@@ -472,7 +472,7 @@ class MessagePassing(torch.nn.Module):
         edge_mask = self._edge_mask
 
         if edge_mask is None:
-            raise ValueError(f"Could not found a pre-defined 'edge_mask' as "
+            raise ValueError(f"Could not find a pre-defined 'edge_mask' as "
                              f"part of {self.__class__.__name__}.")
 
         if self._apply_sigmoid:
