@@ -9,13 +9,13 @@ class HeteroGraphSAGE(torch.nn.Module):
         super().__init__()
         self.model = to_hetero(
             SAGEForHetero(hidden_channels, num_layers, output_channels),
-            metadata)
+            metadata)  # TODO: replace by basic_gnn
 
     @torch.no_grad()
     def inference(self, loader, device, progress_bar=False):
         self.model.eval()
         if progress_bar:
-            loader = tqdm(loader)
+            loader = tqdm(loader, desc="Inference")
         for batch in loader:
             batch = batch.to(device)
             self.model(batch.x_dict, batch.edge_index_dict)

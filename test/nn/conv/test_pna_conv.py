@@ -38,8 +38,7 @@ def test_pna_conv():
 
 def test_pna_conv_get_degree_histogram():
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 2, 3], [1, 2, 3, 2, 0, 0, 0]])
-    x = torch.randn(5, 16)
-    data = Data(x=x, edge_index=edge_index)
+    data = Data(num_nodes=5, edge_index=edge_index)
     loader = NeighborLoader(
         data,
         num_neighbors=[-1],
@@ -56,12 +55,11 @@ def test_pna_conv_get_degree_histogram():
     edge_index_3 = torch.tensor([[1, 3, 2, 0, 0, 4, 2], [2, 0, 4, 1, 1, 0, 3]])
     edge_index_4 = torch.tensor([[0, 1, 2, 4, 0, 1, 3], [2, 3, 3, 1, 1, 0, 2]])
 
-    x = torch.randn(5, 16)
-
-    data_1 = Data(x=x, edge_index=edge_index_1)  # deg_hist = [1, 2 ,1 ,1]
-    data_2 = Data(x=x, edge_index=edge_index_2)  # deg_hist = [1, 1, 3]
-    data_3 = Data(x=x, edge_index=edge_index_3)  # deg_hist = [0, 3, 2]
-    data_4 = Data(x=x, edge_index=edge_index_4)  # deg_hist = [1, 1, 3]
+    data_1 = Data(num_nodes=5,
+                  edge_index=edge_index_1)  # deg_hist = [1, 2 ,1 ,1]
+    data_2 = Data(num_nodes=5, edge_index=edge_index_2)  # deg_hist = [1, 1, 3]
+    data_3 = Data(num_nodes=5, edge_index=edge_index_3)  # deg_hist = [0, 3, 2]
+    data_4 = Data(num_nodes=5, edge_index=edge_index_4)  # deg_hist = [1, 1, 3]
 
     loader = DataLoader(
         [data_1, data_2, data_3, data_4],

@@ -1,5 +1,4 @@
 import argparse
-import copy
 from timeit import default_timer
 
 import torch
@@ -10,15 +9,14 @@ from torch_geometric.nn import PNAConv
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
-    'reddit': ['edge_conv', 'gat', 'gcn', 'pna_conv'],
-    'ogbn-products': ['edge_conv', 'gat', 'gcn', 'pna_conv'],
+    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna'],
+    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna'],
 }
 
 
 def run(args: argparse.ArgumentParser) -> None:
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    progress_bar = True
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
@@ -31,8 +29,9 @@ def run(args: argparse.ArgumentParser) -> None:
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
 
-        inputs_channels = data.x_dict['paper'].size(
-            -1) if dataset_name == 'ogbn-mag' else dataset.num_features
+        inputs_channels = data[
+            'paper'].num_features if dataset_name == 'ogbn-mag' \
+            else dataset.num_features
 
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:
@@ -44,27 +43,25 @@ def run(args: argparse.ArgumentParser) -> None:
             for batch_size in args.eval_batch_sizes:
                 if not hetero:
                     subgraph_loader = NeighborLoader(
-                        copy.copy(data),
-                        num_neighbors=[-1],
+                        data,
+                        num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=args.num_workers,
                     )
-                    subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
                 for layers in args.num_layers:
                     if hetero:
                         subgraph_loader = NeighborLoader(
-                            copy.copy(data),
-                            num_neighbors=[args.hetero_num_neighbors] * layers,
+                            data,
+                            num_neighbors=[args.hetero_num_neighbors] *
+                            layers,  # batch-wise inference
                             input_nodes=mask,
                             batch_size=batch_size,
                             shuffle=False,
                             num_workers=args.num_workers,
                         )
-                        subgraph_loader.data.n_id = torch.arange(
-                            data.num_nodes)
 
                     for hidden_channels in args.num_hidden_channels:
                         print(
@@ -82,7 +79,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             'num_layers': layers,
                         }
 
-                        if model_name == 'pna_conv':
+                        if model_name == 'pna':
                             if degree is None:
                                 degree = PNAConv.get_degree_histogram(
                                     subgraph_loader)
@@ -96,7 +93,8 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         start = default_timer()
-                        model.inference(subgraph_loader, device, progress_bar)
+                        model.inference(subgraph_loader, device,
+                                        progress_bar=True)
                         stop = default_timer()
                         print(f'Inference time={stop-start:.3f} seconds\n')
 
@@ -105,11 +103,10 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
     argparser.add_argument('--datasets', nargs='+',
                            default=['ogbn-mag', 'ogbn-products',
-                                    'reddit'], type=str)
+                                    'Reddit'], type=str)
     argparser.add_argument(
         '--models', nargs='+',
-        default=['edge_conv', 'gat', 'gcn', 'pna_conv', 'rgat',
-                 'rgcn'], type=str)
+        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
     argparser.add_argument('--root', default='../../data', type=str,
                            help='relative path to look for the datasets')
     argparser.add_argument('--eval-batch-sizes', nargs='+',

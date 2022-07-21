@@ -9,64 +9,52 @@ from torch_geometric.datasets import OGB_MAG, Reddit
 from torch_geometric.nn.models.basic_gnn import GAT, GCN, PNA, EdgeCNN
 
 models_dict = {
-    'edge_conv': EdgeCNN,
+    'edge_cnn': EdgeCNN,
     'gat': GAT,
     'gcn': GCN,
-    'pna_conv': PNA,
+    'pna': PNA,
     'rgat': HeteroGAT,
     'rgcn': HeteroGraphSAGE,
 }
 
 
 def get_dataset(name, root):
-    path = osp.dirname(osp.realpath(__file__))
-
+    path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
     if name == 'ogbn-mag':
         transform = T.ToUndirected(merge=True)
-        dataset = OGB_MAG(root=osp.join(path, root, 'mag'),
-                          preprocess='metapath2vec', transform=transform)
+        dataset = OGB_MAG(root=path, preprocess='metapath2vec',
+                          transform=transform)
     elif name == 'ogbn-products':
-        dataset = PygNodePropPredDataset('ogbn-products',
-                                         root=osp.join(path, root, 'products'))
-    elif name == 'reddit':
-        dataset = Reddit(root=osp.join(path, root, 'reddit'))
+        dataset = PygNodePropPredDataset('ogbn-products', root=path)
+    elif name == 'Reddit':
+        dataset = Reddit(root=path)
 
     return dataset[0], dataset.num_classes
 
 
 def get_model(name, params, metadata=None):
-    try:
-        model_type = models_dict[name]
-    except KeyError:
-        print(f'Model {name} not supported!')
+    Model = models_dict.get(name, None)
+    assert Model is not None, f'Model {name} not supported!'
 
     if name == 'rgat':
-        model = model_type(metadata, params['hidden_channels'],
-                           params['num_layers'], params['output_channels'],
-                           params['num_heads'])
+        return Model(metadata, params['hidden_channels'], params['num_layers'],
+                     params['output_channels'], params['num_heads'])
 
-    elif name == 'rgcn':
-        model = model_type(metadata, params['hidden_channels'],
-                           params['num_layers'], params['output_channels'])
+    if name == 'rgcn':
+        return Model(metadata, params['hidden_channels'], params['num_layers'],
+                     params['output_channels'])
 
-    elif name == 'gat':
-        kwargs = {}
-        kwargs['heads'] = params['num_heads']
-        model = model_type(params['inputs_channels'],
-                           params['hidden_channels'], params['num_layers'],
-                           params['output_channels'], **kwargs)
+    if name == 'gat':
+        return Model(params['inputs_channels'], params['hidden_channels'],
+                     params['num_layers'], params['output_channels'],
+                     heads=params['num_heads'])
 
-    elif name == 'pna_conv':
-        kwargs = {}
-        kwargs['aggregators'] = ['mean', 'min', 'max', 'std']
-        kwargs['scalers'] = ['identity', 'amplification', 'attenuation']
-        kwargs['deg'] = params['degree']
-        model = model_type(params['inputs_channels'],
-                           params['hidden_channels'], params['num_layers'],
-                           params['output_channels'], **kwargs)
+    if name == 'pna':
+        return Model(params['inputs_channels'], params['hidden_channels'],
+                     params['num_layers'], params['output_channels'],
+                     aggregators=['mean', 'min', 'max', 'std'],
+                     scalers=['identity', 'amplification',
+                              'attenuation'], deg=params['degree'])
 
-    else:
-        model = model_type(params['inputs_channels'],
-                           params['hidden_channels'], params['num_layers'],
-                           params['output_channels'])
-    return model
+    return Model(params['inputs_channels'], params['hidden_channels'],
+                 params['num_layers'], params['output_channels'])
