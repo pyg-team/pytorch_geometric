@@ -14,7 +14,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
     Within the :class:`DynamicBatchSampler`, the number of steps per epoch is
     ambiguous, depending on the order of the samples. By default the
     :meth:`__len__` will be undefined. This is fine for most cases but
-    progress bars will be `infinite`. Alternatively, :obj:`num_steps` can be
+    progress bars will be infinite. Alternatively, :obj:`num_steps` can be
     supplied to cap the number of mini-batches produced by the sampler.
 
     **Usage:**
