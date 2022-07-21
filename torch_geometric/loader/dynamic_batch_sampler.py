@@ -1,4 +1,5 @@
 from typing import Iterator, List, Optional
+import warnings
 
 import torch
 
@@ -16,15 +17,6 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
     :meth:`__len__` will be undefined. This is fine for most cases but
     progress bars will be infinite. Alternatively, :obj:`num_steps` can be
     supplied to cap the number of mini-batches produced by the sampler.
-
-    **Usage:**
-
-    .. code-block:: python
-
-        from torch_geometric.loader import DataLoader, DynamicBatchSampler
-
-        batch_sampler = DynamicBatchSampler(dataset, max_num=10000)
-        loader = DataLoader(dataset, batch_sampler=sampler, ...)
 
     Args:
         dataset (Dataset): Dataset to sample from.
@@ -88,13 +80,13 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                         if self.skip_too_big:
                             continue
                         else:
-                            raise RuntimeError(
-                                f"Size of a single data example ({n} @ index "
-                                "{idx}) is larger than max_num"
-                                "({self.max_num})")
-
-                    # Mini-batch filled
-                    break
+                            warnings.warn("Size of data sample at index "
+                                          f"{idx} is larger than max_num"
+                                          f"({self.max_num}). This mini-batch"
+                                          f" will have {n} {self.mode}s.")
+                    else:
+                        # Mini-batch filled
+                        break
 
                 # Add sample to current batch
                 batch.append(idx.item())
