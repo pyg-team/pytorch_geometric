@@ -26,19 +26,19 @@ def test_multi_aggr(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the other
     # modes keep output dimensions unchanged.
-    multi_aggr_kwargs, expand = multi_aggr_tuple
+    aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(7, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2, 3])
     ptr = torch.tensor([0, 2, 5, 6, 7])
 
     aggrs = ['mean', 'sum', 'max']
-    aggr = MultiAggregation(aggrs, **multi_aggr_kwargs)
+    aggr = MultiAggregation(aggrs, **aggr_kwargs)
     aggr.reset_parameters()
     assert str(aggr) == ('MultiAggregation([\n'
                          '  MeanAggregation(),\n'
                          '  SumAggregation(),\n'
                          '  MaxAggregation()\n'
-                         f"], mode={multi_aggr_kwargs['mode']})")
+                         f"], mode={aggr_kwargs['mode']})")
 
     out = aggr(x, index)
     assert torch.allclose(out, aggr(x, ptr=ptr))

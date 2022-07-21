@@ -170,20 +170,22 @@ class MyMultipleAggrConv(MessagePassing):
 
 
 @pytest.mark.parametrize(
-    'multi_aggr_tuple',
-    [(dict(mode='cat'), 3),
-     (dict(mode='proj', in_channels=16, out_channels=16), 1)])
+    'multi_aggr_tuple', [(dict(mode='cat'), 3),
+                         (dict(
+                             mode='proj',
+                             mode_kwargs=dict(in_channels=16, out_channels=16),
+                         ), 1)])
 def test_my_multiple_aggr_conv(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the 'proj'
     # mode keeps output dimensions unchanged.
-    multi_aggr_kwargs, expand = multi_aggr_tuple
+    aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = MyMultipleAggrConv(multi_aggr_kwargs=multi_aggr_kwargs)
+    conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
     assert out.size() == (4, 16 * expand)
     assert torch.allclose(conv(x, adj.t()), out)
