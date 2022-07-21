@@ -22,8 +22,8 @@ class MultiAggregation(Aggregation):
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
-        mode_kwargs (dict, optional): Additional arguments to pass to the
-            combine `mode`. (default: :obj:`None`)
+        mode_kwargs (dict, optional): Arguments passed for the combine `mode`.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
