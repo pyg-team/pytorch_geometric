@@ -154,7 +154,6 @@ class Transformer(object):
                 op = 'call_message_passing_module'
             elif is_global_pooling_op(self.module, op, node.target):
                 op = 'call_global_pooling_module'
-
             getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
@@ -284,7 +283,9 @@ def is_message_passing_op(module: Module, op: str, target: str) -> bool:
 
 
 def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
-    from torch_geometric.nn import GlobalPooling
+    from torch_geometric.nn import Aggregation, GlobalPooling
     if op == 'call_module':
-        return isinstance(get_submodule(module, target), GlobalPooling)
+        return isinstance(get_submodule(module, target),
+                          GlobalPooling) or isinstance(
+                              get_submodule(module, target), Aggregation)
     return False

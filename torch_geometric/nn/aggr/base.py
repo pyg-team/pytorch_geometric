@@ -7,13 +7,53 @@ from torch_scatter import scatter, segment_csr
 from torch_geometric.utils import to_dense_batch
 
 
+def validate(x: Tensor, index: Optional[Tensor] = None,
+             ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+             dim: int = -2):
+
+    if dim >= x.dim() or dim < -x.dim():
+        raise ValueError(f"Encountered invalid dimension '{dim}' of "
+                         f"source tensor with {x.dim()} dimensions")
+
+    if index is None and ptr is None:
+        index = x.new_zeros(x.size(dim), dtype=torch.long)
+
+    if ptr is not None:
+        if dim_size is None:
+            dim_size = ptr.numel() - 1
+        elif dim_size != ptr.numel() - 1:
+            raise ValueError(f"Encountered invalid 'dim_size' (got "
+                             f"'{dim_size}' but expected "
+                             f"'{ptr.numel() - 1}')")
+
+    if index is not None:
+        if dim_size is None:
+            dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
+        elif index.numel() > 0 and dim_size <= int(index.max()):
+            raise ValueError(f"Encountered invalid 'dim_size' (got "
+                             f"'{dim_size}' but expected "
+                             f">= '{int(index.max()) + 1}')")
+
+    return x, index, ptr, dim_size, dim
+
+
 class Aggregation(torch.nn.Module):
     r"""An abstract base class for implementing custom aggregations."""
+    def __init__(self):
+        super().__init__()
+        self._forward_sub = self.forward
+        self.forward = self._foward
+
+    def _foward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2, **kwargs) -> Tensor:
+        x, index, ptr, dim_size, dim = validate(x, index, ptr, dim_size, dim)
+        return self._forward_sub(x, index, ptr, dim_size, dim, **kwargs)
 
     # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+                dim: int = -2, **kwargs) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -34,35 +74,6 @@ class Aggregation(torch.nn.Module):
 
     def reset_parameters(self):
         pass
-
-    def __call__(self, x: Tensor, index: Optional[Tensor] = None,
-                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                 dim: int = -2, **kwargs) -> Tensor:
-
-        if dim >= x.dim() or dim < -x.dim():
-            raise ValueError(f"Encountered invalid dimension '{dim}' of "
-                             f"source tensor with {x.dim()} dimensions")
-
-        if index is None and ptr is None:
-            index = x.new_zeros(x.size(dim), dtype=torch.long)
-
-        if ptr is not None:
-            if dim_size is None:
-                dim_size = ptr.numel() - 1
-            elif dim_size != ptr.numel() - 1:
-                raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                 f"'{dim_size}' but expected "
-                                 f"'{ptr.numel() - 1}')")
-
-        if index is not None:
-            if dim_size is None:
-                dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
-            elif index.numel() > 0 and dim_size <= int(index.max()):
-                raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                 f"'{dim_size}' but expected "
-                                 f">= '{int(index.max()) + 1}')")
-
-        return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
