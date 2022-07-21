@@ -1,5 +1,7 @@
 from typing import List, Union
+
 import torch
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -23,12 +25,13 @@ class SKLearnPreprocessTransform(BaseTransform):
         self.attrs = attrs
 
     def __call__(self, data: Union[Data, HeteroData]):
-        for edge,store in list(zip(data.edge_types,data.edge_stores)):
+        for edge, store in list(zip(data.edge_types, data.edge_stores)):
             for key, value in store.items(*self.attrs):
                 if "edge_scaler" in store.keys():
                     scaler = store["edge_scaler"]
                     # needs to be a float tensor since this is the edge_attr
-                    value = torch.tensor(scaler.transform(value),dtype=torch.float)
+                    value = torch.tensor(scaler.transform(value),
+                                         dtype=torch.float)
                     store[key] = value
                     del store["edge_scaler"]
         return data
