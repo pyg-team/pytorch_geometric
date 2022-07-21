@@ -169,12 +169,10 @@ class MyMultipleAggrConv(MessagePassing):
         return self.propagate(edge_index, x=x, size=None)
 
 
-@pytest.mark.parametrize(
-    'multi_aggr_tuple', [(dict(mode='cat'), 3),
-                         (dict(
-                             mode='proj',
-                             mode_kwargs=dict(in_channels=16, out_channels=16),
-                         ), 1)])
+@pytest.mark.parametrize('multi_aggr_tuple', [
+    (dict(mode='cat'), 3),
+    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1)
+])
 def test_my_multiple_aggr_conv(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the 'proj'

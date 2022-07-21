@@ -23,7 +23,13 @@ class MultiAggregation(Aggregation):
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
         mode_kwargs (dict, optional): Arguments passed for the combine `mode`.
-            (default: :obj:`None`)
+            When :obj:`"proj"` or :obj:`"attn"` is used as the combine `mode`,
+            `in_channels` (int or tuple) and `out_channels` (int) are needed to
+            be specified respectively for the size of each input sample to
+            combine from the respective aggregation outputs and the size of
+            each output sample after combination. When :obj:`"attn"` mode is
+            used, `num_heads` (int) is needed to be specified for the number of
+            parallel attention heads. (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -64,7 +70,7 @@ class MultiAggregation(Aggregation):
             out_channels = mode_kwargs.pop('out_channels', None)
             if (in_channels and out_channels) is None:
                 raise ValueError(
-                    f"'Combine mode '{mode}' must have `in_channels` "
+                    f"Combine mode '{mode}' must have `in_channels` "
                     f"and `out_channels` specified.")
 
             if isinstance(in_channels, int):
@@ -118,7 +124,7 @@ class MultiAggregation(Aggregation):
             out = torch.cat(inputs, dim=-1)
             return self.lin(out) if hasattr(self, 'lin') else out
 
-        elif hasattr(self, 'multihead_attn'):
+        if hasattr(self, 'multihead_attn'):
             x = torch.stack(
                 [head(x) for x, head in zip(inputs, self.lin_heads)],
                 dim=0,
@@ -126,13 +132,11 @@ class MultiAggregation(Aggregation):
             attn_out, _ = self.multihead_attn(x, x, x)
             return torch.mean(attn_out, dim=0)
 
-        elif hasattr(self, 'dense_combine'):
+        if hasattr(self, 'dense_combine'):
             out = self.dense_combine(torch.stack(inputs, dim=0), dim=0)
             return out if isinstance(out, Tensor) else out[0]
 
-        else:
-            raise ValueError(f"'Combine mode '{self.mode}' is not "
-                             f"supported")
+        raise ValueError(f"Combine mode '{self.mode}' is not supported.")
 
     def __repr__(self) -> str:
         args = [f'  {aggr}' for aggr in self.aggrs]
