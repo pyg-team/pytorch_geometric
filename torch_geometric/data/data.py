@@ -502,7 +502,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
-        elif 'index' in key or key == 'face':
+        elif isinstance(key, str) and ('index' in key or key == 'face'):
             return -1
         else:
             return 0
