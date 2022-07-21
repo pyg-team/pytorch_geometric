@@ -45,7 +45,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                  shuffle: bool = False, skip_too_big: bool = False,
                  num_steps: Optional[int] = None):
         if not isinstance(max_num, int) or max_num <= 0:
-            raise ValueError("`max_num` should be a positive integer value, "
+            raise ValueError("`max_num` should be a positive integer value "
                              "(got max_num={max_num}).")
         if mode not in ['node', 'edge']:
             raise ValueError("`mode` choice should be either "
