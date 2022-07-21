@@ -5,8 +5,8 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
-@functional_transform('scale_edges')
-class ScaleEdges(BaseTransform):
+@functional_transform('sklearn_preprocess')
+class SKLearnPreprocessTransform(BaseTransform):
     r"""Column-normalizes the attributes given in :obj:`attrs` to sum-up to standardize or scale them.
 
     Mainly useful for edges, if the scalar for the collective data edges is stored
