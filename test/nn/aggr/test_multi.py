@@ -17,6 +17,9 @@ from torch_geometric.nn import MultiAggregation
     (dict(mode='attn', in_channels=16, out_channels=16, num_heads=4), 1),
 ])
 def test_multi_aggr(multi_aggr_tuple):
+    # The 'cat' combine mode will expand the output dimensions by
+    # the number of aggregators which is 3 here, while the other
+    # modes keep output dimensions unchanged.
     multi_aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(7, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2, 3])

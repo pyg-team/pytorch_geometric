@@ -176,7 +176,7 @@ class MyMultipleAggrConv(MessagePassing):
 def test_my_multiple_aggr_conv(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by
     # the number of aggregators which is 3 here, while the 'proj'
-    # mode keep output dimensions unchanged.
+    # mode keeps output dimensions unchanged.
     multi_aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
