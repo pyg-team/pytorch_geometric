@@ -1,8 +1,8 @@
 import torch
-from torch_geometric.typing import OptTensor
 from torch_scatter import scatter_add
 
 from torch_geometric.nn import knn
+from torch_geometric.typing import OptTensor
 
 
 def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
