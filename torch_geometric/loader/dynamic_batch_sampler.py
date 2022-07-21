@@ -46,7 +46,7 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
                  num_steps: Optional[int] = None):
         if not isinstance(max_num, int) or max_num <= 0:
             raise ValueError("`max_num` should be a positive integer value "
-                             "(got max_num={max_num}).")
+                             "(got {max_num}).")
         if mode not in ['node', 'edge']:
             raise ValueError("`mode` choice should be either "
                              f"`node` or `edge` (got {mode}).")
