@@ -64,7 +64,7 @@ class MultiAggregation(Aggregation):
             out_channels = mode_kwargs.pop('out_channels', None)
             if (in_channels and out_channels) is None:
                 raise ValueError(
-                    f"'Combine mode '{mode}' must have `in_channels`"
+                    f"'Combine mode '{mode}' must have `in_channels` "
                     f"and `out_channels` specified.")
 
             if isinstance(in_channels, int):
