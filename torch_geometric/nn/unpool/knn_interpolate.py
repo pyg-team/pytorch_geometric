@@ -2,10 +2,12 @@ import torch
 from torch_scatter import scatter_add
 
 from torch_geometric.nn import knn
+from torch_geometric.typing import OptTensor
 
 
-def knn_interpolate(x, pos_x, pos_y, batch_x=None, batch_y=None, k=3,
-                    num_workers=1):
+def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
+                    batch_x: OptTensor = None, batch_y: OptTensor = None,
+                    k: int = 3, num_workers: int = 1):
     r"""The k-NN interpolation from the `"PointNet++: Deep Hierarchical
     Feature Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper.
@@ -44,7 +46,7 @@ def knn_interpolate(x, pos_x, pos_y, batch_x=None, batch_y=None, k=3,
     with torch.no_grad():
         assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y,
                            num_workers=num_workers)
-        y_idx, x_idx = assign_index
+        y_idx, x_idx = assign_index[0], assign_index[1]
         diff = pos_x[x_idx] - pos_y[y_idx]
         squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
         weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
