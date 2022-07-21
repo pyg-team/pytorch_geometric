@@ -22,27 +22,14 @@ class MultiAggregation(Aggregation):
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
-        in_channels (int or tuple, optional): Size of each input sample to
-            combine from the respective aggregation outputs. Needs to be
-            specified when :obj:`"proj"` or  :obj:`"attn"` is used as the
+        mode_kwargs (dict, optional): Additional arguments to pass to the
             combine `mode`. (default: :obj:`None`)
-        out_channels (int, optional): Size of each output sample after
-            combination. Needs to be specified when :obj:`"proj"` or
-            :obj:`"attn"` is used as the combine `mode`.
-            (default: :obj:`None`)
-        num_heads (int, optional): Number of parallel attention heads for
-            attention-based :obj:`"attn"` combine. (default: :obj:`None`)
-        mode_kwargs (dict, optional): Additional arguments for combine `mode`.
-            (default: :obj:`None`)
     """
     def __init__(
         self,
         aggrs: List[Union[Aggregation, str]],
         aggrs_kwargs: Optional[List[Dict[str, Any]]] = None,
         mode: Optional[str] = 'cat',
-        in_channels: Optional[int] = None,
-        out_channels: Optional[int] = None,
-        num_heads: Optional[int] = None,
         mode_kwargs: Optional[Dict[str, Any]] = None,
     ):
 
@@ -73,6 +60,8 @@ class MultiAggregation(Aggregation):
         self.mode = mode
         mode_kwargs = mode_kwargs or {}
         if mode == 'proj' or mode == 'attn':
+            in_channels = mode_kwargs.pop('in_channels', None)
+            out_channels = mode_kwargs.pop('out_channels', None)
             if (in_channels and out_channels) is None:
                 raise ValueError(
                     f"'Combine mode '{mode}' must have `in_channels`"
@@ -82,18 +71,17 @@ class MultiAggregation(Aggregation):
                 in_channels = (in_channels, ) * len(aggrs)
 
             if mode == 'proj':
-                self.lin = Linear(sum(in_channels), out_channels, bias=True)
+                self.lin = Linear(
+                    sum(in_channels),
+                    out_channels,
+                    **mode_kwargs,
+                )
 
             if mode == 'attn':
-                if num_heads is None:
-                    raise ValueError(
-                        f"'Combine mode '{mode}' must have `num_heads` "
-                        f"specified.")
-                self.need_weights = mode_kwargs.pop('need_weights', False)
                 self.lin_heads = torch.nn.ModuleList([
-                    Linear(channels, out_channels, bias=True)
-                    for channels in in_channels
+                    Linear(channels, out_channels) for channels in in_channels
                 ])
+                num_heads = mode_kwargs.pop('num_heads', 1)
                 self.multihead_attn = MultiheadAttention(
                     out_channels,
                     num_heads,
@@ -104,9 +92,6 @@ class MultiAggregation(Aggregation):
             'sum', 'mean', 'max', 'min', 'logsumexp', 'std', 'var'
         ]
         if mode in dense_combine_modes:
-            if (in_channels or out_channels or num_heads) is not None:
-                raise ValueError("Channel transformation is only supported in "
-                                 "the `'proj'` and `'attn'` combine mode.")
             self.dense_combine = getattr(torch, mode)
 
     def reset_parameters(self):
@@ -132,17 +117,19 @@ class MultiAggregation(Aggregation):
         if self.mode in ['cat', 'proj']:
             out = torch.cat(inputs, dim=-1)
             return self.lin(out) if hasattr(self, 'lin') else out
+
         elif hasattr(self, 'multihead_attn'):
             x = torch.stack(
                 [head(x) for x, head in zip(inputs, self.lin_heads)],
                 dim=0,
             )
-            attn_out, attn_weights = self.multihead_attn(x, x, x)
-            out = torch.mean(attn_out, dim=0)
-            return (out, attn_weights) if self.need_weights else out
+            attn_out, _ = self.multihead_attn(x, x, x)
+            return torch.mean(attn_out, dim=0)
+
         elif hasattr(self, 'dense_combine'):
             out = self.dense_combine(torch.stack(inputs, dim=0), dim=0)
             return out if isinstance(out, Tensor) else out[0]
+
         else:
             raise ValueError(f"'Combine mode '{self.mode}' is not "
                              f"supported")
