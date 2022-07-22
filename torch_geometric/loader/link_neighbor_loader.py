@@ -451,9 +451,9 @@ def get_edge_label_index(
 
         assert len(edge_label_index) == 2
         edge_type, edge_label_index = edge_label_index
-        assert edge_type in edge_types
 
         if edge_label_index is None:
+            assert edge_type in edge_types
             return edge_type, _get_edge_index(edge_type)
 
         return edge_type, edge_label_index
