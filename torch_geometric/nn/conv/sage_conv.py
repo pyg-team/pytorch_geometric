@@ -84,8 +84,9 @@ class SAGEConv(MessagePassing):
             in_channels = (in_channels, in_channels)
 
         if aggr == 'lstm':
-            kwargs['aggr_kwargs'] = dict(in_channels=in_channels[0],
-                                         out_channels=in_channels[0])
+            kwargs.setdefault('aggr_kwargs', {})
+            kwargs['aggr_kwargs'].setdefault('in_channels', in_channels[0])
+            kwargs['aggr_kwargs'].setdefault('out_channels', in_channels[0])
 
         aggr_out_channels = in_channels[0]
         if isinstance(aggr, List) and len(aggr) > 1:
