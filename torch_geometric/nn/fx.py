@@ -2,13 +2,9 @@ import copy
 from typing import Any, Dict, Optional
 
 import torch
+import torch.fx._symbolic_trace as st
+from torch.fx import Graph, GraphModule, Node
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
-
-try:
-    import torch.fx._symbolic_trace as st
-    from torch.fx import Graph, GraphModule, Node
-except (ImportError, ModuleNotFoundError, AttributeError):
-    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
 class Transformer(object):
@@ -269,6 +265,11 @@ def symbolic_trace(
             # TODO We currently only trace top-level modules.
             return not isinstance(module, torch.nn.Sequential)
 
+        # Note: This is a hack around the fact that `Aggregaton.__call__`
+        # is not patched by the base implementation of `trace`.
+        # see https://github.com/pyg-team/pytorch_geometric/pull/5021 for
+        # details on the rationale
+        # TODO: Revisit https://github.com/pyg-team/pytorch_geometric/pull/5021
         @st.compatibility(is_backward_compatible=True)
         def trace(self, root: st.Union[torch.nn.Module, st.Callable[..., Any]],
                   concrete_args: Optional[Dict[str, Any]] = None) -> Graph:
