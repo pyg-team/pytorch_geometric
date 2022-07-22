@@ -161,26 +161,31 @@ def test_my_static_graph_conv():
 
 
 class MyMultipleAggrConv(MessagePassing):
-    def __init__(self):
-        super().__init__(aggr=['add', 'mean', 'max'])
+    def __init__(self, **kwargs):
+        super().__init__(aggr=['add', 'mean', 'max'], **kwargs)
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor)
         return self.propagate(edge_index, x=x, size=None)
 
 
-def test_my_multiple_aggr_conv():
+@pytest.mark.parametrize('multi_aggr_tuple', [
+    (dict(mode='cat'), 3),
+    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1)
+])
+def test_my_multiple_aggr_conv(multi_aggr_tuple):
+    # The 'cat' combine mode will expand the output dimensions by
+    # the number of aggregators which is 3 here, while the 'proj'
+    # mode keeps output dimensions unchanged.
+    aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = MyMultipleAggrConv()
+    conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
-    assert out.size() == (4, 48)
-    assert not torch.allclose(out[:, 0:16], out[:, 16:32])
-    assert not torch.allclose(out[:, 0:16], out[:, 32:48])
-    assert not torch.allclose(out[:, 16:32], out[:, 32:48])
+    assert out.size() == (4, 16 * expand)
     assert torch.allclose(conv(x, adj.t()), out)
 
 
