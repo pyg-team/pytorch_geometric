@@ -3,10 +3,11 @@ import warnings
 from typing import Any, Dict, Optional
 
 import torch
+from torch.nn import Module, ModuleDict, ModuleList, Sequential
 
 try:
     import torch.fx._symbolic_trace as st
-    from torch.nn import Module, ModuleDict, ModuleList, Sequential
+    from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
     st = None
