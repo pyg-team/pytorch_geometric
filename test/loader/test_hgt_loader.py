@@ -174,3 +174,13 @@ def test_hgt_loader_on_cora(get_dataset):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+def test_hgt_loader_on_dblp(get_dataset):
+    dataset = get_dataset(name='dblp')
+    data = dataset[0]
+    loader = HGTLoader(data, num_samples=[10, 10],
+                       input_nodes=('author', data['author'].train_mask))
+
+    for batch in loader:
+        print(batch)

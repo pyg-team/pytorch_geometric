@@ -135,6 +135,7 @@ class HGTLoader(torch.utils.data.DataLoader):
 
     def sample(self, indices: List[int]) -> HeteroData:
         input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
+        print('sampling with input node dict: ', input_node_dict)
         node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
             self.colptr_dict,
             self.row_dict,
@@ -142,9 +143,11 @@ class HGTLoader(torch.utils.data.DataLoader):
             self.num_samples,
             self.num_hops,
         )
+        print('done with sampling, row_dict keys are ', row_dict.keys())
         return node_dict, row_dict, col_dict, edge_dict, len(indices)
 
     def filter_fn(self, out: Any) -> HeteroData:
+        print('filtering... out is ', out)
         node_dict, row_dict, col_dict, edge_dict, batch_size = out
 
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
