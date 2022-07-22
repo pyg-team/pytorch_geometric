@@ -1,10 +1,11 @@
-from typing import Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
 from torch_sparse import SparseTensor, matmul
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, Size
@@ -66,7 +67,7 @@ class SAGEConv(MessagePassing):
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
-        aggr: str = 'mean',
+        aggr: Optional[Union[str, List[str], Aggregation]] = "mean",
         normalize: bool = False,
         root_weight: bool = True,
         project: bool = False,
@@ -86,6 +87,25 @@ class SAGEConv(MessagePassing):
             kwargs['aggr_kwargs'] = dict(in_channels=in_channels[0],
                                          out_channels=in_channels[0])
 
+        aggr_out_channels = in_channels[0]
+        if isinstance(aggr, List) and len(aggr) > 1:
+            kwargs.setdefault('aggr_kwargs', {})
+            kwargs['aggr_kwargs'].setdefault('mode', 'cat')
+            kwargs['aggr_kwargs'].setdefault('mode_kwargs', {})
+            combine_mode = kwargs['aggr_kwargs']['mode']
+            if combine_mode == 'cat':
+                aggr_out_channels = in_channels[0] * len(aggr)
+            if combine_mode == 'proj' or combine_mode == 'attn':
+                kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
+                    'in_channels', in_channels[0])
+                kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
+                    'out_channels', in_channels[0])
+                aggr_out_channels = kwargs['aggr_kwargs']['mode_kwargs'][
+                    'out_channels']
+                if combine_mode == 'attn':
+                    kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
+                        'num_heads', 1)
+
         super().__init__(aggr, **kwargs)
 
         if self.project:
@@ -95,7 +115,7 @@ class SAGEConv(MessagePassing):
             self.fuse = False  # No "fused" message_and_aggregate.
             self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
 
-        self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
         if self.root_weight:
             self.lin_r = Linear(in_channels[1], out_channels, bias=False)
 
