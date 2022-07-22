@@ -75,8 +75,8 @@ def test_lstm_aggr_sage_conv():
 
 @pytest.mark.parametrize('aggr_kwargs', [
     dict(mode='cat'),
-    dict(mode='proj', mode_kwargs=dict(in_channels=8, out_channels=32)),
-    dict(mode='attn', mode_kwargs=dict(in_channels=8, out_channels=32,
+    dict(mode='proj', mode_kwargs=dict(in_channels=8, out_channels=16)),
+    dict(mode='attn', mode_kwargs=dict(in_channels=8, out_channels=16,
                                        num_heads=4)),
     dict(mode='proj'),
     dict(mode='attn'),
