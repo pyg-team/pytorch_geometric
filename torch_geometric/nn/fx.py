@@ -1,10 +1,17 @@
 import copy
+import warnings
 from typing import Any, Dict, Optional
 
 import torch
-import torch.fx._symbolic_trace as st
-from torch.fx import Graph, GraphModule, Node
-from torch.nn import Module, ModuleDict, ModuleList, Sequential
+
+try:
+    import torch.fx._symbolic_trace as st
+    from torch.nn import Module, ModuleDict, ModuleList, Sequential
+except (ImportError, ModuleNotFoundError, AttributeError):
+    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
+    st = None
+    warnings.warn("`torch.fx._symbolic_trace` could not be imported:"
+                  " tracing may fail.")
 
 
 class Transformer(object):
