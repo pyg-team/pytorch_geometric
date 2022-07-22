@@ -124,7 +124,7 @@ def _collate(
     if isinstance(elem, Tensor):
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
-        if isinstance(key, str):
+        key = str(key)
             str_key = key
         else:
             str_key = str(key)
