@@ -226,8 +226,8 @@ class ToHeteroTransformer(Transformer):
                     name=f'{name}__{dst}')
                 self.graph.inserting_after(out)
 
-    def call_aggregation_module(self, node: Node, target: Any, name: str):
-        # Add calls to node type-wise `Aggregation` modules and aggregate
+    def call_global_pooling_module(self, node: Node, target: Any, name: str):
+        # Add calls to node type-wise `GlobalPooling` modules and aggregate
         # the outputs to graph type-wise embeddings afterwards.
         self.graph.inserting_after(node)
         for key in self.metadata[0]:
