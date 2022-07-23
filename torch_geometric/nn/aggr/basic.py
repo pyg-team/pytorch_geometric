@@ -72,10 +72,9 @@ class SoftmaxAggregation(Aggregation):
     <https://arxiv.org/abs/2006.07739>`_ paper
 
     .. math::
-        \mathrm{softmax}(\{ \mathbf{x}_i : i \in |\mathcal{X}| \}, t)
-        = \sum_{i \in |\mathcal{X}|} \frac{ \exp( t \cdot \mathbf{x}_i)}
-        {\sum_{j \in |\mathcal{X}|} \exp(t \cdot \mathbf{x}_j)}
-        \cdot \mathbf{x}_{i},
+        \mathrm{softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
+        \frac{\exp(t\cdot\mathbf{x}_i)}{\sum_{\mathbf{x}_j\in\mathcal{X}}
+        \exp(t\cdot\mathbf{x}_j)}\cdot\mathbf{x}_{i},
 
     where :math:`t` controls the softness of the softmax when aggregating over
     a set of features :math:`\mathcal{X}`.
@@ -130,6 +129,24 @@ class SoftmaxAggregation(Aggregation):
 
 
 class PowerMeanAggregation(Aggregation):
+    r"""The powermean aggregation operator based on a power term, as
+    described in the `"DeeperGCN: All You Need to Train Deeper GCNs"
+    <https://arxiv.org/abs/2006.07739>`_ paper
+
+    .. math::
+        \mathrm{powermean}(\mathcal{X}|p) = \left(\frac{1}{|\mathcal{X}|}
+        \sum_{\mathbf{x}_i\in\mathcal{X}}\mathbf{x}_i^{p}\right)^{1/p},
+
+    where :math:`p` controls the power of the powermean when aggregating over
+    a set of features :math:`\mathcal{X}`.
+
+    Args:
+        p (float, optional): Initial power for powermean aggregation.
+            (default: :obj:`1.0`)
+        learn (bool, optional): If set to :obj:`True`, will learn the value
+            :obj:`p` for powermean aggregation dynamically.
+            (default: :obj:`False`)
+    """
     def __init__(self, p: float = 1.0, learn: bool = False):
         # TODO Learn distinct `p` per channel.
         super().__init__()
