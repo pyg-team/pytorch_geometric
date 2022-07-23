@@ -7,9 +7,15 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import BatchNorm, GCNConv, GINEConv, GlobalPooling
+from torch_geometric.nn import BatchNorm, GCNConv, GINEConv
 from torch_geometric.nn import Linear as LazyLinear
-from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
+from torch_geometric.nn import (
+    MeanAggregation,
+    MessagePassing,
+    RGCNConv,
+    SAGEConv,
+    to_hetero,
+)
 from torch_geometric.utils import dropout_adj
 
 torch.fx.wrap('dropout_adj')
@@ -354,7 +360,7 @@ class GraphLevelGNN(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.conv = SAGEConv(16, 32)
-        self.pool = GlobalPooling(aggr='mean')
+        self.pool = MeanAggregation()
         self.lin = Linear(32, 64)
 
     def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor) -> Tensor:
