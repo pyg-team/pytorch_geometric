@@ -92,4 +92,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - The `bias` argument in `TAGConv` is now actually applied ([#4597](https://github.com/pyg-team/pytorch_geometric/pull/4597))
 - Fixed subclass behaviour of `process` and `download` in `Datsaet` ([#4586](https://github.com/pyg-team/pytorch_geometric/pull/4586))
 - Fixed filtering of attributes for loaders in case `__cat_dim__ != 0` ([#4629](https://github.com/pyg-team/pytorch_geometric/pull/4629))
+- Fixed `torch.fx` bug with `torch.nn.aggr` package ([#5021](https://github.com/pyg-team/pytorch_geometric/pull/5021)))
 ### Removed

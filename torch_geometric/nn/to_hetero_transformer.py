@@ -259,7 +259,6 @@ class ToHeteroTransformer(Transformer):
                 args=(self.find_by_name(key), len(self.metadata[0])),
                 name=f'{name}_{i}')
             self.graph.inserting_after(out)
-
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):
