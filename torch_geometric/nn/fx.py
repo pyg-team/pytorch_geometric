@@ -1,18 +1,13 @@
 import copy
-import warnings
 from typing import Any, Dict, Optional
 
 import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
 
 try:
-    import torch.fx._symbolic_trace as st
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
-    st = None
-    warnings.warn("`torch.fx._symbolic_trace` could not be imported:"
-                  " tracing may fail.")
 
 
 class Transformer(object):
@@ -265,6 +260,8 @@ class Transformer(object):
 def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
+
+    import torch.fx._symbolic_trace as st
 
     from torch_geometric.nn import Aggregation
 
