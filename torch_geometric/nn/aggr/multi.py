@@ -67,7 +67,7 @@ class MultiAggregation(Aggregation):
         mode_kwargs = mode_kwargs or {}
         if mode == 'proj' or mode == 'attn':
             if len(aggrs) == 1:
-                raise ValueError("One single aggregation does not support "
+                raise ValueError("Multiple aggregations are required for "
                                  "'proj' or 'attn' combine mode.")
             in_channels = mode_kwargs.pop('in_channels', None)
             out_channels = mode_kwargs.pop('out_channels', None)
