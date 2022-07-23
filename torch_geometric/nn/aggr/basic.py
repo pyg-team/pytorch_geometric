@@ -72,7 +72,7 @@ class SoftmaxAggregation(Aggregation):
     <https://arxiv.org/abs/2006.07739>`_ paper
 
     .. math::
-        \mathrm{Softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
+        \mathrm{softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
         \frac{\exp(t\cdot\mathbf{x}_i)}{\sum_{\mathbf{x}_j\in\mathcal{X}}
         \exp(t\cdot\mathbf{x}_j)}\cdot\mathbf{x}_{i},
 
