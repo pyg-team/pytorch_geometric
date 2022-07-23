@@ -135,7 +135,7 @@ class PowerMeanAggregation(Aggregation):
 
     .. math::
         \mathrm{PowerMean}(\mathcal{X}|p) = \left(\frac{1}{|\mathcal{X}|}
-        \sum_{\mathbf{x}_i\in\mathcal{X}}\mathbf{x}_i^{p})^{1/p},
+        \sum_{\mathbf{x}_i\in\mathcal{X}}\mathbf{x}_i^{p}\right)^{1/p},
 
     where :math:`p` controls the power of the powermean when aggregating over
     a set of features :math:`\mathcal{X}`.
