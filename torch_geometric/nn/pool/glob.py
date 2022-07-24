@@ -49,7 +49,7 @@ GraphMultisetTransformer = deprecated(
 
 
 @deprecated(
-    details="use 'nn.aggr.GlobalSortAggr' instead",
+    details="use 'nn.aggr.SortAggr' instead",
     func_name='nn.glob.global_sort_pool',
 )
 def global_sort_pool(x, index, k):
