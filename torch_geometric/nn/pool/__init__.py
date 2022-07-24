@@ -11,8 +11,7 @@ from .edge_pool import EdgePooling
 from .asap import ASAPooling
 from .pan_pool import PANPooling
 from .mem_pool import MemPooling
-from .glob import (global_max_pool, global_mean_pool, global_add_pool,
-                   GraphMultisetTransformer, Set2Set, GlobalAttention)
+from .glob import global_max_pool, global_mean_pool, global_add_pool
 
 try:
     import torch_cluster
@@ -245,32 +244,11 @@ def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
 
 
 __all__ = [
-    'TopKPooling',
-    'SAGPooling',
-    'EdgePooling',
-    'ASAPooling',
-    'PANPooling',
-    'MemPooling',
-    'max_pool',
-    'avg_pool',
-    'max_pool_x',
-    'max_pool_neighbor_x',
-    'avg_pool_x',
-    'avg_pool_neighbor_x',
-    'graclus',
-    'voxel_grid',
-    'fps',
-    'knn',
-    'knn_graph',
-    'radius',
-    'radius_graph',
-    'nearest',
-    'global_max_pool',
-    'global_add_pool',
-    'global_mean_pool',
-    'GraphMultisetTransformer',
-    'Set2Set',
-    'GlobalAttention',
+    'TopKPooling', 'SAGPooling', 'EdgePooling', 'ASAPooling', 'PANPooling',
+    'MemPooling', 'max_pool', 'avg_pool', 'max_pool_x', 'max_pool_neighbor_x',
+    'avg_pool_x', 'avg_pool_neighbor_x', 'graclus', 'voxel_grid', 'fps', 'knn',
+    'knn_graph', 'radius', 'radius_graph', 'nearest', 'global_max_pool',
+    'global_add_pool', 'global_mean_pool'
 ]
 
 classes = __all__
