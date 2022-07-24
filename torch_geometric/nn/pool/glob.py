@@ -58,7 +58,7 @@ def global_sort_pool(x, index, k):
 
 
 @deprecated(
-    details="use 'nn.aggr.GlobalAttention' instead",
+    details="use 'nn.aggr.AttentionalAggregation' instead",
     func_name='nn.glob.GlobalAttention',
 )
 class GlobalAttention(AttentionalAggregation):
