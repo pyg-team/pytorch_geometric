@@ -8,6 +8,7 @@ from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import degree
 
 from ..inits import reset
 
@@ -169,3 +170,19 @@ class PNAConv(MessagePassing):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, towers={self.towers}, '
                 f'edge_dim={self.edge_dim})')
+
+    @staticmethod
+    def get_degree_histogram(loader) -> Tensor:
+        max_degree = 0
+        for data in loader:
+            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
+                       dtype=torch.long)
+            max_degree = max(max_degree, int(d.max()))
+        # Compute the in-degree histogram tensor
+        deg_histogram = torch.zeros(max_degree + 1, dtype=torch.long)
+        for data in loader:
+            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
+                       dtype=torch.long)
+            deg_histogram += torch.bincount(d, minlength=deg_histogram.numel())
+
+        return deg_histogram

@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
+from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.conv import (
@@ -167,7 +168,8 @@ class BasicGNN(torch.nn.Module):
 
     @torch.no_grad()
     def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None) -> Tensor:
+                  device: Optional[torch.device] = None,
+                  progress_bar: bool = False) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using
         :class:`~torch_geometric.loader.NeighborLoader`.
         :class:`~torch_geometric.loader.NeighborLoader` should sample the the
@@ -182,6 +184,9 @@ class BasicGNN(torch.nn.Module):
         assert len(loader.num_neighbors) == 1
         assert not self.training
         # assert not loader.shuffle  # TODO (matthias) does not work :(
+        if progress_bar:
+            pbar = tqdm(total=len(self.convs) * len(loader))
+            pbar.set_description('Inference')
 
         x_all = loader.data.x.cpu()
         loader.data.n_id = torch.arange(x_all.size(0))
@@ -194,6 +199,8 @@ class BasicGNN(torch.nn.Module):
                 x = self.convs[i](x, edge_index)[:batch.batch_size]
                 if i == self.num_layers - 1 and self.jk_mode is None:
                     xs.append(x.cpu())
+                    if progress_bar:
+                        pbar.update(1)
                     continue
                 if self.act is not None and self.act_first:
                     x = self.act(x)
@@ -204,8 +211,11 @@ class BasicGNN(torch.nn.Module):
                 if i == self.num_layers - 1 and hasattr(self, 'lin'):
                     x = self.lin(x)
                 xs.append(x.cpu())
+                if progress_bar:
+                    pbar.update(1)
             x_all = torch.cat(xs, dim=0)
-
+        if progress_bar:
+            pbar.close()
         del loader.data.n_id
 
         return x_all

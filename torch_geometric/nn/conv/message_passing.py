@@ -125,11 +125,12 @@ class MessagePassing(torch.nn.Module):
             self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, aggr_kwargs)
+            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
         else:
-            raise ValueError(f"Only strings, list, tuples and instances of"
-                             f"`torch_geometric.nn.aggr.Aggregation` are "
-                             f"valid aggregation schemes (got '{type(aggr)}')")
+            raise ValueError(
+                f"Only strings, list, tuples and instances of"
+                f"`torch_geometric.nn.aggr.Aggregation` are "
+                f"valid aggregation schemes (got '{type(aggr)}').")
 
         self.flow = flow
         assert flow in ['source_to_target', 'target_to_source']
@@ -179,9 +180,12 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            assert edge_index.dtype == torch.long
-            assert edge_index.dim() == 2
-            assert edge_index.size(0) == 2
+            assert edge_index.dtype == torch.long, \
+                "edge_index.dtype is not of torch.long"
+            assert edge_index.dim() == 2, \
+                "edge_index.dim() is not equal to 2"
+            assert edge_index.size(0) == 2, \
+                "edge_index.size(0) is not equal to 2"
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
@@ -469,8 +473,8 @@ class MessagePassing(torch.nn.Module):
         edge_mask = self._edge_mask
 
         if edge_mask is None:
-            raise ValueError(f"Could not found a pre-defined 'edge_mask' as "
-                             f"part of {self.__class__.__name__}")
+            raise ValueError(f"Could not find a pre-defined 'edge_mask' as "
+                             f"part of {self.__class__.__name__}.")
 
         if self._apply_sigmoid:
             edge_mask = edge_mask.sigmoid()
