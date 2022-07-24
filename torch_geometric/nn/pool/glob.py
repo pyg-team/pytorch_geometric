@@ -16,25 +16,67 @@ from torch_geometric.nn.aggr import (
 sum_aggr = SumAggregation()
 
 
-def global_add_pool(x: Tensor, index: Optional[Tensor],
+def global_add_pool(x: Tensor, batch: Optional[Tensor],
                     size: Optional[int] = None) -> Tensor:
-    return sum_aggr(x, index, dim_size=size)
+    r"""Returns batch-wise graph-level-outputs by adding node features
+    across the node dimension, so that for a single graph
+    :math:`\mathcal{G}_i` its output is computed by
+    .. math::
+        \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n
+    Args:
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
+        size (int, optional): Batch-size :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
+    """
+    return sum_aggr(x, batch, dim_size=size)
 
 
 mean_aggr = MeanAggregation()
 
 
-def global_mean_pool(x: Tensor, index: Optional[Tensor],
+def global_mean_pool(x: Tensor, batch: Optional[Tensor],
                      size: Optional[int] = None) -> Tensor:
-    return mean_aggr(x, index, dim_size=size)
+    r"""Returns batch-wise graph-level-outputs by averaging node features
+    across the node dimension, so that for a single graph
+    :math:`\mathcal{G}_i` its output is computed by
+    .. math::
+        \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n
+    Args:
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
+        size (int, optional): Batch-size :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
+    """
+    return mean_aggr(x, batch, dim_size=size)
 
 
 max_aggr = MaxAggregation()
 
 
-def global_max_pool(x: Tensor, index: Optional[Tensor],
+def global_max_pool(x: Tensor, batch: Optional[Tensor],
                     size: Optional[int] = None) -> Tensor:
-    return max_aggr(x, index, dim_size=size)
+    r"""Returns batch-wise graph-level-outputs by taking the channel-wise
+    maximum across the node dimension, so that for a single graph
+    :math:`\mathcal{G}_i` its output is computed by
+    .. math::
+        \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
+    Args:
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
+        size (int, optional): Batch-size :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
+    """
+    return max_aggr(x, batch, dim_size=size)
 
 
 Set2Set = deprecated(
