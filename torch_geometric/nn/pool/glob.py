@@ -81,18 +81,18 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
 
 Set2Set = deprecated(
     details="use 'nn.aggr.Set2Set' instead",
-    func_name='nn.glob.Set2Set',
+    func_name='nn.pool.Set2Set',
 )(Set2Set)
 
 GraphMultisetTransformer = deprecated(
     details="use 'nn.aggr.GraphMultisetTransformer' instead",
-    func_name='nn.glob.GraphMultisetTransformer',
+    func_name='nn.pool.GraphMultisetTransformer',
 )(GraphMultisetTransformer)
 
 
 @deprecated(
     details="use 'nn.aggr.SortAggr' instead",
-    func_name='nn.glob.global_sort_pool',
+    func_name='nn.pool.global_sort_pool',
 )
 def global_sort_pool(x, index, k):
     module = SortAggr(k=k)
@@ -101,7 +101,7 @@ def global_sort_pool(x, index, k):
 
 @deprecated(
     details="use 'nn.aggr.AttentionalAggregation' instead",
-    func_name='nn.glob.GlobalAttention',
+    func_name='nn.pool.GlobalAttention',
 )
 class GlobalAttention(AttentionalAggregation):
     def __call__(self, x, batch=None, size=None):
