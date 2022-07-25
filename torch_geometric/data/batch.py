@@ -1,5 +1,6 @@
+import abc
 import inspect
-from collections.abc import Sequence
+from collections.abc import Sequence, MutableMapping
 from typing import Any, List, Optional, Union
 
 import numpy as np
@@ -28,11 +29,22 @@ class DynamicInheritance(type):
             # problems between `DynamicInheritance` and the metaclass of
             # `base_cls`. In particular, it creates a new common metaclass
             # from the defined metaclasses.
-            class MetaResolver(type(cls), type(base_cls)):
+
+            class MetaCls(metaclass=DynamicInheritance):
+                pass
+
+            class MetaBaseCls(metaclass=abc.ABCMeta):
+                pass
+
+            class MetaResolver(type(MetaCls), type(MetaBaseCls)):
                 pass
 
             if name not in globals():
-                globals()[name] = MetaResolver(name, (cls, base_cls), {})
+                globals()[name] = MetaResolver(
+                    name,
+                    (cls, base_cls),
+                    {},
+                )
             new_cls = globals()[name]
 
         params = list(inspect.signature(base_cls.__init__).parameters.items())
