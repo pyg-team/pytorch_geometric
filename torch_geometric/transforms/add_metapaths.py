@@ -184,7 +184,8 @@ class AddMetaPaths(BaseTransform):
     def _get_edge_attr(self, data: HeteroData,
                        edge_type: EdgeType) -> torch.Tensor:
         if self.weighted:
-            if self.use_edge_attr_as_weights:
+            if self.use_edge_attr_as_weights and \
+                    edge_type in data.edge_attr_dict.keys():
                 edge_attr = data[edge_type].edge_attr
                 assert len(edge_attr.shape) == 1
             else:
