@@ -71,7 +71,7 @@ class MultiAggregation(Aggregation):
             if len(aggrs) == 1:
                 raise ValueError("Multiple aggregations are required for "
                                  "'proj' or 'attn' combine mode.")
-            
+
             if (self.in_channels and self.out_channels) is None:
                 raise ValueError(
                     f"Combine mode '{mode}' must have `in_channels` "
