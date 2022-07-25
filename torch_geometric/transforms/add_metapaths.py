@@ -87,15 +87,20 @@ class AddMetaPaths(BaseTransform):
         max_sample (int, optional): If set, will sample at maximum
             :obj:`max_sample` neighbors within metapaths. Useful in order to
             tackle very dense metapath edges. (default: :obj:`None`)
+        weighted (bool, optional): If set to :obj:`True` compute weights for
+            each metapath and store them in :obj:`edge_attr`.
+            (default :obj:`False)
+        use_edge_attr_as_weights (bool, optional): If set to :obj:`True`
+            use the existing edge attributes :obj:`edge_attr` in computation
+            of metapath weights.  If set to :obj:`False`, use a weight of 1
+            for each existing edge. (default: :obj:`False`)
     """
-    def __init__(
-        self,
-        metapaths: List[List[EdgeType]],
-        drop_orig_edges: bool = False,
-        keep_same_node_type: bool = False,
-        drop_unconnected_nodes: bool = False,
-        max_sample: Optional[int] = None,
-    ):
+    def __init__(self, metapaths: List[List[EdgeType]],
+                 drop_orig_edges: bool = False,
+                 keep_same_node_type: bool = False,
+                 drop_unconnected_nodes: bool = False,
+                 max_sample: Optional[int] = None, weighted: bool = False,
+                 use_edge_attr_as_weights: bool = False):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -108,6 +113,8 @@ class AddMetaPaths(BaseTransform):
         self.keep_same_node_type = keep_same_node_type
         self.drop_unconnected_nodes = drop_unconnected_nodes
         self.max_sample = max_sample
+        self.weighted = weighted
+        self.use_edge_attr_as_weights = use_edge_attr_as_weights
 
     def __call__(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
@@ -119,26 +126,31 @@ class AddMetaPaths(BaseTransform):
                     edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
+            adj1_edge_attr = self._get_edge_attr(data, edge_type)
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
-                sparse_sizes=data[edge_type].size())
+                sparse_sizes=data[edge_type].size(), edge_attr=adj1_edge_attr)
 
             if self.max_sample is not None:
                 adj1 = self.sample_adj(adj1)
 
             for i, edge_type in enumerate(metapath[1:]):
+                adj2_edge_attr = self._get_edge_attr(data, edge_type)
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=data[edge_type].edge_index,
-                    sparse_sizes=data[edge_type].size())
+                    sparse_sizes=data[edge_type].size(),
+                    edge_attr=adj2_edge_attr)
 
                 adj1 = adj1 @ adj2
 
                 if self.max_sample is not None:
                     adj1 = self.sample_adj(adj1)
 
-            row, col, _ = adj1.coo()
+            row, col, value = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = torch.vstack([row, col])
+            if self.weighted:
+                data[new_edge_type].edge_attr = value
             data.metapath_dict[new_edge_type] = metapath
 
         if self.drop_orig_edges:
@@ -168,3 +180,15 @@ class AddMetaPaths(BaseTransform):
         prob = (self.max_sample * (1. / deg))[row]
         mask = torch.rand_like(prob) < prob
         return adj.masked_select_nnz(mask, layout='coo')
+
+    def _get_edge_attr(self, data: HeteroData,
+                       edge_type: EdgeType) -> torch.Tensor:
+        if self.weighted:
+            if self.use_edge_attr_as_weights:
+                edge_attr = data[edge_type].edge_attr
+                assert len(edge_attr.shape) == 1
+            else:
+                edge_attr = torch.ones(data[edge_type].num_edges)
+        else:
+            edge_attr = None
+        return edge_attr

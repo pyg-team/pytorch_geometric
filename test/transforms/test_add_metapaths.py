@@ -87,3 +87,48 @@ def test_add_metapaths_max_sample():
 
     meta = transform(data)
     assert meta['metapath_0'].edge_index.size(1) < 9
+
+
+def test_add_weighted_metapaths():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+    data['a'].x = torch.ones(2)
+    data['b'].x = torch.ones(3)
+    data['c'].x = torch.ones(2)
+    data['d'].x = torch.ones(1)
+    data['a', 'b'].edge_index = tensor([[0, 1, 1], [0, 1, 2]])
+    data['b', 'a'].edge_index = data['a', 'b'].edge_index.flip([0])
+    data['b', 'c'].edge_index = tensor([[0, 1, 2], [0, 1, 1]])
+    data['c', 'b'].edge_index = data['b', 'c'].edge_index.flip([0])
+    data['c', 'd'].edge_index = tensor([[0, 1], [0, 0]])
+    data['d', 'c'].edge_index = data['c', 'd'].edge_index.flip([0])
+
+    metapaths = [[('a', 'b'), ('b', 'c')], [('a', 'b'), ('b', 'c'),
+                                            ('c', 'd')],
+                 [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'c'), ('c', 'b'),
+                  ('b', 'a')]]
+    transform = AddMetaPaths(metapaths, max_sample=None, weighted=True)
+    meta = transform(data)
+
+    # Make sure manually added metapaths compute the correct number of edges
+    assert (meta['a', 'c'].edge_attr == torch.Tensor([1, 2])).all().item()
+    assert (meta['a', 'd'].edge_attr == torch.Tensor([1, 2])).all().item()
+    assert (meta['a', 'a'].edge_attr == torch.Tensor([1, 2, 2,
+                                                      4])).all().item()
+    del meta['a', 'c']
+    del meta['a', 'd']
+    del meta['a', 'a']
+
+    # Compute intra-table metapath efficiently
+    metapaths = [[('a', 'b'), ('b', 'c'), ('c', 'd')]]
+    meta = AddMetaPaths(metapaths, weighted=True)(data)
+    meta['d', 'a'].edge_index = meta['a', 'd'].edge_index.flip([0])
+    meta['d', 'a'].edge_attr = meta['a', 'd'].edge_attr
+    metapaths = [[('a', 'd'), ('d', 'a')]]
+    meta = AddMetaPaths(metapaths, weighted=True,
+                        use_edge_attr_as_weights=True)(meta)
+    del meta['a', 'd']
+    del meta['d', 'a']
+    assert (meta['a', 'a'].edge_attr == torch.Tensor([1, 2, 2,
+                                                      4])).all().item()
