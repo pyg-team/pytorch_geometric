@@ -68,6 +68,10 @@ class MultiAggregation(Aggregation):
         self.in_channels = mode_kwargs.pop('in_channels', None)
         self.out_channels = mode_kwargs.pop('out_channels', None)
         if mode == 'proj' or mode == 'attn':
+            if len(aggrs) == 1:
+                raise ValueError("Multiple aggregations are required for "
+                                 "'proj' or 'attn' combine mode.")
+            
             if (self.in_channels and self.out_channels) is None:
                 raise ValueError(
                     f"Combine mode '{mode}' must have `in_channels` "
@@ -104,11 +108,12 @@ class MultiAggregation(Aggregation):
     def reset_parameters(self):
         for aggr in self.aggrs:
             aggr.reset_parameters()
-        if self.mode == 'proj':
+        if hasattr(self, 'lin'):
             self.lin.reset_parameters()
-        if self.mode == 'attn':
+        if hasattr(self, 'lin_heads'):
             for lin in self.lin_heads:
                 lin.reset_parameters()
+        if hasattr(self, 'multihead_attn'):
             self.multihead_attn._reset_parameters()
 
     def get_out_channels(self, in_channels):

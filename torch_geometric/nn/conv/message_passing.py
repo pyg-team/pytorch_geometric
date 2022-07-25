@@ -180,9 +180,12 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            assert edge_index.dtype == torch.long
-            assert edge_index.dim() == 2
-            assert edge_index.size(0) == 2
+            assert edge_index.dtype == torch.long, \
+                "edge_index.dtype is not of torch.long"
+            assert edge_index.dim() == 2, \
+                "edge_index.dim() is not equal to 2"
+            assert edge_index.size(0) == 2, \
+                "edge_index.size(0) is not equal to 2"
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
