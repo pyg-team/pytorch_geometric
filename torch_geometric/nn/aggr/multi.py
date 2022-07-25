@@ -119,6 +119,8 @@ class MultiAggregation(Aggregation):
     def get_out_channels(self, in_channels):
         if self.out_channels is not None:
             return self.out_channels
+
+        # TODO: Support having customized `out_channels` in each aggregation
         if self.mode == 'cat':
             return in_channels * len(self.aggrs)
         else:
