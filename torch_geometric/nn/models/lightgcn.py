@@ -112,7 +112,7 @@ class LightGCN(torch.nn.Module):
         """
         if edge_label_index is None:
             if isinstance(edge_index, SparseTensor):
-                edge_label_index = edge_index.to_torch_sparse_coo_tensor(
+                edge_label_index = torch.stack(edge_index.coo()[:2], dim=0)
                 ).coalesce().indices()
             elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse(
             ) and not edge_index.is_coalesced():
