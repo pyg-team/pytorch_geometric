@@ -5,10 +5,10 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import LGConv
 from torch_geometric.typing import Adj, OptTensor
-from torch_sparse import SparseTensor
 
 
 class LightGCN(torch.nn.Module):
@@ -112,12 +112,16 @@ class LightGCN(torch.nn.Module):
         """
         if edge_label_index is None:
             if isinstance(edge_index, SparseTensor):
-                edge_label_index = edge_index.to_torch_sparse_coo_tensor().coalesce().indices()
-            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse() and not edge_index.is_coalesced():
+                edge_label_index = edge_index.to_torch_sparse_coo_tensor(
+                ).coalesce().indices()
+            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse(
+            ) and not edge_index.is_coalesced():
                 edge_label_index = edge_index.coalesce().indices()
-            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse() and edge_index.is_coalesced():
+            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse(
+            ) and edge_index.is_coalesced():
                 edge_label_index = edge_index.indices()
-            elif isinstance(edge_index, torch.Tensor) and not edge_index.is_sparse():
+            elif isinstance(edge_index,
+                            torch.Tensor) and not edge_index.is_sparse():
                 assert edge_index.shape == 2
                 edge_label_index = edge_index
             else:
