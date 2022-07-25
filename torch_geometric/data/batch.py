@@ -1,6 +1,6 @@
 import abc
 import inspect
-from collections.abc import Sequence, MutableMapping
+from collections.abc import Sequence
 from typing import Any, List, Optional, Union
 
 import numpy as np
