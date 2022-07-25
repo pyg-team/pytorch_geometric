@@ -6,10 +6,9 @@ from torch_geometric.nn import MultiAggregation
 
 @pytest.mark.parametrize('multi_aggr_tuple', [
     (dict(mode='cat'), 3),
-    (dict(
-        mode='proj',
-        mode_kwargs=dict(in_channels=16, out_channels=16),
-    ), 1),
+    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1),
+    (dict(mode='attn', mode_kwargs=dict(in_channels=16, out_channels=16,
+                                        num_heads=4)), 1),
     (dict(mode='sum'), 1),
     (dict(mode='mean'), 1),
     (dict(mode='max'), 1),
@@ -17,10 +16,6 @@ from torch_geometric.nn import MultiAggregation
     (dict(mode='logsumexp'), 1),
     (dict(mode='std'), 1),
     (dict(mode='var'), 1),
-    (dict(
-        mode='attn',
-        mode_kwargs=dict(in_channels=16, out_channels=16, num_heads=4),
-    ), 1),
 ])
 def test_multi_aggr(multi_aggr_tuple):
     # The 'cat' combine mode will expand the output dimensions by

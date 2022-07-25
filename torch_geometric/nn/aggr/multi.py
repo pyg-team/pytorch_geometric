@@ -66,6 +66,9 @@ class MultiAggregation(Aggregation):
         self.mode = mode
         mode_kwargs = mode_kwargs or {}
         if mode == 'proj' or mode == 'attn':
+            if len(aggrs) == 1:
+                raise ValueError("Multiple aggregations are required for "
+                                 "'proj' or 'attn' combine mode.")
             in_channels = mode_kwargs.pop('in_channels', None)
             out_channels = mode_kwargs.pop('out_channels', None)
             if (in_channels and out_channels) is None:
@@ -103,11 +106,12 @@ class MultiAggregation(Aggregation):
     def reset_parameters(self):
         for aggr in self.aggrs:
             aggr.reset_parameters()
-        if self.mode == 'proj':
+        if hasattr(self, 'lin'):
             self.lin.reset_parameters()
-        if self.mode == 'attn':
+        if hasattr(self, 'lin_heads'):
             for lin in self.lin_heads:
                 lin.reset_parameters()
+        if hasattr(self, 'multihead_attn'):
             self.multihead_attn._reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
