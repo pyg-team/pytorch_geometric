@@ -114,7 +114,7 @@ class LightGCN(torch.nn.Module):
             if isinstance(edge_index, SparseTensor):
                 edge_label_index = torch.stack(edge_index.coo()[:2], dim=0)
 
-            elif isinstance(edge_index,torch.Tensor):
+            elif isinstance(edge_index, torch.Tensor):
 
                 edge_label_index = edge_index
             else:
