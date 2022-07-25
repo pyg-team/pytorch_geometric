@@ -88,8 +88,12 @@ class AddMetaPaths(BaseTransform):
             :obj:`max_sample` neighbors within metapaths. Useful in order to
             tackle very dense metapath edges. (default: :obj:`None`)
         weighted (bool, optional): If set to :obj:`True` compute weights for
-            each metapath and store them in :obj:`edge_attr`.
-            (default :obj:`False)
+            each metapath and store them in :obj:`edge_attr`. If
+            :obj:`use_edge_attr_as_weights` is :obj:`True`, then weights
+            will be computed from the existing :obj:`edge_attr`, otherwise
+            weights will be computed with a starting value of one for each
+            edge.
+            (default :obj:`False`)
         use_edge_attr_as_weights (bool, optional): If set to :obj:`True`
             use the existing edge attributes :obj:`edge_attr` in computation
             of metapath weights.  If set to :obj:`False`, use a weight of 1
@@ -99,8 +103,7 @@ class AddMetaPaths(BaseTransform):
                  drop_orig_edges: bool = False,
                  keep_same_node_type: bool = False,
                  drop_unconnected_nodes: bool = False,
-                 max_sample: Optional[int] = None, weighted: bool = False,
-                 use_edge_attr_as_weights: bool = False):
+                 max_sample: Optional[int] = None, weighted: bool = False):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -114,7 +117,6 @@ class AddMetaPaths(BaseTransform):
         self.drop_unconnected_nodes = drop_unconnected_nodes
         self.max_sample = max_sample
         self.weighted = weighted
-        self.use_edge_attr_as_weights = use_edge_attr_as_weights
 
     def __call__(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
@@ -126,31 +128,31 @@ class AddMetaPaths(BaseTransform):
                     edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
-            adj1_edge_attr = self._get_edge_attr(data, edge_type)
+            adj1_edge_mult = self._get_edge_multiplicity(data, edge_type)
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
-                sparse_sizes=data[edge_type].size(), edge_attr=adj1_edge_attr)
+                sparse_sizes=data[edge_type].size(), edge_attr=adj1_edge_mult)
 
             if self.max_sample is not None:
                 adj1 = self.sample_adj(adj1)
 
             for i, edge_type in enumerate(metapath[1:]):
-                adj2_edge_attr = self._get_edge_attr(data, edge_type)
+                adj2_edge_mult = self._get_edge_multiplicity(data, edge_type)
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=data[edge_type].edge_index,
                     sparse_sizes=data[edge_type].size(),
-                    edge_attr=adj2_edge_attr)
+                    edge_attr=adj2_edge_mult)
 
                 adj1 = adj1 @ adj2
 
                 if self.max_sample is not None:
                     adj1 = self.sample_adj(adj1)
 
-            row, col, value = adj1.coo()
+            row, col, weights = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = torch.vstack([row, col])
             if self.weighted:
-                data[new_edge_type].edge_attr = value
+                data[new_edge_type].edge_multiplicity = weights
             data.metapath_dict[new_edge_type] = metapath
 
         if self.drop_orig_edges:
@@ -181,15 +183,14 @@ class AddMetaPaths(BaseTransform):
         mask = torch.rand_like(prob) < prob
         return adj.masked_select_nnz(mask, layout='coo')
 
-    def _get_edge_attr(self, data: HeteroData,
-                       edge_type: EdgeType) -> torch.Tensor:
+    def _get_edge_multiplicity(self, data: HeteroData,
+                               edge_type: EdgeType) -> torch.Tensor:
         if self.weighted:
-            if self.use_edge_attr_as_weights and \
-                    hasattr(data[edge_type], 'edge_attr'):
-                edge_attr = data[edge_type].edge_attr
-                assert len(edge_attr.shape) == 1
+            if hasattr(data[edge_type], 'edge_multiplicity'):
+                edge_multiplicity = data[edge_type].edge_multiplicity
+                assert edge_multiplicity.ndim == 1
             else:
-                edge_attr = torch.ones(data[edge_type].num_edges)
+                edge_multiplicity = torch.ones(data[edge_type].num_edges)
         else:
-            edge_attr = None
-        return edge_attr
+            edge_multiplicity = None
+        return edge_multiplicity
