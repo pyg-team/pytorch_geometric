@@ -113,16 +113,9 @@ class LightGCN(torch.nn.Module):
         if edge_label_index is None:
             if isinstance(edge_index, SparseTensor):
                 edge_label_index = torch.stack(edge_index.coo()[:2], dim=0)
-                ).coalesce().indices()
-            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse(
-            ) and not edge_index.is_coalesced():
-                edge_label_index = edge_index.coalesce().indices()
-            elif isinstance(edge_index, torch.Tensor) and edge_index.is_sparse(
-            ) and edge_index.is_coalesced():
-                edge_label_index = edge_index.indices()
-            elif isinstance(edge_index,
-                            torch.Tensor) and not edge_index.is_sparse():
-                assert edge_index.shape == 2
+
+            elif isinstance(edge_index,torch.Tensor):
+
                 edge_label_index = edge_index
             else:
                 raise TypeError
