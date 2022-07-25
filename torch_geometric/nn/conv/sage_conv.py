@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import LSTM
 from torch_sparse import SparseTensor, matmul
 
-from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, Size
@@ -88,25 +88,6 @@ class SAGEConv(MessagePassing):
             kwargs['aggr_kwargs'].setdefault('in_channels', in_channels[0])
             kwargs['aggr_kwargs'].setdefault('out_channels', in_channels[0])
 
-        aggr_out_channels = in_channels[0]
-        if isinstance(aggr, List) and len(aggr) > 1:
-            kwargs.setdefault('aggr_kwargs', {})
-            kwargs['aggr_kwargs'].setdefault('mode', 'cat')
-            kwargs['aggr_kwargs'].setdefault('mode_kwargs', {})
-            combine_mode = kwargs['aggr_kwargs']['mode']
-            if combine_mode == 'cat':
-                aggr_out_channels = in_channels[0] * len(aggr)
-            if combine_mode == 'proj' or combine_mode == 'attn':
-                kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
-                    'in_channels', in_channels[0])
-                kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
-                    'out_channels', in_channels[0])
-                aggr_out_channels = kwargs['aggr_kwargs']['mode_kwargs'][
-                    'out_channels']
-                if combine_mode == 'attn':
-                    kwargs['aggr_kwargs']['mode_kwargs'].setdefault(
-                        'num_heads', 1)
-
         super().__init__(aggr, **kwargs)
 
         if self.project:
@@ -115,6 +96,12 @@ class SAGEConv(MessagePassing):
         if self.aggr is None:
             self.fuse = False  # No "fused" message_and_aggregate.
             self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
+
+        if isinstance(self.aggr_module, MultiAggregation):
+            aggr_out_channels = self.aggr_module.get_out_channels(
+                in_channels[0])
+        else:
+            aggr_out_channels = in_channels[0]
 
         self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
         if self.root_weight:

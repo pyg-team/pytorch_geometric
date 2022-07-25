@@ -78,8 +78,6 @@ def test_lstm_aggr_sage_conv():
     dict(mode='proj', mode_kwargs=dict(in_channels=8, out_channels=16)),
     dict(mode='attn', mode_kwargs=dict(in_channels=8, out_channels=16,
                                        num_heads=4)),
-    dict(mode='proj'),
-    dict(mode='attn'),
     dict(mode='sum'),
 ])
 def test_multi_aggr_sage_conv(aggr_kwargs):
