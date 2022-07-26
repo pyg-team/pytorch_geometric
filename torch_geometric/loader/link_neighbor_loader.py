@@ -6,7 +6,11 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
-from torch_geometric.loader.utils import filter_data, filter_hetero_data
+from torch_geometric.loader.utils import (
+    filter_data,
+    filter_hetero_data,
+    has_edge_index,
+)
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
@@ -86,7 +90,7 @@ class LinkSampler(LinkSamplerMixin):
             data, (Data, HeteroData)) else 'custom'
         self.neg_sampling_ratio = neg_sampling_ratio
         self.input_type = input_type
-        self.perm_dict = None
+        self.perm = self.perm_dict = None
         if issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
         else:
@@ -408,13 +412,3 @@ def get_edge_label_index(
         return edge_type, data[edge_type].edge_index
 
     return edge_type, edge_label_index
-
-
-def has_edge_index(data: Union[Data, HeteroData]) -> bool:
-    if isinstance(data, Data):
-        return hasattr(data, 'edge_index')
-    if isinstance(data, HeteroData):
-        for edge_items in data.edge_stores:
-            if 'edge_index' in edge_items:
-                return True
-        return False
