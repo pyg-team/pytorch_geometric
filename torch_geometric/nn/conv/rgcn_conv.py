@@ -209,14 +209,26 @@ class RGCNConv(MessagePassing):
                 out += h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            for i in range(self.num_relations):
-                tmp = masked_edge_index(edge_index, edge_type == i)
+            if not pyg_lib_avail:
+                for i in range(self.num_relations):
+                    tmp = masked_edge_index(edge_index, edge_type == i)
 
-                if x_l.dtype == torch.long:
-                    out += self.propagate(tmp, x=weight[i, x_l], size=size)
-                else:
-                    h = self.propagate(tmp, x=x_l, size=size)
-                    out = out + (h @ weight[i])
+                    if x_l.dtype == torch.long:
+                        out += self.propagate(tmp, x=weight[i, x_l], size=size)
+                    else:
+                        h = self.propagate(tmp, x=x_l, size=size)
+                        out = out + (h @ weight[i])
+            else:
+                self.edge_type, sort_by_edge_type = torch.sort(self.edge_type)
+                edge_index = edge_index[sort_by_edge_type]
+                self.edge_ptr = torch.cumsum(
+                    torch.unique_consecutive(
+                        self.edge_types,
+                        return_counts=True
+                    )[1]
+                )
+                self.edge_ptr = torch.cat(torch.tensor([0]), self.edge_ptr)
+                out = self.propagate(edge_index, x=x_l, size=size)
 
         root = self.root
         if root is not None:
@@ -228,7 +240,10 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
-        return x_j
+        if self.lib:
+            return pyg_lib.ops.segment_matmul(x_j, self.edge_ptr, self.weight)
+        else:
+            return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
