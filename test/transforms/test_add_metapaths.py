@@ -93,10 +93,10 @@ def test_add_weighted_metapaths():
     torch.manual_seed(12345)
 
     data = HeteroData()
-    data['a'].x = torch.ones(2)
-    data['b'].x = torch.ones(3)
-    data['c'].x = torch.ones(2)
-    data['d'].x = torch.ones(1)
+    data['a'].num_nodes = 2
+    data['b'].num_nodes = 3
+    data['c'].num_nodes = 2
+    data['d'].num_nodes = 2
     data['a', 'b'].edge_index = tensor([[0, 1, 1], [0, 1, 2]])
     data['b', 'a'].edge_index = data['a', 'b'].edge_index.flip([0])
     data['b', 'c'].edge_index = tensor([[0, 1, 2], [0, 1, 1]])
@@ -104,34 +104,29 @@ def test_add_weighted_metapaths():
     data['c', 'd'].edge_index = tensor([[0, 1], [0, 0]])
     data['d', 'c'].edge_index = data['c', 'd'].edge_index.flip([0])
 
-    metapaths = [[('a', 'b'), ('b', 'c')], [('a', 'b'), ('b', 'c'),
-                                            ('c', 'd')],
-                 [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'c'), ('c', 'b'),
-                  ('b', 'a')]]
-    transform = AddMetaPaths(metapaths, max_sample=None, weighted=True)
-    data = transform(data)
+    metapaths = [
+        [('a', 'b'), ('b', 'c')],
+        [('a', 'b'), ('b', 'c'), ('c', 'd')],
+        [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'c'), ('c', 'b'),
+         ('b', 'a')],
+    ]
+    transform = AddMetaPaths(metapaths, weighted=True)
+    metapath_data = transform(copy.copy(data))
 
     # Make sure manually added metapaths compute the correct number of edges
-    assert (data['a',
-                 'c'].edge_multiplicity == torch.Tensor([1, 2])).all().item()
-    assert (data['a',
-                 'd'].edge_multiplicity == torch.Tensor([1, 2])).all().item()
-    assert (data['a',
-                 'a'].edge_multiplicity == torch.Tensor([1, 2, 2,
-                                                         4])).all().item()
-    del data['a', 'c']
-    del data['a', 'd']
-    del data['a', 'a']
+    assert metapath_data['a', 'c'].edge_weight.tolist() == [1, 2]
+    assert metapath_data['a', 'd'].edge_weight.tolist() == [1, 2]
+    assert metapath_data['a', 'a'].edge_weight.tolist() == [1, 2, 2, 4]
 
     # Compute intra-table metapaths efficiently
     metapaths = [[('a', 'b'), ('b', 'c'), ('c', 'd')]]
-    data = AddMetaPaths(metapaths, weighted=True)(data)
-    data['d', 'a'].edge_index = data['a', 'd'].edge_index.flip([0])
-    data['d', 'a'].edge_multiplicity = data['a', 'd'].edge_multiplicity
+    metapath_data = AddMetaPaths(metapaths, weighted=True)(copy.copy(data))
+    metapath_data['d',
+                  'a'].edge_index = metapath_data['a',
+                                                  'd'].edge_index.flip([0])
+    metapath_data['d', 'a'].edge_weight = metapath_data['a', 'd'].edge_weight
     metapaths = [[('a', 'd'), ('d', 'a')]]
-    data = AddMetaPaths(metapaths, weighted=True)(data)
-    del data['a', 'd']
-    del data['d', 'a']
-    assert (data['a',
-                 'a'].edge_multiplicity == torch.Tensor([1, 2, 2,
-                                                         4])).all().item()
+    metapath_data = AddMetaPaths(metapaths, weighted=True)(metapath_data)
+    del metapath_data['a', 'd']
+    del metapath_data['d', 'a']
+    assert metapath_data['a', 'a'].edge_weight.tolist() == [1, 2, 2, 4]
