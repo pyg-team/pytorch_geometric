@@ -105,10 +105,13 @@ def test_graph_store_conversion():
                 return tensor_actual == tensor_expected
             return torch.equal(tensor_expected, tensor_actual)
 
-    all_edge_types = [('v', '1', 'v'), ('v', '2', 'v'), ('v', '3', 'v')]
-    assert _tensor_eq(graph_store.coo()[0].values(),
-                      graph_store.coo(edge_types=all_edge_types)[0].values())
-    assert _tensor_eq(graph_store.csr()[0].values(),
-                      graph_store.csr(edge_types=all_edge_types)[0].values())
-    assert _tensor_eq(graph_store.csc()[0].values(),
-                      graph_store.csc(edge_types=all_edge_types)[0].values())
+    edge_types = [('v', '1', 'v'), ('v', '2', 'v')]
+    assert _tensor_eq(
+        list(graph_store.coo()[0].values())[:-1],
+        graph_store.coo(edge_types=edge_types)[0].values())
+    assert _tensor_eq(
+        list(graph_store.csr()[0].values())[:-1],
+        graph_store.csr(edge_types=edge_types)[0].values())
+    assert _tensor_eq(
+        list(graph_store.csc()[0].values())[:-1],
+        graph_store.csc(edge_types=edge_types)[0].values())
