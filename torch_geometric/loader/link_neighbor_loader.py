@@ -10,18 +10,16 @@ from torch_geometric.loader.utils import filter_data, filter_hetero_data
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
-class LinkNeighborSampler(NeighborSampler):
-    def __init__(self, data, *args, neg_sampling_ratio: float = 0.0, **kwargs):
-        super().__init__(data, *args, **kwargs)
-        self.neg_sampling_ratio = neg_sampling_ratio
-
-        if issubclass(self.data_cls, Data):
-            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+class LinkSamplerMixin:
+    def _create_label_index(self, query):
+        query = [torch.tensor(s) for s in zip(*query)]
+        if len(query) == 2:
+            edge_label_index = torch.stack(query, dim=0)
+            edge_label = None
         else:
-            self.num_src_nodes = data[self.input_type[0]].num_nodes
-            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
+            edge_label_index = torch.stack(query[:2], dim=0)
+            edge_label = query[2]
 
-    def _create_label(self, edge_label_index, edge_label):
         device = edge_label_index.device
 
         num_pos_edges = edge_label_index.size(1)
@@ -52,43 +50,88 @@ class LinkNeighborSampler(NeighborSampler):
 
         return edge_label_index, edge_label
 
-    def __call__(self, query: List[Tuple[Tensor]]):
-        query = [torch.tensor(s) for s in zip(*query)]
-        if len(query) == 2:
-            edge_label_index = torch.stack(query, dim=0)
-            edge_label = None
-        else:
-            edge_label_index = torch.stack(query[:2], dim=0)
-            edge_label = query[2]
+    def _get_data_query(self, edge_label_index):
+        query_nodes = edge_label_index.view(-1)
+        query_nodes, reverse = query_nodes.unique(return_inverse=True)
+        edge_label_index = reverse.view(2, -1)
+        return query_nodes, edge_label_index
 
-        edge_label_index, edge_label = self._create_label(
-            edge_label_index, edge_label)
+    def _get_hetero_data_query(self, edge_label_index):
 
-        if issubclass(self.data_cls, Data):
-
+        if self.input_type[0] != self.input_type[-1]:
+            query_src = edge_label_index[0]
+            query_src, reverse_src = query_src.unique(return_inverse=True)
+            query_dst = edge_label_index[1]
+            query_dst, reverse_dst = query_dst.unique(return_inverse=True)
+            edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
+            query_node_dict = {
+                self.input_type[0]: query_src,
+                self.input_type[-1]: query_dst,
+            }
+        else:  # Merge both source and destination node indices:
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
             edge_label_index = reverse.view(2, -1)
+            query_node_dict = {self.input_type[0]: query_nodes}
+        return query_node_dict, edge_label_index
+
+
+class LinkSampler(LinkSamplerMixin):
+    """This sampler is user when :obj:`data` has no
+    :obj:`edge_index`."""
+    def __init__(self, data, neg_sampling_ratio: float = 0.0,
+                 input_type: InputEdges = None):
+        super().__init__()
+        self.data_cls = data.__class__ if isinstance(
+            data, (Data, HeteroData)) else 'custom'
+        self.neg_sampling_ratio = neg_sampling_ratio
+        self.input_type = input_type
+        self.perm_dict = None
+        if issubclass(self.data_cls, Data):
+            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+        else:
+            self.num_src_nodes = data[self.input_type[0]].num_nodes
+            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
+
+    def __call__(self, query: List[Tuple[Tensor]]):
+        edge_label_index, edge_label = self._create_label_index(query)
+
+        if issubclass(self.data_cls, Data):
+            query_nodes, edge_label_index = self._get_data_query(
+                edge_label_index)
+            return (query_nodes, None, None, None) + (edge_label_index,
+                                                      edge_label)
+
+        elif issubclass(self.data_cls, HeteroData):
+            query_node_dict, edge_label_index = self._get_hetero_data_query(
+                edge_label_index)
+            return (query_node_dict, None, None, None) + (edge_label_index,
+                                                          edge_label)
+
+
+class LinkNeighborSampler(NeighborSampler, LinkSamplerMixin):
+    def __init__(self, data, *args, neg_sampling_ratio: float = 0.0, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        self.neg_sampling_ratio = neg_sampling_ratio
+
+        if issubclass(self.data_cls, Data):
+            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+        else:
+            self.num_src_nodes = data[self.input_type[0]].num_nodes
+            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
+
+    def __call__(self, query: List[Tuple[Tensor]]):
+        edge_label_index, edge_label = self._create_label_index(query)
+
+        if issubclass(self.data_cls, Data):
+            query_nodes, edge_label_index = self._get_data_query(
+                edge_label_index)
             return self._sparse_neighbor_sample(query_nodes) + (
                 edge_label_index, edge_label)
 
         elif issubclass(self.data_cls, HeteroData):
-
-            if self.input_type[0] != self.input_type[-1]:
-                query_src = edge_label_index[0]
-                query_src, reverse_src = query_src.unique(return_inverse=True)
-                query_dst = edge_label_index[1]
-                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
-                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
-                query_node_dict = {
-                    self.input_type[0]: query_src,
-                    self.input_type[-1]: query_dst,
-                }
-            else:  # Merge both source and destination node indices:
-                query_nodes = edge_label_index.view(-1)
-                query_nodes, reverse = query_nodes.unique(return_inverse=True)
-                edge_label_index = reverse.view(2, -1)
-                query_node_dict = {self.input_type[0]: query_nodes}
+            query_node_dict, edge_label_index = self._get_hetero_data_query(
+                edge_label_index)
             return self._hetero_sparse_neighbor_sample(query_node_dict) + (
                 edge_label_index, edge_label)
 
@@ -258,7 +301,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
 
-        if neighbor_sampler is None:
+        # Corner Case: When data doesn't have any edges
+        # return a subset of nodes.
+        if not has_edge_index(data):
+            self.neighbor_sampler = LinkSampler(data, neg_sampling_ratio,
+                                                edge_type)
+        elif neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
                 data,
                 num_neighbors,
@@ -360,3 +408,13 @@ def get_edge_label_index(
         return edge_type, data[edge_type].edge_index
 
     return edge_type, edge_label_index
+
+
+def has_edge_index(data: Union[Data, HeteroData]) -> bool:
+    if isinstance(data, Data):
+        return hasattr(data, 'edge_index')
+    if isinstance(data, HeteroData):
+        for edge_items in data.edge_stores:
+            if 'edge_index' in edge_items:
+                return True
+        return False
