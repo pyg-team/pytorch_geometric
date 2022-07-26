@@ -1,4 +1,5 @@
 from collections.abc import Mapping, Sequence
+from inspect import signature
 from typing import List, Optional, Union
 
 import torch.utils.data
@@ -53,7 +54,10 @@ def pin_memory(data, device=None):
     if hasattr(data, "pin_memory"):
         return data.pin_memory()
     else:
-        return __torch_pin_memory(data, device)
+        if len(signature(__torch_pin_memory).parameters) > 1:
+            return __torch_pin_memory(data, device)
+        else:
+            return __torch_pin_memory(data)
 
 
 torch.utils.data._utils.pin_memory.pin_memory = pin_memory

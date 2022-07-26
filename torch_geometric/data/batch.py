@@ -29,14 +29,7 @@ class DynamicInheritance(type):
             # problems between `DynamicInheritance` and the metaclass of
             # `base_cls`. In particular, it creates a new common metaclass
             # from the defined metaclasses.
-
-            class MetaCls(metaclass=DynamicInheritance):
-                pass
-
-            class MetaBaseCls(metaclass=abc.ABCMeta):
-                pass
-
-            class MetaResolver(type(MetaCls), type(MetaBaseCls)):
+            class MetaResolver(type(cls), type(base_cls)):
                 pass
 
             if name not in globals():
