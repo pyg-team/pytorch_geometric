@@ -25,7 +25,7 @@ data = dataset[0].to(device)
 gnn = GCN(dataset.num_node_features, hidden_channels=16,
           out_channels=dataset.num_classes, num_layers=2).to(device)
 mlp = MLP([dataset.num_node_features, 64, dataset.num_classes], dropout=0.5,
-          batch_norm=False).to(device)
+          norm=None).to(device)
 
 gnn_optimizer = torch.optim.Adam(gnn.parameters(), lr=0.01, weight_decay=5e-4)
 mlp_optimizer = torch.optim.Adam(mlp.parameters(), lr=0.01, weight_decay=5e-4)

@@ -19,11 +19,11 @@ class Aggregation(torch.nn.Module):
             x (torch.Tensor): The source tensor.
             index (torch.LongTensor, optional): The indices of elements for
                 applying the aggregation.
-                One of :obj:`index` or `ptr` must be defined.
+                One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             ptr (torch.LongTensor, optional): If given, computes the
                 aggregation based on sorted inputs in CSR representation.
-                One of :obj:`index` or `ptr` must be defined.
+                One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             dim_size (int, optional): The size of the output tensor at
                 dimension :obj:`dim` after aggregation. (default: :obj:`None`)
@@ -37,7 +37,7 @@ class Aggregation(torch.nn.Module):
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                 dim: int = -2) -> Tensor:
+                 dim: int = -2, **kwargs) -> Tensor:
 
         if dim >= x.dim() or dim < -x.dim():
             raise ValueError(f"Encountered invalid dimension '{dim}' of "
@@ -62,7 +62,7 @@ class Aggregation(torch.nn.Module):
                                  f"'{dim_size}' but expected "
                                  f">= '{int(index.max()) + 1}')")
 
-        return super().__call__(x, index, ptr, dim_size, dim)
+        return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -105,15 +105,16 @@ class Aggregation(torch.nn.Module):
 
     def to_dense_batch(self, x: Tensor, index: Optional[Tensor] = None,
                        ptr: Optional[Tensor] = None,
-                       dim_size: Optional[int] = None,
-                       dim: int = -2) -> Tuple[Tensor, Tensor]:
+                       dim_size: Optional[int] = None, dim: int = -2,
+                       fill_value: float = 0.) -> Tuple[Tensor, Tensor]:
 
         # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
 
-        return to_dense_batch(x, index, batch_size=dim_size)
+        return to_dense_batch(x, index, batch_size=dim_size,
+                              fill_value=fill_value)
 
 
 ###############################################################################

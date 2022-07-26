@@ -38,7 +38,7 @@ class Net(torch.nn.Module):
         self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
 
         self.mlp = MLP([3 * 64, 1024, 256, 128, out_channels], dropout=0.5,
-                       batch_norm=False)
+                       norm=None)
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
