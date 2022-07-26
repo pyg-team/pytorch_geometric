@@ -71,21 +71,6 @@ Normalization Layers
    :undoc-members:
    :exclude-members: training
 
-Global Pooling Layers
----------------------
-
-.. currentmodule:: torch_geometric.nn.glob
-.. autosummary::
-   :nosignatures:
-   {% for cls in torch_geometric.nn.glob.classes %}
-     {{ cls }}
-   {% endfor %}
-
-.. automodule:: torch_geometric.nn.glob
-   :members:
-   :undoc-members:
-   :exclude-members: training
-
 Pooling Layers
 --------------
 
