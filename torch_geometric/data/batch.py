@@ -1,4 +1,3 @@
-import abc
 import inspect
 from collections.abc import Sequence
 from typing import Any, List, Optional, Union
@@ -33,11 +32,7 @@ class DynamicInheritance(type):
                 pass
 
             if name not in globals():
-                globals()[name] = MetaResolver(
-                    name,
-                    (cls, base_cls),
-                    {},
-                )
+                globals()[name] = MetaResolver(name, (cls, base_cls), {})
             new_cls = globals()[name]
 
         params = list(inspect.signature(base_cls.__init__).parameters.items())
