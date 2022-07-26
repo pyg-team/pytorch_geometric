@@ -226,7 +226,7 @@ class RGCNConv(MessagePassing):
                         out = out + (h @ weight[i])
             else:
                 edge_type, sort_by_edge_type = torch.sort(edge_type)
-                edge_index = edge_index[sort_by_edge_type]
+                edge_index = edge_index[:, sort_by_edge_type]
                 self.edge_ptr = torch.cumsum(
                     torch.unique_consecutive(edge_type, return_counts=True)[1])
                 self.edge_ptr = torch.cat(torch.tensor([0]), self.edge_ptr)
