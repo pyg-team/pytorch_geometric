@@ -217,16 +217,9 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         assert seed_max_time >= max_time
 
 
-@pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_custom_heterogeneous_link_neighbor_loader(
-    directed,
-    FeatureStore,
-    GraphStore,
-):
-    torch.manual_seed(12345)
-
+def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
     data = HeteroData()
     feature_store = FeatureStore()
     graph_store = GraphStore()
@@ -265,7 +258,7 @@ def test_custom_heterogeneous_link_neighbor_loader(
         num_neighbors=[-1] * 2,
         edge_label_index=('paper', 'to', 'author'),
         batch_size=20,
-        directed=directed,
+        directed=True,
         neg_sampling_ratio=0,
     )
 
@@ -274,7 +267,7 @@ def test_custom_heterogeneous_link_neighbor_loader(
         num_neighbors=[-1] * 2,
         edge_label_index=('paper', 'to', 'author'),
         batch_size=20,
-        directed=directed,
+        directed=True,
         neg_sampling_ratio=0,
     )
 

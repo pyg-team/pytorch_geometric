@@ -417,33 +417,13 @@ def get_edge_label_index(
 
     else:  # Tuple[FeatureStore, GraphStore]
         _, graph_store = data
-        edge_attrs = graph_store.get_all_edge_attrs()
-        edge_types = [attr.edge_type for attr in edge_attrs]
 
-        def _all_indices(ls, val):
-            return [i for i, _ in enumerate(ls) if ls[i] == val]
-
+        # Need the edge index in COO for LinkNeighborLoader:
         def _get_edge_index(edge_type):
-            if edge_type not in edge_types:
-                raise ValueError(
-                    f"The edge label index {edge_type} was not found in "
-                    f"the input graph store.")
-
-            associated_attrs = [
-                edge_attrs[i] for i in _all_indices(edge_types, edge_type)
-                if edge_attrs[i].layout == EdgeLayout.COO
-            ]
-
-            # TODO convert to COO here
-            if len(associated_attrs) == 0:
-                raise ValueError(
-                    f"The edge label index {edge_type} is not stored in the "
-                    f"input graph store in COO format. Please store "
-                    f"{edge_type} in COO format to use it for link "
-                    f"prediction. ")
-
-            return torch.stack(graph_store.get_edge_index(associated_attrs[0]),
-                               dim=0)
+            row_dict, col_dict, _ = graph_store.coo([edge_type])
+            row = list(row_dict.values())[0]
+            col = list(col_dict.values())[0]
+            return torch.stack((row, col), dim=0)
 
         if isinstance(edge_label_index[0], str):
             edge_type = edge_label_index
@@ -453,7 +433,6 @@ def get_edge_label_index(
         edge_type, edge_label_index = edge_label_index
 
         if edge_label_index is None:
-            assert edge_type in edge_types
             return edge_type, _get_edge_index(edge_type)
 
         return edge_type, edge_label_index
