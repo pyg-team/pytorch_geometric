@@ -12,7 +12,11 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
-
+try:
+    import pyg_lib
+    pyg_lib_avail = True
+except:
+    pyg_lib_avail = False
 
 @torch.jit._overload
 def masked_edge_index(edge_index, edge_mask):
