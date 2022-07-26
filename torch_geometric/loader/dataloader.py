@@ -56,8 +56,7 @@ def pin_memory(data, device=None):
         return data.pin_memory()
     if len(__torch_pin_memory_params) > 1:
         return __torch_pin_memory(data, device)
-    else:
-        return __torch_pin_memory(data)
+    return __torch_pin_memory(data)
 
 
 torch.utils.data._utils.pin_memory.pin_memory = pin_memory
