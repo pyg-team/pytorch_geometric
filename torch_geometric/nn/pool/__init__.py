@@ -244,11 +244,29 @@ def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
 
 
 __all__ = [
-    'TopKPooling', 'SAGPooling', 'EdgePooling', 'ASAPooling', 'PANPooling',
-    'MemPooling', 'max_pool', 'avg_pool', 'max_pool_x', 'max_pool_neighbor_x',
-    'avg_pool_x', 'avg_pool_neighbor_x', 'graclus', 'voxel_grid', 'fps', 'knn',
-    'knn_graph', 'radius', 'radius_graph', 'nearest', 'global_max_pool',
-    'global_add_pool', 'global_mean_pool'
+    'global_max_pool',
+    'global_add_pool',
+    'global_mean_pool',
+    'TopKPooling',
+    'SAGPooling',
+    'EdgePooling',
+    'ASAPooling',
+    'PANPooling',
+    'MemPooling',
+    'max_pool',
+    'avg_pool',
+    'max_pool_x',
+    'max_pool_neighbor_x',
+    'avg_pool_x',
+    'avg_pool_neighbor_x',
+    'graclus',
+    'voxel_grid',
+    'fps',
+    'knn',
+    'knn_graph',
+    'radius',
+    'radius_graph',
+    'nearest',
 ]
 
 classes = __all__

@@ -1,14 +1,7 @@
 from typing import Optional
 
 from torch import Tensor
-
-from torch_geometric.nn.aggr import (
-    MaxAggregation,
-    MeanAggregation,
-    SumAggregation,
-)
-
-sum_aggr = SumAggregation()
+from torch_scatter import scatter
 
 
 def global_add_pool(x: Tensor, batch: Optional[Tensor],
@@ -29,10 +22,8 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     """
     if batch is None:
         return x.sum(dim=-2, keepdim=x.dim() == 2)
-    return sum_aggr(x, batch, dim_size=size)
-
-
-mean_aggr = MeanAggregation()
+    size = int(batch.max().item() + 1) if size is None else size
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='add')
 
 
 def global_mean_pool(x: Tensor, batch: Optional[Tensor],
@@ -53,10 +44,8 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     """
     if batch is None:
         return x.mean(dim=-2, keepdim=x.dim() == 2)
-    return mean_aggr(x, batch, dim_size=size)
-
-
-max_aggr = MaxAggregation()
+    size = int(batch.max().item() + 1) if size is None else size
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='mean')
 
 
 def global_max_pool(x: Tensor, batch: Optional[Tensor],
@@ -77,4 +66,5 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
     """
     if batch is None:
         return x.max(dim=-2, keepdim=x.dim() == 2)[0]
-    return max_aggr(x, batch, dim_size=size)
+    size = int(batch.max().item() + 1) if size is None else size
+    return scatter(x, batch, dim=-2, dim_size=size, reduce='mean')
