@@ -1,9 +1,12 @@
+from typing import List
+
 import pytest
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils.sort_edge_index import sort_edge_index
 
 
@@ -94,3 +97,18 @@ def test_graph_store_conversion():
         assert torch.equal(row_dict[key], csc[0])
         assert torch.equal(colptr_dict[key], csc[1])
         assert perm_dict[key] is None
+
+    # Ensure that 'edge_types' parameters work as intended:
+    def _tensor_eq(expected: List[OptTensor], actual: List[OptTensor]):
+        for tensor_expected, tensor_actual in zip(expected, actual):
+            if tensor_expected is None or tensor_actual is None:
+                return tensor_actual == tensor_expected
+            return torch.equal(tensor_expected, tensor_actual)
+
+    all_edge_types = [('v', '1', 'v'), ('v', '2', 'v'), ('v', '3', 'v')]
+    assert _tensor_eq(graph_store.coo()[0].values(),
+                      graph_store.coo(edge_types=all_edge_types)[0].values())
+    assert _tensor_eq(graph_store.csr()[0].values(),
+                      graph_store.csr(edge_types=all_edge_types)[0].values())
+    assert _tensor_eq(graph_store.csc()[0].values(),
+                      graph_store.csc(edge_types=all_edge_types)[0].values())
