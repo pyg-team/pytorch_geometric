@@ -39,7 +39,6 @@ class LinkNeighborSampler(NeighborSampler):
                 self.num_src_nodes, self.num_dst_nodes = edge_attrs[
                     edge_types.index(self.input_type)].size
 
-            # Otherwise:
             elif num_src_nodes is None or num_dst_nodes is None:
                 raise ValueError(
                     f"Use of the feature store and graph store abstraction "
@@ -48,8 +47,9 @@ class LinkNeighborSampler(NeighborSampler):
                     f"the edge label index {self.input_type} is not part "
                     f"of the specified graph. ")
 
-            self.num_src_nodes = num_src_nodes
-            self.num_dst_nodes = num_dst_nodes
+            else:
+                self.num_src_nodes = num_src_nodes
+                self.num_dst_nodes = num_dst_nodes
 
         elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
