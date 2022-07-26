@@ -48,16 +48,16 @@ class Collater:
 # this behavior here by monkeypatching `pin_memory`, but can hopefully patch
 # this in PyTorch in the future:
 __torch_pin_memory = torch.utils.data._utils.pin_memory.pin_memory
+__torch_pin_memory_params = signature(__torch_pin_memory).parameters
 
 
 def pin_memory(data, device=None):
     if hasattr(data, "pin_memory"):
         return data.pin_memory()
+    if len(__torch_pin_memory_params) > 1:
+        return __torch_pin_memory(data, device)
     else:
-        if len(signature(__torch_pin_memory).parameters) > 1:
-            return __torch_pin_memory(data, device)
-        else:
-            return __torch_pin_memory(data)
+        return __torch_pin_memory(data)
 
 
 torch.utils.data._utils.pin_memory.pin_memory = pin_memory
