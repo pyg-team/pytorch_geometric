@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import EdgeLayout, GraphStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
 from torch_geometric.loader.utils import (
