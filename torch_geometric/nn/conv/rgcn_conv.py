@@ -100,7 +100,7 @@ class RGCNConv(MessagePassing):
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
-        is_sorted = False,
+        is_sorted=False,
         **kwargs,
     ):
         kwargs.setdefault('aggr', aggr)
