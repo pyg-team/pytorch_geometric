@@ -56,7 +56,7 @@ def test_sage_conv(project):
         assert jit((x1, None), adj.t()).tolist() == out2.tolist()
 
 
-def test_lstm_sage_conv():
+def test_lstm_aggr_sage_conv():
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
@@ -71,3 +71,23 @@ def test_lstm_sage_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 0]])
     with pytest.raises(ValueError, match="'index' tensor is not sorted"):
         conv(x, edge_index)
+
+
+@pytest.mark.parametrize('aggr_kwargs', [
+    dict(mode='cat'),
+    dict(mode='proj', mode_kwargs=dict(in_channels=8, out_channels=16)),
+    dict(mode='attn', mode_kwargs=dict(in_channels=8, out_channels=16,
+                                       num_heads=4)),
+    dict(mode='sum'),
+])
+def test_multi_aggr_sage_conv(aggr_kwargs):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    aggr_kwargs['aggrs_kwargs'] = [{}, {}, {}, dict(learn=True, t=1)]
+    conv = SAGEConv(8, 32, aggr=['mean', 'max', 'sum', 'softmax'],
+                    aggr_kwargs=aggr_kwargs)
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
+    assert torch.allclose(conv(x, adj.t()), out)
