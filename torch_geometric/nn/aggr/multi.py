@@ -119,12 +119,10 @@ class MultiAggregation(Aggregation):
     def get_out_channels(self, in_channels: int) -> int:
         if self.out_channels is not None:
             return self.out_channels
-
         # TODO: Support having customized `out_channels` in each aggregation
         if self.mode == 'cat':
             return in_channels * len(self.aggrs)
-        else:
-            return in_channels
+        return in_channels
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
