@@ -308,7 +308,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         # Corner Case: When data doesn't have any edges
         # return a subset of nodes.
         if not has_edge_index(data):
-            self.neighbor_sampler = LinkSampler(data, neg_sampling_ratio,
+            self.neighbor_sampler = LinkSampler(data, self.neg_sampling_ratio,
                                                 edge_type)
         elif neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
