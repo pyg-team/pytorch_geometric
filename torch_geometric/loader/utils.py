@@ -224,3 +224,23 @@ def filter_feature_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
+
+
+def has_edge_index(data: Union[Data, HeteroData, Tuple]) -> bool:
+    """Returns :obj:`True` if :obj:`data` has attribute
+    `edge_index`, `adj_t` or `adj`"""
+    def edge_present(edge_store: Union[Data, EdgeStorage]):
+        return ((hasattr(edge_store, 'edge_index')
+                 and edge_store.edge_index is not None) or
+                (hasattr(edge_store, 'adj_t') and edge_store.adj_t is not None)
+                or (hasattr(edge_store, 'adj') and edge_store.adj is not None))
+
+    if isinstance(data, Data):
+        return True if edge_present(data) else False
+    elif isinstance(data, HeteroData):
+        for store in data.edge_stores:
+            if edge_present(store):
+                return True
+        return False
+    else:  # assume graph store always has edge_index.
+        return True
