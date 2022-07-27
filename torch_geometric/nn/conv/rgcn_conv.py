@@ -100,6 +100,7 @@ class RGCNConv(MessagePassing):
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
+        is_sorted = False,
         **kwargs,
     ):
         kwargs.setdefault('aggr', aggr)
@@ -225,8 +226,9 @@ class RGCNConv(MessagePassing):
                         h = self.propagate(tmp, x=x_l, size=size)
                         out = out + (h @ weight[i])
             else:
-                edge_type, sort_by_edge_type = torch.sort(edge_type)
-                edge_index = edge_index[:, sort_by_edge_type]
+                if (edge_type[1:] < edge_type[:-1]).any():
+                    edge_type, sort_by_edge_type = torch.sort(edge_type)
+                    edge_index = edge_index[:, sort_by_edge_type]
                 self.edge_ptr = torch.cumsum(
                     torch.unique_consecutive(edge_type, return_counts=True)[1],
                     dim=0)
