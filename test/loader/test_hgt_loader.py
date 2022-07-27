@@ -183,4 +183,4 @@ def test_hgt_loader_on_dblp(get_dataset):
                        input_nodes=('author', data['author'].train_mask))
 
     for batch in loader:
-        print(batch)
+        assert set(batch.edge_types) == set(list(data.edge_types))
