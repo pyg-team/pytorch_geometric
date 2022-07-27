@@ -116,7 +116,7 @@ class MultiAggregation(Aggregation):
         if hasattr(self, 'multihead_attn'):
             self.multihead_attn._reset_parameters()
 
-    def get_out_channels(self, in_channels):
+    def get_out_channels(self, in_channels: int) -> int:
         if self.out_channels is not None:
             return self.out_channels
 
