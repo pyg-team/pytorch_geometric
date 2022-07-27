@@ -229,7 +229,8 @@ class RGCNConv(MessagePassing):
                 if (edge_type[1:] < edge_type[:-1]).any():
                     edge_type, sort_by_edge_type = torch.sort(edge_type)
                     edge_index = edge_index[:, sort_by_edge_type]
-                self.edge_ptr = torch.ops.torch_sparse.ind2ptr(edge_type, self.num_relations)
+                self.edge_ptr = torch.ops.torch_sparse.ind2ptr(
+                    edge_type, self.num_relations)
                 out = self.propagate(edge_index, x=x_l, size=size)
 
         root = self.root
