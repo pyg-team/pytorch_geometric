@@ -65,34 +65,36 @@ class MultiAggregation(Aggregation):
 
         self.mode = mode
         mode_kwargs = mode_kwargs or {}
+        self.in_channels = mode_kwargs.pop('in_channels', None)
+        self.out_channels = mode_kwargs.pop('out_channels', None)
         if mode == 'proj' or mode == 'attn':
             if len(aggrs) == 1:
                 raise ValueError("Multiple aggregations are required for "
                                  "'proj' or 'attn' combine mode.")
-            in_channels = mode_kwargs.pop('in_channels', None)
-            out_channels = mode_kwargs.pop('out_channels', None)
-            if (in_channels and out_channels) is None:
+
+            if (self.in_channels and self.out_channels) is None:
                 raise ValueError(
                     f"Combine mode '{mode}' must have `in_channels` "
                     f"and `out_channels` specified.")
 
-            if isinstance(in_channels, int):
-                in_channels = (in_channels, ) * len(aggrs)
+            if isinstance(self.in_channels, int):
+                self.in_channels = (self.in_channels, ) * len(aggrs)
 
             if mode == 'proj':
                 self.lin = Linear(
-                    sum(in_channels),
-                    out_channels,
+                    sum(self.in_channels),
+                    self.out_channels,
                     **mode_kwargs,
                 )
 
             if mode == 'attn':
                 self.lin_heads = torch.nn.ModuleList([
-                    Linear(channels, out_channels) for channels in in_channels
+                    Linear(channels, self.out_channels)
+                    for channels in self.in_channels
                 ])
                 num_heads = mode_kwargs.pop('num_heads', 1)
                 self.multihead_attn = MultiheadAttention(
-                    out_channels,
+                    self.out_channels,
                     num_heads,
                     **mode_kwargs,
                 )
@@ -113,6 +115,14 @@ class MultiAggregation(Aggregation):
                 lin.reset_parameters()
         if hasattr(self, 'multihead_attn'):
             self.multihead_attn._reset_parameters()
+
+    def get_out_channels(self, in_channels: int) -> int:
+        if self.out_channels is not None:
+            return self.out_channels
+        # TODO: Support having customized `out_channels` in each aggregation
+        if self.mode == 'cat':
+            return in_channels * len(self.aggrs)
+        return in_channels
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
