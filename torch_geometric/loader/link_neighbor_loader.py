@@ -356,6 +356,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
 
+        if not has_edge_index(data):
+            if isinstance(data, Data):
+                assert edge_label_index is not None
+            else:
+                assert len(edge_label_index) == 2
+
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
 
