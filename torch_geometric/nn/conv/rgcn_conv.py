@@ -16,7 +16,7 @@ from ..inits import glorot, zeros
 try:
     import pyg_lib
     pyg_lib_avail = True
-except:
+except: # noqa
     pyg_lib_avail = False
 
 
