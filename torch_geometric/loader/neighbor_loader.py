@@ -13,6 +13,7 @@ from torch_geometric.loader.utils import (
     filter_data,
     filter_feature_store,
     filter_hetero_data,
+    has_edges,
     to_csc,
     to_hetero_csc,
 )
@@ -50,11 +51,15 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data.__class__.__name__}' object")
 
-            # Convert the graph data into a suitable format for sampling.
-            out = to_csc(data, device='cpu', share_memory=share_memory,
-                         is_sorted=is_sorted)
-            self.colptr, self.row, self.perm = out
-            assert isinstance(num_neighbors, (list, tuple))
+            if not has_edges(data):
+                self.num_neighbors = []
+                self.colptr = self.row = self.perm = None
+            else:
+                # Convert the graph data into a suitable format for sampling.
+                out = to_csc(data, device='cpu', share_memory=share_memory,
+                             is_sorted=is_sorted)
+                self.colptr, self.row, self.perm = out
+                assert isinstance(num_neighbors, (list, tuple))
 
         # If we are working with a `HeteroData` object, convert each edge
         # type's edge_index to CSC and store it:
@@ -72,15 +77,23 @@ class NeighborSampler:
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
-            if isinstance(num_neighbors, (list, tuple)):
-                num_neighbors = {key: num_neighbors for key in self.edge_types}
-            assert isinstance(num_neighbors, dict)
-            self.num_neighbors = {
-                edge_type_to_str(key): value
-                for key, value in num_neighbors.items()
-            }
+            if not has_edges(data):
+                self.num_hops = 0
+                self.num_neighbors = {}
+            else:
+                if isinstance(num_neighbors, (list, tuple)):
+                    num_neighbors = {
+                        key: num_neighbors
+                        for key in self.edge_types
+                    }
+                assert isinstance(num_neighbors, dict)
+                self.num_neighbors = {
+                    edge_type_to_str(key): value
+                    for key, value in num_neighbors.items()
+                }
 
-            self.num_hops = max([len(v) for v in self.num_neighbors.values()])
+                self.num_hops = max(
+                    [len(v) for v in self.num_neighbors.values()])
 
             assert input_type is not None
             self.input_type = input_type
@@ -152,6 +165,8 @@ class NeighborSampler:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
 
     def _sparse_neighbor_sample(self, index: Tensor):
+        if len(self.num_neighbors) == 0:
+            return index, None, None, None
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,
