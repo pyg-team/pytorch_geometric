@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -15,7 +14,7 @@ from torch_geometric.typing import (
     OptTensor,
     Size,
 )
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+# from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 from ..inits import glorot, zeros
 
@@ -45,7 +44,7 @@ class FusedGATConv(MessagePassing):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
-        self.add_self_loops = add_self_loops
+        # self.add_self_loops = add_self_loops
         # self.edge_dim = edge_dim
         # self.fill_value = fill_value
 
@@ -85,16 +84,14 @@ class FusedGATConv(MessagePassing):
     def reset_parameters(self):
         self.lin_src.reset_parameters()
         self.lin_dst.reset_parameters()
-        if self.lin_edge is not None:
-            self.lin_edge.reset_parameters()
+        # if self.lin_edge is not None:
+        #     self.lin_edge.reset_parameters()
         glorot(self.att_src)
         glorot(self.att_dst)
-        glorot(self.att_edge)
+        # glorot(self.att_edge)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None, size: Size = None,
-                return_attention_weights=None):
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj):
 
 
         H, C = self.heads, self.out_channels
@@ -113,7 +110,7 @@ class FusedGATConv(MessagePassing):
 
         x = (x_src, x_dst)
 
-        row_ptr,col_ind,col_ptr,row_ind=edge_index
+        row_ptr, col_idx, col_ptr, row_idx, permute = edge_index
 
         # Next, we compute node-level attention coefficients, both for source
         # and target nodes (if present):
@@ -126,8 +123,10 @@ class FusedGATConv(MessagePassing):
 
         # # propagate_type: (x: OptPairTensor, alpha: Tensor)
         # out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
-
-        out_dgnn=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_ind,col_ptr,row_ind,self.negative_slope,x_src,self.dropout)
+        if self.training:
+            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,self.dropout)
+        else:
+            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,0.0)
 
 
         if self.concat:
