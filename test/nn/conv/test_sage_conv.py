@@ -63,7 +63,7 @@ def test_lstm_aggr_sage_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = SAGEConv(8, 32, aggr='lstm')
-    assert str(conv) == 'SAGEConv(8, 32, aggr=lstm)'
+    assert str(conv) == 'SAGEConv(8, 32, aggr=LSTMAggregation(8, 8))'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj.t()), out)

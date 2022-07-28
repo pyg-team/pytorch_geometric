@@ -22,19 +22,22 @@ def test_activation_resolver():
 @pytest.mark.parametrize('aggr_tuple', [
     (torch_geometric.nn.aggr.MeanAggregation, 'mean'),
     (torch_geometric.nn.aggr.SumAggregation, 'sum'),
-    (torch_geometric.nn.aggr.SumAggregation, 'add'),
     (torch_geometric.nn.aggr.MaxAggregation, 'max'),
     (torch_geometric.nn.aggr.MinAggregation, 'min'),
     (torch_geometric.nn.aggr.MulAggregation, 'mul'),
     (torch_geometric.nn.aggr.VarAggregation, 'var'),
     (torch_geometric.nn.aggr.StdAggregation, 'std'),
     (torch_geometric.nn.aggr.SoftmaxAggregation, 'softmax'),
-    (torch_geometric.nn.aggr.PowerMeanAggregation, 'powermean'),
+    (torch_geometric.nn.aggr.PowerMeanAggregation, 'power_mean'),
 ])
 def test_aggregation_resolver(aggr_tuple):
     aggr_module, aggr_repr = aggr_tuple
+
     assert isinstance(aggregation_resolver(aggr_module()), aggr_module)
     assert isinstance(aggregation_resolver(aggr_repr), aggr_module)
+
+    assert aggregation_resolver(aggr_module(), reverse=True) == aggr_repr
+    assert aggregation_resolver(aggr_repr, reverse=True) == aggr_repr
 
 
 @pytest.mark.parametrize('norm_tuple', [
