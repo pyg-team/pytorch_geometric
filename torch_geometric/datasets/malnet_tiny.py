@@ -52,6 +52,9 @@ class MalNetTiny(InMemoryDataset):
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
+        assert split in {*self.splits, 'trainval', None},       \
+                f'Split "{split}" found, but expected either '  \
+                f'"train", "val", "trainval", "test" or None'
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices, split_slices = torch.load(
             self.processed_paths[0])
