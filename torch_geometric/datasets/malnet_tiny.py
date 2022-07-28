@@ -53,7 +53,8 @@ class MalNetTiny(InMemoryDataset):
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices, split_slices = torch.load(self.processed_paths[0])
+        self.data, self.slices, split_slices = torch.load(
+            self.processed_paths[0])
 
         if split is not None:
             indices = self.indices()
@@ -65,8 +66,10 @@ class MalNetTiny(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [osp.join('split_info_tiny', 'type', f'{split}.txt')
-                for split in self.splits] + ['malnet-graphs-tiny']
+        return [
+            osp.join('split_info_tiny', 'type', f'{split}.txt')
+            for split in self.splits
+        ] + ['malnet-graphs-tiny']
 
     @property
     def processed_file_names(self) -> str:
