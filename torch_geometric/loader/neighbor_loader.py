@@ -51,14 +51,13 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data.__class__.__name__}' object")
 
+            # Convert the graph data into a suitable format for sampling.
+            out = to_csc(data, device='cpu', share_memory=share_memory,
+                         is_sorted=is_sorted)
+            self.colptr, self.row, self.perm = out
             if not has_edges(data):
                 self.num_neighbors = []
-                self.colptr = self.row = self.perm = None
             else:
-                # Convert the graph data into a suitable format for sampling.
-                out = to_csc(data, device='cpu', share_memory=share_memory,
-                             is_sorted=is_sorted)
-                self.colptr, self.row, self.perm = out
                 assert isinstance(num_neighbors, (list, tuple))
 
         # If we are working with a `HeteroData` object, convert each edge
@@ -165,8 +164,6 @@ class NeighborSampler:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
 
     def _sparse_neighbor_sample(self, index: Tensor):
-        if len(self.num_neighbors) == 0:
-            return index, None, None, None
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,

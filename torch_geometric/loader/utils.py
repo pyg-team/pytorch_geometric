@@ -56,7 +56,11 @@ def to_csc(
         colptr, row, _ = data.adj_t.csr()
 
     elif hasattr(data, 'edge_index'):
-        (row, col) = data.edge_index
+        if data.edge_index is None:
+            edge_index = torch.empty((2, 0), dtype=torch.long)
+        else:
+            edge_index = data.edge_index
+        (row, col) = edge_index
         if not is_sorted:
             perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
