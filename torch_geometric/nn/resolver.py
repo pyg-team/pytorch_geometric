@@ -8,6 +8,15 @@ def normalize_string(s: str) -> str:
     return s.lower().replace('-', '').replace('_', '').replace(' ', '')
 
 
+def camel_to_snake(s: str) -> str:
+    import re
+    s = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', s)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s).lower()
+
+
+# Resolvers ###################################################################
+
+
 def resolver(classes: List[Any], class_dict: Dict[str, Any],
              query: Union[Any, str], base_cls: Optional[Any], *args, **kwargs):
 
@@ -36,8 +45,41 @@ def resolver(classes: List[Any], class_dict: Dict[str, Any],
             assert callable(cls)
             return cls
 
-    choices = set(cls.__name__ for cls in classes) | set(class_dict.keys())
+    choices = set(cls.__name__ for cls in classes + list(class_dict.values()))
     raise ValueError(f"Could not resolve '{query}' among choices {choices}")
+
+
+# Reverse Resolvers ###########################################################
+
+
+def reverse_resolver(classes: List[Any], class_dict: Dict[Any, str],
+                     query: Union[Any, str], base_cls: Optional[Any]):
+
+    if isinstance(query, str):
+        return query
+
+    assert callable(query)
+    query_cls_repr = camel_to_snake(query.__class__.__name__)
+
+    if not base_cls:
+        return query_cls_repr
+
+    base_cls_repr = camel_to_snake(base_cls.__name__)
+
+    if not isinstance(query, base_cls):
+        choices = {base_cls_repr} | set(
+            camel_to_snake(cls.__name__).replace(base_cls_repr, '').strip('_')
+            for cls in classes) | set(class_dict.values())
+        choices.remove('')
+        raise ValueError(
+            f"Could not resolve '{query}' among choices {choices}")
+
+    for cls, repr in class_dict.items():
+        if isinstance(query, cls):
+            return repr
+
+    repr = query_cls_repr.replace(base_cls_repr, '').strip("_")
+    return repr if repr else base_cls_repr
 
 
 # Activation Resolver #########################################################
@@ -80,14 +122,21 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
 # Aggregation Resolver ########################################################
 
 
-def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
+def aggregation_resolver(query: Union[Any, str], *args, reverse: bool = False,
+                         **kwargs):
     import torch_geometric.nn.aggr as aggr
     base_cls = aggr.Aggregation
     aggrs = [
         aggr for aggr in vars(aggr).values()
         if isinstance(aggr, type) and issubclass(aggr, base_cls)
     ]
-    aggr_dict = {
-        'add': aggr.SumAggregation,
-    }
-    return resolver(aggrs, aggr_dict, query, base_cls, *args, **kwargs)
+    if not reverse:
+        aggr_dict = {
+            'add': aggr.SumAggregation,
+        }
+        return resolver(aggrs, aggr_dict, query, base_cls, *args, **kwargs)
+    else:
+        aggr_dict = {
+            aggr.Set2Set: 'set2set',
+        }
+        return reverse_resolver(aggrs, aggr_dict, query, base_cls)

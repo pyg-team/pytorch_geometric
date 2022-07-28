@@ -20,23 +20,24 @@ def test_activation_resolver():
 
 
 @pytest.mark.parametrize('aggr_tuple', [
-    (torch_geometric.nn.aggr.MeanAggregation, 'mean'),
-    (torch_geometric.nn.aggr.SumAggregation, 'sum'),
-    (torch_geometric.nn.aggr.MaxAggregation, 'max'),
-    (torch_geometric.nn.aggr.MinAggregation, 'min'),
-    (torch_geometric.nn.aggr.MulAggregation, 'mul'),
-    (torch_geometric.nn.aggr.VarAggregation, 'var'),
-    (torch_geometric.nn.aggr.StdAggregation, 'std'),
-    (torch_geometric.nn.aggr.SoftmaxAggregation, 'softmax'),
-    (torch_geometric.nn.aggr.PowerMeanAggregation, 'power_mean'),
+    (torch_geometric.nn.aggr.MeanAggregation(), 'mean', ()),
+    (torch_geometric.nn.aggr.SumAggregation(), 'sum', ()),
+    (torch_geometric.nn.aggr.MaxAggregation(), 'max', ()),
+    (torch_geometric.nn.aggr.MinAggregation(), 'min', ()),
+    (torch_geometric.nn.aggr.MulAggregation(), 'mul', ()),
+    (torch_geometric.nn.aggr.VarAggregation(), 'var', ()),
+    (torch_geometric.nn.aggr.StdAggregation(), 'std', ()),
+    (torch_geometric.nn.aggr.SoftmaxAggregation(), 'softmax', ()),
+    (torch_geometric.nn.aggr.PowerMeanAggregation(), 'power_mean', ()),
+    (torch_geometric.nn.aggr.LSTMAggregation(6, 6), 'lstm', (6, 6)),
+    (torch_geometric.nn.aggr.Set2Set(6, 6), 'set2set', (6, 6)),
 ])
 def test_aggregation_resolver(aggr_tuple):
-    aggr_module, aggr_repr = aggr_tuple
-
-    assert isinstance(aggregation_resolver(aggr_module()), aggr_module)
-    assert isinstance(aggregation_resolver(aggr_repr), aggr_module)
-
-    assert aggregation_resolver(aggr_module(), reverse=True) == aggr_repr
+    aggr_module, aggr_repr, aggr_args = aggr_tuple
+    aggr_cls = type(aggr_module)
+    assert isinstance(aggregation_resolver(aggr_module), aggr_cls)
+    assert isinstance(aggregation_resolver(aggr_repr, *aggr_args), aggr_cls)
+    assert aggregation_resolver(aggr_module, reverse=True) == aggr_repr
     assert aggregation_resolver(aggr_repr, reverse=True) == aggr_repr
 
 

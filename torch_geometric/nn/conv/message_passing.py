@@ -118,14 +118,15 @@ class MessagePassing(torch.nn.Module):
         super().__init__()
 
         if aggr is None:
-            self.aggr = None
             self.aggr_module = None
+            self.aggr = None
         elif isinstance(aggr, (str, Aggregation)):
-            self.aggr = str(aggr)
             self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
+            aggr = aggr_resolver(aggr, reverse=True)
+            self.aggr = aggr if aggr in FUSE_AGGRS else str(self.aggr_module)
         elif isinstance(aggr, (tuple, list)):
-            self.aggr = [str(x) for x in aggr]
             self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
+            self.aggr = str(self.aggr_module)
         else:
             raise ValueError(
                 f"Only strings, list, tuples and instances of"
