@@ -2,12 +2,18 @@ import pytest
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import GENConv
+from torch_geometric.nn import (
+    GENConv,
+    PowerMeanAggregation,
+    SoftmaxAggregation,
+)
 from torch_geometric.testing import is_full_test
 
 
-@pytest.mark.parametrize('aggr', ['softmax', 'powermean'])
-def test_gen_conv(aggr):
+@pytest.mark.parametrize('aggr_tuple', [('softmax', SoftmaxAggregation()),
+                                        ('powermean', PowerMeanAggregation())])
+def test_gen_conv(aggr_tuple):
+    aggr, aggr_module = aggr_tuple
     x1 = torch.randn(4, 16)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -17,7 +23,7 @@ def test_gen_conv(aggr):
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = GENConv(16, 32, aggr)
-    assert conv.__repr__() == f'GENConv(16, 32, aggr={aggr})'
+    assert conv.__repr__() == f'GENConv(16, 32, aggr={str(aggr_module)})'
     out11 = conv(x1, edge_index)
     assert out11.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out11, atol=1e-6)
