@@ -1,10 +1,12 @@
 import copy
 import os.path as osp
+
 import torch
 import torch.nn.functional as F
 from torch import nn
-from torch_geometric.nn import RGCNConv
+
 from torch_geometric.datasets import DBLP
+from torch_geometric.nn import RGCNConv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'DBLP')
@@ -14,7 +16,8 @@ graph = dataset[0]
 num_classes = torch.max(graph['author'].y).item() + 1
 graph['conference'].x = torch.randn((graph['conference'].num_nodes, 50))
 graph = graph.to(device)
-train_mask, val_mask, test_mask = graph['author'].train_mask, graph['author'].val_mask, graph['author'].test_mask
+train_mask, val_mask, test_mask = graph['author'].train_mask, graph[
+    'author'].val_mask, graph['author'].test_mask
 y = graph['author'].y
 
 node_types, edge_types = graph.metadata()
@@ -28,8 +31,10 @@ in_feats, hidden_feats = 128, 64
 class RGCN(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
         super(RGCN, self).__init__()
-        self.conv1 = RGCNConv(in_channels, hidden_channels, num_relations=num_relations, num_bases=30)
-        self.conv2 = RGCNConv(hidden_channels, out_channels, num_relations=num_relations, num_bases=30)
+        self.conv1 = RGCNConv(in_channels, hidden_channels,
+                              num_relations=num_relations, num_bases=30)
+        self.conv2 = RGCNConv(hidden_channels, out_channels,
+                              num_relations=num_relations, num_bases=30)
         self.lins = torch.nn.ModuleList()
         for i in range(len(node_types)):
             lin = nn.Linear(init_sizes[i], in_channels)
@@ -56,7 +61,8 @@ class RGCN(nn.Module):
 def train():
     model = RGCN(in_feats, hidden_feats, num_classes).to(device)
     print(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=1e-4)
     loss_function = torch.nn.CrossEntropyLoss().to(device)
     min_epochs = 5
     best_val_acc = 0
@@ -74,8 +80,8 @@ def train():
         if epoch + 1 > min_epochs and val_acc > best_val_acc:
             best_val_acc = val_acc
             final_best_acc = test_acc
-        print('Epoch{:3d} train_loss {:.5f} val_acc {:.3f} test_acc {:.3f}'
-              .format(epoch, loss.item(), val_acc, test_acc))
+        print('Epoch{:3d} train_loss {:.5f} val_acc {:.3f} test_acc {:.3f}'.
+              format(epoch, loss.item(), val_acc, test_acc))
 
     return final_best_acc
 
