@@ -91,7 +91,8 @@ class NeighborSampler:
                     for key, value in num_neighbors.items()
                 }
 
-                self.num_hops = max(
+                # Add at least one element to the list to ensure that max is well-defined
+                self.num_hops = max([0] +
                     [len(v) for v in self.num_neighbors.values()])
 
             assert input_type is not None
