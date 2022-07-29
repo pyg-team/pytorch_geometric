@@ -230,7 +230,7 @@ def filter_feature_store(
     return data
 
 
-def has_edges(data: Union[Data, HeteroData]) -> bool:
+def has_edges(data: Data) -> bool:
     """Returns :obj:`True` if :obj:`data` has attribute
     `edge_index`, `adj_t` or `adj`."""
     def edge_present(edge_store: Union[Data, EdgeStorage]):
@@ -239,13 +239,4 @@ def has_edges(data: Union[Data, HeteroData]) -> bool:
                 (hasattr(edge_store, 'adj_t') and edge_store.adj_t is not None)
                 or (hasattr(edge_store, 'adj') and edge_store.adj is not None))
 
-    if isinstance(data, Data):
-        return True if edge_present(data) else False
-    elif isinstance(data, HeteroData):
-        for store in data.edge_stores:
-            if edge_present(store):
-                return True
-        return False
-    else:
-        raise ValueError(
-            'Function only supports `HeteroData` and `Data` objects')
+    return True if edge_present(data) else False
