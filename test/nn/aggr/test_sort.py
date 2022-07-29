@@ -9,7 +9,7 @@ def test_sort_aggregation_pool():
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
 
     aggr = SortAggregation(k=5)
-    assert str(aggr) == 'SortAggr(k=5)'
+    assert str(aggr) == 'SortAggregation(k=5)'
 
     out = aggr(x, index)
     assert out.size() == (2, 5 * 4)
@@ -37,7 +37,7 @@ def test_sort_aggregation_pool_smaller_than_k():
 
     # Set k which is bigger than both N_1=4 and N_2=6.
     aggr = SortAggregation(k=10)
-    assert str(aggr) == 'SortAggr(k=10)'
+    assert str(aggr) == 'SortAggregation(k=10)'
 
     out = aggr(x, index)
     assert out.size() == (2, 10 * 4)
@@ -65,7 +65,7 @@ def test_global_sort_pool_dim_size():
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
 
     aggr = SortAggregation(k=5)
-    assert str(aggr) == 'SortAggr(k=5)'
+    assert str(aggr) == 'SortAggregation(k=5)'
 
     # expand batch output by 1
     out = aggr(x, index, dim_size=3)
