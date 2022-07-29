@@ -8,6 +8,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, OptTensor
 
@@ -29,10 +30,6 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     # Since C++ cannot take dictionaries with tuples as key as input, edge type
     # triplets need to be converted into single strings.
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
-
-
-def str_to_edge_type(key: Union[EdgeType, str]) -> EdgeType:
-    return key if isinstance(key, tuple) else tuple(key.split('__'))
 
 
 # TODO deprecate when FeatureStore / GraphStore unification is complete
@@ -187,8 +184,9 @@ def filter_hetero_data(
     return out
 
 
-def filter_feature_store(
+def filter_custom_store(
     feature_store: FeatureStore,
+    graph_store: GraphStore,
     node_dict: Dict[str, Tensor],
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
@@ -203,14 +201,17 @@ def filter_feature_store(
 
     # Filter edge storage:
     # TODO support edge attributes
-    for key in edge_dict:
-        edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
-        data[str_to_edge_type(key)].edge_index = edge_index
+    edge_attrs = graph_store.get_all_edge_attrs()
+    for attr in edge_attrs:
+        edge_type_str = edge_type_to_str(attr.edge_type)
+        edge_index = torch.stack(
+            [row_dict[edge_type_str], col_dict[edge_type_str]], dim=0)
+        data[attr.edge_type].edge_index = edge_index
 
     # Filter node storage:
-    attrs = feature_store.get_all_tensor_attrs()
+    node_attrs = feature_store.get_all_tensor_attrs()
     required_attrs = []
-    for attr in attrs:
+    for attr in node_attrs:
         if attr.group_name in node_dict:
             attr.index = node_dict[attr.group_name]
             required_attrs.append(attr)
