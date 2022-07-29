@@ -92,8 +92,8 @@ class NeighborSampler:
                 }
 
                 # Add at least one element to the list to ensure that max is well-defined
-                self.num_hops = max([0] +
-                    [len(v) for v in self.num_neighbors.values()])
+                self.num_hops = max(
+                    [0] + [len(v) for v in self.num_neighbors.values()])
 
             assert input_type is not None
             self.input_type = input_type
