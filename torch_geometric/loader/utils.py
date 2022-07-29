@@ -241,9 +241,11 @@ def has_edges(data: Union[Data, HeteroData]) -> bool:
 
     if isinstance(data, Data):
         return True if edge_present(data) else False
-    else:
+    elif isinstance(data, HeteroData):
         for store in data.edge_stores:
             if edge_present(store):
                 return True
         return False
-    # TODO: check if graph store has edges
+    else:
+        raise ValueError(
+            'Function only supports `HeteroData` and `Data` objects')

@@ -133,14 +133,22 @@ class NeighborSampler:
                 set(edge_attr.edge_type for edge_attr in edge_attrs))
 
             # Set other required parameters:
-            if isinstance(num_neighbors, (list, tuple)):
-                num_neighbors = {key: num_neighbors for key in self.edge_types}
-            assert isinstance(num_neighbors, dict)
-            self.num_neighbors = {
-                edge_type_to_str(key): value
-                for key, value in num_neighbors.items()
-            }
-            self.num_hops = max([len(v) for v in self.num_neighbors.values()])
+            if len(self.edge_types) == 0:
+                self.num_neighbors = {}
+                self.num_hops = 0
+            else:
+                if isinstance(num_neighbors, (list, tuple)):
+                    num_neighbors = {
+                        key: num_neighbors
+                        for key in self.edge_types
+                    }
+                assert isinstance(num_neighbors, dict)
+                self.num_neighbors = {
+                    edge_type_to_str(key): value
+                    for key, value in num_neighbors.items()
+                }
+                self.num_hops = max(
+                    [len(v) for v in self.num_neighbors.values()])
 
             assert input_type is not None
             self.input_type = input_type
