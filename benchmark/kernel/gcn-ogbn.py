@@ -11,45 +11,27 @@ from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import rename_profile_file, trace_handler
 
 
-class GCN(torch.nn.Module):
+class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 dropout):
-        super(GCN, self).__init__()
+                 dropout, use_sage) -> None:
+        super(Net, self).__init__()
+        if use_sage:
+            conv_layer_0 = SAGEConv(in_channels, hidden_channels)
+            conv_layer_1 = SAGEConv(hidden_channels, hidden_channels)
+            conv_layer_2 = SAGEConv(hidden_channels, out_channels)
+        else:
+            conv_layer_0 = GCNConv(in_channels, hidden_channels,
+                                   normalize=False)
+            conv_layer_1 = GCNConv(hidden_channels, hidden_channels,
+                                   normalize=False)
+            conv_layer_2 = GCNConv(hidden_channels, out_channels,
+                                   normalize=False)
 
         self.convs = torch.nn.ModuleList()
-        self.convs.append(
-            GCNConv(in_channels, hidden_channels, normalize=False))
+        self.convs.append(conv_layer_0)
         for _ in range(num_layers - 2):
-            self.convs.append(
-                GCNConv(hidden_channels, hidden_channels, normalize=False))
-        self.convs.append(
-            GCNConv(hidden_channels, out_channels, normalize=False))
-
-        self.dropout = dropout
-
-    def reset_parameters(self):
-        for conv in self.convs:
-            conv.reset_parameters()
-
-    def forward(self, x, adj_t):
-        for conv in self.convs[:-1]:
-            x = conv(x, adj_t)
-            x = F.relu(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
-        x = self.convs[-1](x, adj_t)
-        return torch.log_softmax(x, dim=-1)
-
-
-class SAGE(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 dropout):
-        super(SAGE, self).__init__()
-
-        self.convs = torch.nn.ModuleList()
-        self.convs.append(SAGEConv(in_channels, hidden_channels))
-        for _ in range(num_layers - 2):
-            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
-        self.convs.append(SAGEConv(hidden_channels, out_channels))
+            self.convs.append(conv_layer_1)
+        self.convs.append(conv_layer_2)
 
         self.dropout = dropout
 
@@ -133,15 +115,10 @@ def main():
     split_idx = dataset.get_idx_split()
     train_idx = split_idx['train'].to(device)
 
-    if args.use_sage:
-        model = SAGE(data.num_features, args.hidden_channels,
-                     dataset.num_classes, args.num_layers,
-                     args.dropout).to(device)
-    else:
-        model = GCN(data.num_features, args.hidden_channels,
-                    dataset.num_classes, args.num_layers,
-                    args.dropout).to(device)
+    model = Net(data.num_features, args.hidden_channels, dataset.num_classes,
+                args.num_layers, args.dropout, args.use_sage).to(device)
 
+    if not args.use_sage:
         # Pre-compute GCN normalization.
         adj_t = data.adj_t.set_diag()
         deg = adj_t.sum(dim=1).to(torch.float)

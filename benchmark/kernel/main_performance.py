@@ -85,6 +85,7 @@ def run_train():
             print(stats_summary)
 
 
+@torch.no_grad()
 def run_inference():
     for dataset_name, Net in product(datasets, nets):
         dataset = get_dataset(dataset_name, sparse=True)

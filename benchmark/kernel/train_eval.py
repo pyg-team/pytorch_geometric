@@ -145,6 +145,7 @@ def eval_loss(model, loader):
     return loss / len(loader.dataset)
 
 
+@torch.no_grad()
 def inference_run(model, loader):
     model.eval()
     for data in loader:
