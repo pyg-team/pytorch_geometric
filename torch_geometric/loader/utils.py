@@ -208,9 +208,8 @@ def filter_custom_store(
             data[attr.edge_type].edge_index = edge_index
 
     # Filter node storage:
-    node_attrs = feature_store.get_all_tensor_attrs()
     required_attrs = []
-    for attr in node_attrs:
+    for attr in feature_store.get_all_tensor_attrs():
         if attr.group_name in node_dict:
             attr.index = node_dict[attr.group_name]
             required_attrs.append(attr)
