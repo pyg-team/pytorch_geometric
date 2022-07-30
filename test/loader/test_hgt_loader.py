@@ -179,10 +179,9 @@ def test_hgt_loader_on_cora(get_dataset):
 
 @withPackage('torch_sparse>=0.6.15')
 def test_hgt_loader_on_dblp(get_dataset):
-    dataset = get_dataset(name='dblp')
-    data = dataset[0]
+    data = get_dataset(name='dblp')[0]
     loader = HGTLoader(data, num_samples=[10, 10],
                        input_nodes=('author', data['author'].train_mask))
 
     for batch in loader:
-        assert set(batch.edge_types) == set(list(data.edge_types))
+        assert set(batch.edge_types) == set(data.edge_types)
