@@ -4,9 +4,9 @@ import torch
 from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
+    MedianAggregation,
     MinAggregation,
     MulAggregation,
-    MedianAggregation,
     PowerMeanAggregation,
     SoftmaxAggregation,
     StdAggregation,
@@ -30,8 +30,14 @@ def test_validate():
 
 
 @pytest.mark.parametrize('Aggregation', [
-    MeanAggregation, SumAggregation, MaxAggregation, MinAggregation,
-    MulAggregation, VarAggregation, StdAggregation, MedianAggregation,
+    MeanAggregation,
+    SumAggregation,
+    MaxAggregation,
+    MinAggregation,
+    MulAggregation,
+    VarAggregation,
+    StdAggregation,
+    MedianAggregation,
 ])
 def test_basic_aggregation(Aggregation):
     x = torch.randn(6, 16)

@@ -119,7 +119,7 @@ class QuantileAggregation(Aggregation):
         # compute the quantile points
         count = torch.bincount(index, minlength=dim_size)
         cumsum = torch.cumsum(count, dim=0)
-        q_point = self.q*(count - 1) + cumsum - count
+        q_point = self.q * (count - 1) + cumsum - count
 
         # shape used for expansions
         # (1, ..., 1, -1, 1, ..., 1)
@@ -152,16 +152,16 @@ class QuantileAggregation(Aggregation):
 
             if self.interpolation == 'linear':
                 q_frac = torch.frac(q_point).view(*shape)
-                median = l_med + (r_med - l_med)*q_frac
+                median = l_med + (r_med - l_med) * q_frac
             else:  # 'midpoint'
-                median = 0.5*l_med + 0.5*r_med
+                median = 0.5 * l_med + 0.5 * r_med
 
         # if the number of elements is 0, return 'nan'/fill_value
         out_mask = (count > 0).view(*shape)
-        return torch.where(out_mask, median,
-                           torch.tensor([self.fill_value],
-                                        dtype=median.dtype,
-                                        device=median.device))
+        return torch.where(
+            out_mask, median,
+            torch.tensor([self.fill_value], dtype=median.dtype,
+                         device=median.device))
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(q={self.q}), '
@@ -183,7 +183,6 @@ class MedianAggregation(QuantileAggregation):
         fill_value (float, optional): Default value in the case no entry is
             found for a given index (default: :obj:`NaN`).
     """
-
     def __init__(self, fill_value: float = float('nan')):
         super().__init__(q=0.5, interpolation='lower', fill_value=fill_value)
 
