@@ -8,11 +8,16 @@ from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
-from torch_geometric import lib
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
 from ..inits import glorot, zeros
+
+try:
+    import pyg_lib  # noqa
+    _WITH_PYG_LIB = True
+except ImportError:
+    _WITH_PYG_LIB = False
 
 
 @torch.jit._overload
@@ -104,6 +109,7 @@ class RGCNConv(MessagePassing):
     ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
+        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '
@@ -194,7 +200,7 @@ class RGCNConv(MessagePassing):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
 
-        # propagate_type: (x: Tensor)
+        # propagate_type: (x: Tensor, edge_type_ptr: OptTensor)
         out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
 
         weight = self.weight
@@ -216,8 +222,7 @@ class RGCNConv(MessagePassing):
                 out += h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (isinstance(edge_index, Tensor) and edge_index.is_cuda
-                    and lib.is_available()):
+            if self._WITH_PYG_LIB and isinstance(edge_index, Tensor):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = edge_type.sort()
@@ -248,9 +253,10 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if edge_type_ptr is None:
-            return x_j
-        return lib.get().ops.segment_matmul(x_j, edge_type_ptr, self.weight)
+        if edge_type_ptr is not None:
+            return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
+
+        return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
