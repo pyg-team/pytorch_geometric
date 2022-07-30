@@ -19,6 +19,10 @@ except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
+def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    return mapping if mapping is not None else {}
+
+
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = False) -> GraphModule:
@@ -158,9 +162,14 @@ class ToHeteroTransformer(Transformer):
             node.type = Dict[Type, node.type]
 
         self.graph.inserting_after(node)
+
+        dict_node = self.graph.create_node('call_function', target=get_dict,
+                                           args=(node, ), name=f'{name}_dict')
+        self.graph.inserting_after(dict_node)
+
         for key in self.metadata[int(self.is_edge_level(node))]:
             out = self.graph.create_node('call_method', target='get',
-                                         args=(node, key),
+                                         args=(dict_node, key, None),
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
