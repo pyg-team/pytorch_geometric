@@ -55,15 +55,16 @@ def to_csc(
     elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
-    elif hasattr(data, 'edge_index'):
+    elif data.edge_index is not None:
         (row, col) = data.edge_index
         if not is_sorted:
             perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
-        raise AttributeError("Data object does not contain attributes "
-                             "'adj', 'adj_t' or 'edge_index'")
+        row = torch.empty(0, dtype=torch.long, device=device)
+        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
+                             device=device)
 
     colptr = colptr.to(device)
     row = row.to(device)
@@ -224,15 +225,3 @@ def filter_feature_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
-
-
-def has_edges(data: Data) -> bool:
-    """Returns :obj:`True` if :obj:`data` has attribute
-    `edge_index`, `adj_t` or `adj`."""
-    def edge_present(edge_store: Union[Data, EdgeStorage]):
-        return ((hasattr(edge_store, 'edge_index')
-                 and edge_store.edge_index is not None) or
-                (hasattr(edge_store, 'adj_t') and edge_store.adj_t is not None)
-                or (hasattr(edge_store, 'adj') and edge_store.adj is not None))
-
-    return True if edge_present(data) else False

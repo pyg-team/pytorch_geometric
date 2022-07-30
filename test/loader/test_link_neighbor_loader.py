@@ -21,8 +21,6 @@ def unique_edge_pairs(edge_index):
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
 def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
-    torch.manual_seed(12345)
-
     pos_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index[1, :] += 50
@@ -85,8 +83,6 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
 def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
-    torch.manual_seed(12345)
-
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -134,8 +130,6 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_link_neighbor_loader_loop(directed):
-    torch.manual_seed(12345)
-
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -161,8 +155,6 @@ def test_heterogeneous_link_neighbor_loader_loop(directed):
 
 
 def test_link_neighbor_loader_edge_label():
-    torch.manual_seed(12345)
-
     edge_index = get_edge_index(100, 100, 500)
     data = Data(edge_index=edge_index, x=torch.arange(100))
 
@@ -194,8 +186,6 @@ def test_link_neighbor_loader_edge_label():
 
 @withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
 def test_temporal_heterogeneous_link_neighbor_loader():
-    torch.manual_seed(12345)
-
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -289,91 +279,34 @@ def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-@pytest.mark.parametrize('directed', [True, False])
-@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
-def test_hetero_no_edge_graph_link_neighbor_loader(directed,
-                                                   neg_sampling_ratio):
-    data = HeteroData()
-
-    data['paper'].x = torch.arange(100)
-    edge_label_index = (('paper', 'paper'), get_edge_index(100, 100, 100))
-
+def test_homogeneous_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
-        data,
-        num_neighbors=[],
-        edge_label_index=edge_label_index,
-        batch_size=20,
-        directed=directed,
-        neg_sampling_ratio=neg_sampling_ratio,
-        shuffle=True,
-    )
-
-    assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 100 / 20
-
-    for batch in loader:
-        assert isinstance(batch, HeteroData)
-
-        if neg_sampling_ratio == 0.0:
-            assert len(batch) == 2
-
-            # Assert positive samples are present in the original graph:
-            assert batch['paper', 'paper'].edge_label_index.size(1) == 20
-            assert (batch['paper'].x.size(0) == len(
-                batch['paper', 'paper'].edge_label_index.unique()))
-        else:
-            assert len(batch) == 3
-
-            assert batch['paper', 'paper'].edge_label_index.size(1) == 40
-            assert torch.all(batch['paper', 'paper'].edge_label[:20] == 1)
-            assert torch.all(batch['paper', 'paper'].edge_label[20:] == 0)
-            assert (batch['paper'].x.size(0) == len(
-                batch['paper', 'paper'].edge_label_index.unique()))
-
-
-@pytest.mark.parametrize('directed', [True, False])
-@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
-def test_no_edge_homogeneous_link_neighbor_loader(directed,
-                                                  neg_sampling_ratio):
-    torch.manual_seed(12345)
-
-    pos_edge_index = get_edge_index(100, 50, 500)
-    neg_edge_index = get_edge_index(100, 50, 500)
-    neg_edge_index[1, :] += 50
-
-    edge_label_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
-    edge_label = torch.cat([torch.ones(500), torch.zeros(500)], dim=0)
-
-    data = Data()
-
-    data.x = torch.arange(100)
-
-    loader = LinkNeighborLoader(
-        data,
+        Data(num_nodes=100),
         num_neighbors=[],
         batch_size=20,
-        edge_label_index=edge_label_index,
-        edge_label=edge_label if neg_sampling_ratio == 0.0 else None,
-        directed=directed,
-        neg_sampling_ratio=neg_sampling_ratio,
-        shuffle=True,
+        edge_label_index=get_edge_index(100, 100, 100),
     )
-
-    assert str(loader) == 'LinkNeighborLoader()'
-    assert len(loader) == 1000 / 20
 
     for batch in loader:
         assert isinstance(batch, Data)
+        assert len(batch) == 2
+        assert batch.num_nodes <= 40
+        assert batch.edge_label_index.size(1) == 20
+        assert batch.num_nodes == batch.edge_label_index.unique().numel()
 
-        assert len(batch) == 3
-        assert batch.x.size(0) <= 100
-        assert batch.x.min() >= 0 and batch.x.max() < 100
 
-        if neg_sampling_ratio == 0.0:
-            assert batch.edge_label_index.size(1) == 20
-            assert (batch.x.size(0) == len(batch.edge_label_index.unique()))
+def test_heterogeneous_link_neighbor_loader_no_edges():
+    loader = LinkNeighborLoader(
+        HeteroData(paper=dict(num_nodes=100)),
+        num_neighbors=[],
+        edge_label_index=(('paper', 'paper'), get_edge_index(100, 100, 100)),
+        batch_size=20,
+    )
 
-        else:
-            assert batch.edge_label_index.size(1) == 40
-            assert batch.edge_label.sum() == 20
-            assert (batch.x.size(0) == len(batch.edge_label_index.unique()))
+    for batch in loader:
+        assert isinstance(batch, HeteroData)
+        assert len(batch) == 2
+        assert batch['paper'].num_nodes <= 40
+        assert batch['paper', 'paper'].edge_label_index.size(1) == 20
+        assert batch['paper'].num_nodes == batch[
+            'paper', 'paper'].edge_label_index.unique().numel()
