@@ -210,13 +210,14 @@ class RGCNConv(MessagePassing):
 
             for i in range(self.num_relations):
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                h = self.propagate(tmp, x=x_l, size=size)
+                h = self.propagate(tmp, x=x_l, edge_type_ptr=None, size=size)
                 h = h.view(-1, weight.size(1), weight.size(2))
                 h = torch.einsum('abc,bcd->abd', h, weight[i])
                 out += h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if isinstance(edge_index, Tensor) and lib.is_available():
+            if (isinstance(edge_index, Tensor) and edge_index.is_cuda
+                    and lib.is_available()):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = edge_type.sort()
@@ -246,7 +247,7 @@ class RGCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_type_ptr: Optional[Tensor]) -> Tensor:
+    def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
         if edge_type_ptr is None:
             return x_j
         return lib.get().ops.segment_matmul(x_j, edge_type_ptr, self.weight)
