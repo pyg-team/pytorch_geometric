@@ -113,12 +113,8 @@ class LightGCN(torch.nn.Module):
         if edge_label_index is None:
             if isinstance(edge_index, SparseTensor):
                 edge_label_index = torch.stack(edge_index.coo()[:2], dim=0)
-
-            elif isinstance(edge_index, torch.Tensor):
-
-                edge_label_index = edge_index
             else:
-                raise TypeError
+                edge_label_index = edge_index
 
         out = self.get_embedding(edge_index)
 

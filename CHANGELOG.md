@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.0.5] - 2022-MM-DD
 ### Added
+- Support `SparseTensor` as edge label in `LightGCN` (#[5046](https://github.com/pyg-team/pytorch_geometric/issues/5046))
 - Added inference benchmark suite ([#4915](https://github.com/pyg-team/pytorch_geometric/pull/4915))
 - Added a dynamically sized batch sampler for filling a mini-batch with a variable number of samples up to a maximum size ([#4972](https://github.com/pyg-team/pytorch_geometric/pull/4972))
 - Added fine grained options for setting `bias` and `dropout` per layer in the `MLP` model ([#4981](https://github.com/pyg-team/pytorch_geometric/pull/4981))
@@ -93,5 +94,4 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed subclass behaviour of `process` and `download` in `Datsaet` ([#4586](https://github.com/pyg-team/pytorch_geometric/pull/4586))
 - Fixed filtering of attributes for loaders in case `__cat_dim__ != 0` ([#4629](https://github.com/pyg-team/pytorch_geometric/pull/4629))
 - Fixed `torch.fx` bug with `torch.nn.aggr` package ([#5021](https://github.com/pyg-team/pytorch_geometric/pull/5021)))
-- Support SparseTensor label in LightGCN(#[5046](https://github.com/pyg-team/pytorch_geometric/issues/5046))
 ### Removed
