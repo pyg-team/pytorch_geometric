@@ -10,8 +10,8 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     edge_type_to_str,
+    filter_custom_store,
     filter_data,
-    filter_feature_store,
     filter_hetero_data,
     to_csc,
     to_hetero_csc,
@@ -415,9 +415,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
         else:  # Tuple[FeatureStore, GraphStore]
             # TODO support for feature stores with no edge types
             node_dict, row_dict, col_dict, edge_dict, batch_size = out
-            feature_store, _ = self.data
-            data = filter_feature_store(feature_store, node_dict, row_dict,
-                                        col_dict, edge_dict)
+            feature_store, graph_store = self.data
+            data = filter_custom_store(feature_store, graph_store, node_dict,
+                                       row_dict, col_dict, edge_dict)
             data[self.neighbor_sampler.input_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)

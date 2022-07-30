@@ -9,8 +9,8 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
 from torch_geometric.loader.utils import (
+    filter_custom_store,
     filter_data,
-    filter_feature_store,
     filter_hetero_data,
 )
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
@@ -339,9 +339,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         else:
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
              edge_label) = out
-            feature_store, _ = self.data
-            data = filter_feature_store(feature_store, node_dict, row_dict,
-                                        col_dict, edge_dict)
+            feature_store, graph_store = self.data
+            data = filter_custom_store(feature_store, graph_store, node_dict,
+                                       row_dict, col_dict, edge_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
             if edge_label is not None:
