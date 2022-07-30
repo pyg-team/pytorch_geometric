@@ -114,7 +114,7 @@ class EquilibriumAggregation(Aggregation):
         \mathbf{y} = \min_\mathbf{y} R(\mathbf{y}) +
         \sum_{i} F(\mathbf{x}_i, \mathbf{y})
 
-    This implementation use a ResNet Like model for the potential function
+    This implementation uses a ResNet Like model for the potential function
     and a simple L2 norm for the regularizer with learnable weight
     :math:`\lambda`.
 
