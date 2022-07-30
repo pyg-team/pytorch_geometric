@@ -10,11 +10,11 @@ class LSTMAggregation(Aggregation):
     r"""Performs LSTM-style aggregation in which the elements to aggregate are
     interpreted as a sequence.
 
-    .. warn::
-        :class:`LSTMAggregation` is not permutation-invariant.
+    .. warning::
+        :class:`LSTMAggregation` is not a permutation-invariant operator.
 
     .. note::
-        :class:`LSTMAggregation` requires sorted indices.
+        :class:`LSTMAggregation` requires sorted indices as input.
 
     Args:
         in_channels (int): Size of each input sample.

@@ -10,7 +10,7 @@ from torch_geometric.nn.resolver import aggregation_resolver
 
 class MultiAggregation(Aggregation):
     r"""Performs aggregations with one or more aggregators and combines
-        aggregated results.
+    aggregated results.
 
     Args:
         aggrs (list): The list of aggregation schemes to use.
@@ -22,14 +22,15 @@ class MultiAggregation(Aggregation):
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
-        mode_kwargs (dict, optional): Arguments passed for the combine `mode`.
-            When :obj:`"proj"` or :obj:`"attn"` is used as the combine `mode`,
-            `in_channels` (int or tuple) and `out_channels` (int) are needed to
-            be specified respectively for the size of each input sample to
-            combine from the respective aggregation outputs and the size of
-            each output sample after combination. When :obj:`"attn"` mode is
-            used, `num_heads` (int) is needed to be specified for the number of
-            parallel attention heads. (default: :obj:`None`)
+        mode_kwargs (dict, optional): Arguments passed for the combine
+            :obj:`mode`. When :obj:`"proj"` or :obj:`"attn"` is used as the
+            combine :obj:`mode`, :obj:`in_channels` (int or tuple) and
+            :obj:`out_channels` (int) are needed to be specified respectively
+            for the size of each input sample to combine from the respective
+            aggregation outputs and the size of each output sample after
+            combination. When :obj:`"attn"` mode is used, :obj:`num_heads`
+            (int) is needed to be specified for the number of parallel
+            attention heads. (default: :obj:`None`)
     """
     def __init__(
         self,
