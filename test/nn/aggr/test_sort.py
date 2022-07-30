@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn.aggr import SortAggr
+from torch_geometric.nn.aggr import SortAggregation
 
 
 def test_sort_aggregation_pool():
@@ -8,8 +8,8 @@ def test_sort_aggregation_pool():
     x = torch.randn(N_1 + N_2, 4)
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
 
-    aggr = SortAggr(k=5)
-    assert str(aggr) == 'SortAggr(k=5)'
+    aggr = SortAggregation(k=5)
+    assert str(aggr) == 'SortAggregation(k=5)'
 
     out = aggr(x, index)
     assert out.size() == (2, 5 * 4)
@@ -36,8 +36,8 @@ def test_sort_aggregation_pool_smaller_than_k():
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
 
     # Set k which is bigger than both N_1=4 and N_2=6.
-    aggr = SortAggr(k=10)
-    assert str(aggr) == 'SortAggr(k=10)'
+    aggr = SortAggregation(k=10)
+    assert str(aggr) == 'SortAggregation(k=10)'
 
     out = aggr(x, index)
     assert out.size() == (2, 10 * 4)
@@ -64,8 +64,8 @@ def test_global_sort_pool_dim_size():
     x = torch.randn(N_1 + N_2, 4)
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
 
-    aggr = SortAggr(k=5)
-    assert str(aggr) == 'SortAggr(k=5)'
+    aggr = SortAggregation(k=5)
+    assert str(aggr) == 'SortAggregation(k=5)'
 
     # expand batch output by 1
     out = aggr(x, index, dim_size=3)
