@@ -1,9 +1,11 @@
 import os
 import sys
+from importlib import import_module
 from importlib.util import find_spec
 from typing import Callable
 
 import torch
+from packaging.requirements import Requirement
 
 
 def is_full_test() -> bool:
@@ -36,12 +38,21 @@ def withPython(*args) -> Callable:
 
 
 def withPackage(*args) -> Callable:
-    r"""A decorator to skip tests if certain packages are not installed."""
-    na_packages = set(arg for arg in args if find_spec(arg) is None)
+    r"""A decorator to skip tests if certain packages are not installed.
+    Also supports version specification."""
+    def is_installed(package: str) -> bool:
+        req = Requirement(package)
+        if find_spec(req.name) is None:
+            return False
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
+        return module.__version__ in req.specifier
+
+    na_packages = set(package for package in args if not is_installed(package))
 
     def decorator(func: Callable) -> Callable:
         import pytest
-
         return pytest.mark.skipif(
             not is_full_test() and len(na_packages) > 0,
             reason=f"Package(s) {na_packages} are not installed",

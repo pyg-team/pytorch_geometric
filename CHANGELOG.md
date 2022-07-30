@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.0.5] - 2022-MM-DD
 ### Added
 - Added support for `BasicGNN` models within `to_hetero` ([#5091](https://github.com/pyg-team/pytorch_geometric/pull/5091))
-- Fix dynamic inheritance issue in data batching ([#5051](https://github.com/pyg-team/pytorch_geometric/pull/5051))
 - Added support for computing weighted metapaths in `AddMetapaths` ([#5049](https://github.com/pyg-team/pytorch_geometric/pull/5049))
 - Added inference benchmark suite ([#4915](https://github.com/pyg-team/pytorch_geometric/pull/4915))
 - Added a dynamically sized batch sampler for filling a mini-batch with a variable number of samples up to a maximum size ([#4972](https://github.com/pyg-team/pytorch_geometric/pull/4972))
@@ -63,6 +62,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for graph-level outputs in `to_hetero` ([#4582](https://github.com/pyg-team/pytorch_geometric/pull/4582))
 - Added `CHANGELOG.md` ([#4581](https://github.com/pyg-team/pytorch_geometric/pull/4581))
 ### Changed
+- Fixed `HGTLoader` bug which produced outputs with missing edge types ([#5067](https://github.com/pyg-team/pytorch_geometric/pull/5067))
+- Fixed dynamic inheritance issue in data batching ([#5051](https://github.com/pyg-team/pytorch_geometric/pull/5051))
 - Fixed `load_state_dict` in `Linear` with `strict=False` mode ([5094](https://github.com/pyg-team/pytorch_geometric/pull/5094))
 - Fixed typo in `MaskLabel.ratio_mask` ([5093](https://github.com/pyg-team/pytorch_geometric/pull/5093))
 - Fixed `data.num_node_features` computation for sparse matrices ([5089](https://github.com/pyg-team/pytorch_geometric/pull/5089))
