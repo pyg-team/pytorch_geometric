@@ -4,6 +4,8 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.testing import withRegisteredOp
+from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.testing.graph_store import MyGraphStore
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -213,3 +215,75 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         seed_nodes = batch['paper', 'paper'].edge_label_index.view(-1)
         seed_max_time = batch['paper'].time[seed_nodes].max()
         assert seed_max_time >= max_time
+
+
+@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
+@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
+def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
+    data = HeteroData()
+    feature_store = FeatureStore()
+    graph_store = GraphStore()
+
+    # Set up node features:
+    x = torch.arange(100)
+    data['paper'].x = x
+    feature_store.put_tensor(x, group_name='paper', attr_name='x', index=None)
+
+    x = torch.arange(100, 300)
+    data['author'].x = x
+    feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
+
+    # Set up edge indices (GraphStore does not support `edge_attr` at the
+    # moment):
+    edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('paper', 'to', 'paper'),
+                               layout='coo', size=(100, 100))
+
+    edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'to', 'author'].edge_index = edge_index
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('paper', 'to', 'author'),
+                               layout='coo', size=(100, 200))
+
+    edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'to', 'paper'].edge_index = edge_index
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('author', 'to', 'paper'),
+                               layout='coo', size=(200, 100))
+
+    loader1 = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        edge_label_index=('paper', 'to', 'author'),
+        batch_size=20,
+        directed=True,
+        neg_sampling_ratio=0,
+    )
+
+    loader2 = LinkNeighborLoader(
+        (feature_store, graph_store),
+        num_neighbors=[-1] * 2,
+        edge_label_index=('paper', 'to', 'author'),
+        batch_size=20,
+        directed=True,
+        neg_sampling_ratio=0,
+    )
+
+    assert str(loader1) == str(loader2)
+
+    for (batch1, batch2) in zip(loader1, loader2):
+        # Mapped indices of neighbors may be differently sorted:
+        assert torch.allclose(batch1['paper'].x.sort()[0],
+                              batch2['paper'].x.sort()[0])
+        assert torch.allclose(batch1['author'].x.sort()[0],
+                              batch2['author'].x.sort()[0])
+
+        # Assert that edge indices have the same size:
+        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
+            'paper', 'to', 'paper'].edge_index.size())
+        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
+            'paper', 'to', 'author'].edge_index.size())
+        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
+            'author', 'to', 'paper'].edge_index.size())

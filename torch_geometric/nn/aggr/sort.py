@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.nn.aggr import Aggregation
 
 
-class SortAggr(Aggregation):
+class SortAggregation(Aggregation):
     r"""The pooling operator from the `"An End-to-End Deep Learning
     Architecture for Graph Classification"
     <https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf>`_ paper,
