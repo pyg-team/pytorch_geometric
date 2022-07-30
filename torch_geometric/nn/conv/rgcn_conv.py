@@ -8,6 +8,7 @@ from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
+from torch_geometric import lib
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
@@ -79,6 +80,10 @@ class RGCNConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by :obj:`edge_type`. This avoids
+            internal re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -93,6 +98,7 @@ class RGCNConv(MessagePassing):
         num_blocks: Optional[int] = None,
         aggr: str = 'mean',
         root_weight: bool = True,
+        is_sorted: bool = False,
         bias: bool = True,
         **kwargs,
     ):
@@ -108,6 +114,7 @@ class RGCNConv(MessagePassing):
         self.num_relations = num_relations
         self.num_bases = num_bases
         self.num_blocks = num_blocks
+        self.is_sorted = is_sorted
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -203,20 +210,33 @@ class RGCNConv(MessagePassing):
 
             for i in range(self.num_relations):
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                h = self.propagate(tmp, x=x_l, size=size)
+                h = self.propagate(tmp, x=x_l, edge_type_ptr=None, size=size)
                 h = h.view(-1, weight.size(1), weight.size(2))
                 h = torch.einsum('abc,bcd->abd', h, weight[i])
                 out += h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            for i in range(self.num_relations):
-                tmp = masked_edge_index(edge_index, edge_type == i)
+            if (isinstance(edge_index, Tensor) and edge_index.is_cuda
+                    and lib.is_available()):
+                if not self.is_sorted:
+                    if (edge_type[1:] < edge_type[:-1]).any():
+                        edge_type, perm = edge_type.sort()
+                        edge_index = edge_index[:, perm]
+                edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
+                    edge_type, self.num_relations)
+                out = self.propagate(edge_index, x=x_l,
+                                     edge_type_ptr=edge_type_ptr, size=size)
+            else:
+                for i in range(self.num_relations):
+                    tmp = masked_edge_index(edge_index, edge_type == i)
 
-                if x_l.dtype == torch.long:
-                    out += self.propagate(tmp, x=weight[i, x_l], size=size)
-                else:
-                    h = self.propagate(tmp, x=x_l, size=size)
-                    out = out + (h @ weight[i])
+                    if x_l.dtype == torch.long:
+                        out += self.propagate(tmp, x=weight[i, x_l],
+                                              edge_type_ptr=None, size=size)
+                    else:
+                        h = self.propagate(tmp, x=x_l, edge_type_ptr=None,
+                                           size=size)
+                        out = out + (h @ weight[i])
 
         root = self.root
         if root is not None:
@@ -227,8 +247,10 @@ class RGCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor) -> Tensor:
-        return x_j
+    def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
+        if edge_type_ptr is None:
+            return x_j
+        return lib.get().ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
