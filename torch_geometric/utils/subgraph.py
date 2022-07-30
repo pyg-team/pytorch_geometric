@@ -20,9 +20,14 @@ def get_num_hops(model: torch.nn.Module) -> int:
     return num_hops
 
 
-def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
-             edge_attr: Optional[Tensor] = None, relabel_nodes: bool = False,
-             num_nodes: Optional[int] = None, return_edge_mask: bool = False):
+def subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    relabel_nodes: bool = False,
+    num_nodes: Optional[int] = None,
+    return_edge_mask: bool = False,
+) -> Tuple[Tensor, Tensor]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -71,11 +76,14 @@ def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
         return edge_index, edge_attr
 
 
-def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
-                       edge_index: Tensor, edge_attr: Optional[Tensor] = None,
-                       relabel_nodes: bool = False, size: Tuple[int,
-                                                                int] = None,
-                       return_edge_mask: bool = False):
+def bipartite_subgraph(
+    subset: Union[PairTensor, Tuple[List[int], List[int]]],
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    relabel_nodes: bool = False,
+    size: Tuple[int, int] = None,
+    return_edge_mask: bool = False,
+) -> Tuple[Tensor, Tensor]:
     r"""Returns the induced subgraph of the bipartite graph
     :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
@@ -135,11 +143,24 @@ def bipartite_subgraph(subset: Union[PairTensor, Tuple[List[int], List[int]]],
         return edge_index, edge_attr
 
 
-def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
-                   num_nodes=None, flow='source_to_target'):
-    r"""Computes the :math:`k`-hop subgraph of :obj:`edge_index` around node
-    :attr:`node_idx`.
-    It returns (1) the nodes involved in the subgraph, (2) the filtered
+def k_hop_subgraph(
+    node_idx: Union[int, List[int], Tensor],
+    num_hops: int,
+    edge_index: Tensor,
+    relabel_nodes: bool = False,
+    num_nodes: Optional[str] = None,
+    flow: str = 'source_to_target',
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+    r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
+    :attr:`node_idx` reachable within :math:`k` hops.
+
+    The :attr:`flow` argument denotes the direction of edges for finding
+    :math:`k`-hop neighbors. If set to :obj:`"source_to_target"`, then the
+    method will find all neighbors that point to the initial set of seed nodes
+    in :attr:`node_idx.`
+    This mimics the natural flow of message passing in Graph Neural Networks.
+
+    The method returns (1) the nodes involved in the subgraph, (2) the filtered
     :obj:`edge_index` connectivity, (3) the mapping from node indices in
     :obj:`node_idx` to their new location, and (4) the edge mask indicating
     which edges were preserved.
