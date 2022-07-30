@@ -39,6 +39,19 @@ Convolutional Layers
    :undoc-members:
    :exclude-members: training
 
+Aggregation Operators
+---------------------
+
+.. currentmodule:: torch_geometric.nn.aggr
+.. autosummary::
+   :nosignatures:
+   {% for cls in torch_geometric.nn.aggr.classes %}
+     {{ cls }}
+   {% endfor %}
+
+.. automodule:: torch_geometric.nn.aggr
+   :members:
+
 Dense Convolutional Layers
 --------------------------
 
