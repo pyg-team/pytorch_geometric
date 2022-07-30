@@ -66,6 +66,131 @@ class StdAggregation(Aggregation):
         return torch.sqrt(var.relu() + 1e-5)
 
 
+class QuantileAggregation(Aggregation):
+    r"""Quantile aggregation operator.
+
+    Args:
+        q (float): A scalar in the range [0, 1].
+        interpolation (str): Interpolation method applied if the quantile point
+            :math:`q(n - 1)` lies between two values :math:`x_i \le x_{i+1}`,
+            with :math:`i < q(n - 1) < i+1`. Can be one of the following:
+
+            - :obj:`"lower"`: Returns the one with lowest value.
+
+            - :obj:`"higher"`: Returns the one with highest value.
+
+            - :obj:`"midpoint"`: Returns the average of the two values.
+
+            - :obj:`"nearest"`: Returns the one nearest to the quantile point.
+
+            - :obj:`"linear"` (default): Returns a linear combination of the
+                two elments, as
+                :math:`x_i + (x_{i+1} - x_i)\cdot(q(n - 1) - i)`.
+
+        fill_value (float): Default value in the case no entry is
+            found for a given index (default: :obj:`NaN`).
+    """
+
+    interpolations = {'linear', 'lower', 'higher', 'nearest', 'midpoint'}
+
+    def __init__(self, q: float, interpolation: str = 'linear',
+                 fill_value: float = float('nan')):
+        if q > 1. or q < 0:
+            raise ValueError("'q' must be in the range [0, 1].")
+        if interpolation not in self.interpolations:
+            raise ValueError(f"Invalid '{interpolation}' interpolation method."
+                             f" Available interpolations:"
+                             f"{self.interpolations}")
+
+        super().__init__()
+        self.q = q
+        self.interpolation = interpolation
+        self.fill_value = fill_value
+
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        # we could also expand `ptr` to an index
+        self.assert_index_present(index)
+
+        if dim_size is None:
+            dim_size = index.max() + 1
+
+        # compute the quantile points
+        count = torch.bincount(index, minlength=dim_size)
+        cumsum = torch.cumsum(count, dim=0)
+        q_point = self.q*(count - 1) + cumsum - count
+
+        # shape used for expansions
+        # (1, ..., 1, -1, 1, ..., 1)
+        shape = [1] * x.dim()
+        shape[dim] = -1
+
+        # two sorts: the first one on the value,
+        # the second (stable) on the indices
+        x, x_perm = torch.sort(x, dim=dim)
+        index = index.view(*shape).expand_as(x)
+        index = index.take_along_dim(x_perm, dim=dim)
+        index, index_perm = torch.sort(index, dim=dim, stable=True)
+        x = x.take_along_dim(index_perm, dim=dim)
+
+        # compute the quantile interpolations
+        if self.interpolation == 'lower':
+            idx = torch.floor(q_point).long()
+            median = x.index_select(dim, idx)
+        elif self.interpolation == 'higher':
+            idx = torch.ceil(q_point).long()
+            median = x.index_select(dim, idx)
+        elif self.interpolation == 'nearest':
+            idx = torch.round(q_point).long()
+            median = x.index_select(dim, idx)
+        else:
+            l_idx = torch.floor(q_point).long()
+            r_idx = torch.ceil(q_point).long()
+            l_med = x.index_select(dim, l_idx)
+            r_med = x.index_select(dim, r_idx)
+
+            if self.interpolation == 'linear':
+                q_frac = torch.frac(q_point).view(*shape)
+                median = l_med + (r_med - l_med)*q_frac
+            else:  # 'midpoint'
+                median = 0.5*l_med + 0.5*r_med
+
+        # if the number of elements is 0, return 'nan'/fill_value
+        out_mask = (count > 0).view(*shape)
+        return torch.where(out_mask, median,
+                           torch.tensor([self.fill_value],
+                                        dtype=median.dtype,
+                                        device=median.device))
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(q={self.q}), '
+                f'interpolation={self.interpolation}, '
+                f'fill_value={self.fill_value})')
+
+
+class MedianAggregation(QuantileAggregation):
+    r"""Median aggregation operator, as used in `"Understanding Structural
+    Vulnerability in Graph Convolutional Networks"
+    <https://www.ijcai.org/proceedings/2021/310>`_.
+
+    .. note::
+        If the median lies between two values, the lowest one is returned.
+        To compute the midpoint (or other kind of interpolation) of the two
+        values, use :class:`QuantileAggregation` instead.
+
+    Args:
+        fill_value (float, optional): Default value in the case no entry is
+            found for a given index (default: :obj:`NaN`).
+    """
+
+    def __init__(self, fill_value: float = float('nan')):
+        super().__init__(q=0.5, interpolation='lower', fill_value=fill_value)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(fill_value={self.fill_value})'
+
+
 class SoftmaxAggregation(Aggregation):
     r"""The softmax aggregation operator based on a temperature term, as
     described in the `"DeeperGCN: All You Need to Train Deeper GCNs"

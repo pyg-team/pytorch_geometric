@@ -8,6 +8,8 @@ from .basic import (
     MulAggregation,
     VarAggregation,
     StdAggregation,
+    MedianAggregation,
+    QuantileAggregation,
     SoftmaxAggregation,
     PowerMeanAggregation,
 )
@@ -29,6 +31,8 @@ __all__ = classes = [
     'MulAggregation',
     'VarAggregation',
     'StdAggregation',
+    'MedianAggregation',
+    'QuantileAggregation',
     'SoftmaxAggregation',
     'PowerMeanAggregation',
     'LSTMAggregation',

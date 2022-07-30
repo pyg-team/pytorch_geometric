@@ -6,6 +6,7 @@ from torch_geometric.nn import (
     MeanAggregation,
     MinAggregation,
     MulAggregation,
+    MedianAggregation,
     PowerMeanAggregation,
     SoftmaxAggregation,
     StdAggregation,
@@ -30,7 +31,7 @@ def test_validate():
 
 @pytest.mark.parametrize('Aggregation', [
     MeanAggregation, SumAggregation, MaxAggregation, MinAggregation,
-    MulAggregation, VarAggregation, StdAggregation
+    MulAggregation, VarAggregation, StdAggregation, MedianAggregation,
 ])
 def test_basic_aggregation(Aggregation):
     x = torch.randn(6, 16)
@@ -38,12 +39,15 @@ def test_basic_aggregation(Aggregation):
     ptr = torch.tensor([0, 2, 5, 6])
 
     aggr = Aggregation()
-    assert str(aggr) == f'{Aggregation.__name__}()'
+    if isinstance(aggr, MedianAggregation):
+        assert str(aggr) == f'{Aggregation.__name__}(fill_value=nan)'
+    else:
+        assert str(aggr) == f'{Aggregation.__name__}()'
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
 
-    if isinstance(aggr, MulAggregation):
+    if isinstance(aggr, (MulAggregation, MedianAggregation)):
         with pytest.raises(NotImplementedError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
