@@ -203,8 +203,9 @@ def filter_custom_store(
     # TODO support edge attributes
     for attr in graph_store.get_all_edge_attrs():
         key = edge_type_to_str(attr.edge_type)
-        edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
-        data[attr.edge_type].edge_index = edge_index
+        if key in row_dict and key in col_dict:
+            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+            data[attr.edge_type].edge_index = edge_index
 
     # Filter node storage:
     node_attrs = feature_store.get_all_tensor_attrs()
