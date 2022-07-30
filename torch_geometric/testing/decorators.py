@@ -44,7 +44,10 @@ def withPackage(*args) -> Callable:
         req = Requirement(package)
         if find_spec(req.name) is None:
             return False
-        return import_module(req.name).__version__ in req.specifier
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
+        return module.__version__ in req.specifier
 
     na_packages = set(package for package in args if not is_installed(package))
 
