@@ -148,7 +148,7 @@ def k_hop_subgraph(
     num_hops: int,
     edge_index: Tensor,
     relabel_nodes: bool = False,
-    num_nodes: Optional[str] = None,
+    num_nodes: Optional[int] = None,
     flow: str = 'source_to_target',
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
@@ -166,7 +166,7 @@ def k_hop_subgraph(
     which edges were preserved.
 
     Args:
-        node_idx (int, list, tuple or :obj:`torch.Tensor`): The central
+        node_idx (int, list, tuple or :obj:`torch.Tensor`): The central seed
             node(s).
         num_hops (int): The number of hops :math:`k`.
         edge_index (LongTensor): The edge indices.
