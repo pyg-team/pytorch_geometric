@@ -59,7 +59,7 @@ class MaskLabel(torch.nn.Module):
 
         Args:
             mask (torch.Tensor): The mask to re-mask.
-            ratio (float): The ratio of entries to remove.
+            ratio (float): The ratio of entries to keep.
         """
         n = int(mask.sum())
         out = mask.clone()

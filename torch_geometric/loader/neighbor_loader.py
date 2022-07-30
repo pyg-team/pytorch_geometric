@@ -72,15 +72,7 @@ class NeighborSampler:
             self.colptr_dict, self.row_dict, self.perm_dict = out
 
             self.node_types, self.edge_types = data.metadata()
-            if isinstance(num_neighbors, (list, tuple)):
-                num_neighbors = {key: num_neighbors for key in self.edge_types}
-            assert isinstance(num_neighbors, dict)
-            self.num_neighbors = {
-                edge_type_to_str(key): value
-                for key, value in num_neighbors.items()
-            }
-
-            self.num_hops = max([len(v) for v in self.num_neighbors.values()])
+            self._set_num_neighbors_and_num_hops(num_neighbors)
 
             assert input_type is not None
             self.input_type = input_type
@@ -121,14 +113,7 @@ class NeighborSampler:
                 set(edge_attr.edge_type for edge_attr in edge_attrs))
 
             # Set other required parameters:
-            if isinstance(num_neighbors, (list, tuple)):
-                num_neighbors = {key: num_neighbors for key in self.edge_types}
-            assert isinstance(num_neighbors, dict)
-            self.num_neighbors = {
-                edge_type_to_str(key): value
-                for key, value in num_neighbors.items()
-            }
-            self.num_hops = max([len(v) for v in self.num_neighbors.values()])
+            self._set_num_neighbors_and_num_hops(num_neighbors)
 
             assert input_type is not None
             self.input_type = input_type
@@ -150,6 +135,17 @@ class NeighborSampler:
 
         else:
             raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
+
+    def _set_num_neighbors_and_num_hops(self, num_neighbors):
+        if isinstance(num_neighbors, (list, tuple)):
+            num_neighbors = {key: num_neighbors for key in self.edge_types}
+        assert isinstance(num_neighbors, dict)
+        self.num_neighbors = {
+            edge_type_to_str(key): value
+            for key, value in num_neighbors.items()
+        }
+        # Add at least one element to the list to ensure `max` is well-defined
+        self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
 
     def _sparse_neighbor_sample(self, index: Tensor):
         fn = torch.ops.torch_sparse.neighbor_sample

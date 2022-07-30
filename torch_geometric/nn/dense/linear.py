@@ -137,15 +137,16 @@ class Linear(torch.nn.Module):
     def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
                         missing_keys, unexpected_keys, error_msgs):
 
-        weight = state_dict[prefix + 'weight']
-        if is_uninitialized_parameter(weight):
+        weight = state_dict.get(prefix + 'weight', None)
+
+        if weight is not None and is_uninitialized_parameter(weight):
             self.in_channels = -1
             self.weight = nn.parameter.UninitializedParameter()
             if not hasattr(self, '_hook'):
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
 
-        elif is_uninitialized_parameter(self.weight):
+        elif weight is not None and is_uninitialized_parameter(self.weight):
             self.in_channels = weight.size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             if hasattr(self, '_hook'):
