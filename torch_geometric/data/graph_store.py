@@ -183,24 +183,34 @@ class GraphStore:
     def _all_edges_to_layout(
         self,
         layout: EdgeLayout,
+        edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
         # Obtain all edge attributes, grouped by type:
-        edge_attrs = self.get_all_edge_attrs()
+        all_edge_attrs = self.get_all_edge_attrs()
         edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
-        for attr in edge_attrs:
+        for attr in all_edge_attrs:
             edge_type_to_attrs[attr.edge_type].append(attr)
+
+        # Edge types to convert:
+        edge_types = edge_types or [attr.edge_type for attr in all_edge_attrs]
+        for edge_type in edge_types:
+            if edge_type not in edge_type_to_attrs:
+                raise ValueError(
+                    f"The edge label index {edge_type} was not found in "
+                    f"the graph store.")
 
         # Convert layouts for each attribute from its most favorable original
         # layout to the desired layout. Store permutations of edges if
         # necessary as part of the conversion:
         row_dict, col_dict, perm_dict = {}, {}, {}
-        for edge_attrs in edge_type_to_attrs.values():
-            edge_layouts = [edge_attr.layout for edge_attr in edge_attrs]
+        for edge_type in edge_types:
+            edge_type_attrs = edge_type_to_attrs[edge_type]
+            edge_type_layouts = [attr.layout for attr in edge_type_attrs]
 
             # Ignore if requested layout is already present:
-            if layout in edge_layouts:
-                from_attr = edge_attrs[edge_layouts.index(layout)]
+            if layout in edge_type_layouts:
+                from_attr = edge_type_attrs[edge_type_layouts.index(layout)]
                 row, col = self.get_edge_index(from_attr)
                 perm = None
 
@@ -209,12 +219,15 @@ class GraphStore:
                 # Pick the most favorable layout to convert from. We prefer
                 # COO to CSC/CSR:
                 from_attr = None
-                if EdgeLayout.COO in edge_layouts:
-                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.COO)]
-                elif EdgeLayout.CSC in edge_layouts:
-                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSC)]
+                if EdgeLayout.COO in edge_type_layouts:
+                    from_attr = edge_type_attrs[edge_type_layouts.index(
+                        EdgeLayout.COO)]
+                elif EdgeLayout.CSC in edge_type_layouts:
+                    from_attr = edge_type_attrs[edge_type_layouts.index(
+                        EdgeLayout.CSC)]
                 else:
-                    from_attr = edge_attrs[edge_layouts.index(EdgeLayout.CSR)]
+                    from_attr = edge_type_attrs[edge_type_layouts.index(
+                        EdgeLayout.CSR)]
 
                 row, col, perm = self._edge_to_layout(from_attr, layout)
 
@@ -222,7 +235,7 @@ class GraphStore:
             col_dict[from_attr.edge_type] = col
             perm_dict[from_attr.edge_type] = perm
 
-            if store and layout not in edge_layouts:
+            if store and layout not in edge_type_layouts:
                 # We do not store converted edge indices if this conversion
                 # results in a permutation of nodes in the original edge index.
                 # This is to exercise an abundance of caution in the case that
@@ -245,20 +258,32 @@ class GraphStore:
 
         return row_dict, col_dict, perm_dict
 
-    def coo(self, store: bool = False) -> ConversionOutputType:
+    def coo(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        store: bool = False,
+    ) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to COO format,
         optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.COO, store)
+        return self._all_edges_to_layout(EdgeLayout.COO, edge_types, store)
 
-    def csr(self, store: bool = False) -> ConversionOutputType:
+    def csr(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        store: bool = False,
+    ) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to CSR format,
         optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.CSR, store)
+        return self._all_edges_to_layout(EdgeLayout.CSR, edge_types, store)
 
-    def csc(self, store: bool = False) -> ConversionOutputType:
+    def csc(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        store: bool = False,
+    ) -> ConversionOutputType:
         r"""Converts the edge indices in the graph store to CSC format,
         optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.CSC, store)
+        return self._all_edges_to_layout(EdgeLayout.CSC, edge_types, store)
 
     # Additional methods ######################################################
 

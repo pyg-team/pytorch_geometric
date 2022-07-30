@@ -20,8 +20,11 @@ jobs:
         include:
           - torch-version: 1.12.0
             torchvision-version: 0.13.0
-          - os: windows-latest
+        exclude:
+          - os: windows-latest  # Complains about CUDA mismatch.
             python-version: '3.7'
+          - os: windows-latest  # Complains about missing numpy package.
+            python-version: '3.10'
 
     steps:
       - uses: actions/checkout@v3

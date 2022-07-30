@@ -4,20 +4,56 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.neighbor_loader import NeighborSampler
-from torch_geometric.loader.utils import filter_data, filter_hetero_data
+from torch_geometric.loader.utils import (
+    filter_data,
+    filter_feature_store,
+    filter_hetero_data,
+)
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
 class LinkNeighborSampler(NeighborSampler):
-    def __init__(self, data, *args, neg_sampling_ratio: float = 0.0, **kwargs):
+    def __init__(
+        self,
+        data,
+        *args,
+        neg_sampling_ratio: float = 0.0,
+        num_src_nodes: Optional[int] = None,
+        num_dst_nodes: Optional[int] = None,
+        **kwargs,
+    ):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
 
-        if issubclass(self.data_cls, Data):
+        if self.data_cls == 'custom':
+            _, graph_store = data
+            edge_attrs = graph_store.get_all_edge_attrs()
+            edge_types = [attr.edge_type for attr in edge_attrs]
+
+            # Edge label index is part of the graph:
+            if self.input_type in edge_types:
+                self.num_src_nodes, self.num_dst_nodes = edge_attrs[
+                    edge_types.index(self.input_type)].size
+
+            elif num_src_nodes is None or num_dst_nodes is None:
+                raise ValueError(
+                    f"Use of the feature store and graph store abstraction "
+                    f"with {self.__class__.__name__} requires the "
+                    f"specification of source and destination nodes, since "
+                    f"the edge label index {self.input_type} is not part "
+                    f"of the specified graph. ")
+
+            else:
+                self.num_src_nodes = num_src_nodes
+                self.num_dst_nodes = num_dst_nodes
+
+        elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
-        else:
+        else:  # issubclass(self.data_cls, HeteroData):
             self.num_src_nodes = data[self.input_type[0]].num_nodes
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
@@ -64,16 +100,8 @@ class LinkNeighborSampler(NeighborSampler):
         edge_label_index, edge_label = self._create_label(
             edge_label_index, edge_label)
 
-        if issubclass(self.data_cls, Data):
-
-            query_nodes = edge_label_index.view(-1)
-            query_nodes, reverse = query_nodes.unique(return_inverse=True)
-            edge_label_index = reverse.view(2, -1)
-            return self._sparse_neighbor_sample(query_nodes) + (
-                edge_label_index, edge_label)
-
-        elif issubclass(self.data_cls, HeteroData):
-
+        if (self.data_cls == 'custom'
+                or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
                 query_src = edge_label_index[0]
                 query_src, reverse_src = query_src.unique(return_inverse=True)
@@ -90,6 +118,13 @@ class LinkNeighborSampler(NeighborSampler):
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
             return self._hetero_sparse_neighbor_sample(query_node_dict) + (
+                edge_label_index, edge_label)
+
+        elif issubclass(self.data_cls, Data):
+            query_nodes = edge_label_index.view(-1)
+            query_nodes, reverse = query_nodes.unique(return_inverse=True)
+            edge_label_index = reverse.view(2, -1)
+            return self._sparse_neighbor_sample(query_nodes) + (
                 edge_label_index, edge_label)
 
 
@@ -177,6 +212,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         edge_label (Tensor): The labels of edge indices for which neighbors are
             sampled. Must be the same length as the :obj:`edge_label_index`.
             If set to :obj:`None` then no labels are returned in the batch.
+        num_src_nodes (optional, int): The number of source nodes in the edge
+            label index. Inferred if not provided.
+        num_dst_nodes (optional, int): The number of destination nodes in the
+            edge label index. Inferred if not provided.
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
@@ -222,10 +261,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
+        num_src_nodes: Optional[int] = None,
+        num_dst_nodes: Optional[int] = None,
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
@@ -267,6 +308,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
+                num_src_nodes=num_src_nodes,
+                num_dst_nodes=num_dst_nodes,
                 time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
@@ -289,6 +332,16 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
+            edge_type = self.neighbor_sampler.input_type
+            data[edge_type].edge_label_index = edge_label_index
+            if edge_label is not None:
+                data[edge_type].edge_label = edge_label
+        else:
+            (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
+             edge_label) = out
+            feature_store, _ = self.data
+            data = filter_feature_store(feature_store, node_dict, row_dict,
+                                        col_dict, edge_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
             if edge_label is not None:
@@ -333,7 +386,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 def get_edge_label_index(
-    data: Union[Data, HeteroData],
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     edge_label_index: InputEdges,
 ) -> Tuple[Optional[str], Tensor]:
     edge_type = None
@@ -345,18 +398,41 @@ def get_edge_label_index(
     assert edge_label_index is not None
     assert isinstance(edge_label_index, (list, tuple))
 
-    if isinstance(edge_label_index[0], str):
-        edge_type = edge_label_index
+    if isinstance(data, HeteroData):
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            edge_type = data._to_canonical(*edge_type)
+            assert edge_type in data.edge_types
+            return edge_type, data[edge_type].edge_index
+
+        assert len(edge_label_index) == 2
+
+        edge_type, edge_label_index = edge_label_index
         edge_type = data._to_canonical(*edge_type)
-        assert edge_type in data.edge_types
-        return edge_type, data[edge_type].edge_index
 
-    assert len(edge_label_index) == 2
+        if edge_label_index is None:
+            return edge_type, data[edge_type].edge_index
 
-    edge_type, edge_label_index = edge_label_index
-    edge_type = data._to_canonical(*edge_type)
+        return edge_type, edge_label_index
 
-    if edge_label_index is None:
-        return edge_type, data[edge_type].edge_index
+    else:  # Tuple[FeatureStore, GraphStore]
+        _, graph_store = data
 
-    return edge_type, edge_label_index
+        # Need the edge index in COO for LinkNeighborLoader:
+        def _get_edge_index(edge_type):
+            row_dict, col_dict, _ = graph_store.coo([edge_type])
+            row = list(row_dict.values())[0]
+            col = list(col_dict.values())[0]
+            return torch.stack((row, col), dim=0)
+
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            return edge_type, _get_edge_index(edge_type)
+
+        assert len(edge_label_index) == 2
+        edge_type, edge_label_index = edge_label_index
+
+        if edge_label_index is None:
+            return edge_type, _get_edge_index(edge_type)
+
+        return edge_type, edge_label_index
