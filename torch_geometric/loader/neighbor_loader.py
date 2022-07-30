@@ -51,12 +51,15 @@ class NeighborSampler:
                     f"'time_attr' attribute not yet supported for "
                     f"'{data.__class__.__name__}' object")
 
-            # Convert the graph data into a suitable format for sampling.
-            out = to_csc(data, device='cpu', share_memory=share_memory,
-                         is_sorted=is_sorted)
-            self.colptr, self.row, self.perm = out
             if not has_edges(data):
                 self.num_neighbors = []
+                self.perm = self.row = torch.empty(1, dtype=torch.long)
+                self.colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long)
+            else:
+                # Convert the graph data into a suitable format for sampling.
+                out = to_csc(data, device='cpu', share_memory=share_memory,
+                             is_sorted=is_sorted)
+                self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
         # If we are working with a `HeteroData` object, convert each edge
