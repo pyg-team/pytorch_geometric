@@ -4,9 +4,9 @@ from .layer_norm import LayerNorm
 from .graph_norm import GraphNorm
 from .graph_size_norm import GraphSizeNorm
 from .pair_norm import PairNorm
+from .mean_subtraction_norm import MeanSubtractionNorm
 from .msg_norm import MessageNorm
 from .diff_group_norm import DiffGroupNorm
-from .mean_subtraction_norm import MeanSubtractionNorm
 
 __all__ = [
     'BatchNorm',
@@ -15,9 +15,9 @@ __all__ = [
     'GraphNorm',
     'GraphSizeNorm',
     'PairNorm',
+    'MeanSubtractionNorm',
     'MessageNorm',
     'DiffGroupNorm',
-    'MeanSubtractionNorm',
 ]
 
 classes = __all__
