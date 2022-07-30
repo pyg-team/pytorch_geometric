@@ -55,15 +55,16 @@ def to_csc(
     elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
-    elif hasattr(data, 'edge_index'):
+    elif data.edge_index is not None:
         (row, col) = data.edge_index
         if not is_sorted:
             perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
-        raise AttributeError("Data object does not contain attributes "
-                             "'adj', 'adj_t' or 'edge_index'")
+        row = torch.empty(0, dtype=torch.long, device=device)
+        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
+                             device=device)
 
     colptr = colptr.to(device)
     row = row.to(device)
