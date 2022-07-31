@@ -25,9 +25,8 @@ Convolutional Layers
      {{ cls }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.conv.message_passing
+.. autoclass:: torch_geometric.nn.conv.MessagePassing
    :members:
-   :exclude-members: training
 
 .. automodule:: torch_geometric.nn.conv
    :members:
@@ -49,7 +48,7 @@ Aggregation Operators
      {{ cls }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.aggr.base
+.. autoclass:: torch_geometric.nn.aggr.Aggregation
    :members:
 
 .. automodule:: torch_geometric.nn.aggr
