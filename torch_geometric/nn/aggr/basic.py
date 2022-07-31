@@ -99,7 +99,7 @@ class StdAggregation(Aggregation):
     across a set of elements
 
     .. math::
-        \mathrm{std}(\mathcal{X}) = \sqrt{(\mathrm{var}(\mathcal{X})}.
+        \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
     """
     def __init__(self):
         super().__init__()
