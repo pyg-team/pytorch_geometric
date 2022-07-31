@@ -5,6 +5,7 @@ from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
     MedianAggregation,
+    QuantileAggregation,
     MinAggregation,
     MulAggregation,
     PowerMeanAggregation,
@@ -47,6 +48,10 @@ def test_basic_aggregation(Aggregation):
     aggr = Aggregation()
     if isinstance(aggr, MedianAggregation):
         assert str(aggr) == f'{Aggregation.__name__}(fill_value=nan)'
+
+        assert QuantileAggregation.__repr__(aggr) == \
+            f'{aggr.__class__.__name__}(' \
+            f'q=0.5, interpolation="lower", fill_value=nan)'
     else:
         assert str(aggr) == f'{Aggregation.__name__}()'
 
