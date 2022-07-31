@@ -17,7 +17,7 @@ class MultiAggregation(Aggregation):
 
     Args:
         aggrs (list): The list of aggregation schemes to use.
-        aggrs_kwargs (list, optional): Arguments passed to the
+        aggrs_kwargs (dict, optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
         mode (string, optional): The combine mode to use for combining
