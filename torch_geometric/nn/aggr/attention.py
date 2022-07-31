@@ -32,14 +32,6 @@ class AttentionalAggregation(Aggregation):
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
-
-    Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F)`,
-          batch vector :math:`(|\mathcal{V}|)` *(optional)*
-        - **output:**
-          graph features :math:`(|\mathcal{G}|, F)` where
-          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(self, gate_nn: torch.nn.Module,
                  nn: Optional[torch.nn.Module] = None):

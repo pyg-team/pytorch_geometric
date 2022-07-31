@@ -11,7 +11,7 @@ median similar to what is observed in the paper.
 import numpy as np
 import torch
 
-from torch_geometric.nn.aggr import EquilibriumAggregation
+from torch_geometric.nn import EquilibriumAggregation
 
 input_size = 100
 steps = 10000000
