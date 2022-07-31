@@ -245,9 +245,9 @@ def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
 
 
 __all__ = [
-    'global_max_pool',
     'global_add_pool',
     'global_mean_pool',
+    'global_max_pool',
     'TopKPooling',
     'SAGPooling',
     'EdgePooling',

@@ -10,8 +10,8 @@ from ..inits import reset
 
 
 class AttentionalAggregation(Aggregation):
-    r"""Soft attention aggregation layer from the `"Gated Graph Sequence Neural
-    Networks" <https://arxiv.org/abs/1511.05493>`_ paper
+    r"""The soft attention aggregation layer from the `"Gated Graph Sequence
+    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper
 
     .. math::
         \mathbf{r}_i = \sum_{n=1}^{N_i} \mathrm{softmax} \left(
