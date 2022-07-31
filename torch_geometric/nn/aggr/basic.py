@@ -110,11 +110,7 @@ class QuantileAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        # we could also expand `ptr` to an index
         self.assert_index_present(index)
-
-        if dim_size is None:
-            dim_size = index.max() + 1
 
         # compute the quantile points
         count = torch.bincount(index, minlength=dim_size)
@@ -137,13 +133,13 @@ class QuantileAggregation(Aggregation):
         # compute the quantile interpolations
         if self.interpolation == 'lower':
             idx = torch.floor(q_point).long()
-            median = x.index_select(dim, idx)
+            quantile = x.index_select(dim, idx)
         elif self.interpolation == 'higher':
             idx = torch.ceil(q_point).long()
-            median = x.index_select(dim, idx)
+            quantile = x.index_select(dim, idx)
         elif self.interpolation == 'nearest':
             idx = torch.round(q_point).long()
-            median = x.index_select(dim, idx)
+            quantile = x.index_select(dim, idx)
         else:
             l_idx = torch.floor(q_point).long()
             r_idx = torch.ceil(q_point).long()
@@ -152,20 +148,20 @@ class QuantileAggregation(Aggregation):
 
             if self.interpolation == 'linear':
                 q_frac = torch.frac(q_point).view(*shape)
-                median = l_med + (r_med - l_med) * q_frac
+                quantile = l_med + (r_med - l_med) * q_frac
             else:  # 'midpoint'
-                median = 0.5 * l_med + 0.5 * r_med
+                quantile = 0.5 * l_med + 0.5 * r_med
 
         # if the number of elements is 0, return 'nan'/fill_value
         out_mask = (count > 0).view(*shape)
         return torch.where(
-            out_mask, median,
-            torch.tensor([self.fill_value], dtype=median.dtype,
-                         device=median.device))
+            out_mask, quantile,
+            torch.tensor([self.fill_value], dtype=quantile.dtype,
+                         device=quantile.device))
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(q={self.q}), '
-                f'interpolation={self.interpolation}, '
+        return (f'{self.__class__.__name__}(q={self.q}, '
+                f'interpolation="{self.interpolation}", '
                 f'fill_value={self.fill_value})')
 
 
