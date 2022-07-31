@@ -14,9 +14,6 @@ class LSTMAggregation(Aggregation):
     .. warning::
         :class:`LSTMAggregation` is not a permutation-invariant operator.
 
-    .. note::
-        :class:`LSTMAggregation` requires sorted indices as input.
-
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
