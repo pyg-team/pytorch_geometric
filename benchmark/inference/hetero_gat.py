@@ -2,7 +2,6 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric.nn import to_hetero, GAT
-from torch_geometric.nn.models.basic_gnn import GAT
 
 
 class HeteroGAT(torch.nn.Module):
