@@ -113,26 +113,41 @@ class StdAggregation(Aggregation):
 
 
 class QuantileAggregation(Aggregation):
-    r"""Quantile aggregation operator.
+    r"""An aggregation operator that returns the feature-wise :math:`q`-th
+    quantile of a set :math:`\mathcal{X}` of :math:`n` elements. That is,
+    for every feature :math:`d`, computes
+
+    .. math::
+        \big[\mathrm{Q}_q(\mathcal{X})\big]_d = \begin{cases}
+            \mathbf{x}_{\pi_i,d} & i = q\cdot n, \\
+            f(\mathbf{x}_{\pi_i,d}, \mathbf{x}_{\pi_{i+1},d}) &
+                i < q\cdot n < i + 1,\\
+        \end{cases}
+
+    where :math:`\mathbf{x}_{\pi_1,d} \le \dots \le \mathbf{x}_{\pi_i,d} \le
+    \dots \le \mathbf{x}_{\pi_n,d}` and :math:`f(a, b)` is an interpolation
+    function defined by :obj:`interpolation`.
 
     Args:
-        q (float): A scalar in the range [0, 1].
+        q (float): The quantile value :math:`q`. Must be a scalar in the range
+            :math:`[0, 1]`.
         interpolation (str): Interpolation method applied if the quantile point
-            :math:`q(n - 1)` lies between two values :math:`x_i \le x_{i+1}`,
-            with :math:`i < q(n - 1) < i+1`. Can be one of the following:
+            :math:`q\cdot n` lies between two values
+            :math:`a \le b`. Can be one of the following:
 
-            - :obj:`"lower"`: Returns the one with lowest value.
+            * :obj:`"lower"`: Returns the one with lowest value.
 
-            - :obj:`"higher"`: Returns the one with highest value.
+            * :obj:`"higher"`: Returns the one with highest value.
 
-            - :obj:`"midpoint"`: Returns the average of the two values.
+            * :obj:`"midpoint"`: Returns the average of the two values.
 
-            - :obj:`"nearest"`: Returns the one nearest to the quantile point.
+            * :obj:`"nearest"`: Returns the one whose index is nearest to the
+              quantile point.
 
-            - :obj:`"linear"` (default): Returns a linear combination of the
-                two elments, as
-                :math:`x_i + (x_{i+1} - x_i)\cdot(q(n - 1) - i)`.
-
+            * :obj:`"linear"` (default): Returns a linear combination of the
+              two elments, defined as
+              :math:`f(a, b) = a + (b - a)\cdot(q\cdot n - i)`.
+            
         fill_value (float): Default value in the case no entry is
             found for a given index (default: :obj:`NaN`).
     """
@@ -212,9 +227,15 @@ class QuantileAggregation(Aggregation):
 
 
 class MedianAggregation(QuantileAggregation):
-    r"""Median aggregation operator, as used in `"Understanding Structural
-    Vulnerability in Graph Convolutional Networks"
-    <https://www.ijcai.org/proceedings/2021/310>`_.
+    r"""An aggregation operator that returns the feature-wise median of a set
+    :math:`\mathcal{X}` of :math:`n` elements. That is, for every feature
+    :math:`d`, computes
+
+    .. math::
+        \big[\mathrm{median}(\mathcal{X})\big]_d = \mathbf{x}_{\pi_i,d}
+
+    where :math:`\mathbf{x}_{\pi_1,d} \le \mathbf{x}_{\pi_2,d} \le \dots \le
+    \mathbf{x}_{\pi_n,d}` and :math:`i = \lfloor \frac{n}{2} \rfloor`.
 
     .. note::
         If the median lies between two values, the lowest one is returned.
