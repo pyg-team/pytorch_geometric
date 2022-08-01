@@ -147,7 +147,7 @@ class QuantileAggregation(Aggregation):
             * :obj:`"linear"` (default): Returns a linear combination of the
               two elments, defined as
               :math:`f(a, b) = a + (b - a)\cdot(q\cdot n - i)`.
-            
+
         fill_value (float): Default value in the case no entry is
             found for a given index (default: :obj:`NaN`).
     """

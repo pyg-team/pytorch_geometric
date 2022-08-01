@@ -17,7 +17,8 @@ x = torch.tensor([
 ]).float()
 
 
-@pytest.mark.parametrize('index,result,dim', [(
+@pytest.mark.parametrize('index,result,dim', [
+    (
         torch.tensor([0, 0, 0, 0, 1, 1, 1, 2, 2, 2]),
         torch.tensor([
             [3, 1, 2],
@@ -25,19 +26,20 @@ x = torch.tensor([
             [4, 5, 6],
         ]).float(),
         0,
-    ), (
-        torch.tensor([0, 1, 0]),
-        torch.cat([x[:, ::2].min(-1, keepdim=True)[0], x[:, [1]]], dim=1),
-        1
-    ), (
+    ),
+    (torch.tensor([0, 1, 0]),
+     torch.cat([x[:, ::2].min(-1, keepdim=True)[0], x[:, [1]]], dim=1), 1),
+    (
         torch.zeros_like(x[:, 0]).long(),
         torch.median(x, 0, keepdim=True)[0],
         0,
-    ), (
+    ),
+    (
         torch.zeros_like(x[0, :]).long(),
         torch.median(x, 1, keepdim=True)[0],
         1,
-)])
+    )
+])
 def test_median_aggregation(index, dim, result):
     aggr = MedianAggregation()
     assert torch.allclose(result, aggr(x=x, index=index, dim=dim))
