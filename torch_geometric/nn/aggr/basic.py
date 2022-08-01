@@ -8,21 +8,40 @@ from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
 
-class MeanAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-        return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
-
-
 class SumAggregation(Aggregation):
+    r"""An aggregation operator that sums up features across a set of elements
+
+    .. math::
+        \mathrm{sum}(\mathcal{X}) = \sum_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
+class MeanAggregation(Aggregation):
+    r"""An aggregation operator that averages features across a set of elements
+
+    .. math::
+        \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
+        \sum_{\mathbf{x}_i \in \mathcal{X}} \mathbf{x}_i.
+    """
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
+
+
 class MaxAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise maximum across a
+    set of elements
+
+    .. math::
+        \mathrm{max}(\mathcal{X}) = \max_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -30,6 +49,13 @@ class MaxAggregation(Aggregation):
 
 
 class MinAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise minimum across a
+    set of elements
+
+    .. math::
+        \mathrm{min}(\mathcal{X}) = \min_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -37,6 +63,13 @@ class MinAggregation(Aggregation):
 
 
 class MulAggregation(Aggregation):
+    r"""An aggregation operator that multiples features across a set of
+    elements
+
+    .. math::
+        \mathrm{mul}(\mathcal{X}) = \prod_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -46,6 +79,13 @@ class MulAggregation(Aggregation):
 
 
 class VarAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise variance across a
+    set of elements
+
+    .. math::
+        \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
+        \mathcal{X} \}) - \mathrm{mean}(\mathcal{X}).
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -55,6 +95,12 @@ class VarAggregation(Aggregation):
 
 
 class StdAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise standard deviation
+    across a set of elements
+
+    .. math::
+        \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
+    """
     def __init__(self):
         super().__init__()
         self.var_aggr = VarAggregation()

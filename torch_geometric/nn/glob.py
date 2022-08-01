@@ -8,7 +8,7 @@ from torch_geometric.nn.aggr import (
     AttentionalAggregation,
     GraphMultisetTransformer,
     Set2Set,
-    SortAggr,
+    SortAggregation,
 )
 
 Set2Set = deprecated(
@@ -36,7 +36,7 @@ class GlobalAttention(AttentionalAggregation):
     func_name='nn.glob.global_sort_pool',
 )
 def global_sort_pool(x, index, k):
-    module = SortAggr(k=k)
+    module = SortAggregation(k=k)
     return module(x, index=index)
 
 

@@ -8,7 +8,16 @@ from torch_geometric.utils import to_dense_batch
 
 
 class Aggregation(torch.nn.Module):
-    r"""An abstract base class for implementing custom aggregations."""
+    r"""An abstract base class for implementing custom aggregations.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or edge features
+          :math:`(|\mathcal{E}|, F_{in})`,
+          index vector :math:`(|\mathcal{V}|)` or :math:`(|\mathcal{E}|)`,
+        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` or node
+          features :math:`(|\mathcal{V}|, F_{out})`
+    """
 
     # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
