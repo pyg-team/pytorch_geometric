@@ -9,7 +9,7 @@ class HeteroGraphSAGE(torch.nn.Module):
     def __init__(self, metadata, hidden_channels, num_layers, output_channels):
         super().__init__()
         self.model = to_hetero(
-            GraphSAGE(-1, hidden_channels, num_layers, output_channels),
+            GraphSAGE((-1, -1), hidden_channels, num_layers, output_channels),
             metadata)
 
     @torch.no_grad()
