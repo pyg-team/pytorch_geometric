@@ -24,8 +24,8 @@ from .attention import AttentionalAggregation
 __all__ = classes = [
     'Aggregation',
     'MultiAggregation',
-    'MeanAggregation',
     'SumAggregation',
+    'MeanAggregation',
     'MaxAggregation',
     'MinAggregation',
     'MulAggregation',

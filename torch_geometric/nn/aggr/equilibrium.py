@@ -102,31 +102,30 @@ class MomentumOptimizer(torch.nn.Module):
 
 
 class EquilibriumAggregation(Aggregation):
-    r"""
-    The graph global pooling layer from the
-    `"Equilibrium Aggregation: Encoding Sets via Optimization"
-    <https://arxiv.org/abs/2202.12795>`_ paper.
-    This output of this layer :math:`\mathbf{y}` is defined implicitly by
-    defining a potential function :math:`F(\mathbf{x}, \mathbf{y})`
-    and regulatization function :math:`R(\mathbf{y})` and the condition
+    r"""The equilibrium aggregation layer from the `"Equilibrium Aggregation:
+    Encoding Sets via Optimization" <https://arxiv.org/abs/2202.12795>`_ paper.
+    The output of this layer :math:`\mathbf{y}` is defined implicitly via a
+    potential function :math:`F(\mathbf{x}, \mathbf{y})`, a regularization term
+    :math:`R(\mathbf{y})`, and the condition
 
     .. math::
-        \mathbf{y} = \min_\mathbf{y} R(\mathbf{y}) +
-        \sum_{i} F(\mathbf{x}_i, \mathbf{y})
+        \mathbf{y} = \min_\mathbf{y} R(\mathbf{y}) + \sum_{i}
+        F(\mathbf{x}_i, \mathbf{y}).
 
-    This implementation uses a ResNet Like model for the potential function
-    and a simple L2 norm for the regularizer with learnable weight
-    :math:`\lambda`.
+    The given implementation uses a ResNet-like model for the potential
+    function and a simple :math:`L_2` norm :math:`R(\mathbf{y}) =
+    \textrm{softplus}(\lambda) \cdot {\| \mathbf{y} \|}^2_2` for the
+    regularizer with learnable weight :math:`\lambda`.
 
     Args:
-        in_channels (int): The number of channels in the input to the layer.
-        out_channels (float): The number of channels in the ouput.
-        num_layers (List[int): A list of the number of hidden units in the
-            potential function.
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        num_layers (List[int): List of hidden channels in the potential
+            function.
         grad_iter (int): The number of steps to take in the internal gradient
             descent. (default: :obj:`5`)
-        lamb (float): The initial regularization constant. Is learnable.
-            descent. (default: :obj:`0.1`)
+        lamb (float): The initial regularization constant.
+            (default: :obj:`0.1`)
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_layers: List[int], grad_iter: int = 5, lamb: float = 0.1):
@@ -135,29 +134,25 @@ class EquilibriumAggregation(Aggregation):
         self.potential = ResNetPotential(in_channels + out_channels, 1,
                                          num_layers)
         self.optimizer = MomentumOptimizer()
-        self._initial_lambda = lamb
-        self._labmda = torch.nn.Parameter(Tensor([lamb]), requires_grad=True)
+        self.initial_lamb = lamb
+        self.lamb = torch.nn.Parameter(Tensor(1), requires_grad=True)
         self.softplus = torch.nn.Softplus()
         self.grad_iter = grad_iter
         self.output_dim = out_channels
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lamb.data.fill_(self._initial_lambda)
+        self.lamb.data.fill_(self.initial_lamb)
         reset(self.optimizer)
         reset(self.potential)
-
-    @property
-    def lamb(self):
-        return self.softplus(self._labmda)
 
     def init_output(self, index: Optional[Tensor] = None) -> Tensor:
         index_size = 1 if index is None else int(index.max().item() + 1)
         return torch.zeros(index_size, self.output_dim,
                            requires_grad=True).float()
 
-    def reg(self, y: Tensor) -> float:
-        return self.lamb * y.square().mean(dim=-2).sum(dim=0)
+    def reg(self, y: Tensor) -> Tensor:
+        return self.softplus(self.lamb) * y.square().sum(dim=-1).mean()
 
     def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor]):
         return self.potential(x, y, index) + self.reg(y)

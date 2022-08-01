@@ -8,13 +8,11 @@ from torch_geometric.nn.aggr import Aggregation
 
 class LSTMAggregation(Aggregation):
     r"""Performs LSTM-style aggregation in which the elements to aggregate are
-    interpreted as a sequence.
+    interpreted as a sequence, as described in the `"Inductive Representation
+    Learning on Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper.
 
     .. warning::
         :class:`LSTMAggregation` is not a permutation-invariant operator.
-
-    .. note::
-        :class:`LSTMAggregation` requires sorted indices as input.
 
     Args:
         in_channels (int): Size of each input sample.
