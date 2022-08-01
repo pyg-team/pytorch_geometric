@@ -2,10 +2,12 @@ import argparse
 from timeit import default_timer
 
 import torch
+from torch.profiler import ProfilerActivity, profile
 from utils import get_dataset, get_model
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
+from torch_geometric.profile import rename_profile_file, trace_handler
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -92,11 +94,29 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
+                        for _ in range(args.warmup):
+                            model.inference(subgraph_loader, device,
+                                            progress_bar=True)
+
                         start = default_timer()
                         model.inference(subgraph_loader, device,
                                         progress_bar=True)
                         stop = default_timer()
                         print(f'Inference time={stop-start:.3f} seconds\n')
+
+                        if args.profile:
+                            with profile(
+                                    activities=[
+                                        ProfilerActivity.CPU,
+                                        ProfilerActivity.CUDA
+                                    ], on_trace_ready=trace_handler) as p:
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                                p.step()
+                            rename_profile_file(
+                                model_name, dataset_name, str(batch_size),
+                                str(layers), str(hidden_channels),
+                                str(subgraph_loader.num_neighbors))
 
 
 if __name__ == '__main__':
@@ -121,6 +141,8 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=-1, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=2, type=int)
+    argparser.add_argument('--warmup', default=1, type=int)
+    argparser.add_argument('--profile', action='store_true')
 
     args = argparser.parse_args()
 
