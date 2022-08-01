@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 
-from torch_geometric.nn import to_hetero
+from torch_geometric.nn import to_hetero, GraphSAGE
 from torch_geometric.nn.models.basic_gnn import GraphSAGE
 
 
