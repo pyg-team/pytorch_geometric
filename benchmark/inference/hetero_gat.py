@@ -10,7 +10,7 @@ class HeteroGAT(torch.nn.Module):
                  num_heads):
         super().__init__()
         self.model = to_hetero(
-            GAT(-1, hidden_channels, num_layers, output_channels,
+            GAT((-1, -1), hidden_channels, num_layers, output_channels,
                 add_self_loops=False, heads=num_heads), metadata)
 
     @torch.no_grad()
