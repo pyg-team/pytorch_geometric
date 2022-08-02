@@ -22,50 +22,55 @@ class GlobalPooling(torch.nn.Module):
         self.nn = nn
 
     def forward(self, x, pos, batch):
-        x = self.nn(torch.cat([x, pos], dim=1))
+        x = self.nn(x)
         x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
         batch = torch.arange(x.size(0), device=batch.device)
         return x, pos, batch
 
 
-class LocSE(torch.nn.Module):
+class LocalFeatureAggregation(MessagePassing):
     """This only creates relative encodings, taht will later be processed by Attentive Pooling."""
 
-    def __init__(self, d):
+    def __init__(self, d_out):
         # TODO: check if need for batch, activation, etc.
-        super().__init__()
-        self.mlp = MLP([d, d])
+        super().__init__(aggr="add")
+        self.mlp_encoder = MLP([10, d_out // 2])
+        self.mlp_attention = MLP([d_out, d_out])
 
-    def forward(self, x_j: Optional[Tensor], pos_i: Tensor, pos_j: Tensor) -> Tensor:
-        # TODO: add all distahnce, squared distance, etc, to msg
+    def forward(self, edge_indx, x, pos):
+        out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
+        return out
+
+    def message(self, x_j: Optional[Tensor], pos_i: Tensor, pos_j: Tensor) -> Tensor:
+        """_summary_
+
+        Args:
+            x_j (Optional[Tensor]): neighboors features (K,d)
+            pos_i (Tensor): centroid position (repeated) (K,3)
+            pos_j (Tensor): neighboors positions (K,3)
+
+        out1 (Tensor): Concatenation of x_j + MLP(relative_infos)
+        out2 (Tensor): out1 multiplied by derived attention scores on the features.
+
+        """
         dist = pos_j - pos_i
-        squared_dist = dist * dist
-        relative_infos = torch.cat([dist, squared_dist], dim=1)  # K, d
-        local_spatial_encoding = self.mlp(relative_infos)  # K, d
-        x = torch.cat([x_j, local_spatial_encoding], dim=1)  # K, 2d
-        return x
+        euclidian_dist = torch.sqrt(dist * dist).sum(1, keepdim=True)
+        relative_infos = torch.cat(
+            [pos_i, pos_j, dist, euclidian_dist], dim=1
+        )  # N//4 * K, d
+        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N//4 * K, d
+        out1 = torch.cat([x_j, local_spatial_encoding], dim=1)  # N//4 * K, 2d
+
+        # attention will weight the differetn features of x
+        attention_scores = torch.softmax(
+            self.mlp_attention(out1), dim=-1
+        )  # N//4 * K, d_out
+        out2 = attention_scores * out1  # N//4 * K, d_out
+        return out2
 
 
-class AttentivePooling(torch.nn.Module):
-    def __init__(self, d):
-        super().__init__()
-        # TODO: add batch norm, activation, etc. if needed
-        self.nn = MLP(
-            [d, d],
-            # bias=False, norm=False
-        )
-        self.softmax = torch.nn.Softmax(dim=-1)
-
-    def forward(self, x):
-        # x : K, 2d, already contains relative positions and features of all points in neighborhood.
-        scores = self.nn(x)
-        attention_scores = self.softmax(scores)
-        x = torch.sum(x * attention_scores, dim=-1, keepdim=True)
-        return x
-
-
-class LFAggregationModule(MessagePassing):
+class DilatedResidualBlock(MessagePassing):
     def __init__(self, decimation, num_neighbors, d_in, d_out):
         super().__init__()
         self.num_neighbors = num_neighbors
@@ -75,30 +80,27 @@ class LFAggregationModule(MessagePassing):
 
         # MLP on input
         self.mlp1 = MLP(
-            [d_in, d_out // 2],
-            # act="leaky_relu",
-            # act_kwargs={"negative_slope": 0.2},
-            # norm=None,
-        )
-        # output mlp
-        self.mlp2 = MLP(
-            [d_out, d_out // 2],
+            [d_in, d_out // 4],
             # act="leaky_relu",
             # act_kwargs={"negative_slope": 0.2},
             # norm=None,
         )
         # mlp on input whose result sis added to the output of mlp2
         self.shortcut = MLP(
-            [d_in, d_out // 2],
+            [d_in, d_out],
             # act="leaky_relu",
             # act_kwargs={"negative_slope": 0.2},
         )
+        # mlp on output
+        self.mlp2 = MLP(
+            [d_out, d_out],
+            # act="leaky_relu",
+            # act_kwargs={"negative_slope": 0.2},
+            # norm=None,
+        )
 
-        self.lse1 = LocSE(d_out // 2)
-        self.lse2 = LocSE(d_out // 2)
-
-        self.pool1 = AttentivePooling(d_out)
-        self.pool2 = AttentivePooling(d_out)
+        self.lfa1 = LocalFeatureAggregation(d_out // 2)
+        self.lfa2 = LocalFeatureAggregation(d_out)
 
         self.lrelu = torch.nn.LeakyReLU()
 
@@ -112,27 +114,15 @@ class LFAggregationModule(MessagePassing):
         )
         edge_index = torch.stack([col, row], dim=0)
 
-        # forwar pass, including message passing for
-        shortcut_of_x = self.shortcut(x)
-        x = self.mlp1(x)
-        x = self.propagate(edge_index, x=x, pos=pos)
+        # forward pass, including message passing for
+        shortcut_of_x = self.shortcut(x)  # N, d_out
+        x = self.mlp1(x)  # N, d_out // 2
+        x = self.lfa1(edge_index, x, pos)  # N // 4, d_out
+        x = self.lfa2(edge_index, x, pos)
+        x = self.mlp2(x)
         x = self.lrelu(x + shortcut_of_x)
-        pos, batch = pos[idx], batch[idx]
+        x, pos, batch = x[idx], pos[idx], batch[idx]
         return x, pos, batch
-
-    def message(self, x_j: Optional[Tensor], pos_i: Tensor, pos_j: Tensor) -> Tensor:
-
-        ####### LocSE #######
-
-        ####### Attentive Pooling
-        # Encode local structure, keeping the same shape.
-        x = self.lse1(x_j, pos_i, pos_j)
-        x = self.pool1(x)
-
-        x = self.lse2(x_j, pos_i, pos_j)
-        x = self.pool2(x)
-
-        return self.mlp2(x)
 
 
 class Net(torch.nn.Module):
@@ -142,10 +132,10 @@ class Net(torch.nn.Module):
         k = 16
         # Input channels account for both `pos` and node features.
         # TODO: probably turn x = pos+x in each LFA ?
-        self.lfa1_module = LFAggregationModule(decimation, k, 3, 32)
-        self.lfa2_module = LFAggregationModule(decimation, k, 32 + 3, 128)
-        self.lfa3_module = LFAggregationModule(decimation, k, 128 + 3, 256)
-        self.lfa4_module = LFAggregationModule(decimation, k, 256 + 3, 512)
+        self.lfa1_module = DilatedResidualBlock(decimation, k, 3, 32)
+        self.lfa2_module = DilatedResidualBlock(decimation, k, 32, 128)
+        self.lfa3_module = DilatedResidualBlock(decimation, k, 128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, k, 256, 512)
         self.pool = GlobalPooling(MLP([512, 1024]))
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
