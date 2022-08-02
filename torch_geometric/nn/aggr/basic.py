@@ -135,10 +135,13 @@ class SoftmaxAggregation(Aggregation):
             gradient calculation during softmax computation. Therefore, only
             semi-gradient is used during backpropagation. Useful for saving
             memory when :obj:`t` is not learnable. (default: :obj:`False`)
+        channels (int, optional): Number of channels to learn from
+            :math:`t`. If set, :math:`t` will be a learnable tensor of shape
+            :obj:`channels`, this requires compatible shapes for the input
+            to the forward calculation.
     """
     def __init__(self, t: float = 1.0, learn: bool = False,
-                 semi_grad: bool = False):
-        # TODO Learn distinct `t` per channel.
+                 semi_grad: bool = False, channels: int = 1):
         super().__init__()
 
         if learn and semi_grad:
@@ -147,7 +150,8 @@ class SoftmaxAggregation(Aggregation):
                 f"case the temperature term 't' is learnable")
 
         self._init_t = t
-        self.t = Parameter(torch.Tensor(1)) if learn else t
+        self.channels = channels
+        self.t = Parameter(torch.Tensor(self.channels)) if learn else t
         self.learn = learn
         self.semi_grad = semi_grad
         self.reset_parameters()
@@ -160,9 +164,14 @@ class SoftmaxAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
+        if self.channels > 1:
+            self.assert_two_dimensional_input(x, dim)
+
         alpha = x
         if not isinstance(self.t, (int, float)) or self.t != 1:
-            alpha = x * self.t
+            shape = [1] * x.dim()
+            shape[dim + 1] = -1
+            alpha = x * self.t.view(*shape)
         if not self.learn and self.semi_grad:
             with torch.no_grad():
                 alpha = softmax(alpha, index, ptr, dim_size, dim)

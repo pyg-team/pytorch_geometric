@@ -69,3 +69,23 @@ def test_gen_aggregation(Aggregation, learn):
         out.mean().backward()
         for param in aggr.parameters():
             assert not torch.isnan(param.grad).any()
+
+
+@pytest.mark.parametrize('Aggregation', [SoftmaxAggregation])
+@pytest.mark.parametrize('learn', [True, False])
+def test_learnable_channels_aggregation(Aggregation, learn):
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    aggr = Aggregation(learn=learn, channels=16)
+    assert str(aggr) == f'{Aggregation.__name__}(learn={learn})'
+
+    out = aggr(x, index)
+    assert out.size() == (3, x.size(1))
+    assert torch.allclose(out, aggr(x, ptr=ptr))
+
+    if learn:
+        out.mean().backward()
+        for param in aggr.parameters():
+            assert not torch.isnan(param.grad).any()
