@@ -30,7 +30,6 @@ class GlobalPooling(torch.nn.Module):
 
 class LocalFeatureAggregation(MessagePassing):
     """This only creates relative encodings, taht will later be processed by Attentive Pooling."""
-
     def __init__(self, d_out):
         # TODO: check if need for batch, activation, etc.
         super().__init__(aggr="add")
@@ -41,7 +40,8 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
         return out
 
-    def message(self, x_j: Optional[Tensor], pos_i: Tensor, pos_j: Tensor) -> Tensor:
+    def message(self, x_j: Optional[Tensor], pos_i: Tensor,
+                pos_j: Tensor) -> Tensor:
         """_summary_
 
         Args:
@@ -55,16 +55,15 @@ class LocalFeatureAggregation(MessagePassing):
         """
         dist = pos_j - pos_i
         euclidian_dist = torch.sqrt(dist * dist).sum(1, keepdim=True)
-        relative_infos = torch.cat(
-            [pos_i, pos_j, dist, euclidian_dist], dim=1
-        )  # N//4 * K, d
-        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N//4 * K, d
+        relative_infos = torch.cat([pos_i, pos_j, dist, euclidian_dist],
+                                   dim=1)  # N//4 * K, d
+        local_spatial_encoding = self.mlp_encoder(
+            relative_infos)  # N//4 * K, d
         out1 = torch.cat([x_j, local_spatial_encoding], dim=1)  # N//4 * K, 2d
 
         # attention will weight the differetn features of x
-        attention_scores = torch.softmax(
-            self.mlp_attention(out1), dim=-1
-        )  # N//4 * K, d_out
+        attention_scores = torch.softmax(self.mlp_attention(out1),
+                                         dim=-1)  # N//4 * K, d_out
         out2 = attention_scores * out1  # N//4 * K, d_out
         return out2
 
@@ -87,9 +86,7 @@ class DilatedResidualBlock(MessagePassing):
         )
         # mlp on input whose result sis added to the output of mlp2
         self.shortcut = Sequential(
-            MLP(
-                [d_in, d_out],
-            ),
+            MLP([d_in, d_out], ),
             LeakyReLU(negative_slope=0.2),
         )
         # mlp on output
@@ -111,9 +108,8 @@ class DilatedResidualBlock(MessagePassing):
 
         # Random Sampling by decimation
         idx = torch.arange(start=0, end=batch.size(0), step=self.decimation)
-        row, col = knn(
-            pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
-        )
+        row, col = knn(pos, pos[idx], self.num_neighbors, batch_x=batch,
+                       batch_y=batch[idx])
         edge_index = torch.stack([col, row], dim=0)
 
         shortcut_of_x = self.shortcut(x)  # N, d_out
@@ -129,10 +125,14 @@ class DilatedResidualBlock(MessagePassing):
 class Net(torch.nn.Module):
     def __init__(self, decimation: int = 4, num_neighboors: int = 16):
         super().__init__()
-        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 3, 32)
-        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 3,
+                                                32)
+        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32,
+                                                128)
+        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors,
+                                                128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors,
+                                                256, 512)
         self.pool = GlobalPooling(512, 1024)
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
@@ -174,20 +174,24 @@ def test(loader):
 
 
 if __name__ == "__main__":
-    path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10")
+    path = osp.join(osp.dirname(osp.realpath(__file__)), "..",
+                    "data/ModelNet10")
     # FixedPoints acts as a shuffler of Sampled points.
     pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024), T.FixedPoints(1024, replace=False)]
-    )
+        [T.SamplePoints(1024),
+         T.FixedPoints(1024, replace=False)])
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=6)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=6)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,
+                              num_workers=6)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
+                             num_workers=6)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = Net().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
+                                                gamma=0.5)
 
     for epoch in range(1, 201):
         train(epoch)
