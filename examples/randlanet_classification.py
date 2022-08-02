@@ -3,6 +3,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+from torch.nn import Sequential, LeakyReLU
 from tqdm import tqdm
 from torch_geometric.nn.pool import knn
 import torch
@@ -17,9 +18,9 @@ from torch_geometric.nn import MLP, global_max_pool
 
 
 class GlobalPooling(torch.nn.Module):
-    def __init__(self, nn):
+    def __init__(self, d_in, d_out):
         super().__init__()
-        self.nn = nn
+        self.nn = MLP([d_in, d_out])
 
     def forward(self, x, pos, batch):
         x = self.nn(x)
@@ -79,24 +80,27 @@ class DilatedResidualBlock(MessagePassing):
         self.d_out = d_out
 
         # MLP on input
-        self.mlp1 = MLP(
-            [d_in, d_out // 4],
-            # act="leaky_relu",
-            # act_kwargs={"negative_slope": 0.2},
-            # norm=None,
+        self.mlp1 = Sequential(
+            MLP(
+                [d_in, d_out // 4],
+                batch_norm=False,
+            ),
+            LeakyReLU(negative_slope=0.2),
         )
         # mlp on input whose result sis added to the output of mlp2
-        self.shortcut = MLP(
-            [d_in, d_out],
-            # act="leaky_relu",
-            # act_kwargs={"negative_slope": 0.2},
+        self.shortcut = Sequential(
+            MLP(
+                [d_in, d_out],
+            ),
+            LeakyReLU(negative_slope=0.2),
         )
         # mlp on output
-        self.mlp2 = MLP(
-            [d_out, d_out],
-            # act="leaky_relu",
-            # act_kwargs={"negative_slope": 0.2},
-            # norm=None,
+        self.mlp2 = Sequential(
+            MLP(
+                [d_out, d_out],
+                batch_norm=False,
+            ),
+            LeakyReLU(negative_slope=0.2),
         )
 
         self.lfa1 = LocalFeatureAggregation(d_out // 2)
@@ -107,14 +111,13 @@ class DilatedResidualBlock(MessagePassing):
     def forward(self, x, pos, batch):
         # (N, 3+d) -> K, 2d
 
-        # Random Sampling instead of FPS.
+        # Random Sampling by decimation
         idx = torch.arange(start=0, end=batch.size(0), step=self.decimation)
         row, col = knn(
             pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
         )
         edge_index = torch.stack([col, row], dim=0)
 
-        # forward pass, including message passing for
         shortcut_of_x = self.shortcut(x)  # N, d_out
         x = self.mlp1(x)  # N, d_out // 2
         x = self.lfa1(edge_index, x, pos)  # N // 4, d_out
@@ -126,30 +129,26 @@ class DilatedResidualBlock(MessagePassing):
 
 
 class Net(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, decimation: int = 4, num_neighboors: int = 16):
         super().__init__()
-        decimation = 4
-        k = 16
-        # Input channels account for both `pos` and node features.
-        # TODO: probably turn x = pos+x in each LFA ?
-        self.lfa1_module = DilatedResidualBlock(decimation, k, 3, 32)
-        self.lfa2_module = DilatedResidualBlock(decimation, k, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(decimation, k, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, k, 256, 512)
-        self.pool = GlobalPooling(MLP([512, 1024]))
+        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 3, 32)
+        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
+        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.pool = GlobalPooling(512, 1024)
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
     def forward(self, data):
-        data.x = data.pos  # to avoid empty x Tensor.
+        if not data.x:
+            data.x = data.pos  # to avoid empty x Tensor
+
         in_0 = (data.x, data.pos, data.batch)
         lfa1_out = self.lfa1_module(*in_0)
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
         encoding = self.pool(*lfa4_out)
-
         x, _, _ = encoding
-
         return self.mlp(x).log_softmax(dim=-1)
 
 
@@ -178,7 +177,10 @@ def test(loader):
 
 if __name__ == "__main__":
     path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10")
-    pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
+    # FixedPoints acts as a shuffler of Sampled points.
+    pre_transform, transform = T.NormalizeScale(), T.Compose(
+        [T.SamplePoints(1024), T.FixedPoints(1024, replace=False)]
+    )
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=6)
