@@ -136,7 +136,7 @@ class SoftmaxAggregation(Aggregation):
             semi-gradient is used during backpropagation. Useful for saving
             memory when :obj:`t` is not learnable. (default: :obj:`False`)
         channels (int, optional): Number of channels to learn from
-            :math:`t`. If set, :math:`t` will be a learnable tensor of shape
+            :math:`t`. If set to a value greater than :obj:`1`, :math:`t` will be learned per input feature channel.
             :obj:`channels`, this requires compatible shapes for the input
             to the forward calculation.
     """
