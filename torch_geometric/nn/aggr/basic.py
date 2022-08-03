@@ -208,6 +208,7 @@ class PowerMeanAggregation(Aggregation):
             :math:`p`. If set to a value greater than :obj:`1`, :math:`p` will
             be learned per input feature channel. This requires compatible
             shapes for the input to the forward calculation.
+            (default: :obj:`1`)
     """
     def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1):
         super().__init__()
