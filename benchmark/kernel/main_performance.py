@@ -1,5 +1,4 @@
 import argparse
-import time
 from itertools import product
 
 import torch
@@ -7,7 +6,6 @@ from datasets import get_dataset
 from gcn import GCN
 from gin import GIN
 from graph_sage import GraphSAGE
-from torch.profiler import ProfilerActivity, profile
 from train_eval import eval_acc, inference_run, train
 
 from torch_geometric import seed_everything
@@ -17,8 +15,8 @@ from torch_geometric.profile import (
     profileit,
     rename_profile_file,
     timeit,
-    trace_handler,
 )
+from torch_geometric.profile.profile import e2e_time, torch_profile
 
 seed_everything(0)
 
@@ -48,22 +46,28 @@ nets = [
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+def prepare_dataloader(dataset_name):
+    dataset = get_dataset(dataset_name, sparse=True)
+    num_train = int(len(dataset) * 0.8)
+    num_val = int(len(dataset) * 0.1)
+
+    train_dataset = dataset[:num_train]
+    val_dataset = dataset[num_train:num_train + num_val]
+    test_dataset = dataset[num_train + num_val:]
+
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                              shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
+                            shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                             shuffle=False)
+    return dataset, train_loader, val_loader, test_loader
+
+
 def run_train():
     for dataset_name, Net in product(datasets, nets):
-        dataset = get_dataset(dataset_name, sparse=True)
-        num_train = int(len(dataset) * 0.8)
-        num_val = int(len(dataset) * 0.1)
-
-        train_dataset = dataset[:num_train]
-        val_dataset = dataset[num_train:num_train + num_val]
-        test_dataset = dataset[num_train + num_val:]
-
-        train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
-                                  shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
-                                shuffle=False)
-        test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
-                                 shuffle=False)
+        dataset, train_loader, val_loader, test_loader = prepare_dataloader(
+            dataset_name)
 
         for num_layers, hidden in product(layers, hiddens):
             print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
@@ -88,12 +92,7 @@ def run_train():
 @torch.no_grad()
 def run_inference():
     for dataset_name, Net in product(datasets, nets):
-        dataset = get_dataset(dataset_name, sparse=True)
-        num_train = int(len(dataset) * 0.8)
-        num_val = int(len(dataset) * 0.1)
-        test_dataset = dataset[num_train + num_val:]
-        test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
-                                 shuffle=False)
+        dataset, _, _, test_loader = prepare_dataloader(dataset_name)
 
         for num_layers, hidden in product(layers, hiddens):
             print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
@@ -103,27 +102,12 @@ def run_inference():
 
             for epoch in range(1, args.epochs + 1):
                 if epoch == args.epochs:
-                    if torch.cuda.is_available():
-                        torch.cuda.synchronize()
-                    t_start = time.time()
-
-                    inference_run(model, test_loader)
-
-                if epoch == args.epochs:
-                    if torch.cuda.is_available():
-                        torch.cuda.synchronize()
-                    t_end = time.time()
-                    duration = t_end - t_start
-                    print(f'End-to-End Inference time: {duration:.8f}s',
-                          flush=True)
+                    e2e_inference_run = e2e_time()(inference_run)
+                    e2e_inference_run(model, test_loader)
 
             if args.profile:
-                with profile(
-                        activities=[
-                            ProfilerActivity.CPU, ProfilerActivity.CUDA
-                        ], on_trace_ready=trace_handler) as p:
-                    inference_run(model, test_loader)
-                    p.step()
+                profile_inference_run = torch_profile()(inference_run)
+                profile_inference_run(model, test_loader)
                 rename_profile_file(Net.__name__, dataset_name,
                                     str(num_layers), str(hidden))
 

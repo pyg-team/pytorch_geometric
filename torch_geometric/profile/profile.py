@@ -1,8 +1,10 @@
 import os
 import pathlib
+import time
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
+from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.profile.utils import (
     byte_to_megabyte,
@@ -195,3 +197,37 @@ def rename_profile_file(*args):
         timeline_file += '-' + arg
     timeline_file += '.json'
     os.rename('timeline.json', timeline_file)
+
+
+def e2e_time():
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_start = time.time()
+
+            func(*args, **kwargs)
+
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_end = time.time()
+            duration = t_end - t_start
+            print(f'End-to-End Inference time: {duration:.8f}s', flush=True)
+
+        return wrapper
+
+    return decorator
+
+
+def torch_profile():
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            with profile(
+                    activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                    on_trace_ready=trace_handler) as p:
+                func(*args, **kwargs)
+                p.step()
+
+        return wrapper
+
+    return decorator
