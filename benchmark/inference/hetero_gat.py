@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 
-from torch_geometric.nn import GATConv, to_hetero
+from torch_geometric.nn import GAT, to_hetero
 
 
 class HeteroGAT(torch.nn.Module):
@@ -9,8 +9,8 @@ class HeteroGAT(torch.nn.Module):
                  num_heads):
         super().__init__()
         self.model = to_hetero(
-            GATForHetero(hidden_channels, num_layers, output_channels,
-                         num_heads), metadata)  # TODO: replace by basic_gnn
+            GAT((-1, -1), hidden_channels, num_layers, output_channels,
+                add_self_loops=False, heads=num_heads), metadata)
 
     @torch.no_grad()
     def inference(self, loader, device, progress_bar=False):
@@ -20,25 +20,3 @@ class HeteroGAT(torch.nn.Module):
         for batch in loader:
             batch = batch.to(device)
             self.model(batch.x_dict, batch.edge_index_dict)
-
-
-class GATForHetero(torch.nn.Module):
-    def __init__(self, hidden_channels, num_layers, out_channels, heads):
-        super().__init__()
-        self.convs = torch.nn.ModuleList()
-        self.convs.append(
-            GATConv((-1, -1), hidden_channels, heads=heads,
-                    add_self_loops=False))
-        for _ in range(num_layers - 2):
-            self.convs.append(
-                GATConv((-1, -1), hidden_channels, heads=heads,
-                        add_self_loops=False))
-        self.convs.append(
-            GATConv((-1, -1), out_channels, heads=heads, add_self_loops=False))
-
-    def forward(self, x, edge_index):
-        for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
-            if i < len(self.convs) - 1:
-                x = x.relu_()
-        return x

@@ -11,7 +11,10 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
-        \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n
+        \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n.
+
+    Functional method of the
+    :class:`~torch_geometric.nn.aggr.SumAggregation` module.
 
     Args:
         x (Tensor): Node feature matrix
@@ -35,7 +38,10 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
-        \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n
+        \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n.
+
+    Functional method of the
+    :class:`~torch_geometric.nn.aggr.MeanAggregation` module.
 
     Args:
         x (Tensor): Node feature matrix
@@ -59,7 +65,10 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
-        \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
+        \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n.
+
+    Functional method of the
+    :class:`~torch_geometric.nn.aggr.MaxAggregation` module.
 
     Args:
         x (Tensor): Node feature matrix

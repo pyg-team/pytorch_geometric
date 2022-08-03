@@ -7,7 +7,6 @@ from torch_geometric.nn.aggr import EquilibriumAggregation
 @pytest.mark.parametrize('iter', [0, 1, 5])
 @pytest.mark.parametrize('alpha', [0, .1, 5])
 def test_equilibrium(iter, alpha):
-
     batch_size = 10
     feature_channels = 3
     output_channels = 2
@@ -30,7 +29,6 @@ def test_equilibrium(iter, alpha):
 @pytest.mark.parametrize('iter', [0, 1, 5])
 @pytest.mark.parametrize('alpha', [0, .1, 5])
 def test_equilibrium_batch(iter, alpha):
-
     batch_1, batch_2 = 4, 6
     feature_channels = 3
     output_channels = 2
