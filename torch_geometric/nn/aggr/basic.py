@@ -170,7 +170,7 @@ class SoftmaxAggregation(Aggregation):
         alpha = x
         if not isinstance(self.t, (int, float)) or self.t != 1:
             shape = [1] * x.dim()
-            shape[dim + 1] = -1
+            shape[dim + 1] = self.channels
             alpha = x * self.t.view(*shape)
         if not self.learn and self.semi_grad:
             with torch.no_grad():
