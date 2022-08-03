@@ -14,10 +14,13 @@ from torch_geometric.typing import Adj, OptTensor
 from ..inits import glorot, zeros
 
 try:
-    import pyg_lib  # noqa
+    from pyg_lib.ops import segment_matmul  # noqa
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
+
+    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
+        raise NotImplementedError
 
 
 @torch.jit._overload
@@ -254,7 +257,7 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
         if edge_type_ptr is not None:
-            return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
+            return segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j
 
