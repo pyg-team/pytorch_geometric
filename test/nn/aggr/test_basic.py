@@ -71,7 +71,8 @@ def test_gen_aggregation(Aggregation, learn):
             assert not torch.isnan(param.grad).any()
 
 
-@pytest.mark.parametrize('Aggregation', [SoftmaxAggregation])
+@pytest.mark.parametrize('Aggregation',
+                         [SoftmaxAggregation, PowerMeanAggregation])
 @pytest.mark.parametrize('learn', [True, False])
 def test_learnable_channels_aggregation(Aggregation, learn):
     x = torch.randn(6, 16)
