@@ -7,7 +7,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import TensorAttr
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import withRegisteredOp
+from torch_geometric.testing import withPackage
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
 from torch_geometric.utils import k_hop_subgraph
@@ -261,7 +261,7 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
+@withPackage('torch_sparse>=0.6.14')
 def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -362,7 +362,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-@withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
+@withPackage('torch_sparse>=0.6.14')
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
