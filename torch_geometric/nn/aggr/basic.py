@@ -139,6 +139,7 @@ class SoftmaxAggregation(Aggregation):
             :math:`t`. If set to a value greater than :obj:`1`, :math:`t` will
             be learned per input feature channel. This requires compatible
             shapes for the input to the forward calculation.
+            (default: :obj:`1`)
     """
     def __init__(self, t: float = 1.0, learn: bool = False,
                  semi_grad: bool = False, channels: int = 1):
