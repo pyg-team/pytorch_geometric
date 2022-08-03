@@ -7,9 +7,15 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import BatchNorm, GCNConv, GINEConv, GlobalPooling
+from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
 from torch_geometric.nn import Linear as LazyLinear
-from torch_geometric.nn import MessagePassing, RGCNConv, SAGEConv, to_hetero
+from torch_geometric.nn import (
+    MeanAggregation,
+    MessagePassing,
+    RGCNConv,
+    SAGEConv,
+    to_hetero,
+)
 from torch_geometric.utils import dropout_adj
 
 torch.fx.wrap('dropout_adj')
@@ -256,7 +262,6 @@ def test_to_hetero_with_gcn():
         ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
         ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
     }
-
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = GCN()
@@ -264,6 +269,33 @@ def test_to_hetero_with_gcn():
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 1
     assert out['paper'].size() == (100, 64)
+
+
+def test_to_hetero_with_basic_model():
+    x_dict = {
+        'paper': torch.randn(100, 16),
+        'author': torch.randn(100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+
+    model = GraphSAGE((-1, -1), 32, num_layers=3)
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+
+    model = GAT((-1, -1), 32, num_layers=3, add_self_loops=False)
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
 
 
 class GraphConv(MessagePassing):
@@ -354,7 +386,7 @@ class GraphLevelGNN(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.conv = SAGEConv(16, 32)
-        self.pool = GlobalPooling(aggr='mean')
+        self.pool = MeanAggregation()
         self.lin = Linear(32, 64)
 
     def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor) -> Tensor:

@@ -31,8 +31,8 @@ jobs:
 
       - name: Install internal dependencies
         run: |
-          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
 
       - name: Install main package

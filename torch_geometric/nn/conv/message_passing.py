@@ -125,14 +125,18 @@ class MessagePassing(torch.nn.Module):
             self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, aggr_kwargs)
+            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
         else:
-            raise ValueError(f"Only strings, list, tuples and instances of"
-                             f"`torch_geometric.nn.aggr.Aggregation` are "
-                             f"valid aggregation schemes (got '{type(aggr)}')")
+            raise ValueError(
+                f"Only strings, list, tuples and instances of"
+                f"`torch_geometric.nn.aggr.Aggregation` are "
+                f"valid aggregation schemes (got '{type(aggr)}').")
 
         self.flow = flow
-        assert flow in ['source_to_target', 'target_to_source']
+
+        if flow not in ['source_to_target', 'target_to_source']:
+            raise ValueError(f"Expected 'flow' to be either 'source_to_target'"
+                             f" or 'target_to_source' (got '{flow}')")
 
         self.node_dim = node_dim
         self.decomposed_layers = decomposed_layers
@@ -179,9 +183,16 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            assert edge_index.dtype == torch.long
-            assert edge_index.dim() == 2
-            assert edge_index.size(0) == 2
+            if not edge_index.dtype == torch.long:
+                raise ValueError(f"Expected 'edge_index' to be of type "
+                                 f"'torch.long' (got '{edge_index.dtype}')")
+            if edge_index.dim() != 2:
+                raise ValueError(f"Expected 'edge_index' to be two-dimensional"
+                                 f" (got {edge_index.dim()} dimensions)")
+            if edge_index.size(0) != 2:
+                raise ValueError(f"Expected 'edge_index' to have size '2' in "
+                                 f"the first dimension (got "
+                                 f"'{edge_index.size(0)}')")
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
@@ -469,8 +480,8 @@ class MessagePassing(torch.nn.Module):
         edge_mask = self._edge_mask
 
         if edge_mask is None:
-            raise ValueError(f"Could not found a pre-defined 'edge_mask' as "
-                             f"part of {self.__class__.__name__}")
+            raise ValueError(f"Could not find a pre-defined 'edge_mask' as "
+                             f"part of {self.__class__.__name__}.")
 
         if self._apply_sigmoid:
             edge_mask = edge_mask.sigmoid()
