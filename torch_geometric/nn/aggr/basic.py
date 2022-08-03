@@ -135,11 +135,10 @@ class SoftmaxAggregation(Aggregation):
             gradient calculation during softmax computation. Therefore, only
             semi-gradient is used during backpropagation. Useful for saving
             memory when :obj:`t` is not learnable. (default: :obj:`False`)
-        channels (int, optional): Number of channels to learn from
-            :math:`t`. If set to a value greater than :obj:`1`, :math:`t` will
-            be learned per input feature channel. This requires compatible
-            shapes for the input to the forward calculation.
-            (default: :obj:`1`)
+        channels (int, optional): Number of channels to learn from :math:`t`.
+            If set to a value greater than :obj:`1`, :math:`t` will be learned
+            per input feature channel. This requires compatible shapes for the
+            input to the forward calculation. (default: :obj:`1`)
     """
     def __init__(self, t: float = 1.0, learn: bool = False,
                  semi_grad: bool = False, channels: int = 1):
@@ -150,11 +149,16 @@ class SoftmaxAggregation(Aggregation):
                 f"Cannot enable 'semi_grad' in '{self.__class__.__name__}' in "
                 f"case the temperature term 't' is learnable")
 
+        if not learn and channels != 1:
+            raise ValueError(f"Cannot set 'channels' greater than '1' in case "
+                             f"'{self.__class__.__name__}' is not trainable")
+
         self._init_t = t
-        self.channels = channels
-        self.t = Parameter(torch.Tensor(self.channels)) if learn else t
         self.learn = learn
         self.semi_grad = semi_grad
+        self.channels = channels
+
+        self.t = Parameter(torch.Tensor(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -165,15 +169,14 @@ class SoftmaxAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        if self.channels > 1:
-            self.assert_two_dimensional_input(x, dim)
-
         t = self.t
-        if isinstance(t, Tensor):
-            shape = [1] * x.dim()
-            shape[dim + 1] = self.channels
-            t = t.view(*shape)
-        alpha = x * t
+        if self.channels != 1:
+            self.assert_two_dimensional_input(x, dim)
+            t = t.view(-1, self.channels)
+
+        alpha = x
+        if not isinstance(t, (int, float)) or t != 1:
+            alpha = x * t
 
         if not self.learn and self.semi_grad:
             with torch.no_grad():
@@ -204,18 +207,23 @@ class PowerMeanAggregation(Aggregation):
         learn (bool, optional): If set to :obj:`True`, will learn the value
             :obj:`p` for powermean aggregation dynamically.
             (default: :obj:`False`)
-        channels (int, optional): Number of channels to learn from
-            :math:`p`. If set to a value greater than :obj:`1`, :math:`p` will
-            be learned per input feature channel. This requires compatible
-            shapes for the input to the forward calculation.
-            (default: :obj:`1`)
+        channels (int, optional): Number of channels to learn from :math:`p`.
+            If set to a value greater than :obj:`1`, :math:`p` will be learned
+            per input feature channel. This requires compatible shapes for the
+            input to the forward calculation. (default: :obj:`1`)
     """
     def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1):
         super().__init__()
+
+        if not learn and channels != 1:
+            raise ValueError(f"Cannot set 'channels' greater than '1' in case "
+                             f"'{self.__class__.__name__}' is not trainable")
+
         self._init_p = p
-        self.channels = channels
-        self.p = Parameter(torch.Tensor(channels)) if learn else p
         self.learn = learn
+        self.channels = channels
+
+        self.p = Parameter(torch.Tensor(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -226,20 +234,20 @@ class PowerMeanAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        if self.channels > 1:
-            self.assert_two_dimensional_input(x, dim)
-
         p = self.p
-        if isinstance(p, Tensor):
-            shape = [1] * x.dim()
-            shape[dim + 1] = self.channels
-            p = p.view(*shape)
+        if self.channels != 1:
+            self.assert_two_dimensional_input(x, dim)
+            p = p.view(-1, self.channels)
+
+        if not isinstance(p, (int, float)) or p != 1:
+            x = x.clamp(min=0, max=100).pow(p)
 
         out = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
 
-        if isinstance(p, (int, float)) and p == 1:
-            return out
-        return out.clamp_(min=0, max=100).pow(1. / p)
+        if not isinstance(p, (int, float)) or p != 1:
+            out = out.clamp(min=0, max=100).pow(1. / p)
+
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(learn={self.learn})')
