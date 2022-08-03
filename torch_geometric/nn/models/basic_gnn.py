@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -24,14 +24,17 @@ from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, OptTensor
 
 
 class BasicGNN(torch.nn.Module):
     r"""An abstract class for implementing basic GNN models.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
@@ -95,11 +98,17 @@ class BasicGNN(torch.nn.Module):
         if num_layers > 1:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
-            in_channels = hidden_channels
+            if isinstance(in_channels, (tuple, list)):
+                in_channels = (hidden_channels, hidden_channels)
+            else:
+                in_channels = hidden_channels
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
-            in_channels = hidden_channels
+            if isinstance(in_channels, (tuple, list)):
+                in_channels = (hidden_channels, hidden_channels)
+            else:
+                in_channels = hidden_channels
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
             self.convs.append(
@@ -131,8 +140,8 @@ class BasicGNN(torch.nn.Module):
                 in_channels = hidden_channels
             self.lin = Linear(in_channels, self.out_channels)
 
-    def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+    def init_conv(self, in_channels: Union[int, Tuple[int, int]],
+                  out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
 
     def reset_parameters(self):
@@ -145,11 +154,29 @@ class BasicGNN(torch.nn.Module):
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        *,
+        edge_weight: OptTensor = None,
+        edge_attr: OptTensor = None,
+    ) -> Tensor:
         """"""
         xs: List[Tensor] = []
         for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index, *args, **kwargs)
+            # Tracing the module is not allowed with *args and **kwargs :(
+            # As such, we rely on a static solution to pass optional edge
+            # weights and edge attributes to the module.
+            if self.supports_edge_weight and self.supports_edge_attr:
+                x = self.convs[i](x, edge_index, edge_weight=edge_weight,
+                                  edge_attr=edge_attr)
+            elif self.supports_edge_weight:
+                x = self.convs[i](x, edge_index, edge_weight=edge_weight)
+            elif self.supports_edge_attr:
+                x = self.convs[i](x, edge_index, edge_attr=edge_attr)
+            else:
+                x = self.convs[i](x, edge_index)
             if i == self.num_layers - 1 and self.jk_mode is None:
                 break
             if self.act is not None and self.act_first:
@@ -232,7 +259,8 @@ class GCN(BasicGNN):
     :class:`~torch_geometric.nn.conv.GCNConv` operator for message passing.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
@@ -259,6 +287,9 @@ class GCN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
+    supports_edge_weight = True
+    supports_edge_attr = False
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return GCNConv(in_channels, out_channels, **kwargs)
@@ -270,7 +301,10 @@ class GraphSAGE(BasicGNN):
     :class:`~torch_geometric.nn.SAGEConv` operator for message passing.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
@@ -297,8 +331,11 @@ class GraphSAGE(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
-    def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+    supports_edge_weight = False
+    supports_edge_attr = False
+
+    def init_conv(self, in_channels: Union[int, Tuple[int, int]],
+                  out_channels: int, **kwargs) -> MessagePassing:
         return SAGEConv(in_channels, out_channels, **kwargs)
 
 
@@ -335,6 +372,9 @@ class GIN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
+    supports_edge_weight = False
+    supports_edge_attr = False
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP(
@@ -356,7 +396,10 @@ class GAT(BasicGNN):
     respectively.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
@@ -387,8 +430,11 @@ class GAT(BasicGNN):
             :class:`torch_geometric.nn.conv.GATConv` or
             :class:`torch_geometric.nn.conv.GATv2Conv`.
     """
-    def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+    supports_edge_weight = False
+    supports_edge_attr = True
+
+    def init_conv(self, in_channels: Union[int, Tuple[int, int]],
+                  out_channels: int, **kwargs) -> MessagePassing:
 
         v2 = kwargs.pop('v2', False)
         heads = kwargs.pop('heads', 1)
@@ -418,7 +464,8 @@ class PNA(BasicGNN):
     :class:`~torch_geometric.nn.conv.PNAConv` operator for message passing.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
@@ -445,6 +492,9 @@ class PNA(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
+    supports_edge_weight = False
+    supports_edge_attr = True
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         return PNAConv(in_channels, out_channels, **kwargs)
@@ -483,6 +533,9 @@ class EdgeCNN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.EdgeConv`.
     """
+    supports_edge_weight = False
+    supports_edge_attr = False
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP(

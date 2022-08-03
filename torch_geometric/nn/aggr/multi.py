@@ -10,11 +10,14 @@ from torch_geometric.nn.resolver import aggregation_resolver
 
 class MultiAggregation(Aggregation):
     r"""Performs aggregations with one or more aggregators and combines
-        aggregated results.
+    aggregated results, as described in the `"Principal Neighbourhood
+    Aggregation for Graph Nets" <https://arxiv.org/abs/2004.05718>`_ and
+    `"Adaptive Filters and Aggregator Fusion for Efficient Graph Convolutions"
+    <https://arxiv.org/abs/2104.01481>`_ papers.
 
     Args:
         aggrs (list): The list of aggregation schemes to use.
-        aggrs_kwargs (list, optional): Arguments passed to the
+        aggrs_kwargs (dict, optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
         mode (string, optional): The combine mode to use for combining
@@ -22,14 +25,15 @@ class MultiAggregation(Aggregation):
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,
             :obj:`"attn"`). (default: :obj:`"cat"`)
-        mode_kwargs (dict, optional): Arguments passed for the combine `mode`.
-            When :obj:`"proj"` or :obj:`"attn"` is used as the combine `mode`,
-            `in_channels` (int or tuple) and `out_channels` (int) are needed to
-            be specified respectively for the size of each input sample to
-            combine from the respective aggregation outputs and the size of
-            each output sample after combination. When :obj:`"attn"` mode is
-            used, `num_heads` (int) is needed to be specified for the number of
-            parallel attention heads. (default: :obj:`None`)
+        mode_kwargs (dict, optional): Arguments passed for the combine
+            :obj:`mode`. When :obj:`"proj"` or :obj:`"attn"` is used as the
+            combine :obj:`mode`, :obj:`in_channels` (int or tuple) and
+            :obj:`out_channels` (int) are needed to be specified respectively
+            for the size of each input sample to combine from the respective
+            aggregation outputs and the size of each output sample after
+            combination. When :obj:`"attn"` mode is used, :obj:`num_heads`
+            (int) is needed to be specified for the number of parallel
+            attention heads. (default: :obj:`None`)
     """
     def __init__(
         self,

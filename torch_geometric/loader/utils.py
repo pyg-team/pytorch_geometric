@@ -8,6 +8,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, OptTensor
 
@@ -31,10 +32,6 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
-def str_to_edge_type(key: Union[EdgeType, str]) -> EdgeType:
-    return key if isinstance(key, tuple) else tuple(key.split('__'))
-
-
 # TODO deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
     data: Union[Data, EdgeStorage],
@@ -55,15 +52,16 @@ def to_csc(
     elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
-    elif hasattr(data, 'edge_index'):
+    elif data.edge_index is not None:
         (row, col) = data.edge_index
         if not is_sorted:
             perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
         colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
-        raise AttributeError("Data object does not contain attributes "
-                             "'adj', 'adj_t' or 'edge_index'")
+        row = torch.empty(0, dtype=torch.long, device=device)
+        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
+                             device=device)
 
     colptr = colptr.to(device)
     row = row.to(device)
@@ -187,8 +185,9 @@ def filter_hetero_data(
     return out
 
 
-def filter_feature_store(
+def filter_custom_store(
     feature_store: FeatureStore,
+    graph_store: GraphStore,
     node_dict: Dict[str, Tensor],
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
@@ -203,14 +202,15 @@ def filter_feature_store(
 
     # Filter edge storage:
     # TODO support edge attributes
-    for key in edge_dict:
-        edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
-        data[str_to_edge_type(key)].edge_index = edge_index
+    for attr in graph_store.get_all_edge_attrs():
+        key = edge_type_to_str(attr.edge_type)
+        if key in row_dict and key in col_dict:
+            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+            data[attr.edge_type].edge_index = edge_index
 
     # Filter node storage:
-    attrs = feature_store.get_all_tensor_attrs()
     required_attrs = []
-    for attr in attrs:
+    for attr in feature_store.get_all_tensor_attrs():
         if attr.group_name in node_dict:
             attr.index = node_dict[attr.group_name]
             required_attrs.append(attr)
