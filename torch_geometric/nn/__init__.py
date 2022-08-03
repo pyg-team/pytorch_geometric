@@ -4,10 +4,11 @@ from .sequential import Sequential
 from .data_parallel import DataParallel
 from .to_hetero_transformer import to_hetero
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
+from .aggr import *  # noqa
 from .conv import *  # noqa
-from .norm import *  # noqa
-from .glob import *  # noqa
 from .pool import *  # noqa
+from .glob import *  # noqa
+from .norm import *  # noqa
 from .unpool import *  # noqa
 from .dense import *  # noqa
 from .models import *  # noqa

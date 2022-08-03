@@ -154,7 +154,6 @@ class Transformer(object):
                 op = 'call_message_passing_module'
             elif is_global_pooling_op(self.module, op, node.target):
                 op = 'call_global_pooling_module'
-
             getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
@@ -261,10 +260,100 @@ class Transformer(object):
 def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
+
+    import torch.fx._symbolic_trace as st
+
+    from torch_geometric.nn import Aggregation
+
     class Tracer(torch.fx.Tracer):
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
             # TODO We currently only trace top-level modules.
             return not isinstance(module, torch.nn.Sequential)
+
+        # Note: This is a hack around the fact that `Aggregaton.__call__`
+        # is not patched by the base implementation of `trace`.
+        # see https://github.com/pyg-team/pytorch_geometric/pull/5021 for
+        # details on the rationale
+        # TODO: Revisit https://github.com/pyg-team/pytorch_geometric/pull/5021
+        @st.compatibility(is_backward_compatible=True)
+        def trace(self, root: st.Union[torch.nn.Module, st.Callable[..., Any]],
+                  concrete_args: Optional[Dict[str, Any]] = None) -> Graph:
+
+            if isinstance(root, torch.nn.Module):
+                self.root = root
+                fn = type(root).forward
+                self.submodule_paths = {
+                    mod: name
+                    for name, mod in root.named_modules()
+                }
+            else:
+                self.root = torch.nn.Module()
+                fn = root
+
+            tracer_cls: Optional[st.Type['Tracer']] = getattr(
+                self, '__class__', None)
+            self.graph = Graph(tracer_cls=tracer_cls)
+
+            self.tensor_attrs: Dict[st.Union[torch.Tensor, st.ScriptObject],
+                                    str] = {}
+
+            def collect_tensor_attrs(m: torch.nn.Module,
+                                     prefix_atoms: st.List[str]):
+                for k, v in m.__dict__.items():
+                    if isinstance(v, (torch.Tensor, st.ScriptObject)):
+                        self.tensor_attrs[v] = '.'.join(prefix_atoms + [k])
+                for k, v in m.named_children():
+                    collect_tensor_attrs(v, prefix_atoms + [k])
+
+            collect_tensor_attrs(self.root, [])
+
+            assert isinstance(fn, st.FunctionType)
+
+            fn_globals = fn.__globals__  # run before it gets patched
+            fn, args = self.create_args_for_root(
+                fn, isinstance(root, torch.nn.Module), concrete_args)
+
+            parameter_proxy_cache: Dict[str, st.Proxy] = {
+            }  # Reduce number of get_attr calls
+
+            @st.functools.wraps(st._orig_module_getattr)
+            def module_getattr_wrapper(mod, attr):
+                attr_val = st._orig_module_getattr(mod, attr)
+                return self._module_getattr(attr, attr_val,
+                                            parameter_proxy_cache)
+
+            @st.functools.wraps(st._orig_module_call)
+            def module_call_wrapper(mod, *args, **kwargs):
+                def forward(*args, **kwargs):
+                    return st._orig_module_call(mod, *args, **kwargs)
+
+                st._autowrap_check(
+                    patcher,
+                    getattr(getattr(mod, "forward", mod), "__globals__", {}),
+                    self._autowrap_function_ids)
+                return self.call_module(mod, forward, args, kwargs)
+
+            with st._Patcher() as patcher:
+                # allow duplicate patches to support the case of nested calls
+                patcher.patch_method(torch.nn.Module, "__getattr__",
+                                     module_getattr_wrapper, deduplicate=False)
+                patcher.patch_method(torch.nn.Module, "__call__",
+                                     module_call_wrapper, deduplicate=False)
+                patcher.patch_method(Aggregation, "__call__",
+                                     module_call_wrapper, deduplicate=False)
+                st._patch_wrapped_functions(patcher)
+                st._autowrap_check(patcher, fn_globals,
+                                   self._autowrap_function_ids)
+                for module in self._autowrap_search:
+                    st._autowrap_check(patcher, module.__dict__,
+                                       self._autowrap_function_ids)
+                self.create_node(
+                    'output', 'output', (self.create_arg(fn(*args)), ), {},
+                    type_expr=fn.__annotations__.get('return', None))
+
+            self.submodule_paths = None
+
+            return self.graph
 
     return GraphModule(module, Tracer().trace(module, concrete_args))
 
@@ -284,7 +373,7 @@ def is_message_passing_op(module: Module, op: str, target: str) -> bool:
 
 
 def is_global_pooling_op(module: Module, op: str, target: str) -> bool:
-    from torch_geometric.nn import GlobalPooling
+    from torch_geometric.nn import Aggregation
     if op == 'call_module':
-        return isinstance(get_submodule(module, target), GlobalPooling)
+        return isinstance(get_submodule(module, target), Aggregation)
     return False

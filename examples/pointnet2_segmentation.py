@@ -14,7 +14,7 @@ from torch_geometric.nn import MLP, knn_interpolate
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
 transform = T.Compose([
-    T.RandomTranslate(0.01),
+    T.RandomJitter(0.01),
     T.RandomRotate(15, axis=0),
     T.RandomRotate(15, axis=1),
     T.RandomRotate(15, axis=2)
@@ -57,8 +57,7 @@ class Net(torch.nn.Module):
         self.fp2_module = FPModule(3, MLP([256 + 128, 256, 128]))
         self.fp1_module = FPModule(3, MLP([128 + 3, 128, 128, 128]))
 
-        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5,
-                       batch_norm=False)
+        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5, norm=None)
 
         self.lin1 = torch.nn.Linear(128, 128)
         self.lin2 = torch.nn.Linear(128, 128)

@@ -146,7 +146,8 @@ class RandomLinkSplit(BaseTransform):
 
             is_undirected = self.is_undirected
             is_undirected &= not store.is_bipartite()
-            is_undirected &= rev_edge_type is None
+            is_undirected &= (rev_edge_type is None
+                              or store._key == data[rev_edge_type]._key)
 
             edge_index = store.edge_index
             if is_undirected:

@@ -4,9 +4,12 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import TensorAttr
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import withRegisteredOp
+from torch_geometric.testing import withPackage
+from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.testing.graph_store import MyGraphStore
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -258,7 +261,7 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withRegisteredOp('torch_sparse.hetero_temporal_neighbor_sample')
+@withPackage('torch_sparse>=0.6.14')
 def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -275,3 +278,129 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     for batch in loader:
         mask = batch['paper'].time[0] >= batch['paper'].time[1:]
         assert torch.all(mask)
+
+
+@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
+@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
+def test_custom_neighbor_loader(FeatureStore, GraphStore):
+    # Initialize feature store, graph store, and reference:
+    feature_store = FeatureStore()
+    graph_store = GraphStore()
+    data = HeteroData()
+
+    # Set up node features:
+    x = torch.arange(100)
+    data['paper'].x = x
+    feature_store.put_tensor(x, group_name='paper', attr_name='x', index=None)
+
+    x = torch.arange(100, 300)
+    data['author'].x = x
+    feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
+
+    # Set up edge indices:
+
+    # COO:
+    edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'to', 'paper'].edge_index = edge_index
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=('paper', 'to', 'paper'),
+                               layout='coo', size=(100, 100))
+
+    # CSR:
+    edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'to', 'author'].edge_index = edge_index
+    csr = SparseTensor.from_edge_index(edge_index).csr()[:2]
+    graph_store.put_edge_index(edge_index=csr,
+                               edge_type=('paper', 'to', 'author'),
+                               layout='csr', size=(100, 200))
+
+    # CSC:
+    edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'to', 'paper'].edge_index = edge_index
+    csc = SparseTensor(row=edge_index[1], col=edge_index[0]).csr()[-2::-1]
+    graph_store.put_edge_index(edge_index=csc,
+                               edge_type=('author', 'to', 'paper'),
+                               layout='csc', size=(200, 100))
+
+    # COO (sorted):
+    edge_index = get_edge_index(200, 200, 100)
+    edge_index = edge_index[:, edge_index[1].argsort()]
+    data['author', 'to', 'author'].edge_index = edge_index
+    coo = (edge_index[0], edge_index[1])
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=('author', 'to', 'author'),
+                               layout='coo', size=(200, 200), is_sorted=True)
+
+    # Construct neighbor loaders:
+    loader1 = NeighborLoader(data, batch_size=20,
+                             input_nodes=('paper', range(100)),
+                             num_neighbors=[-1] * 2)
+
+    loader2 = NeighborLoader((feature_store, graph_store), batch_size=20,
+                             input_nodes=('paper', range(100)),
+                             num_neighbors=[-1] * 2)
+
+    assert str(loader1) == str(loader2)
+    assert len(loader1) == len(loader2)
+
+    for batch1, batch2 in zip(loader1, loader2):
+        assert len(batch1) == len(batch2)
+        assert batch1['paper'].batch_size == batch2['paper'].batch_size
+
+        # Mapped indices of neighbors may be differently sorted:
+        assert torch.allclose(batch1['paper'].x.sort()[0],
+                              batch2['paper'].x.sort()[0])
+        assert torch.allclose(batch1['author'].x.sort()[0],
+                              batch2['author'].x.sort()[0])
+
+        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
+            'paper', 'to', 'paper'].edge_index.size())
+        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
+            'paper', 'to', 'author'].edge_index.size())
+        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
+            'author', 'to', 'paper'].edge_index.size())
+
+
+@withPackage('torch_sparse>=0.6.14')
+@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
+@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
+def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
+                                                 GraphStore):
+    # Initialize dataset (once):
+    dataset = get_dataset(name='Cora')
+    data = dataset[0]
+
+    # Initialize feature store, graph store, and reference:
+    feature_store = FeatureStore()
+    graph_store = GraphStore()
+    hetero_data = HeteroData()
+
+    feature_store.put_tensor(data.x, group_name='paper', attr_name='x',
+                             index=None)
+    hetero_data['paper'].x = data.x
+
+    feature_store.put_tensor(torch.arange(data.num_nodes), group_name='paper',
+                             attr_name='time', index=None)
+    hetero_data['paper'].time = torch.arange(data.num_nodes)
+
+    num_nodes = data.x.size(dim=0)
+    graph_store.put_edge_index(edge_index=data.edge_index,
+                               edge_type=('paper', 'to', 'paper'),
+                               layout='coo', size=(num_nodes, num_nodes))
+    hetero_data['paper', 'to', 'paper'].edge_index = data.edge_index
+
+    loader1 = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
+                             input_nodes='paper', time_attr='time',
+                             batch_size=128)
+
+    loader2 = NeighborLoader(
+        (feature_store, graph_store),
+        num_neighbors=[-1, -1],
+        input_nodes=TensorAttr(group_name='paper', attr_name='x'),
+        time_attr='time',
+        batch_size=128,
+    )
+
+    for batch1, batch2 in zip(loader1, loader2):
+        assert torch.equal(batch1['paper'].time, batch2['paper'].time)

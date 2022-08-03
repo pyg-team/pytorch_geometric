@@ -7,6 +7,8 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import EdgeType, OptTensor
 
@@ -30,6 +32,7 @@ def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
     return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
+# TODO deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,
@@ -43,19 +46,22 @@ def to_csc(
     # `perm` can be of type `None`.
     perm: Optional[Tensor] = None
 
-    if hasattr(data, 'adj_t'):
+    if hasattr(data, 'adj'):
+        colptr, row, _ = data.adj.csc()
+
+    elif hasattr(data, 'adj_t'):
         colptr, row, _ = data.adj_t.csr()
 
-    elif hasattr(data, 'edge_index'):
+    elif data.edge_index is not None:
         (row, col) = data.edge_index
         if not is_sorted:
-            size = data.size()
-            perm = (col * size[0]).add_(row).argsort()
+            perm = (col * data.size(0)).add_(row).argsort()
             row = row[perm]
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
+        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
-        raise AttributeError("Data object does not contain attributes "
-                             "'adj_t' or 'edge_index'")
+        row = torch.empty(0, dtype=torch.long, device=device)
+        colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
+                             device=device)
 
     colptr = colptr.to(device)
     row = row.to(device)
@@ -177,3 +183,44 @@ def filter_hetero_data(
                            edge_dict[edge_type_str], perm_dict[edge_type_str])
 
     return out
+
+
+def filter_custom_store(
+    feature_store: FeatureStore,
+    graph_store: GraphStore,
+    node_dict: Dict[str, Tensor],
+    row_dict: Dict[str, Tensor],
+    col_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, Tensor],
+) -> HeteroData:
+    r"""Constructs a `HeteroData` object from a feature store that only holds
+    nodes in `node` end edges in `edge` for each node and edge type,
+    respectively."""
+
+    # Construct a new `HeteroData` object:
+    data = HeteroData()
+
+    # Filter edge storage:
+    # TODO support edge attributes
+    for attr in graph_store.get_all_edge_attrs():
+        key = edge_type_to_str(attr.edge_type)
+        if key in row_dict and key in col_dict:
+            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+            data[attr.edge_type].edge_index = edge_index
+
+    # Filter node storage:
+    required_attrs = []
+    for attr in feature_store.get_all_tensor_attrs():
+        if attr.group_name in node_dict:
+            attr.index = node_dict[attr.group_name]
+            required_attrs.append(attr)
+
+    # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
+    # full control over optimizing how it returns features (since the call is
+    # synchronous, this amounts to giving the feature store control over all
+    # iteration).
+    tensors = feature_store.multi_get_tensor(required_attrs)
+    for i, attr in enumerate(required_attrs):
+        data[attr.group_name][attr.attr_name] = tensors[i]
+
+    return data

@@ -20,7 +20,7 @@ def test_shadow_k_hop_sampler():
     assert len(loader) == 1
 
     batch1 = next(iter(loader))
-    assert len(batch1) == 7
+    assert batch1.num_graphs == len(batch1) == 2
 
     assert batch1.batch.tolist() == [0, 0, 0, 0, 1, 1, 1]
     assert batch1.ptr.tolist() == [0, 4, 7]
@@ -42,7 +42,7 @@ def test_shadow_k_hop_sampler():
     assert len(loader) == 1
 
     batch2 = next(iter(loader))
-    assert len(batch2) == 6
+    assert batch2.num_graphs == len(batch2) == 2
 
     assert batch1.batch.tolist() == batch2.batch.tolist()
     assert batch1.ptr.tolist() == batch2.ptr.tolist()

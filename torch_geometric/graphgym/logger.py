@@ -276,6 +276,10 @@ class LoggerCallback(Callback):
     def test_logger(self) -> Any:
         return self._logger[2]
 
+    def close(self):
+        for logger in self._logger:
+            logger.close()
+
     def _get_stats(
         self,
         epoch_start_time: int,
@@ -286,7 +290,7 @@ class LoggerCallback(Callback):
             true=outputs['true'].detach().cpu(),
             pred=outputs['pred_score'].detach().cpu(),
             loss=float(outputs['loss']),
-            lr=trainer.lr_scheduler_configs[0].scheduler.get_last_lr()[0],
+            lr=trainer.lr_schedulers[0]['scheduler'].get_last_lr()[0],
             time_used=time.time() - epoch_start_time,
             params=cfg.params,
         )
@@ -354,7 +358,6 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.train_logger.write_epoch(trainer.current_epoch)
-        self.train_logger.close()
 
     def on_validation_epoch_end(
         self,
@@ -362,7 +365,6 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.val_logger.write_epoch(trainer.current_epoch)
-        self.val_logger.close()
 
     def on_test_epoch_end(
         self,
@@ -370,4 +372,6 @@ class LoggerCallback(Callback):
         pl_module: 'pl.LightningModule',
     ):
         self.test_logger.write_epoch(trainer.current_epoch)
-        self.test_logger.close()
+
+    def on_fit_end(self, trainer, pl_module):
+        self.close()

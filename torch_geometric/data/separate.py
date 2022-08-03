@@ -59,6 +59,7 @@ def _separate(
     if isinstance(value, Tensor):
         # Narrow a `torch.Tensor` based on `slices`.
         # NOTE: We need to take care of decrementing elements appropriately.
+        key = str(key)
         cat_dim = batch.__cat_dim__(key, value, store)
         start, end = int(slices[idx]), int(slices[idx + 1])
         value = value.narrow(cat_dim or 0, start, end - start)
@@ -70,6 +71,7 @@ def _separate(
     elif isinstance(value, SparseTensor) and decrement:
         # Narrow a `SparseTensor` based on `slices`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
+        key = str(key)
         cat_dim = batch.__cat_dim__(key, value, store)
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         for i, dim in enumerate(cat_dims):
@@ -90,6 +92,11 @@ def _separate(
           and not isinstance(value[0], str) and len(value[0]) > 0
           and isinstance(value[0][0], (Tensor, SparseTensor))):
         # Recursively separate elements of lists of lists.
+        return [elem[idx] for elem in value]
+
+    elif (isinstance(value, Sequence) and not isinstance(value, str)
+          and isinstance(value[0], (Tensor, SparseTensor))):
+        # Recursively separate elements of lists of Tensors/SparseTensors.
         return [
             _separate(key, elem, idx, slices[i],
                       incs[i] if decrement else None, batch, store, decrement)

@@ -9,6 +9,7 @@ We have prepared a list of colab notebooks that practically introduces you to th
 4. `Scaling Graph Neural Networks <https://colab.research.google.com/drive/1XAjcjRHrSR_ypCk_feIWFbcBKyT4Lirs?usp=sharing>`__
 5. `Point Cloud Classification with Graph Neural Networks <https://colab.research.google.com/drive/1D45E5bUK3gQ40YpZo65ozs7hg5l-eo_U?usp=sharing>`__
 6. `Explaining GNN Model Predictions using Captum <https://colab.research.google.com/drive/1fLJbFPz0yMCQg81DdCP5I8jXw9LoggKO?usp=sharing>`__
+7. `Customizing Aggregations within Message Passing <https://colab.research.google.com/drive/1KKw-VUDQuHhMo7sCd7ZaRROza3leBjRR?usp=sharing>`__
 
 **Stanford CS224W Graph ML Tutorials:**
 
