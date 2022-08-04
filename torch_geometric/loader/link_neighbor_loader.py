@@ -58,7 +58,6 @@ class LinkNeighborSampler(NeighborSampler):
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
     def _create_label(self, edge_label_index, edge_label):
-        device = edge_label_index.device
 
         num_pos_edges = edge_label_index.size(1)
         num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
@@ -66,11 +65,8 @@ class LinkNeighborSampler(NeighborSampler):
         if num_neg_edges == 0:
             return edge_label_index, edge_label
 
-        if edge_label is None:
-            edge_label = torch.ones(num_pos_edges, device=device)
-        else:
-            assert edge_label.dtype == torch.long
-            edge_label = edge_label + 1
+        assert edge_label.dtype == torch.float
+        edge_label = edge_label + 1
 
         neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
         neg_col = torch.randint(self.num_dst_nodes, (num_neg_edges, ))
@@ -90,12 +86,8 @@ class LinkNeighborSampler(NeighborSampler):
 
     def __call__(self, query: List[Tuple[Tensor]]):
         query = [torch.tensor(s) for s in zip(*query)]
-        if len(query) == 2:
-            edge_label_index = torch.stack(query, dim=0)
-            edge_label = None
-        else:
-            edge_label_index = torch.stack(query[:2], dim=0)
-            edge_label = query[2]
+        edge_label_index = torch.stack(query[:2], dim=0)
+        edge_label = query[2]
 
         edge_label_index, edge_label = self._create_label(
             edge_label_index, edge_label)
@@ -209,9 +201,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the edge type and corresponding edge indices.
             (default: :obj:`None`)
-        edge_label (Tensor): The labels of edge indices for which neighbors are
-            sampled. Must be the same length as the :obj:`edge_label_index`.
-            If set to :obj:`None` then no labels are returned in the batch.
+        edge_label (Tensor, optional): The labels of edge indices for
+            which neighbors are sampled. Must be the same length as
+            the :obj:`edge_label_index`. If set to :obj:`None` its set to
+            `torch.zeros(...)` internally. (default: :obj:`None`)
         num_src_nodes (optional, int): The number of source nodes in the edge
             label index. Inferred if not provided.
         num_dst_nodes (optional, int): The number of destination nodes in the
@@ -288,7 +281,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
         self.edge_label_index = edge_label_index
-        self.edge_label = edge_label
         self.replace = replace
         self.directed = directed
         self.neg_sampling_ratio = neg_sampling_ratio
@@ -298,7 +290,11 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
-
+        if edge_label is None:
+            edge_label = edge_label_index.new_zeros(edge_label_index.size(1))
+            edge_label = (edge_label +
+                          1 if self.neg_sampling_ratio == 0 else edge_label)
+        self.edge_label = edge_label.to(torch.float)
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
                 data,
@@ -314,7 +310,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, edge_label),
+        super().__init__(Dataset(edge_label_index, self.edge_label),
                          collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
@@ -323,8 +319,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, node, row, col, edge,
                                self.neighbor_sampler.perm)
             data.edge_label_index = edge_label_index
-            if edge_label is not None:
-                data.edge_label = edge_label
+            data.edge_label = edge_label
 
         elif isinstance(self.data, HeteroData):
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
@@ -334,8 +329,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                                       self.neighbor_sampler.perm_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
-            if edge_label is not None:
-                data[edge_type].edge_label = edge_label
+            data[edge_type].edge_label = edge_label
         else:
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
              edge_label) = out
@@ -344,8 +338,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                                        row_dict, col_dict, edge_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
-            if edge_label is not None:
-                data[edge_type].edge_label = edge_label
+            data[edge_type].edge_label = edge_label
 
         return data if self.transform is None else self.transform(data)
 
@@ -375,11 +368,8 @@ class Dataset(torch.utils.data.Dataset):
         self.edge_label = edge_label
 
     def __getitem__(self, idx: int) -> Tuple[int]:
-        if self.edge_label is None:
-            return self.edge_label_index[0, idx], self.edge_label_index[1, idx]
-        else:
-            return (self.edge_label_index[0, idx],
-                    self.edge_label_index[1, idx], self.edge_label[idx])
+        return (self.edge_label_index[0, idx], self.edge_label_index[1, idx],
+                self.edge_label[idx])
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
