@@ -31,6 +31,12 @@ class LinkNeighborSampler(NeighborSampler):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
         self.edge_time = edge_time
+        if self.edge_time is not None:
+            self.copy_time_dict = {}
+            self.copy_time_dict[self.input_type[0]] = self.node_time_dict[
+                self.input_type[0]].clone()
+            self.copy_time_dict[self.input_type[1]] = self.node_time_dict[
+                self.input_type[1]].clone()
         if self.data_cls == 'custom':
             _, graph_store = data
             edge_attrs = graph_store.get_all_edge_attrs()
@@ -103,6 +109,15 @@ class LinkNeighborSampler(NeighborSampler):
         # TODO(jinu) input_type[0] = input_type[1]
         update_time(self.input_type[1])
 
+    def _reset_node_time(self, query_dict):
+        def reset_time(input_type):
+            index_unique = query_dict[input_type].unique()
+            self.node_time_dict[input_type][
+                index_unique] = self.copy_time_dict[input_type][index_unique]
+
+        reset_time(self.input_type[0])
+        reset_time(self.input_type[1])
+
     def __call__(self, query: List[Tuple[Tensor]]):
         query = [torch.tensor(s) for s in zip(*query)]
         edge_label_index = torch.stack(query[:2], dim=0)
@@ -131,8 +146,11 @@ class LinkNeighborSampler(NeighborSampler):
                 query_node_dict = {self.input_type[0]: query_nodes}
             if edge_time is not None:
                 self._modify_node_time(query_node_dict, edge_time)
-            return self._hetero_sparse_neighbor_sample(query_node_dict) + (
+            out = self._hetero_sparse_neighbor_sample(query_node_dict) + (
                 edge_label_index, edge_label)
+            if edge_time is not None:
+                self._reset_node_time(query_node_dict)
+            return out
 
         elif issubclass(self.data_cls, Data):
             query_nodes = edge_label_index.view(-1)
