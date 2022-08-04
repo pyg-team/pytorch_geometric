@@ -2,9 +2,9 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-import torch_geometric
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
@@ -12,7 +12,6 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
 from randlanet_classification import DilatedResidualBlock
 
-print(torch_geometric.__version__)
 
 category = "Airplane"  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
@@ -60,10 +59,10 @@ class Net(torch.nn.Module):
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
         self.mlp1 = MLP([512, 512, 512])
         # TODO: look up tensorflow implementation to be sure of the MLP internals.
-        self.fp3_module = FPModule(1, MLP([512 + 256, 256]))
+        self.fp4_module = FPModule(1, MLP([512 + 256, 256]))
         self.fp3_module = FPModule(1, MLP([256 + 128, 128]))
         self.fp2_module = FPModule(1, MLP([128 + 32, 32]))
-        self.fp1_module = FPModule(1, MLP([32 + 8, 8]))
+        self.fp1_module = FPModule(1, MLP([32 + num_features, 8]))
 
         self.mlp2 = MLP([8, 64, 32], dropout=0.5)
         self.lin = torch.nn.Linear(32, num_classes)
@@ -77,8 +76,8 @@ class Net(torch.nn.Module):
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
-        lfa4_out[0] = self.mlp1(lfa4_out[0])  # i.e. x = mlp(x)
-        fp4_out = self.fp3_module(*lfa4_out, *lfa3_out)
+        mlp_out = (self.mlp1(lfa4_out[0]), lfa4_out[1], lfa4_out[2])
+        fp4_out = self.fp4_module(*mlp_out, *lfa3_out)
         fp3_out = self.fp3_module(*fp4_out, *lfa2_out)
         fp2_out = self.fp2_module(*fp3_out, *lfa1_out)
         x, _, _ = self.fp1_module(*fp2_out, *in_0)
@@ -95,7 +94,7 @@ def train():
     model.train()
 
     total_loss = correct_nodes = total_nodes = 0
-    for i, data in enumerate(train_loader):
+    for i, data in tqdm(enumerate(train_loader)):
         data = data.to(device)
         optimizer.zero_grad()
         out = model(data)
