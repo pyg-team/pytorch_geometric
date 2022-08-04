@@ -171,14 +171,6 @@ class GraphMultisetTransformer(Aggregation):
             (default: :obj:`4`)
         layer_norm (bool, optional): If set to :obj:`True`, will make use of
             layer normalization. (default: :obj:`False`)
-
-    Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})`,
-          batch vector :math:`(|\mathcal{V}|)`,
-          edge indices :math:`(2, |\mathcal{E}|)` *(optional)*
-        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` where
-          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(
         self,

@@ -133,7 +133,10 @@ class MessagePassing(torch.nn.Module):
                 f"valid aggregation schemes (got '{type(aggr)}').")
 
         self.flow = flow
-        assert flow in ['source_to_target', 'target_to_source']
+
+        if flow not in ['source_to_target', 'target_to_source']:
+            raise ValueError(f"Expected 'flow' to be either 'source_to_target'"
+                             f" or 'target_to_source' (got '{flow}')")
 
         self.node_dim = node_dim
         self.decomposed_layers = decomposed_layers
@@ -180,12 +183,16 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            assert edge_index.dtype == torch.long, \
-                "edge_index.dtype is not of torch.long"
-            assert edge_index.dim() == 2, \
-                "edge_index.dim() is not equal to 2"
-            assert edge_index.size(0) == 2, \
-                "edge_index.size(0) is not equal to 2"
+            if not edge_index.dtype == torch.long:
+                raise ValueError(f"Expected 'edge_index' to be of type "
+                                 f"'torch.long' (got '{edge_index.dtype}')")
+            if edge_index.dim() != 2:
+                raise ValueError(f"Expected 'edge_index' to be two-dimensional"
+                                 f" (got {edge_index.dim()} dimensions)")
+            if edge_index.size(0) != 2:
+                raise ValueError(f"Expected 'edge_index' to have size '2' in "
+                                 f"the first dimension (got "
+                                 f"'{edge_index.size(0)}')")
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
