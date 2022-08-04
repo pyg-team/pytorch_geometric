@@ -16,9 +16,9 @@ from torch_geometric.nn.pool import knn
 
 
 class GlobalPooling(torch.nn.Module):
-    def __init__(self, d_in, d_out):
+    def __init__(self, nn):
         super().__init__()
-        self.nn = MLP([d_in, d_out])
+        self.nn = nn
 
     def forward(self, x, pos, batch):
         x = self.nn(x)
@@ -81,22 +81,22 @@ class DilatedResidualBlock(MessagePassing):
         self.mlp1 = Sequential(
             MLP(
                 [d_in, d_out // 4],
-                batch_norm=False,
+                norm=False,
             ),
             LeakyReLU(negative_slope=0.2),
         )
-        # mlp on input whose result sis added to the output of mlp2
+        # MLP on input whose result is summed with the output of mlp2
         self.shortcut = Sequential(
             MLP(
                 [d_in, d_out],
             ),
             LeakyReLU(negative_slope=0.2),
         )
-        # mlp on output
+        # MLP on output
         self.mlp2 = Sequential(
             MLP(
                 [d_out, d_out],
-                batch_norm=False,
+                norm=False,
             ),
             LeakyReLU(negative_slope=0.2),
         )
@@ -107,22 +107,19 @@ class DilatedResidualBlock(MessagePassing):
         self.lrelu = torch.nn.LeakyReLU()
 
     def forward(self, x, pos, batch):
-        # (N, 3+d) -> K, 2d
-
         # Random Sampling by decimation
         idx = torch.arange(start=0, end=batch.size(0), step=self.decimation)
         row, col = knn(
             pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
         )
         edge_index = torch.stack([col, row], dim=0)
-
         shortcut_of_x = self.shortcut(x)  # N, d_out
-        x = self.mlp1(x)  # N, d_out // 2
-        x = self.lfa1(edge_index, x, pos)  # N // 4, d_out
-        x = self.lfa2(edge_index, x, pos)
-        x = self.mlp2(x)
-        x = self.lrelu(x + shortcut_of_x)
-        x, pos, batch = x[idx], pos[idx], batch[idx]
+        x = self.mlp1(x)  # N, d_out // 4
+        x = self.lfa1(edge_index, x, pos)  # N, d_out
+        x = self.lfa2(edge_index, x, pos)  # N, d_out
+        x = self.mlp2(x)  # N, d_out
+        x = self.lrelu(x + shortcut_of_x)  # N, d_out
+        x, pos, batch = x[idx], pos[idx], batch[idx]  # N // decimation, d_out
         return x, pos, batch
 
 
@@ -133,13 +130,13 @@ class Net(torch.nn.Module):
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
         self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
-        self.pool = GlobalPooling(512, 1024)
+        self.pool = GlobalPooling(MLP([512, 1024]))
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
     def forward(self, data):
+        # Avoid empty x Tensor by using positions as features.
         if not data.x:
-            data.x = data.pos  # to avoid empty x Tensor
-
+            data.x = data.pos
         in_0 = (data.x, data.pos, data.batch)
         lfa1_out = self.lfa1_module(*in_0)
         lfa2_out = self.lfa2_module(*lfa1_out)

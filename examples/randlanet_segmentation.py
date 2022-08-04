@@ -58,7 +58,6 @@ class Net(torch.nn.Module):
         self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
         self.mlp1 = MLP([512, 512, 512])
-        # TODO: look up tensorflow implementation to be sure of the MLP internals.
         self.fp4_module = FPModule(1, MLP([512 + 256, 256]))
         self.fp3_module = FPModule(1, MLP([256 + 128, 128]))
         self.fp2_module = FPModule(1, MLP([128 + 32, 32]))
@@ -68,20 +67,22 @@ class Net(torch.nn.Module):
         self.lin = torch.nn.Linear(32, num_classes)
 
     def forward(self, data):
-        # if not data.x:
-        #     data.x = data.pos  # to avoid empty x Tensor
-
         in_0 = (data.x, data.pos, data.batch)
+
         lfa1_out = self.lfa1_module(*in_0)
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
+
         mlp_out = (self.mlp1(lfa4_out[0]), lfa4_out[1], lfa4_out[2])
+
         fp4_out = self.fp4_module(*mlp_out, *lfa3_out)
         fp3_out = self.fp3_module(*fp4_out, *lfa2_out)
         fp2_out = self.fp2_module(*fp3_out, *lfa1_out)
         x, _, _ = self.fp1_module(*fp2_out, *in_0)
+
         x = self.mlp2(x)
+
         return self.lin(x).log_softmax(dim=-1)
 
 
