@@ -201,7 +201,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the edge type and corresponding edge indices.
             (default: :obj:`None`)
-        edge_label (Tensor): The labels of edge indices for which neighbors are
+        edge_label (Tensor, optional): The labels of edge indices for which neighbors are
             sampled. Must be the same length as the :obj:`edge_label_index`.
             If set to :obj:`None` its set to `torch.zeros(...)` internally.
         num_src_nodes (optional, int): The number of source nodes in the edge
