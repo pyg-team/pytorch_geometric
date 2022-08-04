@@ -289,9 +289,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
-        edge_label = (torch.zeros(
-            edge_label_index.size(1), device=edge_label_index.device,
-            dtype=torch.long) if edge_label is None else edge_label)
+        if edge_label is None:
+            edge_label = edge_label_index.new_zeros(edge_label_index.size(1))
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
                 data,
