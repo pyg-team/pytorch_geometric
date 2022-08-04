@@ -172,8 +172,11 @@ class QuantileAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         self.assert_index_present(index)
+        assert index is not None  # required for TorchScript
 
         # compute the quantile points
+        if dim_size is None:
+            dim_size = 0  # default value for `bincount`
         count = torch.bincount(index, minlength=dim_size)
         cumsum = torch.cumsum(count, dim=0)
         q_point = self.q * (count - 1) + cumsum - count
@@ -186,7 +189,7 @@ class QuantileAggregation(Aggregation):
         # two sorts: the first one on the value,
         # the second (stable) on the indices
         x, x_perm = torch.sort(x, dim=dim)
-        index = index.view(*shape).expand_as(x)
+        index = index.view(shape).expand_as(x)
         index = index.take_along_dim(x_perm, dim=dim)
         index, index_perm = torch.sort(index, dim=dim, stable=True)
         x = x.take_along_dim(index_perm, dim=dim)
@@ -208,13 +211,13 @@ class QuantileAggregation(Aggregation):
             r_med = x.index_select(dim, r_idx)
 
             if self.interpolation == 'linear':
-                q_frac = torch.frac(q_point).view(*shape)
+                q_frac = torch.frac(q_point).view(shape)
                 quantile = l_med + (r_med - l_med) * q_frac
             else:  # 'midpoint'
                 quantile = 0.5 * l_med + 0.5 * r_med
 
         # if the number of elements is 0, return 'nan'/fill_value
-        out_mask = (count > 0).view(*shape)
+        out_mask = (count > 0).view(shape)
         return torch.where(
             out_mask, quantile,
             torch.tensor([self.fill_value], dtype=quantile.dtype,
