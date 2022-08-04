@@ -342,7 +342,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         if edge_label is None:
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
-
+        self.edge_label = edge_label
         if edge_time is not None and time_attr is None:
             raise ValueError("`time_attr` has to be specified if"
                              "`edge_time` is set")
