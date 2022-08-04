@@ -33,7 +33,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
                                 batch_size=64, num_neighbors=[-1, -1],
                                 sampler=sampler, ...)
 
-    Optionaly, it is supported to accept a :class:`torch.Tensor` object, 
+    Optionaly, it is supported to accept a :class:`torch.Tensor` object,
     which is the labels denoting the class distribution:
 
     .. code-block:: python
@@ -43,11 +43,11 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
         sampler = ImbalancedSampler(data.y, input_nodes=data.train_mask)
         loader = NeighborLoader(data.y, input_nodes=data.train_mask,
                                 batch_size=64, num_neighbors=[-1, -1],
-                                sampler=sampler, ...)                                
+                                sampler=sampler, ...)
 
     Args:
-        dataset (Dataset, Data, or Tensor): The dataset or class distribution 
-            from which to sample the data, either given as a :class:`~torch_geometric.data.Dataset`, 
+        dataset (Dataset, Data, or Tensor): The dataset or class distribution
+            from which to sample the data, either given as a :class:`~torch_geometric.data.Dataset`,
             :class:`~torch_geometric.data.Data` or :class:`torch.Tensor` object.
         input_nodes (Tensor, optional): The indices of nodes that are used by
             the corresponding loader, *e.g.*, by
@@ -60,7 +60,6 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
             epoch. If set to :obj:`None`, will sample as much elements as there
             exists in the underlying data. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         dataset: Union[Data, Tensor, Dataset, List[Data]],
