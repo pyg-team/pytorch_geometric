@@ -8,9 +8,9 @@ from torch_geometric.io.planetoid import edge_index_from_dict
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
-# from torch_geometric.nn import FusedGATConv as GATConv
-from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv as GATConv
 
+# the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
+from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv as GATConv
 from torch_geometric.utils import to_dgnn
 
 parser = argparse.ArgumentParser()
@@ -19,12 +19,9 @@ parser.add_argument('--hidden_channels', type=int, default=8)
 parser.add_argument('--heads', type=int, default=8)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=200)
-# parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# init_wandb(name=f'GAT-{args.dataset}', heads=args.heads, epochs=args.epochs,
-#            hidden_channels=args.hidden_channels, lr=args.lr, device=device)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 print(path)
@@ -34,11 +31,8 @@ col,row=data.edge_index
 print(data.edge_index.shape)
 print(col.shape)
 
-edge_index=to_dgnn(data.edge_index)
-print(edge_index)
-data.edge_index=edge_index
 
-# exit()
+data.edge_index=to_dgnn(data.edge_index) # add one line of data conversion to dgNN
 
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, heads):
@@ -50,7 +44,7 @@ class GAT(torch.nn.Module):
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, edge_index))
+        x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, edge_index)
         return x
