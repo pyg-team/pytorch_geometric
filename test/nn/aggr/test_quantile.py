@@ -53,7 +53,8 @@ def test_quantile_aggregation(q, interpolation, dim):
     aggr = QuantileAggregation(q=q, interpolation=interpolation)
     exp = torch.quantile(x, q=q, interpolation=interpolation, dim=dim,
                          keepdims=True)
-    obs = aggr.forward(x,
-        torch.zeros(x.size(dim), dtype=torch.long, device=x.device), dim=dim)
+    obs = aggr.forward(
+        x, torch.zeros(x.size(dim), dtype=torch.long, device=x.device),
+        dim=dim)
 
     assert torch.allclose(exp, obs)
