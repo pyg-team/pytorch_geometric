@@ -164,7 +164,7 @@ def test_link_neighbor_loader_edge_label():
     )
 
     for batch in loader:
-        assert batch.edge_label.dtype == torch.long
+        assert batch.edge_label.dtype == torch.float
         assert torch.all(batch.edge_label[:10] == 1.0)
         assert torch.all(batch.edge_label[10:] == 0.0)
 
@@ -177,7 +177,7 @@ def test_link_neighbor_loader_edge_label():
     )
 
     for batch in loader:
-        assert batch.edge_label.dtype == torch.long
+        assert batch.edge_label.dtype == torch.float
         assert torch.all(batch.edge_label[:10] == 2)
         assert torch.all(batch.edge_label[10:] == 0)
 

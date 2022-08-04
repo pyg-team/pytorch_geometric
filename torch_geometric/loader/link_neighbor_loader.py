@@ -65,7 +65,7 @@ class LinkNeighborSampler(NeighborSampler):
         if num_neg_edges == 0:
             return edge_label_index, edge_label
 
-        assert edge_label.dtype == torch.long
+        assert edge_label.dtype == torch.float
         edge_label = edge_label + 1
 
         neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
@@ -291,6 +291,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             data, edge_label_index)
         if edge_label is None:
             edge_label = edge_label_index.new_zeros(edge_label_index.size(1))
+        self.edge_label = edge_label.to(torch.float)
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
                 data,
@@ -306,7 +307,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, edge_label),
+        super().__init__(Dataset(edge_label_index, self.edge_label),
                          collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
