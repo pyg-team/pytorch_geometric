@@ -78,5 +78,5 @@ def create_model(to_device=True, dim_in=None, dim_out=None) -> GraphGymModule:
 
     model = GraphGymModule(dim_in, dim_out, cfg)
     if to_device:
-        model.to(torch.device(cfg.device))
+        model.to(torch.device(cfg.accelerator))
     return model

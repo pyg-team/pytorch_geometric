@@ -51,8 +51,8 @@ def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
         (greedily select GPU)
 
     '''
-    if cfg.device != 'cpu' and torch.cuda.is_available():
-        if cfg.device == 'auto':
+    if cfg.accelerator != 'cpu' and torch.cuda.is_available():
+        if cfg.accelerator == 'auto':
             memory_raw = get_gpu_memory_map()
             if strategy == 'greedy' or np.all(memory_raw > memory_max):
                 cuda = np.argmin(memory_raw)
@@ -71,6 +71,6 @@ def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
                     'Random select GPU, select GPU {} with mem: {}'.format(
                         cuda, memory_raw[cuda]))
 
-            cfg.device = 'cuda:{}'.format(cuda)
+            cfg.accelerator = 'cuda:{}'.format(cuda)
     else:
-        cfg.device = 'cpu'
+        cfg.accelerator = 'cpu'
