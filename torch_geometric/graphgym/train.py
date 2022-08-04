@@ -38,11 +38,15 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         callbacks.append(ckpt_cbk)
 
     trainer_config = trainer_config or {}
-    trainer = pl.Trainer(**trainer_config,
-                         enable_checkpointing=cfg.train.enable_ckpt,
-                         callbacks=callbacks, default_root_dir=cfg.out_dir,
-                         max_epochs=cfg.optim.max_epoch,
-                         accelerator=cfg.accelerator, devices=cfg.devices,)
+    trainer = pl.Trainer(
+        **trainer_config,
+        enable_checkpointing=cfg.train.enable_ckpt,
+        callbacks=callbacks,
+        default_root_dir=cfg.out_dir,
+        max_epochs=cfg.optim.max_epoch,
+        accelerator=cfg.accelerator,
+        devices=cfg.devices,
+    )
 
     trainer.fit(model, datamodule=datamodule)
     trainer.test(model, datamodule=datamodule)
