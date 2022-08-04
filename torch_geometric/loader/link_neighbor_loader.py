@@ -58,29 +58,26 @@ class LinkNeighborSampler(NeighborSampler):
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
     def _create_label(self, edge_label_index, edge_label):
-
         num_pos_edges = edge_label_index.size(1)
         num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
 
         if num_neg_edges == 0:
             return edge_label_index, edge_label
 
-        assert edge_label.dtype == torch.float
-        edge_label = edge_label + 1
-
         neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
         neg_col = torch.randint(self.num_dst_nodes, (num_neg_edges, ))
         neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
-
-        neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
-                                              edge_label.size()[1:])
 
         edge_label_index = torch.cat([
             edge_label_index,
             neg_edge_label_index,
         ], dim=1)
 
-        edge_label = torch.cat([edge_label, neg_edge_label], dim=0)
+        pos_edge_label = edge_label + 1
+        neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
+                                              edge_label.size()[1:])
+
+        edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
 
         return edge_label_index, edge_label
 
@@ -215,11 +212,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edges between all sampled nodes. (default: :obj:`True`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges.
-            If :obj:`edge_label` does not exist, it will be automatically
-            created and represents a binary classification task
-            (:obj:`1` = edge, :obj:`0` = no edge).
-            If :obj:`edge_label` exists, it has to be a categorical label from
-            :obj:`0` to :obj:`num_classes - 1`.
+            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
+            does not exist, it will be automatically created and represents a
+            binary classification task (:obj:`1` = edge, :obj:`0` = no edge).
+            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
+            exists, it has to be a categorical label from :obj:`0` to
+            :obj:`num_classes - 1`.
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
             positive edges.
@@ -291,10 +289,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
         if edge_label is None:
-            edge_label = edge_label_index.new_zeros(edge_label_index.size(1))
-            edge_label = (edge_label +
-                          1 if self.neg_sampling_ratio == 0 else edge_label)
-        self.edge_label = edge_label.to(torch.float)
+            edge_label = torch.zeros(edge_label_index.size(1),
+                                     device=edge_label_index.device)
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
                 data,
@@ -310,7 +306,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, self.edge_label),
+        super().__init__(Dataset(edge_label_index, edge_label),
                          collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
