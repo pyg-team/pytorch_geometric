@@ -33,6 +33,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
+from .scatter_reduce import scatter, scatter_composite
 
 __all__ = [
     'degree',
@@ -84,6 +85,8 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
+    'scatter',
+    'scatter_composite',
 ]
 
 classes = __all__

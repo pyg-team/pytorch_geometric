@@ -264,7 +264,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 
 .. code-block:: python
 
-    from torch_scatter import scatter_mean
+    from torch_geometric.utils import scatter
     from torch_geometric.datasets import TUDataset
     from torch_geometric.loader import DataLoader
 
@@ -278,12 +278,11 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         data.num_graphs
         >>> 32
 
-        x = scatter_mean(data.x, data.batch, dim=0)
+        x = scatter(data.x, data.batch, dim=0, reduce='mean')
         x.size()
         >>> torch.Size([32, 21])
 
 You can learn more about the internal batching procedure of PyG, *e.g.*, how to modify its behaviour, `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/batching.html>`_.
-For documentation of scatter operations, we refer the interested reader to the :obj:`torch-scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
 
 Data Transforms
 ---------------
