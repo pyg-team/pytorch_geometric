@@ -212,11 +212,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edges between all sampled nodes. (default: :obj:`True`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges.
-            If :obj:`edge_label` does not exist, it will be automatically
-            created and represents a binary classification task
-            (:obj:`1` = edge, :obj:`0` = no edge).
-            If :obj:`edge_label` exists, it has to be a categorical label from
-            :obj:`0` to :obj:`num_classes - 1`.
+            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
+            does not exist, it will be automatically created and represents a
+            binary classification task (:obj:`1` = edge, :obj:`0` = no edge).
+            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
+            exists, it has to be a categorical label from :obj:`0` to
+            :obj:`num_classes - 1`.
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
             positive edges.
