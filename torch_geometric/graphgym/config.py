@@ -42,7 +42,7 @@ def set_cfg(cfg):
     cfg.print = 'both'
 
     # Select device: 'cpu', 'cuda:0', 'auto'
-    cfg.device = 'auto'
+    cfg.accelerator = 'auto'
 
     # Output directory
     cfg.out_dir = 'results'

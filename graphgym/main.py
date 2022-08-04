@@ -45,7 +45,8 @@ if __name__ == '__main__':
         logging.info(cfg)
         cfg.params = params_count(model)
         logging.info('Num parameters: %s', cfg.params)
-        train(model, datamodule, logger=True)
+        trainer_config = {"accelerator": cfg.accelerator}
+        train(model, datamodule, trainer_config=trainer_config, logger=True)
 
     # Aggregate results from different seeds
     agg_runs(cfg.out_dir, cfg.metric_best)
