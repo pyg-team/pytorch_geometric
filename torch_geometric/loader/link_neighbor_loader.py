@@ -203,7 +203,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             (default: :obj:`None`)
         edge_label (Tensor): The labels of edge indices for which neighbors are
             sampled. Must be the same length as the :obj:`edge_label_index`.
-            If set to :obj:`None` its set to `troch.zeros(...)` internally.
+            If set to :obj:`None` its set to `torch.zeros(...)` internally.
         num_src_nodes (optional, int): The number of source nodes in the edge
             label index. Inferred if not provided.
         num_dst_nodes (optional, int): The number of destination nodes in the
