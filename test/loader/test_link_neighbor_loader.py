@@ -113,7 +113,8 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
         assert len(batch) == 5
         if neg_sampling_ratio == 0.0:
 
-            # Assert positive samples are present in the original graph:
+            # Assert only positive samples are present in the original graph:
+            assert batch['paper', 'author'].edge_label.sum() == 20
             edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
             edge_label_index = batch['paper', 'author'].edge_label_index
             edge_label_index = unique_edge_pairs(edge_label_index)
