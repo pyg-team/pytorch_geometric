@@ -110,18 +110,17 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-
+        assert len(batch) == 5
         if neg_sampling_ratio == 0.0:
-            assert len(batch) == 4
 
-            # Assert positive samples are present in the original graph:
+            # Assert only positive samples are present in the original graph:
+            assert batch['paper', 'author'].edge_label.sum() == 20
             edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
             edge_label_index = batch['paper', 'author'].edge_label_index
             edge_label_index = unique_edge_pairs(edge_label_index)
             assert len(edge_index | edge_label_index) == len(edge_index)
 
         else:
-            assert len(batch) == 5
 
             assert batch['paper', 'author'].edge_label_index.size(1) == 40
             assert torch.all(batch['paper', 'author'].edge_label[:20] == 1)
@@ -179,7 +178,7 @@ def test_link_neighbor_loader_edge_label():
     )
 
     for batch in loader:
-        assert batch.edge_label.dtype == torch.long
+        assert batch.edge_label.dtype == torch.float
         assert torch.all(batch.edge_label[:10] == 2)
         assert torch.all(batch.edge_label[10:] == 0)
 
@@ -289,7 +288,7 @@ def test_homogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 2
+        assert len(batch) == 3
         assert batch.num_nodes <= 40
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
@@ -305,7 +304,7 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 2
+        assert len(batch) == 3
         assert batch['paper'].num_nodes <= 40
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
