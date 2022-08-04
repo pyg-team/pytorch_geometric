@@ -31,7 +31,7 @@ Under the hood, the :class:`~torch_geometric.nn.conv.message_passing.MessagePass
 
 .. code-block:: python
 
-    from torch_scatter import scatter
+    from torch_geometric.utils import scatter
 
     x = ...           # Node features of shape [num_nodes, num_features]
     edge_index = ...  # Edge indices of shape [2, num_edges]
