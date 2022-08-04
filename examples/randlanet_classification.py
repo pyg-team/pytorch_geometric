@@ -122,10 +122,14 @@ class DilatedResidualBlock(MessagePassing):
 class Net(torch.nn.Module):
     def __init__(self, decimation: int = 4, num_neighboors: int = 16):
         super().__init__()
-        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 3, 32)
-        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 3,
+                                                32)
+        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32,
+                                                128)
+        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors,
+                                                128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors,
+                                                256, 512)
         self.pool = GlobalPooling(MLP([512, 1024]))
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
