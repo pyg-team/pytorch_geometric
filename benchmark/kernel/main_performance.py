@@ -104,6 +104,8 @@ def run_inference():
                 if epoch == args.epochs:
                     e2e_inference_run = e2e_time()(inference_run)
                     e2e_inference_run(model, test_loader)
+                else:
+                    inference_run(model, test_loader)
 
             if args.profile:
                 profile_inference_run = torch_profile()(inference_run)
