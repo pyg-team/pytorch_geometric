@@ -14,8 +14,6 @@ from torch_geometric.utils import to_dgnn
 
 # from torch_geometric.io.planetoid import edge_index_from_dict
 
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='Cora')
 parser.add_argument('--hidden_channels', type=int, default=8)
