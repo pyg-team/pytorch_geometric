@@ -13,9 +13,9 @@ from ..inits import glorot, zeros
 
 # dgNN library is needed for FusedGATConv layer,
 # which is equivalent to the standard GAT model mathmatically
-# with less memory consumption and faster speed, 
+# with less memory consumption and faster speed,
 # due to kernel fusion and other techniques,
-# as in paper 'Understanding GNN Computational Graph: 
+# as in paper 'Understanding GNN Computational Graph:
 # A Coordinated Computation, IO, and Memory Perspective'
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
 
@@ -63,8 +63,6 @@ class FusedGATConv(MessagePassing):
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
         self.att_dst = Parameter(torch.Tensor(1, heads, out_channels))
-
-
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
