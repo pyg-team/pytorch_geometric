@@ -14,7 +14,7 @@ from ..inits import glorot, zeros
 # dgNN library is needed for FusedGATConv layer,
 # which is equivalent to the standard GAT model mathmatically
 # with less memory consumption and faster speed, due to kernel fusion techniques,
-# as in paper 'Understanding GNN Computational Graph: 
+# as in paper 'Understanding GNN Computational Graph:
 # A Coordinated Computation, IO, and Memory Perspective'
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
 
