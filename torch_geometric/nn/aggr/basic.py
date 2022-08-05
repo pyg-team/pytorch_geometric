@@ -172,6 +172,7 @@ class SoftmaxAggregation(Aggregation):
         t = self.t
         if self.channels != 1:
             self.assert_two_dimensional_input(x, dim)
+            assert isinstance(t, Tensor)
             t = t.view(-1, self.channels)
 
         alpha = x
@@ -236,6 +237,7 @@ class PowerMeanAggregation(Aggregation):
 
         p = self.p
         if self.channels != 1:
+            assert isinstance(p, Tensor)
             self.assert_two_dimensional_input(x, dim)
             p = p.view(-1, self.channels)
 

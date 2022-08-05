@@ -28,12 +28,13 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 print(path)
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
-col,row=data.edge_index
+col, row = data.edge_index
 print(data.edge_index.shape)
 print(col.shape)
 
+data.edge_index = to_dgnn(
+    data.edge_index)  # add one line of data conversion to dgNN
 
-data.edge_index=to_dgnn(data.edge_index) # add one line of data conversion to dgNN
 
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, heads):
@@ -45,7 +46,7 @@ class GAT(torch.nn.Module):
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
-        x = F.relu(self.conv1(x, edge_index))
+        x = F.elu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, edge_index)
         return x
