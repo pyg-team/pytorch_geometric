@@ -13,7 +13,8 @@ from ..inits import glorot, zeros
 
 # dgNN library is needed for FusedGATConv layer,
 # which is equivalent to the standard GAT model mathmatically
-# with less memory consumption and faster speed, due to kernel fusion techniques,
+# with less memory consumption and faster speed, 
+# due to kernel fusion and other techniques,
 # as in paper 'Understanding GNN Computational Graph: 
 # A Coordinated Computation, IO, and Memory Perspective'
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
@@ -63,13 +64,7 @@ class FusedGATConv(MessagePassing):
         self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
         self.att_dst = Parameter(torch.Tensor(1, heads, out_channels))
 
-        # if edge_dim is not None:
-        #     self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
-        #                            weight_initializer='glorot')
-        #     self.att_edge = Parameter(torch.Tensor(1, heads, out_channels))
-        # else:
-        #     self.lin_edge = None
-        #     self.register_parameter('att_edge', None)
+
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -114,13 +109,7 @@ class FusedGATConv(MessagePassing):
         # and target nodes (if present):
         alpha_src = (x_src * self.att_src).sum(dim=-1)
         alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
-        # alpha = (alpha_src, alpha_dst)
 
-        # # edge_updater_type: (alpha: OptPairTensor, edge_attr: OptTensor)
-        # alpha = self.edge_updater(edge_index, alpha=alpha, edge_attr=edge_attr)
-
-        # # propagate_type: (x: OptPairTensor, alpha: Tensor)
-        # out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
         if self.training:
             out = GATConvFuse(alpha_dst, alpha_src, row_ptr, col_idx, col_ptr,
                               row_idx, permute, self.negative_slope, x_src,
