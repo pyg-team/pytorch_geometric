@@ -2,6 +2,7 @@ from typing import Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from dgNN.operators import GATConvFuse
 from torch import Tensor
 from torch.nn import Parameter
 
@@ -17,10 +18,9 @@ from torch_geometric.typing import (
 
 from ..inits import glorot, zeros
 
-from dgNN.operators import GATConvFuse
-
 # dgNN library is needed for FusedGATConv layer, which is equivalent to the standard GAT model mathmatically with less memory consumption and faster speed, due to kernel fusion techniques, as in paper 'Understanding GNN Computational Graph: A Coordinated Computation, IO, and Memory Perspective'(https://proceedings.mlsys.org/paper/2022/hash/9a1158154dfa42caddbd0694a4e9bdc8-Abstract.html)
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
+
 
 class FusedGATConv(MessagePassing):
     def __init__(
@@ -95,7 +95,6 @@ class FusedGATConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj):
 
-
         H, C = self.heads, self.out_channels
 
         # We first transform the input node features. If a tuple is passed, we
@@ -126,10 +125,13 @@ class FusedGATConv(MessagePassing):
         # # propagate_type: (x: OptPairTensor, alpha: Tensor)
         # out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
         if self.training:
-            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,self.dropout)
+            out = GATConvFuse(alpha_dst, alpha_src, row_ptr, col_idx, col_ptr,
+                              row_idx, permute, self.negative_slope, x_src,
+                              self.dropout)
         else:
-            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,0.0)
-
+            out = GATConvFuse(alpha_dst, alpha_src, row_ptr, col_idx, col_ptr,
+                              row_idx, permute, self.negative_slope, x_src,
+                              0.0)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -140,7 +142,6 @@ class FusedGATConv(MessagePassing):
             out += self.bias
 
         return out
-
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

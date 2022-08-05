@@ -3,12 +3,11 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.io.planetoid import edge_index_from_dict
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
+from torch_geometric.io.planetoid import edge_index_from_dict
 from torch_geometric.logging import init_wandb, log
-
 # the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv as GATConv
 from torch_geometric.utils import to_dgnn
@@ -27,12 +26,13 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 print(path)
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
-col,row=data.edge_index
+col, row = data.edge_index
 print(data.edge_index.shape)
 print(col.shape)
 
+data.edge_index = to_dgnn(
+    data.edge_index)  # add one line of data conversion to dgNN
 
-data.edge_index=to_dgnn(data.edge_index) # add one line of data conversion to dgNN
 
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, heads):
