@@ -1,14 +1,13 @@
 import argparse
-import time
 
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
-from torch.profiler import ProfilerActivity, profile
 
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, SAGEConv
-from torch_geometric.profile import rename_profile_file, trace_handler
+from torch_geometric.profile import rename_profile_file
+from torch_geometric.profile.profile import e2e_time, torch_profile
 
 
 class Net(torch.nn.Module):
@@ -152,26 +151,14 @@ def main():
         for epoch in range(1, 1 + args.epochs):
             print("Epoch ", epoch)
             if epoch == args.epochs:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_start = time.time()
-
-            inference(model, data)
-
-            if epoch == args.epochs:
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                t_end = time.time()
-                duration = t_end - t_start
-                print(f'End-to-End Inference time: {duration:.8f}s',
-                      flush=True)
+                e2e_inference = e2e_time()(inference)
+                e2e_inference(model, data)
+            else:
+                inference(model, data)
 
         if args.profile:
-            with profile(
-                    activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                    on_trace_ready=trace_handler) as p:
-                inference(model, data)
-                p.step()
+            profile_inference = torch_profile()(inference)
+            profile_inference(model, data)
             rename_profile_file('GCN' if not args.use_sage else 'SAGE',
                                 'ogbn-products')
 
