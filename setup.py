@@ -17,7 +17,7 @@ graphgym_requires = [
     'yacs',
     'hydra-core',
     'protobuf<4.21',
-    'pytorch-lightning',
+    'pytorch-lightning==1.6.*',
 ]
 
 full_requires = graphgym_requires + [
