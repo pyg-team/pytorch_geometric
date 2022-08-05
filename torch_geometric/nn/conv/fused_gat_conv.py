@@ -1,12 +1,7 @@
 from typing import Tuple, Union
 
 import torch
-<<<<<<< HEAD
 # import torch.nn.functional as F
-=======
-import torch.nn.functional as F
-from dgNN.operators import GATConvFuse
->>>>>>> d55d355a23048cb2002bfd477fbf9edf7cea19ed
 from torch import Tensor
 from torch.nn import Parameter
 
