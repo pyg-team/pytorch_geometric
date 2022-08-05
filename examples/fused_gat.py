@@ -3,13 +3,14 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.io.planetoid import edge_index_from_dict
+# from torch_geometric.io.planetoid import edge_index_from_dict
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.logging import init_wandb, log
+from torch_geometric.logging import log
 
-# the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
+# the following code requires the installation of dgNN from 
+# https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv as GATConv
 from torch_geometric.utils import to_dgnn
 
