@@ -40,8 +40,7 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
         return out
 
-    def message(self, x_j: Tensor, pos_i: Tensor,
-                pos_j: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor) -> Tensor:
         """
         Local Spatial Encoding (locSE) and attentive pooling of features.
 
