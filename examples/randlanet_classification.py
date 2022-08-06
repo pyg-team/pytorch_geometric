@@ -29,7 +29,7 @@ class GlobalPooling(torch.nn.Module):
 
 
 class LocalFeatureAggregation(MessagePassing):
-    """This only creates relative encodings, taht will later be processed by Attentive Pooling."""
+    """Positional encoding of points in a neighborhood."""
     def __init__(self, d_out):
         # TODO: check if need for batch, activation, etc.
         super().__init__(aggr="add")
@@ -40,17 +40,18 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
         return out
 
-    def message(self, x_j: Optional[Tensor], pos_i: Tensor,
+    def message(self, x_j: Tensor, pos_i: Tensor,
                 pos_j: Tensor) -> Tensor:
-        """_summary_
+        """
+        Local Spatial Encoding (locSE) and attentive pooling of features.
 
         Args:
-            x_j (Optional[Tensor]): neighboors features (K,d)
+            x_j (Tensor): neighboors features (K,d)
             pos_i (Tensor): centroid position (repeated) (K,3)
             pos_j (Tensor): neighboors positions (K,3)
 
-        out1 (Tensor): Concatenation of x_j + MLP(relative_infos)
-        out2 (Tensor): out1 multiplied by derived attention scores on the features.
+        returns:
+            (Tensor): locSE weighted by feature attention scores.
 
         """
         dist = pos_j - pos_i
@@ -134,7 +135,7 @@ class Net(torch.nn.Module):
         self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
 
     def forward(self, data):
-        # Avoid empty x Tensor by using positions as features.
+        # Avoid empty x Tensor by using positions as features if needed.
         if not data.x:
             data.x = data.pos
         in_0 = (data.x, data.pos, data.batch)
