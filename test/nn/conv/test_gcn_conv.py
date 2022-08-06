@@ -83,9 +83,18 @@ def test_static_gcn_conv():
 def test_gcn_conv_norm():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
+    row, col = edge_index
+    value = torch.rand(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = GCNConv(16, 32, flow="source_to_target")
     out1 = conv(x, edge_index)
     conv.flow = "target_to_source"
     out2 = conv(x, edge_index.flip(0))
     assert torch.allclose(out1, out2, atol=1e-6)
+
+    conv.flow = "source_to_target"
+    out3 = conv(x, adj)
+    conv.flow = "target_to_source"
+    out4 = conv(x, edge_index, value)
+    assert torch.allclose(out3, out4, atol=1e-6)
