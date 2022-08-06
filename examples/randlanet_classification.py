@@ -1,5 +1,4 @@
 import os.path as osp
-from typing import Optional
 
 import torch
 import torch.nn.functional as F
