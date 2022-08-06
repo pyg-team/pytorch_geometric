@@ -57,7 +57,7 @@ class Net(torch.nn.Module):
                                                 128, 256)
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors,
                                                 256, 512)
-        self.mlp1 = MLP([512, 512, 512])
+        self.mlp1 = MLP([512, 512])
         self.fp4_module = FPModule(1, MLP([512 + 256, 256]))
         self.fp3_module = FPModule(1, MLP([256 + 128, 128]))
         self.fp2_module = FPModule(1, MLP([128 + 32, 32]))
