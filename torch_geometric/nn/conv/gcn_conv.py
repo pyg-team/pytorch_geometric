@@ -24,7 +24,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target",  dtype=None):
+             add_self_loops=True, flow="source_to_target", dtype=None):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
