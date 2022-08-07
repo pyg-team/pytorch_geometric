@@ -148,9 +148,9 @@ class GINEConv(MessagePassing):
             else:
                 nn = self.nn
             if hasattr(nn, 'in_features'):
-                in_channels = self.nn.in_features
+                in_channels = nn.in_features
             elif hasattr(nn, 'in_channels'):
-                in_channels = self.nn.in_channels
+                in_channels = nn.in_channels
             else:
                 raise ValueError("Could not infer input channels from `nn`.")
             self.lin = Linear(edge_dim, in_channels)
