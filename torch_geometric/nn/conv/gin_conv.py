@@ -141,10 +141,15 @@ class GINEConv(MessagePassing):
         else:
             self.register_buffer('eps', torch.Tensor([eps]))
         if edge_dim is not None:
-            if hasattr(self.nn[0], 'in_features'):
-                in_channels = self.nn[0].in_features
+            if (isinstance(self.nn, torch.nn.Sequential)
+                    or isinstance(self.nn, torch.nn.ModuleList)):
+                nn = self.nn[0]
             else:
-                in_channels = self.nn[0].in_channels
+                nn = self.nn
+            if hasattr(nn, 'in_features'):
+                in_channels = self.nn.in_features
+            else:
+                in_channels = self.nn.in_channels
             self.lin = Linear(edge_dim, in_channels)
         else:
             self.lin = None

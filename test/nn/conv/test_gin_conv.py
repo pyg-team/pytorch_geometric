@@ -146,3 +146,8 @@ def test_static_gine_conv():
     conv = GINEConv(nn, train_eps=True)
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (3, 4, 32)
+
+    nn = Lin(16, 32)
+    conv = GINEConv(nn, train_eps=True)
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (3, 4, 32)
