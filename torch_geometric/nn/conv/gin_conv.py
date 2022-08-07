@@ -142,8 +142,7 @@ class GINEConv(MessagePassing):
         else:
             self.register_buffer('eps', torch.Tensor([eps]))
         if edge_dim is not None:
-            if (isinstance(self.nn, torch.nn.Sequential)
-                    or isinstance(self.nn, torch.nn.ModuleList)):
+            if isinstance(self.nn, torch.nn.Sequential):
                 nn = self.nn[0]
             else:
                 nn = self.nn
