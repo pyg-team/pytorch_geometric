@@ -126,6 +126,11 @@ def test_gine_conv_edge_dim():
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 32)
 
+    nn = Seq(Lin(16, 32))
+    conv = GINEConv(nn, train_eps=True, edge_dim=8)
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (4, 32)
+
 
 def test_static_gin_conv():
     x = torch.randn(3, 4, 16)
@@ -143,11 +148,6 @@ def test_static_gine_conv():
     edge_attr = torch.randn(edge_index.size(1), 16)
 
     nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
-    conv = GINEConv(nn, train_eps=True)
-    out = conv(x, edge_index, edge_attr)
-    assert out.size() == (3, 4, 32)
-
-    nn = Lin(16, 32)
     conv = GINEConv(nn, train_eps=True)
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (3, 4, 32)
