@@ -144,8 +144,6 @@ class GINEConv(MessagePassing):
         if edge_dim is not None:
             if isinstance(self.nn, torch.nn.Sequential):
                 nn = self.nn[0]
-            else:
-                nn = self.nn
             if hasattr(nn, 'in_features'):
                 in_channels = nn.in_features
             elif hasattr(nn, 'in_channels'):
