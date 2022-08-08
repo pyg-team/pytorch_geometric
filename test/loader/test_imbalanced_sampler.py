@@ -46,7 +46,6 @@ def test_neighbor_loader_with_imbalanced_sampler():
     edge_index = torch.empty((2, 0), dtype=torch.long)
     data = Data(edge_index=edge_index, y=y, num_nodes=y.size(0))
 
-    # Test with data instance as input:
     torch.manual_seed(12345)
     sampler = ImbalancedSampler(data)
     loader = NeighborLoader(data, batch_size=10, sampler=sampler,
