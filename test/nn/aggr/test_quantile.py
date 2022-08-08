@@ -45,8 +45,7 @@ def test_median_aggregation(index, dim, result):
     assert torch.allclose(result, aggr(x=x, index=index, dim=dim))
 
 
-@pytest.mark.parametrize('q',
-                         [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
+@pytest.mark.parametrize('q', [0., .1, .2, .3, .4, .5, .6, .7, .8, .9, 1.])
 @pytest.mark.parametrize('interpolation', QuantileAggregation.interpolations)
 @pytest.mark.parametrize('dim', [0, 1])
 def test_quantile_aggregation(q, interpolation, dim):
@@ -66,9 +65,21 @@ def test_quantile_aggregation(q, interpolation, dim):
     (torch.tensor([0, 0, 0, 0, 0, 0, 0, 2, 2, 2]), 0),
 ])
 def test_multi_quantile(q, dim, index):
+
     obs = QuantileAggregation(q=q)(x, index=index, dim=dim)
     exp = torch.cat(
         [QuantileAggregation(q=qi)(x, index=index, dim=dim) for qi in q],
         dim=-1)
 
     assert torch.allclose(exp, obs, equal_nan=True)
+
+
+def test_validate():
+    with pytest.raises(ValueError):
+        QuantileAggregation(q=[])
+
+    with pytest.raises(ValueError):
+        QuantileAggregation(q=-1)
+
+    with pytest.raises(ValueError):
+        QuantileAggregation(q=0.5, interpolation=None)
