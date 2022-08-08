@@ -251,7 +251,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             the :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
             constraints, *i.e.*, neighbors have an earlier timestamp than
-            the edge. (default: :obj:`None`)
+            the ouput edge. (default: :obj:`None`)
         num_src_nodes (optional, int): The number of source nodes in the edge
             label index. Inferred if not provided.
         num_dst_nodes (optional, int): The number of destination nodes in the
