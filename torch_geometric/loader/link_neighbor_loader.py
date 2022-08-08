@@ -73,7 +73,9 @@ class LinkNeighborSampler(NeighborSampler):
             self.num_src_nodes = data[self.input_type[0]].num_nodes
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
-    def _create_label(self, edge_label_index, edge_label, edge_time):
+    def _add_negative_samples(self, edge_label_index, edge_label, edge_time):
+        """Add negative samples and their `edge_label` and `edge_time`
+        if `self.neg_sampling_ration>0`"""
         num_pos_edges = edge_label_index.size(1)
         num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
 
@@ -132,7 +134,7 @@ class LinkNeighborSampler(NeighborSampler):
         edge_label = query[2]
         edge_time = query[3] if len(query) == 4 else None
 
-        edge_label_index, edge_label, edge_time = self._create_label(
+        edge_label_index, edge_label, edge_time = self._add_negative_samples(
             edge_label_index, edge_label, edge_time)
 
         orig_edge_label_index = edge_label_index
