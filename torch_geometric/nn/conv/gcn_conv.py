@@ -32,10 +32,10 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
              add_self_loops=True, flow="source_to_target", dtype=None):
 
-    assert flow in ["source_to_target", "target_to_source"]
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
+        assert flow in ["source_to_target"]
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
@@ -49,6 +49,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         return adj_t
 
     else:
+        assert flow in ["source_to_target", "target_to_source"]
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
         if edge_weight is None:
