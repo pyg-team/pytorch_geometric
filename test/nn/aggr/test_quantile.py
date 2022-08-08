@@ -67,8 +67,8 @@ def test_quantile_aggregation(q, interpolation, dim):
 ])
 def test_multi_quantile(q, dim, index):
     obs = QuantileAggregation(q=q)(x, index=index, dim=dim)
-    exp = torch.cat([
-        QuantileAggregation(q=qi)(x, index=index, dim=dim) for qi in q
-    ], dim=-1)
-    
+    exp = torch.cat(
+        [QuantileAggregation(q=qi)(x, index=index, dim=dim) for qi in q],
+        dim=-1)
+
     assert torch.allclose(exp, obs, equal_nan=True)

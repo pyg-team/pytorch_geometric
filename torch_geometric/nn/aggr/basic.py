@@ -1,4 +1,4 @@
-from typing import Optional, Union, Sequence, SupportsFloat
+from typing import Optional, Sequence, SupportsFloat, Union
 
 import torch
 from torch import Tensor
@@ -187,7 +187,7 @@ class QuantileAggregation(Aggregation):
         count = torch.bincount(index, minlength=dim_size)
         cumsum = torch.cumsum(count, dim=0) - count
         q_point = self.q * (count - 1) + cumsum  # outer sum/product, QxB
-        q_point = q_point.T.reshape(-1)          # BxQ, then flatten
+        q_point = q_point.T.reshape(-1)  # BxQ, then flatten
 
         # shape used for expansions
         # (1, ..., 1, -1, 1, ..., 1)
@@ -234,8 +234,8 @@ class QuantileAggregation(Aggregation):
 
         if num_qs > 1:  # if > 1, this may generate a new dimension
             out_shape = list(out.shape)
-            out_shape = (out_shape[:dim] + [out_shape[dim]//num_qs, -1]
-                         + out_shape[dim + 2:])
+            out_shape = (out_shape[:dim] + [out_shape[dim] // num_qs, -1] +
+                         out_shape[dim + 2:])
             return out.view(out_shape)
 
         return out
