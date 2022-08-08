@@ -105,7 +105,7 @@ class LinkNeighborSampler(NeighborSampler):
 
     def _modify_node_time(self, edge_label_index, edge_time):
         """For edges in a batch replace `src` and `dst`
-        node times by the max across all edge times."""
+        node times by the min across all edge times."""
         def update_time(index, input_type):
             new_node_time, _ = scatter_min(edge_time, index,
                                            dim_size=self.num_src_nodes)
