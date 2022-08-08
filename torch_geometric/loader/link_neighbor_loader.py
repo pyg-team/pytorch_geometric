@@ -327,7 +327,18 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         self.data = data
 
+        edge_type, edge_label_index = get_edge_label_index(
+            data, edge_label_index)
+        if edge_label is None:
+            edge_label = torch.zeros(edge_label_index.size(1),
+                                     device=edge_label_index.device)
+
+        if edge_time is not None and time_attr is None:
+            raise ValueError("`time_attr` has to be specified if"
+                             "`edge_time` is set")
+
         # Save for PyTorch Lightning < 1.6:
+        self.edge_label = edge_label
         self.num_neighbors = num_neighbors
         self.edge_label_index = edge_label_index
         self.replace = replace
@@ -336,16 +347,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.transform = transform
         self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
-
-        edge_type, edge_label_index = get_edge_label_index(
-            data, edge_label_index)
-        if edge_label is None:
-            edge_label = torch.zeros(edge_label_index.size(1),
-                                     device=edge_label_index.device)
-        self.edge_label = edge_label
-        if edge_time is not None and time_attr is None:
-            raise ValueError("`time_attr` has to be specified if"
-                             "`edge_time` is set")
 
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
