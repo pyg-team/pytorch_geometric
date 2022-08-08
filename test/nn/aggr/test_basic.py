@@ -51,7 +51,7 @@ def test_basic_aggregation(Aggregation):
 
         assert QuantileAggregation.__repr__(aggr) == \
             f'{aggr.__class__.__name__}(' \
-            f'q=0.5, interpolation="lower", fill_value=nan)'
+            f'q=[0.5], interpolation="lower", fill_value=nan)'
     else:
         assert str(aggr) == f'{Aggregation.__name__}()'
 

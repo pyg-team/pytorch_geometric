@@ -58,3 +58,17 @@ def test_quantile_aggregation(q, interpolation, dim):
         dim=dim)
 
     assert torch.allclose(exp, obs)
+
+
+@pytest.mark.parametrize('q', [[0.25, 0.5, 0.75]])
+@pytest.mark.parametrize('index,dim', [
+    (torch.tensor([0, 0, 0, 0, 1, 1, 1, 2, 2, 2]), 0),
+    (torch.tensor([0, 0, 0, 0, 0, 0, 0, 2, 2, 2]), 0),
+])
+def test_multi_quantile(q, dim, index):
+    obs = QuantileAggregation(q=q)(x, index=index, dim=dim)
+    exp = torch.cat([
+        QuantileAggregation(q=qi)(x, index=index, dim=dim) for qi in q
+    ], dim=-1)
+    
+    assert torch.allclose(exp, obs, equal_nan=True)

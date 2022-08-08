@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union, Sequence, SupportsFloat
 
 import torch
 from torch import Tensor
@@ -129,8 +129,9 @@ class QuantileAggregation(Aggregation):
     function defined by :obj:`interpolation`.
 
     Args:
-        q (float): The quantile value :math:`q`. Must be a scalar in the range
-            :math:`[0, 1]`.
+        q (float or list): The quantile value(s) :math:`q`. Can be a scalar or
+            a list of scalars in the range :math:`[0, 1]`. If more than a
+            quantile is passed, the results are concatenated.
         interpolation (str): Interpolation method applied if the quantile point
             :math:`q\cdot n` lies between two values
             :math:`a \le b`. Can be one of the following:
@@ -154,17 +155,23 @@ class QuantileAggregation(Aggregation):
 
     interpolations = {'linear', 'lower', 'higher', 'nearest', 'midpoint'}
 
-    def __init__(self, q: float, interpolation: str = 'linear',
-                 fill_value: float = float('nan')):
-        if q > 1. or q < 0:
-            raise ValueError("'q' must be in the range [0, 1].")
+    def __init__(self, q: Union[SupportsFloat, Sequence[SupportsFloat]],
+                 interpolation: str = 'linear',
+                 fill_value: SupportsFloat = float('nan')):
+        if isinstance(q, SupportsFloat):
+            q = [q]
+        if len(q) == 0:
+            raise ValueError("Provide at least a quantile value for `q`.")
+        if not all(0. <= quantile <= 1. for quantile in q):
+            raise ValueError("`q` must be in the range [0, 1].")
         if interpolation not in self.interpolations:
             raise ValueError(f"Invalid '{interpolation}' interpolation method."
                              f" Available interpolations:"
                              f"{self.interpolations}")
 
         super().__init__()
-        self.q = q
+        self.q = torch.tensor(q, dtype=torch.float,
+                              requires_grad=False).view(-1, 1)
         self.interpolation = interpolation
         self.fill_value = fill_value
 
@@ -178,8 +185,9 @@ class QuantileAggregation(Aggregation):
         if dim_size is None:
             dim_size = 0  # default value for `bincount`
         count = torch.bincount(index, minlength=dim_size)
-        cumsum = torch.cumsum(count, dim=0)
-        q_point = self.q * (count - 1) + cumsum - count
+        cumsum = torch.cumsum(count, dim=0) - count
+        q_point = self.q * (count - 1) + cumsum  # outer sum/product, QxB
+        q_point = q_point.T.reshape(-1)          # BxQ, then flatten
 
         # shape used for expansions
         # (1, ..., 1, -1, 1, ..., 1)
@@ -207,24 +215,33 @@ class QuantileAggregation(Aggregation):
         else:
             l_idx = torch.floor(q_point).long()
             r_idx = torch.ceil(q_point).long()
-            l_med = x.index_select(dim, l_idx)
-            r_med = x.index_select(dim, r_idx)
+            l_quant = x.index_select(dim, l_idx)
+            r_quant = x.index_select(dim, r_idx)
 
             if self.interpolation == 'linear':
                 q_frac = torch.frac(q_point).view(shape)
-                quantile = l_med + (r_med - l_med) * q_frac
+                quantile = l_quant + (r_quant - l_quant) * q_frac
             else:  # 'midpoint'
-                quantile = 0.5 * l_med + 0.5 * r_med
+                quantile = 0.5 * l_quant + 0.5 * r_quant
 
         # if the number of elements is 0, return 'nan'/fill_value
-        out_mask = (count > 0).view(shape)
-        return torch.where(
+        num_qs = self.q.size(0)
+        out_mask = (count > 0).repeat_interleave(num_qs).view(shape)
+        out = torch.where(
             out_mask, quantile,
             torch.tensor([self.fill_value], dtype=quantile.dtype,
                          device=quantile.device))
 
+        if num_qs > 1:  # if > 1, this may generate a new dimension
+            out_shape = list(out.shape)
+            out_shape = (out_shape[:dim] + [out_shape[dim]//num_qs, -1]
+                         + out_shape[dim + 2:])
+            return out.view(out_shape)
+
+        return out
+
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(q={self.q}, '
+        return (f'{self.__class__.__name__}(q={self.q.view(-1).tolist()}, '
                 f'interpolation="{self.interpolation}", '
                 f'fill_value={self.fill_value})')
 
