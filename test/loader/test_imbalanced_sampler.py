@@ -22,15 +22,20 @@ def test_dataloader_with_imbalanced_sampler():
     sampler = ImbalancedSampler(data_list)
     loader = DataLoader(data_list, batch_size=10, sampler=sampler)
 
-    ys: List[Tensor] = []
-    for batch in loader:
-        ys.append(batch.y)
+    y = torch.cat([batch.y for batch in loader])
 
-    histogram = torch.cat(ys).bincount()
+    histogram = y.bincount()
     prob = histogram / histogram.sum()
 
     assert histogram.sum() == len(data_list)
     assert prob.min() > 0.4 and prob.max() < 0.6
+
+    # Test with label tensor as input:
+    torch.manual_seed(12345)
+    sampler = ImbalancedSampler(torch.tensor([data.y for data in data_list]))
+    loader = DataLoader(data_list, batch_size=10, sampler=sampler)
+
+    assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
 
 
 def test_neighbor_loader_with_imbalanced_sampler():
@@ -41,34 +46,24 @@ def test_neighbor_loader_with_imbalanced_sampler():
     edge_index = torch.empty((2, 0), dtype=torch.long)
     data = Data(edge_index=edge_index, y=y, num_nodes=y.size(0))
 
-    # test with `torch_geometric.data.Data` instance as input
+    # Test with data instance as input:
     torch.manual_seed(12345)
     sampler = ImbalancedSampler(data)
     loader = NeighborLoader(data, batch_size=10, sampler=sampler,
                             num_neighbors=[-1])
 
-    ys: List[Tensor] = []
-    for batch in loader:
-        ys.append(batch.y)
+    y = torch.cat([batch.y for batch in loader])
 
-    histogram = torch.cat(ys).bincount()
+    histogram = y.bincount()
     prob = histogram / histogram.sum()
 
     assert histogram.sum() == data.num_nodes
     assert prob.min() > 0.4 and prob.max() < 0.6
 
-    # test with `torch.Tensor` instance as input
+    # Test with label tensor as input:
     torch.manual_seed(12345)
     sampler = ImbalancedSampler(data.y)
     loader = NeighborLoader(data, batch_size=10, sampler=sampler,
                             num_neighbors=[-1])
 
-    ys: List[Tensor] = []
-    for batch in loader:
-        ys.append(batch.y)
-
-    histogram = torch.cat(ys).bincount()
-    prob = histogram / histogram.sum()
-
-    assert histogram.sum() == data.num_nodes
-    assert prob.min() > 0.4 and prob.max() < 0.6
+    assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
