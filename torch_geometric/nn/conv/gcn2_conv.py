@@ -119,7 +119,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -130,7 +130,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
