@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
@@ -31,7 +32,14 @@ class LinkNeighborSampler(NeighborSampler):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
         self.edge_time = edge_time
+
+        # TODO if self.edge_time is not None and
+        # input_type doesn't have time attribute
+        # set it to float(inf).
+
         if self.edge_time is not None:
+            # While sampling node time is replaced by edge time.
+            # Create a copy to reset node times.
             self.copy_time_dict = {}
             self.copy_time_dict[self.input_type[0]] = self.node_time_dict[
                 self.input_type[0]].clone()
@@ -41,10 +49,6 @@ class LinkNeighborSampler(NeighborSampler):
             _, graph_store = data
             edge_attrs = graph_store.get_all_edge_attrs()
             edge_types = [attr.edge_type for attr in edge_attrs]
-
-            # TODO(jinu) if self.edge_time is not None and
-            # input_type doesn't have time attribute
-            # set it to 0.
 
             # Edge label index is part of the graph:
             if self.input_type in edge_types:
@@ -94,19 +98,23 @@ class LinkNeighborSampler(NeighborSampler):
         return edge_label_index, edge_label
 
     def _modify_node_time(self, query_dict, edge_time):
+        """For edges in a batch replace `src` and `dst`
+        node times by the max across all edge times."""
         def update_time(input_type):
             index = query_dict[input_type]
             new_node_time, _ = scatter_max(edge_time, index,
                                            dim_size=self.num_src_nodes)
             index_unique = index.unique()
-            self.node_time_dict[input_type][index_unique] = new_node_time[
-                index_unique]
+            self.node_time_dict[input_type][index_unique] = max(
+                new_node_time[index_unique],
+                self.node_time_dict[input_type][index_unique])
 
         update_time(self.input_type[0])
-        # TODO(jinu) input_type[0] = input_type[1]
         update_time(self.input_type[1])
 
     def _reset_node_time(self, query_dict):
+        """Reset `node_time_dict` to its original
+        value saved in `copy_time_dict`."""
         def reset_time(input_type):
             index_unique = query_dict[input_type].unique()
             self.node_time_dict[input_type][
@@ -218,13 +226,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         :obj:`neg_sampling_ratio` is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
-        if :obj:`edge_time` is not :obj:`None` then :obj:`time_attr` needs
-        to be specified.
-
-        if :obj:`edge_time` is :obj:`None`
-        :obj:`time_attr` is currently implemented such that for an edge
-        `(src_node, dst_node)`, the neighbors of `src_node` can have a later
-        timestamp than `dst_node` or vice-versa.
+        if :obj:`edge_time` is :obj:`None`. :obj:`time_attr` is currently
+        implemented such that for an edge `(src_node, dst_node)`,
+        the neighbors of `src_node` can have a later timestamp than
+        `dst_node` or vice-versa.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
@@ -334,8 +339,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                                      device=edge_label_index.device)
 
         if edge_time is not None and time_attr is None:
-            raise ValueError("`time_attr` has to be specified if"
-                             "`edge_time` is set")
+            edge_time = None
+            warnings.warn("`edge_time` is specified by `time_attr` is None."
+                          " No temporal sampling will be done.")
 
         # Save for PyTorch Lightning < 1.6:
         self.edge_label = edge_label
