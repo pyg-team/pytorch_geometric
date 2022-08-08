@@ -189,6 +189,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data['paper'].x = torch.arange(100)
     data['paper'].time = torch.arange(data['paper'].num_nodes)
     data['author'].x = torch.arange(100, 300)
+    data['author'].time = torch.arange(data['author'].num_nodes)
 
     data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
     data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
@@ -203,6 +204,18 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         seed_nodes = batch['paper', 'paper'].edge_label_index.view(-1)
         seed_max_time = batch['paper'].time[seed_nodes].max()
         assert seed_max_time >= max_time
+
+    # With edge_time:
+    edge_time = torch.arange(data['paper', 'paper'].edge_index.size(1))
+    paper_time_original = data['paper'].time.clone()
+    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
+                                edge_label_index=('paper', 'paper'),
+                                edge_time=edge_time, batch_size=32,
+                                time_attr='time')
+    for batch in loader:
+        assert 1 == 0
+
+    assert torch.allclose(data['paper'].time, paper_time_original)
 
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
