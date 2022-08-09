@@ -25,35 +25,35 @@ def test_edge_conv_conv():
         '))')
     out1 = conv(x1, edge_index)
     assert out1.size() == (4, 32)
-    assert conv((x1, x1), edge_index).tolist() == out1.tolist()
-    assert conv(x1, adj.t()).tolist() == out1.tolist()
-    assert conv((x1, x1), adj.t()).tolist() == out1.tolist()
+    assert torch.allclose(conv((x1, x1), edge_index), out1)
+    assert torch.allclose(conv(x1, adj.t()), out1)
+    assert torch.allclose(conv((x1, x1), adj.t()), out1)
 
     adj = adj.sparse_resize((4, 2))
     out2 = conv((x1, x2), edge_index)
     assert out2.size() == (2, 32)
-    assert conv((x1, x2), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), adj.t()), out2)
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, edge_index).tolist() == out1.tolist()
+        assert torch.allclose(jit(x1, edge_index), out1)
 
         t = '(PairTensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x1), edge_index).tolist() == out1.tolist()
-        assert jit((x1, x2), edge_index).tolist() == out2.tolist()
+        assert torch.allclose(jit((x1, x1), edge_index), out1)
+        assert torch.allclose(jit((x1, x2), edge_index), out2)
 
         adj = adj.sparse_resize((4, 4))
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, adj.t()).tolist() == out1.tolist()
+        assert torch.allclose(jit(x1, adj.t()), out1)
 
         t = '(PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x1), adj.t()).tolist() == out1.tolist()
+        assert torch.allclose(jit((x1, x1), adj.t()), out1)
         adj = adj.sparse_resize((4, 2))
-        assert jit((x1, x2), adj.t()).tolist() == out2.tolist()
+        assert torch.allclose(jit((x1, x2), adj.t()), out2)
 
 
 @withPackage('torch_cluster')
