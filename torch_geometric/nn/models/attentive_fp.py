@@ -38,7 +38,7 @@ class GATEConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj, edge_attr: Tensor) -> Tensor:
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
-        out += self.bias
+        out = out + self.bias
         return out
 
     def message(self, x_j: Tensor, x_i: Tensor, edge_attr: Tensor,

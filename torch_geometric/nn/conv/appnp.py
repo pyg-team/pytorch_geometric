@@ -118,7 +118,7 @@ class APPNP(MessagePassing):
             x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                size=None)
             x = x * (1 - self.alpha)
-            x += self.alpha * h
+            x = x + self.alpha * h
 
         return x
 

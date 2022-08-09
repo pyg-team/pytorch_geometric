@@ -198,7 +198,7 @@ class GCNConv(MessagePassing):
                              size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
