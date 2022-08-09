@@ -169,7 +169,7 @@ class NeighborSampler:
                                        **kwargs):
 
         if isinstance(index, List) and isinstance(index[0], Tuple):
-            index_dict = deconvert_hetero(index)
+            index_dict = from_hetero_list(index)
         else:
             if not isinstance(index, torch.LongTensor):
                 index = torch.LongTensor(index)
@@ -517,11 +517,12 @@ def get_input_nodes(
         return node_type, input_nodes.index
 
 
-def convert_hetero(node_type: str, index: Tensor) -> HeteroNodeList:
-    return [(node_type, i) for i in index]
+def to_hetero_list(input_nodes: Dict[str, Tensor]) -> HeteroNodeList:
+    return [(node_type, i) for node_type, index in input_nodes.items()
+            for i in index]
 
 
-def deconvert_hetero(node_list: HeteroNodeList) -> Dict[str, Tensor]:
+def from_hetero_list(node_list: HeteroNodeList) -> Dict[str, Tensor]:
     node_dicts = defaultdict(list)
     for t, node in node_list:
         node_dicts[t].append(node)
