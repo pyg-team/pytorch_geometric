@@ -2,10 +2,11 @@ from itertools import product
 
 import pytest
 import torch
+
 from torch_geometric.utils import scatter
 from torch_geometric.utils.torch_version import torch_version_minor
 
-from .utils import reductions, devices
+from .utils import devices, reductions
 
 
 @pytest.mark.skipif(torch_version_minor() < 12,
