@@ -390,26 +390,26 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         elif isinstance(self.data, HeteroData):
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-             edge_label, edge_time) = out
+             edge_label, edge_label_time) = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
             data[edge_type].edge_label = edge_label
-            if edge_time is not None:
-                data[edge_type].edge_time = edge_time
+            if edge_label_time is not None:
+                data[edge_type].edge_label_time = edge_label_time
         else:
             (node_dict, row_dict, col_dict, edge_dict, edge_label_index,
-             edge_label, edge_time) = out
+             edge_label, edge_label_time) = out
             feature_store, graph_store = self.data
             data = filter_custom_store(feature_store, graph_store, node_dict,
                                        row_dict, col_dict, edge_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
             data[edge_type].edge_label = edge_label
-            if edge_time is None:
-                data[edge_type].edge_time = edge_time
+            if edge_label_time is None:
+                data[edge_type].edge_label_time = edge_label_time
 
         return data if self.transform is None else self.transform(data)
 
