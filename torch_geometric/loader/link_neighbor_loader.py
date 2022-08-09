@@ -341,7 +341,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         if edge_time is not None and time_attr is None:
             edge_time = None
-            warnings.warn("`edge_time` is specified but `time_attr` is `None`."
+            raise ValueError("`edge_time` is specified but `time_attr` is `None`")
                           " No temporal sampling will be done.")
 
         # Save for PyTorch Lightning < 1.6:
@@ -371,7 +371,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, self.edge_label, edge_time),
+        super().__init__(Dataset(edge_label_index, edge_label, edge_time),
                          collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
