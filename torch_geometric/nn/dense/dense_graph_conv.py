@@ -53,7 +53,7 @@ class DenseGraphConv(torch.nn.Module):
             out[out == float('-inf')] = 0.
 
         out = self.lin_rel(out)
-        out += self.lin_root(x)
+        out = out + self.lin_root(x)
 
         if mask is not None:
             out = out * mask.view(-1, N, 1).to(x.dtype)

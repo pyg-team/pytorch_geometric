@@ -75,7 +75,7 @@ class GINConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out += (1 + self.eps) * x_r
+            out = out + (1 + self.eps) * x_r
 
         return self.nn(out)
 
@@ -173,7 +173,7 @@ class GINEConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out += (1 + self.eps) * x_r
+            out = out + (1 + self.eps) * x_r
 
         return self.nn(out)
 
