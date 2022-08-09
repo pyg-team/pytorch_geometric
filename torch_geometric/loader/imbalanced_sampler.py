@@ -33,10 +33,23 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
                                 batch_size=64, num_neighbors=[-1, -1],
                                 sampler=sampler, ...)
 
+    You can also pass in the class labels directly as a :class:`torch.Tensor`:
+
+    .. code-block:: python
+
+        from torch_geometric.loader import NeighborLoader, ImbalancedSampler
+
+        sampler = ImbalancedSampler(data.y)
+        loader = NeighborLoader(data, input_nodes=data.train_mask,
+                                batch_size=64, num_neighbors=[-1, -1],
+                                sampler=sampler, ...)
+
     Args:
-        dataset (Dataset or Data): The dataset from which to sample the data,
-            either given as a :class:`~torch_geometric.data.Dataset` or
-            :class:`~torch_geometric.data.Data` object.
+        dataset (Dataset or Data or Tensor): The dataset or class distribution
+            from which to sample the data, given either as a
+            :class:`~torch_geometric.data.Dataset`,
+            :class:`~torch_geometric.data.Data`, or :class:`torch.Tensor`
+            object.
         input_nodes (Tensor, optional): The indices of nodes that are used by
             the corresponding loader, *e.g.*, by
             :class:`~torch_geometric.loader.NeighborLoader`.
@@ -50,7 +63,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
     """
     def __init__(
         self,
-        dataset: Union[Data, Dataset, List[Data]],
+        dataset: Union[Dataset, Data, List[Data], Tensor],
         input_nodes: Optional[Tensor] = None,
         num_samples: Optional[int] = None,
     ):
@@ -58,6 +71,10 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
         if isinstance(dataset, Data):
             y = dataset.y.view(-1)
             assert dataset.num_nodes == y.numel()
+            y = y[input_nodes] if input_nodes is not None else y
+
+        elif isinstance(dataset, Tensor):
+            y = dataset.view(-1)
             y = y[input_nodes] if input_nodes is not None else y
 
         elif isinstance(dataset, InMemoryDataset):
