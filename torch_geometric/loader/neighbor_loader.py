@@ -437,7 +437,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
-    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
+    def collate_fn(self, index: Union[List[int], Tensor,
+                                      HeteroNodeList]) -> Any:
         out = self.neighbor_sampler(index)
         if self.filter_per_worker:
             # We execute `filter_fn` in the worker process.
