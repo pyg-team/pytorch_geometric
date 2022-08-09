@@ -1,7 +1,6 @@
 from typing import List
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import (
@@ -22,15 +21,20 @@ def test_dataloader_with_imbalanced_sampler():
     sampler = ImbalancedSampler(data_list)
     loader = DataLoader(data_list, batch_size=10, sampler=sampler)
 
-    ys: List[Tensor] = []
-    for batch in loader:
-        ys.append(batch.y)
+    y = torch.cat([batch.y for batch in loader])
 
-    histogram = torch.cat(ys).bincount()
+    histogram = y.bincount()
     prob = histogram / histogram.sum()
 
     assert histogram.sum() == len(data_list)
     assert prob.min() > 0.4 and prob.max() < 0.6
+
+    # Test with label tensor as input:
+    torch.manual_seed(12345)
+    sampler = ImbalancedSampler(torch.tensor([data.y for data in data_list]))
+    loader = DataLoader(data_list, batch_size=10, sampler=sampler)
+
+    assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
 
 
 def test_neighbor_loader_with_imbalanced_sampler():
@@ -46,12 +50,18 @@ def test_neighbor_loader_with_imbalanced_sampler():
     loader = NeighborLoader(data, batch_size=10, sampler=sampler,
                             num_neighbors=[-1])
 
-    ys: List[Tensor] = []
-    for batch in loader:
-        ys.append(batch.y)
+    y = torch.cat([batch.y for batch in loader])
 
-    histogram = torch.cat(ys).bincount()
+    histogram = y.bincount()
     prob = histogram / histogram.sum()
 
     assert histogram.sum() == data.num_nodes
     assert prob.min() > 0.4 and prob.max() < 0.6
+
+    # Test with label tensor as input:
+    torch.manual_seed(12345)
+    sampler = ImbalancedSampler(data.y)
+    loader = NeighborLoader(data, batch_size=10, sampler=sampler,
+                            num_neighbors=[-1])
+
+    assert torch.allclose(y, torch.cat([batch.y for batch in loader]))

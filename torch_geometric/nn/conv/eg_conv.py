@@ -130,7 +130,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index, symnorm_weight = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow)
                     if self.cached:
                         self._cached_edge_index = (edge_index, symnorm_weight)
                 else:
@@ -141,7 +142,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
