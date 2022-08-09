@@ -106,16 +106,18 @@ class LinkNeighborSampler(NeighborSampler):
     def _modify_node_time(self, edge_label_index, edge_time):
         """For edges in a batch replace `src` and `dst`
         node times by the min across all edge times."""
-        def update_time(index, input_type):
+        def update_time(index, input_type, num_nodes):
             new_node_time, _ = scatter_min(edge_time, index,
-                                           dim_size=self.num_src_nodes)
+                                           dim_size=num_nodes)
             index_unique = index.unique()
             self.node_time_dict[input_type][index_unique] = torch.min(
                 new_node_time[index_unique],
                 self.node_time_dict[input_type][index_unique])
 
-        update_time(edge_label_index[0], self.input_type[0])
-        update_time(edge_label_index[1], self.input_type[-1])
+        update_time(edge_label_index[0], self.input_type[0],
+                    self.num_src_nodes)
+        update_time(edge_label_index[1], self.input_type[-1],
+                    self.num_dst_nodes)
 
     def _reset_node_time(self, edge_label_index):
         """Reset `node_time_dict` to its original
