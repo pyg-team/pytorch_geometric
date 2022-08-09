@@ -210,7 +210,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     paper_time_original = data['paper'].time.clone()
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'paper'),
-                                edge_time=edge_time, batch_size=32,
+                                edge_label_time=edge_time, batch_size=32,
                                 time_attr='time', neg_sampling_ratio=0.5)
     for batch in loader:
         author_max = batch['author'].time.max()

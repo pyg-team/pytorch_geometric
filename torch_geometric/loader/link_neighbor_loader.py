@@ -1,4 +1,3 @@
-import warnings
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
@@ -23,7 +22,7 @@ class LinkNeighborSampler(NeighborSampler):
         self,
         data,
         *args,
-        edge_time=None,
+        edge_label_time=None,
         neg_sampling_ratio: float = 0.0,
         num_src_nodes: Optional[int] = None,
         num_dst_nodes: Optional[int] = None,
@@ -31,13 +30,13 @@ class LinkNeighborSampler(NeighborSampler):
     ):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
-        self.edge_time = edge_time
+        self.edge_label_time = edge_label_time
 
         # TODO if self.edge_time is not None and
         # input_type doesn't have time attribute
         # set it to float(inf).
 
-        if self.edge_time is not None:
+        if self.edge_label_time is not None:
             # While sampling node time is replaced by edge time.
             # Create a copy to reset node times.
             self.copy_time_dict = {}
@@ -132,10 +131,12 @@ class LinkNeighborSampler(NeighborSampler):
         query = [torch.tensor(s) for s in zip(*query)]
         edge_label_index = torch.stack(query[:2], dim=0)
         edge_label = query[2]
-        edge_time = query[3] if len(query) == 4 else None
+        edge_label_time = query[3] if len(query) == 4 else None
 
-        edge_label_index, edge_label, edge_time = self._add_negative_samples(
-            edge_label_index, edge_label, edge_time)
+        (edge_label_index, edge_label,
+         edge_label_time) = self._add_negative_samples(edge_label_index,
+                                                       edge_label,
+                                                       edge_label_time)
 
         orig_edge_label_index = edge_label_index
         if (self.data_cls == 'custom'
@@ -155,11 +156,11 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-            if edge_time is not None:
-                self._modify_node_time(orig_edge_label_index, edge_time)
+            if edge_label_time is not None:
+                self._modify_node_time(orig_edge_label_index, edge_label_time)
             out = self._hetero_sparse_neighbor_sample(query_node_dict) + (
-                edge_label_index, edge_label, edge_time)
-            if edge_time is not None:
+                edge_label_index, edge_label, edge_label_time)
+            if edge_label_time is not None:
                 self._reset_node_time(orig_edge_label_index)
             return out
 
@@ -252,12 +253,13 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             which neighbors are sampled. Must be the same length as
             the :obj:`edge_label_index`. If set to :obj:`None` its set to
             `torch.zeros(...)` internally. (default: :obj:`None`)
-        edge_time (Tensor, optional): The timestamps for edge indicies for
-            which neighbors are sampled. Must be the same length as
+        edge_label_time (Tensor, optional): The timestamps for edge indicies
+            for which neighbors are sampled. Must be the same length as
             the :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
             constraints, *i.e.*, neighbors have an earlier timestamp than
-            the ouput edge. (default: :obj:`None`)
+            the ouput edge. The :obj:`time_attr` needs to be set for this
+            to work. (default: :obj:`None`)
         num_src_nodes (optional, int): The number of source nodes in the edge
             label index. Inferred if not provided.
         num_dst_nodes (optional, int): The number of destination nodes in the
@@ -283,10 +285,8 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             :obj:`torch.long` for multi-class classification (to facilitate the
             ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph.
-            If set, and :obj:`edge_time` is :obj:`None` temporal sampling will
-            done used such that neighbors have an earlier timestamp than
-            one of the center nodes. (default: :obj:`None`)
+            timestamps for the nodes in the graph. Only used if
+            :obj:`edge_label_time` is set. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -312,7 +312,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         num_neighbors: NumNeighbors,
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
-        edge_time: OptTensor = None,
+        edge_label_time: OptTensor = None,
         num_src_nodes: Optional[int] = None,
         num_dst_nodes: Optional[int] = None,
         replace: bool = False,
@@ -339,10 +339,12 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
 
-        if edge_time is not None and time_attr is None:
-            edge_time = None
-            raise ValueError("`edge_time` is specified but `time_attr` is `None`")
-                          " No temporal sampling will be done.")
+        if ((edge_label_time is not None and time_attr is None)
+                or (edge_label_time is None and time_attr is not None)):
+            raise ValueError(
+                "`edge_label_time` is specified but `time_attr` is `None` or "
+                "vice-versa. Both arguments need to be specified for temporal "
+                "sampling")
 
         # Save for PyTorch Lightning < 1.6:
         self.edge_label = edge_label
@@ -363,7 +365,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 directed,
                 input_type=edge_type,
                 is_sorted=is_sorted,
-                edge_time=edge_time,
+                edge_label_time=edge_label_time,
                 neg_sampling_ratio=self.neg_sampling_ratio,
                 num_src_nodes=num_src_nodes,
                 num_dst_nodes=num_dst_nodes,
@@ -371,8 +373,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, edge_label, edge_time),
-                         collate_fn=self.collate_fn, **kwargs)
+        super().__init__(
+            Dataset(edge_label_index, edge_label, edge_label_time),
+            collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
@@ -429,19 +432,19 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, edge_label_index: Tensor, edge_label: Tensor,
-                 edge_time: OptTensor = None):
+                 edge_label_time: OptTensor = None):
         self.edge_label_index = edge_label_index
         self.edge_label = edge_label
-        self.edge_time = edge_time
+        self.edge_label_time = edge_label_time
 
     def __getitem__(self, idx: int) -> Tuple[int]:
-        if self.edge_time is None:
+        if self.edge_label_time is None:
             return (self.edge_label_index[0, idx],
                     self.edge_label_index[1, idx], self.edge_label[idx])
         else:
             return (self.edge_label_index[0, idx], self.edge_label_index[1,
                                                                          idx],
-                    self.edge_label[idx], self.edge_time[idx])
+                    self.edge_label[idx], self.edge_label_time[idx])
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
