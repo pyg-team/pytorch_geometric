@@ -7,11 +7,11 @@ from torch import Tensor
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
 major, minor = int(major), int(minor)
 if major > 1 or (major == 1 and minor >= 12):
+    warnings.filterwarnings('ignore', '.*scatter_reduce.*')
 
     def scatter(src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = 'sum') -> Tensor:
-        warnings.filterwarnings('ignore', '.*scatter_reduce.*')
 
         reduce = 'sum' if reduce == 'add' else reduce
         reduce = 'prod' if reduce == 'mul' else reduce
@@ -48,5 +48,4 @@ else:
     def scatter(src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = "sum") -> Tensor:
-        print("OLD_SCATTER")
         return torch_scatter.scatter(src, index, dim, out, dim_size, reduce)
