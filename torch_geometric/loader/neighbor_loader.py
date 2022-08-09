@@ -328,14 +328,16 @@ class NeighborLoader(torch.utils.data.DataLoader):
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
             If an entry is set to :obj:`-1`, all neighbors will be included.
-        input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
+        input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor] or
+            List[Tuple[str, torch.Tensor]]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
             Needs to be either given as a :obj:`torch.LongTensor` or
             :obj:`torch.BoolTensor`.
             If set to :obj:`None`, all nodes will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
-            the node type and node indices. (default: :obj:`None`)
+            the node type and node indices, or a list of tuples for multiple
+            node type sampling. (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
@@ -472,6 +474,9 @@ def get_input_nodes(
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
 
+        if isinstance(input_nodes, list):
+            return to_hetero_types(input_nodes), to_hetero_list(input_nodes)
+
         if isinstance(input_nodes, str):
             return input_nodes, range(data[input_nodes].num_nodes)
 
@@ -517,9 +522,12 @@ def get_input_nodes(
         return node_type, input_nodes.index
 
 
-def to_hetero_list(input_nodes: Dict[str, Tensor]) -> HeteroNodeList:
-    return [(node_type, i) for node_type, index in input_nodes.items()
-            for i in index]
+def to_hetero_types(input_nodes: List[Tuple[str, Tensor]]) -> List[str]:
+    return [node_type for node_type, index in input_nodes]
+
+
+def to_hetero_list(input_nodes: List[Tuple[str, Tensor]]) -> HeteroNodeList:
+    return [(node_type, i) for node_type, index in input_nodes for i in index]
 
 
 def from_hetero_list(node_list: HeteroNodeList) -> Dict[str, Tensor]:
