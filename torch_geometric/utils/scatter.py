@@ -1,14 +1,22 @@
+import warnings
 from typing import Optional
 
 import torch
 from torch import Tensor
 
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
+major, minor = int(major), int(minor)
 if major > 1 or (major == 1 and minor >= 12):
 
     def scatter(src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = 'sum') -> Tensor:
+        warnings.filterwarnings('ignore', '.*scatter_reduce.*')
+
+        reduce = 'sum' if reduce == 'add' else reduce
+        reduce = 'prod' if reduce == 'mul' else reduce
+        reduce = 'amin' if reduce == 'min' else reduce
+        reduce = 'amax' if reduce == 'max' else reduce
 
         # Broadcast `index`:
         dim = src.dim() + dim if dim < 0 else dim
@@ -17,7 +25,7 @@ if major > 1 or (major == 1 and minor >= 12):
                 index = index.unsqueeze(0)
         for _ in range(index.dim(), src.dim()):
             index = index.unsqueeze(-1)
-        return index.expand(src.size())
+        index = index.expand(src.size())
 
         include_self = out is not None
 
@@ -40,4 +48,5 @@ else:
     def scatter(src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = "sum") -> Tensor:
+        print("OLD_SCATTER")
         return torch_scatter.scatter(src, index, dim, out, dim_size, reduce)
