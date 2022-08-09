@@ -278,7 +278,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         data.num_graphs
         >>> 32
 
-        x = scatter_mean(data.x, data.batch, dim=0,)
+        x = scatter_mean(data.x, data.batch, dim=0)
         x.size()
         >>> torch.Size([32, 21])
 
