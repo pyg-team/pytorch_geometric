@@ -302,7 +302,7 @@ class FastRGCNConv(RGCNConv):
 
         root = self.root
         if root is not None:
-            out = out + root[x_r] if x_r.dtype == torch.long else x_r @ root
+            out = out + (root[x_r] if x_r.dtype == torch.long else x_r @ root)
 
         if self.bias is not None:
             out = out + self.bias
