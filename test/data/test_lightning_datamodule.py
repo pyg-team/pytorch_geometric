@@ -287,3 +287,22 @@ def test_lightning_hetero_link_data(get_dataset):
     batch = next(iter(loader))
     assert (batch['author', 'dummy',
                   'paper']['edge_label_index'].shape[1] == 32)
+
+    # With edge time:
+    edge_label_time = torch.arange(input_edges.size(1))
+    data['author'].time_col = torch.arange(data['author'].num_nodes)
+    data['paper'].time_col = torch.arange(data['paper'].num_nodes)
+    data['term'].time_col = torch.arange(data['term'].num_nodes)
+
+    datamodule = LightningDataset(data, loader='link_neighbor',
+                                  num_neighbors=[5, 5], batch_size=32,
+                                  num_workers=3, time_attr='time_col')
+
+    loader = datamodule.dataloader(edge_label_index=input_edges,
+                                   edge_label=None, shuffle=True,
+                                   edge_label_time=edge_label_time)
+    batch = next(iter(loader))
+    assert (batch['author', 'dummy',
+                  'paper']['edge_label_index'].shape[1] == 32)
+    assert (batch['author', 'dummy',
+                  'paper']['edge_label_time'].shape[1] == 32)
