@@ -37,7 +37,7 @@ if major > 1 or (major == 1 and minor >= 12):
                 size[dim] = int(index.max()) + 1
             else:
                 size[dim] = 0
-            out = src.new_empty(size)
+            out = src.new_zeros(size)
 
         return out.scatter_reduce_(dim, index, src, reduce,
                                    include_self=include_self)
