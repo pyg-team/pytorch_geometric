@@ -371,7 +371,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(Dataset(edge_label_index, self.edge_label, edge_time),
+        super().__init__(Dataset(edge_label_index, edge_label, edge_time),
                          collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
