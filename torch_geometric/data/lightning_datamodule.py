@@ -410,10 +410,13 @@ class LightningLinkData(LightningDataModule):
         data: Union[Data, HeteroData],
         input_train_edges: InputEdges = None,
         input_train_edge_label: torch.Tensor = None,
+        train_edge_label_time: torch.Tensor = None,
         input_val_edges: InputEdges = None,
         input_val_edge_label: torch.Tensor = None,
+        val_edge_label_time: torch.Tensor = None,
         input_test_edges: InputEdges = None,
         input_test_edge_label: torch.Tensor = None,
+        test_edge_label_time: torch.Tensor = None,
         loader: str = "link_neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
@@ -455,10 +458,13 @@ class LightningLinkData(LightningDataModule):
 
         self.input_train_edges = input_train_edges
         self.input_train_edge_label = input_train_edge_label
+        self.train_edge_label_time = train_edge_label_time
         self.input_val_edges = input_val_edges
         self.input_val_edge_label = input_val_edge_label
+        self.val_edge_label_time = val_edge_label_time
         self.input_test_edges = input_test_edges
         self.input_test_edge_label = input_test_edge_label
+        self.test_edge_label_time = test_edge_label_time
 
     def prepare_data(self):
         """"""
@@ -476,7 +482,8 @@ class LightningLinkData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_edges: InputEdges, input_labels: torch.Tensor,
+    def dataloader(self, edge_label_index: InputEdges,
+                   edge_label: torch.Tensor, edge_label_time: torch.Tensor,
                    shuffle: bool) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
@@ -487,26 +494,29 @@ class LightningLinkData(LightningDataModule):
 
         if self.loader == 'link_neighbor':
             return LinkNeighborLoader(data=self.data,
-                                      edge_label_index=input_edges,
-                                      edge_label=input_labels, shuffle=shuffle,
-                                      **self.kwargs)
+                                      edge_label_index=edge_label_index,
+                                      edge_label=edge_label,
+                                      edge_label_time=edge_label_time,
+                                      shuffle=shuffle, **self.kwargs)
 
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_train_edges,
-                               self.input_train_edge_label, shuffle=True)
+                               self.input_train_edge_label,
+                               self.train_edge_label_time, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_val_edges, self.input_val_edge_label,
-                               shuffle=False)
+                               self.val_edge_label_time, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_test_edges,
-                               self.input_test_edge_label, shuffle=False)
+                               self.input_test_edge_label,
+                               self.test_edge_label_time, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
