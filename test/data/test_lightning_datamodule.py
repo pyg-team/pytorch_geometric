@@ -306,4 +306,4 @@ def test_lightning_hetero_link_data(get_dataset):
     assert (batch['author', 'dummy',
                   'paper']['edge_label_index'].shape[1] == 32)
     assert (batch['author', 'dummy',
-                  'paper']['edge_label_time'].shape[1] == 32)
+                  'paper']['edge_label_time'].shape[0] == 32)
