@@ -33,8 +33,9 @@ class LinkNeighborSampler(NeighborSampler):
         self.edge_label_time = edge_label_time
 
         # TODO if self.edge_time is not None and
-        # input_type doesn't have time attribute
-        # set it to float(inf).
+        # `src` or `dst` nodes don't have time attribute
+        # i.e node_time_dict[input_type[0/-1]] doesn't exist
+        # set it to largest representabel torch.long.
 
         if self.edge_label_time is not None:
             # While sampling node time is replaced by edge time.
