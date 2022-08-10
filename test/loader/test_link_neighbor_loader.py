@@ -187,7 +187,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
-    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes) - 200
     data['author'].x = torch.arange(100, 300)
     data['author'].time = torch.arange(data['author'].num_nodes)
 
@@ -215,6 +215,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         author_min = batch['author'].time.min()
         edge_min = batch['paper', 'paper'].edge_label_time.min()
         assert edge_min >= author_min
+        assert author_min >= 0
         assert torch.allclose(data['paper'].time, paper_time_original)
 
 
