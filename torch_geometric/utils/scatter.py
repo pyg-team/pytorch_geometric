@@ -39,23 +39,8 @@ if major > 1 or (major == 1 and minor >= 12):
                 size[dim] = 0
             out = src.new_zeros(size)
 
-        out = out.scatter_reduce_(dim, index, src, reduce,
-                                  include_self=include_self)
-
-        # if not include_self:
-        #     out.mark_dirty = False
-        if out.grad_fn is not None:
-            # print(out.__dict__)
-            # print(out.__class__.__dict__.keys())
-            # print(out.grad_fn)
-            # print(out.grad_fn.__class__)
-            # print(out.grad_fn.__class__.__dict__.keys())
-            # print(torch.autograd.Function.__dict__.keys())
-
-            print(torch.Tensor.scatter_reduce)
-            print(torch.Tensor.scatter_reduce)
-
-        return out
+        return out.scatter_reduce_(dim, index, src, reduce,
+                                   include_self=include_self)
 
 else:
     import torch_scatter
