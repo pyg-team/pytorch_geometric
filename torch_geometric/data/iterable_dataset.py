@@ -1,4 +1,3 @@
-import copy
 import os.path as osp
 import re
 import sys
@@ -6,9 +5,7 @@ import warnings
 from collections.abc import Sequence
 from typing import Any, Callable, List, Optional, Tuple, Union
 
-import numpy as np
 import torch.utils.data
-from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.makedirs import makedirs
@@ -164,7 +161,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
 
         print("Done!", file=sys.stderr)
 
-    def __iter__(self) -> Union["Dataset", Data]:
+    def __iter__(self) -> Data:
         r"""Creates an iterator from an implementation of `iter`
         (and transforms each iter in case :obj:`transform` is
         present)."""
