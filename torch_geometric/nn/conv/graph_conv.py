@@ -82,7 +82,7 @@ class GraphConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out = out + self.lin_root(x_r)
+            out += self.lin_root(x_r)
 
         return out
 
