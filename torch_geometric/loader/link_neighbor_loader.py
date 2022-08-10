@@ -128,10 +128,8 @@ class LinkNeighborSampler(NeighborSampler):
         edge_label = query[2]
         edge_label_time = query[3] if len(query) == 4 else None
 
-        (edge_label_index, edge_label,
-         edge_label_time) = self._add_negative_samples(edge_label_index,
-                                                       edge_label,
-                                                       edge_label_time)
+        out = self._add_negative_samples(edge_label_index, edge_label, edge_label_time)
+        edge_label_index, edge_label, edge_label_time = out
 
         orig_edge_label_index = edge_label_index
         if (self.data_cls == 'custom'
