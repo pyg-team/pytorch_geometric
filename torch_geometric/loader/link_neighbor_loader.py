@@ -101,12 +101,22 @@ class LinkNeighborSampler(NeighborSampler):
         node times by the min across all edge times."""
         src, _, dst = self.input_type
         node_time_dict = copy.copy(self.node_time_dict)
-        node_time_dict[src] = node_time_dict[src].clone()
-        node_time_dict[dst] = node_time_dict[dst].clone()
-        scatter_min(edge_label_time, edge_label_index[0],
-                    out=node_time_dict[src])
-        scatter_min(edge_label_time, edge_label_index[1],
-                    out=node_time_dict[dst])
+
+        def update_time(node_time_dict, index, node_type, num_nodes):
+            node_time_dict[node_type] = node_time_dict[node_type].clone()
+            new_node_time, _ = scatter_min(edge_label_time, index,
+                                           dim_size=num_nodes)
+            index_unique = index.unique()
+            # Note: node_time_dict[node_type] is always less than edge_time.
+            # The below call makes a difference only when src = dst.
+            node_time_dict[node_type][index_unique] = torch.max(
+                new_node_time[index_unique],
+                node_time_dict[node_type][index_unique])
+
+        update_time(node_time_dict, edge_label_index[0], src,
+                    self.num_src_nodes)
+        update_time(node_time_dict, edge_label_index[1], dst,
+                    self.num_dst_nodes)
         return node_time_dict
 
     def __call__(self, query: List[Tuple[Tensor]]):
