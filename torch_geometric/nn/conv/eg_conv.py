@@ -191,7 +191,7 @@ class EGConv(MessagePassing):
         out = out.view(-1, self.out_channels)
 
         if self.bias is not None:
-            out = out + self.bias
+            out += self.bias
 
         return out
 
