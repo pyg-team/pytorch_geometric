@@ -2,10 +2,15 @@ import warnings
 from typing import Optional, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, Dataset, HeteroData
-from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
+from torch_geometric.loader.link_neighbor_loader import (
+    LinkNeighborLoader,
+    LinkNeighborSampler,
+    get_edge_label_index,
+)
 from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
     NeighborSampler,
@@ -294,6 +299,7 @@ class LightningNodeData(LightningDataModule):
                 input_type=get_input_nodes(data, input_train_nodes)[0],
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
+                share_memory=num_workers > 0,
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
@@ -386,23 +392,23 @@ class LightningLinkData(LightningDataModule):
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
         input_train_edge_label (Tensor, optional):
-            The labels of train edge indices.
-        train_edge_label_time (Tensor, optional): The timestamp
-            of train edge indices.
+            The labels of train edge indices. (default: :obj:`None`)
+        input_train_edge_label_time (Tensor, optional): The timestamp
+            of train edge indices. (default: :obj:`None`)
         input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
         input_val_edge_label (Tensor, optional):
-            The labels of val edge indices.
-        val_edge_label_time (Tensor, optional): The timestamp
-            of val edge indices.
+            The labels of val edge indices. (default: :obj:`None`)
+        input_val_edge_label_time (Tensor, optional): The timestamp
+            of val edge indices. (default: :obj:`None`)
         input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
         input_test_edge_label (Tensor, optional):
-            The labels of train edge indices.
-        test_edge_label_time (Tensor, optional): The timestamp
-            of test edge indices.
+            The labels of train edge indices. (default: :obj:`None`)
+        input_test_edge_label_time (Tensor, optional): The timestamp
+            of test edge indices. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"link_neighbor"`). (default: :obj:`"link_neighbor"`)
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -415,23 +421,26 @@ class LightningLinkData(LightningDataModule):
         self,
         data: Union[Data, HeteroData],
         input_train_edges: InputEdges = None,
-        input_train_edge_label: torch.Tensor = None,
-        train_edge_label_time: torch.Tensor = None,
+        input_train_edge_label: Tensor = None,
+        input_train_edge_label_time: Tensor = None,
         input_val_edges: InputEdges = None,
-        input_val_edge_label: torch.Tensor = None,
-        val_edge_label_time: torch.Tensor = None,
+        input_val_edge_label: Tensor = None,
+        input_val_edge_label_time: Tensor = None,
         input_test_edges: InputEdges = None,
-        input_test_edge_label: torch.Tensor = None,
-        test_edge_label_time: torch.Tensor = None,
-        loader: str = "link_neighbor",
+        input_test_edge_label: Tensor = None,
+        input_test_edge_label_time: Tensor = None,
+        loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
 
-        assert loader in ['full', 'link_neighbor']
-        # TODO: Handle or document behavior where none of train, val, test
-        # edges are specified.
+        assert loader in ['full', 'neighbor', 'link_neighbor']
+
+        if input_train_edges is None:
+            raise NotImplementedError("'{self.__class__.__name__}' cannot yet "
+                                      "infe input edges automatically")
+
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
                           f"'{self.__class__.__name__}' for loader='full' "
@@ -462,15 +471,27 @@ class LightningLinkData(LightningDataModule):
         self.data = data
         self.loader = loader
 
+        if loader == 'neighbor':
+            self.neighbor_sampler = LinkNeighborSampler(
+                data=data,
+                num_neighbors=kwargs.get('num_neighbors', None),
+                replace=kwargs.get('replace', False),
+                directed=kwargs.get('directed', True),
+                input_type=get_edge_label_index(data, input_train_edges)[0],
+                time_attr=kwargs.get('time_attr', None),
+                is_sorted=kwargs.get('is_sorted', False),
+                share_memory=num_workers > 0,
+            )
+
         self.input_train_edges = input_train_edges
         self.input_train_edge_label = input_train_edge_label
-        self.train_edge_label_time = train_edge_label_time
+        self.input_train_edge_label_time = input_train_edge_label_time
         self.input_val_edges = input_val_edges
         self.input_val_edge_label = input_val_edge_label
-        self.val_edge_label_time = val_edge_label_time
+        self.input_val_edge_label_time = input_val_edge_label_time
         self.input_test_edges = input_test_edges
         self.input_test_edge_label = input_test_edge_label
-        self.test_edge_label_time = test_edge_label_time
+        self.input_test_edge_label_time = input_test_edge_label_time
 
     def prepare_data(self):
         """"""
@@ -488,9 +509,8 @@ class LightningLinkData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, edge_label_index: InputEdges,
-                   edge_label: torch.Tensor, edge_label_time: torch.Tensor,
-                   shuffle: bool) -> DataLoader:
+    def dataloader(self, edge_label_index: InputEdges, edge_label: Tensor,
+                   edge_label_time: Tensor, shuffle: bool) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -498,11 +518,12 @@ class LightningLinkData(LightningDataModule):
                                                collate_fn=lambda xs: xs[0],
                                                **self.kwargs)
 
-        if self.loader == 'link_neighbor':
+        if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(data=self.data,
                                       edge_label_index=edge_label_index,
                                       edge_label=edge_label,
                                       edge_label_time=edge_label_time,
+                                      neighbor_sampler=self.neighbor_sampler,
                                       shuffle=shuffle, **self.kwargs)
 
         raise NotImplementedError

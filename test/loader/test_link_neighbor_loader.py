@@ -208,7 +208,6 @@ def test_temporal_heterogeneous_link_neighbor_loader():
                                 edge_label_time=edge_time, batch_size=32,
                                 time_attr='time', neg_sampling_ratio=0.5,
                                 num_workers=2)
-
     for batch in loader:
         author_max = batch['author'].time.max()
         edge_max = batch['paper', 'paper'].edge_label_time.max()
@@ -216,6 +215,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         author_min = batch['author'].time.min()
         edge_min = batch['paper', 'paper'].edge_label_time.min()
         assert edge_min >= author_min
+        assert author_min >= 0
         assert torch.allclose(data['paper'].time, paper_time_original)
 
 

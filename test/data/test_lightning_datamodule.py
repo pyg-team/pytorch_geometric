@@ -283,8 +283,8 @@ def test_lightning_hetero_link_data(get_dataset):
     input_edges = (('author', 'dummy', 'paper'), data['author',
                                                       'paper']['edge_index'])
     loader = datamodule.dataloader(edge_label_index=input_edges,
-                                   edge_label=None, shuffle=True,
-                                   edge_label_time=None)
+                                   edge_label=None, edge_label_time=None,
+                                   shuffle=True)
     batch = next(iter(loader))
     assert (batch['author', 'dummy',
                   'paper']['edge_label_index'].shape[1] == 32)
