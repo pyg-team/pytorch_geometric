@@ -23,7 +23,7 @@ class LinkNeighborSampler(NeighborSampler):
         self,
         data,
         *args,
-        edge_label_time: Optional[Tensor] =None,
+        edge_label_time: Optional[Tensor] = None,
         neg_sampling_ratio: float = 0.0,
         num_src_nodes: Optional[int] = None,
         num_dst_nodes: Optional[int] = None,
