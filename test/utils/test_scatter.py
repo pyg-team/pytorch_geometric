@@ -4,6 +4,8 @@ import torch_scatter
 
 from torch_geometric.utils import scatter
 
+torch.manual_seed(12345)
+
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max', 'mul'])
 def test_scatter(reduce):
