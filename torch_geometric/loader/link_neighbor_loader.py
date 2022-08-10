@@ -320,17 +320,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         self.data = data
 
-        edge_type, edge_label_index = get_edge_label_index(
-            data, edge_label_index)
-        if edge_label is None:
-            edge_label = torch.zeros(edge_label_index.size(1),
-                                     device=edge_label_index.device)
-
-        if (edge_label_time is None) != (time_attr is None):
-            raise ValueError("`edge_label_time` is specified but `time_attr` "
-                             "is `None` or vice-versa. Both arguments need to "
-                             "be specified for temporal sampling")
-
         # Save for PyTorch Lightning < 1.6:
         self.num_neighbors = num_neighbors
         self.edge_label = edge_label
@@ -342,6 +331,17 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.transform = transform
         self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
+
+        edge_type, edge_label_index = get_edge_label_index(
+            data, edge_label_index)
+        if edge_label is None:
+            edge_label = torch.zeros(edge_label_index.size(1),
+                                     device=edge_label_index.device)
+
+        if (edge_label_time is None) != (time_attr is None):
+            raise ValueError("`edge_label_time` is specified but `time_attr` "
+                             "is `None` or vice-versa. Both arguments need to "
+                             "be specified for temporal sampling")
 
         if neighbor_sampler is None:
             self.neighbor_sampler = LinkNeighborSampler(
