@@ -149,7 +149,6 @@ class LinkNeighborSampler(NeighborSampler):
             out = self._hetero_sparse_neighbor_sample(
                 query_node_dict, node_time_dict=node_time_dict) + (
                     edge_label_index, edge_label, edge_label_time)
-
             return out
 
         elif issubclass(self.data_cls, Data):
@@ -333,7 +332,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                              "be specified for temporal sampling")
 
         # Save for PyTorch Lightning < 1.6:
-        self.edge_label = edge_label
         self.num_neighbors = num_neighbors
         self.edge_label = edge_label
         self.edge_label_index = edge_label_index

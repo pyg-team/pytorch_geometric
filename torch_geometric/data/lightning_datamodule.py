@@ -392,21 +392,21 @@ class LightningLinkData(LightningDataModule):
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
         input_train_edge_label (Tensor, optional):
-            The labels of train edge indices. (default: :obj:`None`)
+            The labels of train edges. (default: :obj:`None`)
         input_train_edge_label_time (Tensor, optional): The timestamp
-            of train edge indices. (default: :obj:`None`)
+            of train edges. (default: :obj:`None`)
         input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
         input_val_edge_label (Tensor, optional):
-            The labels of val edge indices. (default: :obj:`None`)
+            The labels of validation edges. (default: :obj:`None`)
         input_val_edge_label_time (Tensor, optional): The timestamp
-            of val edge indices. (default: :obj:`None`)
+            of validation edges. (default: :obj:`None`)
         input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
         input_test_edge_label (Tensor, optional):
-            The labels of train edge indices. (default: :obj:`None`)
+            The labels of train edges. (default: :obj:`None`)
         input_test_edge_label_time (Tensor, optional): The timestamp
-            of test edge indices. (default: :obj:`None`)
+            of test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         batch_size (int, optional): How many samples per batch to load.
@@ -438,8 +438,8 @@ class LightningLinkData(LightningDataModule):
         assert loader in ['full', 'neighbor', 'link_neighbor']
 
         if input_train_edges is None:
-            raise NotImplementedError("'{self.__class__.__name__}' cannot yet "
-                                      "infe input edges automatically")
+            raise NotImplementedError(f"'{self.__class__.__name__}' cannot "
+                                      f"yet infer input edges automatically")
 
         if loader == 'full' and batch_size != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
@@ -509,8 +509,13 @@ class LightningLinkData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, edge_label_index: InputEdges, edge_label: Tensor,
-                   edge_label_time: Tensor, shuffle: bool) -> DataLoader:
+    def dataloader(
+        self,
+        edge_label_index: InputEdges,
+        edge_label: Optional[Tensor],
+        edge_label_time: Optional[Tensor],
+        shuffle: bool,
+    ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -532,18 +537,18 @@ class LightningLinkData(LightningDataModule):
         """"""
         return self.dataloader(self.input_train_edges,
                                self.input_train_edge_label,
-                               self.train_edge_label_time, shuffle=True)
+                               self.input_train_edge_label_time, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_val_edges, self.input_val_edge_label,
-                               self.val_edge_label_time, shuffle=False)
+                               self.input_val_edge_label_time, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
         """"""
         return self.dataloader(self.input_test_edges,
                                self.input_test_edge_label,
-                               self.test_edge_label_time, shuffle=False)
+                               self.input_test_edge_label_time, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
