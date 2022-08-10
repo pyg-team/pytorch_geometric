@@ -1,15 +1,25 @@
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset, IterableDataset
+from torch_geometric.data import (
+    Data,
+    Dataset,
+    HeteroData,
+    InMemoryDataset,
+    IterableDataset,
+)
+
 
 class MyTestIterableDataset(IterableDataset):
     def __init__(self, data):
         super().__init__('/tmp/MyTestIterableDataset')
         self.data = data
+
     def iter(self):
         for data in self.data:
             yield data
+
+
 def test_iterable_dataset():
     x1 = torch.Tensor([[1], [1], [1]])
     x2 = torch.Tensor([[2], [2], [2]])
@@ -41,10 +51,12 @@ def test_iterable_dataset():
     assert sample2.test_int == 2
     assert sample2.test_str == '2'
 
+
 class MyTestDataset(InMemoryDataset):
     def __init__(self, data_list):
         super().__init__('/tmp/MyTestDataset')
         self.data, self.slices = self.collate(data_list)
+
 
 def test_in_memory_dataset():
     x1 = torch.Tensor([[1], [1], [1]])
