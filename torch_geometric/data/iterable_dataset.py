@@ -2,7 +2,7 @@ import os.path as osp
 import re
 import sys
 import warnings
-from collections.abc import Sequence, Iterable
+from collections.abc import Iterable, Sequence
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import torch.utils.data
