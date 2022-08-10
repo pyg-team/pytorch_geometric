@@ -83,11 +83,11 @@ class SGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim), False,
-                    self.add_self_loops, dtype=x.dtype)
+                    self.add_self_loops, self.flow, dtype=x.dtype)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim), False,
-                    self.add_self_loops, dtype=x.dtype)
+                    self.add_self_loops, self.flow, dtype=x.dtype)
 
             for k in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)

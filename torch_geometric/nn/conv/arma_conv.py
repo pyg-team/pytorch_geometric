@@ -108,12 +108,12 @@ class ARMAConv(MessagePassing):
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
                 edge_index, edge_weight, x.size(self.node_dim),
-                add_self_loops=False, dtype=x.dtype)
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         elif isinstance(edge_index, SparseTensor):
             edge_index = gcn_norm(  # yapf: disable
                 edge_index, edge_weight, x.size(self.node_dim),
-                add_self_loops=False, dtype=x.dtype)
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         x = x.unsqueeze(-3)
         out = x
