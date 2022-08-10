@@ -441,7 +441,7 @@ class RGATConv(MessagePassing):
 
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
-                ones = torch.ones(index.size())
+                ones = alpha.new_ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
@@ -453,7 +453,7 @@ class RGATConv(MessagePassing):
                     alpha.view(-1, self.heads, 1),
                     degree.view(-1, 1, self.out_channels))
             elif self.attention_mode == "multiplicative-self-attention":
-                ones = torch.ones(index.size())
+                ones = alpha.new_ones(index.size())
                 degree = scatter_add(ones, index,
                                      dim_size=size_i)[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
@@ -469,7 +469,7 @@ class RGATConv(MessagePassing):
             alpha = torch.where(alpha > 0, alpha + 1, alpha)
 
         elif self.mod == "f-scaled":
-            ones = torch.ones(index.size())
+            ones = alpha.new_ones(index.size())
             degree = scatter_add(ones, index,
                                  dim_size=size_i)[index].unsqueeze(-1)
             alpha = alpha * degree
