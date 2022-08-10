@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
@@ -37,14 +38,6 @@ class LinkNeighborSampler(NeighborSampler):
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
         # set it to largest representabel torch.long.
 
-        if self.edge_label_time is not None:
-            # While sampling node time is replaced by edge time.
-            # Create a copy to reset node times.
-            self.copy_time_dict = {}
-            self.copy_time_dict[self.input_type[0]] = self.node_time_dict[
-                self.input_type[0]].clone()
-            self.copy_time_dict[self.input_type[-1]] = self.node_time_dict[
-                self.input_type[-1]].clone()
         if self.data_cls == 'custom':
             _, graph_store = data
             edge_attrs = graph_store.get_all_edge_attrs()
@@ -103,32 +96,31 @@ class LinkNeighborSampler(NeighborSampler):
 
         return edge_label_index, edge_label, edge_time
 
-    def _modify_node_time(self, edge_label_index, edge_time):
-        """For edges in a batch replace `src` and `dst`
+    def _modify_node_time(self, edge_label_index, edge_label_time):
+        """If `edge_label_time` is `None` return `self.node_time_dict`.
+        Else, for edges in a batch replace `src` and `dst`
         node times by the min across all edge times."""
-        def update_time(index, input_type, num_nodes):
-            new_node_time, _ = scatter_min(edge_time, index,
+        if edge_label_time is None:
+            return self.node_time_dict
+
+        def update_time(node_time_dict, index, input_type, num_nodes):
+            new_node_time, _ = scatter_min(edge_label_time, index,
                                            dim_size=num_nodes)
             index_unique = index.unique()
-            self.node_time_dict[input_type][index_unique] = torch.min(
+            node_time_dict[input_type][index_unique] = torch.min(
                 new_node_time[index_unique],
                 self.node_time_dict[input_type][index_unique])
 
-        update_time(edge_label_index[0], self.input_type[0],
+        node_time_dict = copy.copy(self.node_time_dict)
+        node_time_dict[self.input_type[0]] = node_time_dict[
+            self.input_type[0]].clone()
+        node_time_dict[self.input_type[-1]] = node_time_dict[
+            self.input_type[-1]].clone()
+        update_time(node_time_dict, edge_label_index[0], self.input_type[0],
                     self.num_src_nodes)
-        update_time(edge_label_index[1], self.input_type[-1],
+        update_time(node_time_dict, edge_label_index[1], self.input_type[-1],
                     self.num_dst_nodes)
-
-    def _reset_node_time(self, edge_label_index):
-        """Reset `node_time_dict` to its original
-        value saved in `copy_time_dict`."""
-        def reset_time(index, input_type):
-            index_unique = index.unique()
-            self.node_time_dict[input_type][
-                index_unique] = self.copy_time_dict[input_type][index_unique]
-
-        reset_time(edge_label_index[0], self.input_type[0])
-        reset_time(edge_label_index[1], self.input_type[-1])
+        return node_time_dict
 
     def __call__(self, query: List[Tuple[Tensor]]):
         query = [torch.tensor(s) for s in zip(*query)]
@@ -159,12 +151,11 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-            if edge_label_time is not None:
-                self._modify_node_time(orig_edge_label_index, edge_label_time)
-            out = self._hetero_sparse_neighbor_sample(query_node_dict) + (
-                edge_label_index, edge_label, edge_label_time)
-            if edge_label_time is not None:
-                self._reset_node_time(orig_edge_label_index)
+            node_time_dict = self._modify_node_time(orig_edge_label_index,
+                                                    edge_label_time)
+            out = self._hetero_sparse_neighbor_sample(
+                query_node_dict, node_time_dict) + (
+                    edge_label_index, edge_label, edge_label_time)
             return out
 
         elif issubclass(self.data_cls, Data):
