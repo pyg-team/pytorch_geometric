@@ -245,7 +245,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             which neighbors are sampled. Must be the same length as
             the :obj:`edge_label_index`. If set to :obj:`None` its set to
             `torch.zeros(...)` internally. (default: :obj:`None`)
-        edge_label_time (Tensor, optional): The timestamps for edge indicies
+        edge_label_time (Tensor, optional): The timestamps for edge indices
             for which neighbors are sampled. Must be the same length as
             the :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
