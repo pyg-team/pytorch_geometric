@@ -143,7 +143,11 @@ class LightningDataset(LightningDataModule):
         self.val_dataset = val_dataset
         self.test_dataset = test_dataset
 
-    def dataloader(self, dataset: Dataset, shuffle: bool) -> DataLoader:
+    def dataloader(
+        self,
+        dataset: Dataset,
+        shuffle: bool = False,
+    ) -> DataLoader:
         return DataLoader(dataset, shuffle=shuffle, **self.kwargs)
 
     def train_dataloader(self) -> DataLoader:
@@ -322,7 +326,11 @@ class LightningNodeData(LightningDataModule):
                     f"training on a single device")
         super().prepare_data()
 
-    def dataloader(self, input_nodes: InputNodes, shuffle: bool) -> DataLoader:
+    def dataloader(
+        self,
+        input_nodes: InputNodes,
+        shuffle: bool = False,
+    ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
@@ -391,21 +399,21 @@ class LightningLinkData(LightningDataModule):
             :class:`~torch_geometric.data.HeteroData` graph object.
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
-        input_train_edge_label (Tensor, optional):
+        input_train_labels (Tensor, optional):
             The labels of train edges. (default: :obj:`None`)
-        input_train_edge_label_time (Tensor, optional): The timestamp
+        input_train_time (Tensor, optional): The timestamp
             of train edges. (default: :obj:`None`)
         input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
-        input_val_edge_label (Tensor, optional):
+        input_val_labels (Tensor, optional):
             The labels of validation edges. (default: :obj:`None`)
-        input_val_edge_label_time (Tensor, optional): The timestamp
+        input_val_time (Tensor, optional): The timestamp
             of validation edges. (default: :obj:`None`)
         input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
-        input_test_edge_label (Tensor, optional):
+        input_test_labels (Tensor, optional):
             The labels of train edges. (default: :obj:`None`)
-        input_test_edge_label_time (Tensor, optional): The timestamp
+        input_test_time (Tensor, optional): The timestamp
             of test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
@@ -421,14 +429,14 @@ class LightningLinkData(LightningDataModule):
         self,
         data: Union[Data, HeteroData],
         input_train_edges: InputEdges = None,
-        input_train_edge_label: Tensor = None,
-        input_train_edge_label_time: Tensor = None,
+        input_train_labels: Tensor = None,
+        input_train_time: Tensor = None,
         input_val_edges: InputEdges = None,
-        input_val_edge_label: Tensor = None,
-        input_val_edge_label_time: Tensor = None,
+        input_val_labels: Tensor = None,
+        input_val_time: Tensor = None,
         input_test_edges: InputEdges = None,
-        input_test_edge_label: Tensor = None,
-        input_test_edge_label_time: Tensor = None,
+        input_test_labels: Tensor = None,
+        input_test_time: Tensor = None,
         loader: str = "neighbor",
         batch_size: int = 1,
         num_workers: int = 0,
@@ -471,7 +479,7 @@ class LightningLinkData(LightningDataModule):
         self.data = data
         self.loader = loader
 
-        if loader == 'neighbor':
+        if loader in ['neighbor', 'link_neighbor']:
             self.neighbor_sampler = LinkNeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
@@ -484,14 +492,14 @@ class LightningLinkData(LightningDataModule):
             )
 
         self.input_train_edges = input_train_edges
-        self.input_train_edge_label = input_train_edge_label
-        self.input_train_edge_label_time = input_train_edge_label_time
+        self.input_train_labels = input_train_labels
+        self.input_train_time = input_train_time
         self.input_val_edges = input_val_edges
-        self.input_val_edge_label = input_val_edge_label
-        self.input_val_edge_label_time = input_val_edge_label_time
+        self.input_val_labels = input_val_labels
+        self.input_val_time = input_val_time
         self.input_test_edges = input_test_edges
-        self.input_test_edge_label = input_test_edge_label
-        self.input_test_edge_label_time = input_test_edge_label_time
+        self.input_test_labels = input_test_labels
+        self.input_test_time = input_test_time
 
     def prepare_data(self):
         """"""
@@ -511,10 +519,10 @@ class LightningLinkData(LightningDataModule):
 
     def dataloader(
         self,
-        edge_label_index: InputEdges,
-        edge_label: Optional[Tensor],
-        edge_label_time: Optional[Tensor],
-        shuffle: bool,
+        input_edges: InputEdges,
+        input_labels: Optional[Tensor],
+        input_time: Optional[Tensor] = None,
+        shuffle: bool = False,
     ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
@@ -525,9 +533,9 @@ class LightningLinkData(LightningDataModule):
 
         if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(data=self.data,
-                                      edge_label_index=edge_label_index,
-                                      edge_label=edge_label,
-                                      edge_label_time=edge_label_time,
+                                      edge_label_index=input_edges,
+                                      edge_label=input_labels,
+                                      edge_label_time=input_time,
                                       neighbor_sampler=self.neighbor_sampler,
                                       shuffle=shuffle, **self.kwargs)
 
@@ -535,20 +543,18 @@ class LightningLinkData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_train_edges,
-                               self.input_train_edge_label,
-                               self.input_train_edge_label_time, shuffle=True)
+        return self.dataloader(self.input_train_edges, self.input_train_labels,
+                               self.input_train_time, shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_val_edges, self.input_val_edge_label,
-                               self.input_val_edge_label_time, shuffle=False)
+        return self.dataloader(self.input_val_edges, self.input_val_labels,
+                               self.input_val_time, shuffle=False)
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_test_edges,
-                               self.input_test_edge_label,
-                               self.input_test_edge_label_time, shuffle=False)
+        return self.dataloader(self.input_test_edges, self.input_test_labels,
+                               self.input_test_time, shuffle=False)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
