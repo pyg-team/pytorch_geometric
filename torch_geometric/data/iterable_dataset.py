@@ -161,7 +161,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
 
         print("Done!", file=sys.stderr)
 
-    def __iter__(self) -> Data:
+    def __iter__(self) -> Iterator:
         r"""Creates an iterator from an implementation of `iter`
         (and transforms each iter in case :obj:`transform` is
         present)."""
