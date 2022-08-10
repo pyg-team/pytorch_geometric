@@ -331,8 +331,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
 
-        if ((edge_label_time is not None and time_attr is None)
-                or (edge_label_time is None and time_attr is not None)):
+        if (edge_label_time is None) !=  (time_attr is None):
             raise ValueError(
                 "`edge_label_time` is specified but `time_attr` is `None` or "
                 "vice-versa. Both arguments need to be specified for temporal "
