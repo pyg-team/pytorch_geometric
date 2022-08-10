@@ -19,8 +19,6 @@ from torch_geometric.data.makedirs import makedirs
 class IterableDataset(torch.utils.data.IterableDataset):
     r"""Dataset base class for creating graph datasets which are loaded as
     an iterator.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
-    ________.html>`__ for the accompanying tutorial.
 
     Args:
         root (string, optional): Root directory where the dataset should be
@@ -58,12 +56,8 @@ class IterableDataset(torch.utils.data.IterableDataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    # def len(self) -> int:
-    #    r"""Returns the number of graphs stored in the dataset."""
-    #    raise NotImplementedError
-
     def iter(self) -> Data:
-        r"""Gets the data object at next iteration."""
+        r"""Yields a data object at every iteration."""
         raise NotImplementedError
 
     def __init__(
@@ -82,16 +76,6 @@ class IterableDataset(torch.utils.data.IterableDataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
-        self._indices: Optional[Sequence] = None
-
-        if self.download.__qualname__.split(".")[0] != "Dataset":
-            self._download()
-
-        if self.process.__qualname__.split(".")[0] != "Dataset":
-            self._process()
-
-    def indices(self) -> Sequence:
-        return range(self.len()) if self._indices is None else self._indices
 
     @property
     def raw_dir(self) -> str:
@@ -181,8 +165,8 @@ class IterableDataset(torch.utils.data.IterableDataset):
         print("Done!", file=sys.stderr)
 
     def __iter__(self) -> Union["Dataset", Data]:
-        r"""In case :obj:`idx` is of type integer, will return the data object
-        at next iteration (and transforms it in case :obj:`transform` is
+        r"""Creates an iterator from an implementation of `iter`
+        (and transforms each iter in case :obj:`transform` is
         present)."""
 
         iterator = iter(self.iter())
@@ -194,7 +178,6 @@ class IterableDataset(torch.utils.data.IterableDataset):
                 yield nextiter
             else:
                 yield self.transform(nextiter)
-        return
 
 
 def to_list(value: Any) -> Sequence:
