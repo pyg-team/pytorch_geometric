@@ -23,7 +23,6 @@ class LinkNeighborSampler(NeighborSampler):
         self,
         data,
         *args,
-        edge_label_time: Optional[Tensor] =None,
         neg_sampling_ratio: float = 0.0,
         num_src_nodes: Optional[int] = None,
         num_dst_nodes: Optional[int] = None,
@@ -31,7 +30,6 @@ class LinkNeighborSampler(NeighborSampler):
     ):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
-        self.edge_label_time = edge_label_time
 
         # TODO if self.edge_time is not None and
         # `src` or `dst` nodes don't have time attribute
@@ -66,22 +64,24 @@ class LinkNeighborSampler(NeighborSampler):
             self.num_src_nodes = data[self.input_type[0]].num_nodes
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
-    def _add_negative_samples(self, edge_label_index, edge_label, edge_time):
+    def _add_negative_samples(self, edge_label_index, edge_label,
+                              edge_label_time):
         """Add negative samples and their `edge_label` and `edge_time`
         if `self.neg_sampling_ration>0`"""
         num_pos_edges = edge_label_index.size(1)
         num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
 
         if num_neg_edges == 0:
-            return edge_label_index, edge_label, edge_time
+            return edge_label_index, edge_label, edge_label_time
 
         neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
         neg_col = torch.randint(self.num_dst_nodes, (num_neg_edges, ))
         neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
 
-        if edge_time is not None:
+        if edge_label_time is not None:
             perm = torch.randperm(num_pos_edges)
-            edge_time = torch.cat([edge_time, edge_time[perm[:num_neg_edges]]])
+            edge_label_time = torch.cat(
+                [edge_label_time, edge_label_time[perm[:num_neg_edges]]])
 
         edge_label_index = torch.cat([
             edge_label_index,
@@ -94,7 +94,7 @@ class LinkNeighborSampler(NeighborSampler):
 
         edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
 
-        return edge_label_index, edge_label, edge_time
+        return edge_label_index, edge_label, edge_label_time
 
     def _modify_node_time(self, edge_label_index, edge_label_time):
         """If `edge_label_time` is `None` return `self.node_time_dict`.
@@ -359,7 +359,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 directed,
                 input_type=edge_type,
                 is_sorted=is_sorted,
-                edge_label_time=edge_label_time,
                 neg_sampling_ratio=self.neg_sampling_ratio,
                 num_src_nodes=num_src_nodes,
                 num_dst_nodes=num_dst_nodes,
