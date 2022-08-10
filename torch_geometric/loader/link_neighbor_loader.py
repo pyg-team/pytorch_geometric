@@ -430,7 +430,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, idx: int) -> Tuple[int]:
         if self.edge_label_time is None:
             return (self.edge_label_index[0, idx],
-                    self.edge_label_index[1, idx], self.edge_label[idx])
+                    self.edge_label_index[1, idx], self.edge_label[idx],)
         else:
             return (self.edge_label_index[0, idx], self.edge_label_index[1,
                                                                          idx],
