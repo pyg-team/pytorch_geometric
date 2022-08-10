@@ -78,3 +78,15 @@ def test_static_gcn_conv():
     conv = GCNConv(16, 32)
     out = conv(x, edge_index)
     assert out.size() == (3, 4, 32)
+
+
+def test_gcn_conv_norm():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
+    row, col = edge_index
+
+    conv = GCNConv(16, 32, flow="source_to_target")
+    out1 = conv(x, edge_index)
+    conv.flow = "target_to_source"
+    out2 = conv(x, edge_index.flip(0))
+    assert torch.allclose(out1, out2, atol=1e-6)
