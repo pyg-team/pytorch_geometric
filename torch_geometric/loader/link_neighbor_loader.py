@@ -332,7 +332,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
 
-        if (edge_label_time is None) !=  (time_attr is None):
+        if (edge_label_time is None) != (time_attr is None):
             raise ValueError(
                 "`edge_label_time` is specified but `time_attr` is `None` or "
                 "vice-versa. Both arguments need to be specified for temporal "
@@ -430,12 +430,18 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx: int) -> Tuple[int]:
         if self.edge_label_time is None:
-            return (self.edge_label_index[0, idx],
-                    self.edge_label_index[1, idx], self.edge_label[idx],)
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+            )
         else:
-            return (self.edge_label_index[0, idx], self.edge_label_index[1,
-                                                                         idx],
-                    self.edge_label[idx], self.edge_label_time[idx],)
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+                self.edge_label_time[idx],
+            )
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
