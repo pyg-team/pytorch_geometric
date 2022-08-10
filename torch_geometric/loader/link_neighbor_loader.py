@@ -111,14 +111,13 @@ class LinkNeighborSampler(NeighborSampler):
                 new_node_time[index_unique],
                 self.node_time_dict[input_type][index_unique])
 
+        src, _, dst = self.input_type
         node_time_dict = copy.copy(self.node_time_dict)
-        node_time_dict[self.input_type[0]] = node_time_dict[
-            self.input_type[0]].clone()
-        node_time_dict[self.input_type[-1]] = node_time_dict[
-            self.input_type[-1]].clone()
-        update_time(node_time_dict, edge_label_index[0], self.input_type[0],
+        node_time_dict[src] = node_time_dict[src].clone()
+        node_time_dict[dst] = node_time_dict[dst].clone()
+        update_time(node_time_dict, edge_label_index[0], src,
                     self.num_src_nodes)
-        update_time(node_time_dict, edge_label_index[1], self.input_type[-1],
+        update_time(node_time_dict, edge_label_index[1], dst,
                     self.num_dst_nodes)
         return node_time_dict
 
@@ -332,7 +331,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
 
-        if (edge_label_time is None) !=  (time_attr is None):
+        if (edge_label_time is None) != (time_attr is None):
             raise ValueError(
                 "`edge_label_time` is specified but `time_attr` is `None` or "
                 "vice-versa. Both arguments need to be specified for temporal "
@@ -342,6 +341,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.edge_label = edge_label
         self.num_neighbors = num_neighbors
         self.edge_label_index = edge_label_index
+        self.edge_label_time = edge_label_time
         self.replace = replace
         self.directed = directed
         self.neg_sampling_ratio = neg_sampling_ratio
@@ -430,12 +430,18 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx: int) -> Tuple[int]:
         if self.edge_label_time is None:
-            return (self.edge_label_index[0, idx],
-                    self.edge_label_index[1, idx], self.edge_label[idx],)
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+            )
         else:
-            return (self.edge_label_index[0, idx], self.edge_label_index[1,
-                                                                         idx],
-                    self.edge_label[idx], self.edge_label_time[idx],)
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+                self.edge_label_time[idx],
+            )
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
