@@ -7,6 +7,8 @@ from torch_geometric.utils import scatter
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max', 'mul'])
 def test_scatter(reduce):
+    torch.manual_seed(12345)
+
     src = torch.randn(8, 100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
 
@@ -17,6 +19,8 @@ def test_scatter(reduce):
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max', 'mul'])
 def test_scatter_backward(reduce):
+    torch.manual_seed(12345)
+
     src = torch.randn(8, 100, 32).requires_grad_(True)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
     out = torch.randn(8, 10, 32)
@@ -29,6 +33,8 @@ def test_scatter_backward(reduce):
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max', 'mul'])
 def test_scatter_with_out(reduce):
+    torch.manual_seed(12345)
+
     src = torch.randn(8, 100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
     out = torch.randn(8, 10, 32)

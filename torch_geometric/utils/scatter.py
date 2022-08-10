@@ -39,8 +39,11 @@ if major > 1 or (major == 1 and minor >= 12):
                 size[dim] = 0
             out = src.new_zeros(size)
 
-        return out.scatter_reduce_(dim, index, src, reduce,
-                                   include_self=include_self)
+        if reduce == 'sum':
+            return out.scatter_add_(dim, index, src)
+        else:
+            return out.scatter_reduce_(dim, index, src, reduce,
+                                       include_self=include_self)
 
 else:
     import torch_scatter
