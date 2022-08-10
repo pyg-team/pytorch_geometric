@@ -3,7 +3,7 @@ import re
 import sys
 import warnings
 from collections.abc import Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union, Iterator
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch.utils.data
 
