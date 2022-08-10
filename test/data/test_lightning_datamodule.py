@@ -128,6 +128,7 @@ class LinearNodeModule(LightningModule):
         return self.lin(x)
 
     def training_step(self, data, batch_idx):
+        print(data)
         y_hat = self(data.x)[data.train_mask]
         y = data.y[data.train_mask]
         loss = F.cross_entropy(y_hat, y)
@@ -277,33 +278,38 @@ def test_lightning_hetero_link_data(get_dataset):
     # TODO: Add more datasets.
     dataset = get_dataset(name='DBLP')
     data = dataset[0]
-    datamodule = LightningLinkData(data, loader='link_neighbor',
-                                   num_neighbors=[5], batch_size=32,
-                                   num_workers=3)
-    input_edges = (('author', 'dummy', 'paper'), data['author',
-                                                      'paper']['edge_index'])
-    loader = datamodule.dataloader(edge_label_index=input_edges,
-                                   edge_label=None, edge_label_time=None,
-                                   shuffle=True)
-    batch = next(iter(loader))
-    assert (batch['author', 'dummy',
-                  'paper']['edge_label_index'].shape[1] == 32)
 
-    # With edge time:
-    edge_label_time = torch.arange(input_edges[1].size(1))
-    data['author'].time_col = torch.arange(data['author'].num_nodes)
-    data['paper'].time_col = torch.arange(data['paper'].num_nodes)
-    data['term'].time_col = torch.arange(data['term'].num_nodes)
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+    )
 
-    datamodule = LightningLinkData(data, loader='link_neighbor',
-                                   num_neighbors=[5], batch_size=32,
-                                   num_workers=3, time_attr='time_col')
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        break
 
-    loader = datamodule.dataloader(edge_label_index=input_edges,
-                                   edge_label=None, shuffle=True,
-                                   edge_label_time=edge_label_time)
-    batch = next(iter(loader))
-    assert (batch['author', 'dummy',
-                  'paper']['edge_label_index'].shape[1] == 32)
-    assert (batch['author', 'dummy',
-                  'paper']['edge_label_time'].shape[0] == 32)
+    data['author'].time = torch.arange(data['author'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['term'].time = torch.arange(data['term'].num_nodes)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        input_train_time=torch.arange(data['author', 'paper'].num_edges),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+        time_attr='time',
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        assert 'edge_label_time' in batch['author', 'paper']
+        break

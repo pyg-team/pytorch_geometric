@@ -480,14 +480,24 @@ class LightningLinkData(LightningDataModule):
         self.loader = loader
 
         if loader in ['neighbor', 'link_neighbor']:
+            input_type = get_edge_label_index(data, input_train_edges)[0]
+            if input_type is not None:
+                num_src_nodes = data[input_type[0]].num_nodes
+                num_dst_nodes = data[input_type[-1]].num_nodes
+            else:
+                num_src_nodes = num_dst_nodes = data.num_nodes
+
             self.neighbor_sampler = LinkNeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
                 directed=kwargs.get('directed', True),
-                input_type=get_edge_label_index(data, input_train_edges)[0],
+                input_type=input_type,
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
+                neg_sampling_ratio=kwargs.get('neg_sampling_ratio', 0.0),
+                num_src_nodes=num_src_nodes,
+                num_dst_nodes=num_dst_nodes,
                 share_memory=num_workers > 0,
             )
 
