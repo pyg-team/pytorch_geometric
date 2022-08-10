@@ -2,8 +2,8 @@ import os.path as osp
 import re
 import sys
 import warnings
-from collections.abc import Iterable, Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union
+from collections.abc import Sequence
+from typing import Any, Callable, List, Optional, Tuple, Union, Iterator
 
 import torch.utils.data
 
@@ -161,7 +161,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
 
         print("Done!", file=sys.stderr)
 
-    def __iter__(self) -> Iterable:
+    def __iter__(self) -> Iterator:
         r"""Creates an iterator from an implementation of `iter`
         (and transforms each iter in case :obj:`transform` is
         present)."""
