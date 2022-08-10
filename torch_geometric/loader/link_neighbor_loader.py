@@ -115,7 +115,7 @@ class LinkNeighborSampler(NeighborSampler):
         return node_time_dict
 
     def __call__(self, query: List[Tuple[Tensor]]):
-        query = [torch.tensor(s) for s in zip(*query)]
+        query = [torch.stack(s, dim=0) for s in zip(*query)]
         edge_label_index = torch.stack(query[:2], dim=0)
         edge_label = query[2]
         edge_label_time = query[3] if len(query) == 4 else None
