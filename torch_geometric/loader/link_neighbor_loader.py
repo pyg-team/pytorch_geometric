@@ -435,7 +435,7 @@ class Dataset(torch.utils.data.Dataset):
         else:
             return (self.edge_label_index[0, idx], self.edge_label_index[1,
                                                                          idx],
-                    self.edge_label[idx], self.edge_label_time[idx])
+                    self.edge_label[idx], self.edge_label_time[idx],)
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
