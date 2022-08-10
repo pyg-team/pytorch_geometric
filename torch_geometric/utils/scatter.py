@@ -40,7 +40,7 @@ if major > 1 or (major == 1 and minor >= 12):
             out = src.new_zeros(size)
 
         return out.scatter_reduce_(dim, index, src, reduce,
-                                   include_self=include_self)
+                                   include_self=include_self).clone()
 
 else:
     import torch_scatter
