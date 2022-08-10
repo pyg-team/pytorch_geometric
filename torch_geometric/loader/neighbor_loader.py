@@ -160,10 +160,8 @@ class NeighborSampler:
         return node, row, col, edge
 
     def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str, Tensor],
-                                       node_time_dict: Dict[str,
-                                                            Tensor] = None):
-        node_time_dict = (self.node_time_dict
-                          if node_time_dict is None else node_time_dict)
+                                       **kwargs):
+        node_time_dict = kwargs.get('node_time_dict', self.node_time_dict)
         if node_time_dict is None:
             fn = torch.ops.torch_sparse.hetero_neighbor_sample
             node_dict, row_dict, col_dict, edge_dict = fn(

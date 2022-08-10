@@ -97,28 +97,16 @@ class LinkNeighborSampler(NeighborSampler):
         return edge_label_index, edge_label, edge_label_time
 
     def _modify_node_time(self, edge_label_index, edge_label_time):
-        """If `edge_label_time` is `None` return `self.node_time_dict`.
-        Else, for edges in a batch replace `src` and `dst`
+        """For edges in a batch replace `src` and `dst`
         node times by the min across all edge times."""
-        if edge_label_time is None:
-            return self.node_time_dict
-
-        def update_time(node_time_dict, index, input_type, num_nodes):
-            new_node_time, _ = scatter_min(edge_label_time, index,
-                                           dim_size=num_nodes)
-            index_unique = index.unique()
-            node_time_dict[input_type][index_unique] = torch.min(
-                new_node_time[index_unique],
-                self.node_time_dict[input_type][index_unique])
-
         src, _, dst = self.input_type
         node_time_dict = copy.copy(self.node_time_dict)
         node_time_dict[src] = node_time_dict[src].clone()
         node_time_dict[dst] = node_time_dict[dst].clone()
-        update_time(node_time_dict, edge_label_index[0], src,
-                    self.num_src_nodes)
-        update_time(node_time_dict, edge_label_index[1], dst,
-                    self.num_dst_nodes)
+        scatter_min(edge_label_time, edge_label_index[0],
+                    out=node_time_dict[src])
+        scatter_min(edge_label_time, edge_label_index[1],
+                    out=node_time_dict[dst])
         return node_time_dict
 
     def __call__(self, query: List[Tuple[Tensor]]):
@@ -149,10 +137,12 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
-            node_time_dict = self._modify_node_time(orig_edge_label_index,
-                                                    edge_label_time)
+            node_time_dict = self.node_time_dict
+            if edge_label_time is not None:
+                node_time_dict = self._modify_node_time(
+                    orig_edge_label_index, edge_label_time)
             out = self._hetero_sparse_neighbor_sample(
-                query_node_dict, node_time_dict) + (
+                query_node_dict, node_time_dict=node_time_dict) + (
                     edge_label_index, edge_label, edge_label_time)
             return out
 
