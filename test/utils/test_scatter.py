@@ -17,7 +17,8 @@ def test_scatter(reduce):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max'])
+@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean'
+                                    'min', 'max'])
 def test_scatter_backward(reduce):
     torch.manual_seed(12345)
 
@@ -30,7 +31,7 @@ def test_scatter_backward(reduce):
     assert src.grad is not None
 
 
-@pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max'])
+@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_old_scatter_backward(reduce):
     torch.manual_seed(12345)
 
