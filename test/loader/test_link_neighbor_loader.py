@@ -187,7 +187,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
-    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes) - 200
     data['author'].x = torch.arange(100, 300)
     data['author'].time = torch.arange(data['author'].num_nodes)
 
@@ -206,7 +206,9 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'paper'),
                                 edge_label_time=edge_time, batch_size=32,
-                                time_attr='time', neg_sampling_ratio=0.5)
+                                time_attr='time', neg_sampling_ratio=0.5,
+                                num_workers=2)
+
     for batch in loader:
         author_max = batch['author'].time.max()
         edge_max = batch['paper', 'paper'].edge_label_time.max()

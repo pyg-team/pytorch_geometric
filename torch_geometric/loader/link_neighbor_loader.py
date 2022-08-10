@@ -1,3 +1,4 @@
+import copy
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
@@ -30,21 +31,12 @@ class LinkNeighborSampler(NeighborSampler):
     ):
         super().__init__(data, *args, **kwargs)
         self.neg_sampling_ratio = neg_sampling_ratio
-        self.edge_label_time = edge_label_time
 
         # TODO if self.edge_time is not None and
         # `src` or `dst` nodes don't have time attribute
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
         # set it to largest representabel torch.long.
 
-        if self.edge_label_time is not None:
-            # While sampling node time is replaced by edge time.
-            # Create a copy to reset node times.
-            self.copy_time_dict = {}
-            self.copy_time_dict[self.input_type[0]] = self.node_time_dict[
-                self.input_type[0]].clone()
-            self.copy_time_dict[self.input_type[-1]] = self.node_time_dict[
-                self.input_type[-1]].clone()
         if self.data_cls == 'custom':
             _, graph_store = data
             edge_attrs = graph_store.get_all_edge_attrs()
@@ -73,22 +65,24 @@ class LinkNeighborSampler(NeighborSampler):
             self.num_src_nodes = data[self.input_type[0]].num_nodes
             self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
-    def _add_negative_samples(self, edge_label_index, edge_label, edge_time):
+    def _add_negative_samples(self, edge_label_index, edge_label,
+                              edge_label_time):
         """Add negative samples and their `edge_label` and `edge_time`
         if `self.neg_sampling_ration>0`"""
         num_pos_edges = edge_label_index.size(1)
         num_neg_edges = int(num_pos_edges * self.neg_sampling_ratio)
 
         if num_neg_edges == 0:
-            return edge_label_index, edge_label, edge_time
+            return edge_label_index, edge_label, edge_label_time
 
         neg_row = torch.randint(self.num_src_nodes, (num_neg_edges, ))
         neg_col = torch.randint(self.num_dst_nodes, (num_neg_edges, ))
         neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
 
-        if edge_time is not None:
+        if edge_label_time is not None:
             perm = torch.randperm(num_pos_edges)
-            edge_time = torch.cat([edge_time, edge_time[perm[:num_neg_edges]]])
+            edge_label_time = torch.cat(
+                [edge_label_time, edge_label_time[perm[:num_neg_edges]]])
 
         edge_label_index = torch.cat([
             edge_label_index,
@@ -101,34 +95,25 @@ class LinkNeighborSampler(NeighborSampler):
 
         edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
 
-        return edge_label_index, edge_label, edge_time
+        return edge_label_index, edge_label, edge_label_time
 
-    def _modify_node_time(self, edge_label_index, edge_time):
-        """For edges in a batch replace `src` and `dst`
-        node times by the min across all edge times."""
-        def update_time(index, input_type, num_nodes):
-            new_node_time, _ = scatter_min(edge_time, index,
-                                           dim_size=num_nodes)
+    def _get_batch_node_time_dict(self, edge_label_index, edge_label_time):
+        """For edges in a batch replace `src` and `dst` node times by the min
+        across all edge times."""
+        def update_time_(node_time_dict, index, node_type, num_nodes):
+            node_time_dict[node_type] = node_time_dict[node_type].clone()
+            node_time, _ = scatter_min(edge_label_time, index, dim=0,
+                                       dim_size=num_nodes)
+            # NOTE We assume that node_time is always less than edge_time.
             index_unique = index.unique()
-            self.node_time_dict[input_type][index_unique] = torch.min(
-                new_node_time[index_unique],
-                self.node_time_dict[input_type][index_unique])
+            node_time_dict[node_type][index_unique] = node_time[index_unique]
 
-        update_time(edge_label_index[0], self.input_type[0],
-                    self.num_src_nodes)
-        update_time(edge_label_index[1], self.input_type[-1],
-                    self.num_dst_nodes)
-
-    def _reset_node_time(self, edge_label_index):
-        """Reset `node_time_dict` to its original
-        value saved in `copy_time_dict`."""
-        def reset_time(index, input_type):
-            index_unique = index.unique()
-            self.node_time_dict[input_type][
-                index_unique] = self.copy_time_dict[input_type][index_unique]
-
-        reset_time(edge_label_index[0], self.input_type[0])
-        reset_time(edge_label_index[1], self.input_type[-1])
+        node_time_dict = copy.copy(self.node_time_dict)
+        update_time_(node_time_dict, edge_label_index[0], self.input_type[0],
+                     self.num_src_nodes)
+        update_time_(node_time_dict, edge_label_index[1], self.input_type[-1],
+                     self.num_dst_nodes)
+        return node_time_dict
 
     def __call__(self, query: List[Tuple[Tensor]]):
         query = [torch.tensor(s) for s in zip(*query)]
@@ -136,10 +121,9 @@ class LinkNeighborSampler(NeighborSampler):
         edge_label = query[2]
         edge_label_time = query[3] if len(query) == 4 else None
 
-        (edge_label_index, edge_label,
-         edge_label_time) = self._add_negative_samples(edge_label_index,
-                                                       edge_label,
-                                                       edge_label_time)
+        out = self._add_negative_samples(edge_label_index, edge_label,
+                                         edge_label_time)
+        edge_label_index, edge_label, edge_label_time = out
 
         orig_edge_label_index = edge_label_index
         if (self.data_cls == 'custom'
@@ -159,12 +143,14 @@ class LinkNeighborSampler(NeighborSampler):
                 query_nodes, reverse = query_nodes.unique(return_inverse=True)
                 edge_label_index = reverse.view(2, -1)
                 query_node_dict = {self.input_type[0]: query_nodes}
+            node_time_dict = self.node_time_dict
             if edge_label_time is not None:
-                self._modify_node_time(orig_edge_label_index, edge_label_time)
-            out = self._hetero_sparse_neighbor_sample(query_node_dict) + (
-                edge_label_index, edge_label, edge_label_time)
-            if edge_label_time is not None:
-                self._reset_node_time(orig_edge_label_index)
+                node_time_dict = self._get_batch_node_time_dict(
+                    orig_edge_label_index, edge_label_time)
+            out = self._hetero_sparse_neighbor_sample(
+                query_node_dict, node_time_dict=node_time_dict) + (
+                    edge_label_index, edge_label, edge_label_time)
+
             return out
 
         elif issubclass(self.data_cls, Data):
@@ -256,9 +242,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             which neighbors are sampled. Must be the same length as
             the :obj:`edge_label_index`. If set to :obj:`None` its set to
             `torch.zeros(...)` internally. (default: :obj:`None`)
-        edge_label_time (Tensor, optional): The timestamps for edge indicies
+        edge_label_time (Tensor, optional): The timestamps for edge indices
             for which neighbors are sampled. Must be the same length as
-            the :obj:`edge_label_index`. If set, temporal sampling will be
+            :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
@@ -342,17 +328,17 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
 
-        if ((edge_label_time is not None and time_attr is None)
-                or (edge_label_time is None and time_attr is not None)):
-            raise ValueError(
-                "`edge_label_time` is specified but `time_attr` is `None` or "
-                "vice-versa. Both arguments need to be specified for temporal "
-                "sampling")
+        if (edge_label_time is None) != (time_attr is None):
+            raise ValueError("`edge_label_time` is specified but `time_attr` "
+                             "is `None` or vice-versa. Both arguments need to "
+                             "be specified for temporal sampling")
 
         # Save for PyTorch Lightning < 1.6:
         self.edge_label = edge_label
         self.num_neighbors = num_neighbors
+        self.edge_label = edge_label
         self.edge_label_index = edge_label_index
+        self.edge_label_time = edge_label_time
         self.replace = replace
         self.directed = directed
         self.neg_sampling_ratio = neg_sampling_ratio
@@ -442,12 +428,18 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx: int) -> Tuple[int]:
         if self.edge_label_time is None:
-            return (self.edge_label_index[0, idx],
-                    self.edge_label_index[1, idx], self.edge_label[idx])
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+            )
         else:
-            return (self.edge_label_index[0, idx], self.edge_label_index[1,
-                                                                         idx],
-                    self.edge_label[idx], self.edge_label_time[idx])
+            return (
+                self.edge_label_index[0, idx],
+                self.edge_label_index[1, idx],
+                self.edge_label[idx],
+                self.edge_label_time[idx],
+            )
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
