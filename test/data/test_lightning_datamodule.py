@@ -128,7 +128,6 @@ class LinearNodeModule(LightningModule):
         return self.lin(x)
 
     def training_step(self, data, batch_idx):
-        print(data)
         y_hat = self(data.x)[data.train_mask]
         y = data.y[data.train_mask]
         loss = F.cross_entropy(y_hat, y)
