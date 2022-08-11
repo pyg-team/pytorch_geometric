@@ -11,7 +11,7 @@ from torch_geometric.profile import rename_profile_file, trace_handler
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
-    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna'],
+    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage'],
     'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna'],
 }
 
@@ -125,15 +125,16 @@ if __name__ == '__main__':
                            default=['ogbn-mag', 'ogbn-products',
                                     'Reddit'], type=str)
     argparser.add_argument(
-        '--models', nargs='+',
-        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
+        '--models', nargs='+', default=[
+            'edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage', 'rgat', 'rgcn'
+        ], type=str)
     argparser.add_argument('--root', default='../../data', type=str,
                            help='relative path to look for the datasets')
-    argparser.add_argument('--eval-batch-sizes', nargs='+',
-                           default=[512, 1024, 2048, 4096, 8192], type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+',
-                           default=[64, 128, 256], type=int)
+    argparser.add_argument('--eval-batch-sizes', nargs='+', default=[5122],
+                           type=int)
+    argparser.add_argument('--num-layers', nargs='+', default=[3], type=int)
+    argparser.add_argument('--num-hidden-channels', nargs='+', default=[64],
+                           type=int)
     argparser.add_argument(
         '--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')

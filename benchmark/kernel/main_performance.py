@@ -102,12 +102,14 @@ def run_inference():
 
             for epoch in range(1, args.epochs + 1):
                 if epoch == args.epochs:
-                    e2e_inference_run(model, test_loader)
+                    with e2e_time():
+                        inference_run(model, test_loader)
                 else:
                     inference_run(model, test_loader)
 
             if args.profile:
-                profile_inference_run(model, test_loader)
+                with torch_profile():
+                    inference_run(model, test_loader)
                 rename_profile_file(Net.__name__, dataset_name,
                                     str(num_layers), str(hidden))
 
@@ -119,6 +121,4 @@ if not args.inference:
     run_train()
 else:
     # Decorate inference_run function:
-    e2e_inference_run = e2e_time()(inference_run)
-    profile_inference_run = torch_profile()(inference_run)
     run_inference()

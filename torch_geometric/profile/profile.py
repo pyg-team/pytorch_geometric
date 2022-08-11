@@ -1,6 +1,7 @@
 import os
 import pathlib
 import time
+from contextlib import contextmanager
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
@@ -199,35 +200,24 @@ def rename_profile_file(*args):
     os.rename('timeline.json', timeline_file)
 
 
+@contextmanager
 def e2e_time():
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_start = time.time()
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    t_start = time.time()
 
-            func(*args, **kwargs)
+    yield
 
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_end = time.time()
-            duration = t_end - t_start
-            print(f'End-to-End Inference time: {duration:.8f}s', flush=True)
-
-        return wrapper
-
-    return decorator
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    t_end = time.time()
+    duration = t_end - t_start
+    print(f'Time: {duration:.8f}s', flush=True)
 
 
+@contextmanager
 def torch_profile():
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            with profile(
-                    activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                    on_trace_ready=trace_handler) as p:
-                func(*args, **kwargs)
-                p.step()
-
-        return wrapper
-
-    return decorator
+    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                 on_trace_ready=trace_handler) as p:
+        yield
+        p.step()
