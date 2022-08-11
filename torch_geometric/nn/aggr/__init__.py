@@ -8,8 +8,6 @@ from .basic import (
     MulAggregation,
     VarAggregation,
     StdAggregation,
-    MedianAggregation,
-    QuantileAggregation,
     SoftmaxAggregation,
     PowerMeanAggregation,
 )
