@@ -53,6 +53,8 @@ if experimental and get_pytorch112:  # pragma: no cover
         # Reference: https://github.com/pyg-team/pytorch_geometric/pull/5120
         out = out.clone()
 
+        return out
+
 else:
     import torch_scatter
 
