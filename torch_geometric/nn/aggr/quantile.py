@@ -8,18 +8,17 @@ from torch_geometric.nn.aggr import Aggregation
 
 class QuantileAggregation(Aggregation):
     r"""An aggregation operator that returns the feature-wise :math:`q`-th
-    quantile of a set :math:`\mathcal{X}` of :math:`n` elements. That is,
-    for every feature :math:`d`, computes
+    quantile of a set :math:`\mathcal{X}`. That is, for every feature
+    :math:`d`, it computes
 
     .. math::
-        \big[\mathrm{Q}_q(\mathcal{X})\big]_d = \begin{cases}
-            \mathbf{x}_{\pi_i,d} & i = q\cdot n, \\
-            f(\mathbf{x}_{\pi_i,d}, \mathbf{x}_{\pi_{i+1},d}) &
-                i < q\cdot n < i + 1,\\
+        {\mathrm{Q}_q(\mathcal{X})}_d = \begin{cases}
+            x_{\pi_i,d} & i = q \cdot n, \\
+            f(x_{\pi_i,d}, x_{\pi_{i+1},d}) & i < q \cdot n < i + 1,\\
         \end{cases}
 
-    where :math:`\mathbf{x}_{\pi_1,d} \le \dots \le \mathbf{x}_{\pi_i,d} \le
-    \dots \le \mathbf{x}_{\pi_n,d}` and :math:`f(a, b)` is an interpolation
+    where :math:`x_{\pi_1,d} \le \dots \le x_{\pi_i,d} \le \dots \le
+    x_{\pi_n,d}` and :math:`f(a, b)` is an interpolation
     function defined by :obj:`interpolation`.
 
     Args:
@@ -39,8 +38,8 @@ class QuantileAggregation(Aggregation):
             * :obj:`"nearest"`: Returns the one whose index is nearest to the
               quantile point.
 
-            * :obj:`"linear"` (default): Returns a linear combination of the
-              two elments, defined as
+            * :obj:`"linear"`: Returns a linear combination of the two
+              elements, defined as
               :math:`f(a, b) = a + (b - a)\cdot(q\cdot n - i)`.
 
             (default: :obj:`"linear"`)
@@ -127,15 +126,14 @@ class QuantileAggregation(Aggregation):
 
 
 class MedianAggregation(QuantileAggregation):
-    r"""An aggregation operator that returns the feature-wise median of a set
-    :math:`\mathcal{X}` of :math:`n` elements. That is, for every feature
-    :math:`d`, computes
+    r"""An aggregation operator that returns the feature-wise median of a set.
+    That is, for every feature :math:`d`, it computes
 
     .. math::
-        \big[\mathrm{median}(\mathcal{X})\big]_d = \mathbf{x}_{\pi_i,d}
+        {\mathrm{median}(\mathcal{X})}_d = x_{\pi_i,d}
 
-    where :math:`\mathbf{x}_{\pi_1,d} \le \mathbf{x}_{\pi_2,d} \le \dots \le
-    \mathbf{x}_{\pi_n,d}` and :math:`i = \lfloor \frac{n}{2} \rfloor`.
+    where :math:`x_{\pi_1,d} \le x_{\pi_2,d} \le \dots \le
+    x_{\pi_n,d}` and :math:`i = \lfloor \frac{n}{2} \rfloor`.
 
     .. note::
         If the median lies between two values, the lowest one is returned.
@@ -143,24 +141,11 @@ class MedianAggregation(QuantileAggregation):
         values, use :class:`QuantileAggregation` instead.
 
     Args:
-        interpolation (str): Interpolation method:
-
-            * :obj:`"lower"`: Returns the one with lowest value.
-
-            * :obj:`"higher"`: Returns the one with highest value.
-
-            * :obj:`"midpoint"`: Returns the average of the two values.
-
-            (default: :obj:`"midpoint"`)
         fill_value (float, optional): The default value in the case no entry is
             found for a given index (default: :obj:`0.0`).
     """
-    def __init__(self, interpolation: str = 'midpoint',
-                 fill_value: float = 0.0):
-        if interpolation not in {'lower', 'higher', 'midpoint'}:
-            raise ValueError(f"Invalid interpolation method "
-                             f"got ('{interpolation}')")
-        super().__init__(0.5, interpolation, fill_value)
+    def __init__(self, fill_value: float = 0.0):
+        super().__init__(0.5, 'lower', fill_value)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}()"
