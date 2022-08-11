@@ -71,7 +71,7 @@ As of now, PyG provides support for various aggregations --- from simple ones (*
    sort_aggr = aggr.SortAggregation(k=4)
 
    x = torch.randn(1000, 64)  # 1000 nodes with 64 features each.
-   index = torch.randint(0, 100, (1000, ))  # Randomly assign to 100 graphs
+   index = torch.randint(0, 100, (1000, ))  # Assign nodes to 100 graphs.
 
    output = mean_aggr(x, index)  #  Output shape: [100, 64]
 
