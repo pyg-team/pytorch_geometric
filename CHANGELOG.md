@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.1.0] - 2022-08-17
 ### Added
+- Added `edge_label_time` argument to `LinkNeighborLoader` ([#5137](https://github.com/pyg-team/pytorch_geometric/pull/5137), [#5173](https://github.com/pyg-team/pytorch_geometric/pull/5173))
 - Let `ImbalancedSampler` accept `torch.Tensor` as input ([#5138](https://github.com/pyg-team/pytorch_geometric/pull/5138))
 - Added `flow` argument to `gcn_norm` to correctly normalize the adjacency matrix in `GCNConv` ([#5149](https://github.com/pyg-team/pytorch_geometric/pull/5149))
 - `NeighborSampler` supports graphs without edges ([#5072](https://github.com/pyg-team/pytorch_geometric/pull/5072))
@@ -72,7 +73,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for graph-level outputs in `to_hetero` ([#4582](https://github.com/pyg-team/pytorch_geometric/pull/4582))
 - Added `CHANGELOG.md` ([#4581](https://github.com/pyg-team/pytorch_geometric/pull/4581))
 ### Changed
-- Switched to PyTorch `scatter_reduce` implementation ([#5120](https://github.com/pyg-team/pytorch_geometric/pull/5120))
+- Switched to PyTorch `scatter_reduce` implementation - experimental feature ([#5120](https://github.com/pyg-team/pytorch_geometric/pull/5120))
+- Fixed `RGATConv` device mismatches for `f-scaled` mode ([#5187](https://github.com/pyg-team/pytorch_geometric/pull/5187)]
+- Allow for multi-dimensional `edge_labels` in `LinkNeighborLoader` ([#5186](https://github.com/pyg-team/pytorch_geometric/pull/5186)]
 - Fixed `GINEConv` bug with non-sequential input ([#5154](https://github.com/pyg-team/pytorch_geometric/pull/5154)]
 - Improved error message ([#5095](https://github.com/pyg-team/pytorch_geometric/pull/5095))
 - Fixed `HGTLoader` bug which produced outputs with missing edge types ([#5067](https://github.com/pyg-team/pytorch_geometric/pull/5067))

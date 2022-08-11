@@ -277,13 +277,38 @@ def test_lightning_hetero_link_data(get_dataset):
     # TODO: Add more datasets.
     dataset = get_dataset(name='DBLP')
     data = dataset[0]
-    datamodule = LightningLinkData(data, loader='link_neighbor',
-                                   num_neighbors=[5], batch_size=32,
-                                   num_workers=3)
-    input_edges = (('author', 'dummy', 'paper'), data['author',
-                                                      'paper']['edge_index'])
-    loader = datamodule.dataloader(input_edges=input_edges, input_labels=None,
-                                   shuffle=True)
-    batch = next(iter(loader))
-    assert (batch['author', 'dummy',
-                  'paper']['edge_label_index'].shape[1] == 32)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        break
+
+    data['author'].time = torch.arange(data['author'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['term'].time = torch.arange(data['term'].num_nodes)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        input_train_time=torch.arange(data['author', 'paper'].num_edges),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+        time_attr='time',
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        assert 'edge_label_time' in batch['author', 'paper']
+        break
