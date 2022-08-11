@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 # metainformation
-LABEL org.opencontainers.image.version = "2.0.4"
+LABEL org.opencontainers.image.version = "2.1.0"
 LABEL org.opencontainers.image.authors = "Matthias Fey"
 LABEL org.opencontainers.image.source = "https://github.com/pyg-team/pytorch_geometric"
 LABEL org.opencontainers.image.licenses = "MIT"
