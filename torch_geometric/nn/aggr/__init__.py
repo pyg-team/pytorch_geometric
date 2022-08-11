@@ -13,6 +13,7 @@ from .basic import (
     SoftmaxAggregation,
     PowerMeanAggregation,
 )
+from .quantile import MedianAggregation, QuantileAggregation
 from .lstm import LSTMAggregation
 from .set2set import Set2Set
 from .scaler import DegreeScalerAggregation
@@ -31,10 +32,10 @@ __all__ = classes = [
     'MulAggregation',
     'VarAggregation',
     'StdAggregation',
-    'MedianAggregation',
-    'QuantileAggregation',
     'SoftmaxAggregation',
     'PowerMeanAggregation',
+    'MedianAggregation',
+    'QuantileAggregation',
     'LSTMAggregation',
     'Set2Set',
     'DegreeScalerAggregation',

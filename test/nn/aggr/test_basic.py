@@ -4,11 +4,9 @@ import torch
 from torch_geometric.nn import (
     MaxAggregation,
     MeanAggregation,
-    MedianAggregation,
     MinAggregation,
     MulAggregation,
     PowerMeanAggregation,
-    QuantileAggregation,
     SoftmaxAggregation,
     StdAggregation,
     SumAggregation,
@@ -34,7 +32,6 @@ def test_validate():
     MeanAggregation,
     SumAggregation,
     MaxAggregation,
-    MedianAggregation,
     MinAggregation,
     MulAggregation,
     VarAggregation,
@@ -46,19 +43,12 @@ def test_basic_aggregation(Aggregation):
     ptr = torch.tensor([0, 2, 5, 6])
 
     aggr = Aggregation()
-    if isinstance(aggr, MedianAggregation):
-        assert str(aggr) == f'{Aggregation.__name__}(fill_value=nan)'
-
-        assert QuantileAggregation.__repr__(aggr) == \
-            f'{aggr.__class__.__name__}(' \
-            f'q=[0.5], interpolation="lower", fill_value=nan)'
-    else:
-        assert str(aggr) == f'{Aggregation.__name__}()'
+    assert str(aggr) == f'{Aggregation.__name__}()'
 
     out = aggr(x, index)
     assert out.size() == (3, x.size(1))
 
-    if isinstance(aggr, (MulAggregation, MedianAggregation)):
+    if isinstance(aggr, MulAggregation):
         with pytest.raises(NotImplementedError, match="requires 'index'"):
             aggr(x, ptr=ptr)
     else:
