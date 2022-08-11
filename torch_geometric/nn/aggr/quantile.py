@@ -1,4 +1,4 @@
-from typing import Optional, Sequence, SupportsFloat, Union
+from typing import List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -43,101 +43,87 @@ class QuantileAggregation(Aggregation):
               two elments, defined as
               :math:`f(a, b) = a + (b - a)\cdot(q\cdot n - i)`.
 
-        fill_value (float): Default value in the case no entry is
-            found for a given index (default: :obj:`NaN`).
+            (default: :obj:`"linear"`)
+        fill_value (float, optional): The default value in the case no entry is
+            found for a given index (default: :obj:`0.0`).
     """
-
     interpolations = {'linear', 'lower', 'higher', 'nearest', 'midpoint'}
 
-    def __init__(self, q: Union[SupportsFloat, Sequence[SupportsFloat]],
-                 interpolation: str = 'linear',
-                 fill_value: SupportsFloat = float('nan')):
-        if isinstance(q, SupportsFloat):
-            q = [q]
-        if len(q) == 0:
-            raise ValueError("Provide at least a quantile value for `q`.")
-        if not all(0. <= quantile <= 1. for quantile in q):
+    def __init__(self, q: Union[float, List[float]],
+                 interpolation: str = 'linear', fill_value: float = 0.0):
+        super().__init__()
+
+        qs = [q] if not isinstance(q, (list, tuple)) else q
+        if len(qs) == 0:
+            raise ValueError("Provide at least one quantile value for `q`.")
+        if not all(0. <= quantile <= 1. for quantile in qs):
             raise ValueError("`q` must be in the range [0, 1].")
         if interpolation not in self.interpolations:
-            raise ValueError(f"Invalid '{interpolation}' interpolation method."
-                             f" Available interpolations:"
-                             f"{self.interpolations}")
+            raise ValueError(f"Invalid interpolation method "
+                             f"got ('{interpolation}')")
 
-        super().__init__()
-        self.q = torch.tensor(q, dtype=torch.float,
-                              requires_grad=False).view(-1, 1)
+        self._q = q
+        self.register_buffer('q', torch.Tensor(qs).view(-1, 1))
         self.interpolation = interpolation
         self.fill_value = fill_value
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
+
+        dim = x.dim() + dim if dim < 0 else dim
+
         self.assert_index_present(index)
-        assert index is not None  # required for TorchScript
+        assert index is not None  # Required for TorchScript.
 
-        # compute the quantile points
-        if dim_size is None:
-            dim_size = 0  # default value for `bincount`
-        count = torch.bincount(index, minlength=dim_size)
+        count = torch.bincount(index, minlength=dim_size or 0)
         cumsum = torch.cumsum(count, dim=0) - count
-        q_point = self.q * (count - 1) + cumsum  # outer sum/product, QxB
-        q_point = q_point.T.reshape(-1)  # BxQ, then flatten
 
-        # shape used for expansions
-        # (1, ..., 1, -1, 1, ..., 1)
+        q_point = self.q * (count - 1) + cumsum
+        q_point = q_point.t().reshape(-1)
+
         shape = [1] * x.dim()
         shape[dim] = -1
-
-        # two sorts: the first one on the value,
-        # the second (stable) on the indices
-        x, x_perm = torch.sort(x, dim=dim)
         index = index.view(shape).expand_as(x)
+
+        # Two sorts: the first one on the value,
+        # the second (stable) on the indices:
+        x, x_perm = torch.sort(x, dim=dim)
         index = index.take_along_dim(x_perm, dim=dim)
         index, index_perm = torch.sort(index, dim=dim, stable=True)
         x = x.take_along_dim(index_perm, dim=dim)
 
-        # compute the quantile interpolations
+        # Compute the quantile interpolations:
         if self.interpolation == 'lower':
-            idx = torch.floor(q_point).long()
-            quantile = x.index_select(dim, idx)
+            quantile = x.index_select(dim, q_point.floor().long())
         elif self.interpolation == 'higher':
-            idx = torch.ceil(q_point).long()
-            quantile = x.index_select(dim, idx)
+            quantile = x.index_select(dim, q_point.ceil().long())
         elif self.interpolation == 'nearest':
-            idx = torch.round(q_point).long()
-            quantile = x.index_select(dim, idx)
+            quantile = x.index_select(dim, q_point.round().long())
         else:
-            l_idx = torch.floor(q_point).long()
-            r_idx = torch.ceil(q_point).long()
-            l_quant = x.index_select(dim, l_idx)
-            r_quant = x.index_select(dim, r_idx)
+            l_quant = x.index_select(dim, q_point.floor().long())
+            r_quant = x.index_select(dim, q_point.ceil().long())
 
             if self.interpolation == 'linear':
-                q_frac = torch.frac(q_point).view(shape)
+                q_frac = q_point.frac().view(shape)
                 quantile = l_quant + (r_quant - l_quant) * q_frac
             else:  # 'midpoint'
                 quantile = 0.5 * l_quant + 0.5 * r_quant
 
-        # if the number of elements is 0, return 'nan'/fill_value
-        num_qs = self.q.size(0)
-        out_mask = (count > 0).repeat_interleave(num_qs).view(shape)
-        out = torch.where(
-            out_mask, quantile,
-            torch.tensor([self.fill_value], dtype=quantile.dtype,
-                         device=quantile.device))
+        # If the number of elements is zero, fill with pre-defined value:
+        mask = (count == 0).repeat_interleave(self.q.numel()).view(shape)
+        out = quantile.masked_fill(mask, self.fill_value)
 
-        if num_qs > 1:  # if > 1, this may generate a new dimension
-            out_shape = list(out.shape)
-            out_shape = (out_shape[:dim] + [out_shape[dim] // num_qs, -1] +
-                         out_shape[dim + 2:])
-            return out.view(out_shape)
+        if self.q.numel() > 1:
+            shape = list(out.shape)
+            shape = (shape[:dim] + [shape[dim] // self.q.numel(), -1] +
+                     shape[dim + 2:])
+            out = out.view(shape)
 
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(q={self.q.view(-1).tolist()}, '
-                f'interpolation="{self.interpolation}", '
-                f'fill_value={self.fill_value})')
+        return (f'{self.__class__.__name__}(q={self._q})')
 
 
 class MedianAggregation(QuantileAggregation):
@@ -157,11 +143,24 @@ class MedianAggregation(QuantileAggregation):
         values, use :class:`QuantileAggregation` instead.
 
     Args:
-        fill_value (float, optional): Default value in the case no entry is
-            found for a given index (default: :obj:`NaN`).
+        interpolation (str): Interpolation method:
+
+            * :obj:`"lower"`: Returns the one with lowest value.
+
+            * :obj:`"higher"`: Returns the one with highest value.
+
+            * :obj:`"midpoint"`: Returns the average of the two values.
+
+            (default: :obj:`"midpoint"`)
+        fill_value (float, optional): The default value in the case no entry is
+            found for a given index (default: :obj:`0.0`).
     """
-    def __init__(self, fill_value: float = float('nan')):
-        super().__init__(q=0.5, interpolation='lower', fill_value=fill_value)
+    def __init__(self, interpolation: str = 'midpoint',
+                 fill_value: float = 0.0):
+        if interpolation not in {'lower', 'higher', 'midpoint'}:
+            raise ValueError(f"Invalid interpolation method "
+                             f"got ('{interpolation}')")
+        super().__init__(0.5, interpolation, fill_value)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(fill_value={self.fill_value})'
+        return f"{self.__class__.__name__}()"
