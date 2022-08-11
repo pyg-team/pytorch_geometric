@@ -1,4 +1,5 @@
-import warnings
+import os
+from distutils.util import strtobool
 from typing import Optional
 
 import torch
@@ -6,8 +7,9 @@ from torch import Tensor
 
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
 major, minor = int(major), int(minor)
-if major > 1 or (major == 1 and minor >= 12):
-    warnings.filterwarnings('ignore', '.*scatter_reduce.*')
+if strtobool(os.environ.get('WITH_PYTORCH_SCATTER',
+                            'False')) and (major > 1 or
+                                           (major == 1 and minor >= 12)):
 
     def scatter(src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
