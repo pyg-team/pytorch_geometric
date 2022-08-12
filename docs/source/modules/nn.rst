@@ -75,7 +75,9 @@ As of now, PyG provides support for various aggregations --- from simple ones (*
 
    output = mean_aggr(x, index)  #  Output shape: [100, 64]
 
-Each of these aggregations can be used within :class:`~torch_geometric.nn.conv.MessagePassing` as well as for hierachical/global pooling to obtain graph-level representations:
+Notably, all aggregations share the same set of forward arguments, as described in detail in :meth:`torch_geometric.nn.aggr.Aggregation.forward`.
+
+Each of the provided aggregations can be used within :class:`~torch_geometric.nn.conv.MessagePassing` as well as for hierachical/global pooling to obtain graph-level representations:
 
 .. code-block:: python
 
