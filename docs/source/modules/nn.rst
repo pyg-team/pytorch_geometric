@@ -49,7 +49,7 @@ For example, **mean aggregation** captures the distribution (or proportions) of 
 Recent works also show that using **multiple aggregations** (`Corso et al. (2020) <https://arxiv.org/abs/2004.05718>`__, `Tailor et al. (2021) <https://arxiv.org/abs/2104.01481>`__) and **learnable aggregations** (`Li et al. (2020) <https://arxiv.org/abs/2006.07739>`__) can potentially provide substantial improvements.
 
 To facilitate further experimentation and unify the concepts of aggregation within GNNs across both :class:`~torch_geometric.nn.conv.MessagePassing` and global readouts, we have made the concept of :class:`~torch_geometric.nn.aggr.Aggregation` a first-class principle in PyG.
-As of now, PyG provides support for various aggregations --- from simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`) and learnable ones (*e.g.*, :obj:`softmax`, :obj:`powermean`), or exotic ones (*e.g.*, :obj:`lstm`, :obj:`sort`):
+As of now, PyG provides support for various aggregations --- from simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`), learnable ones (*e.g.*, :obj:`softmax`, :obj:`powermean`), and exotic ones (*e.g.*, :obj:`lstm`, :obj:`sort`):
 
 .. code-block:: python
 
