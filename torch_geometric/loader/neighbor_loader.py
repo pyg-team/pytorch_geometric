@@ -173,6 +173,7 @@ class NeighborSampler:
         if isinstance(index, List) and isinstance(index[0], Tuple):
             index_dict = from_hetero_list(index)
         else:
+            index = torch.LongTensor(index)
             index_dict = {self.input_type: index}
 
         if self.node_time_dict is None:
