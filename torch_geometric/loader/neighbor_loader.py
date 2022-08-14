@@ -435,11 +435,12 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         else:  # Tuple[FeatureStore, GraphStore]
             # TODO support for feature stores with no edge types
-            node_dict, row_dict, col_dict, edge_dict, batch_size = out
+            node_dict, row_dict, col_dict, edge_dict, batch_dict = out
             feature_store, graph_store = self.data
             data = filter_custom_store(feature_store, graph_store, node_dict,
                                        row_dict, col_dict, edge_dict)
-            data[self.neighbor_sampler.input_type].batch_size = batch_size
+            for node_type, batch_size in batch_dict.items():
+                data[node_type].batch_size = batch_size
 
         return data if self.transform is None else self.transform(data)
 
