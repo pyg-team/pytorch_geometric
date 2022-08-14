@@ -154,7 +154,6 @@ class NeighborSampler:
 
     def _sparse_neighbor_sample(self, index: Union[List[int], Tensor]):
 
-        index = torch.LongTensor(index)
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,
@@ -164,17 +163,11 @@ class NeighborSampler:
             self.replace,
             self.directed,
         )
-        return node, row, col, edge, index.numel()
+        return node, row, col, edge
 
-    def _hetero_sparse_neighbor_sample(self, index: Union[List[int], Tensor,
-                                                          HeteroNodeList],
+    def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str,
+                                                              torch.Tensor],
                                        **kwargs):
-
-        if isinstance(index, List) and isinstance(index[0], Tuple):
-            index_dict = from_hetero_list(index)
-        else:
-            index = torch.LongTensor(index)
-            index_dict = {self.input_type: index}
 
         if self.node_time_dict is None:
             fn = torch.ops.torch_sparse.hetero_neighbor_sample
@@ -211,17 +204,28 @@ class NeighborSampler:
                 self.replace,
                 self.directed,
             )
-        batch_sizes = {
-            node_type: index.numel()
-            for node_type, index in index_dict.items()
-        }
-        return node_dict, row_dict, col_dict, edge_dict, batch_sizes
+
+        return node_dict, row_dict, col_dict, edge_dict
 
     def __call__(self, index: Union[List[int], Tensor, HeteroNodeList]):
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            return self._hetero_sparse_neighbor_sample(index)
 
-        return self._sparse_neighbor_sample(index)
+            if isinstance(index, List) and isinstance(index[0], Tuple):
+                index_dict = from_hetero_list(index)
+            else:
+                index = torch.LongTensor(index)
+                index_dict = {self.input_type: index}
+
+            batch_sizes = {
+                node_type: index.numel()
+                for node_type, index in index_dict.items()
+            }
+
+            return self._hetero_sparse_neighbor_sample(index_dict) + (
+                batch_sizes, )
+
+        index = torch.LongTensor(index)
+        return self._sparse_neighbor_sample(index) + (index.numel(), )
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
