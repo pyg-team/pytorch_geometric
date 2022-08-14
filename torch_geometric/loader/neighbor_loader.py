@@ -154,6 +154,7 @@ class NeighborSampler:
 
     def _sparse_neighbor_sample(self, index: Union[List[int], Tensor]):
 
+        index = torch.LongTensor(index)
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,
@@ -163,7 +164,7 @@ class NeighborSampler:
             self.replace,
             self.directed,
         )
-        return node, row, col, edge
+        return node, row, col, edge, index.numel()
 
     def _hetero_sparse_neighbor_sample(self, index: Union[List[int], Tensor,
                                                           HeteroNodeList],
@@ -209,13 +210,17 @@ class NeighborSampler:
                 self.replace,
                 self.directed,
             )
-        return node_dict, row_dict, col_dict, edge_dict
+        batch_sizes = {
+            node_type: index.numel()
+            for node_type, index in index_dict.items()
+        }
+        return node_dict, row_dict, col_dict, edge_dict, batch_sizes
 
     def __call__(self, index: Union[List[int], Tensor, HeteroNodeList]):
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            return self._hetero_sparse_neighbor_sample(index) + (len(index), )
+            return self._hetero_sparse_neighbor_sample(index)
 
-        return self._sparse_neighbor_sample(index) + (len(index), )
+        return self._sparse_neighbor_sample(index)
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
@@ -420,16 +425,12 @@ class NeighborLoader(torch.utils.data.DataLoader):
             data.batch_size = batch_size
 
         elif isinstance(self.data, HeteroData):
-            node_dict, row_dict, col_dict, edge_dict, batch_size = out
+            node_dict, row_dict, col_dict, edge_dict, batch_dict = out
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
-
-            input_types = self.neighbor_sampler.input_type
-            if isinstance(input_types, str):
-                input_types = [input_types]
-            for input_type in input_types:
-                data[input_type].batch_size = batch_size
+            for node_type, batch_size in batch_dict.items():
+                data[node_type].batch_size = batch_size
 
         else:  # Tuple[FeatureStore, GraphStore]
             # TODO support for feature stores with no edge types

@@ -201,6 +201,17 @@ def test_heterogeneous_neighbor_loader_mixed_input(directed):
         assert torch.equal(batch1['paper'].x, batch2['paper'].x)
         assert torch.equal(batch2['paper'].x, batch3['paper'].x)
 
+    loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
+        ('paper', None), ('author', None)
+    ], batch_size=batch_size, directed=directed, shuffle=False)
+
+    for batch in loader:
+        paper_size = (batch['paper'].batch_size if hasattr(
+            batch['paper'], 'batch_size') else 0)
+        author_size = (batch['author'].batch_size if hasattr(
+            batch['author'], 'batch_size') else 0)
+        assert paper_size + author_size == batch_size
+
 
 @pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
