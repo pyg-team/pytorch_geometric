@@ -166,6 +166,43 @@ def test_heterogeneous_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True, False])
+def test_heterogeneous_neighbor_loader_mixed_input(directed):
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(100)
+    data['author'].x = torch.arange(100, 300)
+
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_attr = torch.arange(500)
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
+
+    batch_size = 20
+
+    loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
+        ('paper', None)
+    ], batch_size=batch_size, directed=directed, shuffle=False)
+
+    loader2 = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
+        ('paper', None)
+    ], batch_size=batch_size, directed=directed, shuffle=False)
+
+    loader3 = NeighborLoader(
+        data, num_neighbors=[10] * 2, input_nodes=[
+            ('paper', torch.arange(0, data['paper'].num_nodes,
+                                   dtype=torch.long))
+        ], batch_size=batch_size, directed=directed, shuffle=False)
+
+    for batch1, batch2, batch3 in zip(loader, loader2, loader3):
+        assert torch.equal(batch1['paper'].x, batch2['paper'].x)
+        assert torch.equal(batch2['paper'].x, batch3['paper'].x)
+
+
+@pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]

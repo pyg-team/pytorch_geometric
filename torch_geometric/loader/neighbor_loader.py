@@ -1,5 +1,4 @@
 from collections import defaultdict
-from collections.abc import Sequence
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 import torch
@@ -17,7 +16,12 @@ from torch_geometric.loader.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.typing import HeteroNodeList, InputNodes, NumNeighbors
+from torch_geometric.typing import (
+    HeteroNodeList,
+    InputNodes,
+    NumNeighbors,
+    SamplingNodes,
+)
 
 
 class NeighborSampler:
@@ -150,9 +154,6 @@ class NeighborSampler:
 
     def _sparse_neighbor_sample(self, index: Union[List[int], Tensor]):
 
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
-
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,
@@ -171,8 +172,6 @@ class NeighborSampler:
         if isinstance(index, List) and isinstance(index[0], Tuple):
             index_dict = from_hetero_list(index)
         else:
-            if not isinstance(index, torch.LongTensor):
-                index = torch.LongTensor(index)
             index_dict = {self.input_type: index}
 
         if self.node_time_dict is None:
@@ -212,15 +211,11 @@ class NeighborSampler:
             )
         return node_dict, row_dict, col_dict, edge_dict
 
-    def __call__(self, index: Union[List[int], Tensor]):
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
-
+    def __call__(self, index: Union[List[int], Tensor, HeteroNodeList]):
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            return self._hetero_sparse_neighbor_sample(index) + (
-                index.numel(), )
+            return self._hetero_sparse_neighbor_sample(index) + (len(index), )
 
-        return self._sparse_neighbor_sample(index) + (index.numel(), )
+        return self._sparse_neighbor_sample(index) + (len(index), )
 
 
 class NeighborLoader(torch.utils.data.DataLoader):
@@ -397,7 +392,11 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
 
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
+        if isinstance(input_nodes, list) and isinstance(data, HeteroData):
+            node_type, input_nodes = get_mixed_sampling_nodes(
+                data, input_nodes)
+        else:
+            node_type, input_nodes = get_sampling_nodes(data, input_nodes)
 
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
@@ -425,7 +424,12 @@ class NeighborLoader(torch.utils.data.DataLoader):
             data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                       edge_dict,
                                       self.neighbor_sampler.perm_dict)
-            data[self.neighbor_sampler.input_type].batch_size = batch_size
+
+            input_types = self.neighbor_sampler.input_type
+            if isinstance(input_types, str):
+                input_types = [input_types]
+            for input_type in input_types:
+                data[input_type].batch_size = batch_size
 
         else:  # Tuple[FeatureStore, GraphStore]
             # TODO support for feature stores with no edge types
@@ -458,11 +462,11 @@ class NeighborLoader(torch.utils.data.DataLoader):
 ###############################################################################
 
 
-def get_input_nodes(
+def get_sampling_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
-) -> Tuple[Optional[str], Sequence]:
-    def to_index(tensor):
+) -> SamplingNodes:
+    def to_index(tensor) -> torch.LongTensor:
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
             return tensor.nonzero(as_tuple=False).view(-1)
         return tensor
@@ -474,9 +478,6 @@ def get_input_nodes(
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
-
-        if isinstance(input_nodes, list):
-            return to_hetero_types(input_nodes), to_hetero_list(input_nodes)
 
         if isinstance(input_nodes, str):
             return input_nodes, range(data[input_nodes].num_nodes)
@@ -521,6 +522,13 @@ def get_input_nodes(
             num_nodes = feature_store.get_tensor_size(input_nodes)[0]
             return node_type, range(num_nodes)
         return node_type, input_nodes.index
+
+
+def get_mixed_sampling_nodes(data: HeteroData,
+                             input_nodes: List[InputNodes]) -> SamplingNodes:
+    for i in range(len(input_nodes)):
+        input_nodes[i] = get_sampling_nodes(data, input_nodes[i])
+    return to_hetero_types(input_nodes), to_hetero_list(input_nodes)
 
 
 def to_hetero_types(input_nodes: List[Tuple[str, Tensor]]) -> List[str]:

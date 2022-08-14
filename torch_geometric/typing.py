@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -47,3 +48,4 @@ InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor],
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
 NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
 HeteroNodeList = List[Tuple[str, Tensor]]
+SamplingNodes = Union[Tuple[Optional[Union[str, List[str]]], Sequence]]
