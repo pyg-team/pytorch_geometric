@@ -187,9 +187,9 @@ def test_heterogeneous_neighbor_loader_mixed_input(directed):
         ('paper', None)
     ], batch_size=batch_size, directed=directed, shuffle=False)
 
-    loader2 = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
-        ('paper', None)
-    ], batch_size=batch_size, directed=directed, shuffle=False)
+    loader2 = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
+                             batch_size=batch_size, directed=directed,
+                             shuffle=False)
 
     loader3 = NeighborLoader(
         data, num_neighbors=[10] * 2, input_nodes=[
