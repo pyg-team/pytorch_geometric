@@ -11,7 +11,7 @@ from torch_geometric.profile.profile import torch_profile
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
     'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage'],
-    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna'],
+    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage'],
 }
 
 

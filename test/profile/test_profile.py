@@ -10,7 +10,7 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
 )
-from torch_geometric.profile.profile import e2e_time, torch_profile
+from torch_geometric.profile.profile import torch_profile
 from torch_geometric.testing import onlyFullTest, withCUDA
 
 
@@ -76,7 +76,7 @@ def test_torch_profile(get_dataset):
                       out_channels=dataset.num_classes).to(device)
     model.eval()
 
-    @e2e_time()
+    @timeit()
     def inference_e2e(model, data):
         model(data.x, data.edge_index)
 
