@@ -1,13 +1,12 @@
 import argparse
-from timeit import default_timer
 
 import torch
-from torch.profiler import ProfilerActivity, profile
 from utils import get_dataset, get_model
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, trace_handler
+from torch_geometric.profile import rename_profile_file, timeit
+from torch_geometric.profile.profile import torch_profile
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -97,22 +96,14 @@ def run(args: argparse.ArgumentParser) -> None:
                         for _ in range(args.warmup):
                             model.inference(subgraph_loader, device,
                                             progress_bar=True)
-
-                        start = default_timer()
-                        model.inference(subgraph_loader, device,
-                                        progress_bar=True)
-                        stop = default_timer()
-                        print(f'Inference time={stop-start:.3f} seconds\n')
+                        with timeit():
+                            model.inference(subgraph_loader, device,
+                                            progress_bar=True)
 
                         if args.profile:
-                            with profile(
-                                    activities=[
-                                        ProfilerActivity.CPU,
-                                        ProfilerActivity.CUDA
-                                    ], on_trace_ready=trace_handler) as p:
+                            with torch_profile():
                                 model.inference(subgraph_loader, device,
                                                 progress_bar=True)
-                                p.step()
                             rename_profile_file(
                                 model_name, dataset_name, str(batch_size),
                                 str(layers), str(hidden_channels),
@@ -125,23 +116,22 @@ if __name__ == '__main__':
                            default=['ogbn-mag', 'ogbn-products',
                                     'Reddit'], type=str)
     argparser.add_argument(
-        '--models', nargs='+', default=[
-            'edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage', 'rgat', 'rgcn'
-        ], type=str)
+        '--models', nargs='+',
+        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
     argparser.add_argument('--root', default='../../data', type=str,
                            help='relative path to look for the datasets')
-    argparser.add_argument('--eval-batch-sizes', nargs='+', default=[5122],
-                           type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+', default=[64],
-                           type=int)
+    argparser.add_argument('--eval-batch-sizes', nargs='+',
+                           default=[512, 1024, 2048, 4096, 8192], type=int)
+    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
+    argparser.add_argument('--num-hidden-channels', nargs='+',
+                           default=[64, 128, 256], type=int)
     argparser.add_argument(
         '--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')
     argparser.add_argument(
         '--hetero-num-neighbors', default=-1, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
-    argparser.add_argument('--num-workers', default=2, type=int)
+    argparser.add_argument('--num-workers', default=0, type=int)
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
 

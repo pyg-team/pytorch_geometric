@@ -16,7 +16,7 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
 )
-from torch_geometric.profile.profile import e2e_time, torch_profile
+from torch_geometric.profile.profile import torch_profile
 
 seed_everything(0)
 
@@ -77,13 +77,19 @@ def run_train():
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
             stats_list = []
+            acc_list = []
             for epoch in range(1, args.epochs + 1):
                 loss, stats = train(model, optimizer, train_loader)
-                val_acc, val_time = eval_acc(model, val_loader)
-                test_acc, test_time = eval_acc(model, test_loader)
+                with timeit() as t:
+                    val_acc = eval_acc(model, val_loader)
+                val_time = t.duration
+                with timeit() as t:
+                    test_acc = eval_acc(model, test_loader)
+                test_time = t.duration
 
                 if epoch >= args.warmup_profile:
                     stats_list.append(stats)
+                    acc_list.append([val_acc, val_time, test_acc, test_time])
 
             stats_summary = get_stats_summary(stats_list)
             print(stats_summary)
@@ -102,7 +108,7 @@ def run_inference():
 
             for epoch in range(1, args.epochs + 1):
                 if epoch == args.epochs:
-                    with e2e_time():
+                    with timeit():
                         inference_run(model, test_loader)
                 else:
                     inference_run(model, test_loader)
@@ -115,10 +121,8 @@ def run_inference():
 
 
 if not args.inference:
-    # Decorate train and eval functions:
-    train = profileit(print_layer_stats=False)(train)
-    eval_acc = timeit()(eval_acc)
+    # Decorate train functions:
+    train = profileit()(train)
     run_train()
 else:
-    # Decorate inference_run function:
     run_inference()
