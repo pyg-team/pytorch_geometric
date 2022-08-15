@@ -277,6 +277,75 @@ def test_from_networkx_subgraph_convert():
 
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
+@withPackage('networkx')
+def test_from_networkx_node_attrs_ignore_missing():
+    """
+    from_networkx should keep only node attributes that are systematically defined if ignore_missing_attrs set to True.
+    """
+    import networkx as nx
+
+    G = nx.Graph()
+    nodes = [(0, {'age': 1, 'height': 180}), (1, {'age': 6, 'height': 170}), (2, {'age': 6})]
+    edges = [(0, 1), (1, 2)]
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
+
+    data = from_networkx(G, ignore_missing_attrs=True)
+
+    assert data.age.tolist() == [node_attrs['age'] for _, node_attrs in nodes]
+    assert 'height' not in data.to_dict()
+
+@withPackage('networkx')
+def test_from_networkx_edge_attrs_ignore_missing():
+    """
+    from_networkx should keep only edge attributes that are systematically defined if ignore_missing_attrs set to True.
+    """
+    import networkx as nx
+
+    G = nx.Graph()
+    nodes = [(0, {'age': 1}), (1, {'age': 6}), (2, {'age': 6})]
+    edges = [(0, 1, {'weight': 1, 'frequency': 1}), (1, 2, {'weight': 2})]
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
+
+    data = from_networkx(G, ignore_missing_attrs=True)
+    
+    duplicated_weights = [weight for to_duplicate_weight in [edge_attrs['weight'] for _, _, edge_attrs in edges] for weight in [to_duplicate_weight]*2]
+    assert data.weight.tolist() == duplicated_weights
+    assert 'frequency' not in data.to_dict()
+
+@withPackage('networkx')
+def test_from_networkx_fails_when_partially_defined_attrs():
+
+    G_missing_node_attrs = nx.Graph()
+    nodes = [(0, {'age': 1}), (1, {'age': 6}), (2, {'age': 6})]
+    edges = [(0, 1, {'weight': 1, 'frequency': 1}), (1, 2, {'weight': 2})]
+    G_missing_node_attrs.add_nodes_from(nodes)
+    G_missing_node_attrs.add_edges_from(edges)
+
+    try:
+        data = from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
+    except ValueError:
+        assert True
+    except Exception:
+       assert False
+    else:
+       assert False
+
+    G_missing_node_attrs = nx.Graph()
+    nodes = [(0, {'age': 1}), (1, {'age': 6}), (2, {'age': 6})]
+    edges = [(0, 1, {'weight': 1, 'frequency': 1}), (1, 2, {'weight': 2})]
+    G_missing_node_attrs.add_nodes_from(nodes)
+    G_missing_node_attrs.add_edges_from(edges)
+
+    try:
+        data = from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
+    except ValueError:
+        assert True
+    except Exception:
+       assert False
+    else:
+       assert False
 
 @withPackage('trimesh')
 def test_trimesh():
