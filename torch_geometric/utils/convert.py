@@ -162,12 +162,12 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     data = defaultdict(list)
 
     node_data = [feat_dict for _, feat_dict in G.nodes(data=True)]
-    node_union_attrs = set.union(*[set(nd) for nd in node_data])
-    node_intersection_attrs = set.intersection(*[set(nd) for nd in node_data])
+    node_union_attrs = set([]) if len(node_data) == 0 else set.union(*[set(nd) for nd in node_data])
+    node_intersection_attrs = set([]) if len(node_data) == 0 else set.intersection(*[set(nd) for nd in node_data])
 
     edge_data = [feat_dict for _, _, feat_dict in G.edges(data=True)]
-    edge_union_attrs = set.union(*[set(ed) for ed in edge_data])
-    edge_intersection_attrs = set.intersection(*[set(ed) for ed in edge_data])
+    edge_union_attrs = set([]) if len(edge_data) == 0 else set.union(*[set(ed) for ed in edge_data])
+    edge_intersection_attrs = set([]) if len(edge_data) == 0 else set.intersection(*[set(ed) for ed in edge_data])
 
     if not ignore_missing_attrs and len(node_union_attrs) > len(node_intersection_attrs):
         part_missing_node_attrs = node_union_attrs.difference(node_intersection_attrs)
@@ -177,8 +177,8 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         part_missing_edge_attrs = edge_union_attrs.difference(edge_intersection_attrs)
         raise ValueError("Not all edges contain the same attributes. Edge attribute{} {} sometimes missing.".format('s' if len(part_missing_edge_attrs) > 1 else '', part_missing_edge_attrs))
 
-    node_attrs = node_intersection_attrs
-    edge_attrs = edge_intersection_attrs
+    node_attrs = [] if len(node_data) == 0 else [attr for attr in node_data[0] if attr in node_intersection_attrs]
+    edge_attrs = [] if len(edge_data) == 0 else [attr for attr in edge_data[0] if attr in edge_intersection_attrs]
 
     formatted_node_data = {key: [i[key] for i in node_data] for key in node_intersection_attrs}
     data = formatted_node_data
