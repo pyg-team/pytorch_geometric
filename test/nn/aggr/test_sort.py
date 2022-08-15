@@ -3,7 +3,7 @@ import torch
 from torch_geometric.nn.aggr import SortAggregation
 
 
-def test_sort_aggregation_pool():
+def test_sort_aggregation():
     N_1, N_2 = 4, 6
     x = torch.randn(N_1 + N_2, 4)
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
@@ -30,7 +30,7 @@ def test_sort_aggregation_pool():
     assert out[1, :, -1].argsort().tolist() == expected.tolist()
 
 
-def test_sort_aggregation_pool_smaller_than_k():
+def test_sort_aggregation_smaller_than_k():
     N_1, N_2 = 4, 6
     x = torch.randn(N_1 + N_2, 4)
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
@@ -59,7 +59,7 @@ def test_sort_aggregation_pool_smaller_than_k():
     assert out[1, :6, -1].argsort().tolist() == expected.tolist()
 
 
-def test_global_sort_pool_dim_size():
+def test_sort_aggregation_dim_size():
     N_1, N_2 = 4, 6
     x = torch.randn(N_1 + N_2, 4)
     index = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])

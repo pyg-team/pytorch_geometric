@@ -130,8 +130,9 @@ class GINEConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
-                 edge_dim: Optional[int] = None, **kwargs):
+    def __init__(self, nn: torch.nn.Module, eps: float = 0.,
+                 train_eps: bool = False, edge_dim: Optional[int] = None,
+                 **kwargs):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
         self.nn = nn
@@ -141,11 +142,16 @@ class GINEConv(MessagePassing):
         else:
             self.register_buffer('eps', torch.Tensor([eps]))
         if edge_dim is not None:
-            if hasattr(self.nn[0], 'in_features'):
-                in_channels = self.nn[0].in_features
+            if isinstance(self.nn, torch.nn.Sequential):
+                nn = self.nn[0]
+            if hasattr(nn, 'in_features'):
+                in_channels = nn.in_features
+            elif hasattr(nn, 'in_channels'):
+                in_channels = nn.in_channels
             else:
-                in_channels = self.nn[0].in_channels
+                raise ValueError("Could not infer input channels from `nn`.")
             self.lin = Linear(edge_dim, in_channels)
+
         else:
             self.lin = None
         self.reset_parameters()

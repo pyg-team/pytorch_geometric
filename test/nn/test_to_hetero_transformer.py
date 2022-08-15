@@ -7,7 +7,7 @@ from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import BatchNorm, GCNConv, GINEConv
+from torch_geometric.nn import GAT, BatchNorm, GCNConv, GINEConv, GraphSAGE
 from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import (
     MeanAggregation,
@@ -176,6 +176,7 @@ def test_to_hetero():
     assert out[1][('paper', 'cites', 'paper')].size() == (200, 16)
     assert out[1][('paper', 'written_by', 'author')].size() == (200, 16)
     assert out[1][('author', 'writes', 'paper')].size() == (200, 16)
+    assert sum(p.numel() for p in model.parameters()) == 1520
 
     for aggr in ['sum', 'mean', 'min', 'max', 'mul']:
         model = Net2()
@@ -184,6 +185,7 @@ def test_to_hetero():
         assert isinstance(out, dict) and len(out) == 2
         assert out['paper'].size() == (100, 32)
         assert out['author'].size() == (100, 32)
+        assert sum(p.numel() for p in model.parameters()) == 5824
 
     model = Net3()
     model = to_hetero(model, metadata, debug=False)
@@ -262,7 +264,6 @@ def test_to_hetero_with_gcn():
         ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
         ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
     }
-
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
     model = GCN()
@@ -270,6 +271,33 @@ def test_to_hetero_with_gcn():
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 1
     assert out['paper'].size() == (100, 64)
+
+
+def test_to_hetero_with_basic_model():
+    x_dict = {
+        'paper': torch.randn(100, 16),
+        'author': torch.randn(100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+
+    model = GraphSAGE((-1, -1), 32, num_layers=3)
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+
+    model = GAT((-1, -1), 32, num_layers=3, add_self_loops=False)
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
 
 
 class GraphConv(MessagePassing):

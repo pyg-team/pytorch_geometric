@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.0.5'
+__version__ = '2.1.0'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
@@ -17,7 +17,7 @@ graphgym_requires = [
     'yacs',
     'hydra-core',
     'protobuf<4.21',
-    'pytorch-lightning',
+    'pytorch-lightning==1.6.*',
 ]
 
 full_requires = graphgym_requires + [

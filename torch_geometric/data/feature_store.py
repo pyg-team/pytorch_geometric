@@ -119,11 +119,12 @@ class AttrView(CastMixin):
     # Advanced indexing #######################################################
 
     def __getattr__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
-        r"""Sets the first unset field of the backing :class:`TensorAttr` object
-        to the attribute. This allows for :class:`AttrView` to be indexed by
-        different values of attributes, in order. In particular, for a feature
-        store that we want to index by :obj:`group_name` and :obj:`attr_name`,
-        the following code will do so:
+        r"""Sets the first unset field of the backing :class:`TensorAttr`
+        object to the attribute.
+        This allows for :class:`AttrView` to be indexed by different values of
+        attributes, in order.
+        In particular, for a feature store that we want to index by
+        :obj:`group_name` and :obj:`attr_name`, the following code will do so:
 
         .. code-block:: python
 
@@ -153,11 +154,12 @@ class AttrView(CastMixin):
         return out
 
     def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
-        r"""Sets the first unset field of the backing :class:`TensorAttr` object
-        to the attribute via indexing. This allows for :class:`AttrView` to be
-        indexed by different values of attributes, in order. In particular, for
-        a feature store that we want to index by :obj:`group_name` and
-        :obj:`attr_name`, the following code will do so:
+        r"""Sets the first unset field of the backing :class:`TensorAttr`
+        object to the attribute via indexing.
+        This allows for :class:`AttrView` to be indexed by different values of
+        attributes, in order.
+        In particular, for a feature store that we want to index by
+        :obj:`group_name` and :obj:`attr_name`, the following code will do so:
 
         .. code-block:: python
 
@@ -227,8 +229,9 @@ class AttrView(CastMixin):
         return out
 
     def __eq__(self, obj: Any) -> bool:
-        r"""Compares two :class:`AttrView` objects by checking equality of their
-        :class:`FeatureStore` references and :class:`TensorAttr` attributes."""
+        r"""Compares two :class:`AttrView` objects by checking equality of
+        their :class:`FeatureStore` references and :class:`TensorAttr`
+        attributes."""
         if not isinstance(obj, AttrView):
             return False
         return self._store == obj._store and self._attr == obj._attr
