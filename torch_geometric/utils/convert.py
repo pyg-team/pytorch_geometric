@@ -48,7 +48,10 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
+def to_networkx(data,
+                node_attrs=None,
+                edge_attrs=None,
+                graph_attrs=None,
                 to_undirected: Union[bool, str] = False,
                 remove_self_loops: bool = False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
@@ -123,7 +126,8 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
     return G
 
 
-def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
+def from_networkx(G,
+                  group_node_attrs: Optional[Union[List[str], all]] = None,
                   group_edge_attrs: Optional[Union[List[str], all]] = None,
                   ignore_missing_attrs: Optional[bool] = False):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
@@ -162,29 +166,60 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     data = defaultdict(list)
 
     node_data = [feat_dict for _, feat_dict in G.nodes(data=True)]
-    node_union_attrs = set([]) if len(node_data) == 0 else set.union(*[set(nd) for nd in node_data])
-    node_intersection_attrs = set([]) if len(node_data) == 0 else set.intersection(*[set(nd) for nd in node_data])
+    node_union_attrs = set([]) if len(node_data) == 0 else set.union(
+        *[set(nd) for nd in node_data])
+    node_intersection_attrs = set(
+        []) if len(node_data) == 0 else set.intersection(
+            *[set(nd) for nd in node_data])
 
     edge_data = [feat_dict for _, _, feat_dict in G.edges(data=True)]
-    edge_union_attrs = set([]) if len(edge_data) == 0 else set.union(*[set(ed) for ed in edge_data])
-    edge_intersection_attrs = set([]) if len(edge_data) == 0 else set.intersection(*[set(ed) for ed in edge_data])
+    edge_union_attrs = set([]) if len(edge_data) == 0 else set.union(
+        *[set(ed) for ed in edge_data])
+    edge_intersection_attrs = set(
+        []) if len(edge_data) == 0 else set.intersection(
+            *[set(ed) for ed in edge_data])
 
-    if not ignore_missing_attrs and len(node_union_attrs) > len(node_intersection_attrs):
-        part_missing_node_attrs = node_union_attrs.difference(node_intersection_attrs)
-        raise ValueError("Not all nodes contain the same attributes. Node attribute{} {} sometimes missing.".format('s' if len(part_missing_node_attrs) > 1 else '', part_missing_node_attrs))
+    if (not ignore_missing_attrs and len(
+            node_union_attrs) > len(node_intersection_attrs)):
+        part_missing_node_attrs = node_union_attrs.difference(
+            node_intersection_attrs)
+        raise ValueError(
+            """Not all nodes contain the same attributes.
+            Node attribute{} {} sometimes missing."""
+            .format('s' if len(part_missing_node_attrs) > 1 else '',
+                    part_missing_node_attrs))
 
-    if not ignore_missing_attrs and len(edge_union_attrs) > len(edge_intersection_attrs):
-        part_missing_edge_attrs = edge_union_attrs.difference(edge_intersection_attrs)
-        raise ValueError("Not all edges contain the same attributes. Edge attribute{} {} sometimes missing.".format('s' if len(part_missing_edge_attrs) > 1 else '', part_missing_edge_attrs))
+    if not ignore_missing_attrs and len(edge_union_attrs) > len(
+            edge_intersection_attrs):
+        part_missing_edge_attrs = edge_union_attrs.difference(
+            edge_intersection_attrs)
+        raise ValueError(
+            """Not all edges contain the same attributes.
+            Edge attribute{} {} sometimes missing."""
+            .format('s' if len(part_missing_edge_attrs) > 1 else '',
+                    part_missing_edge_attrs))
 
-    node_attrs = [] if len(node_data) == 0 else [attr for attr in node_data[0] if attr in node_intersection_attrs]
-    edge_attrs = [] if len(edge_data) == 0 else [attr for attr in edge_data[0] if attr in edge_intersection_attrs]
+    node_attrs = [] if len(node_data) == 0 else [
+        attr for attr in node_data[0] if attr in node_intersection_attrs
+    ]
+    edge_attrs = [] if len(edge_data) == 0 else [
+        attr for attr in edge_data[0] if attr in edge_intersection_attrs
+    ]
 
-    formatted_node_data = {key: [i[key] for i in node_data] for key in node_intersection_attrs}
+    formatted_node_data = {
+        key: [i[key] for i in node_data]
+        for key in node_intersection_attrs
+    }
     data = formatted_node_data
-    formatted_edge_data = {f'edge_{key}' if key in data else key: [i[key] for i in edge_data] for key in edge_intersection_attrs}
+    formatted_edge_data = {
+        f'edge_{key}' if key in data else key: [i[key] for i in edge_data]
+        for key in edge_intersection_attrs
+    }
     data = {**data, **formatted_edge_data}
-    formatted_graph_data = {f'graph_{key}' if key in data else key: value for key, value in G.graph.items()}
+    formatted_graph_data = {
+        f'graph_{key}' if key in data else key: value
+        for key, value in G.graph.items()
+    }
     data = {**data, **formatted_graph_data}
 
     for key, value in data.items():
@@ -256,7 +291,8 @@ def from_trimesh(mesh):
     return Data(pos=pos, face=face)
 
 
-def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
+def to_cugraph(edge_index: Tensor,
+               edge_weight: Optional[Tensor] = None,
                relabel_nodes: bool = True):
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
@@ -276,7 +312,9 @@ def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
         df[2] = cudf.from_dlpack(to_dlpack(edge_weight))
 
     return cugraph.from_cudf_edgelist(
-        df, source=0, destination=1,
+        df,
+        source=0,
+        destination=1,
         edge_attr=2 if edge_weight is not None else None,
         renumber=relabel_nodes)
 

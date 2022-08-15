@@ -53,7 +53,9 @@ def test_to_networkx():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
-        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
+        G = to_networkx(data,
+                        node_attrs=['x', 'pos'],
+                        edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops)
 
         assert G.nodes[0]['x'] == [1, 2]
@@ -99,7 +101,9 @@ def test_to_networkx_undirected():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
-        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
+        G = to_networkx(data,
+                        node_attrs=['x', 'pos'],
+                        edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops,
                         to_undirected=True)
 
@@ -149,9 +153,14 @@ def test_from_networkx_group_attrs():
     edge_attr1 = torch.randn(edge_index.size(1))
     edge_attr2 = torch.randn(edge_index.size(1))
     perm = torch.tensor([0, 2, 1])
-    data = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
-                edge_attr1=edge_attr1, edge_attr2=edge_attr2)
-    G = to_networkx(data, node_attrs=['x', 'x1', 'x2'],
+    data = Data(x=x,
+                x1=x1,
+                x2=x2,
+                edge_index=edge_index,
+                edge_attr1=edge_attr1,
+                edge_attr2=edge_attr2)
+    G = to_networkx(data,
+                    node_attrs=['x', 'x1', 'x2'],
                     edge_attrs=['edge_attr1', 'edge_attr2'])
     data = from_networkx(G, group_node_attrs=['x', 'x2'], group_edge_attrs=all)
     assert len(data) == 4
@@ -160,6 +169,7 @@ def test_from_networkx_group_attrs():
     assert data.edge_index.tolist() == edge_index[:, perm].tolist()
     assert data.edge_attr.tolist() == torch.stack([edge_attr1, edge_attr2],
                                                   dim=-1)[perm].tolist()
+
 
 @withPackage('networkx')
 def test_from_networkx_group_attrs():
@@ -170,24 +180,37 @@ def test_from_networkx_group_attrs():
     edge_attr1 = torch.randn(edge_index.size(1))
     edge_attr2 = torch.randn(edge_index.size(1))
     perm = torch.tensor([0, 2, 1])
-    data = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
-                edge_attr1=edge_attr1, edge_attr2=edge_attr2)
+    data = Data(x=x,
+                x1=x1,
+                x2=x2,
+                edge_index=edge_index,
+                edge_attr1=edge_attr1,
+                edge_attr2=edge_attr2)
 
-    G = to_networkx(data, node_attrs=['x', 'x1', 'x2'],
+    G = to_networkx(data,
+                    node_attrs=['x', 'x1', 'x2'],
                     edge_attrs=['edge_attr1', 'edge_attr2'])
     data = from_networkx(G, group_node_attrs=all, group_edge_attrs=all)
     assert data.x.tolist() == torch.cat([x, x1, x2], dim=-1).tolist()
     assert data.edge_attr.tolist() == torch.stack([edge_attr1, edge_attr2],
                                                   dim=-1)[perm].tolist()
 
-    data_reverse = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
-                edge_attr1=edge_attr1, edge_attr2=edge_attr2)
-    G_reverse = to_networkx(data_reverse, node_attrs=['x', 'x2', 'x1'],
-                    edge_attrs=['edge_attr2', 'edge_attr1'])
-    data_reverse = from_networkx(G_reverse, group_node_attrs=all, group_edge_attrs=all)
+    data_reverse = Data(x=x,
+                        x1=x1,
+                        x2=x2,
+                        edge_index=edge_index,
+                        edge_attr1=edge_attr1,
+                        edge_attr2=edge_attr2)
+    G_reverse = to_networkx(data_reverse,
+                            node_attrs=['x', 'x2', 'x1'],
+                            edge_attrs=['edge_attr2', 'edge_attr1'])
+    data_reverse = from_networkx(G_reverse,
+                                 group_node_attrs=all,
+                                 group_edge_attrs=all)
     assert data_reverse.x.tolist() == torch.cat([x, x2, x1], dim=-1).tolist()
-    assert data_reverse.edge_attr.tolist() == torch.stack([edge_attr2, edge_attr1],
-                                                  dim=-1)[perm].tolist()
+    assert data_reverse.edge_attr.tolist() == torch.stack(
+        [edge_attr2, edge_attr1], dim=-1)[perm].tolist()
+
 
 @withPackage('networkx')
 def test_networkx_vice_versa_convert():
@@ -297,22 +320,33 @@ def test_from_networkx_subgraph_convert():
     G = nx.complete_graph(5)
 
     edge_index = from_networkx(G).edge_index
-    sub_edge_index_1, _ = subgraph([0, 1, 3, 4], edge_index,
+    sub_edge_index_1, _ = subgraph([0, 1, 3, 4],
+                                   edge_index,
                                    relabel_nodes=True)
 
     sub_edge_index_2 = from_networkx(G.subgraph([0, 1, 3, 4])).edge_index
 
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
+
 @withPackage('networkx')
 def test_from_networkx_node_attrs_ignore_missing():
     """
-    from_networkx should keep only node attributes that are systematically defined if ignore_missing_attrs set to True.
+    from_networkx should keep only node attributes that are systematically
+    defined if ignore_missing_attrs set to True.
     """
     import networkx as nx
 
     G = nx.Graph()
-    nodes = [(0, {'age': 1, 'height': 180}), (1, {'age': 6, 'height': 170}), (2, {'age': 6})]
+    nodes = [(0, {
+        'age': 1,
+        'height': 180
+    }), (1, {
+        'age': 6,
+        'height': 170
+    }), (2, {
+        'age': 6
+    })]
     edges = [(0, 1), (1, 2)]
     G.add_nodes_from(nodes)
     G.add_edges_from(edges)
@@ -322,10 +356,12 @@ def test_from_networkx_node_attrs_ignore_missing():
     assert data.age.tolist() == [node_attrs['age'] for _, node_attrs in nodes]
     assert 'height' not in data.to_dict()
 
+
 @withPackage('networkx')
 def test_from_networkx_edge_attrs_ignore_missing():
     """
-    from_networkx should keep only edge attributes that are systematically defined if ignore_missing_attrs set to True.
+    from_networkx should keep only edge attributes that are systematically
+    defined if ignore_missing_attrs set to True.
     """
     import networkx as nx
 
@@ -336,10 +372,15 @@ def test_from_networkx_edge_attrs_ignore_missing():
     G.add_edges_from(edges)
 
     data = from_networkx(G, ignore_missing_attrs=True)
-    
-    duplicated_weights = [weight for to_duplicate_weight in [edge_attrs['weight'] for _, _, edge_attrs in edges] for weight in [to_duplicate_weight]*2]
+
+    duplicated_weights = [
+        weight for to_duplicate_weight in
+        [edge_attrs['weight'] for _, _, edge_attrs in edges]
+        for weight in [to_duplicate_weight] * 2
+    ]
     assert data.weight.tolist() == duplicated_weights
     assert 'frequency' not in data.to_dict()
+
 
 @withPackage('networkx')
 def test_from_networkx_fails_when_partially_defined_attrs():
@@ -352,13 +393,13 @@ def test_from_networkx_fails_when_partially_defined_attrs():
     G_missing_node_attrs.add_edges_from(edges)
 
     try:
-        data = from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
+        from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
     except ValueError:
         assert True
     except Exception:
-       assert False
+        assert False
     else:
-       assert False
+        assert False
 
     G_missing_node_attrs = nx.Graph()
     nodes = [(0, {'age': 1}), (1, {'age': 6}), (2, {'age': 6})]
@@ -367,13 +408,14 @@ def test_from_networkx_fails_when_partially_defined_attrs():
     G_missing_node_attrs.add_edges_from(edges)
 
     try:
-        data = from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
+        from_networkx(G_missing_node_attrs, ignore_missing_attrs=False)
     except ValueError:
         assert True
     except Exception:
-       assert False
+        assert False
     else:
-       assert False
+        assert False
+
 
 @withPackage('trimesh')
 def test_trimesh():
