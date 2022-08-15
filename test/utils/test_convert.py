@@ -53,9 +53,7 @@ def test_to_networkx():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
-        G = to_networkx(data,
-                        node_attrs=['x', 'pos'],
-                        edge_attrs=['weight'],
+        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops)
 
         assert G.nodes[0]['x'] == [1, 2]
@@ -101,9 +99,7 @@ def test_to_networkx_undirected():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
-        G = to_networkx(data,
-                        node_attrs=['x', 'pos'],
-                        edge_attrs=['weight'],
+        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops,
                         to_undirected=True)
 
@@ -153,14 +149,9 @@ def test_from_networkx_group_attrs():
     edge_attr1 = torch.randn(edge_index.size(1))
     edge_attr2 = torch.randn(edge_index.size(1))
     perm = torch.tensor([0, 2, 1])
-    data = Data(x=x,
-                x1=x1,
-                x2=x2,
-                edge_index=edge_index,
-                edge_attr1=edge_attr1,
-                edge_attr2=edge_attr2)
-    G = to_networkx(data,
-                    node_attrs=['x', 'x1', 'x2'],
+    data = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
+                edge_attr1=edge_attr1, edge_attr2=edge_attr2)
+    G = to_networkx(data, node_attrs=['x', 'x1', 'x2'],
                     edge_attrs=['edge_attr1', 'edge_attr2'])
     data = from_networkx(G, group_node_attrs=['x', 'x2'], group_edge_attrs=all)
     assert len(data) == 4
@@ -180,32 +171,21 @@ def test_from_networkx_group_attrs():
     edge_attr1 = torch.randn(edge_index.size(1))
     edge_attr2 = torch.randn(edge_index.size(1))
     perm = torch.tensor([0, 2, 1])
-    data = Data(x=x,
-                x1=x1,
-                x2=x2,
-                edge_index=edge_index,
-                edge_attr1=edge_attr1,
-                edge_attr2=edge_attr2)
+    data = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
+                edge_attr1=edge_attr1, edge_attr2=edge_attr2)
 
-    G = to_networkx(data,
-                    node_attrs=['x', 'x1', 'x2'],
+    G = to_networkx(data, node_attrs=['x', 'x1', 'x2'],
                     edge_attrs=['edge_attr1', 'edge_attr2'])
     data = from_networkx(G, group_node_attrs=all, group_edge_attrs=all)
     assert data.x.tolist() == torch.cat([x, x1, x2], dim=-1).tolist()
     assert data.edge_attr.tolist() == torch.stack([edge_attr1, edge_attr2],
                                                   dim=-1)[perm].tolist()
 
-    data_reverse = Data(x=x,
-                        x1=x1,
-                        x2=x2,
-                        edge_index=edge_index,
-                        edge_attr1=edge_attr1,
-                        edge_attr2=edge_attr2)
-    G_reverse = to_networkx(data_reverse,
-                            node_attrs=['x', 'x2', 'x1'],
+    data_reverse = Data(x=x, x1=x1, x2=x2, edge_index=edge_index,
+                        edge_attr1=edge_attr1, edge_attr2=edge_attr2)
+    G_reverse = to_networkx(data_reverse, node_attrs=['x', 'x2', 'x1'],
                             edge_attrs=['edge_attr2', 'edge_attr1'])
-    data_reverse = from_networkx(G_reverse,
-                                 group_node_attrs=all,
+    data_reverse = from_networkx(G_reverse, group_node_attrs=all,
                                  group_edge_attrs=all)
     assert data_reverse.x.tolist() == torch.cat([x, x2, x1], dim=-1).tolist()
     assert data_reverse.edge_attr.tolist() == torch.stack(
@@ -320,8 +300,7 @@ def test_from_networkx_subgraph_convert():
     G = nx.complete_graph(5)
 
     edge_index = from_networkx(G).edge_index
-    sub_edge_index_1, _ = subgraph([0, 1, 3, 4],
-                                   edge_index,
+    sub_edge_index_1, _ = subgraph([0, 1, 3, 4], edge_index,
                                    relabel_nodes=True)
 
     sub_edge_index_2 = from_networkx(G.subgraph([0, 1, 3, 4])).edge_index
