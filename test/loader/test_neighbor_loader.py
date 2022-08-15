@@ -198,8 +198,8 @@ def test_heterogeneous_neighbor_loader_mixed_input(directed):
         ], batch_size=batch_size, directed=directed, shuffle=False)
 
     for batch1, batch2, batch3 in zip(loader, loader2, loader3):
-        assert torch.equal(batch1['paper'].x, batch2['paper'].x)
-        assert torch.equal(batch2['paper'].x, batch3['paper'].x)
+        assert torch.allclose(batch1['paper'].x, batch2['paper'].x)
+        assert torch.allclose(batch2['paper'].x, batch3['paper'].x)
 
     loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
         ('paper', None), ('author', None)
