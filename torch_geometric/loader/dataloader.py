@@ -40,28 +40,6 @@ class Collater:
         return self(batch)
 
 
-# PyG 'Data' objects are subclasses of MutableMapping, which is an
-# instance of collections.abc.Mapping. Currently, PyTorch pin_memory
-# for DataLoaders treats the returned batches as Mapping objects and
-# calls `pin_memory` on each element in `Data.__dict__`, which is not
-# desired behavior if 'Data' has a `pin_memory` function. We patch
-# this behavior here by monkeypatching `pin_memory`, but can hopefully patch
-# this in PyTorch in the future:
-__torch_pin_memory = torch.utils.data._utils.pin_memory.pin_memory
-__torch_pin_memory_params = signature(__torch_pin_memory).parameters
-
-
-def pin_memory(data, device=None):
-    if hasattr(data, "pin_memory"):
-        return data.pin_memory()
-    if len(__torch_pin_memory_params) > 1:
-        return __torch_pin_memory(data, device)
-    return __torch_pin_memory(data)
-
-
-torch.utils.data._utils.pin_memory.pin_memory = pin_memory
-
-
 class DataLoader(torch.utils.data.DataLoader):
     r"""A data loader which merges data objects from a
     :class:`torch_geometric.data.Dataset` to a mini-batch.

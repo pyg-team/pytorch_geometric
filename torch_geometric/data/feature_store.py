@@ -241,7 +241,7 @@ class AttrView(CastMixin):
                 f'attr={self._attr})')
 
 
-class FeatureStore(MutableMapping):
+class FeatureStore:
     def __init__(self, tensor_attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
         the ordering and required nature of their :class:`TensorAttr` tensor
