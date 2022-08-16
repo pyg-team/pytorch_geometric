@@ -100,10 +100,8 @@ def test_random_link_split_on_hetero_data():
     data['a', 'p'].edge_attr = torch.arange(1500, 2500)
 
     transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=True,
-                                edge_types=data.edge_types,
-                                rev_edge_types=data.edge_types)
+                                edge_types=('p', 'p'))
     train_data, val_data, test_data = transform(data)
-    print(train_data)
 
     assert len(train_data['p']) == 1
     assert len(train_data['a']) == 1
