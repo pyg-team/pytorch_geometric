@@ -17,9 +17,9 @@ from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv
 from torch_geometric.utils import to_dgnn
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='Cora')
-parser.add_argument('--hidden_channels', type=int, default=8)
-parser.add_argument('--heads', type=int, default=8)
+parser.add_argument('--dataset', type=str, default='pubmed')
+parser.add_argument('--hidden_channels', type=int, default=64)
+parser.add_argument('--heads', type=int, default=16)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=200)
 args = parser.parse_args()
@@ -104,19 +104,19 @@ for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model], ['p
     start_time.record()
     for epoch in range(1, args.epochs + 1):
         loss = train(model, optimizer, data)
-        train_acc, val_acc, tmp_test_acc = test(model, data)
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-            test_acc = tmp_test_acc
-        log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+        # train_acc, val_acc, tmp_test_acc = test(model, data)
+        # if val_acc > best_val_acc:
+        #     best_val_acc = val_acc
+        #     test_acc = tmp_test_acc
+        # log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
     end_time.record()
     torch.cuda.synchronize()
 
     benchmark_info[name]['train_time'] = start_time.elapsed_time(end_time)
 
-    benchmark_info[name]['train_acc'] = train_acc
-    benchmark_info[name]['val_acc'] = val_acc
-    benchmark_info[name]['test_acc'] = test_acc
+    # benchmark_info[name]['train_acc'] = train_acc
+    # benchmark_info[name]['val_acc'] = val_acc
+    # benchmark_info[name]['test_acc'] = test_acc
 
 print('Benchmark info:')
 print(benchmark_info)
