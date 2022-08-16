@@ -1,5 +1,4 @@
 from collections.abc import Mapping, Sequence
-from inspect import signature
 from typing import List, Optional, Union
 
 import torch.utils.data

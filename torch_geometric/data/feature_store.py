@@ -22,7 +22,6 @@ Major TODOs for future implementation:
 """
 import copy
 from abc import abstractmethod
-from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
