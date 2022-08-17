@@ -25,11 +25,8 @@ class FusedGATConv(GATConv):
         bias: bool = True,
         **kwargs,
     ):
-        if not all([
-            add_self_loops == False, 
-            edge_dim == None, 
-            fill_value == 'mean']
-        ):
+        if not all(
+            [add_self_loops == False, edge_dim == None, fill_value == 'mean']):
             raise NotImplementedError(
                 'FusedGATConv does not support add_self_loops, edge_features or non-mean fill_value'
             )
