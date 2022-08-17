@@ -293,10 +293,7 @@ def test_trimesh():
     assert face.tolist() == data.face.tolist()
 
 
-@withPackage('scipy')
 def test_to_dgnn():
-    import scipy.sparse as sp
-
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
 
     dgnn_adj = to_dgnn(edge_index)

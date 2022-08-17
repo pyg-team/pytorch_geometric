@@ -7,8 +7,6 @@ import torch.nn.functional as F
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.io.planetoid import edge_index_from_dict
-from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GATConv
 # the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv
