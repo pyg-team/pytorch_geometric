@@ -240,6 +240,13 @@ class AttrView(CastMixin):
                 f'attr={self._attr})')
 
 
+# TODO (manan, matthias) Ideally, we want to let `FeatureStore` inherit from
+# `MutableMapping` to clearly indicate its behaviour and usage to the user.
+# However, having `MutableMapping` as a base class leads to strange behaviour
+# in combination with PyTorch and PyTorch Lightning, in particular since these
+# libraries use customized logic during mini-batch for `Mapping` base classes.
+
+
 class FeatureStore:
     def __init__(self, tensor_attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
