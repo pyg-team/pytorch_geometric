@@ -8,10 +8,10 @@ from torch_geometric.utils import (
     from_scipy_sparse_matrix,
     from_trimesh,
     subgraph,
+    to_dgnn,
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
-    to_dgnn
 )
 
 
@@ -291,6 +291,7 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
+
 
 @withPackage('scipy')
 def test_to_dgnn():

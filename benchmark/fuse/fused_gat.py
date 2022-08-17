@@ -4,14 +4,12 @@ from collections import defaultdict
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.io.planetoid import edge_index_from_dict
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
+from torch_geometric.io.planetoid import edge_index_from_dict
 from torch_geometric.logging import init_wandb, log
-
 from torch_geometric.nn import GATConv
-
 # the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv
 from torch_geometric.utils import to_dgnn
@@ -24,13 +22,16 @@ parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=200)
 args = parser.parse_args()
 
+
 class dgNN_GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, heads):
         super().__init__()
-        self.conv1 = FusedGATConv(in_channels, hidden_channels, heads, dropout=0.6, add_self_loops=False)
+        self.conv1 = FusedGATConv(in_channels, hidden_channels, heads,
+                                  dropout=0.6, add_self_loops=False)
         # On the Pubmed dataset, use `heads` output heads in `conv2`.
-        self.conv2 = FusedGATConv(hidden_channels * heads, out_channels, heads=1,
-                             concat=False, dropout=0.6, add_self_loops=False)
+        self.conv2 = FusedGATConv(hidden_channels * heads, out_channels,
+                                  heads=1, concat=False, dropout=0.6,
+                                  add_self_loops=False)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
@@ -39,10 +40,12 @@ class dgNN_GAT(torch.nn.Module):
         x = self.conv2(x, edge_index)
         return x
 
+
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, heads):
         super().__init__()
-        self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6, add_self_loops=False)
+        self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6,
+                             add_self_loops=False)
         # On the Pubmed dataset, use `heads` output heads in `conv2`.
         self.conv2 = GATConv(hidden_channels * heads, out_channels, heads=1,
                              concat=False, dropout=0.6, add_self_loops=False)
@@ -53,6 +56,7 @@ class GAT(torch.nn.Module):
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, edge_index)
         return x
+
 
 def train(model, optimizer, data):
     model.train()
@@ -78,27 +82,31 @@ def test(model, data):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # test with Planetoid dataset
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data', 'Planetoid')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data',
+                'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 
 # define data and model
 pyg_data = dataset[0].to(device)
 dgNN_data = dataset[0].to(device)
-dgNN_data.edge_index=to_dgnn(dgNN_data.edge_index) # add one line of data conversion to dgNN
+dgNN_data.edge_index = to_dgnn(
+    dgNN_data.edge_index)  # add one line of data conversion to dgNN
 
-pyg_model = GAT(dataset.num_features, args.hidden_channels, dataset.num_classes,
-            args.heads).to(device)
-dgNN_model = dgNN_GAT(dataset.num_features, args.hidden_channels, dataset.num_classes,
-            args.heads).to(device)
+pyg_model = GAT(dataset.num_features, args.hidden_channels,
+                dataset.num_classes, args.heads).to(device)
+dgNN_model = dgNN_GAT(dataset.num_features, args.hidden_channels,
+                      dataset.num_classes, args.heads).to(device)
 
 benchmark_info = defaultdict(dict)
 start_time = torch.cuda.Event(enable_timing=True)
 end_time = torch.cuda.Event(enable_timing=True)
 
 # train and test model
-for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model], ['pyg', 'dgNN']):
+for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model],
+                             ['pyg', 'dgNN']):
     print('{} train on dataset: {}'.format(name, dataset.name))
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.005,
+                                 weight_decay=5e-4)
     best_val_acc = final_test_acc = 0
     # record training time
     start_time.record()
@@ -120,4 +128,3 @@ for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model], ['p
 
 print('Benchmark info:')
 print(benchmark_info)
-
