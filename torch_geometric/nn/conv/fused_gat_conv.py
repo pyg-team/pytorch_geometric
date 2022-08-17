@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Tuple, Union, Optional
 
 import torch.nn.functional as F
 from torch import Tensor
@@ -36,7 +36,6 @@ class FusedGATConv(GATConv):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj):
 
-
         H, C = self.heads, self.out_channels
 
         # We first transform the input node features. If a tuple is passed, we
@@ -59,10 +58,13 @@ class FusedGATConv(GATConv):
         alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
 
         if self.training:
-            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,self.dropout)
+            out = GATConvFuse(alpha_dst, alpha_src, row_ptr, col_idx, col_ptr,
+                              row_idx, permute, self.negative_slope, x_src,
+                              self.dropout)
         else:
-            out=GATConvFuse(alpha_dst,alpha_src,row_ptr,col_idx,col_ptr,row_idx,permute,self.negative_slope,x_src,0.0)
-
+            out = GATConvFuse(alpha_dst, alpha_src, row_ptr, col_idx, col_ptr,
+                              row_idx, permute, self.negative_slope, x_src,
+                              0.0)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
