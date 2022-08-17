@@ -241,8 +241,8 @@ class AttrView(CastMixin):
 
 
 # TODO (manan, matthias) Ideally, we want to let `FeatureStore` inherit from
-# `MutableMapping` to clearly indicate its behaviour and usage to the user.
-# However, having `MutableMapping` as a base class leads to strange behaviour
+# `MutableMapping` to clearly indicate its behavior and usage to the user.
+# However, having `MutableMapping` as a base class leads to strange behavior
 # in combination with PyTorch and PyTorch Lightning, in particular since these
 # libraries use customized logic during mini-batch for `Mapping` base classes.
 
