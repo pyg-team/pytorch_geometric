@@ -115,6 +115,6 @@ for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model],
     torch.cuda.synchronize()
 
     benchmark_info[name]['train_time'] = start_time.elapsed_time(end_time)
-    
+
 print('Benchmark info:')
 print(benchmark_info)

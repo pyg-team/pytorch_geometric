@@ -25,7 +25,7 @@ def to_dgnn(edge_index):
     adj_csc_new = adj_csr_new.tocsc()
     permute = torch.from_numpy(adj_csc_new.data)
 
-    dgnn_adj = (row_ptr.to(device), col_idx.to(device), col_ptr.to(device), row_idx.to(device),
-                permute.to(device))
+    dgnn_adj = (row_ptr.to(device), col_idx.to(device), col_ptr.to(device),
+                row_idx.to(device), permute.to(device))
 
     return dgnn_adj
