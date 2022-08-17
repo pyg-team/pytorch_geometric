@@ -218,6 +218,16 @@ def test_hetero_data_subgraph():
     assert len(out['author', 'paper']) == 1
     assert out['author', 'paper'].edge_index is not None
 
+    out = data.node_type_subgraph(['paper', 'author'])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'paper'),
+                              ('author', 'to', 'paper'),
+                              ('paper', 'to', 'author')]
+
+    out = data.edge_type_subgraph([('paper', 'author')])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'author')]
+
 
 def test_copy_hetero_data():
     data = HeteroData()

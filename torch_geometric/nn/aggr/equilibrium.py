@@ -148,8 +148,8 @@ class EquilibriumAggregation(Aggregation):
 
     def init_output(self, index: Optional[Tensor] = None) -> Tensor:
         index_size = 1 if index is None else int(index.max().item() + 1)
-        return torch.zeros(index_size, self.output_dim,
-                           requires_grad=True).float()
+        return torch.zeros(index_size, self.output_dim, requires_grad=True,
+                           device=self.lamb.device).float()
 
     def reg(self, y: Tensor) -> Tensor:
         return self.softplus(self.lamb) * y.square().sum(dim=-1).mean()
