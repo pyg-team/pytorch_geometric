@@ -11,6 +11,7 @@ from torch_geometric.utils import (
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
+    to_dgnn
 )
 
 
@@ -290,3 +291,17 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
+
+@withPackage('scipy')
+def test_to_dgnn():
+    import scipy.sparse as sp
+
+    edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
+
+    dgnn_adj = to_dgnn(edge_index)
+
+    assert dgnn_adj[0].tolist() == [0, 2, 3]
+    assert dgnn_adj[1].tolist() == [0, 1, 0]
+    assert dgnn_adj[2].tolist() == [0, 2, 3]
+    assert dgnn_adj[3].tolist() == [0, 1, 0]
+    assert dgnn_adj[4].tolist() == [0, 2, 1]
