@@ -15,8 +15,8 @@ from torch_geometric.profile import (
     profileit,
     rename_profile_file,
     timeit,
+    torch_profile,
 )
-from torch_geometric.profile.profile import torch_profile
 
 seed_everything(0)
 
