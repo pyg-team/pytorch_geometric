@@ -6,7 +6,11 @@ from torch import Tensor
 from torch_geometric.nn.conv import GATConv
 from torch_geometric.typing import Adj, OptPairTensor
 
-# dgNN library is needed for FusedGATConv layer, which is equivalent to the standard GAT model mathmatically with less memory consumption and faster speed, due to kernel fusion techniques, as in paper 'Understanding GNN Computational Graph: A Coordinated Computation, IO, and Memory Perspective'(https://proceedings.mlsys.org/paper/2022/hash/9a1158154dfa42caddbd0694a4e9bdc8-Abstract.html)
+# dgNN library is needed for FusedGATConv layer, which is 
+# equivalent to the standard GAT model mathmatically 
+# with less memory consumption and faster speed, due to 
+# kernel fusion techniques, as in paper 'Understanding GNN Computational Graph: 
+# A Coordinated Computation, IO, and Memory Perspective'
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
 
 
@@ -25,10 +29,11 @@ class FusedGATConv(GATConv):
         bias: bool = True,
         **kwargs,
     ):
-        if not all(
-            [add_self_loops is False, edge_dim is None, fill_value == 'mean']):
+        requirement = [add_self_loops is False, edge_dim is None, fill_value == 'mean']
+        if not all(requirement):
             raise NotImplementedError(
-                'FusedGATConv does not support add_self_loops, edge_features or non-mean fill_value'
+                'FusedGATConv does not support add_self_loops, \
+                edge_features or non-mean fill_value'
             )
 
         super(FusedGATConv,
