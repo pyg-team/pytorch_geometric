@@ -402,7 +402,6 @@ def get_node_offset_dict(
     input_dict: Dict[NodeType, Union[Tensor, SparseTensor]],
     type2id: Dict[NodeType, int],
 ) -> Dict[NodeType, int]:
-
     cumsum = 0
     out: Dict[NodeType, int] = {}
     for key in type2id.keys():
@@ -415,7 +414,6 @@ def get_edge_offset_dict(
     input_dict: Dict[EdgeType, Union[Tensor, SparseTensor]],
     type2id: Dict[EdgeType, int],
 ) -> Dict[EdgeType, int]:
-
     cumsum = 0
     out: Dict[EdgeType, int] = {}
     for key in type2id.keys():
