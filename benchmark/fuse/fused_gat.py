@@ -8,7 +8,8 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv
-# the following code requires the installation of dgNN from https://github.com/dgSPARSE/dgNN
+# the following code requires the installation of dgNN
+# from https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv
 from torch_geometric.utils import to_dgnn
 
@@ -110,19 +111,10 @@ for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model],
     start_time.record()
     for epoch in range(1, args.epochs + 1):
         loss = train(model, optimizer, data)
-        # train_acc, val_acc, tmp_test_acc = test(model, data)
-        # if val_acc > best_val_acc:
-        #     best_val_acc = val_acc
-        #     test_acc = tmp_test_acc
-        # log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
     end_time.record()
     torch.cuda.synchronize()
 
     benchmark_info[name]['train_time'] = start_time.elapsed_time(end_time)
-
-    # benchmark_info[name]['train_acc'] = train_acc
-    # benchmark_info[name]['val_acc'] = val_acc
-    # benchmark_info[name]['test_acc'] = test_acc
-
+    
 print('Benchmark info:')
 print(benchmark_info)
