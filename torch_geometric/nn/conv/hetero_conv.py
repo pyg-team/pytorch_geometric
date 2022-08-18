@@ -3,11 +3,12 @@ from collections import defaultdict
 from typing import Dict, Optional
 
 from torch import Tensor
-from torch.nn import Module, ModuleDict
+from torch.nn import Module
 
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
+from torch_geometric.utils import CustomModuleDict
 
 
 class HeteroConv(Module):
@@ -60,7 +61,9 @@ class HeteroConv(Module):
                 f"passing as they do not occur as destination type in any "
                 f"edge type. This may lead to unexpected behaviour.")
 
-        self.convs = ModuleDict({'__'.join(k): v for k, v in convs.items()})
+        self.convs = CustomModuleDict(
+            {'__'.join(k): v
+             for k, v in convs.items()})
         self.aggr = aggr
 
     def reset_parameters(self):

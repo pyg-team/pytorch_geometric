@@ -21,19 +21,21 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 @pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', None])
 def test_hetero_conv(aggr):
     data = HeteroData()
-    data['paper'].x = torch.randn(50, 32)
+    data['src.paper'].x = torch.randn(50, 32)
     data['author'].x = torch.randn(30, 64)
-    data['paper', 'paper'].edge_index = get_edge_index(50, 50, 200)
-    data['paper', 'author'].edge_index = get_edge_index(50, 30, 100)
-    data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
-    data['paper', 'paper'].edge_weight = torch.rand(200)
+    data['src.paper', 'src.paper'].edge_index = get_edge_index(50, 50, 200)
+    data['src.paper', 'author'].edge_index = get_edge_index(50, 30, 100)
+    data['author', 'src.paper'].edge_index = get_edge_index(30, 50, 100)
+    data['paper', 'src.paper'].edge_weight = torch.rand(200)
 
     conv = HeteroConv(
         {
-            ('paper', 'to', 'paper'): GCNConv(-1, 64),
-            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
-            ('paper', 'to', 'author'): GATConv(
-                (-1, -1), 64, add_self_loops=False),
+            ('src.paper', 'to', 'src.paper'):
+            GCNConv(-1, 64),
+            ('author', 'to', 'src.paper'):
+            SAGEConv((-1, -1), 64),
+            ('src.paper', 'to', 'author'):
+            GATConv((-1, -1), 64, add_self_loops=False),
         }, aggr=aggr)
 
     assert len(list(conv.parameters())) > 0
@@ -44,10 +46,10 @@ def test_hetero_conv(aggr):
 
     assert len(out) == 2
     if aggr is not None:
-        assert out['paper'].size() == (50, 64)
+        assert out['src.paper'].size() == (50, 64)
         assert out['author'].size() == (30, 64)
     else:
-        assert out['paper'].size() == (50, 2, 64)
+        assert out['src.paper'].size() == (50, 2, 64)
         assert out['author'].size() == (30, 1, 64)
 
 
