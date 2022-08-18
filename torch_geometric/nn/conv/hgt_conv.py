@@ -11,7 +11,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils import softmax, CustomModuleDict
+from torch_geometric.utils import CustomModuleDict, softmax
 
 
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
