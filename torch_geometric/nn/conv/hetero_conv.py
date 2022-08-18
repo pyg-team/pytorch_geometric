@@ -7,7 +7,7 @@ from torch.nn import Module
 
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.typing import Adj, EdgeType, NodeType
-from torch_geometric.utils import ModuleDict
+from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.utils.hetero import check_add_self_loops
 
 
