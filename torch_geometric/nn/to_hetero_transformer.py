@@ -8,11 +8,11 @@ from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.utils import CustomModuleDict
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
 )
-from torch_geometric.utils import CustomModuleDict
 
 try:
     from torch.fx import Graph, GraphModule, Node

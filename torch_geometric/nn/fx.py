@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 
 import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
+
 from torch_geometric.utils import CustomModuleDict
 
 try:

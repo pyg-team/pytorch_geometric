@@ -1,6 +1,6 @@
-from torch.nn import Module, ModuleDict
+from typing import Iterable, Mapping, Optional
 
-from typing import Optional, Mapping, Iterable
+from torch.nn import Module, ModuleDict
 
 
 # `torch.nn.ModuleDict` doesn't allow `.` to be used in the keys.

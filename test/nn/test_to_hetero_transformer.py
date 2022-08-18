@@ -16,7 +16,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.utils import dropout_adj, CustomModuleDict
+from torch_geometric.utils import CustomModuleDict, dropout_adj
 
 torch.fx.wrap('dropout_adj')
 

@@ -11,8 +11,8 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.fx import Transformer
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils.hetero import get_unused_node_types
 from torch_geometric.utils import CustomModuleDict
+from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
     from torch.fx import Graph, GraphModule, Node

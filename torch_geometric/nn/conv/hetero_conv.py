@@ -7,8 +7,8 @@ from torch.nn import Module
 
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.typing import Adj, EdgeType, NodeType
-from torch_geometric.utils.hetero import check_add_self_loops
 from torch_geometric.utils import CustomModuleDict
+from torch_geometric.utils.hetero import check_add_self_loops
 
 
 class HeteroConv(Module):
