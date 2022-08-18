@@ -5,7 +5,7 @@ from torch.nn import Module
 
 
 # `torch.nn.ModuleDict` doesn't allow `.` to be used in the keys.
-# `CustomModuleDict` will support it by converting the `.` to `#` in the
+# This `ModuleDict` will support it by converting the `.` to `#` in the
 # internal representation and converts it back to `.` in the external
 # representation.
 class ModuleDict(torch.nn.ModuleDict):
