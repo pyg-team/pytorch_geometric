@@ -1,6 +1,6 @@
-import torch
 from typing import Iterable, Mapping, Optional
 
+import torch
 from torch.nn import Module
 
 
