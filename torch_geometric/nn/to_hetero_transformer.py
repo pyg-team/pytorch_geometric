@@ -12,6 +12,7 @@ from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
 )
+from torch_geometric.utils import CustomModuleDict
 
 try:
     from torch.fx import Graph, GraphModule, Node
@@ -351,7 +352,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        module_dict = torch.nn.ModuleDict()
+        module_dict = CustomModuleDict()
         for key in self.metadata[int(has_edge_level_target)]:
             module_dict[key2str(key)] = copy.deepcopy(module)
             if len(self.metadata[int(has_edge_level_target)]) <= 1:

@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 
 import torch
 from torch.nn import Module, ModuleDict, ModuleList, Sequential
+from torch_geometric.utils import CustomModuleDict
 
 try:
     from torch.fx import Graph, GraphModule, Node
@@ -192,7 +193,7 @@ class Transformer(object):
                 for i, submodule in enumerate(module)
             ])
         elif isinstance(module, ModuleDict):
-            return ModuleDict({
+            return CustomModuleDict({
                 key: self._init_submodule(submodule, f'{target}.{key}')
                 for key, submodule in module.items()
             })

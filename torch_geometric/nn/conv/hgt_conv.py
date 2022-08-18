@@ -11,7 +11,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils import softmax
+from torch_geometric.utils import softmax, CustomModuleDict
 
 
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
@@ -77,10 +77,10 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.group = group
 
-        self.k_lin = torch.nn.ModuleDict()
-        self.q_lin = torch.nn.ModuleDict()
-        self.v_lin = torch.nn.ModuleDict()
-        self.a_lin = torch.nn.ModuleDict()
+        self.k_lin = CustomModuleDict()
+        self.q_lin = CustomModuleDict()
+        self.v_lin = CustomModuleDict()
+        self.a_lin = CustomModuleDict()
         self.skip = torch.nn.ParameterDict()
         for node_type, in_channels in self.in_channels.items():
             self.k_lin[node_type] = Linear(in_channels, out_channels)

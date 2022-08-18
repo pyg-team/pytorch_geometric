@@ -12,6 +12,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero_with_bases,
 )
+from torch_geometric.utils import CustomModuleDict
 
 
 class Net1(torch.nn.Module):
@@ -83,8 +84,8 @@ class Net5(torch.nn.Module):
 class Net6(torch.nn.Module):
     def __init__(self, num_layers):
         super().__init__()
-        self.lins = torch.nn.ModuleDict()
-        self.convs = torch.nn.ModuleDict()
+        self.lins = CustomModuleDict()
+        self.convs = CustomModuleDict()
         for i in range(num_layers):
             self.lins[str(i)] = Linear(16, 16)
             self.convs[str(i)] = SAGEConv(16, 16)
