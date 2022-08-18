@@ -5,7 +5,6 @@ import torch.nn.functional as F
 
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HGTConv, Linear
-from torch_geometric.utils import CustomModuleDict
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
 dataset = DBLP(path)
@@ -20,7 +19,7 @@ class HGT(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
         super().__init__()
 
-        self.lin_dict = CustomModuleDict()
+        self.lin_dict = torch.nn.ModuleDict()
         for node_type in data.node_types:
             self.lin_dict[node_type] = Linear(-1, hidden_channels)
 

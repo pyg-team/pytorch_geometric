@@ -1,4 +1,3 @@
-from .module_dict import CustomModuleDict
 from .degree import degree
 from .softmax import softmax
 from .dropout import dropout_adj
@@ -37,7 +36,6 @@ from .train_test_split_edges import train_test_split_edges
 from .scatter import scatter
 
 __all__ = [
-    'CustomModuleDict',
     'degree',
     'softmax',
     'dropout_adj',

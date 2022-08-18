@@ -11,7 +11,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.fx import Transformer
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils import CustomModuleDict
+from torch_geometric.utils import ModuleDict
 from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
@@ -375,7 +375,7 @@ class LinearAlign(torch.nn.Module):
                  out_channels: int):
         super().__init__()
         self.out_channels = out_channels
-        self.lins = CustomModuleDict()
+        self.lins = ModuleDict()
         for key in keys:
             self.lins[key2str(key)] = Linear(-1, out_channels, bias=False)
 

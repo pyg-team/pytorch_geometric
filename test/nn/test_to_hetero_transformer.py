@@ -16,7 +16,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.utils import CustomModuleDict, dropout_adj
+from torch_geometric.utils import dropout_adj
 
 torch.fx.wrap('dropout_adj')
 
@@ -90,8 +90,8 @@ class Net5(torch.nn.Module):
 class Net6(torch.nn.Module):
     def __init__(self, num_layers):
         super().__init__()
-        self.lins = CustomModuleDict()
-        self.convs = CustomModuleDict()
+        self.lins = torch.nn.ModuleDict()
+        self.convs = torch.nn.ModuleDict()
         for i in range(num_layers):
             self.lins[str(i)] = Linear(16, 16)
             self.convs[str(i)] = SAGEConv(16, 16)

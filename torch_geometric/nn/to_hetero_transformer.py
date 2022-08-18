@@ -8,7 +8,7 @@ from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils import CustomModuleDict
+from torch_geometric.utils import ModuleDict
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -352,7 +352,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
 
-        module_dict = CustomModuleDict()
+        module_dict = ModuleDict()
         for key in self.metadata[int(has_edge_level_target)]:
             module_dict[key2str(key)] = copy.deepcopy(module)
             if len(self.metadata[int(has_edge_level_target)]) <= 1:
