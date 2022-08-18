@@ -1,5 +1,6 @@
-import torch
 from typing import Mapping
+
+import torch
 from torch.nn import Module
 
 from torch_geometric.nn.module_dict import ModuleDict
