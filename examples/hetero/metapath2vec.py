@@ -54,7 +54,7 @@ def train(epoch, log_steps=100, eval_steps=2000):
 def test(train_ratio=0.1):
     model.eval()
 
-    z = model('author', batch=data['author'].y_index)
+    z = model('author', batch=data['author'].y_index.to(device))
     y = data['author'].y
 
     perm = torch.randperm(z.size(0))
