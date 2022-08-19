@@ -36,8 +36,6 @@ class SAGPooling(torch.nn.Module):
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},
 
-    where nodes are dropped based on a learnable projection score
-    :math:`\mathbf{p}`.
     Projections scores are learned based on a graph neural network layer.
 
     Args:
