@@ -7,12 +7,22 @@ from torch import Tensor
 
 import torch_geometric
 
+major, minor, _ = torch.__version__.split('.', maxsplit=2)
+major, minor = int(major), int(minor)
+has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
+
 
 class ScatterImpl(torch.nn.Module):
     def forward(self, src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = 'sum') -> Tensor:
         if torch_geometric.is_experimental_mode_enabled('scatter_reduce'):
+            if not has_pytorch112:
+                warnings.warn("Cannot use 'scatter_reduce' experimental mode "
+                              "on PyTorch < 1.12")
+                return torch_scatter.scatter(src, index, dim, out, dim_size,
+                                             reduce)
+
             warnings.filterwarnings('ignore', '.*scatter_reduce.*')
 
             reduce = 'sum' if reduce == 'add' else reduce
