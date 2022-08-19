@@ -84,7 +84,7 @@ class VarAggregation(Aggregation):
 
     .. math::
         \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
-        \mathcal{X} \}) - \mathrm{mean}(\mathcal{X}).
+        \mathcal{X} \}) - \mathrm{mean}(\mathcal{X})^2.
     """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
