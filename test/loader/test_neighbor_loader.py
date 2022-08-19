@@ -172,45 +172,36 @@ def test_heterogeneous_neighbor_loader_mixed_input(directed):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
-    data['author'].x = torch.arange(100, 300)
+    data['author'].x = torch.arange(100)
+    data['book'].x = torch.arange(100)
+    data['publisher'].x = torch.arange(100)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
-    data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
-    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
-    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
+    data['paper', 'author'].edge_index = get_edge_index(100, 100, 500)
+    data['book', 'publisher'].edge_index = get_edge_index(100, 100, 500)
 
     batch_size = 20
 
     loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
-        ('paper', None)
-    ], batch_size=batch_size, directed=directed, shuffle=False)
-
-    loader2 = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
-                             batch_size=batch_size, directed=directed,
-                             shuffle=False)
-
-    loader3 = NeighborLoader(
-        data, num_neighbors=[10] * 2, input_nodes=[
-            ('paper', torch.arange(0, data['paper'].num_nodes,
-                                   dtype=torch.long))
-        ], batch_size=batch_size, directed=directed, shuffle=False)
-
-    for batch1, batch2, batch3 in zip(loader, loader2, loader3):
-        assert torch.allclose(batch1['paper'].x, batch2['paper'].x)
-        assert torch.allclose(batch2['paper'].x, batch3['paper'].x)
-
-    loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes=[
-        ('paper', None), ('author', None)
+        ('paper', None), ('book', None)
     ], batch_size=batch_size, directed=directed, shuffle=False)
 
     for batch in loader:
+        assert batch['paper'].num_nodes >= batch['author'].num_nodes
+        assert batch['book'].num_nodes >= batch['publisher'].num_nodes
+
         paper_size = (batch['paper'].batch_size if hasattr(
             batch['paper'], 'batch_size') else 0)
-        author_size = (batch['author'].batch_size if hasattr(
-            batch['author'], 'batch_size') else 0)
-        assert paper_size + author_size == batch_size
+        book_size = (batch['book'].batch_size if hasattr(
+            batch['book'], 'batch_size') else 0)
+        assert paper_size + book_size == batch_size
+
+    loader = NeighborLoader(
+        data, num_neighbors=[10] * 2, input_nodes=[('paper', torch.arange(10)),
+                                                   ('book', torch.arange(10))],
+        batch_size=batch_size, directed=directed, shuffle=False)
+
+    for batch in loader:
+        assert batch['paper'].num_nodes == batch['book'].num_nodes
 
 
 @pytest.mark.parametrize('directed', [True, False])
