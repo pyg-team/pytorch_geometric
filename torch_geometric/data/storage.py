@@ -161,6 +161,9 @@ class BaseStorage(MutableMapping):
 
     # Additional functionality ################################################
 
+    def get(self, key: str, value: Optional[Any] = None) -> Any:
+        return self._mapping.get(key, value)
+
     def to_dict(self) -> Dict[str, Any]:
         r"""Returns a dictionary of stored key/value pairs."""
         return copy.copy(self._mapping)

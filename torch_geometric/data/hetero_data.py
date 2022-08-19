@@ -591,6 +591,39 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return data
 
+    def node_type_subgraph(self, node_types: List[NodeType]) -> 'HeteroData':
+        r"""Returns the subgraph induced by the given :obj:`node_types`, *i.e.*
+        the returned :class:`HeteroData` object only contains the node types
+        which are included in :obj:`node_types`, and only contains the edge
+        types where both end points are included in :obj:`node_types`."""
+        data = copy.copy(self)
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            if src not in node_types or dst not in node_types:
+                del data[edge_type]
+        for node_type in self.node_types:
+            if node_type not in node_types:
+                del data[node_type]
+        return data
+
+    def edge_type_subgraph(self, edge_types: List[EdgeType]) -> 'HeteroData':
+        r"""Returns the subgraph induced by the given :obj:`edge_types`, *i.e.*
+        the returned :class:`HeteroData` object only contains the edge types
+        which are included in :obj:`edge_types`, and only contains the node
+        types of the end points which are included in :obj:`node_types`."""
+        edge_types = [self._to_canonical(e) for e in edge_types]
+
+        data = copy.copy(self)
+        for edge_type in self.edge_types:
+            if edge_type not in edge_types:
+                del data[edge_type]
+        node_types = set(e[0] for e in edge_types)
+        node_types |= set(e[-1] for e in edge_types)
+        for node_type in self.node_types:
+            if node_type not in node_types:
+                del data[node_type]
+        return data
+
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
                        add_node_type: bool = True,

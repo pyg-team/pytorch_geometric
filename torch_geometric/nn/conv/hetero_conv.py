@@ -3,9 +3,10 @@ from collections import defaultdict
 from typing import Dict, Optional
 
 from torch import Tensor
-from torch.nn import Module, ModuleDict
+from torch.nn import Module
 
 from torch_geometric.nn.conv.hgt_conv import group
+from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
 
