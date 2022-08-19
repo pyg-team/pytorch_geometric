@@ -28,7 +28,7 @@ def is_seed(s):
 
 
 def is_split(s):
-    if s in ['train', 'val', 'test']:
+    if s in ['train', 'val']:
         return True
     else:
         return False
@@ -59,15 +59,18 @@ def agg_dict_list(dict_list):
 
 
 def name_to_dict(run):
-    cols = run.split('-')[1:]
+    run = run.split('-', 1)[-1]
+    cols = run.split('=')
     keys, vals = [], []
-    for col in cols:
+    keys.append(cols[0])
+    for col in cols[1:-1]:
         try:
-            key, val = col.split('=')
+            val, key = col.rsplit('-', 1)
         except Exception:
             print(col)
         keys.append(key)
         vals.append(string_to_python(val))
+    vals.append(cols[-1])
     return dict(zip(keys, vals))
 
 
@@ -86,8 +89,8 @@ def agg_runs(dir, metric_best='auto'):
         validation performance. Options: auto, accuracy, auc.
 
     '''
-    results = {'train': None, 'val': None, 'test': None}
-    results_best = {'train': None, 'val': None, 'test': None}
+    results = {'train': None, 'val': None}
+    results_best = {'train': None, 'val': None}
     for seed in os.listdir(dir):
         if is_seed(seed):
             dir_seed = os.path.join(dir, seed)

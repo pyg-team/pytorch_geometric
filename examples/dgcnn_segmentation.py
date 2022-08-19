@@ -13,7 +13,7 @@ from torch_geometric.nn import MLP, DynamicEdgeConv
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
 transform = T.Compose([
-    T.RandomTranslate(0.01),
+    T.RandomJitter(0.01),
     T.RandomRotate(15, axis=0),
     T.RandomRotate(15, axis=1),
     T.RandomRotate(15, axis=2)
@@ -38,7 +38,7 @@ class Net(torch.nn.Module):
         self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
 
         self.mlp = MLP([3 * 64, 1024, 256, 128, out_channels], dropout=0.5,
-                       batch_norm=False)
+                       norm=None)
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch

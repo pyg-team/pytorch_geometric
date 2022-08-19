@@ -41,8 +41,11 @@ def set_cfg(cfg):
     # Set print destination: stdout / file / both
     cfg.print = 'both'
 
-    # Select device: 'cpu', 'cuda:0', 'auto'
-    cfg.device = 'auto'
+    # Select device: 'cpu', 'gpu', 'tpu', 'auto'
+    cfg.accelerator = 'auto'
+
+    # number of devices: eg. for 2 GPU set cfg.devices=2
+    cfg.devices = None
 
     # Output directory
     cfg.out_dir = 'results'
@@ -223,9 +226,6 @@ def set_cfg(cfg):
     # Training options
     # ----------------------------------------------------------------------- #
     cfg.train = CN()
-
-    # Training (and validation) pipeline mode
-    cfg.train.mode = 'standard'
 
     # Total graph mini-batch size
     cfg.train.batch_size = 16

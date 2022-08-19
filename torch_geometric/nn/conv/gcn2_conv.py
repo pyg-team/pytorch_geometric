@@ -119,7 +119,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -130,7 +130,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -154,8 +154,8 @@ class GCN2Conv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)

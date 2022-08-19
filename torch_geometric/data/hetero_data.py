@@ -9,16 +9,30 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data.data import BaseData, Data, size_repr
+from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import (
+    EDGE_LAYOUT_TO_ATTR_NAME,
+    EdgeAttr,
+    GraphStore,
+    adj_type_to_edge_tensor_type,
+    edge_tensor_type_to_adj_type,
+)
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, NodeType, QueryType
-from torch_geometric.utils import is_undirected
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    QueryType,
+)
+from torch_geometric.utils import bipartite_subgraph, is_undirected
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
-class HeteroData(BaseData):
+class HeteroData(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a heterogeneous graph, holding multiple node
     and/or edge types in disjunct storage objects.
     Storage objects can hold either node-level, link-level or graph-level
@@ -92,6 +106,8 @@ class HeteroData(BaseData):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        super().__init__()
+
         self.__dict__['_global_store'] = BaseStorage(_parent=self)
         self.__dict__['_node_store_dict'] = {}
         self.__dict__['_edge_store_dict'] = {}
@@ -229,6 +245,14 @@ class HeteroData(BaseData):
         r"""Returns a list of all edge storages of the graph."""
         return list(self._edge_store_dict.values())
 
+    def node_items(self) -> List[Tuple[NodeType, NodeStorage]]:
+        r"""Returns a list of node type and node storage pairs."""
+        return list(self._node_store_dict.items())
+
+    def edge_items(self) -> List[Tuple[EdgeType, EdgeStorage]]:
+        r"""Returns a list of edge type and edge storage pairs."""
+        return list(self._edge_store_dict.items())
+
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
         for key, store in chain(self._node_store_dict.items(),
@@ -301,6 +325,59 @@ class HeteroData(BaseData):
         edge_index, _, _ = to_homogeneous_edge_index(self)
         return is_undirected(edge_index, num_nodes=self.num_nodes)
 
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the data."""
+        cls_name = self.__class__.__name__
+        status = True
+
+        for edge_type, store in self._edge_store_dict.items():
+            src, _, dst = edge_type
+
+            num_src_nodes = self[src].num_nodes
+            num_dst_nodes = self[dst].num_nodes
+            if num_src_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{src}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if num_dst_nodes is None:
+                status = False
+                warn_or_raise(
+                    f"'num_nodes' is undefined in node type '{dst}' of "
+                    f"'{cls_name}'", raise_on_error)
+
+            if 'edge_index' in store and store.edge_index.numel() > 0:
+                if store.edge_index.min() < 0:
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"negative indices in '{cls_name}' "
+                        f"(found {int(store.edge_index.min())})",
+                        raise_on_error)
+
+                if (num_src_nodes is not None
+                        and store.edge_index[0].max() >= num_src_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger source indices than the number of nodes"
+                        f"({num_src_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[0].max())})",
+                        raise_on_error)
+
+                if (num_dst_nodes is not None
+                        and store.edge_index[1].max() >= num_dst_nodes):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} contains"
+                        f"larger destination indices than the number of nodes"
+                        f"({num_dst_nodes}) of this node type in '{cls_name}' "
+                        f"(found {int(store.edge_index[1].max())})",
+                        raise_on_error)
+
+        return status
+
     def debug(self):
         pass  # TODO
 
@@ -337,7 +414,7 @@ class HeteroData(BaseData):
             if len(edge_types) == 1:
                 args = edge_types[0]
                 return args
-            else:
+            elif len(edge_types) == 0:
                 args = (args[0], self.DEFAULT_REL, args[1])
                 return args
 
@@ -437,6 +514,116 @@ class HeteroData(BaseData):
 
         return self
 
+    def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
+        r"""Returns the induced subgraph containing the node types and
+        corresponding nodes in :obj:`subset_dict`.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = ...
+            data['author'].x = ...
+            data['conference'].x = ...
+            data['paper', 'cites', 'paper'].edge_index = ...
+            data['author', 'paper'].edge_index = ...
+            data['paper', 'conference'].edge_index = ...
+            print(data)
+            >>> HeteroData(
+                paper={ x=[10, 16] },
+                author={ x=[5, 32] },
+                conference={ x=[5, 8] },
+                (paper, cites, paper)={ edge_index=[2, 50] },
+                (author, to, paper)={ edge_index=[2, 30] },
+                (paper, to, conference)={ edge_index=[2, 25] }
+            )
+
+            subset_dict = {
+                'paper': torch.tensor([3, 4, 5, 6]),
+                'author': torch.tensor([0, 2]),
+            }
+
+            print(data.subgraph(subset_dict))
+            >>> HeteroData(
+                paper={ x=[4, 16] },
+                author={ x=[2, 32] },
+                (paper, cites, paper)={ edge_index=[2, 24] },
+                (author, to, paper)={ edge_index=[2, 5] }
+            )
+
+        Args:
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+                holding the nodes to keep for each node type.
+        """
+        data = self.__class__(self._global_store)
+
+        for node_type, subset in subset_dict.items():
+            for key, value in self[node_type].items():
+                if key == 'num_nodes':
+                    if subset.dtype == torch.bool:
+                        data[node_type].num_nodes = int(subset.sum())
+                    else:
+                        data[node_type].num_nodes = subset.size(0)
+                elif self[node_type].is_node_attr(key):
+                    data[node_type][key] = value[subset]
+                else:
+                    data[node_type][key] = value
+
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            if src not in subset_dict or dst not in subset_dict:
+                continue
+
+            edge_index, _, edge_mask = bipartite_subgraph(
+                (subset_dict[src], subset_dict[dst]),
+                self[edge_type].edge_index,
+                relabel_nodes=True,
+                size=(self[src].num_nodes, self[dst].num_nodes),
+                return_edge_mask=True,
+            )
+
+            for key, value in self[edge_type].items():
+                if key == 'edge_index':
+                    data[edge_type].edge_index = edge_index
+                elif self[edge_type].is_edge_attr(key):
+                    data[edge_type][key] = value[edge_mask]
+                else:
+                    data[edge_type][key] = value
+
+        return data
+
+    def node_type_subgraph(self, node_types: List[NodeType]) -> 'HeteroData':
+        r"""Returns the subgraph induced by the given :obj:`node_types`, *i.e.*
+        the returned :class:`HeteroData` object only contains the node types
+        which are included in :obj:`node_types`, and only contains the edge
+        types where both end points are included in :obj:`node_types`."""
+        data = copy.copy(self)
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            if src not in node_types or dst not in node_types:
+                del data[edge_type]
+        for node_type in self.node_types:
+            if node_type not in node_types:
+                del data[node_type]
+        return data
+
+    def edge_type_subgraph(self, edge_types: List[EdgeType]) -> 'HeteroData':
+        r"""Returns the subgraph induced by the given :obj:`edge_types`, *i.e.*
+        the returned :class:`HeteroData` object only contains the edge types
+        which are included in :obj:`edge_types`, and only contains the node
+        types of the end points which are included in :obj:`node_types`."""
+        edge_types = [self._to_canonical(e) for e in edge_types]
+
+        data = copy.copy(self)
+        for edge_type in self.edge_types:
+            if edge_type not in edge_types:
+                del data[edge_type]
+        node_types = set(e[0] for e in edge_types)
+        node_types |= set(e[-1] for e in edge_types)
+        for node_type in self.node_types:
+            if node_type not in node_types:
+                del data[node_type]
+        return data
+
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
                        add_node_type: bool = True,
@@ -530,6 +717,134 @@ class HeteroData(BaseData):
             data.edge_type = edge_type.repeat_interleave(sizes)
 
         return data
+
+    # FeatureStore interface ##################################################
+
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        r"""Stores a feature tensor in node storage."""
+        if not attr.is_set('index'):
+            attr.index = None
+
+        out = self._node_store_dict.get(attr.group_name, None)
+        if out:
+            # Group name exists, handle index or create new attribute name:
+            val = getattr(out, attr.attr_name, None)
+            if val is not None:
+                val[attr.index] = tensor
+            else:
+                setattr(self[attr.group_name], attr.attr_name, tensor)
+        else:
+            # No node storage found, just store tensor in new one:
+            setattr(self[attr.group_name], attr.attr_name, tensor)
+        return True
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        r"""Obtains a feature tensor from node storage."""
+        # Retrieve tensor and index accordingly:
+        tensor = getattr(self[attr.group_name], attr.attr_name, None)
+        if tensor is not None:
+            # TODO this behavior is a bit odd, since TensorAttr requires that
+            # we set `index`. So, we assume here that indexing by `None` is
+            # equivalent to not indexing at all, which is not in line with
+            # Python semantics.
+            return tensor[attr.index] if attr.index is not None else tensor
+        return None
+
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        r"""Deletes a feature tensor from node storage."""
+        # Remove tensor entirely:
+        if hasattr(self[attr.group_name], attr.attr_name):
+            delattr(self[attr.group_name], attr.attr_name)
+            return True
+        return False
+
+    def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
+        r"""Returns the size of the tensor corresponding to `attr`."""
+        return self._get_tensor(attr).size()
+
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        out = []
+        for group_name, group in self.node_items():
+            for attr_name in group:
+                if group.is_node_attr(attr_name):
+                    out.append(TensorAttr(group_name, attr_name))
+        return out
+
+    def __len__(self) -> int:
+        return BaseData.__len__(self)
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    # GraphStore interface ####################################################
+
+    def _put_edge_index(self, edge_index: EdgeTensorType,
+                        edge_attr: EdgeAttr) -> bool:
+        r"""Stores an edge index in edge storage, in the specified layout."""
+
+        # Convert the edge index to a recognizable layout:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
+        setattr(self[edge_attr.edge_type], attr_name, attr_val)
+
+        # Set edge attributes:
+        if not hasattr(self[edge_attr.edge_type], '_edge_attrs'):
+            self[edge_attr.edge_type]._edge_attrs = {}
+
+        self[edge_attr.edge_type]._edge_attrs[
+            edge_attr.layout.value] = edge_attr
+
+        key = self._to_canonical(edge_attr.edge_type)
+        src, _, dst = key
+
+        # Handle num_nodes, if possible:
+        size = edge_attr.size
+        if size is not None:
+            # TODO better warning in the case of overwriting 'num_nodes'
+            self[src].num_nodes = size[0]
+            self[dst].num_nodes = size[1]
+
+        return True
+
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""Gets an edge index from edge storage, in the specified layout."""
+        # Get the requested layout and the Adj tensor associated with it:
+        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
+        attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
+        if attr_val is not None:
+            # Convert from Adj type to Tuple[Tensor, Tensor]
+            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
+        return attr_val
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns a list of `EdgeAttr` objects corresponding to the edge
+        indices stored in `HeteroData` and their layouts."""
+        out = []
+        added_attrs = set()
+
+        # Check edges added via _put_edge_index:
+        for edge_type, _ in self.edge_items():
+            if not hasattr(self[edge_type], '_edge_attrs'):
+                continue
+            edge_attrs = self[edge_type]._edge_attrs.values()
+            for attr in edge_attrs:
+                attr.size = self[edge_type].size()
+                added_attrs.add((attr.edge_type, attr.layout))
+            out.extend(edge_attrs)
+
+        # Check edges added through regular interface:
+        # TODO deprecate this and store edge attributes for all edges in
+        # EdgeStorage
+        for edge_type, edge_store in self.edge_items():
+            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
+                # Don't double count:
+                if attr_name in edge_store and ((edge_type, layout)
+                                                not in added_attrs):
+                    out.append(
+                        EdgeAttr(edge_type=edge_type, layout=layout,
+                                 size=self[edge_type].size()))
+
+        return out
 
 
 # Helper functions ############################################################

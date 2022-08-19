@@ -1,20 +1,28 @@
 import copy
 
+import pytest
 import torch
+import torch_sparse
 
 from torch_geometric.data import HeteroData
+from torch_geometric.data.storage import EdgeStorage
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
+x_conference = torch.randn(5, 8)
 
 idx_paper = torch.randint(x_paper.size(0), (100, ), dtype=torch.long)
 idx_author = torch.randint(x_author.size(0), (100, ), dtype=torch.long)
+idx_conference = torch.randint(x_conference.size(0), (100, ), dtype=torch.long)
 
 edge_index_paper_paper = torch.stack([idx_paper[:50], idx_paper[:50]], dim=0)
 edge_index_paper_author = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
-edge_index_author_paper = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
+edge_index_author_paper = torch.stack([idx_author[:30], idx_paper[:30]], dim=0)
+edge_index_paper_conference = torch.stack(
+    [idx_paper[:25], idx_conference[:25]], dim=0)
 
 edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
+edge_attr_author_paper = torch.randn(edge_index_author_paper.size(1), 8)
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -31,9 +39,15 @@ def test_init_hetero_data():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
+    data.validate(raise_on_error=True)
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData(
         v1={'x': 1},
@@ -43,9 +57,14 @@ def test_init_hetero_data():
         paper__author={'edge_index': edge_index_paper_author},
         author__paper={'edge_index': edge_index_author_paper},
     )
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
     data = HeteroData({
         'v1': {
@@ -67,9 +86,14 @@ def test_init_hetero_data():
             'edge_index': edge_index_author_paper
         },
     })
+
     assert len(data) == 2
-    assert len(data.edge_types) == 3
     assert data.node_types == ['v1', 'paper', 'author']
+    assert len(data.node_stores) == 3
+    assert len(data.node_items()) == 3
+    assert len(data.edge_types) == 3
+    assert len(data.edge_stores) == 3
+    assert len(data.edge_items()) == 3
 
 
 def test_hetero_data_functions():
@@ -142,6 +166,67 @@ def test_hetero_data_rename():
     assert data['article'].x.tolist() == x_paper.tolist()
     edge_index = data['article', 'article'].edge_index
     assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
+def test_hetero_data_subgraph():
+    data = HeteroData()
+    data.num_node_types = 3
+    data['paper'].x = x_paper
+    data['paper'].name = 'paper'
+    data['paper'].num_nodes = x_paper.size(0)
+    data['author'].x = x_author
+    data['author'].num_nodes = x_author.size(0)
+    data['conference'].x = x_conference
+    data['conference'].num_nodes = x_conference.size(0)
+    data['paper', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'paper'].edge_attr = edge_attr_paper_paper
+    data['paper', 'paper'].name = 'cites'
+    data['author', 'paper'].edge_index = edge_index_author_paper
+    data['paper', 'author'].edge_index = edge_index_paper_author
+    data['paper', 'conference'].edge_index = edge_index_paper_conference
+
+    subset = {
+        'paper': torch.randperm(x_paper.size(0))[:4],
+        'author': torch.randperm(x_author.size(0))[:2]
+    }
+
+    out = data.subgraph(subset)
+
+    assert out.num_node_types == data.num_node_types
+    assert out.node_types == ['paper', 'author']
+
+    assert len(out['paper']) == 3
+    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
+    assert out['paper'].name == 'paper'
+    assert out['paper'].num_nodes == 4
+    assert len(out['author']) == 2
+    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
+    assert out['author'].num_nodes == 2
+
+    assert out.edge_types == [
+        ('paper', 'to', 'paper'),
+        ('author', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+    ]
+
+    assert len(out['paper', 'paper']) == 3
+    assert out['paper', 'paper'].edge_index is not None
+    assert out['paper', 'paper'].edge_attr is not None
+    assert out['paper', 'paper'].name == 'cites'
+    assert len(out['paper', 'author']) == 1
+    assert out['paper', 'author'].edge_index is not None
+    assert len(out['author', 'paper']) == 1
+    assert out['author', 'paper'].edge_index is not None
+
+    out = data.node_type_subgraph(['paper', 'author'])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'paper'),
+                              ('author', 'to', 'paper'),
+                              ('paper', 'to', 'author')]
+
+    out = data.edge_type_subgraph([('paper', 'author')])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'author')]
 
 
 def test_copy_hetero_data():
@@ -311,3 +396,100 @@ def test_to_homogeneous_and_vice_versa():
     assert len(out) == 1
     assert out['paper'].num_nodes == 100
     assert out['author'].num_nodes == 200
+
+
+def test_hetero_data_to_canonical():
+    data = HeteroData()
+    assert isinstance(data['user', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 1
+    assert isinstance(data['user', 'to', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 1
+
+    data = HeteroData()
+    assert isinstance(data['user', 'buys', 'product'], EdgeStorage)
+    assert isinstance(data['user', 'clicks', 'product'], EdgeStorage)
+    assert len(data.edge_types) == 2
+
+    with pytest.raises(TypeError, match="missing 1 required"):
+        data['user', 'product']
+
+
+# Feature Store ###############################################################
+
+
+def test_basic_feature_store():
+    data = HeteroData()
+    x = torch.randn(20, 20)
+
+    # Put tensor:
+    assert data.put_tensor(copy.deepcopy(x), group_name='paper', attr_name='x',
+                           index=None)
+    assert torch.equal(data['paper'].x, x)
+
+    # Put (modify) tensor slice:
+    x[15:] = 0
+    data.put_tensor(0, group_name='paper', attr_name='x',
+                    index=slice(15, None, None))
+
+    # Get tensor:
+    out = data.get_tensor(group_name='paper', attr_name='x', index=None)
+    assert torch.equal(x, out)
+
+    # Get tensor size:
+    assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
+
+    # Get tensor attrs:
+    data['paper'].num_nodes = 20  # don't include, not a tensor attr
+    data['paper'].bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
+
+    tensor_attrs = data.get_all_tensor_attrs()
+    assert len(tensor_attrs) == 1
+    assert tensor_attrs[0].group_name == 'paper'
+    assert tensor_attrs[0].attr_name == 'x'
+
+    # Remove tensor:
+    assert 'x' in data['paper'].__dict__['_mapping']
+    data.remove_tensor(group_name='paper', attr_name='x', index=None)
+    assert 'x' not in data['paper'].__dict__['_mapping']
+
+
+# Graph Store #################################################################
+
+
+def test_basic_graph_store():
+    data = HeteroData()
+
+    edge_index = torch.LongTensor([[0, 1], [1, 2]])
+    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
+                                    sparse_sizes=(3, 3))
+
+    def assert_equal_tensor_tuple(expected, actual):
+        assert len(expected) == len(actual)
+        for i in range(len(expected)):
+            assert torch.equal(expected[i], actual[i])
+
+    # We put all three tensor types: COO, CSR, and CSC, and we get them back
+    # to confirm that `GraphStore` works as intended.
+    coo = adj.coo()[:-1]
+    csr = adj.csr()[:-1]
+    csc = adj.csc()[-2::-1]  # (row, colptr)
+
+    # Put:
+    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),
+                        size=(3, 3))
+    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'),
+                        size=(3, 3))
+    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'),
+                        size=(3, 3))
+
+    # Get:
+    assert_equal_tensor_tuple(
+        coo, data.get_edge_index(layout='coo', edge_type=('a', 'to', 'b')))
+    assert_equal_tensor_tuple(
+        csr, data.get_edge_index(layout='csr', edge_type=('a', 'to', 'c')))
+    assert_equal_tensor_tuple(
+        csc, data.get_edge_index(layout='csc', edge_type=('b', 'to', 'c')))
+
+    # Get attrs:
+    edge_attrs = data.get_all_edge_attrs()
+    assert len(edge_attrs) == 3

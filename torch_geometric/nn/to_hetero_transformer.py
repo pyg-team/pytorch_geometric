@@ -6,14 +6,21 @@ from typing import Any, Dict, Optional, Tuple, Union
 import torch
 from torch.nn import Module
 
-from torch_geometric.nn.fx import Transformer
+from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils.hetero import get_unused_node_types
+from torch_geometric.utils.hetero import (
+    check_add_self_loops,
+    get_unused_node_types,
+)
 
 try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
+
+
+def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    return mapping if mapping is not None else {}
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
@@ -155,9 +162,14 @@ class ToHeteroTransformer(Transformer):
             node.type = Dict[Type, node.type]
 
         self.graph.inserting_after(node)
+
+        dict_node = self.graph.create_node('call_function', target=get_dict,
+                                           args=(node, ), name=f'{name}_dict')
+        self.graph.inserting_after(dict_node)
+
         for key in self.metadata[int(self.is_edge_level(node))]:
             out = self.graph.create_node('call_method', target='get',
-                                         args=(node, key),
+                                         args=(dict_node, key, None),
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
@@ -167,6 +179,9 @@ class ToHeteroTransformer(Transformer):
     def call_message_passing_module(self, node: Node, target: Any, name: str):
         # Add calls to edge type-wise `MessagePassing` modules and aggregate
         # the outputs to node type-wise embeddings afterwards.
+
+        module = get_submodule(self.module, target)
+        check_add_self_loops(module, self.metadata[1])
 
         # Group edge-wise keys per destination:
         key_name, keys_per_dst = {}, defaultdict(list)
@@ -253,7 +268,6 @@ class ToHeteroTransformer(Transformer):
                 args=(self.find_by_name(key), len(self.metadata[0])),
                 name=f'{name}_{i}')
             self.graph.inserting_after(out)
-
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):

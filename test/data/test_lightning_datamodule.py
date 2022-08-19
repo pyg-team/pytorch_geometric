@@ -4,7 +4,11 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import LightningDataset, LightningNodeData
+from torch_geometric.data import (
+    LightningDataset,
+    LightningLinkData,
+    LightningNodeData,
+)
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
@@ -264,3 +268,47 @@ def test_lightning_hetero_node_data(get_dataset):
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
+
+
+@withCUDA
+@onlyFullTest
+@withPackage('pytorch_lightning')
+def test_lightning_hetero_link_data(get_dataset):
+    # TODO: Add more datasets.
+    dataset = get_dataset(name='DBLP')
+    data = dataset[0]
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        break
+
+    data['author'].time = torch.arange(data['author'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['term'].time = torch.arange(data['term'].num_nodes)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        input_train_time=torch.arange(data['author', 'paper'].num_edges),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+        time_attr='time',
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        assert 'edge_label_time' in batch['author', 'paper']
+        break

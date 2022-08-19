@@ -17,6 +17,7 @@ from .mask import index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import dense_to_sparse
+from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
@@ -32,6 +33,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
+from .scatter import scatter
 
 __all__ = [
     'degree',
@@ -61,6 +63,8 @@ __all__ = [
     'to_dense_batch',
     'to_dense_adj',
     'dense_to_sparse',
+    'unbatch',
+    'unbatch_edge_index',
     'normalized_cut',
     'grid',
     'geodesic_distance',
@@ -81,6 +85,7 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
+    'scatter',
 ]
 
 classes = __all__

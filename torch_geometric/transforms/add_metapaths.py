@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import torch
 from torch_sparse import SparseTensor
@@ -7,6 +7,7 @@ from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType
+from torch_geometric.utils import degree
 
 
 @functional_transform('add_metapaths')
@@ -83,11 +84,24 @@ class AddMetaPaths(BaseTransform):
             (default: :obj:`False`)
         drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
             node types not connected by any edge type. (default: :obj:`False`)
+        max_sample (int, optional): If set, will sample at maximum
+            :obj:`max_sample` neighbors within metapaths. Useful in order to
+            tackle very dense metapath edges. (default: :obj:`None`)
+        weighted (bool, optional): If set to :obj:`True` compute weights for
+            each metapath edge and store them in :obj:`edge_weight`. The weight
+            of each metapath edge is computed as the number of metapaths from
+            the start to the end of the metapath edge.
+            (default :obj:`False`)
     """
-    def __init__(self, metapaths: List[List[EdgeType]],
-                 drop_orig_edges: bool = False,
-                 keep_same_node_type: bool = False,
-                 drop_unconnected_nodes: bool = False):
+    def __init__(
+        self,
+        metapaths: List[List[EdgeType]],
+        drop_orig_edges: bool = False,
+        keep_same_node_type: bool = False,
+        drop_unconnected_nodes: bool = False,
+        max_sample: Optional[int] = None,
+        weighted: bool = False,
+    ):
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -99,6 +113,8 @@ class AddMetaPaths(BaseTransform):
         self.drop_orig_edges = drop_orig_edges
         self.keep_same_node_type = keep_same_node_type
         self.drop_unconnected_nodes = drop_unconnected_nodes
+        self.max_sample = max_sample
+        self.weighted = weighted
 
     def __call__(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
@@ -110,19 +126,30 @@ class AddMetaPaths(BaseTransform):
                     edge_type) in edge_types, f"'{edge_type}' not present"
 
             edge_type = metapath[0]
+            edge_weight = self._get_edge_weight(data, edge_type)
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
-                sparse_sizes=data[edge_type].size())
+                sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
+
+            if self.max_sample is not None:
+                adj1 = self.sample_adj(adj1)
 
             for i, edge_type in enumerate(metapath[1:]):
+                edge_weight = self._get_edge_weight(data, edge_type)
                 adj2 = SparseTensor.from_edge_index(
                     edge_index=data[edge_type].edge_index,
-                    sparse_sizes=data[edge_type].size())
+                    sparse_sizes=data[edge_type].size(), edge_attr=edge_weight)
+
                 adj1 = adj1 @ adj2
 
-            row, col, _ = adj1.coo()
+                if self.max_sample is not None:
+                    adj1 = self.sample_adj(adj1)
+
+            row, col, edge_weight = adj1.coo()
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = torch.vstack([row, col])
+            if self.weighted:
+                data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
 
         if self.drop_orig_edges:
@@ -145,3 +172,23 @@ class AddMetaPaths(BaseTransform):
                     del data[node]
 
         return data
+
+    def sample_adj(self, adj: SparseTensor) -> SparseTensor:
+        row, col, _ = adj.coo()
+        deg = degree(row, num_nodes=adj.size(0))
+        prob = (self.max_sample * (1. / deg))[row]
+        mask = torch.rand_like(prob) < prob
+        return adj.masked_select_nnz(mask, layout='coo')
+
+    def _get_edge_weight(self, data: HeteroData,
+                         edge_type: EdgeType) -> torch.Tensor:
+        if self.weighted:
+            edge_weight = data[edge_type].get('edge_weight', None)
+            if edge_weight is None:
+                edge_weight = torch.ones(
+                    data[edge_type].num_edges,
+                    device=data[edge_type].edge_index.device)
+            assert edge_weight.ndim == 1
+        else:
+            edge_weight = None
+        return edge_weight
