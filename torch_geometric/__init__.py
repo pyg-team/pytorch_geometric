@@ -1,5 +1,5 @@
-from importlib import import_module
 from types import ModuleType
+from importlib import import_module
 
 import torch_geometric.data
 import torch_geometric.loader
@@ -9,8 +9,8 @@ import torch_geometric.profile
 
 from .seed import seed_everything
 from .home import get_home_dir, set_home_dir
-from .debug import debug, is_debug_enabled, set_debug
-from .experimental import experimental_mode, is_experimental_mode_enabled
+from .debug import is_debug_enabled, debug, set_debug
+from .experimental import is_experimental_mode_enabled, experimental_mode
 
 
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/

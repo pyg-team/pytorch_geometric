@@ -5,7 +5,9 @@ __experimental_flag__ = {'scatter_reduce': False}
 
 def is_experimental_mode_enabled(
         options: Optional[Union[str, List[str]]] = None) -> bool:
-    r"""Returns :obj:`True` if the experimental mode is enabled."""
+    r"""Returns :obj:`True` if the experimental mode is enabled. See
+    :class:`torch_geometric.experimental_mode` for a list of (optional)
+    options."""
     if options is None:
         options = list(__experimental_flag__.keys())
     if isinstance(options, str):
