@@ -1,51 +1,48 @@
-from typing import Dict
+from typing import List, Optional, Union
 
-__experimental_options__ = {'pytorch_scatter': False}
-
-
-def is_experimental_option_enabled(option: str) -> bool:
-    r"""Returns :obj:`True`, if the experimental :attr:`option` is enabled.
-    See :class:`~torch_geometric.experimental.set_experimental_options` for
-    a list of available options."""
-    return __experimental_options__.get(option, False)
+__experimental_flag__ = {'scatter_reduce': False}
 
 
-def disable_all_experimental_options() -> None:
-    r"""Disables all experimental options."""
-    for key in __experimental_options__:
-        __experimental_options__[key] = False
+def is_experimental_mode_enabled(
+        options: Optional[Union[str, List[str]]] = None) -> bool:
+    r"""Returns :obj:`True` if the experimental mode is enabled."""
+    if options is None:
+        options = list(__experimental_flag__.keys())
+    if isinstance(options, str):
+        options = [options]
+    return all([__experimental_flag__[option] for option in options])
 
 
-class set_experimental_options:
-    r"""Context-manager that sets experimental options on or off.
-
-    :class:`set_experimental_options` will enable or disable experimental
-    options based on :attr:`options` argument. It can be used as a
-    context-manager or as a function.
+class experimental_mode:
+    r"""Context-manager that enables the experimental mode to test new but
+    potentially unstable features.
 
     Example:
 
-        >>> options = {'pytorch_scatter': True}
-        >>> with torch_geometric.set_experimental_options(options):
+        >>> with torch_geometric.experimental_mode():
         ...     out = model(data.x, data.edge_index)
 
     Args:
-        options (Dict[str, bool]): Dictionary of experimental options to
-            enable/disable. Valid keys:
+        options (str or list, optional): Possible option(s):
 
-                - **pytorch_scatter**: Enables usage of
-                  :meth:`torch.scatter_reduce` instead of
-                  :meth:`torch_scatter.scatter`. Requires :obj:`torch>=1.12`.
+            - :obj:`"torch_scatter"`: Enables the usage of
+              :meth:`torch.scatter_reduce` instead of
+              :meth:`torch_scatter.scatter`. Requires :obj:`torch>=1.12`.
     """
-    def __init__(self, options: Dict[str, bool]) -> None:
-        self.previous_state = __experimental_options__.copy()
-        for option, value in options.items():
-            if option in __experimental_options__:
-                __experimental_options__[option] = value
+    def __init__(self, options: Optional[Union[str, List[str]]]):
+        if options is None:
+            options = list(__experimental_flag__.keys())
+        if isinstance(options, str):
+            options = [options]
+        self.previous_state = {
+            option: __experimental_flag__[option]
+            for option in options
+        }
 
     def __enter__(self) -> None:
-        pass
+        for option in self.previous_state.keys():
+            __experimental_flag__[option] = True
 
     def __exit__(self, *args) -> bool:
-        __experimental_options__.update(self.previous_state)
-        return False
+        for option, value in self.previous_state.items():
+            __experimental_flag__[option] = value

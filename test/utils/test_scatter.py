@@ -2,7 +2,7 @@ import pytest
 import torch
 import torch_scatter
 
-from torch_geometric import set_experimental_options
+import torch_geometric
 from torch_geometric.utils import scatter
 
 
@@ -13,7 +13,7 @@ def test_scatter(reduce):
     src = torch.randn(8, 100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
 
-    with set_experimental_options({'pytorch_scatter': True}):
+    with torch_geometric.experimental_mode('scatter_reduce'):
         out1 = scatter(src, index, dim=1, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=1, reduce=reduce)
     assert torch.allclose(out1, out2, atol=1e-6)
@@ -26,7 +26,7 @@ def test_scatter_backward(reduce):
     src = torch.randn(8, 100, 32).requires_grad_(True)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
 
-    with set_experimental_options({'pytorch_scatter': True}):
+    with torch_geometric.experimental_mode('scatter_reduce'):
         out = scatter(src, index, dim=1, reduce=reduce).relu_()
     assert src.grad is None
     out.mean().backward()
@@ -41,7 +41,7 @@ def test_scatter_with_out(reduce):
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
     out = torch.randn(8, 10, 32)
 
-    with set_experimental_options({'pytorch_scatter': True}):
+    with torch_geometric.experimental_mode('scatter_reduce'):
         out1 = scatter(src, index, dim=1, out=out.clone(), reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=1, out=out.clone(),
                                  reduce=reduce)
