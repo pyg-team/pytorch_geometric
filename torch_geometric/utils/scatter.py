@@ -12,7 +12,6 @@ class ScatterImpl(torch.nn.Module):
     def forward(self, src: Tensor, index: Tensor, dim: int = -1,
                 out: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 reduce: str = 'sum') -> Tensor:
-
         if torch_geometric.is_experimental_mode_enabled('scatter_reduce'):
             warnings.filterwarnings('ignore', '.*scatter_reduce.*')
 
