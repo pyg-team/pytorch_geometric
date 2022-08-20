@@ -280,7 +280,7 @@ def test_lightning_hetero_node_data(get_dataset):
 @withCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
-def test_lightning_hetero_link_data(get_dataset):
+def test_lightning_hetero_link_data():
     torch.manual_seed(12345)
 
     data = HeteroData()
