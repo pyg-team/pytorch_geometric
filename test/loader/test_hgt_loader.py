@@ -179,7 +179,7 @@ def test_hgt_loader_on_cora(get_dataset):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.skip("'dblp' dataset is broken")
+@pytest.mask.skip("'dblp' dataset is broken")
 @withPackage('torch_sparse>=0.6.15')
 def test_hgt_loader_on_dblp(get_dataset):
     data = get_dataset(name='dblp')[0]
