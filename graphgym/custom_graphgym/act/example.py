@@ -20,5 +20,5 @@ class SWISH(nn.Module):
             return x * torch.sigmoid(x)
 
 
-register_act('swish', partial(SWISH, inplace=cfg.mem.inplace))
+register_act('swish', lambda: SWISH(inplace=cfg.mem.inplace))
 register_act('lrelu_03', partial(nn.LeakyReLU, 0.3, inplace=cfg.mem.inplace))
