@@ -4,6 +4,7 @@ from timeit import default_timer
 import torch
 from utils import get_dataset, get_model
 
+import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 
@@ -93,8 +94,13 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         start = default_timer()
-                        model.inference(subgraph_loader, device,
-                                        progress_bar=True)
+                        if args.experimental_mode:
+                            with torch_geometric.experimental_mode():
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                        else:
+                            model.inference(subgraph_loader, device,
+                                            progress_bar=True)
                         stop = default_timer()
                         print(f'Inference time={stop-start:.3f} seconds\n')
 
@@ -121,6 +127,8 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=-1, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=2, type=int)
+    argparser.add_argument('--experimental-mode', action='store_true',
+                           help='use experimental mode')
 
     args = argparser.parse_args()
 

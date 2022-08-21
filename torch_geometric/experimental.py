@@ -31,7 +31,7 @@ class experimental_mode:
               :meth:`torch.scatter_reduce` instead of
               :meth:`torch_scatter.scatter`. Requires :obj:`torch>=1.12`.
     """
-    def __init__(self, options: Optional[Union[str, List[str]]]):
+    def __init__(self, options: Optional[Union[str, List[str]]] = None):
         if options is None:
             options = list(__experimental_flag__.keys())
         if isinstance(options, str):
