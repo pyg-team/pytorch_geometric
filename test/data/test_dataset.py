@@ -1,7 +1,55 @@
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
+from torch_geometric.data import (
+    Data,
+    Dataset,
+    HeteroData,
+    InMemoryDataset,
+    IterableDataset,
+)
+
+
+class MyTestIterableDataset(IterableDataset):
+    def __init__(self, data):
+        super().__init__('/tmp/MyTestIterableDataset')
+        self.data = data
+
+    def iter(self):
+        for data in self.data:
+            yield data
+
+
+def test_iterable_dataset():
+    x1 = torch.Tensor([[1], [1], [1]])
+    x2 = torch.Tensor([[2], [2], [2]])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    face = torch.tensor([[0], [1], [2]])
+
+    data1 = Data(x1, edge_index, face=face, test_int=1, test_str='1')
+    data1.num_nodes = 10
+
+    data2 = Data(x2, edge_index, face=face, test_int=2, test_str='2')
+    data2.num_nodes = 5
+
+    dataset = iter(MyTestIterableDataset([data1, data2]))
+    sample1 = next(dataset)
+    sample2 = next(dataset)
+
+    assert sample1.num_nodes == 10
+    assert sample1.x.tolist() == x1.tolist()
+    assert sample1.edge_index.tolist() == edge_index.tolist()
+    assert sample1.face.tolist() == face.tolist()
+    assert sample1.test_int == 1
+    assert sample1.test_str == '1'
+
+    assert len(sample2) == 6
+    assert sample2.num_nodes == 5
+    assert sample2.x.tolist() == x2.tolist()
+    assert sample2.edge_index.tolist() == edge_index.tolist()
+    assert sample2.face.tolist() == face.tolist()
+    assert sample2.test_int == 2
+    assert sample2.test_str == '2'
 
 
 class MyTestDataset(InMemoryDataset):

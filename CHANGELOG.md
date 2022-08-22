@@ -3,8 +3,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [2.2.0] - 2022-MM-DD
+## [2.2.0] - 2022-08-10
 ### Added
+- Added `IterableDataset` class ([#5020](https://github.com/pyg-team/pytorch_geometric/pull/5020))
 - Added node classification example instrumented with [Weights and Biases (W&B) logging](https://wandb.com) and [W&B Sweeps](https://wandb.com/sweeps) ([#5192](https://github.com/pyg-team/pytorch_geometric/pull/5192))
 - Added experimental mode for `utils.scatter` ([#5232](https://github.com/pyg-team/pytorch_geometric/pull/5232), [#5241](https://github.com/pyg-team/pytorch_geometric/pull/5241))
 - Added missing test labels in `HGBDataset` ([#5233](https://github.com/pyg-team/pytorch_geometric/pull/5233))

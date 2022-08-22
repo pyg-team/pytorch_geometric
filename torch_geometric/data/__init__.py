@@ -4,6 +4,7 @@ from .temporal import TemporalData
 from .batch import Batch
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
+from .iterable_dataset import IterableDataset
 from .lightning_datamodule import (
     LightningDataset,
     LightningLinkData,
@@ -20,6 +21,7 @@ __all__ = [
     'Batch',
     'Dataset',
     'InMemoryDataset',
+    'IterableDataset',
     'LightningDataset',
     'LightningNodeData',
     'LightningLinkData',
