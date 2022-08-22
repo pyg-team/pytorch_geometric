@@ -13,6 +13,11 @@ def test_base_storage():
     assert storage.x is not None
     assert storage.y is not None
 
+    assert torch.allclose(storage.get('x', None), storage.x)
+    assert torch.allclose(storage.get('y', None), storage.y)
+    assert storage.get('z', 2) == 2
+    assert storage.get('z', None) is None
+
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.values('x', 'y', 'z'))) == 2

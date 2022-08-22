@@ -10,6 +10,46 @@ from torch_geometric.utils import scatter, to_dense_batch
 class Aggregation(torch.nn.Module):
     r"""An abstract base class for implementing custom aggregations.
 
+    Aggregation can be either performed via an :obj:`index` vector, which
+    defines the mapping from input elements to their location in the output:
+
+    |
+
+    .. image:: https://raw.githubusercontent.com/rusty1s/pytorch_scatter/
+            master/docs/source/_figures/add.svg?sanitize=true
+        :align: center
+        :width: 400px
+
+    |
+
+    Notably, :obj:`index` does not have to be sorted:
+
+    .. code-block::
+
+       # Feature matrix holding 10 elements with 64 features each:
+       x = torch.randn(10, 64)
+
+       # Assign each element to one of three sets:
+       index = torch.tensor([0, 0, 1, 0, 2, 0, 2, 1, 0, 2])
+
+       output = aggr(x, index)  #  Output shape: [4, 64]
+
+    Alternatively, aggregation can be achieved via a "compressed" index vector
+    called :obj:`ptr`. Here, elements within the same set need to be grouped
+    together in the input, and :obj:`ptr` defines their boundaries:
+
+    .. code-block::
+
+       # Feature matrix holding 10 elements with 64 features each:
+       x = torch.randn(10, 64)
+
+       # Define the boundary indices for three sets:
+       ptr = torch.tensor([0, 4, 7, 10])
+
+       output = aggr(x, ptr=ptr)  #  Output shape: [4, 64]
+
+    Note that at least one of :obj:`index` or :obj:`ptr` must be defined.
+
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or edge features
