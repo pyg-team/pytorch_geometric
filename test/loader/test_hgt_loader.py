@@ -1,12 +1,11 @@
 import numpy as np
-import pytest
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -179,10 +178,10 @@ def test_hgt_loader_on_cora(get_dataset):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.skip("'dblp' dataset is broken")
+@onlyFullTest
 @withPackage('torch_sparse>=0.6.15')
 def test_hgt_loader_on_dblp(get_dataset):
-    data = get_dataset(name='dblp')[0]
+    data = get_dataset(name='DBLP')[0]
     loader = HGTLoader(data, num_samples=[10, 10],
                        input_nodes=('author', data['author'].train_mask))
 
