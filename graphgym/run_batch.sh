@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-CONFIG=example_node
-GRID=example
-REPEAT=3
-MAX_JOBS=8
-SLEEP=1
-MAIN=main
+CONFIG=${CONFIG:-example_node}
+GRID=${GRID:-example}
+REPEAT=${REPEAT:-3}
+MAX_JOBS=${MAX_JOBS:-8}
+SLEEP=${SLEEP:-1}
+MAIN=${MAIN:-main}
 
 # generate configs (after controlling computational budget)
 # please remove --config_budget, if don't control computational budget
