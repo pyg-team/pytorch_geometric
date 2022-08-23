@@ -75,4 +75,5 @@ setup(
         'dev': dev_requires,
     },
     packages=find_packages(),
+    include_package_data=True,  # Ensure that `*.jinja` files are found.
 )
