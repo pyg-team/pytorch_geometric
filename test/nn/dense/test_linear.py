@@ -47,6 +47,10 @@ def test_load_lazy_linear(dim1, dim2):
         assert hasattr(lin1, '_hook')
         assert hasattr(lin2, '_hook')
 
+    with pytest.raises(RuntimeError, match="in state_dict"):
+        lin1.load_state_dict({}, strict=True)
+    lin1.load_state_dict({}, strict=False)
+
 
 @pytest.mark.parametrize('lazy', [True, False])
 def test_identical_linear_default_initialization(lazy):

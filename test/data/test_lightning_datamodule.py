@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import (
+    HeteroData,
     LightningDataset,
     LightningLinkData,
     LightningNodeData,
@@ -16,6 +17,12 @@ try:
     from pytorch_lightning import LightningModule
 except ImportError:
     LightningModule = torch.nn.Module
+
+
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+    return torch.stack([row, col], dim=0)
 
 
 class LinearGraphModule(LightningModule):
@@ -273,17 +280,50 @@ def test_lightning_hetero_node_data(get_dataset):
 @withCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
-def test_lightning_hetero_link_data(get_dataset):
-    # TODO: Add more datasets.
-    dataset = get_dataset(name='DBLP')
-    data = dataset[0]
-    datamodule = LightningLinkData(data, loader='link_neighbor',
-                                   num_neighbors=[5], batch_size=32,
-                                   num_workers=3)
-    input_edges = (('author', 'dummy', 'paper'), data['author',
-                                                      'paper']['edge_index'])
-    loader = datamodule.dataloader(input_edges=input_edges, input_labels=None,
-                                   shuffle=True)
-    batch = next(iter(loader))
-    assert (batch['author', 'dummy',
-                  'paper']['edge_label_index'].shape[1] == 32)
+def test_lightning_hetero_link_data():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(10)
+    data['author'].x = torch.arange(10)
+    data['term'].x = torch.arange(10)
+
+    data['paper', 'author'].edge_index = get_edge_index(10, 10, 10)
+    data['author', 'paper'].edge_index = get_edge_index(10, 10, 10)
+    data['paper', 'term'].edge_index = get_edge_index(10, 10, 10)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        break
+
+    data['author'].time = torch.arange(data['author'].num_nodes)
+    data['paper'].time = torch.arange(data['paper'].num_nodes)
+    data['term'].time = torch.arange(data['term'].num_nodes)
+
+    datamodule = LightningLinkData(
+        data,
+        input_train_edges=('author', 'paper'),
+        input_train_time=torch.arange(data['author', 'paper'].num_edges),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+        time_attr='time',
+    )
+
+    for batch in datamodule.train_dataloader():
+        assert 'edge_label' in batch['author', 'paper']
+        assert 'edge_label_index' in batch['author', 'paper']
+        assert 'edge_label_time' in batch['author', 'paper']
+        break

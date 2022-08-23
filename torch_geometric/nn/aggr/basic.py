@@ -8,21 +8,40 @@ from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
 
-class MeanAggregation(Aggregation):
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-        return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
-
-
 class SumAggregation(Aggregation):
+    r"""An aggregation operator that sums up features across a set of elements
+
+    .. math::
+        \mathrm{sum}(\mathcal{X}) = \sum_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
+class MeanAggregation(Aggregation):
+    r"""An aggregation operator that averages features across a set of elements
+
+    .. math::
+        \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
+        \sum_{\mathbf{x}_i \in \mathcal{X}} \mathbf{x}_i.
+    """
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
+
+
 class MaxAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise maximum across a
+    set of elements
+
+    .. math::
+        \mathrm{max}(\mathcal{X}) = \max_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -30,6 +49,13 @@ class MaxAggregation(Aggregation):
 
 
 class MinAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise minimum across a
+    set of elements
+
+    .. math::
+        \mathrm{min}(\mathcal{X}) = \min_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -37,6 +63,13 @@ class MinAggregation(Aggregation):
 
 
 class MulAggregation(Aggregation):
+    r"""An aggregation operator that multiples features across a set of
+    elements
+
+    .. math::
+        \mathrm{mul}(\mathcal{X}) = \prod_{\mathbf{x}_i \in \mathcal{X}}
+        \mathbf{x}_i.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -46,6 +79,13 @@ class MulAggregation(Aggregation):
 
 
 class VarAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise variance across a
+    set of elements
+
+    .. math::
+        \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
+        \mathcal{X} \}) - \mathrm{mean}(\mathcal{X})^2.
+    """
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
@@ -55,6 +95,12 @@ class VarAggregation(Aggregation):
 
 
 class StdAggregation(Aggregation):
+    r"""An aggregation operator that takes the feature-wise standard deviation
+    across a set of elements
+
+    .. math::
+        \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
+    """
     def __init__(self):
         super().__init__()
         self.var_aggr = VarAggregation()
@@ -89,10 +135,13 @@ class SoftmaxAggregation(Aggregation):
             gradient calculation during softmax computation. Therefore, only
             semi-gradient is used during backpropagation. Useful for saving
             memory when :obj:`t` is not learnable. (default: :obj:`False`)
+        channels (int, optional): Number of channels to learn from :math:`t`.
+            If set to a value greater than :obj:`1`, :math:`t` will be learned
+            per input feature channel. This requires compatible shapes for the
+            input to the forward calculation. (default: :obj:`1`)
     """
     def __init__(self, t: float = 1.0, learn: bool = False,
-                 semi_grad: bool = False):
-        # TODO Learn distinct `t` per channel.
+                 semi_grad: bool = False, channels: int = 1):
         super().__init__()
 
         if learn and semi_grad:
@@ -100,10 +149,16 @@ class SoftmaxAggregation(Aggregation):
                 f"Cannot enable 'semi_grad' in '{self.__class__.__name__}' in "
                 f"case the temperature term 't' is learnable")
 
+        if not learn and channels != 1:
+            raise ValueError(f"Cannot set 'channels' greater than '1' in case "
+                             f"'{self.__class__.__name__}' is not trainable")
+
         self._init_t = t
-        self.t = Parameter(torch.Tensor(1)) if learn else t
         self.learn = learn
         self.semi_grad = semi_grad
+        self.channels = channels
+
+        self.t = Parameter(torch.Tensor(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -114,9 +169,16 @@ class SoftmaxAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
+        t = self.t
+        if self.channels != 1:
+            self.assert_two_dimensional_input(x, dim)
+            assert isinstance(t, Tensor)
+            t = t.view(-1, self.channels)
+
         alpha = x
-        if not isinstance(self.t, (int, float)) or self.t != 1:
-            alpha = x * self.t
+        if not isinstance(t, (int, float)) or t != 1:
+            alpha = x * t
+
         if not self.learn and self.semi_grad:
             with torch.no_grad():
                 alpha = softmax(alpha, index, ptr, dim_size, dim)
@@ -146,13 +208,23 @@ class PowerMeanAggregation(Aggregation):
         learn (bool, optional): If set to :obj:`True`, will learn the value
             :obj:`p` for powermean aggregation dynamically.
             (default: :obj:`False`)
+        channels (int, optional): Number of channels to learn from :math:`p`.
+            If set to a value greater than :obj:`1`, :math:`p` will be learned
+            per input feature channel. This requires compatible shapes for the
+            input to the forward calculation. (default: :obj:`1`)
     """
-    def __init__(self, p: float = 1.0, learn: bool = False):
-        # TODO Learn distinct `p` per channel.
+    def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1):
         super().__init__()
+
+        if not learn and channels != 1:
+            raise ValueError(f"Cannot set 'channels' greater than '1' in case "
+                             f"'{self.__class__.__name__}' is not trainable")
+
         self._init_p = p
-        self.p = Parameter(torch.Tensor(1)) if learn else p
         self.learn = learn
+        self.channels = channels
+
+        self.p = Parameter(torch.Tensor(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -163,10 +235,21 @@ class PowerMeanAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
+        p = self.p
+        if self.channels != 1:
+            assert isinstance(p, Tensor)
+            self.assert_two_dimensional_input(x, dim)
+            p = p.view(-1, self.channels)
+
+        if not isinstance(p, (int, float)) or p != 1:
+            x = x.clamp(min=0, max=100).pow(p)
+
         out = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
-        if isinstance(self.p, (int, float)) and self.p == 1:
-            return out
-        return out.clamp_(min=0, max=100).pow(1. / self.p)
+
+        if not isinstance(p, (int, float)) or p != 1:
+            out = out.clamp(min=0, max=100).pow(1. / p)
+
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(learn={self.learn})')

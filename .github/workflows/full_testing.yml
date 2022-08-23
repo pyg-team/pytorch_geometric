@@ -20,8 +20,11 @@ jobs:
         include:
           - torch-version: 1.12.0
             torchvision-version: 0.13.0
-          - os: windows-latest
+        exclude:
+          - os: windows-latest  # Complains about CUDA mismatch.
             python-version: '3.7'
+          - os: windows-latest  # Complains about missing numpy package.
+            python-version: '3.10'
 
     steps:
       - uses: actions/checkout@v3
@@ -37,10 +40,7 @@ jobs:
 
       - name: Install internal dependencies
         run: |
-          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
 
       - name: Install main package
         run: |
