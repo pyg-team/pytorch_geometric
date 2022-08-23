@@ -18,12 +18,15 @@ class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
     <https://arxiv.org/abs/2004.05718>`_ paper
+
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left(
         \mathbf{x}_i, \underset{j \in \mathcal{N}(i)}{\bigoplus}
         h_{\mathbf{\Theta}} \left( \mathbf{x}_i, \mathbf{x}_j \right)
         \right)
+
     with
+
     .. math::
         \bigoplus = \underbrace{\begin{bmatrix}
             1 \\
@@ -36,9 +39,12 @@ class PNAConv(MessagePassing):
             \max \\
             \min
         \end{bmatrix}}_{\text{aggregators}},
+
     where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
     denote MLPs.
+
     .. note::
+
         For an example of using :obj:`PNAConv`, see `examples/pna.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/
         examples/pna.py>`_.
@@ -65,8 +71,8 @@ class PNAConv(MessagePassing):
             aggregation (default: :obj:`1`).
         divide_input (bool, optional): Whether the input features should
             be split between towers or not (default: :obj:`False`).
-        act (str or Callable, optional): Pre- and post- layers activation
-            function to use. (defaul :obj: `relu`)
+        act (str or Callable, optional): Pre- and post-layer activation
+            function to use. (default: :obj:`"relu"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
@@ -116,21 +122,19 @@ class PNAConv(MessagePassing):
         if self.edge_dim is not None:
             self.edge_encoder = Linear(edge_dim, self.F_in)
 
-        act_func = activation_resolver(act, **(act_kwargs or {}))
-
         self.pre_nns = ModuleList()
         self.post_nns = ModuleList()
         for _ in range(towers):
             modules = [Linear((3 if edge_dim else 2) * self.F_in, self.F_in)]
             for _ in range(pre_layers - 1):
-                modules += [act_func]
+                modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_in, self.F_in)]
             self.pre_nns.append(Sequential(*modules))
 
             in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
             modules = [Linear(in_channels, self.F_out)]
             for _ in range(post_layers - 1):
-                modules += [act_func]
+                modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))
 
@@ -180,9 +184,9 @@ class PNAConv(MessagePassing):
         return torch.stack(hs, dim=1)
 
     def __repr__(self):
-        return (f"{self.__class__.__name__}({self.in_channels}, "
-                f"{self.out_channels}, towers={self.towers}, "
-                f"edge_dim={self.edge_dim})")
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, towers={self.towers}, '
+                f'edge_dim={self.edge_dim})')
 
     @staticmethod
     def get_degree_histogram(loader) -> Tensor:
