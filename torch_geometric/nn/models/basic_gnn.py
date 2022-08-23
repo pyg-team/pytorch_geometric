@@ -222,7 +222,10 @@ class BasicGNN(torch.nn.Module):
             xs: List[Tensor] = []
             for batch in loader:
                 x = x_all[batch.n_id].to(device)
-                edge_index = batch.edge_index.to(device)
+                if hasattr(batch, 'adj_t'):
+                    edge_index = batch.adj_t.to(device)
+                else:
+                    edge_index = batch.edge_index.to(device)
                 x = self.convs[i](x, edge_index)[:batch.batch_size]
                 if i == self.num_layers - 1 and self.jk_mode is None:
                     xs.append(x.cpu())
