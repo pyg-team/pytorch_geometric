@@ -53,5 +53,40 @@ class VerticalRGCN(MessagePassing):
         super().__init__(aggr='sum')
         self.weight = torch.randn(num_edge_types, channels, channels)
 
-    def forward(self, x_dict, edge_index_dict):
-        pass
+    def forward(self, x, edge_index, edge_type):
+        edge_index = edge_index.clone()
+        edge_index[1] += x.size(0) * edge_type
+
+        out = self.propagate(
+            edge_index,
+            x=x,
+            size=(x.size(0), self.weight.size(0) * x.size(0)),
+        )
+
+        out = out.view(self.weight.size(0), x.size(0), x.size(1))
+        out = out @ self.weight
+        out = out.sum(dim=0)
+
+        return out
+
+
+class HorizontalRGCN(MessagePassing):
+    # https://arxiv.org/pdf/2107.10015.pdf
+    def __init__(self, num_edge_types, channels):
+        super().__init__(aggr='sum')
+        self.weight = torch.randn(num_edge_types, channels, channels)
+
+    def forward(self, x, edge_index, edge_type):
+        edge_index = edge_index.clone()
+        edge_index[0] += x.size(0) * edge_type
+
+        out = x.view(1, x.size(0), x.size(1)) @ self.weight
+        out = out.view(self.weight.size(0) * x.size(0), x.size(1))
+
+        out = self.propagate(
+            edge_index,
+            x=out,
+            size=(self.weight.size(0) * x.size(0), x.size(0)),
+        )
+
+        return out
