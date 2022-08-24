@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import (
+    HeteroData,
     LightningDataset,
     LightningLinkData,
     LightningNodeData,
@@ -16,6 +17,12 @@ try:
     from pytorch_lightning import LightningModule
 except ImportError:
     LightningModule = torch.nn.Module
+
+
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+    return torch.stack([row, col], dim=0)
 
 
 class LinearGraphModule(LightningModule):
@@ -273,10 +280,18 @@ def test_lightning_hetero_node_data(get_dataset):
 @withCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
-def test_lightning_hetero_link_data(get_dataset):
-    # TODO: Add more datasets.
-    dataset = get_dataset(name='DBLP')
-    data = dataset[0]
+def test_lightning_hetero_link_data():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(10)
+    data['author'].x = torch.arange(10)
+    data['term'].x = torch.arange(10)
+
+    data['paper', 'author'].edge_index = get_edge_index(10, 10, 10)
+    data['author', 'paper'].edge_index = get_edge_index(10, 10, 10)
+    data['paper', 'term'].edge_index = get_edge_index(10, 10, 10)
 
     datamodule = LightningLinkData(
         data,
