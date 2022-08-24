@@ -2,7 +2,6 @@ import copy
 from collections.abc import Mapping, Sequence
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
