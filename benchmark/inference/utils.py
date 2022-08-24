@@ -6,7 +6,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
-from torch_geometric.nn.models.basic_gnn import (
+from torch_geometric.nn import (
     GAT,
     GCN,
     PNA,
