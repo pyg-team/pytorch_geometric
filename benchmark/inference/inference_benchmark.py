@@ -10,8 +10,8 @@ from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
-    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage'],
-    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'graph_sage'],
+    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
+    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
 }
 
 

@@ -96,7 +96,7 @@ def profileit():
 
 
 class timeit(ContextDecorator):
-    r"""A ContextDecorator to facilitate timing a function, *e.g.*, obtaining
+    r"""A context decorator to facilitate timing a function, *e.g.*, obtaining
     the runtime of a specific model on a specific dataset.
 
     .. code-block:: python
@@ -105,10 +105,13 @@ class timeit(ContextDecorator):
         def test(model, x, edge_index):
             return model(x, edge_index)
 
-        with timeit() as timeit:
+        with timeit() as t:
             z = test(model, x, edge_index)
-        time = timeit.duration
+        time = t.duration
     """
+    def __init__(self, log: bool = True):
+        self.log = log
+
     def __enter__(self):
         if torch.cuda.is_available():
             torch.cuda.synchronize()
@@ -120,7 +123,8 @@ class timeit(ContextDecorator):
             torch.cuda.synchronize()
         self.t_end = time.time()
         self.duration = self.t_end - self.t_start
-        print(f'Time: {self.duration:.8f}s', flush=True)
+        if self.log:
+            print(f'Time: {self.duration:.8f}s', flush=True)
 
 
 def get_stats_summary(stats_list: List[Stats]):

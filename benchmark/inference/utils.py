@@ -19,7 +19,7 @@ models_dict = {
     'gat': GAT,
     'gcn': GCN,
     'pna': PNA,
-    'graph_sage': GraphSAGE,
+    'sage': GraphSAGE,
     'rgat': HeteroGAT,
     'rgcn': HeteroGraphSAGE,
 }

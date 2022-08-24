@@ -70,8 +70,9 @@ def run_train():
             dataset_name)
 
         for num_layers, hidden in product(layers, hiddens):
-            print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
-                                                 num_layers, hidden))
+            print(
+                f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
+            )
 
             model = Net(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -80,10 +81,10 @@ def run_train():
             acc_list = []
             for epoch in range(1, args.epochs + 1):
                 loss, stats = train(model, optimizer, train_loader)
-                with timeit() as t:
+                with timeit(log=False) as t:
                     val_acc = eval_acc(model, val_loader)
                 val_time = t.duration
-                with timeit() as t:
+                with timeit(log=False) as t:
                     test_acc = eval_acc(model, test_loader)
                 test_time = t.duration
 
@@ -101,8 +102,9 @@ def run_inference():
         dataset, _, _, test_loader = prepare_dataloader(dataset_name)
 
         for num_layers, hidden in product(layers, hiddens):
-            print("--\n{} - {} - {} - {}".format(dataset_name, Net.__name__,
-                                                 num_layers, hidden))
+            print(
+                f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
+            )
 
             model = Net(dataset, num_layers, hidden).to(device)
 
