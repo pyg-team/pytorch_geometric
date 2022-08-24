@@ -4,9 +4,8 @@ import torch
 import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
-from torch.profiler import ProfilerActivity, profile
 
-from torch_geometric.profile import trace_handler
+from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -102,24 +101,14 @@ def run_inference(dataset, model, epochs, profiling, permute_masks=None,
 
     for epoch in range(1, epochs + 1):
         if epoch == epochs:
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_start = time.time()
-
-        inference(model, data)
-
-        if epoch == epochs:
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_end = time.time()
-            duration = t_end - t_start
-            print(f'End-to-End Inference Time: {duration:.8f}s', flush=True)
+            with timeit():
+                inference(model, data)
+        else:
+            inference(model, data)
 
     if profiling:
-        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                     on_trace_ready=trace_handler) as p:
+        with torch_profile():
             inference(model, data)
-            p.step()
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,

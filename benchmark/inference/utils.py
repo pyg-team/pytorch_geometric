@@ -6,13 +6,14 @@ from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
-from torch_geometric.nn.models.basic_gnn import GAT, GCN, PNA, EdgeCNN
+from torch_geometric.nn import GAT, GCN, PNA, EdgeCNN, GraphSAGE
 
 models_dict = {
     'edge_cnn': EdgeCNN,
     'gat': GAT,
     'gcn': GCN,
     'pna': PNA,
+    'sage': GraphSAGE,
     'rgat': HeteroGAT,
     'rgcn': HeteroGraphSAGE,
 }

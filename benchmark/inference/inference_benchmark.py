@@ -1,5 +1,4 @@
 import argparse
-from timeit import default_timer
 
 import torch
 from utils import get_dataset, get_model
@@ -7,11 +6,12 @@ from utils import get_dataset, get_model
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
+from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
-    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna'],
-    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna'],
+    'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
+    'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
 }
 
 
@@ -93,16 +93,27 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
-                        start = default_timer()
-                        if args.experimental_mode:
-                            with torch_geometric.experimental_mode():
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
-                        else:
+                        for _ in range(args.warmup):
                             model.inference(subgraph_loader, device,
                                             progress_bar=True)
-                        stop = default_timer()
-                        print(f'Inference time={stop-start:.3f} seconds\n')
+                        if args.experimental_mode:
+                            with torch_geometric.experimental_mode():
+                                with timeit():
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True)
+                        else:
+                            with timeit():
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+
+                        if args.profile:
+                            with torch_profile():
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                            rename_profile_file(
+                                model_name, dataset_name, str(batch_size),
+                                str(layers), str(hidden_channels),
+                                str(subgraph_loader.num_neighbors))
 
 
 if __name__ == '__main__':
@@ -129,9 +140,11 @@ if __name__ == '__main__':
     argparser.add_argument(
         '--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
-    argparser.add_argument('--num-workers', default=2, type=int)
+    argparser.add_argument('--num-workers', default=0, type=int)
     argparser.add_argument('--experimental-mode', action='store_true',
                            help='use experimental mode')
+    argparser.add_argument('--warmup', default=1, type=int)
+    argparser.add_argument('--profile', action='store_true')
 
     args = argparser.parse_args()
 
