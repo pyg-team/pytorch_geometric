@@ -1,11 +1,11 @@
 import warnings
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, Dataset, HeteroData
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.link_neighbor_loader import (
@@ -400,8 +400,8 @@ class LightningLinkData(LightningDataModule):
     Args:
         data (Data or HeteroData or Tuple[FeatureStore, GraphStore]): The
             :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object, or a 
-            tuple of a :class:`~torch_geometric.data.FeatureStore` and 
+            :class:`~torch_geometric.data.HeteroData` graph object, or a
+            tuple of a :class:`~torch_geometric.data.FeatureStore` and
             :class:`~torch_geometric.data.GraphStore` objects.
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)

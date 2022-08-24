@@ -37,6 +37,9 @@ class MyFeatureStore(FeatureStore):
         if attr.index is None:
             return tensor
 
+        if attr.index.numel() == 0:
+            return []
+
         # Empty slices return the whole tensor:
         if (isinstance(attr.index, slice)
                 and attr.index == slice(None, None, None)):
