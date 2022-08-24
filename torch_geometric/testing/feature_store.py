@@ -37,7 +37,7 @@ class MyFeatureStore(FeatureStore):
         if attr.index is None:
             return tensor
 
-        if attr.index.numel() == 0:
+        if isinstance(attr, torch.Tensor) and attr.index.numel() == 0:
             return []
 
         # Empty slices return the whole tensor:
