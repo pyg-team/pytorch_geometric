@@ -14,7 +14,7 @@ from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import spline_basis, spline_weighting
-except ImportError:
+except (ImportError, OSError):  # Fail gracefully on GLIBC errors
     spline_basis = None
     spline_weighting = None
 
