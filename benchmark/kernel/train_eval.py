@@ -143,3 +143,11 @@ def eval_loss(model, loader):
             out = model(data)
         loss += F.nll_loss(out, data.y.view(-1), reduction='sum').item()
     return loss / len(loader.dataset)
+
+
+@torch.no_grad()
+def inference_run(model, loader):
+    model.eval()
+    for data in loader:
+        data = data.to(device)
+        model(data)

@@ -129,6 +129,25 @@ class Dataset(torch.utils.data.Dataset):
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
                              f"attribute 'num_edge_features'")
 
+    def _infer_num_classes(self, y: Optional[Tensor]) -> int:
+        if y is None:
+            return 0
+        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
+            return int(y.max()) + 1
+        elif y.numel() == y.size(0) and torch.is_floating_point(y):
+            return torch.unique(y).numel()
+        else:
+            return y.size(-1)
+
+    @property
+    def num_classes(self) -> int:
+        r"""Returns the number of classes in the dataset."""
+        y = torch.cat([data.y for data in self], dim=0)
+        # Do not fill cache for `InMemoryDataset`:
+        if hasattr(self, '_data_list') and self._data_list is not None:
+            self._data_list = self.len() * [None]
+        return self._infer_num_classes(y)
+
     @property
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
