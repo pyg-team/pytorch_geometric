@@ -851,8 +851,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return self[src].num_nodes
 
     def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
-        key = self._to_canonical(edge_attr.edge_type)
-        _, _, dst = key
+        _, _, dst = self._to_canonical(edge_attr.edge_type)
         return self[dst].num_nodes
 
 
