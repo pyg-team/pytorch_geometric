@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Do not fill `InMemoryDataset` cache on `dataset.num_features` ([#5264](https://github.com/pyg-team/pytorch_geometric/pull/5264))
 - Changed tests relying on `dblp` datasets to instead use  synthetic data ([#5250](https://github.com/pyg-team/pytorch_geometric/pull/5250))
 - Fixed a bug for the initialization of activation function examples in `custom_graphgym` ([#5243](https://github.com/pyg-team/pytorch_geometric/pull/5243))
+- Allow any integer tensors when checking edge_index input to message passing ([5281](https://github.com/pyg-team/pytorch_geometric/pull/5281))
 ### Removed
 
 ## [2.1.0] - 2022-08-17
