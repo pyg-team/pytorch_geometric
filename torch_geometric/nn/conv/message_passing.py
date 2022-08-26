@@ -183,9 +183,11 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            if not edge_index.dtype == torch.long:
-                raise ValueError(f"Expected 'edge_index' to be of type "
-                                 f"'torch.long' (got '{edge_index.dtype}')")
+            int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
+
+            if edge_index.dtype not in int_dtypes:
+                raise ValueError(f"Expected 'edge_index' to be of integer "
+                                 f"type (got '{edge_index.dtype}')")
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
@@ -211,7 +213,7 @@ class MessagePassing(torch.nn.Module):
             return the_size
 
         raise ValueError(
-            ('`MessagePassing.propagate` only supports `torch.LongTensor` of '
+            ('`MessagePassing.propagate` only supports integer tensors of '
              'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
              'argument `edge_index`.'))
 
