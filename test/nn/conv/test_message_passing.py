@@ -540,5 +540,4 @@ def test_message_passing_int32_edge_index():
     conv = MyConv(8, 32)
     conv.register_aggregate_forward_pre_hook(cast_index_hook)
 
-    out = conv(x, edge_index, edge_weight)
-    assert out.size() == (4, 32)
+    assert conv(x, edge_index, edge_weight).size() == (4, 32)
