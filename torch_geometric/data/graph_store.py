@@ -40,27 +40,26 @@ class EdgeAttr(CastMixin):
     edge_type: Optional[Any]
 
     # The layout of the edge representation
-    layout: EdgeLayout
+    layout: Optional[EdgeLayout] = None
 
     # Whether the edge index is sorted, by destination node. Useful for
     # avoiding sorting costs when performing neighbor sampling, and only
     # meaningful for COO (CSC and CSR are sorted by definition)
     is_sorted: bool = False
 
-    # The number of nodes in this edge type. If set to None, will attempt to
-    # infer with the simple heuristic int(self.edge_index.max()) + 1
+    # The number of nodes in this edge type
     size: Optional[Tuple[int, int]] = None
 
     # NOTE we define __init__ to force-cast layout
     def __init__(
         self,
         edge_type: Optional[Any],
-        layout: EdgeLayout,
+        layout: Optional[EdgeLayout] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
     ):
         self.edge_type = edge_type
-        self.layout = EdgeLayout(layout)
+        self.layout = EdgeLayout(layout) if layout else None
         self.is_sorted = is_sorted
         self.size = size
 
@@ -91,6 +90,7 @@ class GraphStore:
             **attr(EdgeAttr): the edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        assert edge_attr.layout is not None
         edge_attr.layout = EdgeLayout(edge_attr.layout)
 
         # Override is_sorted for CSC and CSR:
@@ -117,8 +117,8 @@ class GraphStore:
         Raises:
             KeyError: if the edge index corresponding to attr was not found.
         """
-
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        assert edge_attr.layout is not None
         edge_attr.layout = EdgeLayout(edge_attr.layout)
         # Override is_sorted for CSC and CSR:
         # TODO treat is_sorted specially in this function, where is_sorted=True
@@ -131,6 +131,22 @@ class GraphStore:
             raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
                            f"found")
         return edge_index
+
+    @abstractmethod
+    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
+        pass
+
+    def num_src_nodes(self, *args, **kwargs) -> int:
+        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        return self._num_src_nodes(edge_attr)
+
+    @abstractmethod
+    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
+        pass
+
+    def num_dst_nodes(self, *args, **kwargs) -> int:
+        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        return self._num_dst_nodes(edge_attr)
 
     # Layout Conversion #######################################################
 

@@ -1,10 +1,12 @@
 import warnings
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, Dataset, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.link_neighbor_loader import (
     LinkNeighborLoader,
@@ -171,6 +173,7 @@ class LightningDataset(LightningDataModule):
         return f'{self.__class__.__name__}({kwargs})'
 
 
+# TODO explicitly support Tuple[FeatureStore, GraphStore]
 class LightningNodeData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
@@ -395,8 +398,11 @@ class LightningLinkData(LightningDataModule):
             trainer.fit(model, datamodule)
 
     Args:
-        data (Data or HeteroData): The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Data or HeteroData or Tuple[FeatureStore, GraphStore]): The
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` graph object, or a
+            tuple of a :class:`~torch_geometric.data.FeatureStore` and
+            :class:`~torch_geometric.data.GraphStore` objects.
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
         input_train_labels (Tensor, optional):
@@ -427,7 +433,7 @@ class LightningLinkData(LightningDataModule):
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         input_train_edges: InputEdges = None,
         input_train_labels: Tensor = None,
         input_train_time: Tensor = None,
@@ -481,12 +487,6 @@ class LightningLinkData(LightningDataModule):
 
         if loader in ['neighbor', 'link_neighbor']:
             input_type = get_edge_label_index(data, input_train_edges)[0]
-            if input_type is not None:
-                num_src_nodes = data[input_type[0]].num_nodes
-                num_dst_nodes = data[input_type[-1]].num_nodes
-            else:
-                num_src_nodes = num_dst_nodes = data.num_nodes
-
             self.neighbor_sampler = LinkNeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
@@ -496,8 +496,8 @@ class LightningLinkData(LightningDataModule):
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
                 neg_sampling_ratio=kwargs.get('neg_sampling_ratio', 0.0),
-                num_src_nodes=num_src_nodes,
-                num_dst_nodes=num_dst_nodes,
+                num_src_nodes=kwargs.get('num_src_nodes', None),
+                num_dst_nodes=kwargs.get('num_dst_nodes', None),
                 share_memory=num_workers > 0,
             )
 
@@ -574,6 +574,7 @@ class LightningLinkData(LightningDataModule):
 ###############################################################################
 
 
+# TODO support Tuple[FeatureStore, GraphStore]
 def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
     attr_name: Optional[str] = None
     if f'{split}_mask' in data:

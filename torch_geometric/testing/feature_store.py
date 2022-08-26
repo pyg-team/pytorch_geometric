@@ -42,7 +42,8 @@ class MyFeatureStore(FeatureStore):
                 and attr.index == slice(None, None, None)):
             return tensor
 
-        idx = torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
+        idx = (torch.cat([(index == v).nonzero() for v in attr.index]).view(-1)
+               if attr.index.numel() > 0 else [])
         return tensor[idx]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
