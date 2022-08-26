@@ -337,7 +337,7 @@ class DataEdgeAttr(EdgeAttr):
     `edge_type`."""
     def __init__(
         self,
-        layout: EdgeLayout,
+        layout: Optional[EdgeLayout] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
         edge_type: EdgeType = None,
@@ -892,6 +892,12 @@ class Data(BaseData, FeatureStore, GraphStore):
                              size=(self.num_nodes, self.num_nodes)))
 
         return edge_attrs
+
+    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
+        return self.num_nodes
+
+    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
+        return self.num_nodes
 
 
 ###############################################################################

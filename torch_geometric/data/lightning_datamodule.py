@@ -487,37 +487,6 @@ class LightningLinkData(LightningDataModule):
 
         if loader in ['neighbor', 'link_neighbor']:
             input_type = get_edge_label_index(data, input_train_edges)[0]
-
-            if isinstance(data, (Data, HeteroData)):
-                if input_type is not None:
-                    num_src_nodes = data[input_type[0]].num_nodes
-                    num_dst_nodes = data[input_type[-1]].num_nodes
-                else:
-                    num_src_nodes = num_dst_nodes = data.num_nodes
-            else:
-                # TODO improve num_nodes logic, currently we can only do this
-                # by explicitly querying a feature tensor
-                feature_store, _ = data
-                all_attrs = feature_store.get_all_tensor_attrs()
-
-                src_attrs = [
-                    x for x in all_attrs if x.group_name == input_type[0]
-                ]
-                dst_attrs = [
-                    x for x in all_attrs if x.group_name == input_type[-1]
-                ]
-
-                if len(src_attrs) == 0 or len(dst_attrs) == 0:
-                    raise ValueError(
-                        f"Currently, using a Tuple[FeatureStore, GraphStore] "
-                        f"with LinkNeighborLoader requires both the source "
-                        f"and destination nodes to have feature tensors for "
-                        f"'num_nodes' inferral (got src: {src_attrs} and "
-                        f"dst: {dst_attrs}).")
-
-                num_src_nodes = feature_store.get_tensor_size(src_attrs[0])
-                num_dst_nodes = feature_store.get_tensor_size(dst_attrs[0])
-
             self.neighbor_sampler = LinkNeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
@@ -527,8 +496,8 @@ class LightningLinkData(LightningDataModule):
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
                 neg_sampling_ratio=kwargs.get('neg_sampling_ratio', 0.0),
-                num_src_nodes=num_src_nodes,
-                num_dst_nodes=num_dst_nodes,
+                num_src_nodes=kwargs.get('num_src_nodes', None),
+                num_dst_nodes=kwargs.get('num_dst_nodes', None),
                 share_memory=num_workers > 0,
             )
 

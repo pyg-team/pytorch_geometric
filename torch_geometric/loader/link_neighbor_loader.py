@@ -35,34 +35,36 @@ class LinkNeighborSampler(NeighborSampler):
         # `src` or `dst` nodes don't have time attribute
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
         # set it to largest representabel torch.long.
+        self.num_src_nodes = num_src_nodes
+        self.num_dst_nodes = num_dst_nodes
 
-        if self.data_cls == 'custom':
-            _, graph_store = data
-            edge_attrs = graph_store.get_all_edge_attrs()
-            edge_types = [attr.edge_type for attr in edge_attrs]
+        if self.num_src_nodes is None or self.num_dst_nodes is None:
+            if self.data_cls == 'custom':
+                _, graph_store = data
+                edge_attrs = graph_store.get_all_edge_attrs()
+                edge_types = [attr.edge_type for attr in edge_attrs]
 
-            # Edge label index is part of the graph:
-            if self.input_type in edge_types:
-                self.num_src_nodes, self.num_dst_nodes = edge_attrs[
-                    edge_types.index(self.input_type)].size
+                # Edge label index is part of the graph:
+                if self.input_type in edge_types:
+                    self.num_src_nodes = graph_store.num_src_nodes(
+                        edge_type=self.input_type)
+                    self.num_dst_nodes = graph_store.num_dst_nodes(
+                        edge_type=self.input_type)
+                else:
+                    # We do not support querying the number of nodes by the
+                    # feature store, so we throw an error here:
+                    raise ValueError(
+                        f"Use of a remote backend with "
+                        f"{self.__class__.__name__} requires the "
+                        f"specification of source and destination nodes, as "
+                        f"the edge label index {self.input_type} is not part "
+                        f"of the specified graph.")
 
-            elif num_src_nodes is None or num_dst_nodes is None:
-                raise ValueError(
-                    f"Use of the feature store and graph store abstraction "
-                    f"with {self.__class__.__name__} requires the "
-                    f"specification of source and destination nodes, since "
-                    f"the edge label index {self.input_type} is not part "
-                    f"of the specified graph. ")
-
-            else:
-                self.num_src_nodes = num_src_nodes
-                self.num_dst_nodes = num_dst_nodes
-
-        elif issubclass(self.data_cls, Data):
-            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
-        else:  # issubclass(self.data_cls, HeteroData):
-            self.num_src_nodes = data[self.input_type[0]].num_nodes
-            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
+            elif issubclass(self.data_cls, Data):
+                self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+            else:  # issubclass(self.data_cls, HeteroData):
+                self.num_src_nodes = data[self.input_type[0]].num_nodes
+                self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
     def _add_negative_samples(self, edge_label_index, edge_label,
                               edge_label_time):
