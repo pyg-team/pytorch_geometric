@@ -106,10 +106,11 @@ class Aggregation(torch.nn.Module):
         if index is not None:
             if dim_size is None:
                 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
-            elif index.numel() > 0 and dim_size <= int(index.max()):
-                raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                 f"'{dim_size}' but expected "
-                                 f">= '{int(index.max()) + 1}')")
+            elif self._validate:
+                if index.numel() > 0 and dim_size <= int(index.max()):
+                    raise ValueError(f"Encountered invalid 'dim_size' (got "
+                                     f"'{dim_size}' but expected "
+                                     f">= '{int(index.max()) + 1}')")
 
         return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
 
@@ -164,6 +165,25 @@ class Aggregation(torch.nn.Module):
 
         return to_dense_batch(x, index, batch_size=dim_size,
                               fill_value=fill_value)
+
+    _validate = __debug__
+
+    @staticmethod
+    def set_validate_args(value):
+        r"""
+        Sets whether eager validation is enabled.
+
+        The default behaviour is set by the Python ``__debug__`` constant which
+        is ``True`` as long as Python was not started with an ``-O`` option.
+
+        This option can be used to skip the validation of arguments such as
+        ``dim_size``. This is useful for PyTorch execution backends that may
+        incur a performance penalty when eager validation is performed.
+        """
+        if not isinstance(value, bool):
+            raise ValueError("value must be a bool")
+
+        Aggregation._validate = value
 
 
 ###############################################################################
