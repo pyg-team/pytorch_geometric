@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added missing test labels in `HGBDataset` ([#5233](https://github.com/pyg-team/pytorch_geometric/pull/5233))
 - Added `BaseStorage.get()` functionality ([#5240](https://github.com/pyg-team/pytorch_geometric/pull/5240))
 - Added a test to confirm that `to_hetero` works with `SparseTensor` ([#5222](https://github.com/pyg-team/pytorch_geometric/pull/5222))
+- Added `Aggregation.set_validate_args` option to skip eager validation of `dim_size`([#5290](https://github.com/pyg-team/pytorch_geometric/pull/5290))
 ### Changed
 - Improved name resolving of normalization layers ([#5277](https://github.com/pyg-team/pytorch_geometric/pull/5277))
 - Fail gracefully on `GLIBC` errors within `torch-spline-conv` ([#5276](https://github.com/pyg-team/pytorch_geometric/pull/5276))
