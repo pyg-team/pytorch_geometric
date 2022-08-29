@@ -317,6 +317,9 @@ class GraphStore:
         key = self._edge_attr_cls.cast(key)
         return self.get_edge_index(key)
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
+
 
 # Data and HeteroData utilities ###############################################
 

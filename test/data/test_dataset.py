@@ -43,6 +43,23 @@ def test_in_memory_dataset():
     assert dataset[1].test_str == '2'
 
 
+def test_in_memory_sparse_tensor_dataset():
+    x = torch.randn(11, 16)
+    adj = SparseTensor(
+        row=torch.tensor([4, 1, 3, 2, 2, 3]),
+        col=torch.tensor([1, 3, 2, 3, 3, 2]),
+        sparse_sizes=(11, 11),
+    )
+    data = Data(x=x, adj=adj)
+
+    dataset = MyTestDataset([data, data])
+    assert len(dataset) == 2
+    assert torch.allclose(dataset[0].x, x)
+    assert dataset[0].adj.sparse_sizes() == (11, 11)
+    assert torch.allclose(dataset[1].x, x)
+    assert dataset[1].adj.sparse_sizes() == (11, 11)
+
+
 def test_collate_with_new_dimension():
     class MyData(Data):
         def __cat_dim__(self, key, value, *args, **kwargs):
@@ -161,12 +178,6 @@ def test_override_behaviour():
     assert not ds.enter_process
 
 
-class MyTestDataset2(InMemoryDataset):
-    def __init__(self, data_list):
-        super().__init__('/tmp/MyTestDataset2')
-        self.data, self.slices = self.collate(data_list)
-
-
 def test_lists_of_tensors_in_memory_dataset():
     def tr(n, m):
         return torch.rand((n, m))
@@ -178,19 +189,13 @@ def test_lists_of_tensors_in_memory_dataset():
 
     data_list = [d1, d2, d3, d4]
 
-    dataset = MyTestDataset2(data_list)
+    dataset = MyTestDataset(data_list)
     assert len(dataset) == 4
-    assert dataset[0].xs[1].shape == (11, 4)
-    assert dataset[0].xs[2].shape == (1, 2)
-    assert dataset[1].xs[0].shape == (5, 3)
-    assert dataset[2].xs[1].shape == (15, 4)
-    assert dataset[3].xs[1].shape == (16, 4)
-
-
-class MyTestDataset3(InMemoryDataset):
-    def __init__(self, data_list):
-        super().__init__('/tmp/MyTestDataset3')
-        self.data, self.slices = self.collate(data_list)
+    assert dataset[0].xs[1].size() == (11, 4)
+    assert dataset[0].xs[2].size() == (1, 2)
+    assert dataset[1].xs[0].size() == (5, 3)
+    assert dataset[2].xs[1].size() == (15, 4)
+    assert dataset[3].xs[1].size() == (16, 4)
 
 
 def test_lists_of_SparseTensors():
@@ -207,7 +212,7 @@ def test_lists_of_SparseTensors():
     d2 = Data(adj_test=[adj3, adj4])
 
     data_list = [d1, d2]
-    dataset = MyTestDataset3(data_list)
+    dataset = MyTestDataset(data_list)
     assert len(dataset) == 2
     assert dataset[0].adj_test[0].sparse_sizes() == (11, 11)
     assert dataset[0].adj_test[1].sparse_sizes() == (22, 22)
