@@ -227,10 +227,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
-        num_src_nodes (optional, int): The number of source nodes in the edge
-            label index. Inferred if not provided.
-        num_dst_nodes (optional, int): The number of destination nodes in the
-            edge label index. Inferred if not provided.
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
@@ -280,8 +276,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
-        num_src_nodes: Optional[int] = None,
-        num_dst_nodes: Optional[int] = None,
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
@@ -332,8 +326,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
-                num_src_nodes=num_src_nodes,
-                num_dst_nodes=num_dst_nodes,
                 time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
