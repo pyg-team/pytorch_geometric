@@ -1,9 +1,10 @@
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
-from torch_geometric.data.remote_backend import num_nodes
-from torch_geometric.data import HeteroData
 import pytest
 import torch
+
+from torch_geometric.data import HeteroData
+from torch_geometric.data.remote_backend import num_nodes
+from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.testing.graph_store import MyGraphStore
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -44,5 +45,6 @@ def test_num_nodes(FeatureStore, GraphStore):
     with pytest.raises(ValueError, match="Unable to accurately infer"):
         _ = num_nodes(feature_store, graph_store, 'z')
 
-    graph_store.put_edge_index(yz, edge_type=('y', 'to', 'z'), layout='coo', size=(50, 20))
+    graph_store.put_edge_index(yz, edge_type=('y', 'to', 'z'), layout='coo',
+                               size=(50, 20))
     assert num_nodes(feature_store, graph_store, 'z') == 20
