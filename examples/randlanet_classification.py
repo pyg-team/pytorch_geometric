@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Sequential, Linear, LeakyReLU
 from tqdm import tqdm
-import numpy as np
 import torch_geometric.transforms as T
 from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.datasets import ModelNet
@@ -16,20 +15,20 @@ from torch_geometric.nn.pool import knn
 
 
 # Default activation and BatchNorm used by RandLaNet authors
-lrelu02 = LeakyReLU(negative_slope=0.2)
+lrelu02_kwargs = {"negative_slope":0.2}
 
 
-def bn099(in_channels):
-    return BatchNorm(in_channels, momentum=0.99, eps=1e-6)
+bn099_kwargs = {"momentum":0.99, "eps":1e-6}
 
+
+def MLP_1l(*args, **kwargs):
+    """MLP with activation, bn, and dropout at last layer."""
+    kwargs["plain_last"] = False
+    return MLP(*args, **kwargs)
 
 class GlobalPooling(torch.nn.Module):
-    def __init__(self, nn):
-        super().__init__()
-        self.nn = nn
 
     def forward(self, x, pos, batch):
-        x = self.nn(x)
         x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
         batch = torch.arange(x.size(0), device=batch.device)
@@ -41,9 +40,9 @@ class LocalFeatureAggregation(MessagePassing):
 
     def __init__(self, d_out):
         super().__init__(aggr="add")
-        self.mlp_encoder = MLP([10, d_out // 2], act=lrelu02, norm=bn099(d_out // 2))
-        self.mlp_attention = Linear(in_features=d_out, out_features=d_out, bias=False)
-        self.mlp_post_attention = MLP([d_out, d_out], act=lrelu02, norm=bn099(d_out))
+        self.mlp_encoder = MLP_1l([10, d_out // 2], act="LeakyReLU", act_norm=lrelu02_kwargs, norm_kwargs=bn099_kwargs)
+        self.mlp_attention = MLP_1l([d_out, d_out], bias=False, act=None, norm=None)
+        self.mlp_post_attention = MLP_1l([d_out, d_out], act="LeakyReLU", act_norm=lrelu02_kwargs, norm_kwargs=bn099_kwargs)
 
     def forward(self, edge_indx, x, pos):
         out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
@@ -119,16 +118,16 @@ class DilatedResidualBlock(MessagePassing):
         self.d_out = d_out
 
         # MLP on input
-        self.mlp1 = MLP([d_in, d_out // 8], act=lrelu02, norm=False)
+        self.mlp1 = MLP_1l([d_in, d_out // 8], act="LeakyReLU", act_kwargs=lrelu02_kwargs)
         # MLP on input, and the result is summed with the output of mlp2
-        self.shortcut = MLP([d_in, d_out], act=None, norm=bn099(d_out))
+        self.shortcut = MLP_1l([d_in, d_out], act=None, norm_kwargs=bn099_kwargs)
         # MLP on output
-        self.mlp2 = MLP([d_out // 2, d_out], act=None, norm=bn099(d_out))
+        self.mlp2 = MLP_1l([d_out // 2, d_out], act=None, norm_kwargs=bn099_kwargs)
 
         self.lfa1 = LocalFeatureAggregation(d_out // 4)
         self.lfa2 = LocalFeatureAggregation(d_out // 2)
 
-        self.lrelu = torch.nn.LeakyReLU()
+        self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
     def forward(self, x, pos, batch):
         # Random Sampling by decimation
@@ -158,14 +157,18 @@ class Net(torch.nn.Module):
         super().__init__()
         self.return_logits = return_logits
         self.fc0 = Sequential(
-            Linear(in_features=num_features, out_features=8), bn099(8)
+            Linear(in_features=num_features, out_features=8)
         )
         self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
         self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
-        self.pool = GlobalPooling(MLP([512, 512]))
-        self.mlp = MLP([512, 64, num_classes], dropout=0.5)
+        self.mlp1 = MLP_1l([512, 512])
+        self.pool = GlobalPooling()
+        self.mlp_end = Sequential(
+            MLP([512, 128, 32], act="LeakyReLU", act_kwargs=lrelu02_kwargs,norm_kwargs=bn099_kwargs, dropout=[0.0, 0.5]),
+            Linear(32, num_classes)
+        )
 
     def forward(self, data):
         in_0 = (self.fc0(data.x), data.pos, data.batch)
@@ -173,9 +176,10 @@ class Net(torch.nn.Module):
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
-        encoding = self.pool(*lfa4_out)
-        x, _, _ = encoding
-        logits = self.mlp(x)
+        x, pos, batch = lfa4_out
+        x = self.mlp1(x)
+        encoding = self.pool(x, pos, batch)
+        logits = self.mlp_end(encoding[0])
         if self.return_logits:
             return logits
         return logits.log_softmax(dim=-1)
