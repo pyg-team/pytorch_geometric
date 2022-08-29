@@ -14,6 +14,9 @@ class ClusterData(torch.utils.data.Dataset):
     and Large Graph Convolutional Networks"
     <https://arxiv.org/abs/1905.07953>`_ paper.
 
+    .. note::
+        The underlying METIS algorithm requires undirected graphs as input.
+
     Args:
         data (torch_geometric.data.Data): The graph data object.
         num_parts (int): The number of partitions.
