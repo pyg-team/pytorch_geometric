@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 from torch.nn import Sequential, Linear
 import torch.nn.functional as F
-from randlanet_classification import DilatedResidualBlock, bn099, lrelu02
+from randlanet_classification import DilatedResidualBlock, default_MLP, bn099_kwargs, lrelu02_kwargs
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
@@ -11,7 +11,7 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, knn_interpolate
+from torch_geometric.nn import knn_interpolate
 
 
 category = "Airplane"  # Pass in `None` to train on all categories.
@@ -66,30 +66,27 @@ class Net(torch.nn.Module):
         d = decimation
         nk = num_neighbors
 
-        self.fc0 = Sequential(
-            Linear(in_features=num_features, out_features=bottleneck), bn099(bottleneck)
-        )
+        self.fc0 = default_MLP([num_features,bottleneck], act=None) # TODO: check activation.
         self.lfa1_module = DilatedResidualBlock(d, nk, bottleneck, 32)
         self.lfa2_module = DilatedResidualBlock(d, nk, 32, 128)
         self.lfa3_module = DilatedResidualBlock(d, nk, 128, 256)
         self.lfa4_module = DilatedResidualBlock(d, nk, 256, 512)
-        self.mlp1 = MLP([512, 512], act=lrelu02)
+        self.mlp1 = default_MLP([512, 512])
         self.fp4_module = FPModule(
-            1, MLP([512 + 256, 256], act=lrelu02, norm=bn099(256))
+            1, default_MLP([512 + 256, 256])
         )
         self.fp3_module = FPModule(
-            1, MLP([256 + 128, 128], act=lrelu02, norm=bn099(128))
+            1, default_MLP([256 + 128, 128])
         )
-        self.fp2_module = FPModule(1, MLP([128 + 32, 32], act=lrelu02, norm=bn099(32)))
+        self.fp2_module = FPModule(1, default_MLP([128 + 32, 32]))
         self.fp1_module = FPModule(
-            1, MLP([32 + bottleneck, bottleneck], act=lrelu02, norm=bn099(bottleneck))
+            1, default_MLP([32 + bottleneck, bottleneck])
         )
 
         self.mlp2 = Sequential(
-            MLP([bottleneck, 64], act=lrelu02, norm=bn099(64)),
-            MLP([64, 32], act=lrelu02, norm=bn099(32), dropout=0.5),
+            default_MLP([bottleneck, 64, 32], dropout=[0.0, 0.5]),
+            Linear(32, num_classes)
         )
-        self.fc_end = Linear(32, num_classes)
 
     def forward(self, batch):
 
@@ -107,8 +104,7 @@ class Net(torch.nn.Module):
         fp2_out = self.fp2_module(*fp3_out, *lfa1_out)
         x, _, _ = self.fp1_module(*fp2_out, *in_0)
 
-        x = self.mlp2(x)
-        logits = self.fc_end(x)
+        logits = self.mlp2(x)
         if self.return_logits:
             return logits
         return logits.log_softmax(dim=-1)

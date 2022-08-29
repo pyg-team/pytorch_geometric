@@ -14,16 +14,19 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn
 
 
-# Default activation and BatchNorm used by RandLaNet authors
+# Default activation, BatchNorm, and resulting MLP used by RandLaNet authors
 lrelu02_kwargs = {"negative_slope":0.2}
 
 
 bn099_kwargs = {"momentum":0.99, "eps":1e-6}
 
 
-def MLP_1l(*args, **kwargs):
-    """MLP with activation, bn, and dropout at last layer."""
-    kwargs["plain_last"] = False
+def default_MLP(*args, **kwargs):
+    """MLP with custom activation, bn, and dropout that are always active even an last layer."""
+    kwargs["plain_last"] = kwargs.get("plain_last", False)
+    kwargs["act"] = kwargs.get("act", "LeakyReLU")
+    kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
+    kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
     return MLP(*args, **kwargs)
 
 class GlobalPooling(torch.nn.Module):
@@ -40,9 +43,9 @@ class LocalFeatureAggregation(MessagePassing):
 
     def __init__(self, d_out):
         super().__init__(aggr="add")
-        self.mlp_encoder = MLP_1l([10, d_out // 2], act="LeakyReLU", act_norm=lrelu02_kwargs, norm_kwargs=bn099_kwargs)
-        self.mlp_attention = MLP_1l([d_out, d_out], bias=False, act=None, norm=None)
-        self.mlp_post_attention = MLP_1l([d_out, d_out], act="LeakyReLU", act_norm=lrelu02_kwargs, norm_kwargs=bn099_kwargs)
+        self.mlp_encoder = default_MLP([10, d_out // 2])
+        self.mlp_attention = default_MLP([d_out, d_out], bias=False, act=None, norm=None)
+        self.mlp_post_attention = default_MLP([d_out, d_out])
 
     def forward(self, edge_indx, x, pos):
         out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
@@ -77,6 +80,50 @@ class LocalFeatureAggregation(MessagePassing):
         return attention_scores * local_features  # N//4 * K, d_out
 
 
+
+
+
+class DilatedResidualBlock(MessagePassing):
+    def __init__(
+        self,
+        decimation,
+        num_neighbors,
+        d_in: int,
+        d_out: int,
+    ):
+        super().__init__()
+        self.num_neighbors = num_neighbors
+        self.decimation = decimation
+        self.d_in = d_in
+        self.d_out = d_out
+
+        # MLP on input
+        self.mlp1 = default_MLP([d_in, d_out // 8])  # TODO: remove the norm ?
+        # MLP on input, and the result is summed with the output of mlp2
+        self.shortcut = default_MLP([d_in, d_out], act=None)
+        # MLP on output
+        self.mlp2 = default_MLP([d_out // 2, d_out], act=None)
+
+        self.lfa1 = LocalFeatureAggregation(d_out // 4)
+        self.lfa2 = LocalFeatureAggregation(d_out // 2)
+
+        self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
+
+    def forward(self, x, pos, batch):
+        # Random Sampling by decimation
+        idx = subsample_by_decimation(batch, self.decimation)
+        row, col = knn(
+            pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
+        )
+        edge_index = torch.stack([col, row], dim=0)
+        shortcut_of_x = self.shortcut(x)  # N, d_out
+        x = self.mlp1(x)  # N, d_out // 8
+        x = self.lfa1(edge_index, x, pos)  # N, d_out // 2
+        x = self.lfa2(edge_index, x, pos)  # N, d_out // 2
+        x = self.mlp2(x)  # N, d_out
+        x = self.lrelu(x + shortcut_of_x)  # N, d_out
+        return x[idx], pos[idx], batch[idx]  # N // decimation, d_out
+
 def subsample_by_decimation(batch, decimation):
     """Subsamples by a decimation factor.
 
@@ -102,49 +149,6 @@ def subsample_by_decimation(batch, decimation):
     )
     return idx
 
-
-class DilatedResidualBlock(MessagePassing):
-    def __init__(
-        self,
-        decimation,
-        num_neighbors,
-        d_in: int,
-        d_out: int,
-    ):
-        super().__init__()
-        self.num_neighbors = num_neighbors
-        self.decimation = decimation
-        self.d_in = d_in
-        self.d_out = d_out
-
-        # MLP on input
-        self.mlp1 = MLP_1l([d_in, d_out // 8], act="LeakyReLU", act_kwargs=lrelu02_kwargs)
-        # MLP on input, and the result is summed with the output of mlp2
-        self.shortcut = MLP_1l([d_in, d_out], act=None, norm_kwargs=bn099_kwargs)
-        # MLP on output
-        self.mlp2 = MLP_1l([d_out // 2, d_out], act=None, norm_kwargs=bn099_kwargs)
-
-        self.lfa1 = LocalFeatureAggregation(d_out // 4)
-        self.lfa2 = LocalFeatureAggregation(d_out // 2)
-
-        self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
-
-    def forward(self, x, pos, batch):
-        # Random Sampling by decimation
-        idx = subsample_by_decimation(batch, self.decimation)
-        row, col = knn(
-            pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
-        )
-        edge_index = torch.stack([col, row], dim=0)
-        shortcut_of_x = self.shortcut(x)  # N, d_out
-        x = self.mlp1(x)  # N, d_out // 8
-        x = self.lfa1(edge_index, x, pos)  # N, d_out // 2
-        x = self.lfa2(edge_index, x, pos)  # N, d_out // 2
-        x = self.mlp2(x)  # N, d_out
-        x = self.lrelu(x + shortcut_of_x)  # N, d_out
-        return x[idx], pos[idx], batch[idx]  # N // decimation, d_out
-
-
 class Net(torch.nn.Module):
     def __init__(
         self,
@@ -163,10 +167,10 @@ class Net(torch.nn.Module):
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
         self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
         self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
-        self.mlp1 = MLP_1l([512, 512])
+        self.mlp1 = default_MLP([512, 512])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
-            MLP([512, 128, 32], act="LeakyReLU", act_kwargs=lrelu02_kwargs,norm_kwargs=bn099_kwargs, dropout=[0.0, 0.5]),
+            default_MLP([512, 128, 32], dropout=[0.0, 0.5]),
             Linear(32, num_classes)
         )
 
