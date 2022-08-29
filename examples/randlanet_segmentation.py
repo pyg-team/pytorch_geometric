@@ -60,16 +60,18 @@ class Net(torch.nn.Module):
         super().__init__()
 
         self.return_logits = return_logits
+        # Authors use 8, which might become a bottlenecj if num_classes>8 or num_features>8.
+        bottleneck = max(num_classes, num_features)
         d = decimation
         nk = num_neighbors
 
         self.fc0 = Sequential(
-            Linear(in_features=num_features, out_features=8), bn099(8)
+            Linear(in_features=num_features, out_features=bottleneck), bn099(bottleneck)
         )
-        self.lfa1_module = DilatedResidualBlock(d, nk, 8, 16)
-        self.lfa2_module = DilatedResidualBlock(d, nk, 32, 64)
-        self.lfa3_module = DilatedResidualBlock(d, nk, 128, 128)
-        self.lfa4_module = DilatedResidualBlock(d, nk, 256, 256)
+        self.lfa1_module = DilatedResidualBlock(d, nk, bottleneck, 32)
+        self.lfa2_module = DilatedResidualBlock(d, nk, 32, 128)
+        self.lfa3_module = DilatedResidualBlock(d, nk, 128, 256)
+        self.lfa4_module = DilatedResidualBlock(d, nk, 256, 512)
         self.mlp1 = MLP([512, 512], act=lrelu02)
         self.fp4_module = FPModule(
             1, MLP([512 + 256, 256], act=lrelu02, norm=bn099(256))
@@ -78,10 +80,12 @@ class Net(torch.nn.Module):
             1, MLP([256 + 128, 128], act=lrelu02, norm=bn099(128))
         )
         self.fp2_module = FPModule(1, MLP([128 + 32, 32], act=lrelu02, norm=bn099(32)))
-        self.fp1_module = FPModule(1, MLP([32 + 8, 64], act=lrelu02, norm=bn099(64)))
+        self.fp1_module = FPModule(
+            1, MLP([32 + bottleneck, bottleneck], act=lrelu02, norm=bn099(bottleneck))
+        )
 
         self.mlp2 = Sequential(
-            MLP([64, 64], act=lrelu02, norm=bn099(64)),
+            MLP([bottleneck, 64], act=lrelu02, norm=bn099(64)),
             MLP([64, 32], act=lrelu02, norm=bn099(32), dropout=0.5),
         )
         self.fc_end = Linear(32, num_classes)
