@@ -1,3 +1,25 @@
+r"""
+This class defines the abstraction for a backend-agnostic graph store. The
+goal of the graph store is to abstract away all graph edge index memory
+management so that varying implementations can allow for independent scale-out.
+
+This particular graph store abstraction makes a few key assumptions:
+* The edge indices we care about storing are represented either in COO, CSC,
+  or CSR format. They can be uniquely identified by an edge type (in PyG,
+  this is a tuple of the source node, relation type, and destination node).
+* Edge indices are static once they are stored in tthe grah. That is, we do not
+  support dynamic modification of edge indices once they have been inserted
+  into the graph store.
+
+It is the job of a graph store implementor class to handle these assumptions
+properly. For example, a simple in-memory graph store implementation may
+concatenate all metadata values with an edge index and use this as a unique
+index in a KV store. More complicated implementations may choose to partition
+the graph in interesting manners based on the provided metadata.
+
+Major TODOs for future implementation:
+* `sample` behind the graph store interface
+"""
 import copy
 import warnings
 from abc import abstractmethod
@@ -47,7 +69,7 @@ class EdgeAttr(CastMixin):
     # meaningful for COO (CSC and CSR are sorted by definition)
     is_sorted: bool = False
 
-    # The number of nodes in this edge type
+    # The number of source and destination nodes in this edge type
     size: Optional[Tuple[int, int]] = None
 
     # NOTE we define __init__ to force-cast layout
@@ -155,6 +177,9 @@ class GraphStore:
         attr: EdgeAttr,
         layout: EdgeLayout,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
+        r"""Converts one edge in the graph store to the desired output
+        layout, by fetching the edge index and performing in-memory
+        conversion."""
         from_tuple = self.get_edge_index(attr)
 
         if layout == EdgeLayout.COO:
@@ -202,6 +227,10 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
+        r"""Converts all edge attributes in the graph store to the desired
+        layout, by fetching all edge indices and performing conversion on
+        the caller instance. Implementations that support conversion within
+        the graph store can override this method."""
         # Obtain all edge attributes, grouped by type:
         all_edge_attrs = self.get_all_edge_attrs()
         edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
@@ -213,8 +242,8 @@ class GraphStore:
         for edge_type in edge_types:
             if edge_type not in edge_type_to_attrs:
                 raise ValueError(
-                    f"The edge label index {edge_type} was not found in "
-                    f"the graph store.")
+                    f"The edge index {edge_type} was not found in the graph "
+                    f"store.")
 
         # Convert layouts for each attribute from its most favorable original
         # layout to the desired layout. Store permutations of edges if
@@ -268,9 +297,9 @@ class GraphStore:
                                   f"this warning.")
                 else:
                     is_sorted = (layout != EdgeLayout.COO)
-                    self._put_edge_index((row, col),
-                                         EdgeAttr(from_attr.edge_type, layout,
-                                                  is_sorted, from_attr.size))
+                    self.put_edge_index((row, col),
+                                        EdgeAttr(from_attr.edge_type, layout,
+                                                 is_sorted, from_attr.size))
 
         return row_dict, col_dict, perm_dict
 
@@ -305,6 +334,7 @@ class GraphStore:
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        r"""Returns all edge attributes stored in the graph store."""
         pass
 
     # Python built-ins ########################################################
