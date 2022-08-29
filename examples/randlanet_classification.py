@@ -165,12 +165,12 @@ class Net(torch.nn.Module):
         )
         self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
-        self.mlp1 = default_MLP([512, 512])
+        # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        # self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.mlp1 = default_MLP([128, 128])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
-            default_MLP([512, 128, 32], dropout=[0.0, 0.5]),
+            default_MLP([128, 32], dropout=[0.5]),
             Linear(32, num_classes)
         )
 
@@ -178,10 +178,10 @@ class Net(torch.nn.Module):
         in_0 = (self.fc0(data.x), data.pos, data.batch)
         lfa1_out = self.lfa1_module(*in_0)
         lfa2_out = self.lfa2_module(*lfa1_out)
-        lfa3_out = self.lfa3_module(*lfa2_out)
-        lfa4_out = self.lfa4_module(*lfa3_out)
-        x = self.mlp1(lfa4_out[0])
-        x, _, _ = self.pool(x, lfa4_out[1], lfa4_out[2])
+        # lfa3_out = self.lfa3_module(*lfa2_out)
+        # lfa4_out = self.lfa4_module(*lfa3_out)
+        x = self.mlp1(lfa2_out[0])
+        x, _, _ = self.pool(x, lfa2_out[1], lfa2_out[2])
         logits = self.mlp_end(x)
         if self.return_logits:
             return logits

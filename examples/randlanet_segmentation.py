@@ -66,7 +66,7 @@ class Net(torch.nn.Module):
         d = decimation
         nk = num_neighbors
 
-        self.fc0 = default_MLP([num_features,bottleneck], act=None) # TODO: check activation.
+        self.fc0 = Linear(num_features,bottleneck)
         self.lfa1_module = DilatedResidualBlock(d, nk, bottleneck, 32)
         self.lfa2_module = DilatedResidualBlock(d, nk, 32, 128)
         self.lfa3_module = DilatedResidualBlock(d, nk, 128, 256)
