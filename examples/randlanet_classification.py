@@ -93,14 +93,14 @@ class DilatedResidualBlock(MessagePassing):
         self.d_out = d_out
 
         # MLP on input
-        self.mlp1 = MLP([d_in, d_out // 4], act=lrelu02, norm=False)
+        self.mlp1 = MLP([d_in, d_out // 8], act=lrelu02, norm=False)
         # MLP on input, and the result is summed with the output of mlp2
-        self.shortcut = MLP([d_in, 2 * d_out], act=None, norm=bn099(2 * d_out))
+        self.shortcut = MLP([d_in, d_out], act=None, norm=bn099(d_out))
         # MLP on output
-        self.mlp2 = MLP([d_out, 2 * d_out], act=None, norm=bn099(2 * d_out))
+        self.mlp2 = MLP([d_out // 2, d_out], act=None, norm=bn099(d_out))
 
-        self.lfa1 = LocalFeatureAggregation(d_out // 2)
-        self.lfa2 = LocalFeatureAggregation(d_out)
+        self.lfa1 = LocalFeatureAggregation(d_out // 4)
+        self.lfa2 = LocalFeatureAggregation(d_out // 2)
 
         self.lrelu = torch.nn.LeakyReLU()
 
@@ -111,19 +111,20 @@ class DilatedResidualBlock(MessagePassing):
             pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
         )
         edge_index = torch.stack([col, row], dim=0)
-        shortcut_of_x = self.shortcut(x)  # N, 2 * d_out
-        x = self.mlp1(x)  # N, d_out // 4
-        x = self.lfa1(edge_index, x, pos)  # N, d_out
-        x = self.lfa2(edge_index, x, pos)  # N, d_out
-        x = self.mlp2(x)  # N, 2 * d_out
-        x = self.lrelu(x + shortcut_of_x)  # N, 2 * d_out
-        return x[idx], pos[idx], batch[idx]  # N // decimation, 2 * d_out
+        shortcut_of_x = self.shortcut(x)  # N, d_out
+        x = self.mlp1(x)  # N, d_out // 8
+        x = self.lfa1(edge_index, x, pos)  # N, d_out // 2
+        x = self.lfa2(edge_index, x, pos)  # N, d_out // 2
+        x = self.mlp2(x)  # N, d_out
+        x = self.lrelu(x + shortcut_of_x)  # N, d_out
+        return x[idx], pos[idx], batch[idx]  # N // decimation, d_out
 
 
 class Net(torch.nn.Module):
     def __init__(
         self,
         num_features,
+        num_classes,
         decimation: int = 4,
         num_neighboors: int = 16,
         return_logits: bool = False,
@@ -133,12 +134,12 @@ class Net(torch.nn.Module):
         self.fc0 = Sequential(
             Linear(in_features=num_features, out_features=8), bn099(8)
         )
-        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 16)
-        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 64)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 128)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 256)
-        self.pool = GlobalPooling(MLP([512, 1024]))
-        self.mlp = MLP([1024, 512, 256, 10], dropout=0.5)
+        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
+        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
+        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.pool = GlobalPooling(MLP([512, 512]))
+        self.mlp = MLP([512, 64, num_classes], dropout=0.5)
 
     def forward(self, data):
         in_0 = (self.fc0(data.x), data.pos, data.batch)
@@ -198,7 +199,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=6)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = Net(3).to(device)
+    model = Net(3, train_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
