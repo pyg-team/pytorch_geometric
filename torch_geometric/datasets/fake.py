@@ -189,6 +189,7 @@ class FakeHeteroDataset(InMemoryDataset):
 
         iterator = zip(self.node_types, self.num_channels)
         for i, (node_type, num_channels) in enumerate(iterator):
+            # TODO: Generate num_nodes // len(node_types)
             num_nodes = get_num_nodes(self.avg_num_nodes, self.avg_degree)
 
             store = data[node_type]
@@ -204,6 +205,7 @@ class FakeHeteroDataset(InMemoryDataset):
         for (src, rel, dst) in self.edge_types:
             store = data[(src, rel, dst)]
 
+            # TODO: Generate avg_degree // len(edge_types)
             store.edge_index = get_edge_index(
                 data[src].num_nodes,
                 data[dst].num_nodes,
