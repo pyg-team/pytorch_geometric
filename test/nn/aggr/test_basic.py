@@ -34,9 +34,6 @@ def test_validate():
     with pytest.raises(RuntimeError, match="out of bounds"):
         aggr(x, index, dim_size=2)
 
-    with pytest.raises(ValueError, match="value must be a bool"):
-        aggr.set_validate_args(0)
-
 
 @pytest.mark.parametrize('Aggregation', [
     MeanAggregation,
