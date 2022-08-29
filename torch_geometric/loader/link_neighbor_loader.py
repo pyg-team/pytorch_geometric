@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_min
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, remote_backend
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -40,25 +40,10 @@ class LinkNeighborSampler(NeighborSampler):
 
         if self.num_src_nodes is None or self.num_dst_nodes is None:
             if self.data_cls == 'custom':
-                _, graph_store = data
-                edge_attrs = graph_store.get_all_edge_attrs()
-                edge_types = [attr.edge_type for attr in edge_attrs]
-
-                # Edge label index is part of the graph:
-                if self.input_type in edge_types:
-                    self.num_src_nodes = graph_store.num_src_nodes(
-                        edge_type=self.input_type)
-                    self.num_dst_nodes = graph_store.num_dst_nodes(
-                        edge_type=self.input_type)
-                else:
-                    # We do not support querying the number of nodes by the
-                    # feature store, so we throw an error here:
-                    raise ValueError(
-                        f"Use of a remote backend with "
-                        f"{self.__class__.__name__} requires the "
-                        f"specification of source and destination nodes, as "
-                        f"the edge label index {self.input_type} is not part "
-                        f"of the specified graph.")
+                feature_store, graph_store = data
+                self.num_src_nodes, self.num_dst_nodes = \
+                    remote_backend.num_nodes(feature_store, graph_store,
+                    self.input_type)
 
             elif issubclass(self.data_cls, Data):
                 self.num_src_nodes = self.num_dst_nodes = data.num_nodes

@@ -4,7 +4,6 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import TensorAttr
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import withPackage
@@ -397,7 +396,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
     loader2 = NeighborLoader(
         (feature_store, graph_store),
         num_neighbors=[-1, -1],
-        input_nodes=TensorAttr(group_name='paper', attr_name='x'),
+        input_nodes='paper',
         time_attr='time',
         batch_size=128,
     )

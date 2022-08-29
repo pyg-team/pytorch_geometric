@@ -132,22 +132,6 @@ class GraphStore:
                            f"found")
         return edge_index
 
-    @abstractmethod
-    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
-        pass
-
-    def num_src_nodes(self, *args, **kwargs) -> int:
-        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._num_src_nodes(edge_attr)
-
-    @abstractmethod
-    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
-        pass
-
-    def num_dst_nodes(self, *args, **kwargs) -> int:
-        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._num_dst_nodes(edge_attr)
-
     # Layout Conversion #######################################################
 
     def _edge_to_layout(
