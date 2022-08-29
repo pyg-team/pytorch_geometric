@@ -496,8 +496,6 @@ class LightningLinkData(LightningDataModule):
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
                 neg_sampling_ratio=kwargs.get('neg_sampling_ratio', 0.0),
-                num_src_nodes=kwargs.get('num_src_nodes', None),
-                num_dst_nodes=kwargs.get('num_dst_nodes', None),
                 share_memory=num_workers > 0,
             )
 

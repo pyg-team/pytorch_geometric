@@ -24,8 +24,6 @@ class LinkNeighborSampler(NeighborSampler):
         data,
         *args,
         neg_sampling_ratio: float = 0.0,
-        num_src_nodes: Optional[int] = None,
-        num_dst_nodes: Optional[int] = None,
         **kwargs,
     ):
         super().__init__(data, *args, **kwargs)
@@ -34,22 +32,18 @@ class LinkNeighborSampler(NeighborSampler):
         # TODO if self.edge_time is not None and
         # `src` or `dst` nodes don't have time attribute
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
-        # set it to largest representabel torch.long.
-        self.num_src_nodes = num_src_nodes
-        self.num_dst_nodes = num_dst_nodes
+        # set it to largest representable torch.long.
+        if self.data_cls == 'custom':
+            feature_store, graph_store = data
+            self.num_src_nodes, self.num_dst_nodes = \
+                remote_backend.num_nodes(feature_store, graph_store,
+                self.input_type)
 
-        if self.num_src_nodes is None or self.num_dst_nodes is None:
-            if self.data_cls == 'custom':
-                feature_store, graph_store = data
-                self.num_src_nodes, self.num_dst_nodes = \
-                    remote_backend.num_nodes(feature_store, graph_store,
-                    self.input_type)
-
-            elif issubclass(self.data_cls, Data):
-                self.num_src_nodes = self.num_dst_nodes = data.num_nodes
-            else:  # issubclass(self.data_cls, HeteroData):
-                self.num_src_nodes = data[self.input_type[0]].num_nodes
-                self.num_dst_nodes = data[self.input_type[-1]].num_nodes
+        elif issubclass(self.data_cls, Data):
+            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+        else:  # issubclass(self.data_cls, HeteroData):
+            self.num_src_nodes = data[self.input_type[0]].num_nodes
+            self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
     def _add_negative_samples(self, edge_label_index, edge_label,
                               edge_label_time):
