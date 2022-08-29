@@ -1,8 +1,9 @@
 import os.path as osp
 
 import torch
+from torch.nn import Sequential, Linear
 import torch.nn.functional as F
-from randlanet_classification import DilatedResidualBlock
+from randlanet_classification import DilatedResidualBlock, bn099, lrelu02
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
@@ -14,24 +15,26 @@ from torch_geometric.nn import MLP, knn_interpolate
 
 category = "Airplane"  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
-transform = T.Compose([
-    T.RandomJitter(0.01),
-    T.RandomRotate(15, axis=0),
-    T.RandomRotate(15, axis=1),
-    T.RandomRotate(15, axis=2),
-])
+transform = T.Compose(
+    [
+        T.RandomJitter(0.01),
+        T.RandomRotate(15, axis=0),
+        T.RandomRotate(15, axis=1),
+        T.RandomRotate(15, axis=2),
+    ]
+)
 pre_transform = T.NormalizeScale()
-train_dataset = ShapeNet(path, category, split="trainval", transform=transform,
-                         pre_transform=pre_transform)
-test_dataset = ShapeNet(path, category, split="test",
-                        pre_transform=pre_transform)
-train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True,
-                          num_workers=6)
-test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
-                         num_workers=6)
+train_dataset = ShapeNet(
+    path, category, split="trainval", transform=transform, pre_transform=pre_transform
+)
+test_dataset = ShapeNet(path, category, split="test", pre_transform=pre_transform)
+train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True, num_workers=6)
+test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False, num_workers=6)
 
 
 class FPModule(torch.nn.Module):
+    """Upsampling with a skip connection."""
+
     def __init__(self, k, nn):
         super().__init__()
         self.k = k
@@ -46,28 +49,46 @@ class FPModule(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
-    def __init__(self, num_features, num_classes, decimation: int = 4,
-                 num_neighboors: int = 16):
+    def __init__(
+        self,
+        num_features,
+        num_classes,
+        decimation: int = 4,
+        num_neighbors: int = 16,
+        return_logits: bool = False,
+    ):
         super().__init__()
-        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors,
-                                                num_features, 32)
-        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32,
-                                                128)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors,
-                                                128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors,
-                                                256, 512)
-        self.mlp1 = MLP([512, 512])
-        self.fp4_module = FPModule(1, MLP([512 + 256, 256]))
-        self.fp3_module = FPModule(1, MLP([256 + 128, 128]))
-        self.fp2_module = FPModule(1, MLP([128 + 32, 32]))
-        self.fp1_module = FPModule(1, MLP([32 + num_features, 8]))
 
-        self.mlp2 = MLP([8, 64, 32], dropout=0.5)
-        self.lin = torch.nn.Linear(32, num_classes)
+        self.return_logits = return_logits
+        d = decimation
+        nk = num_neighbors
 
-    def forward(self, data):
-        in_0 = (data.x, data.pos, data.batch)
+        self.fc0 = Sequential(
+            Linear(in_features=num_features, out_features=8), bn099(8)
+        )
+        self.lfa1_module = DilatedResidualBlock(d, nk, 8, 16)
+        self.lfa2_module = DilatedResidualBlock(d, nk, 32, 64)
+        self.lfa3_module = DilatedResidualBlock(d, nk, 128, 128)
+        self.lfa4_module = DilatedResidualBlock(d, nk, 256, 256)
+        self.mlp1 = MLP([512, 512], act=lrelu02)
+        self.fp4_module = FPModule(
+            1, MLP([512 + 256, 256], act=lrelu02, norm=bn099(256))
+        )
+        self.fp3_module = FPModule(
+            1, MLP([256 + 128, 128], act=lrelu02, norm=bn099(128))
+        )
+        self.fp2_module = FPModule(1, MLP([128 + 32, 32], act=lrelu02, norm=bn099(32)))
+        self.fp1_module = FPModule(1, MLP([32 + 8, 64], act=lrelu02, norm=bn099(64)))
+
+        self.mlp2 = Sequential(
+            MLP([64, 64], act=lrelu02, norm=bn099(64)),
+            MLP([64, 32], act=lrelu02, norm=bn099(32), dropout=0.5),
+        )
+        self.fc_end = Linear(32, num_classes)
+
+    def forward(self, batch):
+
+        in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
 
         lfa1_out = self.lfa1_module(*in_0)
         lfa2_out = self.lfa2_module(*lfa1_out)
@@ -82,13 +103,15 @@ class Net(torch.nn.Module):
         x, _, _ = self.fp1_module(*fp2_out, *in_0)
 
         x = self.mlp2(x)
-
-        return self.lin(x).log_softmax(dim=-1)
+        logits = self.fc_end(x)
+        if self.return_logits:
+            return logits
+        return logits.log_softmax(dim=-1)
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Net(3, train_dataset.num_classes).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train():
@@ -107,8 +130,10 @@ def train():
         total_nodes += data.num_nodes
 
         if (i + 1) % 10 == 0:
-            print(f"[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} "
-                  f"Train Acc: {correct_nodes / total_nodes:.4f}")
+            print(
+                f"[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} "
+                f"Train Acc: {correct_nodes / total_nodes:.4f}"
+            )
             total_loss = correct_nodes = total_nodes = 0
 
 
@@ -123,8 +148,9 @@ def test(loader):
         outs = model(data)
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
-        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
-                                    data.category.tolist()):
+        for out, y, category in zip(
+            outs.split(sizes), data.y.split(sizes), data.category.tolist()
+        ):
             category = list(ShapeNet.seg_classes.keys())[category]
             part = ShapeNet.seg_classes[category]
             part = torch.tensor(part, device=device)

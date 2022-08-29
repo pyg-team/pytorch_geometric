@@ -148,10 +148,10 @@ class Net(torch.nn.Module):
         lfa4_out = self.lfa4_module(*lfa3_out)
         encoding = self.pool(*lfa4_out)
         x, _, _ = encoding
-        x = self.mlp(x)
+        logits = self.mlp(x)
         if self.return_logits:
-            return x
-        return x.log_softmax(dim=-1)
+            return logits
+        return logits.log_softmax(dim=-1)
 
 
 class SetPosAsXIfNoX(BaseTransform):
