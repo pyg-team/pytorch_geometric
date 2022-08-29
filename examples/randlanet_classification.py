@@ -165,8 +165,8 @@ class Net(torch.nn.Module):
         )
         self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        # self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
         self.mlp1 = default_MLP([512, 512])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
@@ -180,10 +180,9 @@ class Net(torch.nn.Module):
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
-        x, pos, batch = lfa4_out
-        x = self.mlp1(x)
-        encoding = self.pool(x, pos, batch)
-        logits = self.mlp_end(encoding[0])
+        x = self.mlp1(lfa4_out[0])
+        x, _, _ = self.pool(x, lfa4_out[1], lfa4_out[2])
+        logits = self.mlp_end(x)
         if self.return_logits:
             return logits
         return logits.log_softmax(dim=-1)
