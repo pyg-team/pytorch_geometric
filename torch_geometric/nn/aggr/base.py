@@ -58,6 +58,7 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` or node
           features :math:`(|\mathcal{V}|, F_{out})`
     """
+    _validate = __debug__
 
     # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
@@ -83,6 +84,21 @@ class Aggregation(torch.nn.Module):
 
     def reset_parameters(self):
         pass
+
+    @staticmethod
+    def set_validate_args(value: bool):
+        r"""Sets whether validation is enabled or disabled.
+
+        The default behavior mimics Python's :obj:`assert`` statement:
+        validation is on by default, but is disabled if Python is run in
+        optimized mode (via :obj:`python -O`).
+        Validation may be expensive, so you may want to disable it once a model
+        is working.
+
+        Args:
+            value (bool): Whether to enable validation.
+        """
+        Aggregation._validate = value
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -165,25 +181,6 @@ class Aggregation(torch.nn.Module):
 
         return to_dense_batch(x, index, batch_size=dim_size,
                               fill_value=fill_value)
-
-    _validate = __debug__
-
-    @staticmethod
-    def set_validate_args(value):
-        r"""
-        Sets whether eager validation is enabled.
-
-        The default behaviour is set by the Python ``__debug__`` constant which
-        is ``True`` as long as Python was not started with an ``-O`` option.
-
-        This option can be used to skip the validation of arguments such as
-        ``dim_size``. This is useful for PyTorch execution backends that may
-        incur a performance penalty when eager validation is performed.
-        """
-        if not isinstance(value, bool):
-            raise ValueError("value must be a bool")
-
-        Aggregation._validate = value
 
 
 ###############################################################################
