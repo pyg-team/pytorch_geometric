@@ -13,6 +13,7 @@ from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
 
+
 category = "Airplane"  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
 transform = T.Compose(

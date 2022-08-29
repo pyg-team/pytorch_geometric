@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Sequential, Linear, LeakyReLU
 from tqdm import tqdm
-
+import numpy as np
 import torch_geometric.transforms as T
 from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.datasets import ModelNet
@@ -78,6 +78,32 @@ class LocalFeatureAggregation(MessagePassing):
         return attention_scores * local_features  # N//4 * K, d_out
 
 
+def subsample_by_decimation(batch, decimation):
+    """Subsamples by a decimation factor.
+
+    Each sample needs to be decimated separately to prevent emptying point clouds by accident.
+
+    """
+    ends = (
+        (torch.argwhere(torch.diff(batch) != 0) + 1)
+        .cpu()
+        .numpy()
+        .squeeze()
+        .astype(int)
+        .tolist()
+    )
+    starts = [0] + ends
+    ends = ends + [batch.size(0)]
+    idx = torch.cat(
+        [
+            (start + torch.randperm(end - start))[::decimation]
+            for start, end in zip(starts, ends)
+        ],
+        dim=0,
+    )
+    return idx
+
+
 class DilatedResidualBlock(MessagePassing):
     def __init__(
         self,
@@ -106,7 +132,7 @@ class DilatedResidualBlock(MessagePassing):
 
     def forward(self, x, pos, batch):
         # Random Sampling by decimation
-        idx = torch.arange(start=0, end=batch.size(0), step=self.decimation)
+        idx = subsample_by_decimation(batch, self.decimation)
         row, col = knn(
             pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
         )
