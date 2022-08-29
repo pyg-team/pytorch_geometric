@@ -35,9 +35,8 @@ class LinkNeighborSampler(NeighborSampler):
         # set it to largest representable torch.long.
         if self.data_cls == 'custom':
             feature_store, graph_store = data
-            self.num_src_nodes, self.num_dst_nodes = \
-                remote_backend.num_nodes(feature_store, graph_store,
-                self.input_type)
+            self.num_src_nodes, self.num_dst_nodes = remote_backend.num_nodes(
+                feature_store, graph_store, self.input_type)
 
         elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
