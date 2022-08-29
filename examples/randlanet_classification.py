@@ -165,8 +165,8 @@ class Net(torch.nn.Module):
         )
         self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        # self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
         self.mlp1 = default_MLP([512, 512])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
