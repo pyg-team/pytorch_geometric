@@ -8,9 +8,6 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import degree
 
-# kill these
-import torch
-from torch_geometric.data import Data
 
 
 class WLConvContinuous(MessagePassing):
@@ -69,6 +66,8 @@ class WLConvContinuous(MessagePassing):
         return matmul(adj_t, x[0], reduce=self.aggr)
 
 if __name__ == "__main__":
+    import torch
+    from torch_geometric.data import Data
     model = WLConvContinuous()
     edge_index = torch.tensor([[0, 1, 1, 2],
                            [1, 0, 2, 1]], dtype=torch.long)
