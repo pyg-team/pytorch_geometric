@@ -62,16 +62,3 @@ class WLConvContinuous(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return matmul(adj_t, x[0], reduce=self.aggr)
-
-if __name__ == "__main__":
-    import torch
-    from torch_geometric.data import Data
-    model = WLConvContinuous()
-    edge_index = torch.tensor([[0, 1, 1, 2],
-                           [1, 0, 2, 1]], dtype=torch.long)
-    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
-
-    data = Data(x=x, edge_index=edge_index)
-
-    z = model(data.x, data.edge_index)
-    assert (z == torch.tensor([[-0.5], [0.0], [0.5]], dtype=torch.float)).all()
