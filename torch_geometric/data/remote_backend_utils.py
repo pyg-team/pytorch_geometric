@@ -7,7 +7,9 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.typing import EdgeType, NodeType
 
 
-def num_nodes(
+# NOTE PyG also supports querying by a relation type `rel` in an edge type
+# (src, rel, dst). It may be worth supporting this in remote backends as well.
+def _internal_num_nodes(
     feature_store: FeatureStore,
     graph_store: GraphStore,
     query: Union[NodeType, EdgeType],
@@ -30,6 +32,11 @@ def num_nodes(
             return query == node_type
 
     node_query = isinstance(query, NodeType)
+
+    # TODO: In general, a feature store and graph store should be able to
+    # expose methods that allow for easy access to individual attributes,
+    # instead of requiring iteration to identify a particular attribute.
+    # Implementing this should reduce the iteration below.
 
     # 1. Check GraphStore:
     edge_attrs = graph_store.get_all_edge_attrs()
@@ -68,3 +75,23 @@ def num_nodes(
         f"{graph_store}. Please consider either adding an edge containing "
         f"the nodes in this query or feature tensors for the nodes in this "
         f"query.")
+
+
+def num_nodes(
+    feature_store: FeatureStore,
+    graph_store: GraphStore,
+    query: NodeType,
+) -> int:
+    r"""Returns the number of nodes in a given node type stored in a remote
+    backend."""
+    return _internal_num_nodes(feature_store, graph_store, query)
+
+
+def size(
+    feature_store: FeatureStore,
+    graph_store: GraphStore,
+    query: EdgeType,
+) -> Tuple[int, int]:
+    r"""Returns the size of an edge (number of source nodes, number of
+    destination nodes) in an edge stored in a remote backend."""
+    return _internal_num_nodes(feature_store, graph_store, query)

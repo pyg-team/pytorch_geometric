@@ -479,7 +479,6 @@ def get_input_nodes(
         if isinstance(input_nodes, Tensor):
             return None, to_index(input_nodes)
 
-        # Can't infer number of nodes from a group_name; need an attr_name
         if isinstance(input_nodes, str):
             return input_nodes, range(
                 remote_backend_utils.num_nodes(feature_store, graph_store,

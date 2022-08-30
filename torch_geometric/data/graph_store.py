@@ -32,7 +32,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, EdgeTensorType, OptTensor
+from torch_geometric.typing import Adj, EdgeTensorType, EdgeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -59,7 +59,7 @@ class EdgeAttr(CastMixin):
     r"""Defines the attributes of an :obj:`GraphStore` edge."""
 
     # The type of the edge
-    edge_type: Optional[Any]
+    edge_type: Optional[EdgeType]
 
     # The layout of the edge representation
     layout: Optional[EdgeLayout] = None
