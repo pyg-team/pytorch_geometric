@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Dict, NamedTuple, Tuple, Union, List
+from typing import Dict, List, NamedTuple, Tuple, Union
+
 import torch
-from torch_geometric.typing import NodeType, EdgeType
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.typing import EdgeType, NodeType
 
 # An input to a sampler is either a list or tensor of node indices:
 SamplerInput = Union[List[int], torch.Tensor]

@@ -11,7 +11,11 @@ from torch_geometric.loader.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.sampler.base import BaseSampler, SamplerInput, SamplerOutput
+from torch_geometric.sampler.base import (
+    BaseSampler,
+    SamplerInput,
+    SamplerOutput,
+)
 from torch_geometric.typing import NumNeighbors
 
 
