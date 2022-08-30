@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import HeteroData
-from torch_geometric.data.remote_backend import num_nodes
+from torch_geometric.data.remote_backend_utils import num_nodes
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
 

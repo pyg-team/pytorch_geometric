@@ -14,9 +14,7 @@ def num_nodes(
 ) -> Union[int, Tuple[int, int]]:
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
-    in the feature and graph stores that reveal this number. Returns a single
-    integer in the case of a feature store and a tuple of integers in the case
-    of a graph store."""
+    in the feature and graph stores that reveal this number."""
     def _matches_edge_type(query: Union[NodeType, EdgeType],
                            edge_type: EdgeType) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType

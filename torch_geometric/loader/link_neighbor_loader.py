@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_min
 
-from torch_geometric.data import Data, HeteroData, remote_backend
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -35,8 +35,9 @@ class LinkNeighborSampler(NeighborSampler):
         # set it to largest representable torch.long.
         if self.data_cls == 'custom':
             feature_store, graph_store = data
-            self.num_src_nodes, self.num_dst_nodes = remote_backend.num_nodes(
-                feature_store, graph_store, self.input_type)
+            self.num_src_nodes, self.num_dst_nodes = \
+                remote_backend_utils.num_nodes(feature_store,
+                graph_store, self.input_type)
 
         elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
