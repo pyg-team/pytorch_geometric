@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added missing test labels in `HGBDataset` ([#5233](https://github.com/pyg-team/pytorch_geometric/pull/5233))
 - Added `BaseStorage.get()` functionality ([#5240](https://github.com/pyg-team/pytorch_geometric/pull/5240))
 - Added a test to confirm that `to_hetero` works with `SparseTensor` ([#5222](https://github.com/pyg-team/pytorch_geometric/pull/5222))
+- Added implementation of WL conv operator with continuous attributes ([#5316](https://github.com/pyg-team/pytorch_geometric/pull/5316))
 ### Changed
 - Fixed separating a list of `SparseTensor` within `InMemoryDataset` ([#5299](https://github.com/pyg-team/pytorch_geometric/pull/5299))
 - Improved name resolving of normalization layers ([#5277](https://github.com/pyg-team/pytorch_geometric/pull/5277))
