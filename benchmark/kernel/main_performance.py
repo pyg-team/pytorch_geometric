@@ -45,6 +45,9 @@ nets = [
 ]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+amp = torch.cuda.amp.autocast(
+    enabled=False) if torch.cuda.is_available() else torch.cpu.amp.autocast(
+        enabled=args.bf16)
 
 
 def prepare_dataloader(dataset_name):
@@ -109,7 +112,7 @@ def run_inference():
 
             model = Net(dataset, num_layers, hidden).to(device)
 
-            with torch.cpu.amp.autocast(enabled=args.bf16):
+            with amp:
                 for epoch in range(1, args.epochs + 1):
                     if epoch == args.epochs:
                         with timeit():

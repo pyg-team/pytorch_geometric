@@ -30,6 +30,10 @@ def run(args: argparse.ArgumentParser) -> None:
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
+        if torch.cuda.is_available():
+            amp = torch.cuda.amp.autocast(enabled=False)
+        else:
+            amp = torch.cpu.amp.autocast(enabled=args.bf16)
         dtype = torch.float
         if args.bf16:
             dtype = torch.bfloat16
@@ -96,7 +100,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
-                        with torch.cpu.amp.autocast(enabled=args.bf16):
+                        with amp:
                             for _ in range(args.warmup):
                                 model.inference(subgraph_loader, device,
                                                 progress_bar=True, dtype=dtype)
