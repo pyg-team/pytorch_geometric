@@ -30,6 +30,7 @@ parser.add_argument('--goal_accuracy', type=int, default=1,
                     help='The goal test accuracy')
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
+parser.add_argument('--bf16', action='store_true')
 args = parser.parse_args()
 
 layers = [1, 2, 3]
@@ -44,6 +45,10 @@ nets = [
 ]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    amp = torch.cuda.amp.autocast(enabled=False)
+else:
+    amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
 
 def prepare_dataloader(dataset_name):
@@ -108,18 +113,19 @@ def run_inference():
 
             model = Net(dataset, num_layers, hidden).to(device)
 
-            for epoch in range(1, args.epochs + 1):
-                if epoch == args.epochs:
-                    with timeit():
-                        inference_run(model, test_loader)
-                else:
-                    inference_run(model, test_loader)
+            with amp:
+                for epoch in range(1, args.epochs + 1):
+                    if epoch == args.epochs:
+                        with timeit():
+                            inference_run(model, test_loader, args.bf16)
+                    else:
+                        inference_run(model, test_loader, args.bf16)
 
-            if args.profile:
-                with torch_profile():
-                    inference_run(model, test_loader)
-                rename_profile_file(Net.__name__, dataset_name,
-                                    str(num_layers), str(hidden))
+                if args.profile:
+                    with torch_profile():
+                        inference_run(model, test_loader, args.bf16)
+                    rename_profile_file(Net.__name__, dataset_name,
+                                        str(num_layers), str(hidden))
 
 
 if not args.inference:

@@ -146,8 +146,10 @@ def eval_loss(model, loader):
 
 
 @torch.no_grad()
-def inference_run(model, loader):
+def inference_run(model, loader, bf16):
     model.eval()
     for data in loader:
         data = data.to(device)
+        if bf16:
+            data.x = data.x.to(torch.bfloat16)
         model(data)

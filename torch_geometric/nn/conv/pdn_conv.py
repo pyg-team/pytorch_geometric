@@ -101,10 +101,11 @@ class PDNConv(MessagePassing):
                 edge_index, edge_attr = gcn_norm(edge_index, edge_attr,
                                                  x.size(self.node_dim), False,
                                                  self.add_self_loops,
-                                                 self.flow)
+                                                 self.flow, x.dtype)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
-                                      False, self.add_self_loops, self.flow)
+                                      False, self.add_self_loops, self.flow,
+                                      x.dtype)
 
         x = self.lin(x)
 
