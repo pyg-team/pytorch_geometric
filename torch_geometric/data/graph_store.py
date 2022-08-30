@@ -32,7 +32,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, EdgeTensorType, OptTensor
+from torch_geometric.typing import Adj, EdgeTensorType, EdgeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -59,7 +59,7 @@ class EdgeAttr(CastMixin):
     r"""Defines the attributes of an :obj:`GraphStore` edge."""
 
     # The type of the edge
-    edge_type: Optional[Any]
+    edge_type: Optional[EdgeType]
 
     # The layout of the edge representation
     layout: Optional[EdgeLayout] = None
@@ -153,22 +153,6 @@ class GraphStore:
             raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
                            f"found")
         return edge_index
-
-    @abstractmethod
-    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
-        pass
-
-    def num_src_nodes(self, *args, **kwargs) -> int:
-        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._num_src_nodes(edge_attr)
-
-    @abstractmethod
-    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
-        pass
-
-    def num_dst_nodes(self, *args, **kwargs) -> int:
-        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._num_dst_nodes(edge_attr)
 
     # Layout Conversion #######################################################
 
@@ -346,6 +330,9 @@ class GraphStore:
     def __getitem__(self, key: EdgeAttr) -> Optional[EdgeTensorType]:
         key = self._edge_attr_cls.cast(key)
         return self.get_edge_index(key)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
 
 
 # Data and HeteroData utilities ###############################################

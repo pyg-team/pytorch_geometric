@@ -893,12 +893,6 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         return edge_attrs
 
-    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
-        return self.num_nodes
-
-    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
-        return self.num_nodes
-
 
 ###############################################################################
 

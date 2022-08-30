@@ -493,7 +493,3 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
-
-    # Get num nodes:
-    assert data.num_src_nodes(edge_type=('a', 'to', 'b')) == 3
-    assert data.num_dst_nodes(edge_type=('a', 'to', 'c')) == 3
