@@ -42,7 +42,7 @@ class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
     def __init__(self, d_out):
-        super().__init__(aggr="add")
+        super().__init__(aggr="add", flow="target_to_source")
         self.mlp_encoder = default_MLP([10, d_out // 2])
         self.mlp_attention = default_MLP([d_out, d_out], bias=False, act=None, norm=None)
         self.mlp_post_attention = default_MLP([d_out, d_out])
