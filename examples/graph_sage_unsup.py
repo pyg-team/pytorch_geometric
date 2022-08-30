@@ -18,8 +18,10 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
+train_loader = LinkNeighborLoader(data, batch_size=256, shuffle=True,
+                                  neg_sampling_ratio=1.0,
+                                  num_neighbors=[10, 10])
 
-train_loader = LinkNeighborLoader(data,batch_size=256, shuffle=True, neg_sampling_ratio=1.0, num_neighbors=[10,10])
 
 class SAGE(nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers):
@@ -67,8 +69,9 @@ def train():
         src_nodes = loader.edge_label_index[0]
         dst_nodes = loader.edge_label_index[1]
         out = h[src_nodes] * h[dst_nodes]
-        loss = F.binary_cross_entropy_with_logits(out.sum(dim=-1),loader.edge_label)
-        
+        loss = F.binary_cross_entropy_with_logits(out.sum(dim=-1),
+                                                  loader.edge_label)
+
         loss.backward()
         optimizer.step()
 
