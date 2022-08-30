@@ -30,6 +30,13 @@ def run(args: argparse.ArgumentParser) -> None:
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
+        if torch.cuda.is_available():
+            amp = torch.cuda.amp.autocast(enabled=False)
+        else:
+            amp = torch.cpu.amp.autocast(enabled=args.bf16)
+        dtype = torch.float
+        if args.bf16:
+            dtype = torch.bfloat16
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -93,27 +100,31 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
-                        for _ in range(args.warmup):
-                            model.inference(subgraph_loader, device,
-                                            progress_bar=True)
-                        if args.experimental_mode:
-                            with torch_geometric.experimental_mode():
+                        with amp:
+                            for _ in range(args.warmup):
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True, dtype=dtype)
+                            if args.experimental_mode:
+                                with torch_geometric.experimental_mode():
+                                    with timeit():
+                                        model.inference(
+                                            subgraph_loader, device,
+                                            progress_bar=True, dtype=dtype)
+                            else:
                                 with timeit():
                                     model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                        else:
-                            with timeit():
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
+                                                    progress_bar=True,
+                                                    dtype=dtype)
 
-                        if args.profile:
-                            with torch_profile():
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
-                            rename_profile_file(
-                                model_name, dataset_name, str(batch_size),
-                                str(layers), str(hidden_channels),
-                                str(subgraph_loader.num_neighbors))
+                            if args.profile:
+                                with torch_profile():
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True,
+                                                    dtype=dtype)
+                                rename_profile_file(
+                                    model_name, dataset_name, str(batch_size),
+                                    str(layers), str(hidden_channels),
+                                    str(subgraph_loader.num_neighbors))
 
 
 if __name__ == '__main__':
@@ -145,6 +156,7 @@ if __name__ == '__main__':
                            help='use experimental mode')
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
+    argparser.add_argument('--bf16', action='store_true')
 
     args = argparser.parse_args()
 

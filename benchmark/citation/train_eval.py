@@ -90,7 +90,7 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
 
 
 @torch.no_grad()
-def run_inference(dataset, model, epochs, profiling, permute_masks=None,
+def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
                   logger=None):
     data = dataset[0]
     if permute_masks is not None:
@@ -99,25 +99,34 @@ def run_inference(dataset, model, epochs, profiling, permute_masks=None,
 
     model.to(device).reset_parameters()
 
-    for epoch in range(1, epochs + 1):
-        if epoch == epochs:
-            with timeit():
-                inference(model, data)
-        else:
-            inference(model, data)
+    if torch.cuda.is_available():
+        amp = torch.cuda.amp.autocast(enabled=False)
+    else:
+        amp = torch.cpu.amp.autocast(enabled=bf16)
+    if bf16:
+        data.x = data.x.to(torch.bfloat16)
 
-    if profiling:
-        with torch_profile():
-            inference(model, data)
+    with amp:
+        for epoch in range(1, epochs + 1):
+            if epoch == epochs:
+                with timeit():
+                    inference(model, data)
+            else:
+                inference(model, data)
+
+        if profiling:
+            with torch_profile():
+                inference(model, data)
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        inference, profiling, permute_masks=None, logger=None):
+        inference, profiling, bf16, permute_masks=None, logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
                   early_stopping, permute_masks, logger)
     else:
-        run_inference(dataset, model, epochs, profiling, permute_masks, logger)
+        run_inference(dataset, model, epochs, profiling, bf16, permute_masks,
+                      logger)
 
 
 def train(model, optimizer, data):

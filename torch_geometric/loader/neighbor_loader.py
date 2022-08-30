@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData, remote_backend
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -479,11 +479,10 @@ def get_input_nodes(
         if isinstance(input_nodes, Tensor):
             return None, to_index(input_nodes)
 
-        # Can't infer number of nodes from a group_name; need an attr_name
         if isinstance(input_nodes, str):
             return input_nodes, range(
-                remote_backend.num_nodes(feature_store, graph_store,
-                                         input_nodes))
+                remote_backend_utils.num_nodes(feature_store, graph_store,
+                                               input_nodes))
 
         if isinstance(input_nodes, (list, tuple)):
             assert len(input_nodes) == 2
@@ -492,6 +491,6 @@ def get_input_nodes(
             node_type, input_nodes = input_nodes
             if input_nodes is None:
                 return node_type, range(
-                    remote_backend.num_nodes(feature_store, graph_store,
-                                             input_nodes))
+                    remote_backend_utils.num_nodes(feature_store, graph_store,
+                                                   input_nodes))
             return node_type, to_index(input_nodes)
