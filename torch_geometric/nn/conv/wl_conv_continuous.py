@@ -8,8 +8,6 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import degree
 
-
-
 class WLConvContinuous(MessagePassing):
     r""" Weisfeiler Lehman operator for graphs with continuous attributes.
     Wasserstein Weisfeiler-Lehman Graph Kernels"
