@@ -45,9 +45,10 @@ nets = [
 ]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-amp = torch.cuda.amp.autocast(
-    enabled=False) if torch.cuda.is_available() else torch.cpu.amp.autocast(
-        enabled=args.bf16)
+if torch.cuda.is_available():
+    amp = torch.cuda.amp.autocast(enabled=False)
+else:
+    amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
 
 def prepare_dataloader(dataset_name):
