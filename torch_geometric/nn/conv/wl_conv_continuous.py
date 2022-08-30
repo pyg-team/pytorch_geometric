@@ -1,21 +1,22 @@
-from typing import Tuple, Union
+from typing import Union
 
 from torch import Tensor
 from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import degree
+
 
 class WLConvContinuous(MessagePassing):
     r""" Weisfeiler Lehman operator for graphs with continuous attributes.
     Wasserstein Weisfeiler-Lehman Graph Kernels"
-    <https://proceedings.neurips.cc/paper/2019/file/73fed7fd472e502d8908794430511f4d-Paper.pdf>`_ paper
+    <https://arxiv.org/abs/1906.01277>`_ paper
     Refinement is done though a degree-scaled mean aggregation:
 
     .. math::
-        \mathbf{x}^{\prime}_i = \frac{1}{2}\big(\mathbf{x}_i + \frac{1}{\textrm{deg}(i)}
+        \mathbf{x}^{\prime}_i = \frac{1}{2}\big(\mathbf{x}_i +
+        \frac{1}{\textrm{deg}(i)}
         \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot \mathbf{x}_j \big)
 
     where :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to
@@ -52,7 +53,7 @@ class WLConvContinuous(MessagePassing):
                              size=size)
         x_r = x[1]
         deg = degree(edge_index[1]).view(-1, 1)
-        out = 1/2 * (x_r + (1/deg * out))
+        out = 1 / 2 * (x_r + (1 / deg * out))
 
         return out
 
