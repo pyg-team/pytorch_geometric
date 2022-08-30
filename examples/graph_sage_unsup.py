@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression
-from torch_cluster import random_walk
+#from torch_cluster import random_walk
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
@@ -68,7 +68,7 @@ def train():
         dst_nodes = loader.edge_label_index[1]
         out = h[src_nodes] * h[dst_nodes]
         loss = F.binary_cross_entropy_with_logits(out.sum(dim=-1),loader.edge_label)
-        
+
         loss.backward()
         optimizer.step()
 
