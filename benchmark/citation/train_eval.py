@@ -98,10 +98,11 @@ def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
     data = data.to(device)
 
     model.to(device).reset_parameters()
+
     if torch.cuda.is_available():
         amp = torch.cuda.amp.autocast(enabled=False)
     else:
-        amp = torch.cpu.amp.autocast(enabled=args.bf16)
+        amp = torch.cpu.amp.autocast(enabled=bf16)
     if bf16:
         data.x = data.x.to(torch.bfloat16)
 

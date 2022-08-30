@@ -44,10 +44,11 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
 def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16):
     model = model.to(device)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
+
     if torch.cuda.is_available():
         amp = torch.cuda.amp.autocast(enabled=False)
     else:
-        amp = torch.cpu.amp.autocast(enabled=args.bf16)
+        amp = torch.cpu.amp.autocast(enabled=bf16)
 
     with amp:
         for epoch in range(1, epochs + 1):
