@@ -9,10 +9,11 @@ from torch_geometric.utils import degree
 
 
 class WLConvContinuous(MessagePassing):
-    r""" Weisfeiler Lehman operator for graphs with continuous attributes.
-    Wasserstein Weisfeiler-Lehman Graph Kernels"
-    <https://arxiv.org/abs/1906.01277>`_ paper
-    Refinement is done though a degree-scaled mean aggregation:
+    r"""The Weisfeiler Lehman operator from the `"Wasserstein
+    Weisfeiler-Lehman Graph Kernels"
+    <https://arxiv.org/abs/1906.01277>`_ paper.
+    Refinement is done though a degree-scaled mean aggregation and works on
+    nodes with continuous attributes:
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{2}\big(\mathbf{x}_i +
