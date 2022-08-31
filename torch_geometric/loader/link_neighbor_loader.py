@@ -34,8 +34,8 @@ class LinkNeighborSampler(NeighborSampler):
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
         # set it to largest representable torch.long.
         if self.data_cls == 'custom':
-            self.num_src_nodes, self.num_dst_nodes = \
-                remote_backend_utils.num_nodes(*data, self.input_type)
+            self.num_src_nodes, self.num_dst_nodes = remote_backend_utils.size(
+                *data, self.input_type)
 
         elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes

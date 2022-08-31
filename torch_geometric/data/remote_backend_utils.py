@@ -1,5 +1,6 @@
 # This file defines a set of utilities for remote backends (backends that are
-# characterize as Tuple[FeatureStore, GraphStore]).
+# characterize as Tuple[FeatureStore, GraphStore]). TODO support for
+# non-heterogeneous graphs (feature stores with a group_name=None).
 from typing import Tuple, Union
 
 from torch_geometric.data.feature_store import FeatureStore
@@ -17,13 +18,6 @@ def _internal_num_nodes(
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
     in the feature and graph stores that reveal this number."""
-    def _matches_edge_type(query: Union[NodeType, EdgeType],
-                           edge_type: EdgeType) -> bool:
-        if isinstance(query, (list, tuple)):  # EdgeType
-            return query == edge_type
-        else:
-            return query == edge_type[0] or query == edge_type[-1]
-
     def _matches_node_type(query: Union[NodeType, EdgeType],
                            node_type: NodeType) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType
@@ -38,18 +32,19 @@ def _internal_num_nodes(
     # instead of requiring iteration to identify a particular attribute.
     # Implementing this should reduce the iteration below.
 
-    # 1. Check GraphStore:
+    # 1. Check the edges in the GraphStore, for each node type in each edge:
     edge_attrs = graph_store.get_all_edge_attrs()
+    _num_nodes = [None] if node_query else [None, None]
     for edge_attr in edge_attrs:
-        if (_matches_edge_type(query, edge_attr.edge_type)
-                and edge_attr.size is not None):
-            if node_query:
-                return edge_attr.size[0] if query == edge_attr.edge_type[
-                    0] else edge_attr.size[1]
-            else:
-                return edge_attr.size
+        if _matches_node_type(query, edge_attr.edge_type[0]):
+            _num_nodes[0] = _num_nodes[0] or edge_attr.size[0]
+        if _matches_node_type(query, edge_attr.edge_type[-1]):
+            _num_nodes[-1] = _num_nodes[-1] or edge_attr.size[-1]
+        if None not in _num_nodes:
+            # We have filled out all the nodes:
+            return _num_nodes[0] if node_query else tuple(_num_nodes)
 
-    # 2. Check FeatureStore:
+    # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
     matching_attrs = [
         attr for attr in tensor_attrs
