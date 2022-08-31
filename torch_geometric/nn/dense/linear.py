@@ -212,12 +212,12 @@ class HeteroLinear(torch.nn.Module):
         """
         if self._WITH_PYG_LIB:
             if not self.is_sorted:
-                if (edge_type[1:] < edge_type[:-1]).any():
-                    edge_type, perm = edge_type.sort()
-                    edge_index = edge_index[:, perm]
+                if (type_vec[1:] < type_vec[:-1]).any():
+                    type_vec, perm = type_vec.sort()
+                    x = x[:, perm]
             edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
                     type_vec, len(self.lins))
-            out = segment_matmul(self.lins, edge_type_ptr, self.weights) + self.biases
+            out = segment_matmul(x, edge_type_ptr, self.weights) + self.biases
         else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
