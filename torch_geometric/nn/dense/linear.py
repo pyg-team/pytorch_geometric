@@ -8,7 +8,11 @@ from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
-
+try:
+    from pyg_lib.ops import grouped_matmul  # noqa
+    _WITH_PYG_LIB = True
+except ImportError:
+    _WITH_PYG_LIB = False
 
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(nn.parameter, 'UninitializedParameter'):
@@ -190,17 +194,21 @@ class HeteroLinear(torch.nn.Module):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-
+        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
         self.lins = torch.nn.ModuleList([
             Linear(in_channels, out_channels, **kwargs)
             for _ in range(num_types)
         ])
 
         self.reset_parameters()
+        if self._WITH_PYG_LIB:
+            self.weights = [lin.weight for lin in self.lins]
+            self.biases = [lin.bias for lin in self.lins]
 
     def reset_parameters(self):
         for lin in self.lins:
             lin.reset_parameters()
+
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
@@ -208,10 +216,14 @@ class HeteroLinear(torch.nn.Module):
             x (Tensor): The input features.
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
-        out = x.new_empty(x.size(0), self.out_channels)
-        for i, lin in enumerate(self.lins):
-            mask = type_vec == i
-            out[mask] = lin(x[mask])
+        if self._WITH_PYG_LIB:
+            out = grouped_matmul([x[type_vec == i] for i in range(len(self.lins))], self.weights)
+            out = [out[i] + self.biases[i] for bias in range(len(out))]
+        else:  
+            out = x.new_empty(x.size(0), self.out_channels)
+            for i, lin in enumerate(self.lins):
+                mask = type_vec == i
+                out[mask] = lin(x[mask])
         return out
 
     def __repr__(self) -> str:
