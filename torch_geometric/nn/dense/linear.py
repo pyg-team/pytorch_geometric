@@ -197,8 +197,10 @@ class HeteroLinear(torch.nn.Module):
 
         self.reset_parameters()
         if self._WITH_PYG_LIB:
-            self.weights = torch.stack([lin.weight for lin in self.lins])
-            self.biases = torch.stack([lin.bias for lin in self.lins])
+            self.weights = torch.nn.Parameter(torch.stack([lin.weight for lin in self.lins]))
+            self.biases = torch.nn.Parameter(torch.stack([lin.bias for lin in self.lins]))
+            self.num_types = len(self.lins)
+            del self.lins
 
     def reset_parameters(self):
         for lin in self.lins:
@@ -216,7 +218,7 @@ class HeteroLinear(torch.nn.Module):
                     type_vec, perm = type_vec.sort()
                     x = x[:, perm]
             edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
-                type_vec, len(self.lins))
+                type_vec, self.num_types)
             out = segment_matmul(x, edge_type_ptr, self.weights) + self.biases
         else:
             out = x.new_empty(x.size(0), self.out_channels)
