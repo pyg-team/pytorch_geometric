@@ -10,7 +10,7 @@ from torch.nn.parameter import Parameter
 from torch_geometric.nn import inits
 
 try:
-    from pyg_lib.ops import grouped_matmul  # noqa
+    from pyg_lib.ops import segment_matmul  # noqa
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
@@ -24,14 +24,11 @@ def is_uninitialized_parameter(x: Any) -> bool:
 
 class Linear(torch.nn.Module):
     r"""Applies a linear tranformation to the incoming data
-
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
-
     similar to :class:`torch.nn.Linear`.
     It supports lazy initialization and customizable weight and bias
     initialization.
-
     Args:
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
@@ -47,7 +44,6 @@ class Linear(torch.nn.Module):
             (:obj:`"zeros"` or :obj:`None`).
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
-
     Shapes:
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
@@ -167,15 +163,12 @@ class Linear(torch.nn.Module):
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
     to types
-
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
         \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
-
     for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
-
     Args:
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
@@ -183,7 +176,6 @@ class HeteroLinear(torch.nn.Module):
         num_types (int): The number of types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
-
     Shapes:
         - **input:**
           features :math:`(*, F_{in})`,
@@ -191,6 +183,7 @@ class HeteroLinear(torch.nn.Module):
         - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
+                 is_sorted: Optional[bool] = False.
                  **kwargs):
         super().__init__()
 
@@ -204,8 +197,8 @@ class HeteroLinear(torch.nn.Module):
 
         self.reset_parameters()
         if self._WITH_PYG_LIB:
-            self.weights = [lin.weight for lin in self.lins]
-            self.biases = [lin.bias for lin in self.lins]
+            self.weights = torch.stack([lin.weight for lin in self.lins])
+            self.biases = torch.stack([lin.bias for lin in self.lins])
 
     def reset_parameters(self):
         for lin in self.lins:
@@ -218,10 +211,13 @@ class HeteroLinear(torch.nn.Module):
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
         if self._WITH_PYG_LIB:
-            out = grouped_matmul(
-                [x[type_vec == i] for i in range(len(self.lins))],
-                self.weights)
-            out = [out[i] + self.biases[i] for bias in range(len(out))]
+            if not self.is_sorted:
+                if (edge_type[1:] < edge_type[:-1]).any():
+                    edge_type, perm = edge_type.sort()
+                    edge_index = edge_index[:, perm]
+            edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
+                    type_vec, len(self.lins))
+            out = segment_matmul(self.lins, edge_type_ptr, self.weights) + self.biases
         else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
