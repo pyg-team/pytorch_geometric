@@ -18,13 +18,6 @@ def _internal_num_nodes(
     r"""Returns the number of nodes in the node type or the number of source
     and destination nodes in an edge type by sequentially accessing attributes
     in the feature and graph stores that reveal this number."""
-    def _matches_edge_type(query: Union[NodeType, EdgeType],
-                           edge_type: EdgeType) -> bool:
-        if isinstance(query, (list, tuple)):  # EdgeType
-            return query == edge_type
-        else:
-            return query == edge_type[0] or query == edge_type[-1]
-
     def _matches_node_type(query: Union[NodeType, EdgeType],
                            node_type: NodeType) -> bool:
         if isinstance(query, (list, tuple)):  # EdgeType
