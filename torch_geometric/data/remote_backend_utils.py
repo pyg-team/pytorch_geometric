@@ -1,5 +1,6 @@
 # This file defines a set of utilities for remote backends (backends that are
-# characterize as Tuple[FeatureStore, GraphStore]).
+# characterize as Tuple[FeatureStore, GraphStore]). TODO support for
+# non-heterogeneous graphs (feature stores with a group_name=None).
 from typing import Tuple, Union
 
 from torch_geometric.data.feature_store import FeatureStore
@@ -38,8 +39,9 @@ def _internal_num_nodes(
     # instead of requiring iteration to identify a particular attribute.
     # Implementing this should reduce the iteration below.
 
-    # 1. Check GraphStore:
+    # 1. Check the edges in the GraphStore:
     edge_attrs = graph_store.get_all_edge_attrs()
+    num_src_nodes, num_dst_nodes = None, None
     for edge_attr in edge_attrs:
         if (_matches_edge_type(query, edge_attr.edge_type)
                 and edge_attr.size is not None):
@@ -48,8 +50,16 @@ def _internal_num_nodes(
                     0] else edge_attr.size[1]
             else:
                 return edge_attr.size
+        elif not node_query and edge_attr.size is not None:
+            # Check the node types in the edge one-by-one:
+            if _matches_node_type(query, edge_attr.edge_type[0]):
+                num_src_nodes = num_src_nodes or edge_attr.size[0]
+            if _matches_node_type(query, edge_attr.edge_type[-1]):
+                num_dst_nodes = num_dst_nodes or edge_attr.size[-1]
+        if num_src_nodes is not None and num_dst_nodes is not None:
+            return (num_src_nodes, num_dst_nodes)
 
-    # 2. Check FeatureStore:
+    # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
     matching_attrs = [
         attr for attr in tensor_attrs
