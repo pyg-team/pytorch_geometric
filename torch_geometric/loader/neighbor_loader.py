@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -473,24 +473,16 @@ def get_input_nodes(
         return node_type, to_index(input_nodes)
 
     else:  # Tuple[FeatureStore, GraphStore]
-        # NOTE FeatureStore and GraphStore are treated as separate
-        # entities, so we cannot leverage the custom structure in Data and
-        # HeteroData to infer the number of nodes. As a result, here we expect
-        # that the input nodes are either explicitly provided or can be
-        # directly inferred from the feature store.
-        feature_store, _ = data
-
+        feature_store, graph_store = data
         assert input_nodes is not None
 
         if isinstance(input_nodes, Tensor):
             return None, to_index(input_nodes)
 
-        # Can't infer number of nodes from a group_name; need an attr_name
         if isinstance(input_nodes, str):
-            raise NotImplementedError(
-                f"Cannot infer the number of nodes from a single string "
-                f"(got '{input_nodes}'). Please pass a more explicit "
-                f"representation. ")
+            return input_nodes, range(
+                remote_backend_utils.num_nodes(feature_store, graph_store,
+                                               input_nodes))
 
         if isinstance(input_nodes, (list, tuple)):
             assert len(input_nodes) == 2
@@ -498,17 +490,7 @@ def get_input_nodes(
 
             node_type, input_nodes = input_nodes
             if input_nodes is None:
-                raise NotImplementedError(
-                    f"Cannot infer the number of nodes from a node type alone "
-                    f"(got '{input_nodes}'). Please pass a more explicit "
-                    f"representation. ")
+                return node_type, range(
+                    remote_backend_utils.num_nodes(feature_store, graph_store,
+                                                   input_nodes))
             return node_type, to_index(input_nodes)
-
-        assert isinstance(input_nodes, TensorAttr)
-        assert input_nodes.is_set('attr_name')
-
-        node_type = getattr(input_nodes, 'group_name', None)
-        if not input_nodes.is_set('index') or input_nodes.index is None:
-            num_nodes = feature_store.get_tensor_size(input_nodes)[0]
-            return node_type, range(num_nodes)
-        return node_type, input_nodes.index

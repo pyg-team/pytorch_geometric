@@ -27,13 +27,3 @@ class MyGraphStore(GraphStore):
 
     def get_all_edge_attrs(self):
         return [EdgeAttr(*key) for key in self.store]
-
-    def _num_src_nodes(self, edge_attr: EdgeAttr) -> int:
-        for k in self.store:
-            if k[0] == edge_attr.edge_type:
-                return k[3][0]
-
-    def _num_dst_nodes(self, edge_attr: EdgeAttr) -> int:
-        for k in self.store:
-            if k[0] == edge_attr.edge_type:
-                return k[3][1]
