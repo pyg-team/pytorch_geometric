@@ -8,11 +8,13 @@ from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
+
 try:
     from pyg_lib.ops import grouped_matmul  # noqa
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
+
 
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(nn.parameter, 'UninitializedParameter'):
@@ -209,7 +211,6 @@ class HeteroLinear(torch.nn.Module):
         for lin in self.lins:
             lin.reset_parameters()
 
-
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
         Args:
@@ -217,9 +218,11 @@ class HeteroLinear(torch.nn.Module):
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
         if self._WITH_PYG_LIB:
-            out = grouped_matmul([x[type_vec == i] for i in range(len(self.lins))], self.weights)
+            out = grouped_matmul(
+                [x[type_vec == i] for i in range(len(self.lins))],
+                self.weights)
             out = [out[i] + self.biases[i] for bias in range(len(out))]
-        else:  
+        else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
                 mask = type_vec == i
