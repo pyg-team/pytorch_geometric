@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 from torch.nn import Sequential, Linear
 import torch.nn.functional as F
-from randlanet_classification import DilatedResidualBlock, default_MLP, bn099_kwargs, lrelu02_kwargs
+from randlanet_classification import DilatedResidualBlock, default_MLP
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
@@ -62,37 +62,33 @@ class Net(torch.nn.Module):
 
         self.return_logits = return_logits
         # Authors use 8, which might become a bottlenecj if num_classes>8 or num_features>8.
-        bottleneck = max(num_classes, num_features)
+        bottleneck = max(64, num_classes, num_features)
         d = decimation
         nk = num_neighbors
 
-        self.fc0 = Linear(num_features,bottleneck)
+        self.fc0 = Linear(num_features, bottleneck)
         self.lfa1_module = DilatedResidualBlock(d, nk, bottleneck, 32)
         self.lfa2_module = DilatedResidualBlock(d, nk, 32, 128)
         self.lfa3_module = DilatedResidualBlock(d, nk, 128, 256)
         self.lfa4_module = DilatedResidualBlock(d, nk, 256, 512)
         self.mlp1 = default_MLP([512, 512])
-        self.fp4_module = FPModule(
-            1, default_MLP([512 + 256, 256])
-        )
-        self.fp3_module = FPModule(
-            1, default_MLP([256 + 128, 128])
-        )
+        self.fp4_module = FPModule(1, default_MLP([512 + 256, 256]))
+        self.fp3_module = FPModule(1, default_MLP([256 + 128, 128]))
         self.fp2_module = FPModule(1, default_MLP([128 + 32, 32]))
-        self.fp1_module = FPModule(
-            1, default_MLP([32 + bottleneck, bottleneck])
-        )
+        self.fp1_module = FPModule(1, default_MLP([32 + 32, bottleneck]))
 
         self.mlp2 = Sequential(
             default_MLP([bottleneck, 64, 32], dropout=[0.0, 0.5]),
-            Linear(32, num_classes)
+            Linear(32, num_classes),
         )
 
     def forward(self, batch):
 
         in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
 
-        lfa1_out = self.lfa1_module(*in_0)
+        lfa1_out, lfa1_out_unsampled = self.lfa1_module(
+            *in_0, return_unsampled_as_well=True
+        )
         lfa2_out = self.lfa2_module(*lfa1_out)
         lfa3_out = self.lfa3_module(*lfa2_out)
         lfa4_out = self.lfa4_module(*lfa3_out)
@@ -102,7 +98,7 @@ class Net(torch.nn.Module):
         fp4_out = self.fp4_module(*mlp_out, *lfa3_out)
         fp3_out = self.fp3_module(*fp4_out, *lfa2_out)
         fp2_out = self.fp2_module(*fp3_out, *lfa1_out)
-        x, _, _ = self.fp1_module(*fp2_out, *in_0)
+        x, _, _ = self.fp1_module(*fp2_out, *lfa1_out_unsampled)
 
         logits = self.mlp2(x)
         if self.return_logits:

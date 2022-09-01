@@ -3,13 +3,13 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Sequential, Linear, LeakyReLU
+from torch.nn import Sequential, Linear
 from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, global_max_pool, BatchNorm
+from torch_geometric.nn import MLP, global_max_pool
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn
 
@@ -120,18 +120,23 @@ class DilatedResidualBlock(MessagePassing):
 
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
-    def forward(self, x, pos, batch):
-        # Random Sampling by decimation
+    def forward(self, x, pos, batch, return_unsampled_as_well: bool = False):
         idx = subsample_by_decimation(batch, self.decimation)
         row, col = knn(pos, pos, self.num_neighbors, batch_x=batch, batch_y=batch)
         edge_index = torch.stack([col, row], dim=0)
+
         shortcut_of_x = self.shortcut(x)  # N, d_out
         x = self.mlp1(x)  # N, d_out//8
         x = self.lfa1(edge_index, x, pos)  # N, d_out//2
         x = self.lfa2(edge_index, x, pos)  # N, d_out//2
         x = self.mlp2(x)  # N, d_out
         x = self.lrelu(x + shortcut_of_x)  # N, d_out
-        return x[idx], pos[idx], batch[idx]  # N//decim, d_out
+
+        sampled = (x[idx], pos[idx], batch[idx])
+        if return_unsampled_as_well:
+            # Needed for skip connection in final upsampling
+            return sampled, (x, pos, batch)
+        return sampled  # N//decim, d_out
 
 
 def subsample_by_decimation(batch, decimation):
