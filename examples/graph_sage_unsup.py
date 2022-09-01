@@ -12,7 +12,6 @@ from torch_geometric.nn import SAGEConv
 
 #from torch_cluster import random_walk
 
-
 EPS = 1e-15
 
 dataset = 'Cora'
