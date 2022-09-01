@@ -24,11 +24,14 @@ def is_uninitialized_parameter(x: Any) -> bool:
 
 class Linear(torch.nn.Module):
     r"""Applies a linear tranformation to the incoming data
+
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
+
     similar to :class:`torch.nn.Linear`.
     It supports lazy initialization and customizable weight and bias
     initialization.
+
     Args:
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
@@ -44,6 +47,7 @@ class Linear(torch.nn.Module):
             (:obj:`"zeros"` or :obj:`None`).
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
+
     Shapes:
         - **input:** features :math:`(*, F_{in})`
         - **output:** features :math:`(*, F_{out})`
@@ -163,12 +167,15 @@ class Linear(torch.nn.Module):
 class HeteroLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data according
     to types
+
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
         \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+
     for type :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
+
     Args:
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
@@ -176,6 +183,7 @@ class HeteroLinear(torch.nn.Module):
         num_types (int): The number of types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
+
     Shapes:
         - **input:**
           features :math:`(*, F_{in})`,
