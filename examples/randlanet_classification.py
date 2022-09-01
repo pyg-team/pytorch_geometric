@@ -15,10 +15,10 @@ from torch_geometric.nn.pool import knn
 
 
 # Default activation, BatchNorm, and resulting MLP used by RandLaNet authors
-lrelu02_kwargs = {"negative_slope":0.2}
+lrelu02_kwargs = {"negative_slope": 0.2}
 
 
-bn099_kwargs = {"momentum":0.99, "eps":1e-6}
+bn099_kwargs = {"momentum": 0.99, "eps": 1e-6}
 
 
 def default_MLP(*args, **kwargs):
@@ -29,8 +29,8 @@ def default_MLP(*args, **kwargs):
     kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
     return MLP(*args, **kwargs)
 
-class GlobalPooling(torch.nn.Module):
 
+class GlobalPooling(torch.nn.Module):
     def forward(self, x, pos, batch):
         x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
@@ -41,14 +41,20 @@ class GlobalPooling(torch.nn.Module):
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
-    def __init__(self, d_out):
-        super().__init__(aggr="add", flow="target_to_source")
+    def __init__(self, d_out, num_neighbors):
+        super().__init__(
+            aggr="add"
+            # , flow="source_to_target"  # the default: source are knn points, target are neighboorhood centers
+        )
         self.mlp_encoder = default_MLP([10, d_out // 2])
-        self.mlp_attention = default_MLP([d_out, d_out], bias=False, act=None, norm=None)
+        self.mlp_attention = default_MLP(
+            [d_out, d_out], bias=False, act=None, norm=None
+        )
         self.mlp_post_attention = default_MLP([d_out, d_out])
+        self.num_neighbors = num_neighbors
 
-    def forward(self, edge_indx, x, pos):
-        out = self.propagate(edge_indx, x=x, pos=pos)  # N // 4 * d_out
+    def forward(self, edge_index, x, pos):
+        out = self.propagate(edge_index, x=x, pos=pos)  # N // 4 * d_out
         out = self.mlp_post_attention(out)  # N // 4 * d_out
         return out
 
@@ -65,22 +71,27 @@ class LocalFeatureAggregation(MessagePassing):
             (Tensor): locSE weighted by feature attention scores.
 
         """
-        dist = pos_j - pos_i
-        euclidian_dist = torch.sqrt((dist * dist).sum(1, keepdim=True))
+        # Encode local neighboorhod structural information
+        pos_diff = pos_j - pos_i
+        distance = torch.sqrt((pos_diff * pos_diff).sum(1, keepdim=True))
         relative_infos = torch.cat(
-            [pos_i, pos_j, dist, euclidian_dist], dim=1
-        )  # N//4 * K, d
-        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N//4 * K, d
-        local_features = torch.cat([x_j, local_spatial_encoding], dim=1)  # N//4 * K, 2d
+            [pos_i, pos_j, pos_diff, distance], dim=1
+        )  # N//decim * K, d
+        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N//decim * K, d
+        local_features = torch.cat(
+            [x_j, local_spatial_encoding], dim=1
+        )  # N//decim * K, 2d
 
-        # attention will weight the different features of x
-        attention_scores = torch.softmax(
-            self.mlp_attention(local_features), dim=-1
-        )  # N//4 * K, d_out
-        return attention_scores * local_features  # N//4 * K, d_out
+        # Attention will weight the different features of x
+        att_features = self.mlp_attention(local_features)  # N//decim * K, d_out
+        d_out = att_features.size(1)
+        att_scores = torch.softmax(
+            att_features.view(-1, self.num_neighbors, d_out), dim=1
+        ).view(
+            -1, d_out
+        )  # N//decim * K, d_out with transitory N//decim, K, d_out
 
-
-
+        return att_scores * local_features  # N//decim * K, d_out
 
 
 class DilatedResidualBlock(MessagePassing):
@@ -98,14 +109,14 @@ class DilatedResidualBlock(MessagePassing):
         self.d_out = d_out
 
         # MLP on input
-        self.mlp1 = default_MLP([d_in, d_out // 8])  # TODO: remove the norm ?
+        self.mlp1 = default_MLP([d_in, d_out // 8])
         # MLP on input, and the result is summed with the output of mlp2
         self.shortcut = default_MLP([d_in, d_out], act=None)
         # MLP on output
         self.mlp2 = default_MLP([d_out // 2, d_out], act=None)
 
-        self.lfa1 = LocalFeatureAggregation(d_out // 4)
-        self.lfa2 = LocalFeatureAggregation(d_out // 2)
+        self.lfa1 = LocalFeatureAggregation(d_out // 4, num_neighbors)
+        self.lfa2 = LocalFeatureAggregation(d_out // 2, num_neighbors)
 
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
@@ -117,12 +128,13 @@ class DilatedResidualBlock(MessagePassing):
         )
         edge_index = torch.stack([col, row], dim=0)
         shortcut_of_x = self.shortcut(x)  # N, d_out
-        x = self.mlp1(x)  # N, d_out // 8
-        x = self.lfa1(edge_index, x, pos)  # N, d_out // 2
-        x = self.lfa2(edge_index, x, pos)  # N, d_out // 2
+        x = self.mlp1(x)  # N, d_out//8
+        x = self.lfa1(edge_index, x, pos)  # N, d_out//2
+        x = self.lfa2(edge_index, x, pos)  # N, d_out//2
         x = self.mlp2(x)  # N, d_out
         x = self.lrelu(x + shortcut_of_x)  # N, d_out
-        return x[idx], pos[idx], batch[idx]  # N // decimation, d_out
+        return x[idx], pos[idx], batch[idx]  # N//decim, d_out
+
 
 def subsample_by_decimation(batch, decimation):
     """Subsamples by a decimation factor.
@@ -149,6 +161,7 @@ def subsample_by_decimation(batch, decimation):
     )
     return idx
 
+
 class Net(torch.nn.Module):
     def __init__(
         self,
@@ -160,9 +173,7 @@ class Net(torch.nn.Module):
     ):
         super().__init__()
         self.return_logits = return_logits
-        self.fc0 = Sequential(
-            Linear(in_features=num_features, out_features=8)
-        )
+        self.fc0 = Sequential(Linear(in_features=num_features, out_features=8))
         self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
         # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
@@ -170,8 +181,7 @@ class Net(torch.nn.Module):
         self.mlp1 = default_MLP([128, 128])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
-            default_MLP([128, 32], dropout=[0.5]),
-            Linear(32, num_classes)
+            default_MLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
 
     def forward(self, data):
