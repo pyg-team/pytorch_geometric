@@ -123,9 +123,7 @@ class DilatedResidualBlock(MessagePassing):
     def forward(self, x, pos, batch):
         # Random Sampling by decimation
         idx = subsample_by_decimation(batch, self.decimation)
-        row, col = knn(
-            pos, pos[idx], self.num_neighbors, batch_x=batch, batch_y=batch[idx]
-        )
+        row, col = knn(pos, pos, self.num_neighbors, batch_x=batch, batch_y=batch)
         edge_index = torch.stack([col, row], dim=0)
         shortcut_of_x = self.shortcut(x)  # N, d_out
         x = self.mlp1(x)  # N, d_out//8
