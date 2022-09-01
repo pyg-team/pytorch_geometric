@@ -221,7 +221,8 @@ class HeteroLinear(torch.nn.Module):
                     x = x[:, perm]
             type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
                 type_vec, self.num_types)
-            out = segment_matmul(x, type_vec_ptr, self.weights) + self.biases[type_vec]
+            out = segment_matmul(x, type_vec_ptr,
+                                 self.weights) + self.biases[type_vec]
         else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
