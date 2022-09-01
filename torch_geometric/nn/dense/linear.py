@@ -219,11 +219,11 @@ class HeteroLinear(torch.nn.Module):
                 if (type_vec[1:] < type_vec[:-1]).any():
                     type_vec, perm = type_vec.sort()
                     x = x[:, perm]
-            edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
+            type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
                 type_vec, self.num_types)
-            out = segment_matmul(x, edge_type_ptr, self.weights)
+            out = segment_matmul(x, type_vec_ptr, self.weights)
             for i in range(self.num_types):
-                out[edge_type_ptr[i]:edge_type_ptr[i + 1]] += self.biases[i]
+                out[type_vec_ptr[i]:type_vec_ptr[i + 1]] += self.biases[i]
         else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
