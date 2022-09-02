@@ -37,7 +37,7 @@ class SAGE(nn.Module):
 
         x, edge_index = data.x, data.edge_index
         for i in range(self.num_layers):
-            x = self.convs[i]((x, x), edge_index)
+            x = self.convs[i](x, edge_index)
             if i != self.num_layers - 1:
                 x = x.relu()
                 x = F.dropout(x, p=0.5, training=self.training)
