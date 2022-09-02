@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn import Sequential, Linear
 import torch.nn.functional as F
-from randlanet_classification import DilatedResidualBlock, SharedMLP
+from randlanet_classification import DilatedResidualBlock, SharedMLP, decimate
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
@@ -17,6 +17,7 @@ from torch_geometric.nn import knn_interpolate
 
 
 category = "Airplane"  # Pass in `None` to train on all categories.
+category_num_classes = 4  # 4 for Airplane - see ShapeNet for details
 path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
 transform = T.Compose(
     [
@@ -62,19 +63,18 @@ class Net(torch.nn.Module):
         super().__init__()
 
         # An option to return logits instead of probas
+        self.decimation = decimation
         self.return_logits = return_logits
 
         # Authors use 8, which might become a bottleneck if num_classes>8 or num_features>8,
         # and even for the final MLP.
         d_bottleneck = max(32, num_classes, num_features)
-        d = decimation
-        nk = num_neighbors
 
         self.fc0 = Linear(num_features, d_bottleneck)
-        self.block1 = DilatedResidualBlock(d, nk, d_bottleneck, 32)
-        self.block2 = DilatedResidualBlock(d, nk, 32, 128)
-        self.block3 = DilatedResidualBlock(d, nk, 128, 256)
-        self.block4 = DilatedResidualBlock(d, nk, 256, 512)
+        self.block1 = DilatedResidualBlock(num_neighbors, d_bottleneck, 32)
+        self.block2 = DilatedResidualBlock(num_neighbors, 32, 128)
+        self.block3 = DilatedResidualBlock(num_neighbors, 128, 256)
+        self.block4 = DilatedResidualBlock(num_neighbors, 256, 512)
         self.mlp_summit = SharedMLP([512, 512])
         self.fp4 = FPModule(1, SharedMLP([512 + 256, 256]))
         self.fp3 = FPModule(1, SharedMLP([256 + 128, 128]))
@@ -86,30 +86,44 @@ class Net(torch.nn.Module):
         )
 
     def forward(self, batch):
+        ptr = batch.ptr.clone()
+        in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
 
-        in_0 = (self.fc0(batch.x), batch.pos, batch.batch, batch.ptr)
+        b1_out = self.block1(*in_0)
+        b1_out_decimated, ptr = decimate(b1_out, ptr, self.decimation)
 
-        b1_out, b1_out_unsampled = self.block1(*in_0, return_unsampled_as_well=True)
-        b2_out = self.block2(*b1_out)
-        b3_out = self.block3(*b2_out)
-        b4_out = self.block4(*b3_out)
+        b2_out = self.block2(*b1_out_decimated)
+        b2_out_decimated, ptr = decimate(b2_out, ptr, self.decimation)
 
-        mlp_out = (self.mlp_summit(b4_out[0]), b4_out[1], b4_out[2])
+        b3_out = self.block3(*b2_out_decimated)
+        b3_out_decimated, ptr = decimate(b3_out, ptr, self.decimation)
 
-        fp4_out = self.fp4(*mlp_out, *b3_out[:3])
-        fp3_out = self.fp3(*fp4_out, *b2_out[:3])
-        fp2_out = self.fp2(*fp3_out, *b1_out[:3])
-        fp1_out = self.fp1(*fp2_out, *b1_out_unsampled[:3])
+        b4_out = self.block4(*b3_out_decimated)
+        b4_out_decimated, ptr = decimate(b4_out, ptr, self.decimation)
+
+        mlp_out = (
+            self.mlp_summit(b4_out_decimated[0]),
+            b4_out_decimated[1],
+            b4_out_decimated[2],
+        )
+
+        fp4_out = self.fp4(*mlp_out, *b3_out_decimated)
+        fp3_out = self.fp3(*fp4_out, *b2_out_decimated)
+        fp2_out = self.fp2(*fp3_out, *b1_out_decimated)
+        fp1_out = self.fp1(*fp2_out, *b1_out)
 
         logits = self.mlp_end(fp1_out[0])
+
         if self.return_logits:
             return logits
+
         probas = logits.log_softmax(dim=-1)
+
         return probas
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = Net(3, train_dataset.num_classes).to(device)
+model = Net(3, category_num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

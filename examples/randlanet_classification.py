@@ -97,14 +97,12 @@ class LocalFeatureAggregation(MessagePassing):
 class DilatedResidualBlock(MessagePassing):
     def __init__(
         self,
-        decimation,
         num_neighbors,
         d_in: int,
         d_out: int,
     ):
         super().__init__()
         self.num_neighbors = num_neighbors
-        self.decimation = decimation
         self.d_in = d_in
         self.d_out = d_out
 
@@ -120,7 +118,7 @@ class DilatedResidualBlock(MessagePassing):
 
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
-    def forward(self, x, pos, batch, ptr, return_unsampled_as_well: bool = False):
+    def forward(self, x, pos, batch):
         row, col = knn(pos, pos, self.num_neighbors, batch_x=batch, batch_y=batch)
         edge_index = torch.stack([col, row], dim=0)
 
@@ -131,43 +129,36 @@ class DilatedResidualBlock(MessagePassing):
         x = self.mlp2(x)  # N, d_out
         x = self.lrelu(x + shortcut_of_x)  # N, d_out
 
-        decimation_idx, decimation_ptr = self.decimate(ptr, self.decimation)
-        sampled = (
-            x[decimation_idx],
-            pos[decimation_idx],
-            batch[decimation_idx],
-            decimation_ptr,
-        )
-        if return_unsampled_as_well:
-            # Needed for skip connection in final upsampling
-            unsampled = (x, pos, batch, ptr)
-            return sampled, unsampled
-        return sampled
+        return x, pos, batch
 
-    @staticmethod
-    def decimate(ptr, decimation):
-        """Subsamples each point cloud by a decimation factor.
 
-        Decimation happens separately for each cloud to prevent emptying point clouds by accident.
+def get_decimation_idx(ptr, decimation):
+    """Subsamples each point cloud by a decimation factor.
 
-        """
-        batch_size = ptr.size(0) - 1
-        num_nodes = torch.Tensor(
-            [ptr[i + 1] - ptr[i] for i in range(batch_size)]
-        ).long()
-        decimated_num_nodes = num_nodes // decimation
-        decimation_idx = torch.cat(
-            [
-                (ptr[i] + torch.randperm(decimated_num_nodes[i], device=ptr.device))
-                for i in range(batch_size)
-            ],
-            dim=0,
-        )
-        # Update the ptr for future decimations
-        decimation_ptr = ptr.clone()
-        for i in range(batch_size):
-            decimation_ptr[i + 1] = decimation_ptr[i] + decimated_num_nodes[i]
-        return decimation_idx, decimation_ptr
+    Decimation happens separately for each cloud to prevent emptying point clouds by accident.
+
+    """
+    batch_size = ptr.size(0) - 1
+    num_nodes = torch.Tensor([ptr[i + 1] - ptr[i] for i in range(batch_size)]).long()
+    decimated_num_nodes = num_nodes // decimation
+    idx_decim = torch.cat(
+        [
+            (ptr[i] + torch.randperm(decimated_num_nodes[i], device=ptr.device))
+            for i in range(batch_size)
+        ],
+        dim=0,
+    )
+    # Update the ptr for future decimations
+    ptr_decim = ptr.clone()
+    for i in range(batch_size):
+        ptr_decim[i + 1] = ptr_decim[i] + decimated_num_nodes[i]
+    return idx_decim, ptr_decim
+
+
+def decimate(b_out, ptr, decimation):
+    decimation_idx, decimation_ptr = get_decimation_idx(ptr, decimation)
+    b_out_decim = tuple(t[decimation_idx] for t in b_out)
+    return b_out_decim, decimation_ptr
 
 
 class Net(torch.nn.Module):
@@ -180,31 +171,37 @@ class Net(torch.nn.Module):
         return_logits: bool = False,
     ):
         super().__init__()
+        self.decimation = decimation
         self.return_logits = return_logits
         self.fc0 = Sequential(Linear(in_features=num_features, out_features=8))
-        self.block1 = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
-        self.block2 = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        # Two Blocks converges better on ModelNet.
-        # self.block3 = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        # self.block4 = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        # 2 DilatedResidualBlock converges better than 4 on ModelNet.
+        self.block1 = DilatedResidualBlock(num_neighboors, 8, 32)
+        self.block2 = DilatedResidualBlock(num_neighboors, 32, 128)
         self.mlp1 = SharedMLP([128, 128])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
             SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
 
-    def forward(self, data):
-        in_0 = (self.fc0(data.x), data.pos, data.batch, data.ptr)
-        b1_out = self.block1(*in_0)
-        b2_out = self.block2(*b1_out)
-        # b3_out = self.block3(*b2_out)
-        # b4_out = self.block4(*b3_out)
-        x = self.mlp1(b2_out[0])
-        x, _, _ = self.pool(x, b2_out[1], b2_out[2])
+    def forward(self, batch):
+        ptr = batch.ptr.clone()
+
+        in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
+
+        b1 = self.block1(*in_0)
+        b1_decimated, ptr = decimate(b1, ptr, self.decimation)
+
+        b2 = self.block2(*b1_decimated)
+        b2_decimated, _ = decimate(b2, ptr, self.decimation)
+
+        x = self.mlp1(b2_decimated[0])
+        x, _, _ = self.pool(x, b2_decimated[1], b2_decimated[2])
+
         logits = self.mlp_end(x)
         if self.return_logits:
             return logits
-        return logits.log_softmax(dim=-1)
+        probas = logits.log_softmax(dim=-1)
+        return probas
 
 
 class SetPosAsXIfNoX(BaseTransform):
