@@ -21,16 +21,23 @@ lrelu02_kwargs = {"negative_slope": 0.2}
 bn099_kwargs = {"momentum": 0.99, "eps": 1e-6}
 
 
-def default_MLP(*args, **kwargs):
-    """MLP with custom activation, bn, and dropout that are always active even an last layer."""
-    kwargs["plain_last"] = kwargs.get("plain_last", False)
-    kwargs["act"] = kwargs.get("act", "LeakyReLU")
-    kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
-    kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
-    return MLP(*args, **kwargs)
+class SharedMLP(MLP):
+    """SharedMLP with new defauts BN and Activation following tensorflow implementation."""
+
+    def __init__(self, *args, **kwargs):
+        # BN + Act always active even at last layer.
+        kwargs["plain_last"] = False
+        # LeakyRelu with 0.2 slope by default.
+        kwargs["act"] = kwargs.get("act", "LeakyReLU")
+        kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
+        # BatchNorm with 0.99 momentum and 1e-6 eps by defaut.
+        kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class GlobalPooling(torch.nn.Module):
+    """Global Pooling to adapt RandLa-Net to a classification task."""
+
     def forward(self, x, pos, batch):
         x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
@@ -46,11 +53,9 @@ class LocalFeatureAggregation(MessagePassing):
             aggr="add"
             # , flow="source_to_target"  # the default: source are knn points, target are neighboorhood centers
         )
-        self.mlp_encoder = default_MLP([10, d_out // 2])
-        self.mlp_attention = default_MLP(
-            [d_out, d_out], bias=False, act=None, norm=None
-        )
-        self.mlp_post_attention = default_MLP([d_out, d_out])
+        self.mlp_encoder = SharedMLP([10, d_out // 2])
+        self.mlp_attention = SharedMLP([d_out, d_out], bias=False, act=None, norm=None)
+        self.mlp_post_attention = SharedMLP([d_out, d_out])
         self.num_neighbors = num_neighbors
 
     def forward(self, edge_index, x, pos):
@@ -109,11 +114,11 @@ class DilatedResidualBlock(MessagePassing):
         self.d_out = d_out
 
         # MLP on input
-        self.mlp1 = default_MLP([d_in, d_out // 8])
+        self.mlp1 = SharedMLP([d_in, d_out // 8])
         # MLP on input, and the result is summed with the output of mlp2
-        self.shortcut = default_MLP([d_in, d_out], act=None)
+        self.shortcut = SharedMLP([d_in, d_out], act=None)
         # MLP on output
-        self.mlp2 = default_MLP([d_out // 2, d_out], act=None)
+        self.mlp2 = SharedMLP([d_out // 2, d_out], act=None)
 
         self.lfa1 = LocalFeatureAggregation(d_out // 4, num_neighbors)
         self.lfa2 = LocalFeatureAggregation(d_out // 2, num_neighbors)
@@ -181,10 +186,10 @@ class Net(torch.nn.Module):
         self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
         # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
         # self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
-        self.mlp1 = default_MLP([128, 128])
+        self.mlp1 = SharedMLP([128, 128])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
-            default_MLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
+            SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
 
     def forward(self, data):
