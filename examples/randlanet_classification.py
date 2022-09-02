@@ -235,9 +235,8 @@ def test(loader):
 
 if __name__ == "__main__":
     path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10")
-    # FixedPoints acts as a shuffler of Sampled points.
     pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024), T.FixedPoints(1024, replace=False), SetPosAsXIfNoX()]
+        [T.SamplePoints(1024), SetPosAsXIfNoX()]
     )
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
