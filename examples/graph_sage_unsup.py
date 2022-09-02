@@ -10,7 +10,6 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 
-#from torch_cluster import random_walk
 
 EPS = 1e-15
 
@@ -66,12 +65,12 @@ def train():
     for batch in train_loader:
 
         optimizer.zero_grad()
-        h = model(loader)
-        src_nodes = loader.edge_label_index[0]
-        dst_nodes = loader.edge_label_index[1]
+        h = model(batch)
+        src_nodes = batch.edge_label_index[0]
+        dst_nodes = batch.edge_label_index[1]
         out = h[src_nodes] * h[dst_nodes]
         loss = F.binary_cross_entropy_with_logits(out.sum(dim=-1),
-                                                  loader.edge_label)
+                                                  batch.edge_label)
 
         loss.backward()
         optimizer.step()
