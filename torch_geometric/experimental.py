@@ -62,19 +62,20 @@ class set_experimental_mode:
 
     :class:`set_experimental_mode` will enable or disable the experimental mode
     based on its argument :attr:`mode`.
+    It can be used as a context-manager or as a function.
 
     See :class:`experimental_mode` above for more details.
     """
     def __init__(self, mode: bool, options: Options = None):
-        self.mode = mode
         self.options = get_options(options)
         self.previous_state = {
             option: __experimental_flag__[option]
             for option in self.options
         }
+        set_experimental_mode_enabled(mode, self.options)
 
     def __enter__(self):
-        set_experimental_mode_enabled(self.mode, self.options)
+        pass
 
     def __exit__(self, *args):
         for option, value in self.previous_state.items():
