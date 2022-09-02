@@ -18,6 +18,6 @@ jobs:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - uses: samspills/assign-pr-to-author@v1.0
-        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        if: github.event_name == 'pull_request'
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
