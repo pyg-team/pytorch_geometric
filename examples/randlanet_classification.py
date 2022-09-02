@@ -72,6 +72,7 @@ class LocalFeatureAggregation(MessagePassing):
             x_j (Tensor): neighboors features (K,d)
             pos_i (Tensor): centroid position (repeated) (K,3)
             pos_j (Tensor): neighboors positions (K,3)
+            index (Tensor): index of centroid positions (e.g. [0,...,0,1,...,1,...,N,...,N])
 
         returns:
             (Tensor): locSE weighted by feature attention scores.
