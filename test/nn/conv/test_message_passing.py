@@ -80,6 +80,21 @@ def test_my_conv():
     conv.fuse = True
 
 
+def test_my_conv_out_of_bounds():
+    x = torch.randn(3, 8)
+    value = torch.randn(4)
+
+    conv = MyConv(8, 32)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+
 def test_my_conv_jittable():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)

@@ -16,3 +16,8 @@ jobs:
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - uses: samspills/assign-pr-to-author@v1.0
+        if: github.event_name == 'pull_request'
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
