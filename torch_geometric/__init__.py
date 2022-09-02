@@ -10,7 +10,8 @@ import torch_geometric.profile
 from .seed import seed_everything
 from .home import get_home_dir, set_home_dir
 from .debug import is_debug_enabled, debug, set_debug
-from .experimental import is_experimental_mode_enabled, experimental_mode
+from .experimental import (is_experimental_mode_enabled, experimental_mode,
+                           set_experimental_mode)
 
 
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/
@@ -49,8 +50,9 @@ __all__ = [
     'is_debug_enabled',
     'debug',
     'set_debug',
-    'experimental_mode',
     'is_experimental_mode_enabled',
+    'experimental_mode',
+    'set_experimental_mode',
     'torch_geometric',
     '__version__',
 ]

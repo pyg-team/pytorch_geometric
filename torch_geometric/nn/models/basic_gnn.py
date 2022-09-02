@@ -196,7 +196,7 @@ class BasicGNN(torch.nn.Module):
     @torch.no_grad()
     def inference(self, loader: NeighborLoader,
                   device: Optional[torch.device] = None,
-                  progress_bar: bool = False, dtype=torch.float) -> Tensor:
+                  progress_bar: bool = False) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using
         :class:`~torch_geometric.loader.NeighborLoader`.
         :class:`~torch_geometric.loader.NeighborLoader` should sample the the
@@ -216,7 +216,6 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.cpu()
-        x_all = x_all.to(dtype)
         loader.data.n_id = torch.arange(x_all.size(0))
 
         for i in range(self.num_layers):

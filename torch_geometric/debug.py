@@ -6,7 +6,7 @@ def is_debug_enabled():
     return __debug_flag__['enabled']
 
 
-def set_debug_enabled(mode):
+def set_debug_enabled(mode: bool):
     __debug_flag__['enabled'] = mode
 
 
@@ -27,7 +27,6 @@ class debug:
 
     def __exit__(self, *args):
         set_debug_enabled(self.prev)
-        return False
 
 
 class set_debug:
@@ -35,17 +34,15 @@ class set_debug:
 
     :class:`set_debug` will enable or disable the debug mode based on its
     argument :attr:`mode`.
-    It can be used as a context-manager or as a function.
 
     See :class:`debug` above for more details.
     """
-    def __init__(self, mode):
+    def __init__(self, mode: bool):
         self.prev = is_debug_enabled()
-        set_debug_enabled(mode)
+        self.mode = mode
 
     def __enter__(self):
-        pass
+        set_debug_enabled(self.mode)
 
     def __exit__(self, *args):
         set_debug_enabled(self.prev)
-        return False

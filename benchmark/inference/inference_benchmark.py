@@ -3,7 +3,7 @@ import argparse
 import torch
 from utils import get_dataset, get_model
 
-import torch_geometric
+from torch_geometric import set_experimental_mode
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -25,7 +25,7 @@ def run(args: argparse.ArgumentParser) -> None:
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
         dataset, num_classes = get_dataset(dataset_name, args.root,
-                                           args.use_sparse_tensor)
+                                           args.use_sparse_tensor, args.bf16)
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
@@ -34,9 +34,6 @@ def run(args: argparse.ArgumentParser) -> None:
             amp = torch.cuda.amp.autocast(enabled=False)
         else:
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
-        dtype = torch.float
-        if args.bf16:
-            dtype = torch.bfloat16
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -101,26 +98,18 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         with amp:
-                            for _ in range(args.warmup):
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True, dtype=dtype)
-                            if args.experimental_mode:
-                                with torch_geometric.experimental_mode():
-                                    with timeit():
-                                        model.inference(
-                                            subgraph_loader, device,
-                                            progress_bar=True, dtype=dtype)
-                            else:
+                            with set_experimental_mode(args.experimental_mode):
+                                for _ in range(args.warmup):
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True)
                                 with timeit():
                                     model.inference(subgraph_loader, device,
-                                                    progress_bar=True,
-                                                    dtype=dtype)
+                                                    progress_bar=True)
 
                             if args.profile:
                                 with torch_profile():
                                     model.inference(subgraph_loader, device,
-                                                    progress_bar=True,
-                                                    dtype=dtype)
+                                                    progress_bar=True)
                                 rename_profile_file(
                                     model_name, dataset_name, str(batch_size),
                                     str(layers), str(hidden_channels),
