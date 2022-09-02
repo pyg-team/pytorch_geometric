@@ -74,7 +74,7 @@ class PointTransformerConv(MessagePassing):
                  out_channels: int, pos_nn: Optional[Callable] = None,
                  attn_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'mean')
+        kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
