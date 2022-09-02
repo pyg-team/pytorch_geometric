@@ -194,7 +194,6 @@ class Dataset(torch.utils.data.Dataset):
                 "make use of another pre-fitering technique, make sure to "
                 "delete '{self.processed_dir}' first")
 
-        print(self.processed_paths)
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
