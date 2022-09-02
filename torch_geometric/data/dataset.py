@@ -152,15 +152,23 @@ class Dataset(torch.utils.data.Dataset):
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         downloading."""
-        files = to_list(self.raw_file_names)
-        return [osp.join(self.raw_dir, f) for f in files]
+        files = self.raw_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.raw_dir, f) for f in to_list(files)]
 
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         processing."""
-        files = to_list(self.processed_file_names)
-        return [osp.join(self.processed_dir, f) for f in files]
+        files = self.processed_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
