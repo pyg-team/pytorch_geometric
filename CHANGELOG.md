@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `BaseStorage.get()` functionality ([#5240](https://github.com/pyg-team/pytorch_geometric/pull/5240))
 - Added a test to confirm that `to_hetero` works with `SparseTensor` ([#5222](https://github.com/pyg-team/pytorch_geometric/pull/5222))
 ### Changed
+- Improve out-of-bounds error message in `MessagePassing` ([#5339](https://github.com/pyg-team/pytorch_geometric/pull/5339))
 - Allow file names of a `Dataset` to be specified as either property and method ([#5338](https://github.com/pyg-team/pytorch_geometric/pull/5338))
 - Fixed separating a list of `SparseTensor` within `InMemoryDataset` ([#5299](https://github.com/pyg-team/pytorch_geometric/pull/5299))
 - Improved name resolving of normalization layers ([#5277](https://github.com/pyg-team/pytorch_geometric/pull/5277))
