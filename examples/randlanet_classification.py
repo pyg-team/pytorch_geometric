@@ -1,5 +1,4 @@
 import os.path as osp
-from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -9,11 +8,10 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.datasets import ModelNet
-from torch_geometric.typing import OptTensor
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, global_max_pool
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.pool import knn
+from torch_geometric.nn.pool import knn, knn_graph
 from torch_geometric.utils import softmax
 
 # Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
@@ -119,8 +117,7 @@ class DilatedResidualBlock(MessagePassing):
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
     def forward(self, x, pos, batch):
-        row, col = knn(pos, pos, self.num_neighbors, batch_x=batch, batch_y=batch)
-        edge_index = torch.stack([col, row], dim=0)
+        edge_index = knn_graph(pos, self.num_neighbors, batch=batch, loop=True)
 
         shortcut_of_x = self.shortcut(x)  # N, d_out
         x = self.mlp1(x)  # N, d_out//8
