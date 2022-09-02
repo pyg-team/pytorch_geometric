@@ -319,8 +319,7 @@ def symbolic_trace(
             @st.functools.wraps(st._orig_module_getattr)
             def module_getattr_wrapper(mod, attr):
                 attr_val = st._orig_module_getattr(mod, attr)
-                return self._module_getattr(attr, attr_val,
-                                            parameter_proxy_cache)
+                return self.getattr(attr, attr_val, parameter_proxy_cache)
 
             @st.functools.wraps(st._orig_module_call)
             def module_call_wrapper(mod, *args, **kwargs):
