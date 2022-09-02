@@ -14,12 +14,15 @@ def test_experimental_mode(options):
         assert is_experimental_mode_enabled(options) is True
     assert is_experimental_mode_enabled(options) is False
 
-    assert is_experimental_mode_enabled(options) is False
     with set_experimental_mode(True, options):
         assert is_experimental_mode_enabled(options) is True
     assert is_experimental_mode_enabled(options) is False
 
-    assert is_experimental_mode_enabled(options) is False
     with set_experimental_mode(False, options):
         assert is_experimental_mode_enabled(options) is False
+    assert is_experimental_mode_enabled(options) is False
+
+    set_experimental_mode(True, options)
+    assert is_experimental_mode_enabled(options) is True
+    set_experimental_mode(False, options)
     assert is_experimental_mode_enabled(options) is False
