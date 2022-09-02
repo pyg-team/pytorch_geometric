@@ -58,8 +58,8 @@ class LocalFeatureAggregation(MessagePassing):
         self.num_neighbors = num_neighbors
 
     def forward(self, edge_index, x, pos):
-        out = self.propagate(edge_index, x=x, pos=pos)  # N // 4 * d_out
-        out = self.mlp_post_attention(out)  # N // 4 * d_out
+        out = self.propagate(edge_index, x=x, pos=pos)  # N, d_out
+        out = self.mlp_post_attention(out)  # N, d_out
         return out
 
     def message(
@@ -88,7 +88,7 @@ class LocalFeatureAggregation(MessagePassing):
 
         # Attention will weight the different features of x along the neighborhood dimension.
         att_features = self.mlp_attention(local_features)  # N * K, d_out
-        att_scores = softmax(att_features, index=index)
+        att_scores = softmax(att_features, index=index)  # N * K, d_out
 
         return att_scores * local_features  # N * K, d_out
 
