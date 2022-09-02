@@ -120,8 +120,7 @@ class DilatedResidualBlock(MessagePassing):
 
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
-    def forward(self, x, pos, batch, return_unsampled_as_well: bool = False):
-        idx = subsample_by_decimation(batch, self.decimation)
+    def forward(self, x, pos, batch, ptr, return_unsampled_as_well: bool = False):
         row, col = knn(pos, pos, self.num_neighbors, batch_x=batch, batch_y=batch)
         edge_index = torch.stack([col, row], dim=0)
 
@@ -132,37 +131,43 @@ class DilatedResidualBlock(MessagePassing):
         x = self.mlp2(x)  # N, d_out
         x = self.lrelu(x + shortcut_of_x)  # N, d_out
 
-        sampled = (x[idx], pos[idx], batch[idx])
+        decimation_idx, decimation_ptr = self.decimate(ptr, self.decimation)
+        sampled = (
+            x[decimation_idx],
+            pos[decimation_idx],
+            batch[decimation_idx],
+            decimation_ptr,
+        )
         if return_unsampled_as_well:
             # Needed for skip connection in final upsampling
-            return sampled, (x, pos, batch)
-        return sampled  # N//decim, d_out
+            unsampled = (x, pos, batch, ptr)
+            return sampled, unsampled
+        return sampled
 
+    @staticmethod
+    def decimate(ptr, decimation):
+        """Subsamples each point cloud by a decimation factor.
 
-def subsample_by_decimation(batch, decimation):
-    """Subsamples by a decimation factor.
+        Decimation happens separately for each cloud to prevent emptying point clouds by accident.
 
-    Each sample needs to be decimated separately to prevent emptying point clouds by accident.
-
-    """
-    ends = (
-        (torch.argwhere(torch.diff(batch) != 0) + 1)
-        .cpu()
-        .numpy()
-        .squeeze()
-        .astype(int)
-        .tolist()
-    )
-    starts = [0] + ends
-    ends = ends + [batch.size(0)]
-    idx = torch.cat(
-        [
-            (start + torch.randperm(end - start))[::decimation]
-            for start, end in zip(starts, ends)
-        ],
-        dim=0,
-    )
-    return idx
+        """
+        batch_size = ptr.size(0) - 1
+        num_nodes = torch.Tensor(
+            [ptr[i + 1] - ptr[i] for i in range(batch_size)]
+        ).long()
+        decimated_num_nodes = num_nodes // decimation
+        decimation_idx = torch.cat(
+            [
+                (ptr[i] + torch.randperm(decimated_num_nodes[i], device=ptr.device))
+                for i in range(batch_size)
+            ],
+            dim=0,
+        )
+        # Update the ptr for future decimations
+        decimation_ptr = ptr.clone()
+        for i in range(batch_size):
+            decimation_ptr[i + 1] = decimation_ptr[i] + decimated_num_nodes[i]
+        return decimation_idx, decimation_ptr
 
 
 class Net(torch.nn.Module):
@@ -177,10 +182,11 @@ class Net(torch.nn.Module):
         super().__init__()
         self.return_logits = return_logits
         self.fc0 = Sequential(Linear(in_features=num_features, out_features=8))
-        self.lfa1_module = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
-        self.lfa2_module = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
-        # self.lfa3_module = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
-        # self.lfa4_module = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
+        self.block1 = DilatedResidualBlock(decimation, num_neighboors, 8, 32)
+        self.block2 = DilatedResidualBlock(decimation, num_neighboors, 32, 128)
+        # Two Blocks converges better on ModelNet.
+        # self.block3 = DilatedResidualBlock(decimation, num_neighboors, 128, 256)
+        # self.block4 = DilatedResidualBlock(decimation, num_neighboors, 256, 512)
         self.mlp1 = SharedMLP([128, 128])
         self.pool = GlobalPooling()
         self.mlp_end = Sequential(
@@ -188,13 +194,13 @@ class Net(torch.nn.Module):
         )
 
     def forward(self, data):
-        in_0 = (self.fc0(data.x), data.pos, data.batch)
-        lfa1_out = self.lfa1_module(*in_0)
-        lfa2_out = self.lfa2_module(*lfa1_out)
-        # lfa3_out = self.lfa3_module(*lfa2_out)
-        # lfa4_out = self.lfa4_module(*lfa3_out)
-        x = self.mlp1(lfa2_out[0])
-        x, _, _ = self.pool(x, lfa2_out[1], lfa2_out[2])
+        in_0 = (self.fc0(data.x), data.pos, data.batch, data.ptr)
+        b1_out = self.block1(*in_0)
+        b2_out = self.block2(*b1_out)
+        # b3_out = self.block3(*b2_out)
+        # b4_out = self.block4(*b3_out)
+        x = self.mlp1(b2_out[0])
+        x, _, _ = self.pool(x, b2_out[1], b2_out[2])
         logits = self.mlp_end(x)
         if self.return_logits:
             return logits

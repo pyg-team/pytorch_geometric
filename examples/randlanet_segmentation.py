@@ -1,6 +1,8 @@
 import os.path as osp
+from typing import Tuple
 
 import torch
+from torch import Tensor
 from torch.nn import Sequential, Linear
 import torch.nn.functional as F
 from randlanet_classification import DilatedResidualBlock, SharedMLP
@@ -43,8 +45,7 @@ class FPModule(torch.nn.Module):
 
     def forward(self, x, pos, batch, x_skip, pos_skip, batch_skip):
         x = knn_interpolate(x, pos, pos_skip, batch, batch_skip, k=self.k)
-        if x_skip is not None:
-            x = torch.cat([x, x_skip], dim=1)
+        x = torch.cat([x, x_skip], dim=1)
         x = self.nn(x)
         return x, pos_skip, batch_skip
 
@@ -52,58 +53,59 @@ class FPModule(torch.nn.Module):
 class Net(torch.nn.Module):
     def __init__(
         self,
-        num_features,
-        num_classes,
+        num_features: int,
+        num_classes: int,
         decimation: int = 4,
         num_neighbors: int = 16,
         return_logits: bool = False,
     ):
         super().__init__()
 
+        # An option to return logits instead of probas
         self.return_logits = return_logits
-        # Authors use 8, which might become a bottlenecj if num_classes>8 or num_features>8.
-        bottleneck = max(64, num_classes, num_features)
+
+        # Authors use 8, which might become a bottleneck if num_classes>8 or num_features>8,
+        # and even for the final MLP.
+        d_bottleneck = max(32, num_classes, num_features)
         d = decimation
         nk = num_neighbors
 
-        self.fc0 = Linear(num_features, bottleneck)
-        self.lfa1_module = DilatedResidualBlock(d, nk, bottleneck, 32)
-        self.lfa2_module = DilatedResidualBlock(d, nk, 32, 128)
-        self.lfa3_module = DilatedResidualBlock(d, nk, 128, 256)
-        self.lfa4_module = DilatedResidualBlock(d, nk, 256, 512)
-        self.mlp1 = SharedMLP([512, 512])
-        self.fp4_module = FPModule(1, SharedMLP([512 + 256, 256]))
-        self.fp3_module = FPModule(1, SharedMLP([256 + 128, 128]))
-        self.fp2_module = FPModule(1, SharedMLP([128 + 32, 32]))
-        self.fp1_module = FPModule(1, SharedMLP([32 + 32, bottleneck]))
-
-        self.mlp2 = Sequential(
-            SharedMLP([bottleneck, 64, 32], dropout=[0.0, 0.5]),
+        self.fc0 = Linear(num_features, d_bottleneck)
+        self.block1 = DilatedResidualBlock(d, nk, d_bottleneck, 32)
+        self.block2 = DilatedResidualBlock(d, nk, 32, 128)
+        self.block3 = DilatedResidualBlock(d, nk, 128, 256)
+        self.block4 = DilatedResidualBlock(d, nk, 256, 512)
+        self.mlp_summit = SharedMLP([512, 512])
+        self.fp4 = FPModule(1, SharedMLP([512 + 256, 256]))
+        self.fp3 = FPModule(1, SharedMLP([256 + 128, 128]))
+        self.fp2 = FPModule(1, SharedMLP([128 + 32, 32]))
+        self.fp1 = FPModule(1, SharedMLP([32 + 32, d_bottleneck]))
+        self.mlp_end = Sequential(
+            SharedMLP([d_bottleneck, 64, 32], dropout=[0.0, 0.5]),
             Linear(32, num_classes),
         )
 
     def forward(self, batch):
 
-        in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
+        in_0 = (self.fc0(batch.x), batch.pos, batch.batch, batch.ptr)
 
-        lfa1_out, lfa1_out_unsampled = self.lfa1_module(
-            *in_0, return_unsampled_as_well=True
-        )
-        lfa2_out = self.lfa2_module(*lfa1_out)
-        lfa3_out = self.lfa3_module(*lfa2_out)
-        lfa4_out = self.lfa4_module(*lfa3_out)
+        b1_out, b1_out_unsampled = self.block1(*in_0, return_unsampled_as_well=True)
+        b2_out = self.block2(*b1_out)
+        b3_out = self.block3(*b2_out)
+        b4_out = self.block4(*b3_out)
 
-        mlp_out = (self.mlp1(lfa4_out[0]), lfa4_out[1], lfa4_out[2])
+        mlp_out = (self.mlp_summit(b4_out[0]), b4_out[1], b4_out[2])
 
-        fp4_out = self.fp4_module(*mlp_out, *lfa3_out)
-        fp3_out = self.fp3_module(*fp4_out, *lfa2_out)
-        fp2_out = self.fp2_module(*fp3_out, *lfa1_out)
-        x, _, _ = self.fp1_module(*fp2_out, *lfa1_out_unsampled)
+        fp4_out = self.fp4(*mlp_out, *b3_out[:3])
+        fp3_out = self.fp3(*fp4_out, *b2_out[:3])
+        fp2_out = self.fp2(*fp3_out, *b1_out[:3])
+        fp1_out = self.fp1(*fp2_out, *b1_out_unsampled[:3])
 
-        logits = self.mlp2(x)
+        logits = self.mlp_end(fp1_out[0])
         if self.return_logits:
             return logits
-        return logits.log_softmax(dim=-1)
+        probas = logits.log_softmax(dim=-1)
+        return probas
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
