@@ -153,6 +153,8 @@ class Dataset(torch.utils.data.Dataset):
         r"""The absolute filepaths that must be present in order to skip
         downloading."""
         files = self.raw_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
         if isinstance(files, Callable):
             files = files()
         return [osp.join(self.raw_dir, f) for f in to_list(files)]
@@ -162,6 +164,8 @@ class Dataset(torch.utils.data.Dataset):
         r"""The absolute filepaths that must be present in order to skip
         processing."""
         files = self.processed_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
         if isinstance(files, Callable):
             files = files()
         return [osp.join(self.processed_dir, f) for f in to_list(files)]
