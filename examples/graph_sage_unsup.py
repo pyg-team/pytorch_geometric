@@ -63,7 +63,7 @@ def train():
     model.train()
 
     total_loss = 0
-    for loader in train_loader:
+    for batch in train_loader:
 
         optimizer.zero_grad()
         h = model(loader)
