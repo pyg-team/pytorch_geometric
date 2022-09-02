@@ -22,6 +22,7 @@ parser.add_argument('--heads', type=int, default=8)
 parser.add_argument('--output_heads', type=int, default=1)
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
+parser.add_argument('--bf16', action='store_true')
 args = parser.parse_args()
 
 
@@ -50,7 +51,8 @@ class Net(torch.nn.Module):
 dataset = get_planetoid_dataset(args.dataset, not args.no_normalize_features)
 permute_masks = random_planetoid_splits if args.random_splits else None
 run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
-    args.early_stopping, args.inference, args.profile, permute_masks)
+    args.early_stopping, args.inference, args.profile, args.bf16,
+    permute_masks)
 
 if args.profile:
     rename_profile_file('citation', GATConv.__name__, args.dataset,
