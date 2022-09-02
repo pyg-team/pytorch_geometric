@@ -102,7 +102,7 @@ def test_hetero_linear():
     node_type = torch.tensor([0, 1, 2])
 
     lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
-    assert str(lin) == 'HeteroLinear(16, 32, bias=True)'
+    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
     out = lin(x, node_type)
     assert out.size() == (3, 32)

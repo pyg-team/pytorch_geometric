@@ -9,11 +9,50 @@ from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
 
+try:
+    from pyg_lib.ops import segment_matmul  # noqa
+    _WITH_PYG_LIB = True
+except ImportError:
+    _WITH_PYG_LIB = False
+
 
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(nn.parameter, 'UninitializedParameter'):
         return False
     return isinstance(x, nn.parameter.UninitializedParameter)
+
+
+def reset_weight_(weight: Tensor, in_channels: int,
+                  initializer: Optional[str] = None) -> Tensor:
+    if in_channels <= 0:
+        pass
+    elif initializer == 'glorot':
+        inits.glorot(weight)
+    elif initializer == 'uniform':
+        bound = 1.0 / math.sqrt(in_channels)
+        torch.nn.init.uniform_(weight.data, -bound, bound)
+    elif initializer == 'kaiming_uniform':
+        inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
+    elif initializer is None:
+        inits.kaiming_uniform(weight, fan=in_channels, a=math.sqrt(5))
+    else:
+        raise RuntimeError(f"Weight initializer '{initializer}' not supported")
+
+    return weight
+
+
+def reset_bias_(bias: Optional[Tensor], in_channels: int,
+                initializer: Optional[str] = None) -> Optional[Tensor]:
+    if bias is None or in_channels <= 0:
+        pass
+    elif initializer == 'zeros':
+        inits.zeros(bias)
+    elif initializer is None:
+        inits.uniform(in_channels, bias)
+    else:
+        raise RuntimeError(f"Bias initializer '{initializer}' not supported")
+
+    return bias
 
 
 class Linear(torch.nn.Module):
@@ -83,32 +122,8 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
-        if self.in_channels <= 0:
-            pass
-        elif self.weight_initializer == 'glorot':
-            inits.glorot(self.weight)
-        elif self.weight_initializer == 'uniform':
-            bound = 1.0 / math.sqrt(self.weight.size(-1))
-            torch.nn.init.uniform_(self.weight.data, -bound, bound)
-        elif self.weight_initializer == 'kaiming_uniform':
-            inits.kaiming_uniform(self.weight, fan=self.in_channels,
-                                  a=math.sqrt(5))
-        elif self.weight_initializer is None:
-            inits.kaiming_uniform(self.weight, fan=self.in_channels,
-                                  a=math.sqrt(5))
-        else:
-            raise RuntimeError(f"Linear layer weight initializer "
-                               f"'{self.weight_initializer}' is not supported")
-
-        if self.bias is None or self.in_channels <= 0:
-            pass
-        elif self.bias_initializer == 'zeros':
-            inits.zeros(self.bias)
-        elif self.bias_initializer is None:
-            inits.uniform(self.in_channels, self.bias)
-        else:
-            raise RuntimeError(f"Linear layer bias initializer "
-                               f"'{self.bias_initializer}' is not supported")
+        reset_weight_(self.weight, self.in_channels, self.weight_initializer)
+        reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
         r"""
@@ -175,6 +190,10 @@ class HeteroLinear(torch.nn.Module):
             lazily in case it is given as :obj:`-1`.
         out_channels (int): Size of each output sample.
         num_types (int): The number of types.
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`type_vec` is sorted. This avoids internal re-sorting of the
+            data and can improve runtime and memory efficiency.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
 
@@ -185,22 +204,41 @@ class HeteroLinear(torch.nn.Module):
         - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 **kwargs):
+                 is_sorted: bool = False, **kwargs):
         super().__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.num_types = num_types
+        self.is_sorted = is_sorted
+        self.kwargs = kwargs
 
-        self.lins = torch.nn.ModuleList([
-            Linear(in_channels, out_channels, **kwargs)
-            for _ in range(num_types)
-        ])
+        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
+
+        if self._WITH_PYG_LIB:
+            self.weight = torch.nn.Parameter(
+                torch.Tensor(num_types, in_channels, out_channels))
+            if kwargs.get('bias', True):
+                self.bias = Parameter(torch.Tensor(num_types, out_channels))
+            else:
+                self.register_parameter('bias', None)
+        else:
+            self.lins = torch.nn.ModuleList([
+                Linear(in_channels, out_channels, **kwargs)
+                for _ in range(num_types)
+            ])
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        for lin in self.lins:
-            lin.reset_parameters()
+        if self._WITH_PYG_LIB:
+            reset_weight_(self.weight, self.in_channels,
+                          self.kwargs.get('weight_initializer', None))
+            reset_weight_(self.bias, self.in_channels,
+                          self.kwargs.get('bias_initializer', None))
+        else:
+            for lin in self.lins:
+                lin.reset_parameters()
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
@@ -208,12 +246,24 @@ class HeteroLinear(torch.nn.Module):
             x (Tensor): The input features.
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
-        out = x.new_empty(x.size(0), self.out_channels)
-        for i, lin in enumerate(self.lins):
-            mask = type_vec == i
-            out[mask] = lin(x[mask])
+        if self._WITH_PYG_LIB:
+            if not self.is_sorted:
+                if (type_vec[1:] < type_vec[:-1]).any():
+                    type_vec, perm = type_vec.sort()
+                    x = x[:, perm]
+            type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
+                type_vec, self.num_types)
+            out = segment_matmul(x, type_vec_ptr, self.weight)
+            if self.bias is not None:
+                out += self.bias[type_vec]
+        else:
+            out = x.new_empty(x.size(0), self.out_channels)
+            for i, lin in enumerate(self.lins):
+                mask = type_vec == i
+                out[mask] = lin(x[mask])
         return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, bias={self.lins[0].bias is not None})')
+                f'{self.out_channels}, num_types={self.num_types}, '
+                f'bias={self.kwargs.get("bias", True)})')
