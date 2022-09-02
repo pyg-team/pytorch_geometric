@@ -10,7 +10,6 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 
-
 EPS = 1e-15
 
 dataset = 'Cora'
