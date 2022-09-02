@@ -14,7 +14,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn
 
 
-# Default activation, BatchNorm, and resulting MLP used by RandLaNet authors
+# Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
 lrelu02_kwargs = {"negative_slope": 0.2}
 
 
@@ -36,7 +36,7 @@ class SharedMLP(MLP):
 
 
 class GlobalPooling(torch.nn.Module):
-    """Global Pooling to adapt RandLa-Net to a classification task."""
+    """Global Pooling to adapt RandLA-Net to a classification task."""
 
     def forward(self, x, pos, batch):
         x = global_max_pool(x, batch)
@@ -49,10 +49,7 @@ class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
     def __init__(self, d_out, num_neighbors):
-        super().__init__(
-            aggr="add"
-            # , flow="source_to_target"  # the default: source are knn points, target are neighboorhood centers
-        )
+        super().__init__(aggr="add")
         self.mlp_encoder = SharedMLP([10, d_out // 2])
         self.mlp_attention = SharedMLP([d_out, d_out], bias=False, act=None, norm=None)
         self.mlp_post_attention = SharedMLP([d_out, d_out])
