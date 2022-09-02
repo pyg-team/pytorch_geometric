@@ -1,4 +1,5 @@
 import os.path as osp
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -8,11 +9,12 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.datasets import ModelNet
+from torch_geometric.typing import OptTensor
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, global_max_pool
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn
-
+from torch_geometric.utils import softmax
 
 # Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
 lrelu02_kwargs = {"negative_slope": 0.2}
@@ -60,7 +62,9 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.mlp_post_attention(out)  # N // 4 * d_out
         return out
 
-    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor) -> Tensor:
+    def message(
+        self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor, index: Tensor
+    ) -> Tensor:
         """
         Local Spatial Encoding (locSE) and attentive pooling of features.
 
@@ -78,22 +82,15 @@ class LocalFeatureAggregation(MessagePassing):
         distance = torch.sqrt((pos_diff * pos_diff).sum(1, keepdim=True))
         relative_infos = torch.cat(
             [pos_i, pos_j, pos_diff, distance], dim=1
-        )  # N//decim * K, d
-        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N//decim * K, d
-        local_features = torch.cat(
-            [x_j, local_spatial_encoding], dim=1
-        )  # N//decim * K, 2d
+        )  # N * K, d
+        local_spatial_encoding = self.mlp_encoder(relative_infos)  # N * K, d
+        local_features = torch.cat([x_j, local_spatial_encoding], dim=1)  # N * K, 2d
 
-        # Attention will weight the different features of x
-        att_features = self.mlp_attention(local_features)  # N//decim * K, d_out
-        d_out = att_features.size(1)
-        att_scores = torch.softmax(
-            att_features.view(-1, self.num_neighbors, d_out), dim=1
-        ).view(
-            -1, d_out
-        )  # N//decim * K, d_out with transitory N//decim, K, d_out
+        # Attention will weight the different features of x along the neighborhood dimension.
+        att_features = self.mlp_attention(local_features)  # N * K, d_out
+        att_scores = softmax(att_features, index=index)
 
-        return att_scores * local_features  # N//decim * K, d_out
+        return att_scores * local_features  # N * K, d_out
 
 
 class DilatedResidualBlock(MessagePassing):
