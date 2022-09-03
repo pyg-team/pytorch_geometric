@@ -15,6 +15,9 @@ try:
 except ImportError:
     _WITH_PYG_LIB = False
 
+    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
+        raise NotImplementedError
+
 
 def is_uninitialized_parameter(x: Any) -> bool:
     if not hasattr(nn.parameter, 'UninitializedParameter'):
@@ -227,6 +230,8 @@ class HeteroLinear(torch.nn.Module):
                 Linear(in_channels, out_channels, **kwargs)
                 for _ in range(num_types)
             ])
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
@@ -247,10 +252,13 @@ class HeteroLinear(torch.nn.Module):
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
         if self._WITH_PYG_LIB:
+            assert self.weight is not None
+
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
                     type_vec, perm = type_vec.sort()
-                    x = x[:, perm]
+                    x = x[perm]
+
             type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
                 type_vec, self.num_types)
             out = segment_matmul(x, type_vec_ptr, self.weight)
