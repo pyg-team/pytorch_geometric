@@ -538,7 +538,7 @@ def get_mixed_sampling_nodes(data: HeteroData,
     return to_hetero_types(input_nodes), to_hetero_list(input_nodes)
 
 
-def to_hetero_types(input_nodes: List[Tuple[str, Tensor]]) -> List[str]:
+def get_node_types(input_nodes: List[Tuple[str, Tensor]]) -> List[str]:
     return [node_type for node_type, index in input_nodes]
 
 
