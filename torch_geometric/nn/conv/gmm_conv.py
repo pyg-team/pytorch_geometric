@@ -144,10 +144,10 @@ class GMMConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None and self.root is not None:
-            out += self.root(x_r)
+            out = out + self.root(x_r)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
