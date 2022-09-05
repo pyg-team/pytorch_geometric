@@ -211,7 +211,7 @@ class NeighborSampler:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
 
             if isinstance(index, List) and isinstance(index[0], Tuple):
-                index_dict = from_hetero_list(index)
+                index_dict = from_node_list(index)
             else:
                 index = torch.LongTensor(index)
                 index_dict = {self.input_type: index}
@@ -535,18 +535,18 @@ def get_mixed_sampling_nodes(data: HeteroData,
                              input_nodes: List[InputNodes]) -> SamplingNodes:
     for i in range(len(input_nodes)):
         input_nodes[i] = get_sampling_nodes(data, input_nodes[i])
-    return to_hetero_types(input_nodes), to_hetero_list(input_nodes)
+    return get_node_types(input_nodes), get_node_list(input_nodes)
 
 
 def get_node_types(input_nodes: List[Tuple[str, Tensor]]) -> List[str]:
     return [node_type for node_type, index in input_nodes]
 
 
-def to_hetero_list(input_nodes: List[Tuple[str, Tensor]]) -> HeteroNodeList:
+def get_node_list(input_nodes: List[Tuple[str, Tensor]]) -> HeteroNodeList:
     return [(node_type, i) for node_type, index in input_nodes for i in index]
 
 
-def from_hetero_list(node_list: HeteroNodeList) -> Dict[str, Tensor]:
+def from_node_list(node_list: HeteroNodeList) -> Dict[str, Tensor]:
     node_dicts = defaultdict(list)
     for t, node in node_list:
         node_dicts[t].append(node)
