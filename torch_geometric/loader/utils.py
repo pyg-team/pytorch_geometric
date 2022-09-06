@@ -108,7 +108,8 @@ def filter_hetero_data(
 
     # TODO(manan): consolidate behind 'EdgeType':
     # TODO(manan): remove special handling of 'perm_dict':
-    is_str = isinstance(list(row_dict.keys())[0], str)
+    row_dict_keys = list(row_dict.keys())
+    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
 
     for node_type in data.node_types:
         filter_node_store_(data[node_type], out[node_type],
@@ -144,7 +145,8 @@ def filter_custom_store(
     data = HeteroData()
 
     # TODO(manan): consolidate behind 'EdgeType':
-    is_str = isinstance(list(row_dict.keys())[0], str)
+    row_dict_keys = list(row_dict.keys())
+    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
 
     # Filter edge storage:
     # TODO support edge attributes
