@@ -154,15 +154,6 @@ class GraphStore:
                            f"found")
         return edge_index
 
-    # Sampling ################################################################
-
-    # We need to define a nice simple sampling interface here, where a sampler
-    # can be constructed and called. A graph store should be able to work with
-    # any sampler. To do so, we leverage sampler/base.py, which defines a base
-    # sampler class.
-    #
-    # TODO(manan) implement.
-
     # Layout Conversion #######################################################
 
     def _edge_to_layout(
