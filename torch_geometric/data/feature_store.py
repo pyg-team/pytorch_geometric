@@ -29,7 +29,7 @@ from typing import Any, List, Optional, Tuple, Union
 import numpy as np
 import torch
 
-from torch_geometric.typing import FeatureTensorType
+from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
 
 _field_status = Enum("FieldStatus", "UNSET")
@@ -52,7 +52,7 @@ class TensorAttr(CastMixin):
     """
 
     # The group name that the tensor corresponds to. Defaults to UNSET.
-    group_name: Optional[str] = _field_status.UNSET
+    group_name: Optional[NodeType] = _field_status.UNSET
 
     # The name of the tensor within its group. Defaults to UNSET.
     attr_name: Optional[str] = _field_status.UNSET

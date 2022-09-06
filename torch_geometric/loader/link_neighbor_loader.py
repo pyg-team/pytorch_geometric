@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch_scatter import scatter_min
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
@@ -24,8 +24,6 @@ class LinkNeighborSampler(NeighborSampler):
         data,
         *args,
         neg_sampling_ratio: float = 0.0,
-        num_src_nodes: Optional[int] = None,
-        num_dst_nodes: Optional[int] = None,
         **kwargs,
     ):
         super().__init__(data, *args, **kwargs)
@@ -34,29 +32,10 @@ class LinkNeighborSampler(NeighborSampler):
         # TODO if self.edge_time is not None and
         # `src` or `dst` nodes don't have time attribute
         # i.e node_time_dict[input_type[0/-1]] doesn't exist
-        # set it to largest representabel torch.long.
-
+        # set it to largest representable torch.long.
         if self.data_cls == 'custom':
-            _, graph_store = data
-            edge_attrs = graph_store.get_all_edge_attrs()
-            edge_types = [attr.edge_type for attr in edge_attrs]
-
-            # Edge label index is part of the graph:
-            if self.input_type in edge_types:
-                self.num_src_nodes, self.num_dst_nodes = edge_attrs[
-                    edge_types.index(self.input_type)].size
-
-            elif num_src_nodes is None or num_dst_nodes is None:
-                raise ValueError(
-                    f"Use of the feature store and graph store abstraction "
-                    f"with {self.__class__.__name__} requires the "
-                    f"specification of source and destination nodes, since "
-                    f"the edge label index {self.input_type} is not part "
-                    f"of the specified graph. ")
-
-            else:
-                self.num_src_nodes = num_src_nodes
-                self.num_dst_nodes = num_dst_nodes
+            self.num_src_nodes, self.num_dst_nodes = remote_backend_utils.size(
+                *data, self.input_type)
 
         elif issubclass(self.data_cls, Data):
             self.num_src_nodes = self.num_dst_nodes = data.num_nodes
@@ -247,10 +226,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
-        num_src_nodes (optional, int): The number of source nodes in the edge
-            label index. Inferred if not provided.
-        num_dst_nodes (optional, int): The number of destination nodes in the
-            edge label index. Inferred if not provided.
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
@@ -300,8 +275,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
-        num_src_nodes: Optional[int] = None,
-        num_dst_nodes: Optional[int] = None,
         replace: bool = False,
         directed: bool = True,
         neg_sampling_ratio: float = 0.0,
@@ -352,8 +325,6 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 input_type=edge_type,
                 is_sorted=is_sorted,
                 neg_sampling_ratio=self.neg_sampling_ratio,
-                num_src_nodes=num_src_nodes,
-                num_dst_nodes=num_dst_nodes,
                 time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )

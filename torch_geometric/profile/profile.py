@@ -1,8 +1,11 @@
 import os
 import pathlib
+import time
+from contextlib import ContextDecorator, contextmanager
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
+from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.profile.utils import (
     byte_to_megabyte,
@@ -92,36 +95,36 @@ def profileit():
     return decorator
 
 
-def timeit():
-    r"""A decorator to facilitate timing a function, *e.g.*, obtaining the
-    runtime of a specific model on a specific dataset.
+class timeit(ContextDecorator):
+    r"""A context decorator to facilitate timing a function, *e.g.*, obtaining
+    the runtime of a specific model on a specific dataset.
 
     .. code-block:: python
 
-        @timeit()
         @torch.no_grad()
         def test(model, x, edge_index):
             return model(x, edge_index)
 
-        z, time = test(model, x, edge_index)
+        with timeit() as t:
+            z = test(model, x, edge_index)
+        time = t.duration
     """
-    def decorator(func):
-        def wrapper(*args, **kwargs) -> Tuple[Any, float]:
-            start = torch.cuda.Event(enable_timing=True)
-            end = torch.cuda.Event(enable_timing=True)
-            start.record()
+    def __init__(self, log: bool = True):
+        self.log = log
 
-            out = func(*args, **kwargs)
-
-            end.record()
+    def __enter__(self):
+        if torch.cuda.is_available():
             torch.cuda.synchronize()
-            time = start.elapsed_time(end) / 1000
+        self.t_start = time.time()
+        return self
 
-            return out, time
-
-        return wrapper
-
-    return decorator
+    def __exit__(self, *args):
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        self.t_end = time.time()
+        self.duration = self.t_end - self.t_start
+        if self.log:
+            print(f'Time: {self.duration:.8f}s', flush=True)
 
 
 def get_stats_summary(stats_list: List[Stats]):
@@ -195,3 +198,11 @@ def rename_profile_file(*args):
         timeline_file += '-' + arg
     timeline_file += '.json'
     os.rename('timeline.json', timeline_file)
+
+
+@contextmanager
+def torch_profile():
+    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                 on_trace_ready=trace_handler) as p:
+        yield
+        p.step()
