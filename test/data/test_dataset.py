@@ -218,3 +218,30 @@ def test_lists_of_SparseTensors():
     assert dataset[0].adj_test[1].sparse_sizes() == (22, 22)
     assert dataset[1].adj_test[0].sparse_sizes() == (12, 12)
     assert dataset[1].adj_test[1].sparse_sizes() == (15, 15)
+
+
+def test_file_names_as_property_and_method():
+    class MyTestDataset(InMemoryDataset):
+        def __init__(self):
+            super().__init__('/tmp/MyTestDataset')
+
+        @property
+        def raw_file_names(self):
+            return ['test_file']
+
+        def download(self):
+            pass
+
+    MyTestDataset()
+
+    class MyTestDataset(InMemoryDataset):
+        def __init__(self):
+            super().__init__('/tmp/MyTestDataset')
+
+        def raw_file_names(self):
+            return ['test_file']
+
+        def download(self):
+            pass
+
+    MyTestDataset()
