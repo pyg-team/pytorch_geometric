@@ -8,8 +8,8 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.typing import EdgeType, NodeType
 
-# An input to a sampler is either a list or tensor of node indices:
-SamplerInput = Union[List[int], torch.Tensor]
+# An input to a sampler a tensor of node indices:
+SamplerInput = torch.Tensor
 
 
 # A sampler output contains the following information.
