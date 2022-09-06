@@ -12,6 +12,8 @@ We have prepared a list of colab notebooks that practically introduces you to th
 7. `Customizing Aggregations within Message Passing <https://colab.research.google.com/drive/1KKw-VUDQuHhMo7sCd7ZaRROza3leBjRR?usp=sharing>`__
 8. `Node Classification with Graph Neural Networks Instrumented with Weights and Biases Logging and Sweeps <https://colab.research.google.com/github/wandb/examples/blob/master/colabs/pyg/8_Node_Classification_(with_W&B).ipynb>`__
 
+All colab notebooks are released under the MIT license.
+
 **Stanford CS224W Graph ML Tutorials:**
 
 .. image:: https://data.pyg.org/img/cs224w_tutorials.png
