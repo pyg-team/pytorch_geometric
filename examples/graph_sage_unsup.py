@@ -90,7 +90,7 @@ def test():
     val_acc = clf.score(out[data.val_mask], data.y[data.val_mask])
     test_acc = clf.score(out[data.test_mask], data.y[data.test_mask])
 
-    return val_acc, test_acc, out
+    return val_acc, test_acc
 
 
 for epoch in range(1, 51):
