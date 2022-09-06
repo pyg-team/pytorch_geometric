@@ -5,7 +5,8 @@ from torch import Tensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
+from torch_geometric.loader.utils import filter_hetero_data
+from torch_geometric.sampler.utils import to_hetero_csc
 from torch_geometric.typing import NodeType
 
 

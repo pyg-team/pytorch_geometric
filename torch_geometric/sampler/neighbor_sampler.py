@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -6,20 +6,22 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader.utils import (
-    edge_type_to_str,
-    to_csc,
-    to_hetero_csc,
-)
 from torch_geometric.sampler.base import (
     BaseSampler,
     SamplerInput,
     SamplerOutput,
 )
+from torch_geometric.sampler.utils import (
+    edge_type_from_str_dict,
+    edge_type_to_str_dict,
+    to_csc,
+    to_hetero_csc,
+)
 from torch_geometric.typing import NumNeighbors
 
 
 class NeighborSampler(BaseSampler):
+    r"""An implementation of an in-memory neighbor sampler."""
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -31,7 +33,7 @@ class NeighborSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
-        super().__init__()
+        super().__init__(data)
         self.data_cls = data.__class__ if isinstance(
             data, (Data, HeteroData)) else 'custom'
         self.num_neighbors = num_neighbors
@@ -40,7 +42,7 @@ class NeighborSampler(BaseSampler):
         self.node_time = None
 
         # TODO Unify the following conditionals behind the `FeatureStore`
-        # and `GraphStore` API
+        # and `GraphStore` API:
 
         # If we are working with a `Data` object, convert the edge_index to
         # CSC and store it:
@@ -85,7 +87,7 @@ class NeighborSampler(BaseSampler):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             feature_store, graph_store = data
 
-            # TODO support `collect` on `FeatureStore`
+            # TODO support `collect` on `FeatureStore`:
             self.node_time_dict = None
             if time_attr is not None:
                 # We need to obtain all features with 'attr_name=time_attr'
@@ -121,34 +123,22 @@ class NeighborSampler(BaseSampler):
 
             # Obtain CSC representations for in-memory sampling:
             row_dict, colptr_dict, perm_dict = graph_store.csc()
-            self.row_dict = {
-                edge_type_to_str(k): v
-                for k, v in row_dict.items()
-            }
-            self.colptr_dict = {
-                edge_type_to_str(k): v
-                for k, v in colptr_dict.items()
-            }
-            self.perm_dict = {
-                edge_type_to_str(k): v
-                for k, v in perm_dict.items()
-            }
-
+            self.row_dict = edge_type_to_str_dict(row_dict)
+            self.colptr_dict = edge_type_to_str_dict(colptr_dict)
+            self.perm_dict = edge_type_to_str_dict(perm_dict)
         else:
-            raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
+            raise TypeError(
+                f'{self.__class__.__name__} found invalid type: {type(data)}')
 
     def _set_num_neighbors_and_num_hops(self, num_neighbors):
         if isinstance(num_neighbors, (list, tuple)):
             num_neighbors = {key: num_neighbors for key in self.edge_types}
         assert isinstance(num_neighbors, dict)
-        self.num_neighbors = {
-            edge_type_to_str(key): value
-            for key, value in num_neighbors.items()
-        }
+        self.num_neighbors = edge_type_to_str_dict(num_neighbors)
         # Add at least one element to the list to ensure `max` is well-defined
         self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
 
-    def _sparse_neighbor_sample(self, index: Tensor) -> SamplerOutput:
+    def _sparse_neighbor_sample(self, index: Tensor):
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
             self.colptr,
@@ -160,8 +150,11 @@ class NeighborSampler(BaseSampler):
         )
         return node, row, col, edge
 
-    def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str, Tensor],
-                                       **kwargs) -> SamplerOutput:
+    def _hetero_sparse_neighbor_sample(
+        self,
+        index_dict: Dict[str, Tensor],
+        **kwargs,
+    ) -> SamplerOutput:
         if self.node_time_dict is None:
             fn = torch.ops.torch_sparse.hetero_neighbor_sample
             node_dict, row_dict, col_dict, edge_dict = fn(
@@ -199,14 +192,34 @@ class NeighborSampler(BaseSampler):
             )
         return node_dict, row_dict, col_dict, edge_dict
 
-    def __call__(self, index: SamplerInput) -> SamplerOutput:
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
+    def sample(self, index: SamplerInput) -> SamplerOutput:
+        r"""Implements neighbor sampling by calling 'torch-sparse' sampling
+        routines, conditional on the type of data object."""
 
-        if self.data_cls != 'custom' and issubclass(self.data_cls, Data):
-            return self._sparse_neighbor_sample(index) + (index.numel(), )
+        # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
+        # sampling:
+        if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
+            node, row, col, edge = self._hetero_sparse_neighbor_sample(
+                {self.input_type: index})
 
-        elif self.data_cls == 'custom' or issubclass(self.data_cls,
-                                                     HeteroData):
-            return self._hetero_sparse_neighbor_sample(
-                {self.input_type: index}) + (index.numel(), )
+            # Convert back from edge type strings to PyG EdgeType, as required
+            # by SamplerOutput:
+            return SamplerOutput(
+                input_size=index.numel(),
+                node=node,
+                row=edge_type_from_str_dict(row),
+                col=edge_type_from_str_dict(col),
+                edge=edge_type_from_str_dict(edge),
+            )
+        elif issubclass(self.data_cls, Data):
+            node, row, col, edge = self._sparse_neighbor_sample(index)
+            return SamplerOutput(
+                input_size=index.numel(),
+                node=node,
+                row=row,
+                col=col,
+                edge=edge,
+            )
+        else:
+            raise TypeError(f'{self.__class__.__name__} found invalid type: '
+                            f'{type(self.data_cls)}')

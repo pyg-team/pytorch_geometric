@@ -30,11 +30,11 @@ SamplerInput = Union[List[int], torch.Tensor]
 #   * edge: a tensor of the indices in the original graph; e.g. to be used to
 #       obtain edge attributes.
 class SamplerOutput(NamedTuple):
-    input_size: int
     node: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]
     row: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
     col: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
     edge: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
+    input_size: int
 
 
 class BaseSampler(ABC):
