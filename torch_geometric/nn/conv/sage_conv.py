@@ -133,7 +133,7 @@ class SAGEConv(MessagePassing):
 
         x_r = x[1]
         if self.root_weight and x_r is not None:
-            out += self.lin_r(x_r)
+            out = out + self.lin_r(x_r)
 
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)

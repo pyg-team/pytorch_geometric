@@ -113,7 +113,7 @@ class PDNConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
