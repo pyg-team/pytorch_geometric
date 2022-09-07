@@ -8,9 +8,9 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
+    HeteroSamplerOutput,
     SamplerInput,
     SamplerOutput,
-    HeteroSamplerOutput,
 )
 from torch_geometric.sampler.utils import to_csc, to_hetero_csc
 from torch_geometric.typing import NumNeighbors
