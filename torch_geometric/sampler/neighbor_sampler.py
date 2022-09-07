@@ -166,7 +166,7 @@ class NeighborSampler(BaseSampler):
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
-            self.perm_dict = perm_dict, self.to_rel_type
+            self.perm_dict = perm_dict
 
         else:
             raise TypeError(
