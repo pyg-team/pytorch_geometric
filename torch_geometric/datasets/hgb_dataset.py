@@ -169,7 +169,6 @@ class HGBDataset(InMemoryDataset):
                     else:
                         data[n_type].y = torch.full((num_nodes, ), -1).long()
                     data[n_type].train_mask = torch.zeros(num_nodes).bool()
-                    data[n_type].test_mask = torch.zeros(num_nodes).bool()
 
                 if data[n_type].y.dim() > 1:  # multi-label
                     for v in y[3].split(','):
