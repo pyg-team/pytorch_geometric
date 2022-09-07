@@ -149,7 +149,7 @@ class FAConv(MessagePassing):
         self._alpha = None
 
         if self.eps != 0.0:
-            out += self.eps * x_0
+            out = out + self.eps * x_0
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None

@@ -75,7 +75,8 @@ def run(args: argparse.ArgumentParser) -> None:
                             f'Batch size={batch_size}, '
                             f'Layers amount={layers}, '
                             f'Num_neighbors={subgraph_loader.num_neighbors}, '
-                            f'Hidden features size={hidden_channels}')
+                            f'Hidden features size={hidden_channels}, '
+                            f'Sparse tensor={args.use_sparse_tensor}')
                         params = {
                             'inputs_channels': inputs_channels,
                             'hidden_channels': hidden_channels,

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, NamedTuple, Union
+from typing import Dict, NamedTuple, Union, Any
 
 import torch
 
@@ -33,25 +33,49 @@ EdgeSamplerInput = Union[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 #       the associated output tensors.
 #   * edge: a tensor of the indices in the original graph; e.g. to be used to
 #       obtain edge attributes.
+#   * metadata: any additional metadata required by a loader using the sampler
+#       output.
+# There exist both homogeneous and heterogeneous versions.
 class SamplerOutput(NamedTuple):
-    node: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]
-    row: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    col: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    edge: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    input_size: int
+    node: torch.Tensor
+    row: torch.Tensor
+    col: torch.Tensor
+    edge: torch.Tensor
+
+    # TODO(manan): refine this further; it does not currently define a proper
+    # API for the expected output of a sampler.
+    metadata: Any
+
+    # TODO(manan): include a 'batch' attribute that assigns each node to an
+    # example; this is necessary for integration with pyg-lib
+
+
+class HeteroSamplerOutput(NamedTuple):
+    node: Dict[NodeType, torch.Tensor]
+    row: Dict[EdgeType, torch.Tensor]
+    col: Dict[EdgeType, torch.Tensor]
+    edge: Dict[EdgeType, torch.Tensor]
+
+    # TODO(manan): refine this further; it does not currently define a proper
+    # API for the expected output of a sampler.
+    metadata: Any
+
+    # TODO(manan): include a 'batch' attribute that assigns each node to an
+    # example; this is necessary for integration with pyg-lib
 
 
 class BaseSampler(ABC):
     r"""A base class that initializes a graph sampler and provides a `sample`
     routine that performs sampling on an input list or tensor of node indices.
+
+    .. warning ::
+        Any data stored in the sampler will be _replicated_ across data loading
+        workers that use the sampler. That is, each data loading worker has its
+        own instance of a sampler. As such, it is recommended to limit the
+        amount of information stored in the sampler, and to initialize all this
+        information at `__init__`.
     """
     @abstractmethod
-    def __init__(self, *args, **kwargs):
-        r"""Initializes a sampler with common data it will need to perform a
-        `sample` call. Note that this data will be replicated across processes,
-        so it is best to limit the amount of information stored here."""
-        pass
-
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
@@ -60,6 +84,7 @@ class BaseSampler(ABC):
     ) -> SamplerOutput:
         raise NotImplementedError
 
+    @abstractmethod
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,

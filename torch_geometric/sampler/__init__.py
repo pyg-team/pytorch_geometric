@@ -1,5 +1,7 @@
-from torch_geometric.sampler.neighbor_sampler import NeighborSampler
+from .base import BaseSampler
+from .neighbor_sampler import NeighborSampler
 
 __all__ = [
+    'BaseSampler',
     'NeighborSampler',
 ]

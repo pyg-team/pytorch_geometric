@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -8,36 +8,6 @@ from torch_scatter import scatter_min
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import EdgeType, OptTensor
-
-# Since C++ cannot take dictionaries with tuples as key as input, edge type
-# triplets need to be converted into single strings. This is done by adding
-# EDGE_TYPE_SPLIT_STR between values in the edge type tuple:
-EDGE_TYPE_SPLIT_STR = "__"
-
-# Edge Type Conversion ########################################################
-
-
-def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
-    if isinstance(edge_type, str):
-        return edge_type
-    return EDGE_TYPE_SPLIT_STR.join(edge_type)
-
-
-def edge_type_to_str_dict(
-        edge_type_dict: Dict[EdgeType, Any]) -> Dict[str, Any]:
-    return {edge_type_to_str(k): v for k, v in edge_type_dict.items()}
-
-
-def edge_type_from_str(edge_type: Union[EdgeType, str]) -> EdgeType:
-    if isinstance(edge_type, tuple):
-        return edge_type
-    return tuple(edge_type.split(EDGE_TYPE_SPLIT_STR))
-
-
-def edge_type_from_str_dict(
-        edge_type_dict: Dict[str, Any]) -> Dict[EdgeType, Any]:
-    return {edge_type_from_str(k): v for k, v in edge_type_dict.items()}
-
 
 # Edge Layout Conversion ######################################################
 
@@ -96,12 +66,10 @@ def to_hetero_csc(
     # (CSC format).
     # Returns dictionaries holding `colptr` and `row` indices as well as edge
     # permutations for each edge type, respectively.
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets are converted into single strings.
     colptr_dict, row_dict, perm_dict = {}, {}, {}
 
     for store in data.edge_stores:
-        key = edge_type_to_str(store._key)
+        key = store._key
         out = to_csc(store, device, share_memory, is_sorted)
         colptr_dict[key], row_dict[key], perm_dict[key] = out
 
