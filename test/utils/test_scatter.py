@@ -27,7 +27,7 @@ def test_scatter_backward(reduce):
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
 
     with torch_geometric.experimental_mode('scatter_reduce'):
-        out = scatter(src, index, dim=1, reduce=reduce).relu_()
+        out = scatter(src, index, dim=1, reduce=reduce).relu()
     assert src.grad is None
     out.mean().backward()
     assert src.grad is not None
