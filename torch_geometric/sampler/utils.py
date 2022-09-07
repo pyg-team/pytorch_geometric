@@ -1,5 +1,5 @@
 import copy
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -147,5 +147,11 @@ def set_node_time_dict(
 ###############################################################################
 
 
-def remap_keys(original: Dict, mapping: Dict) -> Dict:
-    return {mapping[k]: v for k, v in original.items()}
+def remap_keys(
+    original: Dict,
+    mapping: Dict,
+    exclude: Optional[Set[Any]] = None,
+) -> Dict:
+    exclude = exclude or set()
+    return {(k if k in exclude else mapping[k]): v
+            for k, v in original.items()}
