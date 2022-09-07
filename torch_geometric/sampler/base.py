@@ -1,19 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, NamedTuple, Tuple, Union
+from typing import Dict, NamedTuple, Union, Any
 
 import torch
-
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.typing import EdgeType, NodeType
 
-# An input to a sampler a tensor of node indices:
+# An input to a sampler is a tensor of node indices:
 SamplerInput = torch.Tensor
 
 
-# A sampler output contains the following information.
-#   * input_size: the number of input nodes to begin sampling from.
+# A sampler output contains the following information:
 #   * node: a tensor of output nodes resulting from sampling. In the
 #       heterogeneous case, this is a dictionary mapping node types to the
 #       associated output tensors.
@@ -29,34 +24,38 @@ SamplerInput = torch.Tensor
 #       the associated output tensors.
 #   * edge: a tensor of the indices in the original graph; e.g. to be used to
 #       obtain edge attributes.
+#   * metadata: any additional metadata required by a loader using the sampler
+#       output.
 class SamplerOutput(NamedTuple):
     node: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]
     row: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
     col: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
     edge: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    input_size: int
+
+    # TODO(manan): refine this further; it does not currently define a proper
+    # API for the expected output of a sampler.
+    metadata: Any
+
+    # TODO(manan): include a 'batch' attribute that assigns each node to an
+    # example; this is necessary for integration with pyg-lib
 
 
 class BaseSampler(ABC):
     r"""A base class that initializes a graph sampler and provides a `sample`
     routine that performs sampling on an input list or tensor of node indices.
-    """
-    @abstractmethod
-    def __init__(
-        self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        **kwargs,
-    ):
-        r"""Initializes a sampler with common data it will need to perform a
-        `sample` call. Note that this data will be replicated across processes,
-        so it is best to limit the amount of information stored here."""
-        pass
 
+    .. warning ::
+        Any data stored in the sampler will be _replicated_ across data loading
+        workers that use the sampler. That is, each data loading worker has its
+        own instance of a sampler. As such, it is recommended to limit the
+        amount of information stored in the sampler, and to initialize all this
+        information at `__init__`.
+    """
     @abstractmethod
     def sample(self, index: SamplerInput, **kwargs) -> SamplerOutput:
         pass
 
     def __call__(self, index: SamplerInput, **kwargs) -> SamplerOutput:
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
+        if isinstance(index, (list, tuple)):
+            index = torch.tensor(index)
         return self.sample(index, **kwargs)

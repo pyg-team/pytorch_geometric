@@ -12,8 +12,6 @@ from torch_geometric.sampler.base import (
     SamplerOutput,
 )
 from torch_geometric.sampler.utils import (
-    edge_type_from_str_dict,
-    edge_type_to_str_dict,
     to_csc,
     to_hetero_csc,
 )
@@ -33,7 +31,6 @@ class NeighborSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
-        super().__init__(data)
         self.data_cls = data.__class__ if isinstance(
             data, (Data, HeteroData)) else 'custom'
         self.num_neighbors = num_neighbors
@@ -67,18 +64,34 @@ class NeighborSampler(BaseSampler):
             else:
                 self.node_time_dict = None
 
-            # Convert the graph data into a suitable format for sampling.
-            # NOTE: Since C++ cannot take dictionaries with tuples as key as
-            # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
-                                is_sorted=is_sorted)
-            self.colptr_dict, self.row_dict, self.perm_dict = out
-
             self.node_types, self.edge_types = data.metadata()
             self._set_num_neighbors_and_num_hops(num_neighbors)
 
             assert input_type is not None
             self.input_type = input_type
+
+            # Conversions to/from C++ string type:
+            # Since C++ cannot take dictionaries with tuples as key as input,
+            # edge type triplets need to be converted into single strings. This
+            # is done by maintaining the following mappings:
+            self.to_rel_type = {key: '__'.join(key) for key in self.edge_types}
+            self.to_edge_type = {
+                '__'.join(key): key
+                for key in self.edge_types
+            }
+
+            # Obtain CSC representations for in-memory sampling:
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
+                                is_sorted=is_sorted)
+            colptr_dict, row_dict, perm_dict = out
+
+            # TODO(manan): drop remapping keys in perm_dict, so we can remove
+            # this logic from NeighborLoader as well.
+            self.row_dict = remap_keys(row_dict, self.to_rel_type)
+            self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+            self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
+            self.num_neighbors = remap_keys(self.num_neighbors,
+                                            self.to_rel_type)
 
         # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
         # obtain edges from GraphStore and convert them to CSC if necessary,
@@ -115,28 +128,39 @@ class NeighborSampler(BaseSampler):
             self.edge_types = list(
                 set(edge_attr.edge_type for edge_attr in edge_attrs))
 
-            # Set other required parameters:
             self._set_num_neighbors_and_num_hops(num_neighbors)
 
             assert input_type is not None
             self.input_type = input_type
 
+            self.to_rel_type = {key: '__'.join(key) for key in self.edge_types}
+            self.to_edge_type = {
+                '__'.join(key): key
+                for key in self.edge_types
+            }
+
             # Obtain CSC representations for in-memory sampling:
             row_dict, colptr_dict, perm_dict = graph_store.csc()
-            self.row_dict = edge_type_to_str_dict(row_dict)
-            self.colptr_dict = edge_type_to_str_dict(colptr_dict)
-            self.perm_dict = edge_type_to_str_dict(perm_dict)
+            self.row_dict = remap_keys(row_dict, self.to_rel_type)
+            self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+            self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
+            self.num_neighbors = remap_keys(self.num_neighbors,
+                                            self.to_rel_type)
         else:
             raise TypeError(
                 f'{self.__class__.__name__} found invalid type: {type(data)}')
 
     def _set_num_neighbors_and_num_hops(self, num_neighbors):
         if isinstance(num_neighbors, (list, tuple)):
-            num_neighbors = {key: num_neighbors for key in self.edge_types}
-        assert isinstance(num_neighbors, dict)
-        self.num_neighbors = edge_type_to_str_dict(num_neighbors)
+            self.num_neighbors = {
+                key: num_neighbors
+                for key in self.edge_types
+            }
+        assert isinstance(self.num_neighbors, dict)
+
         # Add at least one element to the list to ensure `max` is well-defined
-        self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
+        self.num_hops = max([0] +
+                            [len(v) for v in self.num_neighbors.values()])
 
     def _sparse_neighbor_sample(self, index: Tensor):
         fn = torch.ops.torch_sparse.neighbor_sample
@@ -205,16 +229,16 @@ class NeighborSampler(BaseSampler):
             # Convert back from edge type strings to PyG EdgeType, as required
             # by SamplerOutput:
             return SamplerOutput(
-                input_size=index.numel(),
+                metadata=index.numel(),
                 node=node,
-                row=edge_type_from_str_dict(row),
-                col=edge_type_from_str_dict(col),
-                edge=edge_type_from_str_dict(edge),
+                row=remap_keys(row, self.to_edge_type),
+                col=remap_keys(col, self.to_edge_type),
+                edge=remap_keys(edge, self.to_edge_type),
             )
         elif issubclass(self.data_cls, Data):
             node, row, col, edge = self._sparse_neighbor_sample(index)
             return SamplerOutput(
-                input_size=index.numel(),
+                metadata=index.numel(),
                 node=node,
                 row=row,
                 col=col,
@@ -223,3 +247,10 @@ class NeighborSampler(BaseSampler):
         else:
             raise TypeError(f'{self.__class__.__name__} found invalid type: '
                             f'{type(self.data_cls)}')
+
+
+###############################################################################
+
+
+def remap_keys(original: Dict, mapping: Dict) -> Dict:
+    return {mapping[k]: v for k, v in original.items()}
