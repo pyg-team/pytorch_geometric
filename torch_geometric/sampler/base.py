@@ -27,11 +27,26 @@ SamplerInput = torch.Tensor
 #       obtain edge attributes.
 #   * metadata: any additional metadata required by a loader using the sampler
 #       output.
+# There exist both homogeneous and heterogeneous versions.
 class SamplerOutput(NamedTuple):
-    node: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]
-    row: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    col: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
-    edge: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]
+    node: torch.Tensor
+    row: torch.Tensor
+    col: torch.Tensor
+    edge: torch.Tensor
+
+    # TODO(manan): refine this further; it does not currently define a proper
+    # API for the expected output of a sampler.
+    metadata: Any
+
+    # TODO(manan): include a 'batch' attribute that assigns each node to an
+    # example; this is necessary for integration with pyg-lib
+
+
+class HeteroSamplerOutput(NamedTuple):
+    node: Dict[NodeType, torch.Tensor]
+    row: Dict[EdgeType, torch.Tensor]
+    col: Dict[EdgeType, torch.Tensor]
+    edge: Dict[EdgeType, torch.Tensor]
 
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -53,10 +68,18 @@ class BaseSampler(ABC):
         information at `__init__`.
     """
     @abstractmethod
-    def sample(self, index: SamplerInput, **kwargs) -> SamplerOutput:
+    def sample(
+        self,
+        index: SamplerInput,
+        **kwargs,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         pass
 
-    def __call__(self, index: SamplerInput, **kwargs) -> SamplerOutput:
+    def __call__(
+        self,
+        index: SamplerInput,
+        **kwargs,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         if isinstance(index, (list, tuple)):
             index = torch.tensor(index)
         return self.sample(index, **kwargs)

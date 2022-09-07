@@ -10,6 +10,7 @@ from torch_geometric.sampler.base import (
     BaseSampler,
     SamplerInput,
     SamplerOutput,
+    HeteroSamplerOutput,
 )
 from torch_geometric.sampler.utils import to_csc, to_hetero_csc
 from torch_geometric.typing import NumNeighbors
@@ -175,7 +176,7 @@ class NeighborSampler(BaseSampler):
         self,
         index_dict: Dict[str, Tensor],
         **kwargs,
-    ) -> SamplerOutput:
+    ):
         if self.node_time_dict is None:
             fn = torch.ops.torch_sparse.hetero_neighbor_sample
             node_dict, row_dict, col_dict, edge_dict = fn(
@@ -213,7 +214,10 @@ class NeighborSampler(BaseSampler):
             )
         return node_dict, row_dict, col_dict, edge_dict
 
-    def sample(self, index: SamplerInput) -> SamplerOutput:
+    def sample(
+        self,
+        index: SamplerInput,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling 'torch-sparse' sampling
         routines, conditional on the type of data object."""
 
@@ -225,7 +229,7 @@ class NeighborSampler(BaseSampler):
 
             # Convert back from edge type strings to PyG EdgeType, as required
             # by SamplerOutput:
-            return SamplerOutput(
+            return HeteroSamplerOutput(
                 metadata=index.numel(),
                 node=node,
                 row=remap_keys(row, self.to_edge_type),
