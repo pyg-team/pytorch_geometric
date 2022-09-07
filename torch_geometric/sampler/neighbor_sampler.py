@@ -285,7 +285,7 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         *args,
         **kwargs,
-    ) -> SamplerOutput:
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
         query = [torch.stack(s, dim=0) for s in zip(*index)]
         edge_label_index = torch.stack(query[:2], dim=0)

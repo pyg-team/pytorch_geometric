@@ -132,6 +132,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         # NOTE: Since C++ cannot take dictionaries with tuples as key as
         # input, edge type triplets are converted into single strings.
         self.to_rel_type = {key: '__'.join(key) for key in data.edge_types}
+        self.to_edge_type = {'__'.join(key): key for key in data.edge_types}
         self.row_dict = remap_keys(row_dict, self.to_rel_type)
         self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
         self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
@@ -152,7 +153,9 @@ class HGTLoader(torch.utils.data.DataLoader):
 
     def filter_fn(self, out: Any) -> HeteroData:
         node_dict, row_dict, col_dict, edge_dict, batch_size = out
-
+        row_dict = remap_keys(row_dict, self.to_edge_type)
+        col_dict = remap_keys(col_dict, self.to_edge_type)
+        edge_dict = remap_keys(edge_dict, self.to_edge_type)
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                   edge_dict, self.perm_dict)
         data[self.input_nodes[0]].batch_size = batch_size
