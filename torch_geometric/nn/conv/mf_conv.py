@@ -101,7 +101,7 @@ class MFConv(MessagePassing):
             r = lin_l(h.index_select(self.node_dim, idx))
 
             if x_r is not None:
-                r += lin_r(x_r.index_select(self.node_dim, idx))
+                r = r + lin_r(x_r.index_select(self.node_dim, idx))
 
             out.index_copy_(self.node_dim, idx, r)
 
