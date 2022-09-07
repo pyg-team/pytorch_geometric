@@ -179,10 +179,10 @@ class NeighborSampler:
                 fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
             except RuntimeError as e:
                 raise RuntimeError(
-                    "'torch_sparse' operator "
-                    "'hetero_temporal_neighbor_sample' not "
-                    "found. Currently requires building "
-                    "'torch_sparse' from master.", e)
+                    "The 'torch_sparse' operator "
+                    "'hetero_temporal_neighbor_sample' was not "
+                    "found. Please upgrade your 'torch_sparse' installation "
+                    "to 0.6.15 or greater to use this feature.") from e
 
             node_dict, row_dict, col_dict, edge_dict = fn(
                 self.node_types,
