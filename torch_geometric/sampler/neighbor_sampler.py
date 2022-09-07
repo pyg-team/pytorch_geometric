@@ -9,8 +9,8 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
-    NodeSamplerInput,
     HeteroSamplerOutput,
+    NodeSamplerInput,
     SamplerOutput,
 )
 from torch_geometric.sampler.utils import (
