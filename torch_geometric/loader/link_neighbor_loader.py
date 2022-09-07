@@ -247,7 +247,9 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
     def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
         out = self.neighbor_sampler.sample_from_edges(
-            index, negative_sampling_ratio=self.neg_sampling_ratio)
+            index,
+            negative_sampling_ratio=self.neg_sampling_ratio,
+        )
         if self.filter_per_worker:
             # We execute `filter_fn` in the worker process.
             out = self.filter_fn(out)

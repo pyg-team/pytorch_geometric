@@ -17,7 +17,6 @@ EdgeSamplerInput = Union[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 
 
 # A sampler output contains the following information.
-#   * input_size: the number of input nodes to begin sampling from.
 #   * node: a tensor of output nodes resulting from sampling. In the
 #       heterogeneous case, this is a dictionary mapping node types to the
 #       associated output tensors.
@@ -81,7 +80,7 @@ class BaseSampler(ABC):
         index: NodeSamplerInput,
         *args,
         **kwargs,
-    ) -> SamplerOutput:
+    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         raise NotImplementedError
 
     @abstractmethod
@@ -90,5 +89,5 @@ class BaseSampler(ABC):
         index: EdgeSamplerInput,
         *args,
         **kwargs,
-    ) -> SamplerOutput:
+    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         raise NotImplementedError

@@ -540,10 +540,15 @@ class LightningLinkData(LightningDataModule):
 
         if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(
-                data=self.data, edge_label_index=input_edges,
-                edge_label=input_labels, edge_label_time=input_time,
-                neighbor_sampler=self.neighbor_sampler, shuffle=shuffle,
-                neg_sampling_ratio=self.neg_sampling_ratio, **self.kwargs)
+                data=self.data,
+                edge_label_index=input_edges,
+                edge_label=input_labels,
+                edge_label_time=input_time,
+                neighbor_sampler=self.neighbor_sampler,
+                shuffle=shuffle,
+                neg_sampling_ratio=self.neg_sampling_ratio,
+                **self.kwargs,
+            )
 
         raise NotImplementedError
 
