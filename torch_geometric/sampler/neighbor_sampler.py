@@ -241,7 +241,9 @@ class NeighborSampler(BaseSampler):
     # Node-based sampling #####################################################
 
     def sample_from_nodes(
-            self, index: NodeSamplerInput, **kwargs,
+        self,
+        index: NodeSamplerInput,
+        **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling 'torch-sparse' sampling
         routines, conditional on the type of data object."""
