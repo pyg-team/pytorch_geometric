@@ -241,7 +241,7 @@ class NeighborSampler(BaseSampler):
     # Node-based sampling #####################################################
 
     def sample_from_nodes(
-            self, index: NodeSamplerInput
+            self, index: NodeSamplerInput, **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling 'torch-sparse' sampling
         routines, conditional on the type of data object."""
@@ -282,7 +282,6 @@ class NeighborSampler(BaseSampler):
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        *args,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)

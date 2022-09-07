@@ -78,7 +78,6 @@ class BaseSampler(ABC):
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
-        *args,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         raise NotImplementedError
@@ -87,7 +86,6 @@ class BaseSampler(ABC):
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        *args,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         raise NotImplementedError
