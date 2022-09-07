@@ -68,6 +68,11 @@ class NeighborSampler(BaseSampler):
             assert input_type is not None
             self.input_type = input_type
 
+            # Obtain CSC representations for in-memory sampling:
+            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
+                                is_sorted=is_sorted)
+            colptr_dict, row_dict, perm_dict = out
+
             # Conversions to/from C++ string type:
             # Since C++ cannot take dictionaries with tuples as key as input,
             # edge type triplets need to be converted into single strings. This
@@ -77,11 +82,6 @@ class NeighborSampler(BaseSampler):
                 '__'.join(key): key
                 for key in self.edge_types
             }
-
-            # Obtain CSC representations for in-memory sampling:
-            out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
-                                is_sorted=is_sorted)
-            colptr_dict, row_dict, perm_dict = out
 
             # TODO(manan): drop remapping keys in perm_dict, so we can remove
             # this logic from NeighborLoader as well.
@@ -131,14 +131,14 @@ class NeighborSampler(BaseSampler):
             assert input_type is not None
             self.input_type = input_type
 
+            # Obtain CSC representations for in-memory sampling:
+            row_dict, colptr_dict, perm_dict = graph_store.csc()
+
             self.to_rel_type = {key: '__'.join(key) for key in self.edge_types}
             self.to_edge_type = {
                 '__'.join(key): key
                 for key in self.edge_types
             }
-
-            # Obtain CSC representations for in-memory sampling:
-            row_dict, colptr_dict, perm_dict = graph_store.csc()
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
