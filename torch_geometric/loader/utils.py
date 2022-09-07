@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 import torch
 from torch import Tensor
@@ -10,7 +10,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, OptTensor
+from torch_geometric.typing import OptTensor
 
 
 def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
@@ -24,12 +24,6 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
     return torch.index_select(value, dim, index, out=out)
-
-
-def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets need to be converted into single strings.
-    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -111,14 +105,13 @@ def filter_hetero_data(
                            node_dict[node_type])
 
     for edge_type in data.edge_types:
-        # TODO(manan): remove special handling of 'perm_dict':
         filter_edge_store_(
             data[edge_type],
             out[edge_type],
             row_dict[edge_type],
             col_dict[edge_type],
             edge_dict[edge_type],
-            perm_dict[edge_type_to_str(edge_type)],
+            perm_dict[edge_type],
         )
 
     return out

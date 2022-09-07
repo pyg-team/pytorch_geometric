@@ -108,13 +108,11 @@ class NeighborSampler(BaseSampler):
                 for key in self.edge_types
             }
 
-            # TODO(manan): drop remapping keys in perm_dict, so we can remove
-            # this logic from NeighborLoader as well.
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
-            self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
+            self.perm_dict = perm_dict
 
         # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
         # obtain edges from GraphStore and convert them to CSC if necessary,
@@ -166,9 +164,10 @@ class NeighborSampler(BaseSampler):
             }
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
-            self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
+            self.perm_dict = perm_dict, self.to_rel_type
+
         else:
             raise TypeError(
                 f'{self.__class__.__name__} found invalid type: {type(data)}')

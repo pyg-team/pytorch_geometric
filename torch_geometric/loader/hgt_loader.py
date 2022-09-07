@@ -135,7 +135,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.to_edge_type = {'__'.join(key): key for key in data.edge_types}
         self.row_dict = remap_keys(row_dict, self.to_rel_type)
         self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
-        self.perm_dict = remap_keys(perm_dict, self.to_rel_type)
+        self.perm_dict = perm_dict
 
         super().__init__(input_nodes[1].tolist(), collate_fn=self.collate_fn,
                          **kwargs)
