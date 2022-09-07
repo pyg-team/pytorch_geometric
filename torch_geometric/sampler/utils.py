@@ -142,3 +142,10 @@ def set_node_time_dict(
     update_time_(node_time_dict, edge_label_index[1], input_type[-1],
                  num_dst_nodes)
     return node_time_dict
+
+
+###############################################################################
+
+
+def remap_keys(original: Dict, mapping: Dict) -> Dict:
+    return {mapping[k]: v for k, v in original.items()}

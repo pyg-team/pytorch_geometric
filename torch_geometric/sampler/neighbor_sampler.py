@@ -15,6 +15,7 @@ from torch_geometric.sampler.base import (
 )
 from torch_geometric.sampler.utils import (
     add_negative_samples,
+    remap_keys,
     set_node_time_dict,
     to_csc,
     to_hetero_csc,
@@ -347,10 +348,3 @@ class NeighborSampler(BaseSampler):
                 edge=edge,
                 metadata=(edge_label_index, edge_label),
             )
-
-
-###############################################################################
-
-
-def remap_keys(original: Dict, mapping: Dict) -> Dict:
-    return {mapping[k]: v for k, v in original.items()}

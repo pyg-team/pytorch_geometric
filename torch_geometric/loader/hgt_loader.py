@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import filter_hetero_data
-from torch_geometric.sampler.utils import to_hetero_csc
+from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
 from torch_geometric.typing import NodeType
 
 
@@ -177,10 +177,3 @@ class HGTLoader(torch.utils.data.DataLoader):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
-
-
-###############################################################################
-
-
-def remap_keys(original: Dict, mapping: Dict) -> Dict:
-    return {mapping[k]: v for k, v in original.items()}
