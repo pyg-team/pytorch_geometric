@@ -3,17 +3,20 @@ from typing import Any, Dict, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
-    SamplerInput,
+    EdgeSamplerInput,
+    NodeSamplerInput,
     SamplerOutput,
 )
 from torch_geometric.sampler.utils import (
+    add_negative_samples,
     edge_type_from_str_dict,
     edge_type_to_str_dict,
+    set_node_time_dict,
     to_csc,
     to_hetero_csc,
 )
@@ -33,13 +36,32 @@ class NeighborSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
-        super().__init__(data)
+        super().__init__()
         self.data_cls = data.__class__ if isinstance(
             data, (Data, HeteroData)) else 'custom'
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
         self.node_time = None
+        self.input_type = input_type
+
+        # TODO if self.edge_time is not None and
+        # `src` or `dst` nodes don't have time attribute
+        # i.e node_time_dict[input_type[0/-1]] doesn't exist
+        # set it to largest representable torch.long.
+
+        # Set the number of source and destination nodes if we can, otherwise
+        # ignore:
+        self.num_src_nodes, self.num_dst_nodes = None, None
+        if self.data_cls != 'custom' and issubclass(self.data_cls, Data):
+            self.num_src_nodes = self.num_dst_nodes = data.num_nodes
+        elif isinstance(self.input_type, tuple):
+            if self.data_cls == 'custom':
+                out = remote_backend_utils.size(*data, self.input_type)
+                self.num_src_nodes, self.num_dst_nodes = out
+            else:  # issubclass(self.data_cls, HeteroData):
+                self.num_src_nodes = data[self.input_type[0]].num_nodes
+                self.num_dst_nodes = data[self.input_type[-1]].num_nodes
 
         # TODO Unify the following conditionals behind the `FeatureStore`
         # and `GraphStore` API:
@@ -138,6 +160,8 @@ class NeighborSampler(BaseSampler):
         # Add at least one element to the list to ensure `max` is well-defined
         self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
 
+    # In-memory sampling routines #############################################
+
     def _sparse_neighbor_sample(self, index: Tensor):
         fn = torch.ops.torch_sparse.neighbor_sample
         node, row, col, edge = fn(
@@ -192,9 +216,14 @@ class NeighborSampler(BaseSampler):
             )
         return node_dict, row_dict, col_dict, edge_dict
 
-    def sample(self, index: SamplerInput) -> SamplerOutput:
+    # Node-based sampling #####################################################
+
+    def sample_from_nodes(self, index: NodeSamplerInput) -> SamplerOutput:
         r"""Implements neighbor sampling by calling 'torch-sparse' sampling
         routines, conditional on the type of data object."""
+
+        if not isinstance(index, torch.LongTensor):
+            index = torch.LongTensor(index)
 
         # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
         # sampling:
@@ -223,3 +252,76 @@ class NeighborSampler(BaseSampler):
         else:
             raise TypeError(f'{self.__class__.__name__} found invalid type: '
                             f'{type(self.data_cls)}')
+
+    # Edge-based sampling #####################################################
+
+    def sample_from_edges(
+        self,
+        index: EdgeSamplerInput,
+        *args,
+        **kwargs,
+    ) -> SamplerOutput:
+        negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
+        query = [torch.stack(s, dim=0) for s in zip(*index)]
+        edge_label_index = torch.stack(query[:2], dim=0)
+        edge_label = query[2]
+        edge_label_time = query[3] if len(query) == 4 else None
+
+        out = add_negative_samples(edge_label_index, edge_label,
+                                   edge_label_time, self.num_src_nodes,
+                                   self.num_dst_nodes, negative_sampling_ratio)
+        edge_label_index, edge_label, edge_label_time = out
+
+        orig_edge_label_index = edge_label_index
+        if (self.data_cls == 'custom'
+                or issubclass(self.data_cls, HeteroData)):
+            if self.input_type[0] != self.input_type[-1]:
+                query_src = edge_label_index[0]
+                query_src, reverse_src = query_src.unique(return_inverse=True)
+                query_dst = edge_label_index[1]
+                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
+                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
+                query_node_dict = {
+                    self.input_type[0]: query_src,
+                    self.input_type[-1]: query_dst,
+                }
+            else:  # Merge both source and destination node indices:
+                query_nodes = edge_label_index.view(-1)
+                query_nodes, reverse = query_nodes.unique(return_inverse=True)
+                edge_label_index = reverse.view(2, -1)
+                query_node_dict = {self.input_type[0]: query_nodes}
+
+            node_time_dict = self.node_time_dict
+            if edge_label_time is not None:
+                node_time_dict = set_node_time_dict(
+                    node_time_dict, self.input_type, orig_edge_label_index,
+                    edge_label_time, self.num_src_nodes, self.num_dst_nodes)
+
+            out = self._hetero_sparse_neighbor_sample(
+                query_node_dict, node_time_dict=node_time_dict)
+
+            node, row, col, edge = out
+
+            # TODO(manan): clean up `input_size` overloading, here and
+            # elsewhere:
+            return SamplerOutput(
+                node=node,
+                row=edge_type_from_str_dict(row),
+                col=edge_type_from_str_dict(col),
+                edge=edge_type_from_str_dict(edge),
+                input_size=(edge_label_index, edge_label, edge_label_time),
+            )
+
+        elif issubclass(self.data_cls, Data):
+            query_nodes = edge_label_index.view(-1)
+            query_nodes, reverse = query_nodes.unique(return_inverse=True)
+            edge_label_index = reverse.view(2, -1)
+
+            node, row, col, edge = self._sparse_neighbor_sample(query_nodes)
+            return SamplerOutput(
+                node=node,
+                row=row,
+                col=col,
+                edge=edge,
+                input_size=(edge_label_index, edge_label),
+            )

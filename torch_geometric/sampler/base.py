@@ -1,15 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, NamedTuple, Tuple, Union
+from typing import Dict, NamedTuple, Union
 
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
-# An input to a sampler is either a list or tensor of node indices:
-SamplerInput = Union[List[int], torch.Tensor]
+# An input to a node-based sampler is a tensor of node indices:
+NodeSamplerInput = torch.Tensor
+
+# An input to an edge-based sampler consists of four tensors:
+#   * The row of the edge index in COO format
+#   * The column of the edge index in COO format
+#   * The labels of the edges
+#   * (Optionally) the time attribute corresponding to the edge label
+EdgeSamplerInput = Union[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 
 
 # A sampler output contains the following information.
@@ -42,21 +46,24 @@ class BaseSampler(ABC):
     routine that performs sampling on an input list or tensor of node indices.
     """
     @abstractmethod
-    def __init__(
-        self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        **kwargs,
-    ):
+    def __init__(self, *args, **kwargs):
         r"""Initializes a sampler with common data it will need to perform a
         `sample` call. Note that this data will be replicated across processes,
         so it is best to limit the amount of information stored here."""
         pass
 
-    @abstractmethod
-    def sample(self, index: SamplerInput, **kwargs) -> SamplerOutput:
-        pass
+    def sample_from_nodes(
+        self,
+        index: NodeSamplerInput,
+        *args,
+        **kwargs,
+    ) -> SamplerOutput:
+        raise NotImplementedError
 
-    def __call__(self, index: SamplerInput, **kwargs) -> SamplerOutput:
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
-        return self.sample(index, **kwargs)
+    def sample_from_edges(
+        self,
+        index: EdgeSamplerInput,
+        *args,
+        **kwargs,
+    ) -> SamplerOutput:
+        raise NotImplementedError
