@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, NamedTuple, Union, Any
+from typing import Any, Dict, NamedTuple, Union
 
 import torch
+
 from torch_geometric.typing import EdgeType, NodeType
 
 # An input to a sampler is a tensor of node indices:
