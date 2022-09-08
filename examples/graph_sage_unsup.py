@@ -1,14 +1,13 @@
 import os.path as osp
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
-from torch_geometric.nn import SAGEConv
+from torch_geometric.nn import GraphSAGE
 
 EPS = 1e-15
 
@@ -17,42 +16,17 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
-train_loader = LinkNeighborLoader(data, batch_size=256, shuffle=True,
-                                  neg_sampling_ratio=1.0,
-                                  num_neighbors=[10, 10])
-
-
-class SAGE(nn.Module):
-    def __init__(self, in_channels, hidden_channels, num_layers):
-        super().__init__()
-        self.num_layers = num_layers
-        self.convs = nn.ModuleList()
-        for i in range(num_layers):
-            in_channels = in_channels if i == 0 else hidden_channels
-            self.convs.append(SAGEConv(in_channels, hidden_channels))
-
-    def forward(self, data):
-
-        x, edge_index = data.x, data.edge_index
-        for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index)
-            if i != self.num_layers - 1:
-                x = x.relu()
-                x = F.dropout(x, p=0.5, training=self.training)
-        return x
-
-    def full_forward(self, x, edge_index):
-        for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
-            if i != self.num_layers - 1:
-                x = x.relu()
-                x = F.dropout(x, p=0.5, training=self.training)
-        return x
-
+train_loader = LinkNeighborLoader(
+    data,
+    batch_size=256,
+    shuffle=True,
+    neg_sampling_ratio=1.0,
+    num_neighbors=[10, 10],
+)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = SAGE(data.num_node_features, hidden_channels=64, num_layers=2)
-model = model.to(device)
+model = GraphSAGE(data.num_node_features, hidden_channels=64,
+                  num_layers=2).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 x, edge_index = data.x.to(device), data.edge_index.to(device)
 
@@ -65,16 +39,13 @@ def train():
 
         optimizer.zero_grad()
         h = model(batch)
-        src_nodes = batch.edge_label_index[0]
-        dst_nodes = batch.edge_label_index[1]
-        out = h[src_nodes] * h[dst_nodes]
-        loss = F.binary_cross_entropy_with_logits(out.sum(dim=-1),
-                                                  batch.edge_label)
-
+        h_src = h[batch.edge_label_index[0]]
+        h_dst = h[batch.edge_label_index[1]]
+        pred = (h_src * h_dst).sum(dim=-1)
+        loss = F.binary_cross_entropy_with_logits(pred, batch.edge_label)
         loss.backward()
         optimizer.step()
-
-        total_loss += float(loss) * out.size(0)
+        total_loss += float(loss) * pred.size(0)
 
     return total_loss / data.num_nodes
 
@@ -95,6 +66,6 @@ def test():
 
 for epoch in range(1, 51):
     loss = train()
-    val_acc, test_acc, _ = test()
+    val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
           f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
