@@ -88,7 +88,7 @@ def add_negative_samples(
     negative_sampling_ratio: float,
 ):
     """Add negative samples and their `edge_label` and `edge_time`
-    if `self.neg_sampling_ratio > 0`"""
+    if `neg_sampling_ratio > 0`"""
     num_pos_edges = edge_label_index.size(1)
     num_neg_edges = int(num_pos_edges * negative_sampling_ratio)
 

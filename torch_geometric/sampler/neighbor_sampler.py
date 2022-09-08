@@ -204,6 +204,8 @@ class NeighborSampler(BaseSampler):
         # self.num_neighbors = {}
         use_pyg_lib = len(self.num_neighbors) > 0 and _WITH_PYG_LIB
 
+        # TODO(manan): remote backends only support heterogeneous graphs for
+        # now:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if use_pyg_lib:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
@@ -214,7 +216,7 @@ class NeighborSampler(BaseSampler):
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    seed,  #{self.input_type: index},  # seed_dict
+                    seed,  # seed_dict
                     self.num_neighbors,
                     kwargs.get('node_time_dict', self.node_time_dict),
                     True,  # csc
@@ -229,14 +231,14 @@ class NeighborSampler(BaseSampler):
                     batch = {k: v[0] for k, v in node.items()}
                     node = {k: v[1] for k, v in node.items()}
 
-            else:  # _WITH_PYTORCH_SPARSE
+            else:
                 if self.node_time_dict is None:
                     out = torch.ops.torch_sparse.hetero_neighbor_sample(
                         self.node_types,
                         self.edge_types,
                         self.colptr_dict,
                         self.row_dict,
-                        seed,  #{self.input_type: index},  # seed
+                        seed,  # seed
                         self.num_neighbors,
                         self.num_hops,
                         self.replace,
@@ -249,7 +251,7 @@ class NeighborSampler(BaseSampler):
                         self.edge_types,
                         self.colptr_dict,
                         self.row_dict,
-                        seed,  #{self.input_type: index},  # seed_dict
+                        seed,  # seed_dict
                         self.num_neighbors,
                         kwargs.get('node_time_dict', self.node_time_dict),
                         self.num_hops,
@@ -264,7 +266,6 @@ class NeighborSampler(BaseSampler):
                 col=remap_keys(col, self.to_edge_type),
                 edge=remap_keys(edge, self.to_edge_type),
                 batch=batch,
-                #metadata=index.numel(),
             )
 
         if issubclass(self.data_cls, Data):
@@ -275,7 +276,7 @@ class NeighborSampler(BaseSampler):
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
                     self.row,
-                    seed,  #index,  # seed
+                    seed,  # seed
                     self.num_neighbors,
                     kwargs.get('node_time', self.node_time),
                     True,  # csc
@@ -288,14 +289,14 @@ class NeighborSampler(BaseSampler):
                 if disjoint:
                     batch, node = node.t().contiguous()
 
-            else:  # _WITH_PYTORCH_SPARSE
+            else:
                 if self.node_time is not None:
                     raise ValueError("'time_attr' not supported for "
                                      "neighbor sampling via 'torch-sparse'")
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,
-                    seed,  #index,  # seed
+                    seed,  # seed
                     self.num_neighbors,
                     self.replace,
                     self.directed,
@@ -308,7 +309,6 @@ class NeighborSampler(BaseSampler):
                 col=col,
                 edge=edge,
                 batch=batch,
-                #metadata=index.numel(),
             )
 
         raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -321,9 +321,8 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Implements neighbor sampling by calling 'torch-sparse' sampling
-        routines, conditional on the type of data object."""
-
+        r"""Samples from the nodes specified in 'index', using pyg-lib or
+        torch-sparse sampling routines that store the graph in memory."""
         if isinstance(index, (list, tuple)):
             index = torch.tensor(index)
 
@@ -350,6 +349,8 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        r"""Samples from the edges specified in 'index', using pyg-lib or
+        torch-sparse sampling routines that store the graph in memory."""
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
         query = [torch.stack(s, dim=0) for s in zip(*index)]
         edge_label_index = torch.stack(query[:2], dim=0)

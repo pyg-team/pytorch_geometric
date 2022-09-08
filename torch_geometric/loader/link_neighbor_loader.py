@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,6 +13,7 @@ from torch_geometric.loader.utils import (
     filter_hetero_data,
 )
 from torch_geometric.sampler import NeighborSampler
+from torch_geometric.sampler.base import EdgeSamplerInput
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
@@ -242,7 +243,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
-    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
+    def collate_fn(self, index: EdgeSamplerInput) -> Any:
         out = self.neighbor_sampler.sample_from_edges(
             index,
             negative_sampling_ratio=self.neg_sampling_ratio,

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 
@@ -77,6 +77,8 @@ class BaseSampler(ABC):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+        r"""Performs sampling from the nodes specified in 'index', returning
+        a sampled subgraph in the specified output format."""
         raise NotImplementedError
 
     @abstractmethod
@@ -85,4 +87,6 @@ class BaseSampler(ABC):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+        r"""Performs sampling from the edges specified in 'index', returning
+        a sampled subgraph in the specified output format."""
         raise NotImplementedError
