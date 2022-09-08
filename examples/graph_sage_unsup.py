@@ -9,8 +9,6 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
 
-EPS = 1e-15
-
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
@@ -36,9 +34,9 @@ def train():
 
     total_loss = 0
     for batch in train_loader:
-
+        batch = batch.to(device)
         optimizer.zero_grad()
-        h = model(batch)
+        h = model(batch.x, batch.edge_index)
         h_src = h[batch.edge_label_index[0]]
         h_dst = h[batch.edge_label_index[1]]
         pred = (h_src * h_dst).sum(dim=-1)
@@ -53,7 +51,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    out = model.full_forward(x, edge_index).cpu()
+    out = model(data.x.to(device), data.edge_index.to(device)).cpu()
 
     clf = LogisticRegression()
     clf.fit(out[data.train_mask], data.y[data.train_mask])
