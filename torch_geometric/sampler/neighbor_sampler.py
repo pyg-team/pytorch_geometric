@@ -238,7 +238,7 @@ class NeighborSampler(BaseSampler):
                         self.edge_types,
                         self.colptr_dict,
                         self.row_dict,
-                        seed,  # seed
+                        seed,  # seed_dict
                         self.num_neighbors,
                         self.num_hops,
                         self.replace,
@@ -312,7 +312,7 @@ class NeighborSampler(BaseSampler):
             )
 
         raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                        f"type: '{type(self.data_cls)}'")
+                        f"type: '{self.data_cls}'")
 
     # Node-based sampling #####################################################
 
@@ -337,8 +337,8 @@ class NeighborSampler(BaseSampler):
             output.metadata = index.numel()
 
         else:
-            raise TypeError(f'{self.__class__.__name__} found invalid type: '
-                            f'{type(self.data_cls)}')
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{self.data_cls}'")
 
         return output
 
@@ -400,7 +400,7 @@ class NeighborSampler(BaseSampler):
             output.metadata = (edge_label_index, edge_label)
 
         else:
-            raise TypeError(f'{self.__class__.__name__} found invalid type: '
-                            f'{type(self.data_cls)}')
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{self.data_cls}'")
 
         return output
