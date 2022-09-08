@@ -14,6 +14,7 @@ from torch_geometric.loader.utils import (
     filter_hetero_data,
 )
 from torch_geometric.sampler import NeighborSampler
+from torch_geometric.sampler.base import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputNodes, NumNeighbors
 
 
@@ -205,28 +206,33 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         super().__init__(input_nodes, collate_fn=self.collate_fn, **kwargs)
 
-    def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
+    def filter_fn(
+        self,
+        out: Union[SamplerOutput, HeteroSamplerOutput],
+    ) -> Union[Data, HeteroData]:
         # TODO(manan): remove special access of input_type and perm_dict here:
-        if isinstance(self.data, Data):
-            node, row, col, edge, batch_size = out
-            data = filter_data(self.data, node, row, col, edge,
+        if isinstance(out, SamplerOutput):
+            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.neighbor_sampler.perm)
-            data.batch_size = batch_size
+            data.batch = out.batch
+            data.batch_size = out.metadata
 
-        elif isinstance(self.data, HeteroData):
-            node_dict, row_dict, col_dict, edge_dict, batch_size = out
-            data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict,
-                                      self.neighbor_sampler.perm_dict)
-            data[self.neighbor_sampler.input_type].batch_size = batch_size
+        elif isinstance(out, HeteroSamplerOutput):
+            if isinstance(self.data, HeteroData):
+                data = filter_hetero_data(self.data, out.node, out.row,
+                                          out.col, out.edge,
+                                          self.neighbor_sampler.perm_dict)
+            else:  # Tuple[FeatureStore, GraphStore]
+                data = filter_custom_store(*self.data, out.node, out.row,
+                                           out.col, out.edge)
 
-        else:  # Tuple[FeatureStore, GraphStore]
-            # TODO support for feature stores with no edge types
-            node_dict, row_dict, col_dict, edge_dict, batch_size = out
-            feature_store, graph_store = self.data
-            data = filter_custom_store(feature_store, graph_store, node_dict,
-                                       row_dict, col_dict, edge_dict)
-            data[self.neighbor_sampler.input_type].batch_size = batch_size
+            for key, batch in (out.batch or {}).items():
+                data[key].batch = batch
+            data[self.neighbor_sampler.input_type].batch_size = out.metadata
+
+        else:
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)
 
