@@ -16,7 +16,7 @@ def transform_attrs(attrs: Optional[List[str]], store: BaseStorage,
     return tuple(filter(lambda s: s.endswith(suffix), store.keys()))
 
 
-def update_suffix(name, old_suffix, new_suffix):
+def update_suffix(name: str, old_suffix: str, new_suffix: str):
     if name.endswith(old_suffix):
         name = name[:-len(old_suffix)]
 
