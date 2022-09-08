@@ -148,8 +148,8 @@ class NeighborSampler(BaseSampler):
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
         else:
-            raise TypeError(
-                f'{self.__class__.__name__} found invalid type: {type(data)}')
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(data)}'")
 
     def _set_num_neighbors_and_num_hops(self, num_neighbors):
         if isinstance(num_neighbors, (list, tuple)):
@@ -260,8 +260,8 @@ class NeighborSampler(BaseSampler):
             return HeteroSamplerOutput(node, row, col, edge, batch,
                                        metadata=index.numel())
 
-        raise TypeError(f'{self.__class__.__name__} found invalid type: '
-                        f'{type(self.data_cls)}')
+        raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                        f"type: '{type(self.data_cls)}'")
 
 
 ###############################################################################
