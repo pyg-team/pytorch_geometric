@@ -16,7 +16,7 @@ from torch_geometric.typing import NumNeighbors
 
 try:
     import pyg_lib  # noqa
-    _WITH_PYG_LIB = False
+    _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
 
@@ -171,6 +171,8 @@ class NeighborSampler(BaseSampler):
         :obj:`data` object."""
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
+                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
+                # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time_dict is not None
                 out = torch.ops.pyg.hetero_neighbor_sample_cpu(
                     self.node_types,
@@ -226,6 +228,8 @@ class NeighborSampler(BaseSampler):
 
         if issubclass(self.data_cls, Data):
             if _WITH_PYG_LIB:
+                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
+                # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time is not None
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
