@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
@@ -17,7 +16,7 @@ from torch_geometric.typing import NumNeighbors
 
 try:
     import pyg_lib  # noqa
-    _WITH_PYG_LIB = True
+    _WITH_PYG_LIB = False
 except ImportError:
     _WITH_PYG_LIB = False
 
