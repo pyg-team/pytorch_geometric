@@ -414,7 +414,6 @@ def test_pyg_lib_homogeneous_neighbor_loader():
 
     seed = torch.arange(10)
 
-    # We can input CSC as well, but need to transpose the output as a result:
     sample = torch.ops.pyg.neighbor_sample
     out1 = sample(colptr, row, seed, [-1, -1], time=None, csc=True)
     sample = torch.ops.torch_sparse.neighbor_sample
@@ -454,7 +453,6 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
         'author__to__paper': [-1, -1],
     }
 
-    # We can input CSC as well, but need to transpose the output as a result:
     sample = torch.ops.pyg.hetero_neighbor_sample_cpu
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, None, True, False, True, False, True)
