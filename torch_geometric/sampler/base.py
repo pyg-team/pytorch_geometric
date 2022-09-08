@@ -1,15 +1,23 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, NamedTuple, Optional, Union
+from dataclasses import dataclass
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
-# An input to a sampler is a tensor of node indices:
-SamplerInput = torch.Tensor
+# An input to a node-based sampler is a tensor of node indices:
+NodeSamplerInput = torch.Tensor
+
+# An input to an edge-based sampler consists of four tensors:
+#   * The row of the edge index in COO format
+#   * The column of the edge index in COO format
+#   * The labels of the edges
+#   * (Optionally) the time attribute corresponding to the edge label
+EdgeSamplerInput = Tuple[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 
 
-# A sampler output contains the following information:
+# A sampler output contains the following information.
 #   * node: a tensor of output nodes resulting from sampling. In the
 #       heterogeneous case, this is a dictionary mapping node types to the
 #       associated output tensors.
@@ -28,7 +36,8 @@ SamplerInput = torch.Tensor
 #   * metadata: any additional metadata required by a loader using the sampler
 #       output.
 # There exist both homogeneous and heterogeneous versions.
-class SamplerOutput(NamedTuple):
+@dataclass
+class SamplerOutput:
     node: torch.Tensor
     row: torch.Tensor
     col: torch.Tensor
@@ -39,7 +48,8 @@ class SamplerOutput(NamedTuple):
     metadata: Optional[Any] = None
 
 
-class HeteroSamplerOutput(NamedTuple):
+@dataclass
+class HeteroSamplerOutput:
     node: Dict[NodeType, torch.Tensor]
     row: Dict[EdgeType, torch.Tensor]
     col: Dict[EdgeType, torch.Tensor]
@@ -62,18 +72,21 @@ class BaseSampler(ABC):
         information at `__init__`.
     """
     @abstractmethod
-    def sample(
+    def sample_from_nodes(
         self,
-        index: SamplerInput,
+        index: NodeSamplerInput,
         **kwargs,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        pass
+    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+        r"""Performs sampling from the nodes specified in 'index', returning
+        a sampled subgraph in the specified output format."""
+        raise NotImplementedError
 
-    def __call__(
+    @abstractmethod
+    def sample_from_edges(
         self,
-        index: SamplerInput,
+        index: EdgeSamplerInput,
         **kwargs,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
-        return self.sample(index, **kwargs)
+    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+        r"""Performs sampling from the edges specified in 'index', returning
+        a sampled subgraph in the specified output format."""
+        raise NotImplementedError

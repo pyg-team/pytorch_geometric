@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -14,7 +14,11 @@ from torch_geometric.loader.utils import (
     filter_hetero_data,
 )
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import HeteroSamplerOutput, SamplerOutput
+from torch_geometric.sampler.base import (
+    HeteroSamplerOutput,
+    NodeSamplerInput,
+    SamplerOutput,
+)
 from torch_geometric.typing import InputNodes, NumNeighbors
 
 
@@ -236,8 +240,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
-    def collate_fn(self, index: Union[List[int], Tensor]) -> Any:
-        out = self.neighbor_sampler(index)
+    def collate_fn(self, index: NodeSamplerInput) -> Any:
+        out = self.neighbor_sampler.sample_from_nodes(index)
         if self.filter_per_worker:
             # We execute `filter_fn` in the worker process.
             out = self.filter_fn(out)
