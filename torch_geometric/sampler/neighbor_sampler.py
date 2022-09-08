@@ -224,8 +224,14 @@ class NeighborSampler(BaseSampler):
                     )
                 node, row, col, edge, batch = out + (None, )
 
-            return HeteroSamplerOutput(node, row, col, edge, batch,
-                                       metadata=index.numel())
+            return HeteroSamplerOutput(
+                node=node,
+                row=remap_keys(row, self.to_edge_type),
+                col=remap_keys(col, self.to_edge_type),
+                edge=remap_keys(edge, self.to_edge_type),
+                batch=batch,
+                metadata=index.numel(),
+            )
 
         if issubclass(self.data_cls, Data):
             if _WITH_PYG_LIB:
@@ -262,8 +268,14 @@ class NeighborSampler(BaseSampler):
                 )
                 node, row, col, edge, batch = out + (None, )
 
-            return SamplerOutput(node, row, col, edge, batch,
-                                 metadata=index.numel())
+            return SamplerOutput(
+                node=node,
+                row=row,
+                col=col,
+                edge=edge,
+                batch=batch,
+                metadata=index.numel(),
+            )
 
         raise TypeError(f"'{self.__class__.__name__}'' found invalid "
                         f"type: '{type(self.data_cls)}'")
