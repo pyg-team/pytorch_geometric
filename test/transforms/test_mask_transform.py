@@ -23,6 +23,8 @@ def test_index_to_mask():
         assert out[attr].numel() == 20
 
     out = IndexToMask(sizes=30)(data.clone())
+    assert len(out) == len(data) + 3
+
     for attr in ["train_mask", "val_mask", "test_mask"]:
         assert hasattr(out, attr)
         assert out[attr].numel() == 30
@@ -53,14 +55,18 @@ def test_mask_to_index():
 
     out = MaskToIndex()(data.clone())
     assert len(out) == len(data) + 3
-    assert hasattr(out, "train_idx")
-    assert hasattr(out, "val_idx")
-    assert hasattr(out, "test_idx")
+
+    for attr in ["train_idx", "val_idx", "test_idx"]:
+        assert hasattr(out, attr)
+        assert out[attr].dtype == torch.long
 
     out = MaskToIndex(attrs="train_mask")(data.clone())
     assert len(out) == len(data) + 1
+    assert hasattr(out, "train_idx")
     assert out.train_idx.numel() == 3
+    assert out.train_idx.dtype == torch.long
 
     out = MaskToIndex(replace=True)(data.clone())
     assert len(out) == len(data)
+    assert out.train_mask.numel() == 3
     assert out.train_mask.dtype == torch.long
