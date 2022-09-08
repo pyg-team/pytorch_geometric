@@ -16,7 +16,7 @@ from torch_geometric.typing import NumNeighbors
 
 try:
     import pyg_lib  # noqa
-    _WITH_PYG_LIB = False
+    _WITH_PYG_LIB = False  # TODO: Set to `True` once all tests pass.
 except ImportError:
     _WITH_PYG_LIB = False
 
