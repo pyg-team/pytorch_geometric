@@ -291,7 +291,6 @@ def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-"""
 def test_homogeneous_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         Data(num_nodes=100),
@@ -323,4 +322,3 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
             'paper', 'paper'].edge_label_index.unique().numel()
-"""

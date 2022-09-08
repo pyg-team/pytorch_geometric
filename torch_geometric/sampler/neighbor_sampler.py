@@ -199,8 +199,13 @@ class NeighborSampler(BaseSampler):
         Note that the 'metadata' field of the output is not filled; it is the
         job of the caller to appropriately fill out this field for downstream
         loaders."""
+
+        # TODO(manan, matthias): support pyg-lib sampling routines for
+        # self.num_neighbors = {}
+        use_pyg_lib = len(self.num_neighbors) > 0 and _WITH_PYG_LIB
+
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            if _WITH_PYG_LIB:
+            if use_pyg_lib:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time_dict is not None
@@ -263,7 +268,7 @@ class NeighborSampler(BaseSampler):
             )
 
         if issubclass(self.data_cls, Data):
-            if _WITH_PYG_LIB:
+            if use_pyg_lib:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time is not None
