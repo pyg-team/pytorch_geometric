@@ -17,23 +17,27 @@ def test_index_to_mask():
 
     out = IndexToMask()(data.clone())
     assert len(out) == len(data) + 3
-    assert hasattr(out, "train_mask")
-    assert hasattr(out, "val_mask")
-    assert hasattr(out, "test_mask")
+
+    for attr in ["train_mask", "val_mask", "test_mask"]:
+        assert hasattr(out, attr)
+        assert out[attr].numel() == 20
 
     out = IndexToMask(sizes=30)(data.clone())
-    assert out.train_mask.numel() == 30
-    assert out.val_mask.numel() == 30
-    assert out.test_mask.numel() == 30
+    for attr in ["train_mask", "val_mask", "test_mask"]:
+        assert hasattr(out, attr)
+        assert out[attr].numel() == 30
 
     out = IndexToMask(replace=True)(data.clone())
     assert len(out) == len(data)
-    assert out.train_idx.dtype == torch.bool
-    assert out.val_idx.dtype == torch.bool
-    assert out.test_idx.dtype == torch.bool
+
+    for attr in ["train_idx", "val_idx", "test_idx"]:
+        assert out[attr].numel() == 20
+        assert out[attr].dtype == torch.bool
 
     out = IndexToMask(attrs="train_idx")(data.clone())
     assert len(out) == len(data) + 1
+    assert hasattr(out, "train_mask")
+    assert out.train_mask.numel() == 20
 
     with pytest.raises(ValueError):
         IndexToMask(sizes=(1, 2))(data)
