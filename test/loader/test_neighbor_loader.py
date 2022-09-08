@@ -403,3 +403,74 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
     for batch1, batch2 in zip(loader1, loader2):
         assert torch.equal(batch1['paper'].time, batch2['paper'].time)
+
+
+@withPackage('pyg_lib')
+def test_pyg_lib_homogeneous_neighbor_loader():
+    import pyg_lib  # noqa
+
+    adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
+    colptr, row, _ = adj.csc()
+
+    seed = torch.arange(10)
+
+    sample = torch.ops.pyg.neighbor_sample
+    out1 = sample(colptr, row, seed, [-1, -1], time=None, csc=True)
+    sample = torch.ops.torch_sparse.neighbor_sample
+    out2 = sample(colptr, row, seed, [-1, -1], False, True)
+
+    row1, col1, node_id1, edge_id1 = out1
+    node_id2, row2, col2, edge_id2 = out2
+    assert torch.equal(node_id1, node_id2)
+    assert torch.equal(row1, row2)
+    assert torch.equal(col1, col2)
+    assert torch.equal(edge_id1, edge_id2)
+
+
+@withPackage('pyg_lib')
+def test_pyg_lib_heterogeneous_neighbor_loader():
+    import pyg_lib  # noqa
+
+    adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
+    colptr1, row1, _ = adj1.csc()
+
+    adj2 = SparseTensor.from_edge_index(get_edge_index(10, 20, 50))
+    colptr2, row2, _ = adj2.csc()
+
+    node_types = ['paper', 'author']
+    edge_types = [('paper', 'to', 'author'), ('author', 'to', 'paper')]
+    colptr_dict = {
+        'paper__to__author': colptr1,
+        'author__to__paper': colptr2,
+    }
+    row_dict = {
+        'paper__to__author': row1,
+        'author__to__paper': row2,
+    }
+    seed_dict = {'paper': torch.arange(1)}
+    num_neighbors_dict = {
+        'paper__to__author': [-1, -1],
+        'author__to__paper': [-1, -1],
+    }
+
+    sample = torch.ops.pyg.hetero_neighbor_sample_cpu
+    out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
+                  num_neighbors_dict, None, True, False, True, False, True)
+    sample = torch.ops.torch_sparse.hetero_neighbor_sample
+    out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
+                  num_neighbors_dict, 2, False, True)
+
+    row1_dict, col1_dict, node_id1_dict, edge_id1_dict = out1
+    node_id2_dict, row2_dict, col2_dict, edge_id2_dict = out2
+    assert len(node_id1_dict) == len(node_id2_dict)
+    for key in node_id1_dict.keys():
+        assert torch.equal(node_id1_dict[key], node_id2_dict[key])
+    assert len(row1_dict) == len(row2_dict)
+    for key in row1_dict.keys():
+        assert torch.equal(row1_dict[key], row2_dict[key])
+    assert len(col1_dict) == len(col2_dict)
+    for key in col1_dict.keys():
+        assert torch.equal(col1_dict[key], col2_dict[key])
+    assert len(edge_id1_dict) == len(edge_id2_dict)
+    for key in edge_id1_dict.keys():
+        assert torch.equal(edge_id1_dict[key], edge_id2_dict[key])

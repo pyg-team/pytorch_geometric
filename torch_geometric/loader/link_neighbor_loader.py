@@ -9,15 +9,17 @@ from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.neighbor_loader import NeighborSampler
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
     filter_hetero_data,
 )
+from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
+# TODO(manan) clean this up, align with NeighborSampler interface and
+# implementation:
 class LinkNeighborSampler(NeighborSampler):
     def __init__(
         self,
@@ -92,6 +94,10 @@ class LinkNeighborSampler(NeighborSampler):
         update_time_(node_time_dict, edge_label_index[1], self.input_type[-1],
                      self.num_dst_nodes)
         return node_time_dict
+
+    def sample(self, index):
+        # TODO(manan): remove after proper integration with interface
+        pass
 
     def __call__(self, query: List[Tuple[Tensor]]):
         query = [torch.stack(s, dim=0) for s in zip(*query)]
