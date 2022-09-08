@@ -77,10 +77,8 @@ class MaskToIndex(BaseTransform):
         attrs = self.attrs if self.attrs else attrs_ends_with(data, suffix)
 
         for mask_attr in attrs:
-            mask = getattr(data, mask_attr)
-            index = mask_to_index(mask)
-            new_attr = update_suffix(mask_attr, suffix, "_indices")
-            setattr(data, new_attr, index)
+            index = mask_to_index(data[mask_attr])
+            data[update_suffix(mask_attr, suffix, "_indices")] = index
 
         return data
 
