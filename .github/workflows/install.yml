@@ -1,4 +1,4 @@
-name: Minimal Installation
+name: Testing Minimal Installation
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -44,3 +44,7 @@ jobs:
           python -c "import torch_geometric.datasets"
           python -c "import torch_geometric.nn"
           python -c "import torch_geometric.graphgym"
+
+      - name: Run tests
+        run: |
+          pytest
