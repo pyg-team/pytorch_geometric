@@ -213,18 +213,16 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
 
     def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
         if isinstance(self.data, Data):
-            (node, row, col, edge, metadata) = out
-            edge_label_index, edge_label = metadata
-            data = filter_data(self.data, node, row, col, edge,
+            edge_label_index, edge_label = out.metadata
+            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.neighbor_sampler.perm)
             data.edge_label_index = edge_label_index
             data.edge_label = edge_label
 
         elif isinstance(self.data, HeteroData):
-            (node_dict, row_dict, col_dict, edge_dict, metadata) = out
-            edge_label_index, edge_label, edge_label_time = metadata
-            data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict,
+            edge_label_index, edge_label, edge_label_time = out.metadata
+            data = filter_hetero_data(self.data, out.node, out.row, out.col,
+                                      out.edge,
                                       self.neighbor_sampler.perm_dict)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
@@ -232,11 +230,10 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             if edge_label_time is not None:
                 data[edge_type].edge_label_time = edge_label_time
         else:
-            (node_dict, row_dict, col_dict, edge_dict, metadata) = out
-            edge_label_index, edge_label, edge_label_time = metadata
+            edge_label_index, edge_label, edge_label_time = out.metadata
             feature_store, graph_store = self.data
-            data = filter_custom_store(feature_store, graph_store, node_dict,
-                                       row_dict, col_dict, edge_dict)
+            data = filter_custom_store(feature_store, graph_store, out.node,
+                                       out.row, out.col, out.edge)
             edge_type = self.neighbor_sampler.input_type
             data[edge_type].edge_label_index = edge_label_index
             data[edge_type].edge_label = edge_label
