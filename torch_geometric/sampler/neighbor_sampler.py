@@ -165,6 +165,7 @@ class NeighborSampler(BaseSampler):
     def sample(
         self,
         index: SamplerInput,
+        **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling :obj:`pyg-lib` or
         :obj:`torch-sparse` sampling routines, conditional on the type of
@@ -181,7 +182,7 @@ class NeighborSampler(BaseSampler):
                     self.row_dict,
                     {self.input_type: index},  # seed_dict
                     self.num_neighbors,
-                    self.node_time_dict,
+                    kwargs.get('node_time_dict', self.node_time_dict),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -216,7 +217,7 @@ class NeighborSampler(BaseSampler):
                         self.row_dict,
                         {self.input_type: index},  # seed_dict
                         self.num_neighbors,
-                        self.node_time_dict,
+                        kwargs.get('node_time_dict', self.node_time_dict),
                         self.num_hops,
                         self.replace,
                         self.directed,
@@ -236,7 +237,7 @@ class NeighborSampler(BaseSampler):
                     self.row,
                     index,  # seed
                     self.num_neighbors,
-                    self.node_time,
+                    kwargs.get('node_time', self.node_time),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -266,6 +267,62 @@ class NeighborSampler(BaseSampler):
 
         raise TypeError(f"'{self.__class__.__name__}'' found invalid "
                         f"type: '{type(self.data_cls)}'")
+
+    # TODO Remove once better link prediction sample support lands ############
+
+    def _sparse_neighbor_sample(self, index: torch.Tensor):
+        fn = torch.ops.torch_sparse.neighbor_sample
+        node, row, col, edge = fn(
+            self.colptr,
+            self.row,
+            index,
+            self.num_neighbors,
+            self.replace,
+            self.directed,
+        )
+        return node, row, col, edge
+
+    def _hetero_sparse_neighbor_sample(
+        self,
+        index_dict: Dict[str, torch.Tensor],
+        **kwargs,
+    ):
+        if self.node_time_dict is None:
+            fn = torch.ops.torch_sparse.hetero_neighbor_sample
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        else:
+            try:
+                fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
+            except RuntimeError as e:
+                raise RuntimeError(
+                    "The 'torch_sparse' operator "
+                    "'hetero_temporal_neighbor_sample' was not "
+                    "found. Please upgrade your 'torch_sparse' installation "
+                    "to 0.6.15 or greater to use this feature.") from e
+
+            node_dict, row_dict, col_dict, edge_dict = fn(
+                self.node_types,
+                self.edge_types,
+                self.colptr_dict,
+                self.row_dict,
+                index_dict,
+                self.num_neighbors,
+                kwargs.get('node_time_dict', self.node_time_dict),
+                self.num_hops,
+                self.replace,
+                self.directed,
+            )
+        return node_dict, row_dict, col_dict, edge_dict
 
 
 ###############################################################################
