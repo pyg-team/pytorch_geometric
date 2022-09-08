@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, NamedTuple, Union
+from typing import Any, Dict, NamedTuple, Optional, Union
 
 import torch
 
@@ -33,13 +33,10 @@ class SamplerOutput(NamedTuple):
     row: torch.Tensor
     col: torch.Tensor
     edge: torch.Tensor
-
+    batch: Optional[torch.Tensor] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
-    metadata: Any
-
-    # TODO(manan): include a 'batch' attribute that assigns each node to an
-    # example; this is necessary for integration with pyg-lib
+    metadata: Optional[Any] = None
 
 
 class HeteroSamplerOutput(NamedTuple):
@@ -47,13 +44,10 @@ class HeteroSamplerOutput(NamedTuple):
     row: Dict[EdgeType, torch.Tensor]
     col: Dict[EdgeType, torch.Tensor]
     edge: Dict[EdgeType, torch.Tensor]
-
+    batch: Optional[Dict[NodeType, torch.Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
-    metadata: Any
-
-    # TODO(manan): include a 'batch' attribute that assigns each node to an
-    # example; this is necessary for integration with pyg-lib
+    metadata: Optional[Any] = None
 
 
 class BaseSampler(ABC):
