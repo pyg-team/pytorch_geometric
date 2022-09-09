@@ -10,8 +10,8 @@ from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
     filter_hetero_data,
+    get_edge_label_index,
 )
-from torch_geometric.sampler import NeighborSampler
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -162,56 +162,3 @@ class Dataset(torch.utils.data.Dataset):
 
     def __len__(self) -> int:
         return self.edge_label_index.size(1)
-
-
-def get_edge_label_index(
-    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-    edge_label_index: InputEdges,
-) -> Tuple[Optional[str], torch.Tensor]:
-    edge_type = None
-    if isinstance(data, Data):
-        if edge_label_index is None:
-            return None, data.edge_index
-        return None, edge_label_index
-
-    assert edge_label_index is not None
-    assert isinstance(edge_label_index, (list, tuple))
-
-    if isinstance(data, HeteroData):
-        if isinstance(edge_label_index[0], str):
-            edge_type = edge_label_index
-            edge_type = data._to_canonical(*edge_type)
-            assert edge_type in data.edge_types
-            return edge_type, data[edge_type].edge_index
-
-        assert len(edge_label_index) == 2
-
-        edge_type, edge_label_index = edge_label_index
-        edge_type = data._to_canonical(*edge_type)
-
-        if edge_label_index is None:
-            return edge_type, data[edge_type].edge_index
-
-        return edge_type, edge_label_index
-
-    else:  # Tuple[FeatureStore, GraphStore]
-        _, graph_store = data
-
-        # Need the edge index in COO for LinkNeighborLoader:
-        def _get_edge_index(edge_type):
-            row_dict, col_dict, _ = graph_store.coo([edge_type])
-            row = list(row_dict.values())[0]
-            col = list(col_dict.values())[0]
-            return torch.stack((row, col), dim=0)
-
-        if isinstance(edge_label_index[0], str):
-            edge_type = edge_label_index
-            return edge_type, _get_edge_index(edge_type)
-
-        assert len(edge_label_index) == 2
-        edge_type, edge_label_index = edge_label_index
-
-        if edge_label_index is None:
-            return edge_type, _get_edge_index(edge_type)
-
-        return edge_type, edge_label_index
