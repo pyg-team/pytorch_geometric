@@ -1,7 +1,7 @@
 import copy
 import math
-from typing import Dict, Optional, Union, Tuple
 from collections.abc import Sequence
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor

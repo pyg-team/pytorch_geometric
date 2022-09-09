@@ -4,9 +4,9 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputNodes, NumNeighbors
-from torch_geometric.loader.utils import get_input_nodes
 
 
 class NeighborLoader(NodeLoader):
