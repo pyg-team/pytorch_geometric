@@ -90,3 +90,10 @@ class BaseSampler(ABC):
         r"""Performs sampling from the edges specified in 'index', returning
         a sampled subgraph in the specified output format."""
         raise NotImplementedError
+
+    # TODO
+    def get_input_type(self) -> Optional[Union[NodeType, EdgeType]]:
+        r"""Returns the input type of a sampler, which is either None for
+        homogeneous graphs, a node type for node-based sampling, or an edge
+        type for edge-based sampling."""
+        raise NotImplementedError
