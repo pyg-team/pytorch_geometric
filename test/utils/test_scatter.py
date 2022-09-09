@@ -33,7 +33,7 @@ def test_pytorch_scatter_backward(reduce):
 
 
 @withPackage('torch>=1.12.0')
-@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
+@pytest.mark.parametrize('reduce', ['min', 'max'])
 def test_pytorch_scatter_inplace_backward(reduce):
     torch.manual_seed(12345)
 
