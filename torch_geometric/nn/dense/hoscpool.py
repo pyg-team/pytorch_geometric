@@ -8,7 +8,7 @@ def dense_hoscpool(
 ):
     r"""The highe-order pooling operator (HoscPool) from the paper 
     `"Higher-order clustering and pooling for Graph Neural Networks"
-    <https://arxiv.org/abs/1907.00481>`_. Based on motif spectral clustering, 
+    <http://arxiv.org/abs/2209.03473>`_. Based on motif spectral clustering, 
     it captures and combines different levels of higher-order connectivity 
     patterns when coarsening the graph.
 
