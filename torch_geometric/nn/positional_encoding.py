@@ -17,8 +17,13 @@ class PositionalEncoding1D(torch.nn.Module):
         mode (str, optional): The mode to use for positonal encoding
             (:obj:`"sin"`, :obj:`"learn"`). (default: :obj:`sin`)
     """
-    def __init__(self, out_channels: int, max_position: Optional[int] = None,
-                 base_freq: float = 1e-4, mode: str = "sin"):
+    def __init__(
+        self,
+        out_channels: int,
+        max_position: Optional[int] = None,
+        base_freq: Optional[float] = 1e-4,
+        mode: Optional[str] = "sin",
+    ):
         super().__init__()
 
         self.mode = mode
