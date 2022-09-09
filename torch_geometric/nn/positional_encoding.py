@@ -13,7 +13,11 @@ class PositionalEncoding1D(torch.nn.Module):
         max_position (int, optional): Maximum value of positions for
             :obj:`"learn"` mode. (default: :obj:`None`)
         base_freq (float, optional): The base frequncy of sinusoidal functions
-            for `sin` mode. (default: :obj:`1e-4`)
+            for :obj:`"sin"` mode. (default: :obj:`1e-4`)
+        granularity (float, optional): The granularity of the positions for
+            :obj:`"sin"` mode. If set to smaller, the :obj:`"sin"` encoder
+            will capturing more fine-grained changes in position.
+            (default: :obj:`1.0`)
         mode (str, optional): The mode to use for positonal encoding
             (:obj:`"sin"`, :obj:`"learn"`). (default: :obj:`sin`)
     """
@@ -22,6 +26,7 @@ class PositionalEncoding1D(torch.nn.Module):
         out_channels: int,
         max_position: Optional[int] = None,
         base_freq: Optional[float] = 1e-4,
+        granularity: Optional[float] = 1.0,
         mode: Optional[str] = "sin",
     ):
         super().__init__()
@@ -38,6 +43,7 @@ class PositionalEncoding1D(torch.nn.Module):
 
             self.frequency = torch.logspace(0, 1, steps=out_channels // 2,
                                             base=base_freq)
+            self.granularity = granularity
 
         if self.mode == "learn":
             if max_position is None:
@@ -54,7 +60,7 @@ class PositionalEncoding1D(torch.nn.Module):
             (position.size(0), self.out_channels),
             device=position.device,
         )
-        x = position.unsqueeze(1) * self.frequency
+        x = (position / self.granularity).unsqueeze(1) * self.frequency
         position_encoding[:, 0::2] = torch.sin(x)
         position_encoding[:, 1::2] = torch.cos(x)
         return position_encoding
