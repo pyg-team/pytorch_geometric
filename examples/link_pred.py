@@ -69,22 +69,21 @@ def train():
     loss = criterion(out, edge_label)
     loss.backward()
     optimizer.step()
-    return loss
+    return loss, z
 
 
 @torch.no_grad()
-def test(data):
+def test(data, z):
     model.eval()
-    z = model.encode(data.x, data.edge_index)
     out = model.decode(z, data.edge_label_index).view(-1).sigmoid()
     return roc_auc_score(data.edge_label.cpu().numpy(), out.cpu().numpy())
 
 
 best_val_auc = final_test_auc = 0
 for epoch in range(1, 101):
-    loss = train()
-    val_auc = test(val_data)
-    test_auc = test(test_data)
+    loss, z = train()
+    val_auc = test(val_data, z)
+    test_auc = test(test_data, z)
     if val_auc > best_val_auc:
         best_val_auc = val_auc
         final_test_auc = test_auc
@@ -93,5 +92,4 @@ for epoch in range(1, 101):
 
 print(f'Final Test: {final_test_auc:.4f}')
 
-z = model.encode(test_data.x, test_data.edge_index)
 final_edge_index = model.decode_all(z)
