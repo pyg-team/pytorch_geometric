@@ -1,6 +1,6 @@
 from .data_parallel import DataParallel
 from .meta import MetaLayer
-from .position_encoding import PositionEncoding1D
+from .positional_encoding import PositionalEncoding1D
 from .reshape import Reshape
 from .sequential import Sequential
 from .to_hetero_transformer import to_hetero
@@ -23,5 +23,5 @@ __all__ = [
     'DataParallel',
     'to_hetero',
     'to_hetero_with_bases',
-    'PositionEncoding1D',
+    'PositionalEncoding1D',
 ]
