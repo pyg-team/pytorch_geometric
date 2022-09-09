@@ -3,7 +3,6 @@ import argparse
 import torch
 from utils import get_dataset, get_model
 
-from torch_geometric import set_experimental_mode
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -99,13 +98,12 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         with amp:
-                            with set_experimental_mode(args.experimental_mode):
-                                for _ in range(args.warmup):
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                                with timeit():
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                            for _ in range(args.warmup):
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                            with timeit():
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
 
                             if args.profile:
                                 with torch_profile():
@@ -143,8 +141,6 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=0, type=int)
-    argparser.add_argument('--experimental-mode', action='store_true',
-                           help='use experimental mode')
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
