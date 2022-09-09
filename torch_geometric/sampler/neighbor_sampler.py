@@ -200,14 +200,10 @@ class NeighborSampler(BaseSampler):
         job of the caller to appropriately fill out this field for downstream
         loaders."""
 
-        # TODO(manan, matthias): support pyg-lib sampling routines for
-        # self.num_neighbors = {}
-        use_pyg_lib = len(self.num_neighbors) > 0 and _WITH_PYG_LIB
-
         # TODO(manan): remote backends only support heterogeneous graphs for
         # now:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            if use_pyg_lib:
+            if _WITH_PYG_LIB:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time_dict is not None
@@ -269,7 +265,7 @@ class NeighborSampler(BaseSampler):
             )
 
         if issubclass(self.data_cls, Data):
-            if use_pyg_lib:
+            if _WITH_PYG_LIB:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time is not None
