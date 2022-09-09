@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Changed tests relying on `dblp` datasets to instead use  synthetic data ([#5250](https://github.com/pyg-team/pytorch_geometric/pull/5250))
 - Fixed a bug for the initialization of activation function examples in `custom_graphgym` ([#5243](https://github.com/pyg-team/pytorch_geometric/pull/5243))
 - Allow any integer tensors when checking edge_index input to message passing ([5281](https://github.com/pyg-team/pytorch_geometric/pull/5281))
+- Fixed `link_pred.py` to use node embedding from training in `test()` and add negative sampling into `test()`([#5393](https://github.com/pyg-team/pytorch_geometric/pull/5393))
 ### Removed
 
 ## [2.1.0] - 2022-08-17
