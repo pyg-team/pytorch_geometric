@@ -9,7 +9,7 @@ class PositionalEncoding1D(torch.nn.Module):
     <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
     """
     def __init__(self, out_channels: int, max_position: Optional[int] = None,
-                 max_inv_freq: int = 10000., mode: str = "sin"):
+                 base_freq: float = 1e-4, mode: str = "sin"):
         super().__init__()
 
         self.mode = mode
@@ -22,8 +22,8 @@ class PositionalEncoding1D(torch.nn.Module):
                     "Cannot use sinusoidal positional encoding with "
                     f"odd `out_channles`(got {out_channels}).")
 
-            self.frequency = 1.0 / (max_inv_freq**(torch.arange(
-                0, out_channels, 2, dtype=torch.float) / out_channels))
+            self.frequency = torch.logspace(0, 1, steps=out_channels // 2,
+                                            base=base_freq)
 
         if self.mode == "learn":
             if max_position is None:
