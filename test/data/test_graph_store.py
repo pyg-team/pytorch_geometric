@@ -63,10 +63,8 @@ def test_graph_store_conversion():
     # Put all edge indices:
     graph_store.put_edge_index(edge_index=coo, edge_type=('v', '1', 'v'),
                                layout='coo', size=(100, 100), is_sorted=True)
-
     graph_store.put_edge_index(edge_index=csr, edge_type=('v', '2', 'v'),
                                layout='csr', size=(100, 100))
-
     graph_store.put_edge_index(edge_index=csc, edge_type=('v', '3', 'v'),
                                layout='csc', size=(100, 100))
 

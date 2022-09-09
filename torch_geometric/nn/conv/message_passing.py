@@ -183,9 +183,11 @@ class MessagePassing(torch.nn.Module):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
-            if not edge_index.dtype == torch.long:
-                raise ValueError(f"Expected 'edge_index' to be of type "
-                                 f"'torch.long' (got '{edge_index.dtype}')")
+            int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
+
+            if edge_index.dtype not in int_dtypes:
+                raise ValueError(f"Expected 'edge_index' to be of integer "
+                                 f"type (got '{edge_index.dtype}')")
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
@@ -211,7 +213,7 @@ class MessagePassing(torch.nn.Module):
             return the_size
 
         raise ValueError(
-            ('`MessagePassing.propagate` only supports `torch.LongTensor` of '
+            ('`MessagePassing.propagate` only supports integer tensors of '
              'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
              'argument `edge_index`.'))
 
@@ -225,9 +227,38 @@ class MessagePassing(torch.nn.Module):
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
     def __lift__(self, src, edge_index, dim):
-        if isinstance(edge_index, (Tensor, ProxyTensor)):
-            index = edge_index[dim]
-            return src.index_select(self.node_dim, index)
+        if isinstance(edge_index, Tensor):
+            try:
+                index = edge_index[dim]
+                return src.index_select(self.node_dim, index)
+            except (IndexError, RuntimeError) as e:
+                if 'CUDA' in str(e):
+                    raise ValueError(
+                        f"Encountered a CUDA error. Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices "
+                        f"in the interval [0, {src.size(self.node_dim)}) in "
+                        f"your node feature matrix and try again.")
+
+                if index.numel() > 0 and index.min() < 0:
+                    raise ValueError(
+                        f"Found negative indices in 'edge_index' (got "
+                        f"{index.min().item()}). Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices "
+                        f"in the interval [0, {src.size(self.node_dim)}) in "
+                        f"your node feature matrix and try again.")
+
+                if (index.numel() > 0
+                        and index.max() >= src.size(self.node_dim)):
+                    raise ValueError(
+                        f"Found indices in 'edge_index' that are larger "
+                        f"than {src.size(self.node_dim) - 1} (got "
+                        f"{index.max().item()}). Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices "
+                        f"in the interval [0, {src.size(self.node_dim)}) in "
+                        f"your node feature matrix and try again.")
+
+                raise e
+
         elif isinstance(edge_index, SparseTensor):
             if dim == 1:
                 rowptr = edge_index.storage.rowptr()
@@ -236,7 +267,11 @@ class MessagePassing(torch.nn.Module):
             elif dim == 0:
                 col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
-        raise ValueError
+
+        raise ValueError(
+            ('`MessagePassing.propagate` only supports integer tensors of '
+             'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
+             'argument `edge_index`.'))
 
     def __collect__(self, args, edge_index, size, kwargs):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
@@ -261,7 +296,7 @@ class MessagePassing(torch.nn.Module):
 
                 out[arg] = data
 
-        if isinstance(edge_index, (Tensor, ProxyTensor)):
+        if isinstance(edge_index, Tensor):
             out['adj_t'] = None
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
@@ -794,7 +829,6 @@ class MessagePassing(torch.nn.Module):
             edge_updater_types=edge_updater_types,
             edge_updater_return_type=edge_updater_return_type,
             check_input=inspect.getsource(self.__check_input__)[:-1],
-            lift=inspect.getsource(self.__lift__)[:-1],
         )
         # Instantiate a class from the rendered JIT module representation.
         cls = class_from_module_repr(cls_name, jit_module_repr)

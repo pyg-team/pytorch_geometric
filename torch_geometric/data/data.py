@@ -337,7 +337,7 @@ class DataEdgeAttr(EdgeAttr):
     `edge_type`."""
     def __init__(
         self,
-        layout: EdgeLayout,
+        layout: Optional[EdgeLayout] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
         edge_type: EdgeType = None,

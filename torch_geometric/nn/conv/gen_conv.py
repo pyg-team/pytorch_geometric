@@ -162,7 +162,7 @@ class GENConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out += x_r
+            out = out + x_r
 
         return self.mlp(out)
 
