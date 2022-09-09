@@ -7,6 +7,15 @@ from torch import Tensor
 class PositionalEncoding1D(torch.nn.Module):
     r"""The 1D positional encoding from `"Attention Is All You Need"
     <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
+
+    Args:
+        out_channels (int): Size of positional encoding.
+        max_position (int, optional): Maximum value of positions for
+            :obj:`"learn"` mode. (default: :obj:`None`)
+        base_freq (float, optional): The base frequncy of sinusoidal functions
+            for `sin` mode. (default: :obj:`1e-4`)
+        mode (str, optional): The mode to use for positonal encoding
+            (:obj:`"sin"`, :obj:`"learn"`). (default: :obj:`sin`)
     """
     def __init__(self, out_channels: int, max_position: Optional[int] = None,
                  base_freq: float = 1e-4, mode: str = "sin"):
