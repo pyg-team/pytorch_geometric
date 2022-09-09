@@ -201,9 +201,9 @@ class NeighborLoader(torch.utils.data.DataLoader):
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
                 data,
-                num_neighbors,
-                replace,
-                directed,
+                num_neighbors=num_neighbors,
+                replace=replace,
+                directed=directed,
                 input_type=self.input_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
