@@ -71,10 +71,9 @@ def add_negative_sample(data):
         [data.edge_label_index, neg_edge_index],
         dim=-1,
     )
-    edge_label = torch.cat([
-        data.edge_label,
-        data.edge_label.new_zeros(neg_edge_index.size(1))
-    ], dim=0)
+    edge_label = torch.cat(
+        [data.edge_label,
+         data.edge_label.new_zeros(neg_edge_index.size(1))], dim=0)
 
     return edge_label_index, edge_label
 
