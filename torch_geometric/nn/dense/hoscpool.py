@@ -4,12 +4,18 @@ EPS = 1e-15
 
 
 def dense_hoscpool(
-    x, adj, s, mu=0.1, alpha=0.5, new_ortho=False, mask=None,
+    x,
+    adj,
+    s,
+    mu=0.1,
+    alpha=0.5,
+    new_ortho=False,
+    mask=None,
 ):
-    r"""The highe-order pooling operator (HoscPool) from the paper 
+    r"""The highe-order pooling operator (HoscPool) from the paper
     `"Higher-order clustering and pooling for Graph Neural Networks"
-    <http://arxiv.org/abs/2209.03473>`_. Based on motif spectral clustering, 
-    it captures and combines different levels of higher-order connectivity 
+    <http://arxiv.org/abs/2209.03473>`_. Based on motif spectral clustering,
+    it captures and combines different levels of higher-order connectivity
     patterns when coarsening the graph.
 
     .. math::
@@ -18,9 +24,9 @@ def dense_hoscpool(
 
         \mathbf{A}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
         \mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})
-    
+
     based on the learned cluster assignment matrix :math:`\mathbf{S} \in \mathbb{R}^{B
-    \times N \times K}`. This function returns the pooled feature matrix, the coarsened 
+    \times N \times K}`. This function returns the pooled feature matrix, the coarsened
     symmetrically normalised adjacency matrix, the motif spectral clustering loss :math:`\mathcal{L}_{mc}`
     and the orthogonality loss :math:`\mathcal{L}_{o}`.
 
@@ -48,7 +54,7 @@ def dense_hoscpool(
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
-    
+
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
     """
@@ -88,10 +94,9 @@ def dense_hoscpool(
         diag_SAS = torch.einsum("ijj->ij", motif_out_adj)
         d_flat = torch.einsum("ijk->ij", motif_adj)
         d = _rank3_diag(d_flat)
-        diag_SDS = (
-            torch.einsum("ijk->ij", torch.matmul(torch.matmul(s.transpose(1, 2), d), s))
-            + EPS
-        )
+        diag_SDS = (torch.einsum(
+            "ijk->ij", torch.matmul(torch.matmul(s.transpose(1, 2), d), s)) +
+                    EPS)
         ho_mincut_loss = -torch.sum(diag_SAS / diag_SDS, axis=1)
         ho_mincut_loss = 1 / k * torch.mean(ho_mincut_loss)
 
@@ -105,50 +110,29 @@ def dense_hoscpool(
     else:
         if new_ortho:
             if s.shape[0] == 1:
-                ortho_loss = (
-                    (-torch.sum(torch.norm(s, p="fro", dim=-2)) / (num_nodes ** 0.5))
-                    + k ** 0.5
-                ) / (k ** 0.5 - 1)
+                ortho_loss = ((-torch.sum(torch.norm(s, p="fro", dim=-2)) /
+                               (num_nodes**0.5)) + k**0.5) / (k**0.5 - 1)
             elif mask != None:
-                ortho_loss = sum(
-                    [
-                        (
-                            (
-                                -torch.sum(
-                                    torch.norm(
-                                        s[i][: mask[i].nonzero().shape[0]],
-                                        p="fro",
-                                        dim=-2,
-                                    )
-                                )
-                                / (mask[i].nonzero().shape[0] ** 0.5)
-                                + k ** 0.5
-                            )
-                            / (k ** 0.5 - 1)
-                        )
-                        for i in range(batch_size)
-                    ]
-                ) / float(batch_size)
+                ortho_loss = sum([((-torch.sum(
+                    torch.norm(
+                        s[i][:mask[i].nonzero().shape[0]],
+                        p="fro",
+                        dim=-2,
+                    )) / (mask[i].nonzero().shape[0]**0.5) + k**0.5) /
+                                   (k**0.5 - 1)) for i in range(batch_size)
+                                  ]) / float(batch_size)
             else:
                 ortho_loss = sum(
-                    [
-                        (
-                            (
-                                -torch.sum(torch.norm(s[i], p="fro", dim=-2))
-                                / (num_nodes ** 0.5)
-                                + k ** 0.5
-                            )
-                            / (k ** 0.5 - 1)
-                        )
-                        for i in range(batch_size)
-                    ]
-                ) / float(batch_size)
+                    [((-torch.sum(torch.norm(s[i], p="fro", dim=-2)) /
+                       (num_nodes**0.5) + k**0.5) / (k**0.5 - 1))
+                     for i in range(batch_size)]) / float(batch_size)
         else:
             # Orthogonality regularization.
             ss = torch.matmul(s.transpose(1, 2), s)
             i_s = torch.eye(k).type_as(ss)
             ortho_loss = torch.norm(
-                ss / torch.norm(ss, dim=(-1, -2), keepdim=True) - i_s / torch.norm(i_s),
+                ss / torch.norm(ss, dim=(-1, -2), keepdim=True) -
+                i_s / torch.norm(i_s),
                 dim=(-1, -2),
             )
             ortho_loss = torch.mean(ortho_loss)
@@ -161,6 +145,7 @@ def dense_hoscpool(
     out_adj = (out_adj / d) / d.transpose(1, 2)
 
     return out, out_adj, hosc_loss, mu * ortho_loss
+
 
 def _rank3_diag(x):
     eye = torch.eye(x.size(1)).type_as(x)
