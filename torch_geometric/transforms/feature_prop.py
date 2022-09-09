@@ -35,24 +35,17 @@ class FeaturePropagation(BaseTransform):
         num_iterations (int): The number of propagations. (default: :obj:`40`)
         missing_mask (Tensor, optional): The mask indicating where
             node features are missing. (default: :obj:`None`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
     """
     def __init__(self, num_iterations: int = 40,
-                 missing_mask: OptTensor = None, add_self_loops: bool = True,
-                 normalize: bool = True):
+                 missing_mask: OptTensor = None):
         assert missing_mask is None or missing_mask.dtype == torch.bool
         self.num_iterations = num_iterations
         self.missing_mask = missing_mask
-        self.normalize = normalize
-        self.add_self_loops = add_self_loops
 
     def __call__(self, data: Data) -> Data:
 
         assert 'edge_index' in data or 'adj_t' in data
+        assert data.x.size() == self.missing_mask.size()
 
         if 'edge_index' in data:
             edge_weight = data.edge_attr
@@ -66,8 +59,7 @@ class FeaturePropagation(BaseTransform):
         else:
             adj_t = data.adj_t
 
-        if self.normalize:
-            adj_t = gcn_norm(adj_t, add_self_loops=self.add_self_loops)
+        adj_t = gcn_norm(adj_t)
 
         x = data.x
         known_feature_mask = None
