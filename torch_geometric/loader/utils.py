@@ -111,7 +111,7 @@ def filter_hetero_data(
             row_dict[edge_type],
             col_dict[edge_type],
             edge_dict[edge_type],
-            perm_dict[edge_type],
+            perm_dict[edge_type] if perm_dict else None,
         )
 
     return out

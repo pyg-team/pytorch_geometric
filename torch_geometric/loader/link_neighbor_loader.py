@@ -13,7 +13,11 @@ from torch_geometric.loader.utils import (
     filter_hetero_data,
 )
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import EdgeSamplerInput
+from torch_geometric.sampler.base import (
+    EdgeSamplerInput,
+    HeteroSamplerOutput,
+    SamplerOutput,
+)
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
@@ -185,11 +189,13 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         self.neighbor_sampler = neighbor_sampler
         self.neg_sampling_ratio = neg_sampling_ratio
 
+        # Get input edge type:
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
         if edge_label is None:
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
+        self.input_type = edge_type
 
         if (edge_label_time is None) != (time_attr is None):
             raise ValueError("`edge_label_time` is specified but `time_attr` "
@@ -202,7 +208,7 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
-                input_type=edge_type,
+                input_type=self.input_type,
                 is_sorted=is_sorted,
                 time_attr=time_attr,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -212,34 +218,36 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
             Dataset(edge_label_index, edge_label, edge_label_time),
             collate_fn=self.collate_fn, **kwargs)
 
-    def filter_fn(self, out: Any) -> Union[Data, HeteroData]:
-        if isinstance(self.data, Data):
+    def filter_fn(
+        self,
+        out: Union[SamplerOutput, HeteroSamplerOutput],
+    ) -> Union[Data, HeteroData]:
+        if isinstance(out, SamplerOutput):
             edge_label_index, edge_label = out.metadata
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.neighbor_sampler.perm)
+                               self.neighbor_sampler.edge_permutation)
             data.edge_label_index = edge_label_index
             data.edge_label = edge_label
 
-        elif isinstance(self.data, HeteroData):
+        elif isinstance(out, HeteroSamplerOutput):
             edge_label_index, edge_label, edge_label_time = out.metadata
-            data = filter_hetero_data(self.data, out.node, out.row, out.col,
-                                      out.edge,
-                                      self.neighbor_sampler.perm_dict)
-            edge_type = self.neighbor_sampler.input_type
+            if isinstance(self.data, HeteroData):
+                data = filter_hetero_data(
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.neighbor_sampler.edge_permutation)
+            else:  # Tuple[FeatureStore, GraphStore]
+                data = filter_custom_store(*self.data, out.node, out.row,
+                                           out.col, out.edge)
+
+            edge_type = self.input_type
             data[edge_type].edge_label_index = edge_label_index
             data[edge_type].edge_label = edge_label
             if edge_label_time is not None:
                 data[edge_type].edge_label_time = edge_label_time
+
         else:
-            edge_label_index, edge_label, edge_label_time = out.metadata
-            feature_store, graph_store = self.data
-            data = filter_custom_store(feature_store, graph_store, out.node,
-                                       out.row, out.col, out.edge)
-            edge_type = self.neighbor_sampler.input_type
-            data[edge_type].edge_label_index = edge_label_index
-            data[edge_type].edge_label = edge_label
-            if edge_label_time is None:
-                data[edge_type].edge_label_time = edge_label_time
+            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+                            f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)
 
