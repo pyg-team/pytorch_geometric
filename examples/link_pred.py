@@ -52,18 +52,7 @@ def train():
     z = model.encode(train_data.x, train_data.edge_index)
 
     # We perform a new round of negative sampling for every training epoch:
-    neg_edge_index = negative_sampling(
-        edge_index=train_data.edge_index, num_nodes=train_data.num_nodes,
-        num_neg_samples=train_data.edge_label_index.size(1), method='sparse')
-
-    edge_label_index = torch.cat(
-        [train_data.edge_label_index, neg_edge_index],
-        dim=-1,
-    )
-    edge_label = torch.cat([
-        train_data.edge_label,
-        train_data.edge_label.new_zeros(neg_edge_index.size(1))
-    ], dim=0)
+    edge_label_index, edge_label = add_negative_sample(train_data)
 
     out = model.decode(z, edge_label_index).view(-1)
     loss = criterion(out, edge_label)
@@ -72,11 +61,30 @@ def train():
     return loss, z
 
 
+def add_negative_sample(data):
+
+    neg_edge_index = negative_sampling(
+        edge_index=data.edge_index, num_nodes=data.num_nodes,
+        num_neg_samples=data.edge_label_index.size(1), method='sparse')
+
+    edge_label_index = torch.cat(
+        [data.edge_label_index, neg_edge_index],
+        dim=-1,
+    )
+    edge_label = torch.cat([
+        data.edge_label,
+        data.edge_label.new_zeros(neg_edge_index.size(1))
+    ], dim=0)
+
+    return edge_label_index, edge_label
+
+
 @torch.no_grad()
 def test(data, z):
     model.eval()
-    out = model.decode(z, data.edge_label_index).view(-1).sigmoid()
-    return roc_auc_score(data.edge_label.cpu().numpy(), out.cpu().numpy())
+    edge_label_index, edge_label = add_negative_sample(data)
+    out = model.decode(z, edge_label_index).view(-1).sigmoid()
+    return roc_auc_score(edge_label.cpu().numpy(), out.cpu().numpy())
 
 
 best_val_auc = final_test_auc = 0
