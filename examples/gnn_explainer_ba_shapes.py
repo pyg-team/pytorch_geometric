@@ -25,7 +25,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index, data.edge_weight)
+    out = model(data.x, data.edge_index, edge_weight=data.edge_weight)
     loss = F.cross_entropy(out[train_idx], data.y[train_idx])
     torch.nn.utils.clip_grad_norm_(model.parameters(), 2.0)
     loss.backward()
@@ -36,7 +36,8 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index, data.edge_weight).argmax(dim=-1)
+    pred = model(data.x, data.edge_index,
+                 edge_weight=data.edge_weight).argmax(dim=-1)
 
     train_correct = int((pred[train_idx] == data.y[train_idx]).sum())
     train_acc = train_correct / train_idx.size(0)
