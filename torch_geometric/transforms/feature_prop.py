@@ -45,7 +45,8 @@ class FeaturePropagation(BaseTransform):
     def __call__(self, data: Data) -> Data:
 
         assert 'edge_index' in data or 'adj_t' in data
-        assert data.x.size() == self.missing_mask.size()
+        assert self.missing_mask is None or data.x.size(
+        ) == self.missing_mask.size()
 
         if 'edge_index' in data:
             edge_weight = data.edge_attr
