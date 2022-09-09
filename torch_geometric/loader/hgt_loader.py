@@ -5,7 +5,8 @@ from torch import Tensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
+from torch_geometric.loader.utils import filter_hetero_data
+from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
 from torch_geometric.typing import NodeType
 
 
@@ -125,10 +126,16 @@ class HGTLoader(torch.utils.data.DataLoader):
         self.sample_fn = torch.ops.torch_sparse.hgt_sample
 
         # Convert the graph data into a suitable format for sampling.
+        colptr_dict, row_dict, perm_dict = to_hetero_csc(
+            data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
+
         # NOTE: Since C++ cannot take dictionaries with tuples as key as
         # input, edge type triplets are converted into single strings.
-        self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
-            data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
+        self.to_rel_type = {key: '__'.join(key) for key in data.edge_types}
+        self.to_edge_type = {'__'.join(key): key for key in data.edge_types}
+        self.row_dict = remap_keys(row_dict, self.to_rel_type)
+        self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
+        self.perm_dict = perm_dict
 
         super().__init__(input_nodes[1].tolist(), collate_fn=self.collate_fn,
                          **kwargs)
@@ -146,7 +153,9 @@ class HGTLoader(torch.utils.data.DataLoader):
 
     def filter_fn(self, out: Any) -> HeteroData:
         node_dict, row_dict, col_dict, edge_dict, batch_size = out
-
+        row_dict = remap_keys(row_dict, self.to_edge_type)
+        col_dict = remap_keys(col_dict, self.to_edge_type)
+        edge_dict = remap_keys(edge_dict, self.to_edge_type)
         data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
                                   edge_dict, self.perm_dict)
         data[self.input_nodes[0]].batch_size = batch_size
