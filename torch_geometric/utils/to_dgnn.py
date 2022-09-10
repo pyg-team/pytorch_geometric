@@ -27,3 +27,19 @@ def to_dgnn(edge_index):
                 permute.cuda())
 
     return dgnn_adj
+
+
+def compute_all_graph_representations(edge_index):
+    col, row = edge_index
+    numlist = torch.arange(col.size(0), dtype=torch.int32, device=col.device)
+    coo = torch.sparse_coo_tensor([row, col], numlist).coalesce()
+    coo_T = coo.transpose()
+    csr = coo.to_sparse_csr().coalesce()
+    csc = coo_T.to_sparse_csr().coalesce()
+    row_ptr = csr.crow_indices()
+    col_idx = csr.col_indices()
+    col_ptr = csc.crow_indices()
+    row_idx = csc.col_indices()
+    permute = coo_T.values()
+    all_graph_representations = (row_ptr, col_idx, col_ptr, row_idx, permute)
+    return all_graph_representations
