@@ -1,26 +1,20 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
-import torch
 from dgNN.operators import GATConvFuse
 from torch import Tensor
-from torch.nn import Parameter
 
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.conv import GATConv
 from torch_geometric.typing import Adj, OptPairTensor
 
-from ..inits import glorot, zeros
-
-# dgNN library is needed for FusedGATConv layer,
-# which is equivalent to the standard GAT model mathmatically
-# with less memory consumption and faster speed,
-# due to kernel fusion and other techniques,
-# as in paper 'Understanding GNN Computational Graph:
+# dgNN library is needed for FusedGATConv layer, which is
+# equivalent to the standard GAT model mathmatically
+# with less memory consumption and faster speed, due to
+# kernel fusion techniques, as in paper 'Understanding GNN Computational Graph:
 # A Coordinated Computation, IO, and Memory Perspective'
 # dgNN library can be installed as in repo https://github.com/dgSPARSE/dgNN
 
 
-class FusedGATConv(MessagePassing):
+class FusedGATConv(GATConv):
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -29,59 +23,24 @@ class FusedGATConv(MessagePassing):
         concat: bool = True,
         negative_slope: float = 0.2,
         dropout: float = 0.0,
-        # add_self_loops: bool = True,
-        # edge_dim: Optional[int] = None,
-        # fill_value: Union[float, Tensor, str] = 'mean',
+        add_self_loops: bool = True,
+        edge_dim: Optional[int] = None,
+        fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
-        super().__init__(node_dim=0, **kwargs)
+        requirement = [
+            add_self_loops is False, edge_dim is None, fill_value == 'mean'
+        ]
+        if not all(requirement):
+            raise NotImplementedError(
+                'FusedGATConv does not support add_self_loops, \
+                edge_features or non-mean fill_value')
 
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.heads = heads
-        self.concat = concat
-        self.negative_slope = negative_slope
-        self.dropout = dropout
-        # self.add_self_loops = add_self_loops
-        # self.edge_dim = edge_dim
-        # self.fill_value = fill_value
-
-        # In case we are operating in bipartite graphs, we apply separate
-        # transformations 'lin_src' and 'lin_dst' to source and target nodes:
-        if isinstance(in_channels, int):
-            self.lin_src = Linear(in_channels, heads * out_channels,
-                                  bias=False, weight_initializer='glorot')
-            self.lin_dst = self.lin_src
-        else:
-            self.lin_src = Linear(in_channels[0], heads * out_channels, False,
-                                  weight_initializer='glorot')
-            self.lin_dst = Linear(in_channels[1], heads * out_channels, False,
-                                  weight_initializer='glorot')
-
-        # The learnable parameters to compute attention coefficients:
-        self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
-        self.att_dst = Parameter(torch.Tensor(1, heads, out_channels))
-
-        if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
-        elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
-        else:
-            self.register_parameter('bias', None)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        self.lin_src.reset_parameters()
-        self.lin_dst.reset_parameters()
-        # if self.lin_edge is not None:
-        #     self.lin_edge.reset_parameters()
-        glorot(self.att_src)
-        glorot(self.att_dst)
-        # glorot(self.att_edge)
-        zeros(self.bias)
+        super(FusedGATConv,
+              self).__init__(in_channels, out_channels, heads, concat,
+                             negative_slope, dropout, add_self_loops, edge_dim,
+                             fill_value, bias, **kwargs)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj):
 
@@ -98,8 +57,6 @@ class FusedGATConv(MessagePassing):
             x_src = self.lin_src(x_src).view(-1, H, C)
             if x_dst is not None:
                 x_dst = self.lin_dst(x_dst).view(-1, H, C)
-
-        x = (x_src, x_dst)
 
         row_ptr, col_idx, col_ptr, row_idx, permute = edge_index
 
@@ -126,7 +83,3 @@ class FusedGATConv(MessagePassing):
             out += self.bias
 
         return out
-
-    def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, heads={self.heads})')

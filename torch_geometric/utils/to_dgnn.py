@@ -3,6 +3,8 @@ import torch
 
 
 def to_dgnn(edge_index):
+    device = edge_index.device
+
     col, row = edge_index.cpu()
     numlist = torch.arange(col.size(0), dtype=torch.int32)
     num_nodes = torch.max(col) - torch.min(col) + 1
@@ -23,8 +25,8 @@ def to_dgnn(edge_index):
     adj_csc_new = adj_csr_new.tocsc()
     permute = torch.from_numpy(adj_csc_new.data)
 
-    dgnn_adj = (row_ptr.cuda(), col_idx.cuda(), col_ptr.cuda(), row_idx.cuda(),
-                permute.cuda())
+    dgnn_adj = (row_ptr.to(device), col_idx.to(device), col_ptr.to(device),
+                row_idx.to(device), permute.to(device))
 
     return dgnn_adj
 
