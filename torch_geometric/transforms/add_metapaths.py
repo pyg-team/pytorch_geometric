@@ -361,10 +361,8 @@ class AddMetaPaths2(BaseTransform):
     def sample(src: SparseTensor, subset: Tensor,
                num_neighbors: int = 1) -> Tensor:
 
-        mask = torch.ones_like(subset, dtype=torch.bool)
-        rowcount = torch.zeros_like(subset)
-        rowcount[mask] = src.storage.rowcount()[subset[mask]]
-        mask = mask & (rowcount > 0)
+        rowcount = src.storage.rowcount()[subset]
+        mask = rowcount > 0
         offset = torch.zeros_like(subset)
         offset[mask] = src.storage.rowptr()[subset[mask]]
 
