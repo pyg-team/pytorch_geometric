@@ -167,7 +167,7 @@ class NeighborSampler:
 
     def _hetero_sparse_neighbor_sample(self, index_dict: Dict[str,
                                                               torch.Tensor],
-                                       **kwargs):
+                                       **kwargs,):
 
         if self.node_time_dict is None:
             fn = torch.ops.torch_sparse.hetero_neighbor_sample
