@@ -58,7 +58,7 @@ def train():
     loss = criterion(out, edge_label)
     loss.backward()
     optimizer.step()
-    return loss, z
+    return loss
 
 
 def add_negative_sample(data):
@@ -79,18 +79,20 @@ def add_negative_sample(data):
 
 
 @torch.no_grad()
-def test(data, z):
+def test(edge_label_index, edge_label):
     model.eval()
-    edge_label_index, edge_label = add_negative_sample(data)
+    z = model.encode(train_data.x, train_data.edge_index)
     out = model.decode(z, edge_label_index).view(-1).sigmoid()
     return roc_auc_score(edge_label.cpu().numpy(), out.cpu().numpy())
 
 
 best_val_auc = final_test_auc = 0
+val_edge_label_index, val_edge_label = add_negative_sample(val_data)
+test_edge_label_index, test_edge_label = add_negative_sample(test_data)
 for epoch in range(1, 101):
-    loss, z = train()
-    val_auc = test(val_data, z)
-    test_auc = test(test_data, z)
+    loss = train()
+    val_auc = test(val_edge_label_index, val_edge_label)
+    test_auc = test(test_edge_label_index, test_edge_label)
     if val_auc > best_val_auc:
         best_val_auc = val_auc
         final_test_auc = test_auc
@@ -99,4 +101,5 @@ for epoch in range(1, 101):
 
 print(f'Final Test: {final_test_auc:.4f}')
 
+z = model.encode(train_data.x, train_data.edge_index)
 final_edge_index = model.decode_all(z)
