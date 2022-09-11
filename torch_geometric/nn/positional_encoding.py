@@ -56,14 +56,8 @@ class PositionalEncoding1D(torch.nn.Module):
             )
 
     def compute_sinus_encoding(self, position: Tensor) -> Tensor:
-        position_encoding = torch.zeros(
-            (position.size(0), self.out_channels),
-            device=position.device,
-        )
         x = (position / self.granularity).unsqueeze(1) * self.frequency
-        position_encoding[:, 0::2] = torch.sin(x)
-        position_encoding[:, 1::2] = torch.cos(x)
-        return position_encoding
+        return torch.cat([torch.sin(x), torch.cos(x)], dim=-1)
 
     def forward(self, position: Tensor) -> Tensor:
         if self.mode == "sin":
