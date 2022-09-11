@@ -228,6 +228,9 @@ class SchNet(torch.nn.Module):
     def _validate_fwd_args(z, pos, batch, edge_index, edge_weight):
         assert z.dim() == 1 and z.dtype == torch.long
 
+        if batch is not None:
+            assert batch.dim() == 1 and batch.dtype == torch.long
+
         if pos is not None:
             assert edge_index is None and edge_weight is None
         else:
