@@ -64,20 +64,16 @@ class FeaturePropagation(BaseTransform):
 
         x = data.x
         known_feature_mask = None
-        missing_mask = self.missing_mask
-        if missing_mask is not None:
-            out = torch.zeros_like(x)
-            known_feature_mask = ~missing_mask
-            out[known_feature_mask] = x[known_feature_mask]
-        else:
-            out = x.clone()
+        if self.missing_mask is not None:
+            x[self.missing_mask] = 0
+            known_feature_mask = ~self.missing_mask
 
         for _ in range(self.num_iterations):
-            # Diffuse current features
-            out = matmul(adj_t, out)
+            out = matmul(adj_t, x)
             if known_feature_mask is not None:
                 # Reset original known features
                 out[known_feature_mask] = x[known_feature_mask]
+            x = out
         data.x = out
 
         return data
