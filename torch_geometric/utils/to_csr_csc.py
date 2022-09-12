@@ -1,7 +1,9 @@
 import torch
 
+
 def to_csr_csc(edge_index):
-    numlist = torch.arange(edge_index.size(1), dtype=torch.int32, device=edge_index.device)
+    numlist = torch.arange(edge_index.size(1), dtype=torch.int32,
+                           device=edge_index.device)
     coo = torch.sparse_coo_tensor(edge_index, numlist).coalesce()
     coo_T = torch.transpose(coo, 0, 1)
     csr = coo.to_sparse_csr()  # .coalesce()

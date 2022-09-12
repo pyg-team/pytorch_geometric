@@ -88,7 +88,7 @@ dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 # define data and model
 pyg_data = dataset[0].to(device)
 dgNN_data = dataset[0].to(device)
-dgNN_data.edge_index=to_csr_csc(dgNN_data.edge_index)
+dgNN_data.edge_index = to_csr_csc(dgNN_data.edge_index)
 
 pyg_model = GAT(dataset.num_features, args.hidden_channels,
                 dataset.num_classes, args.heads).to(device)

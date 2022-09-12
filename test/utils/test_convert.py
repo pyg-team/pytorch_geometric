@@ -4,11 +4,11 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
-    to_csr_csc,
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
     subgraph,
+    to_csr_csc,
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
