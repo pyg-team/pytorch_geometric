@@ -34,7 +34,7 @@ EdgeSamplerInput = Tuple[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 #   * edge: a tensor of the indices of the sampled edges in the original graph.
 #       This tensor is used to obtain edge attributes from the original graph;
 #       if no edge attributes are present, it may be omitted.
-#   * batch: a tensor identifying each node with its corresponding example.
+#   * batch: a tensor identifying the seed node for each sampled node.
 #   * metadata: any additional metadata required by a loader using the sampler
 #       output.
 # There exist both homogeneous and heterogeneous versions.
@@ -99,5 +99,6 @@ class BaseSampler(ABC):
         original graph, this function is expected to return the permutation
         tensor that defines the permutation from the edges in the original
         graph and the edges used in the sampler. If no such permutation was
-        applied, a default None tensor is returned."""
+        applied, a default None tensor is returned. For heterogeneous graphs,
+        the expected return type is a permutation tensor for each edge type."""
         return None

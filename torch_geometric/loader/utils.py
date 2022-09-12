@@ -94,7 +94,7 @@ def filter_hetero_data(
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, Tensor],
-    perm_dict: Dict[str, OptTensor],
+    perm_dict: Optional[Dict[str, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
