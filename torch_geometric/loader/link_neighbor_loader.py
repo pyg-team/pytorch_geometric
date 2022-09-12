@@ -1,8 +1,5 @@
 from typing import Callable, Optional, Tuple, Union
 
-import torch
-from torch import Tensor
-
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore

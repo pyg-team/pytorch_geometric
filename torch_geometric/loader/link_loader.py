@@ -22,13 +22,63 @@ from torch_geometric.typing import InputEdges, OptTensor
 
 
 class LinkLoader(torch.utils.data.DataLoader):
-    r"""A data loader that performs neighborhood sampling from link information."""
+    r"""A data loader that performs neighbor sampling from link information,
+    using a generic :class:`~torch_geometric.sampler.BaseSampler`
+    implementation that defines a `sample_from_edges` function and is supported
+    on the provided input :obj:`data` object.
+
+    Args:
+        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
+            The :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` graph object.
+        link_sampler (torch_geometric.sampler.BaseSampler, optional): The
+            sampler implementation to be used with this loader. Note that the
+            sampler implementation must be compatible with the input data
+            object.
+        link_sampler_kwargs (Dict[str, Any], optional): the keyword arguments
+            to be passed to the constructor of `link_sampler`; only necessary
+            if `link_sampler` has not already been constructed.
+        edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
+            The edge indices for which neighbors are sampled to create
+            mini-batches.
+            If set to :obj:`None`, all edges will be considered.
+            In heterogeneous graphs, needs to be passed as a tuple that holds
+            the edge type and corresponding edge indices.
+            (default: :obj:`None`)
+        edge_label (Tensor, optional): The labels of edge indices for
+            which neighbors are sampled. Must be the same length as
+            the :obj:`edge_label_index`. If set to :obj:`None` its set to
+            `torch.zeros(...)` internally. (default: :obj:`None`)
+        edge_label_time (Tensor, optional): The timestamps for edge indices
+            for which neighbors are sampled. Must be the same length as
+            :obj:`edge_label_index`. If set, temporal sampling will be
+            used such that neighbors are guaranteed to fulfill temporal
+            constraints, *i.e.*, neighbors have an earlier timestamp than
+            the ouput edge. The :obj:`time_attr` needs to be set for this
+            to work. (default: :obj:`None`)
+        initialize_sampler (bool, optional): whether `link_sampler` should be
+            constructed (default: True).
+        transform (Callable, optional): A function/transform that takes in
+            a sampled mini-batch and returns a transformed version.
+            (default: :obj:`None`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         link_sampler: Optional[BaseSampler] = None,
         link_sampler_kwargs: Dict[str, Any] = None,
-        initialize_sampler=True,
+        initialize_sampler: bool = True,
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
@@ -46,7 +96,8 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.data = data
 
         # Initialize sampler with keyword arguments:
-        # NOTE sampler is an attribute of 'DataLoader':
+        # NOTE sampler is an attribute of 'DataLoader', so we use link_sampler
+        # here:
         self.link_sampler = link_sampler
         if initialize_sampler:
             self.link_sampler = self.link_sampler(self.data,
@@ -68,15 +119,17 @@ class LinkLoader(torch.utils.data.DataLoader):
                                      device=edge_label_index.device)
         self.input_type = edge_type
 
-        if ((edge_label_time is None) !=
-            (link_sampler_kwargs.get('time_attr', None) is None)):
+        has_time_attr = link_sampler_kwargs.get('time_attr', None) is not None
+        if ((edge_label_time is not None) != has_time_attr):
             raise ValueError("`edge_label_time` is specified but `time_attr` "
                              "is `None` or vice-versa. Both arguments need to "
                              "be specified for temporal sampling")
 
         super().__init__(
             Dataset(edge_label_index, edge_label, edge_label_time),
-            collate_fn=self.collate_fn, **kwargs)
+            collate_fn=self.collate_fn,
+            **kwargs,
+        )
 
     def filter_fn(
         self,
