@@ -1,11 +1,11 @@
 import torch
+from torch import Tensor
 from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import OptTensor
 
 
 @functional_transform('feature_propagation')
@@ -32,21 +32,19 @@ class FeaturePropagation(BaseTransform):
         feature_propagation.py>`_.
 
     Args:
+        missing_mask (Tensor): The mask indicating where
+            node features are missing, of shape `[num_nodes, channels]`.
         num_iterations (int): The number of propagations. (default: :obj:`40`)
-        missing_mask (Tensor, optional): The mask indicating where
-            node features are missing, of shape `[num_nodes, channels]`. (default: :obj:`None`)
     """
-    def __init__(self, num_iterations: int = 40,
-                 missing_mask: OptTensor = None):
-        assert missing_mask is None or missing_mask.dtype == torch.bool
-        self.num_iterations = num_iterations
+    def __init__(self, missing_mask: Tensor, num_iterations: int = 40):
+        assert missing_mask.dtype == torch.bool
         self.missing_mask = missing_mask
+        self.num_iterations = num_iterations
 
     def __call__(self, data: Data) -> Data:
 
         assert 'edge_index' in data or 'adj_t' in data
-        assert self.missing_mask is None or data.x.size(
-        ) == self.missing_mask.size()
+        assert data.x.size() == self.missing_mask.size()
 
         if 'edge_index' in data:
             edge_weight = data.edge_attr
@@ -63,16 +61,13 @@ class FeaturePropagation(BaseTransform):
         adj_t = gcn_norm(adj_t)
 
         x = data.x
-        known_feature_mask = None
-        if self.missing_mask is not None:
-            x[self.missing_mask] = 0
-            known_feature_mask = ~self.missing_mask
+        x[self.missing_mask] = 0
+        known_feature_mask = ~self.missing_mask
 
         for _ in range(self.num_iterations):
             out = matmul(adj_t, x)
-            if known_feature_mask is not None:
-                # Reset original known features
-                out[known_feature_mask] = x[known_feature_mask]
+            # Reset original known features
+            out[known_feature_mask] = x[known_feature_mask]
             x = out
         data.x = out
 
