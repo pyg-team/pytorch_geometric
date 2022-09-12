@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import onlyFullTest, withPackage
 from torch_geometric.transforms import Compose, Distance, RadiusGraph
 
 
@@ -41,6 +41,7 @@ def test_schnet():
     assert losses[num_steps - 1] < losses[0]
 
 
+@withPackage('torch_cluster')
 def test_schnet_batch():
     seed_everything(0)
     num_graphs = 3
@@ -55,6 +56,7 @@ def test_schnet_batch():
         assert out.size() == (num_graphs, 1)
 
 
+@withPackage('torch_cluster')
 def test_schnet_batch_pre_compute():
     seed_everything(0)
     num_graphs = 3
