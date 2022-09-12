@@ -89,8 +89,6 @@ class SchNet(torch.nn.Module):
                  atomref: Optional[torch.Tensor] = None):
         super().__init__()
 
-        import ase
-
         self.hidden_channels = hidden_channels
         self.num_filters = num_filters
         self.num_interactions = num_interactions
@@ -104,8 +102,11 @@ class SchNet(torch.nn.Module):
         self.std = std
         self.scale = None
 
-        atomic_mass = torch.from_numpy(ase.data.atomic_masses)
-        self.register_buffer('atomic_mass', atomic_mass)
+        if self.dipole:
+            import ase
+
+            atomic_mass = torch.from_numpy(ase.data.atomic_masses)
+            self.register_buffer('atomic_mass', atomic_mass)
 
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
