@@ -135,6 +135,9 @@ class NodeLoader(torch.utils.data.DataLoader):
 
     def collate_fn(self, index: NodeSamplerInput) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
+        if isinstance(index, (list, tuple)):
+            index = torch.tensor(index)
+
         out = self.node_sampler.sample_from_nodes(index)
         if self.filter_per_worker:
             # We execute `filter_fn` in the worker process.
