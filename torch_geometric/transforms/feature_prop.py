@@ -24,12 +24,13 @@ class FeaturePropagation(BaseTransform):
 
     where missing node features are inferred by known features via propagation.
 
-    .. note::
+    .. code-block::
 
-        For an example of using :class:`~torch_geometric.transforms.
-        FeaturePropagation`, see `examples/feature_propagation.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        feature_propagation.py>`_.
+        from torch_geometric.transforms import FeaturePropagation
+
+        missing_mask = torch.isnan(data.x)
+        transform = FeaturePropagation(missing_mask)
+        data = transform(data)
 
     Args:
         missing_mask (Tensor): The mask indicating where
@@ -64,11 +65,11 @@ class FeaturePropagation(BaseTransform):
         x[self.missing_mask] = 0
         known_feature_mask = ~self.missing_mask
 
+        out = x
         for _ in range(self.num_iterations):
-            out = matmul(adj_t, x)
+            out = matmul(adj_t, out)
             # Reset original known features
             out[known_feature_mask] = x[known_feature_mask]
-            x = out
         data.x = out
 
         return data
