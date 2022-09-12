@@ -69,6 +69,6 @@ def test_schnet_batch_pre_compute():
                    num_gaussians=10, cutoff=cutoff)
 
     with torch.no_grad():
-        out = model(batch.z, batch.pos, batch.batch, batch.edge_index,
+        out = model(batch.z, None, batch.batch, batch.edge_index,
                     batch.edge_attr)
         assert out.size() == (num_graphs, 1)
