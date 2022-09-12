@@ -4,11 +4,11 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
+    to_csr_csc,
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
     subgraph,
-    to_dgnn,
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
@@ -296,7 +296,7 @@ def test_trimesh():
 def test_to_dgnn():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
 
-    dgnn_adj = to_dgnn(edge_index)
+    dgnn_adj = to_csr_csc(edge_index)
 
     assert dgnn_adj[0].tolist() == [0, 2, 3]
     assert dgnn_adj[1].tolist() == [0, 1, 0]

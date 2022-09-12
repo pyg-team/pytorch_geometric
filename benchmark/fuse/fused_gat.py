@@ -11,7 +11,7 @@ from torch_geometric.nn import GATConv
 # the following code requires the installation of dgNN
 # from https://github.com/dgSPARSE/dgNN
 from torch_geometric.nn.conv.fused_gat_conv import FusedGATConv
-from torch_geometric.utils import to_dgnn
+from torch_geometric.utils import to_csr_csc
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='pubmed')
@@ -88,8 +88,7 @@ dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 # define data and model
 pyg_data = dataset[0].to(device)
 dgNN_data = dataset[0].to(device)
-dgNN_data.edge_index = to_dgnn(
-    dgNN_data.edge_index)  # add one line of data conversion to dgNN
+dgNN_data.edge_index=to_csr_csc(dgNN_data.edge_index)
 
 pyg_model = GAT(dataset.num_features, args.hidden_channels,
                 dataset.num_classes, args.heads).to(device)
