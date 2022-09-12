@@ -11,7 +11,7 @@ from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, global_max_pool
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.pool import knn, knn_graph
+from torch_geometric.nn.pool import knn_graph
 from torch_geometric.utils import softmax
 
 # Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
