@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.2.0] - 2022-MM-DD
 ### Added
 - Added `PositionalEncoding` ([#5381](https://github.com/pyg-team/pytorch_geometric/pull/5381))
-- Consolidated sampler routines behind `torch_geometric.sampler`, enabling ease of extensibility in the future ([#5312](https://github.com/pyg-team/pytorch_geometric/pull/5312), [#5365](https://github.com/pyg-team/pytorch_geometric/pull/5365))
+- Consolidated sampler routines behind `torch_geometric.sampler`, enabling ease of extensibility in the future ([#5312](https://github.com/pyg-team/pytorch_geometric/pull/5312), [#5365](https://github.com/pyg-team/pytorch_geometric/pull/5365), [#5402](https://github.com/pyg-team/pytorch_geometric/pull/5402)))
 - Added `pyg-lib` neighbor sampling ([#5384](https://github.com/pyg-team/pytorch_geometric/pull/5384), [#5388](https://github.com/pyg-team/pytorch_geometric/pull/5388))
 - Added `pyg_lib.segment_matmul` integration within `HeteroLinear` ([#5330](https://github.com/pyg-team/pytorch_geometric/pull/5330), [#5347](https://github.com/pyg-team/pytorch_geometric/pull/5347)))
 - Enabled `bf16` support in benchmark scripts ([#5293](https://github.com/pyg-team/pytorch_geometric/pull/5293), [#5341](https://github.com/pyg-team/pytorch_geometric/pull/5341))

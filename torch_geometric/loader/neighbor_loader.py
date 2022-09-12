@@ -194,15 +194,17 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self.filter_per_worker = filter_per_worker
         self.neighbor_sampler = neighbor_sampler
 
+        # Get input type, or None for homogeneous graphs:
         node_type, input_nodes = get_input_nodes(data, input_nodes)
+        self.input_type = node_type
 
         if neighbor_sampler is None:
             self.neighbor_sampler = NeighborSampler(
                 data,
-                num_neighbors,
-                replace,
-                directed,
-                input_type=node_type,
+                num_neighbors=num_neighbors,
+                replace=replace,
+                directed=directed,
+                input_type=self.input_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -214,25 +216,24 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self,
         out: Union[SamplerOutput, HeteroSamplerOutput],
     ) -> Union[Data, HeteroData]:
-        # TODO(manan): remove special access of input_type and perm_dict here:
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.neighbor_sampler.perm)
+                               self.neighbor_sampler.edge_permutation)
             data.batch = out.batch
             data.batch_size = out.metadata
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(self.data, out.node, out.row,
-                                          out.col, out.edge,
-                                          self.neighbor_sampler.perm_dict)
+                data = filter_hetero_data(
+                    self.data, out.node, out.row, out.col, out.edge,
+                    self.neighbor_sampler.edge_permutation)
             else:  # Tuple[FeatureStore, GraphStore]
                 data = filter_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge)
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.neighbor_sampler.input_type].batch_size = out.metadata
+            data[self.input_type].batch_size = out.metadata
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
