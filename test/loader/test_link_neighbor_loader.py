@@ -18,7 +18,7 @@ def unique_edge_pairs(edge_index):
     return set(map(tuple, edge_index.t().tolist()))
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
 def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     pos_edge_index = get_edge_index(100, 50, 500)
@@ -80,7 +80,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
             assert torch.all(batch.edge_label[20:] == 0)
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
 def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     data = HeteroData()
@@ -126,7 +126,7 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
             assert torch.all(batch['paper', 'author'].edge_label[20:] == 0)
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_heterogeneous_link_neighbor_loader_loop(directed):
     data = HeteroData()
 

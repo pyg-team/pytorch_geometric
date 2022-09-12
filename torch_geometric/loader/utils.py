@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 import torch
 from torch import Tensor
@@ -10,7 +10,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, OptTensor
+from torch_geometric.typing import OptTensor
 
 
 def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
@@ -24,12 +24,6 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
     return torch.index_select(value, dim, index, out=out)
-
-
-def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets need to be converted into single strings.
-    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -106,24 +100,18 @@ def filter_hetero_data(
     # edges in `edge` for each node and edge type, respectively:
     out = copy.copy(data)
 
-    # TODO(manan): consolidate behind 'EdgeType':
-    # TODO(manan): remove special handling of 'perm_dict':
-    row_dict_keys = list(row_dict.keys())
-    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
-
     for node_type in data.node_types:
         filter_node_store_(data[node_type], out[node_type],
                            node_dict[node_type])
 
     for edge_type in data.edge_types:
-        edge_type_str = edge_type_to_str(edge_type) if is_str else edge_type
         filter_edge_store_(
             data[edge_type],
             out[edge_type],
-            row_dict[edge_type_str],
-            col_dict[edge_type_str],
-            edge_dict[edge_type_str],
-            perm_dict[edge_type_to_str(edge_type)],
+            row_dict[edge_type],
+            col_dict[edge_type],
+            edge_dict[edge_type],
+            perm_dict[edge_type],
         )
 
     return out
@@ -144,14 +132,10 @@ def filter_custom_store(
     # Construct a new `HeteroData` object:
     data = HeteroData()
 
-    # TODO(manan): consolidate behind 'EdgeType':
-    row_dict_keys = list(row_dict.keys())
-    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
-
     # Filter edge storage:
     # TODO support edge attributes
     for attr in graph_store.get_all_edge_attrs():
-        key = edge_type_to_str(attr.edge_type) if is_str else attr.edge_type
+        key = attr.edge_type
         if key in row_dict and key in col_dict:
             edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
             data[attr.edge_type].edge_index = edge_index

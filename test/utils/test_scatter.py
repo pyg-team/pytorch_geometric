@@ -3,6 +3,7 @@ import torch
 import torch_scatter
 
 import torch_geometric
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import scatter
 
 
@@ -20,7 +21,7 @@ def test_scatter(reduce):
 
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
-def test_scatter_backward(reduce):
+def test_pytorch_scatter_backward(reduce):
     torch.manual_seed(12345)
 
     src = torch.randn(8, 100, 32).requires_grad_(True)
@@ -28,9 +29,25 @@ def test_scatter_backward(reduce):
 
     with torch_geometric.experimental_mode('scatter_reduce'):
         out = scatter(src, index, dim=1, reduce=reduce).relu()
+
     assert src.grad is None
     out.mean().backward()
     assert src.grad is not None
+
+
+@withPackage('torch>=1.12.0')
+@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
+def test_pytorch_scatter_inplace_backward(reduce):
+    torch.manual_seed(12345)
+
+    src = torch.randn(8, 100, 32).requires_grad_(True)
+    index = torch.randint(0, 10, (100, ), dtype=torch.long)
+
+    with torch_geometric.experimental_mode('scatter_reduce'):
+        out = scatter(src, index, dim=1, reduce=reduce).relu_()
+
+    with pytest.raises(RuntimeError, match="modified by an inplace operation"):
+        out.mean().backward()
 
 
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max', 'mul'])
