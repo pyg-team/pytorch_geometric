@@ -4,13 +4,13 @@ from torch import Tensor
 
 class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from `"Attention Is All You Need"
-    <https://arxiv.org/pdf/1706.03762.pdf>`_ paper.
+    <https://arxiv.org/pdf/1706.03762.pdf>`_ paper
 
     .. math::
 
-        PE(x)_{2 \cdot i} &= \sin(x / 10000^{2 \c dot i / d})
+        PE(x)_{2 \cdot i} &= \sin(x / 10000^{2 \cdot i / d})
 
-        PE(x)_{2 \cdot i + 1} &= \cos(x / 10000^{2 \c dot i / d})
+        PE(x)_{2 \cdot i + 1} &= \cos(x / 10000^{2 \cdot i / d})
 
     where :math:`x` is the position and :math:`i` is the dimension.
 
@@ -42,6 +42,7 @@ class PositionalEncoding(torch.nn.Module):
         self.register_buffer('frequency', frequency)
 
     def forward(self, x: Tensor) -> Tensor:
+        """"""
         x = x / self.granularity if self.granularity != 1.0 else x
         out = x.view(-1, 1) * self.frequency.view(1, -1)
         return torch.cat([torch.sin(out), torch.cos(out)], dim=-1)
