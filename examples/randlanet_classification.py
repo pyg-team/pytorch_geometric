@@ -18,7 +18,7 @@ from torch_geometric.utils import softmax
 lrelu02_kwargs = {"negative_slope": 0.2}
 
 
-bn099_kwargs = {"momentum": 0.99, "eps": 1e-6}
+bn099_kwargs = {"momentum": 0.01, "eps": 1e-6}
 
 
 class SharedMLP(MLP):
@@ -30,7 +30,7 @@ class SharedMLP(MLP):
         # LeakyRelu with 0.2 slope by default.
         kwargs["act"] = kwargs.get("act", "LeakyReLU")
         kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
-        # BatchNorm with 0.99 momentum and 1e-6 eps by defaut.
+        # BatchNorm with 1 - 0.99 = 0.01 momentum and 1e-6 eps by defaut (tensorflow momentum != pytorch momentum)
         kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
         super().__init__(*args, **kwargs)
 
