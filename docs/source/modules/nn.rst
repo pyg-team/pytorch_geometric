@@ -227,6 +227,14 @@ Models
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
+Encoders
+--------
+
+.. automodule:: torch_geometric.nn.encoder
+   :members:
+   :undoc-members:
+   :exclude-members: training
+
 Functional
 ----------
 

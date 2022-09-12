@@ -4,7 +4,8 @@ from .sequential import Sequential
 from .data_parallel import DataParallel
 from .to_hetero_transformer import to_hetero
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
-from .positional_encoding import PositionalEncoding1D
+from .encoding import PositionalEncoding
+
 from .aggr import *  # noqa
 from .conv import *  # noqa
 from .pool import *  # noqa
@@ -22,5 +23,5 @@ __all__ = [
     'DataParallel',
     'to_hetero',
     'to_hetero_with_bases',
-    'PositionalEncoding1D',
+    'PositionalEncoding',
 ]
