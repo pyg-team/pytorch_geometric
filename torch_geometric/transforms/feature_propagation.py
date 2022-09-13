@@ -1,6 +1,5 @@
-import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
