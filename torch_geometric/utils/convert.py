@@ -185,7 +185,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         >>> data = Data(edge_index=edge_index, num_nodes=4)
         >>> g = to_networkx(data)
 
-        >>> A `Data` object is returned
+        >>> # A `Data` object is returned
         >>> from_networkx(g)
         Data(edge_index=[2, 6], num_nodes=4)
     """
