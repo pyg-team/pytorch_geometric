@@ -1,28 +1,15 @@
-from collections.abc import Sequence
-from typing import Any, Callable, Iterator, Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union
 
-import torch
-from torch import Tensor
-
-from torch_geometric.data import Data, HeteroData, remote_backend_utils
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import (
-    filter_custom_store,
-    filter_data,
-    filter_hetero_data,
-)
+from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import (
-    HeteroSamplerOutput,
-    NodeSamplerInput,
-    SamplerOutput,
-)
 from torch_geometric.typing import InputNodes, NumNeighbors
 
 
-class NeighborLoader(torch.utils.data.DataLoader):
+class NeighborLoader(NodeLoader):
     r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
@@ -177,138 +164,30 @@ class NeighborLoader(torch.utils.data.DataLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-
-        self.data = data
-
-        # Save for PyTorch Lightning < 1.6:
-        self.num_neighbors = num_neighbors
-        self.input_nodes = input_nodes
-        self.replace = replace
-        self.directed = directed
-        self.transform = transform
-        self.filter_per_worker = filter_per_worker
-        self.neighbor_sampler = neighbor_sampler
-
-        # Get input type, or None for homogeneous graphs:
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
-        self.input_type = node_type
+        # Get input type:
+        # TODO(manan): this computation is repeated twice, once here and once
+        # in NodeLoader:
+        node_type, _ = get_input_nodes(data, input_nodes)
 
         if neighbor_sampler is None:
-            self.neighbor_sampler = NeighborSampler(
+            neighbor_sampler = NeighborSampler(
                 data,
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
-                input_type=self.input_type,
+                input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        super().__init__(input_nodes, collate_fn=self.collate_fn, **kwargs)
-
-    def filter_fn(
-        self,
-        out: Union[SamplerOutput, HeteroSamplerOutput],
-    ) -> Union[Data, HeteroData]:
-        if isinstance(out, SamplerOutput):
-            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.neighbor_sampler.edge_permutation)
-            data.batch = out.batch
-            data.batch_size = out.metadata
-
-        elif isinstance(out, HeteroSamplerOutput):
-            if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.neighbor_sampler.edge_permutation)
-            else:  # Tuple[FeatureStore, GraphStore]
-                data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge)
-
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
-            data[self.input_type].batch_size = out.metadata
-
-        else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{type(out)}'")
-
-        return data if self.transform is None else self.transform(data)
-
-    def collate_fn(self, index: NodeSamplerInput) -> Any:
-        out = self.neighbor_sampler.sample_from_nodes(index)
-        if self.filter_per_worker:
-            # We execute `filter_fn` in the worker process.
-            out = self.filter_fn(out)
-        return out
-
-    def _get_iterator(self) -> Iterator:
-        if self.filter_per_worker:
-            return super()._get_iterator()
-        # We execute `filter_fn` in the main process.
-        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
-
-
-###############################################################################
-
-
-def get_input_nodes(
-    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-    input_nodes: Union[InputNodes, TensorAttr],
-) -> Tuple[Optional[str], Sequence]:
-    def to_index(tensor):
-        if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
-            return tensor.nonzero(as_tuple=False).view(-1)
-        return tensor
-
-    if isinstance(data, Data):
-        if input_nodes is None:
-            return None, range(data.num_nodes)
-        return None, to_index(input_nodes)
-
-    elif isinstance(data, HeteroData):
-        assert input_nodes is not None
-
-        if isinstance(input_nodes, str):
-            return input_nodes, range(data[input_nodes].num_nodes)
-
-        assert isinstance(input_nodes, (list, tuple))
-        assert len(input_nodes) == 2
-        assert isinstance(input_nodes[0], str)
-
-        node_type, input_nodes = input_nodes
-        if input_nodes is None:
-            return node_type, range(data[node_type].num_nodes)
-        return node_type, to_index(input_nodes)
-
-    else:  # Tuple[FeatureStore, GraphStore]
-        feature_store, graph_store = data
-        assert input_nodes is not None
-
-        if isinstance(input_nodes, Tensor):
-            return None, to_index(input_nodes)
-
-        if isinstance(input_nodes, str):
-            return input_nodes, range(
-                remote_backend_utils.num_nodes(feature_store, graph_store,
-                                               input_nodes))
-
-        if isinstance(input_nodes, (list, tuple)):
-            assert len(input_nodes) == 2
-            assert isinstance(input_nodes[0], str)
-
-            node_type, input_nodes = input_nodes
-            if input_nodes is None:
-                return node_type, range(
-                    remote_backend_utils.num_nodes(feature_store, graph_store,
-                                                   input_nodes))
-            return node_type, to_index(input_nodes)
+        # A NeighborLoader is simply a NodeLoader that uses the NeighborSampler
+        # sampling implementation:
+        super().__init__(
+            data=data,
+            node_sampler=neighbor_sampler,
+            input_nodes=input_nodes,
+            transform=transform,
+            filter_per_worker=filter_per_worker,
+            **kwargs,
+        )

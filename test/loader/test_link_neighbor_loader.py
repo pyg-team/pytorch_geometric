@@ -195,7 +195,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
 
-    with pytest.raises(ValueError, match=r'`edge_label_time` is specified .*'):
+    with pytest.raises(ValueError, match=r"'edge_label_time' was not set.*"):
         loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                     edge_label_index=('paper', 'paper'),
                                     batch_size=32, time_attr='time')

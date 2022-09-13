@@ -1,27 +1,15 @@
-from typing import Any, Callable, Iterator, Optional, Tuple, Union
-
-import torch
-from torch import Tensor
+from typing import Callable, Optional, Tuple, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import (
-    filter_custom_store,
-    filter_data,
-    filter_hetero_data,
-)
+from torch_geometric.loader.link_loader import LinkLoader
+from torch_geometric.loader.utils import get_edge_label_index
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import (
-    EdgeSamplerInput,
-    HeteroSamplerOutput,
-    SamplerOutput,
-)
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
-class LinkNeighborLoader(torch.utils.data.DataLoader):
+class LinkNeighborLoader(LinkLoader):
     r"""A link-based data loader derived as an extension of the node-based
     :class:`torch_geometric.loader.NeighborLoader`.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -168,186 +156,42 @@ class LinkNeighborLoader(torch.utils.data.DataLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Get input type:
+        # TODO(manan): this computation is required twice, once here and once
+        # in LinkLoader:
+        edge_type, _ = get_edge_label_index(data, edge_label_index)
 
-        self.data = data
-
-        # Save for PyTorch Lightning < 1.6:
-        self.num_neighbors = num_neighbors
-        self.edge_label = edge_label
-        self.edge_label_index = edge_label_index
-        self.edge_label_time = edge_label_time
-        self.replace = replace
-        self.directed = directed
-        self.neg_sampling_ratio = neg_sampling_ratio
-        self.transform = transform
-        self.filter_per_worker = filter_per_worker
-        self.neighbor_sampler = neighbor_sampler
-        self.neg_sampling_ratio = neg_sampling_ratio
-
-        # Get input edge type:
-        edge_type, edge_label_index = get_edge_label_index(
-            data, edge_label_index)
-        if edge_label is None:
-            edge_label = torch.zeros(edge_label_index.size(1),
-                                     device=edge_label_index.device)
-        self.input_type = edge_type
-
-        if (edge_label_time is None) != (time_attr is None):
-            raise ValueError("`edge_label_time` is specified but `time_attr` "
-                             "is `None` or vice-versa. Both arguments need to "
-                             "be specified for temporal sampling")
+        has_time_attr = time_attr is not None
+        has_edge_label_time = edge_label_time is not None
+        if has_edge_label_time != has_time_attr:
+            raise ValueError(
+                f"Received conflicting 'time_attr' and 'edge_label_time' "
+                f"arguments: 'time_attr' was "
+                f"{'set' if has_time_attr else 'not set'} and "
+                f"'edge_label_time' was "
+                f"{'set' if has_edge_label_time else 'not set'}. Please "
+                f"resolve these conflicting arguments.")
 
         if neighbor_sampler is None:
-            self.neighbor_sampler = NeighborSampler(
+            neighbor_sampler = NeighborSampler(
                 data,
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
-                input_type=self.input_type,
-                is_sorted=is_sorted,
+                input_type=edge_type,
                 time_attr=time_attr,
+                is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
         super().__init__(
-            Dataset(edge_label_index, edge_label, edge_label_time),
-            collate_fn=self.collate_fn, **kwargs)
-
-    def filter_fn(
-        self,
-        out: Union[SamplerOutput, HeteroSamplerOutput],
-    ) -> Union[Data, HeteroData]:
-        if isinstance(out, SamplerOutput):
-            edge_label_index, edge_label = out.metadata
-            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.neighbor_sampler.edge_permutation)
-            data.edge_label_index = edge_label_index
-            data.edge_label = edge_label
-
-        elif isinstance(out, HeteroSamplerOutput):
-            edge_label_index, edge_label, edge_label_time = out.metadata
-            if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.neighbor_sampler.edge_permutation)
-            else:  # Tuple[FeatureStore, GraphStore]
-                data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge)
-
-            edge_type = self.input_type
-            data[edge_type].edge_label_index = edge_label_index
-            data[edge_type].edge_label = edge_label
-            if edge_label_time is not None:
-                data[edge_type].edge_label_time = edge_label_time
-
-        else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{type(out)}'")
-
-        return data if self.transform is None else self.transform(data)
-
-    def collate_fn(self, index: EdgeSamplerInput) -> Any:
-        out = self.neighbor_sampler.sample_from_edges(
-            index,
-            negative_sampling_ratio=self.neg_sampling_ratio,
+            data=data,
+            link_sampler=neighbor_sampler,
+            edge_label_index=edge_label_index,
+            edge_label=edge_label,
+            edge_label_time=edge_label_time,
+            neg_sampling_ratio=neg_sampling_ratio,
+            transform=transform,
+            filter_per_worker=filter_per_worker,
+            **kwargs,
         )
-        if self.filter_per_worker:
-            # We execute `filter_fn` in the worker process.
-            out = self.filter_fn(out)
-        return out
-
-    def _get_iterator(self) -> Iterator:
-        if self.filter_per_worker:
-            return super()._get_iterator()
-        # We execute `filter_fn` in the main process.
-        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
-
-
-###############################################################################
-
-
-class Dataset(torch.utils.data.Dataset):
-    def __init__(self, edge_label_index: Tensor, edge_label: Tensor,
-                 edge_label_time: OptTensor = None):
-        self.edge_label_index = edge_label_index
-        self.edge_label = edge_label
-        self.edge_label_time = edge_label_time
-
-    def __getitem__(self, idx: int) -> Tuple[int]:
-        if self.edge_label_time is None:
-            return (
-                self.edge_label_index[0, idx],
-                self.edge_label_index[1, idx],
-                self.edge_label[idx],
-            )
-        else:
-            return (
-                self.edge_label_index[0, idx],
-                self.edge_label_index[1, idx],
-                self.edge_label[idx],
-                self.edge_label_time[idx],
-            )
-
-    def __len__(self) -> int:
-        return self.edge_label_index.size(1)
-
-
-def get_edge_label_index(
-    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-    edge_label_index: InputEdges,
-) -> Tuple[Optional[str], Tensor]:
-    edge_type = None
-    if isinstance(data, Data):
-        if edge_label_index is None:
-            return None, data.edge_index
-        return None, edge_label_index
-
-    assert edge_label_index is not None
-    assert isinstance(edge_label_index, (list, tuple))
-
-    if isinstance(data, HeteroData):
-        if isinstance(edge_label_index[0], str):
-            edge_type = edge_label_index
-            edge_type = data._to_canonical(*edge_type)
-            assert edge_type in data.edge_types
-            return edge_type, data[edge_type].edge_index
-
-        assert len(edge_label_index) == 2
-
-        edge_type, edge_label_index = edge_label_index
-        edge_type = data._to_canonical(*edge_type)
-
-        if edge_label_index is None:
-            return edge_type, data[edge_type].edge_index
-
-        return edge_type, edge_label_index
-
-    else:  # Tuple[FeatureStore, GraphStore]
-        _, graph_store = data
-
-        # Need the edge index in COO for LinkNeighborLoader:
-        def _get_edge_index(edge_type):
-            row_dict, col_dict, _ = graph_store.coo([edge_type])
-            row = list(row_dict.values())[0]
-            col = list(col_dict.values())[0]
-            return torch.stack((row, col), dim=0)
-
-        if isinstance(edge_label_index[0], str):
-            edge_type = edge_label_index
-            return edge_type, _get_edge_index(edge_type)
-
-        assert len(edge_label_index) == 2
-        edge_type, edge_label_index = edge_label_index
-
-        if edge_label_index is None:
-            return edge_type, _get_edge_index(edge_type)
-
-        return edge_type, edge_label_index
