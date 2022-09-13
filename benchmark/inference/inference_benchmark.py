@@ -58,11 +58,12 @@ def run(args: argparse.ArgumentParser) -> None:
                     )
 
                 for layers in args.num_layers:
+                    num_neighbors = [args.hetero_num_neighbors] * layers
                     if hetero:
+                        # batch-wise inference
                         subgraph_loader = NeighborLoader(
                             data,
-                            num_neighbors=[args.hetero_num_neighbors] *
-                            layers,  # batch-wise inference
+                            num_neighbors=num_neighbors,
                             input_nodes=mask,
                             batch_size=batch_size,
                             shuffle=False,
@@ -71,12 +72,11 @@ def run(args: argparse.ArgumentParser) -> None:
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
-                        print(
-                            f'Batch size={batch_size}, '
-                            f'Layers amount={layers}, '
-                            f'Num_neighbors={subgraph_loader.num_neighbors}, '
-                            f'Hidden features size={hidden_channels}, '
-                            f'Sparse tensor={args.use_sparse_tensor}')
+                        print(f'Batch size={batch_size}, '
+                              f'Layers amount={layers}, '
+                              f'Num_neighbors={num_neighbors}, '
+                              f'Hidden features size={hidden_channels}, '
+                              f'Sparse tensor={args.use_sparse_tensor}')
                         params = {
                             'inputs_channels': inputs_channels,
                             'hidden_channels': hidden_channels,
@@ -111,10 +111,11 @@ def run(args: argparse.ArgumentParser) -> None:
                                 with torch_profile():
                                     model.inference(subgraph_loader, device,
                                                     progress_bar=True)
-                                rename_profile_file(
-                                    model_name, dataset_name, str(batch_size),
-                                    str(layers), str(hidden_channels),
-                                    str(subgraph_loader.num_neighbors))
+                                rename_profile_file(model_name, dataset_name,
+                                                    str(batch_size),
+                                                    str(layers),
+                                                    str(hidden_channels),
+                                                    str(num_neighbors))
 
 
 if __name__ == '__main__':

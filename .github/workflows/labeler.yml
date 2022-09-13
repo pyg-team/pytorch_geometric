@@ -6,6 +6,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   triage:
+    if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
     permissions:
