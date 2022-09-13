@@ -15,10 +15,12 @@ jobs:
 
     steps:
       - uses: actions/labeler@v4
+        continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - uses: samspills/assign-pr-to-author@v1.0
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
