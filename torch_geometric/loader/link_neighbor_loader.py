@@ -10,7 +10,7 @@ from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
-    """A link-based data loader derived as an extension of the node-based
+    r"""A link-based data loader derived as an extension of the node-based
     :class:`torch_geometric.loader.NeighborLoader`.
     This loader allows for mini-batch training of GNNs on large-scale graphs
     where full-batch training is not feasible.
@@ -161,27 +161,37 @@ class LinkNeighborLoader(LinkLoader):
         # in LinkLoader:
         edge_type, _ = get_edge_label_index(data, edge_label_index)
 
-        # Store num_neigbors to retain backwards compatibility:
-        self.num_neighbors = num_neighbors
+        has_time_attr = time_attr is not None
+        has_edge_label_time = edge_label_time is not None
+        if has_edge_label_time != has_time_attr:
+            raise ValueError(
+                f"Received conflicting 'time_attr' and 'edge_label_time' "
+                f"arguments: 'time_attr' was "
+                f"{'set' if has_time_attr else 'not set'} and "
+                f"'edge_label_time' was "
+                f"{'set' if has_edge_label_time else 'not set'}. Please "
+                f"resolve these conflicting arguments.")
+
+        if neighbor_sampler is None:
+            neighbor_sampler = NeighborSampler(
+                data,
+                num_neighbors=num_neighbors,
+                replace=replace,
+                directed=directed,
+                input_type=edge_type,
+                time_attr=time_attr,
+                is_sorted=is_sorted,
+                share_memory=kwargs.get('num_workers', 0) > 0,
+            )
 
         super().__init__(
             data=data,
-            link_sampler=neighbor_sampler or NeighborSampler,
-            link_sampler_kwargs={
-                'num_neighbors': num_neighbors,
-                'replace': replace,
-                'directed': directed,
-                'input_type': edge_type,
-                'time_attr': time_attr,
-                'is_sorted': is_sorted,
-                'share_memory': kwargs.get('num_workers', 0) > 0,
-            },
-            initialize_sampler=neighbor_sampler is None,
+            link_sampler=neighbor_sampler,
             edge_label_index=edge_label_index,
             edge_label=edge_label,
             edge_label_time=edge_label_time,
+            neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
             filter_per_worker=filter_per_worker,
-            neg_sampling_ratio=neg_sampling_ratio,
             **kwargs,
         )

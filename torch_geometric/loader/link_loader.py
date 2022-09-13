@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, Tuple, Union
 
 import torch
 
@@ -24,20 +24,17 @@ from torch_geometric.typing import InputEdges, OptTensor
 class LinkLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs neighbor sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
-    implementation that defines a `sample_from_edges` function and is supported
-    on the provided input :obj:`data` object.
+    implementation that defines a :meth:`sample_from_edges` function and is
+    supported on the provided input :obj:`data` object.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
-        link_sampler (torch_geometric.sampler.BaseSampler, optional): The
-            sampler implementation to be used with this loader. Note that the
+        link_sampler (torch_geometric.sampler.BaseSampler): The sampler
+            implementation to be used with this loader. Note that the
             sampler implementation must be compatible with the input data
             object.
-        link_sampler_kwargs (Dict[str, Any], optional): the keyword arguments
-            to be passed to the constructor of `link_sampler`; only necessary
-            if `link_sampler` has not already been constructed.
         edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The edge indices for which neighbors are sampled to create
             mini-batches.
@@ -56,8 +53,9 @@ class LinkLoader(torch.utils.data.DataLoader):
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
-        initialize_sampler (bool, optional): whether `link_sampler` should be
-            constructed (default: True).
+        neg_sampling_ratio (float, optional): the number of negative samples
+            to include as a ratio of the number of positive examples
+            (default: 0).
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -76,15 +74,13 @@ class LinkLoader(torch.utils.data.DataLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        link_sampler: Optional[BaseSampler] = None,
-        link_sampler_kwargs: Dict[str, Any] = None,
-        initialize_sampler: bool = True,
+        link_sampler: BaseSampler,
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
+        neg_sampling_ratio: float = 0.0,
         transform: Callable = None,
         filter_per_worker: bool = False,
-        neg_sampling_ratio: float = 0.0,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -99,9 +95,6 @@ class LinkLoader(torch.utils.data.DataLoader):
         # NOTE sampler is an attribute of 'DataLoader', so we use link_sampler
         # here:
         self.link_sampler = link_sampler
-        if initialize_sampler:
-            self.link_sampler = self.link_sampler(self.data,
-                                                  **link_sampler_kwargs)
 
         # Store additional arguments:
         self.edge_label = edge_label
@@ -118,12 +111,6 @@ class LinkLoader(torch.utils.data.DataLoader):
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
         self.input_type = edge_type
-
-        has_time_attr = link_sampler_kwargs.get('time_attr', None) is not None
-        if ((edge_label_time is not None) != has_time_attr):
-            raise ValueError("`edge_label_time` is specified but `time_attr` "
-                             "is `None` or vice-versa. Both arguments need to "
-                             "be specified for temporal sampling")
 
         super().__init__(
             Dataset(edge_label_index, edge_label, edge_label_time),
@@ -192,13 +179,23 @@ class LinkLoader(torch.utils.data.DataLoader):
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, edge_label_index: torch.Tensor,
-                 edge_label: torch.Tensor, edge_label_time: OptTensor = None):
+    def __init__(
+        self,
+        edge_label_index: torch.Tensor,
+        edge_label: torch.Tensor,
+        edge_label_time: OptTensor = None,
+    ):
+        # NOTE see documentation of LinkLoader for details on these three
+        # input parameters:
         self.edge_label_index = edge_label_index
         self.edge_label = edge_label
         self.edge_label_time = edge_label_time
 
-    def __getitem__(self, idx: int) -> Tuple[int]:
+    def __getitem__(
+        self,
+        idx: int,
+    ) -> Union[Tuple[torch.Tensor, torch.Tensor, torch.Tensor], Tuple[
+            torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]]:
         if self.edge_label_time is None:
             return (
                 self.edge_label_index[0, idx],
