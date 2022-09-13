@@ -25,8 +25,7 @@ def run(args: argparse.ArgumentParser) -> None:
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
         dataset, num_classes = get_dataset(dataset_name, args.root,
-                                           args.use_sparse_tensor, args.bf16,
-                                           remove_edge_index=False)
+                                           args.use_sparse_tensor, args.bf16)
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
