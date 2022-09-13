@@ -26,7 +26,8 @@ def run(args: argparse.ArgumentParser) -> None:
         print(f'Dataset: {dataset_name}')
         remove_edge_index = False if 'pna' in args.models else True
         dataset, num_classes = get_dataset(dataset_name, args.root,
-                                           args.use_sparse_tensor, args.bf16, remove_edge_index)
+                                           args.use_sparse_tensor, args.bf16,
+                                           remove_edge_index)
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
