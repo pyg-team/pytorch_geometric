@@ -208,7 +208,7 @@ class BasicGNN(torch.nn.Module):
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
         assert len(loader.dataset) == loader.data.num_nodes
-        assert len(loader.num_neighbors) == 1
+        assert len(loader.node_sampler.num_neighbors) == 1
         assert not self.training
         # assert not loader.shuffle  # TODO (matthias) does not work :(
         if progress_bar:
