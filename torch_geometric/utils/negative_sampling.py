@@ -38,6 +38,19 @@ def negative_sampling(edge_index: Tensor,
             negative edges will be undirected. (default: :obj:`False`)
 
     :rtype: LongTensor
+
+    Examples:
+
+        >>> edge_index = torch.as_tensor([[0, 0, 1, 2],
+        ...                               [0, 1, 2, 3]])
+        >>> negative_sampling(edge_index)
+        tensor([[3, 0, 0, 3],
+                [2, 3, 2, 1]])
+
+        >>> # For bipartite graph
+        >>> negative_sampling(edge_index, num_nodes=(3, 4))
+        tensor([[0, 2, 2, 1],
+                [2, 2, 1, 3]])
     """
     assert method in ['sparse', 'dense']
 
