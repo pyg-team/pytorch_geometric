@@ -58,7 +58,7 @@ def from_scipy_sparse_matrix(A):
         ... ])
         >>> adj = to_scipy_sparse_matrix(edge_index)
 
-        >>> `edge_index` and `edge_weight` are both returned
+        >>> # `edge_index` and `edge_weight` are both returned
         >>> from_scipy_sparse_matrix(adj)
         (tensor([[0, 1, 1, 2, 2, 3],
                 [1, 0, 2, 1, 3, 2]]),
