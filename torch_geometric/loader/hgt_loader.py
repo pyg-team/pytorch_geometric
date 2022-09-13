@@ -1,16 +1,15 @@
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import filter_hetero_data
-from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
+from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.loader.utils import get_input_nodes
+from torch_geometric.sampler.hgt_sampler import HGTSampler
 from torch_geometric.typing import NodeType
 
 
-class HGTLoader(torch.utils.data.DataLoader):
+class HGTLoader(NodeLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -78,6 +77,10 @@ class HGTLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by column. This avoids internal
+            re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -95,85 +98,24 @@ class HGTLoader(torch.utils.data.DataLoader):
         data: HeteroData,
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
         input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
+        is_sorted: bool = False,
         transform: Callable = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-
-        if isinstance(num_samples, (list, tuple)):
-            num_samples = {key: num_samples for key in data.node_types}
-
-        if isinstance(input_nodes, str):
-            input_nodes = (input_nodes, None)
-        assert isinstance(input_nodes, (list, tuple))
-        assert len(input_nodes) == 2
-        assert isinstance(input_nodes[0], str)
-        if input_nodes[1] is None:
-            index = torch.arange(data[input_nodes[0]].num_nodes)
-            input_nodes = (input_nodes[0], index)
-        elif input_nodes[1].dtype == torch.bool:
-            index = input_nodes[1].nonzero(as_tuple=False).view(-1)
-            input_nodes = (input_nodes[0], index)
-
-        self.data = data
-        self.num_samples = num_samples
-        self.input_nodes = input_nodes
-        self.num_hops = max([len(v) for v in num_samples.values()])
-        self.transform = transform
-        self.filter_per_worker = filter_per_worker
-        self.sample_fn = torch.ops.torch_sparse.hgt_sample
-
-        # Convert the graph data into a suitable format for sampling.
-        colptr_dict, row_dict, perm_dict = to_hetero_csc(
-            data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
-
-        # NOTE: Since C++ cannot take dictionaries with tuples as key as
-        # input, edge type triplets are converted into single strings.
-        self.to_rel_type = {key: '__'.join(key) for key in data.edge_types}
-        self.to_edge_type = {'__'.join(key): key for key in data.edge_types}
-        self.row_dict = remap_keys(row_dict, self.to_rel_type)
-        self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
-        self.perm_dict = perm_dict
-
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.collate_fn,
-                         **kwargs)
-
-    def sample(self, indices: List[int]) -> HeteroData:
-        input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
-        node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
-            self.colptr_dict,
-            self.row_dict,
-            input_node_dict,
-            self.num_samples,
-            self.num_hops,
+        node_type, _ = get_input_nodes(data, input_nodes)
+        node_sampler = HGTSampler(
+            data,
+            num_samples=num_samples,
+            input_type=node_type,
+            is_sorted=is_sorted,
+            share_memory=kwargs.get('num_workers', 0) > 0,
         )
-        return node_dict, row_dict, col_dict, edge_dict, len(indices)
-
-    def filter_fn(self, out: Any) -> HeteroData:
-        node_dict, row_dict, col_dict, edge_dict, batch_size = out
-        row_dict = remap_keys(row_dict, self.to_edge_type)
-        col_dict = remap_keys(col_dict, self.to_edge_type)
-        edge_dict = remap_keys(edge_dict, self.to_edge_type)
-        data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                  edge_dict, self.perm_dict)
-        data[self.input_nodes[0]].batch_size = batch_size
-
-        return data if self.transform is None else self.transform(data)
-
-    def collate_fn(self, indices: List[int]) -> Any:
-        out = self.sample(indices)
-        if self.filter_per_worker:
-            # We execute `filter_fn` in the worker process.
-            out = self.filter_fn(out)
-        return out
-
-    def _get_iterator(self) -> Iterator:
-        if self.filter_per_worker:
-            return super()._get_iterator()
-        # We execute `filter_fn` in the main process.
-        return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        super().__init__(
+            data=data,
+            node_sampler=node_sampler,
+            input_nodes=input_nodes,
+            transform=transform,
+            filter_per_worker=filter_per_worker,
+            **kwargs,
+        )
