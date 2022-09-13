@@ -38,7 +38,7 @@ def coalesce(
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
         (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
 
-    Examples:
+    Example:
 
         >>> edge_index = torch.tensor([[1, 1, 2, 3], [3, 3, 1, 2]])
         >>> edge_attr = torch.tensor([1., 1., 1., 1.])
