@@ -10,7 +10,7 @@ from torch_geometric.typing import InputNodes, NumNeighbors
 
 
 class NeighborLoader(NodeLoader):
-    """A data loader that performs neighbor sampling as introduced in the
+    r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs

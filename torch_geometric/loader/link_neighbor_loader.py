@@ -10,7 +10,7 @@ from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
-    """A link-based data loader derived as an extension of the node-based
+    r"""A link-based data loader derived as an extension of the node-based
     :class:`torch_geometric.loader.NeighborLoader`.
     This loader allows for mini-batch training of GNNs on large-scale graphs
     where full-batch training is not feasible.
