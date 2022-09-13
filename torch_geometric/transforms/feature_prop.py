@@ -60,7 +60,7 @@ class FeaturePropagation(BaseTransform):
         else:
             adj_t = data.adj_t
 
-        adj_t = gcn_norm(adj_t)
+        adj_t = gcn_norm(adj_t, add_self_loops=False)
 
         x = data.x
         x[self.missing_mask] = 0
