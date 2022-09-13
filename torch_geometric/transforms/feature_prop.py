@@ -33,8 +33,9 @@ class FeaturePropagation(BaseTransform):
         data = transform(data)
 
     Args:
-        missing_mask (Tensor): The mask indicating where
-            node features are missing, of shape `[num_nodes, channels]`.
+        missing_mask (BoolTensor): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{N\times F}`, which
+                indicates where node features are missing.
         num_iterations (int): The number of propagations. (default: :obj:`40`)
     """
     def __init__(self, missing_mask: Tensor, num_iterations: int = 40):
