@@ -12,18 +12,19 @@ def test_feature_propagation():
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
 
-    assert str(FeaturePropagation(missing_mask)) == ('FeaturePropagation('
-                                                     'num_iterations=40)')
+    transform = FeaturePropagation(missing_mask)
+    assert str(transform) == ('FeaturePropagation(missing_features=8.3%, '
+                              'num_iterations=40)')
 
-    data = Data(x=x, edge_index=edge_index)
-    assert torch.any(torch.isnan(data.x))
+    data1 = Data(x=x, edge_index=edge_index)
+    assert torch.isnan(data1.x).sum() == 2
+    data1 = FeaturePropagation(missing_mask)(data1)
+    assert torch.isnan(data1.x).sum() == 0
+    assert data1.x.size() == x.size()
 
-    data = FeaturePropagation(missing_mask)(data)
-    assert torch.all(~torch.isnan(data.x))
-    assert data.x.size() == x.size()
-
-    data = Data(x=x, edge_index=edge_index)
-    data = ToSparseTensor()(data)
-    data = FeaturePropagation(missing_mask)(data)
-    assert torch.all(~torch.isnan(data.x))
-    assert data.x.size() == x.size()
+    data2 = Data(x=x, edge_index=edge_index)
+    assert torch.isnan(data2.x).sum() == 2
+    data2 = ToSparseTensor()(data2)
+    data2 = transform(data2)
+    assert torch.isnan(data2.x).sum() == 0
+    assert torch.allclose(data1.x, data2.x)

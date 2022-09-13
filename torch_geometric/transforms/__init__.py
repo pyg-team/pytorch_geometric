@@ -50,7 +50,7 @@ from .rooted_subgraph import RootedEgoNets, RootedRWSubgraph
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
-from .feature_prop import FeaturePropagation
+from .feature_propagation import FeaturePropagation
 
 __all__ = [
     'BaseTransform',
