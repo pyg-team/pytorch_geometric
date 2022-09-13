@@ -16,7 +16,7 @@ def contains_isolated_nodes(edge_index, num_nodes=None):
 
     :rtype: bool
 
-    Examples:
+    Examples::
 
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
