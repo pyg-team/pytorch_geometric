@@ -19,7 +19,7 @@ from torch_geometric.sampler.utils import (
     to_csc,
     to_hetero_csc,
 )
-from torch_geometric.typing import NodeType, NumNeighbors
+from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
 try:
     import pyg_lib  # noqa
@@ -115,7 +115,7 @@ class NeighborSampler(BaseSampler):
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
-            self.perm_dict = perm_dict
+            self.perm = perm_dict
 
         # If we are working with a `Tuple[FeatureStore, GraphStore]` object,
         # obtain edges from GraphStore and convert them to CSC if necessary,
@@ -169,7 +169,7 @@ class NeighborSampler(BaseSampler):
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
             self.num_neighbors = remap_keys(self.num_neighbors,
                                             self.to_rel_type)
-            self.perm_dict = perm_dict
+            self.perm = perm_dict
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -400,3 +400,9 @@ class NeighborSampler(BaseSampler):
                             f"type: '{self.data_cls}'")
 
         return output
+
+    # Other Utilities #########################################################
+
+    @property
+    def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
+        return self.perm

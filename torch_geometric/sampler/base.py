@@ -18,21 +18,23 @@ EdgeSamplerInput = Tuple[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 
 
 # A sampler output contains the following information.
-#   * node: a tensor of output nodes resulting from sampling. In the
+#   * node: a tensor of `n` output nodes resulting from sampling. In the
 #       heterogeneous case, this is a dictionary mapping node types to the
-#       associated output tensors.
-#   * row: a tensor of edge indices that correspond to the row values of the
-#       edges in the sampled subgraph. Note that these indices must be
+#       associated output tensors, each with potentially varying length.
+#   * row: a tensor of edge indices that correspond to the COO row values of
+#       the edges in the sampled subgraph. Note that these indices must be
 #       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
 #       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated output tensors.
-#   * row: a tensor of edge indices that correspond to the column values of the
-#       edges in the sampled subgraph. Note that these indices must be
+#       the associated COO row tensors.
+#   * col: a tensor of edge indices that correspond to the COO column values of
+#       the edges in the sampled subgraph. Note that these indices must be
 #       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
 #       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated output tensors.
-#   * edge: a tensor of the indices in the original graph; e.g. to be used to
-#       obtain edge attributes.
+#       the associated COO column tensors.
+#   * edge: a tensor of the indices of the sampled edges in the original graph.
+#       This tensor is used to obtain edge attributes from the original graph;
+#       if no edge attributes are present, it may be omitted.
+#   * batch: a tensor identifying the seed node for each sampled node.
 #   * metadata: any additional metadata required by a loader using the sampler
 #       output.
 # There exist both homogeneous and heterogeneous versions.
@@ -90,3 +92,13 @@ class BaseSampler(ABC):
         r"""Performs sampling from the edges specified in 'index', returning
         a sampled subgraph in the specified output format."""
         raise NotImplementedError
+
+    @property
+    def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
+        r"""If the sampler performs any modification of edge ordering in the
+        original graph, this function is expected to return the permutation
+        tensor that defines the permutation from the edges in the original
+        graph and the edges used in the sampler. If no such permutation was
+        applied, a default None tensor is returned. For heterogeneous graphs,
+        the expected return type is a permutation tensor for each edge type."""
+        return None
