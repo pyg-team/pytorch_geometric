@@ -172,7 +172,7 @@ def add_self_loops(
                 [1, 0, 0, 0, 1]]),
         tensor([0.5000, 0.5000, 0.5000, 2.0000, 2.0000]))
 
-        >>> # # Use 'add' operation to merge edge features for self-loops
+        >>> # Use 'add' operation to merge edge features for self-loops
         >>> add_self_loops(edge_index, edge_weight,
         ...                fill_value='add')
         (tensor([[0, 1, 0, 0, 1],

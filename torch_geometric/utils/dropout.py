@@ -38,10 +38,8 @@ def dropout_adj(
 
     Examples:
 
-        >>> edge_index = torch.tensor([
-        ...     [0, 1, 1, 2, 2, 3],
-        ...     [1, 0, 2, 1, 3, 2],
-        ... ])
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6])
         >>> dropout_adj(edge_index, edge_attr)
         (tensor([[0, 1, 2, 3],

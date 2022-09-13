@@ -57,7 +57,6 @@ def from_scipy_sparse_matrix(A):
         ...     [1, 0, 2, 1, 3, 2],
         ... ])
         >>> adj = to_scipy_sparse_matrix(edge_index)
-
         >>> # `edge_index` and `edge_weight` are both returned
         >>> from_scipy_sparse_matrix(adj)
         (tensor([[0, 1, 1, 2, 2, 3],
@@ -184,7 +183,6 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         ... ])
         >>> data = Data(edge_index=edge_index, num_nodes=4)
         >>> g = to_networkx(data)
-
         >>> # A `Data` object is returned
         >>> from_networkx(g)
         Data(edge_index=[2, 6], num_nodes=4)

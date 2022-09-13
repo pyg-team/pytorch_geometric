@@ -36,7 +36,7 @@ def mask_to_index(mask: Tensor) -> Tensor:
 
     Example:
 
-        >>> mask = torch.tensor([False,  True, False])
+        >>> mask = torch.tensor([False, True, False])
         >>> mask_to_index(mask)
         tensor([1])
     """

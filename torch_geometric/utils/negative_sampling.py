@@ -165,7 +165,6 @@ def batched_negative_sampling(
         >>> dst_batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2])
         >>> batched_negative_sampling(edge_index,
         ...                           (src_batch, dst_batch))
-
         tensor([[ 0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5],
                 [ 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9]])
     """

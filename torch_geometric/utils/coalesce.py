@@ -40,9 +40,9 @@ def coalesce(
 
     Example:
 
-        >>> edge_index = torch.tensor([[1, 1, 2, 3], [3, 3, 1, 2]])
+        >>> edge_index = torch.tensor([[1, 1, 2, 3],
+        ...                            [3, 3, 1, 2]])
         >>> edge_attr = torch.tensor([1., 1., 1., 1.])
-
         >>> coalesce(edge_index)
         tensor([[1, 2, 3],
                 [3, 1, 2]])
