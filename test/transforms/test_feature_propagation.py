@@ -12,8 +12,8 @@ def test_feature_propagation():
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
 
-    assert str(FeaturePropagation()) == ('FeaturePropagation('
-                                         'num_iterations=40)')
+    assert str(FeaturePropagation(missing_mask)) == ('FeaturePropagation('
+                                                     'num_iterations=40)')
 
     data = Data(x=x, edge_index=edge_index)
     assert torch.any(torch.isnan(data.x))
