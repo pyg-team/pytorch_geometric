@@ -104,17 +104,16 @@ class HGTLoader(NodeLoader):
         **kwargs,
     ):
         node_type, _ = get_input_nodes(data, input_nodes)
-
+        node_sampler = HGTSampler(
+            data,
+            num_samples=num_samples,
+            input_type=node_type,
+            is_sorted=is_sorted,
+            share_memory=kwargs.get('num_workers', 0) > 0,
+        )
         super().__init__(
             data=data,
-            node_sampler=HGTSampler,
-            node_sampler_kwargs={
-                'num_samples': num_samples,
-                'input_type': node_type,
-                'is_sorted': is_sorted,
-                'share_memory': kwargs.get('num_workers', 0) > 0,
-            },
-            initialize_sampler=True,
+            node_sampler=node_sampler,
             input_nodes=input_nodes,
             transform=transform,
             filter_per_worker=filter_per_worker,
