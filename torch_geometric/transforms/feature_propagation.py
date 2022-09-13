@@ -16,24 +16,24 @@ class FeaturePropagation(BaseTransform):
     (functional name: :obj:`feature_propagation`)
 
     .. math::
-        \mathbf{X}^(0) &= (1 - \mathbf{M}) \cdot \mathbf{X}
+        \mathbf{X}^{(0)} &= (1 - \mathbf{M}) \cdot \mathbf{X}
 
-        \mathbf{X}^{(\ell)} &= (1 - \mathbf{M}) \cdot \mathbf{x} +
-        \mathbf{M} \cdot (\mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2}
-        \mathbf{X}^{(\ell - 1)})
+        \mathbf{X}^{(\ell + 1)} &= \mathbf{X}^{(0)} + \mathbf{M} \cdot
+        (\mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2} \mathbf{X}^{(\ell)})
 
     where missing node features are inferred by known features via propagation.
+
+    Example:
 
     .. code-block::
 
         from torch_geometric.transforms import FeaturePropagation
 
         transform = FeaturePropagation(missing_mask=torch.isnan(data.x))
-
         data = transform(data)
 
     Args:
-        missing_mask (torch.BoolTensor): Mask matrix
+        missing_mask (torch.Tensor): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{N\times F}` indicating missing
             node features.
         num_iterations (int, optional): The number of propagations.
