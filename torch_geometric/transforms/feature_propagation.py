@@ -15,10 +15,11 @@ class FeaturePropagation(BaseTransform):
     Node Features" <https://arxiv.org/abs/2111.12128>`_ paper
 
     .. math::
-        \mathbf{X}^(0) &= \mathbf{X}
+        \mathbf{X}^(0) &= (1 - \mathbf{M}) \cdot \mathbf{X}
 
-        \mathbf{X}^{(\ell)} &= \mathbf{D}^{-1/2} \mathbf{A}
-        \mathbf{D}^{-1/2} \mathbf{X}^{(\ell - 1)},
+        \mathbf{X}^{(\ell)} &= (1 - \mathbf{M}) \cdot \mathbf{x} +
+        \mathbf{M} \cdot (\mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2}
+        \mathbf{X}^{(\ell - 1)})
 
     where missing node features are inferred by known features via propagation.
 
