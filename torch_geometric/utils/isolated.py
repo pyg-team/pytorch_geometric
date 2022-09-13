@@ -58,7 +58,7 @@ def remove_isolated_nodes(edge_index, edge_attr=None, num_nodes=None):
         >>> edge_index, edge_attr, mask = remove_isolated_nodes(edge_index,
         ...                                                     num_nodes=3)
         >>> mask # node mask (3 nodes)
-        tensor([ True,  True, False])
+        tensor([True, True, False])
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
