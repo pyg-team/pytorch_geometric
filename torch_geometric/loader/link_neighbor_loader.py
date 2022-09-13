@@ -161,9 +161,6 @@ class LinkNeighborLoader(LinkLoader):
         # in LinkLoader:
         edge_type, _ = get_edge_label_index(data, edge_label_index)
 
-        # Store num_neigbors to retain backwards compatibility:
-        self.num_neighbors = num_neighbors
-
         has_time_attr = time_attr is not None
         has_edge_label_time = edge_label_time is not None
         if has_edge_label_time != has_time_attr:

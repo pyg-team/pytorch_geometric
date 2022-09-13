@@ -185,6 +185,8 @@ class Dataset(torch.utils.data.Dataset):
         edge_label: torch.Tensor,
         edge_label_time: OptTensor = None,
     ):
+        # NOTE see documentation of LinkLoader for details on these three
+        # input parameters:
         self.edge_label_index = edge_label_index
         self.edge_label = edge_label
         self.edge_label_time = edge_label_time

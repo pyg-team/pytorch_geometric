@@ -169,10 +169,6 @@ class NeighborLoader(NodeLoader):
         # in NodeLoader:
         node_type, _ = get_input_nodes(data, input_nodes)
 
-        # Store num_neigbors to retain backwards compatibility, since existing
-        # implementations may access this attribute directly:
-        self.num_neighbors = num_neighbors
-
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
                 data,
