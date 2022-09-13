@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, Tuple, Union
 
 import torch
 
@@ -24,22 +24,17 @@ from torch_geometric.typing import InputNodes
 class NodeLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs neighbor sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
-    implementation that defines a `sample_from_nodes` function and is supported
-    on the provided input :obj:`data` object.
+    implementation that defines a :meth:`sample_from_nodes` function and is
+    supported on the provided input :obj:`data` object.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The :class:`~torch_geometric.data.Data` or
             :class:`~torch_geometric.data.HeteroData` graph object.
-        node_sampler (torch_geometric.sampler.BaseSampler, optional): The
-            sampler implementation to be used with this loader. Note that the
+        node_sampler (torch_geometric.sampler.BaseSampler): The sampler
+            implementation to be used with this loader. Note that the
             sampler implementation must be compatible with the input data
             object.
-        node_sampler_kwargs (Dict[str, Any], optional): the keyword arguments
-            to be passed to the constructor of `node_sampler`; only necessary
-            if `node_sampler` has not already been constructed.
-        initialize_sampler (bool, optional): whether `node_sampler` should be
-            constructed (default: True).
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -66,9 +61,7 @@ class NodeLoader(torch.utils.data.DataLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        node_sampler: Optional[BaseSampler] = None,
-        node_sampler_kwargs: Dict[str, Any] = None,
-        initialize_sampler: bool = True,
+        node_sampler: BaseSampler,
         input_nodes: InputNodes = None,
         transform: Callable = None,
         filter_per_worker: bool = False,
@@ -82,13 +75,9 @@ class NodeLoader(torch.utils.data.DataLoader):
 
         self.data = data
 
-        # Initialize sampler with keyword arguments:
         # NOTE sampler is an attribute of 'DataLoader', so we use node_sampler
         # here:
         self.node_sampler = node_sampler
-        if initialize_sampler:
-            self.node_sampler = self.node_sampler(self.data,
-                                                  **node_sampler_kwargs)
 
         # Store additional arguments:
         self.input_nodes = input_nodes

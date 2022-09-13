@@ -11,7 +11,7 @@ from torch_geometric.typing import InputNodes, NumNeighbors
 
 class NeighborLoader(NodeLoader):
     """A data loader that performs neighbor sampling as introduced in the
-    `"Inductive Representation Learning on Large Graphs
+    `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
     where full-batch training is not feasible.
@@ -173,21 +173,23 @@ class NeighborLoader(NodeLoader):
         # implementations may access this attribute directly:
         self.num_neighbors = num_neighbors
 
+        if neighbor_sampler is None:
+            neighbor_sampler = NeighborSampler(
+                data,
+                num_neighbors=num_neighbors,
+                replace=replace,
+                directed=directed,
+                input_type=node_type,
+                time_attr=time_attr,
+                is_sorted=is_sorted,
+                share_memory=kwargs.get('num_workers', 0) > 0,
+            )
+
         # A NeighborLoader is simply a NodeLoader that uses the NeighborSampler
         # sampling implementation:
         super().__init__(
             data=data,
-            node_sampler=neighbor_sampler or NeighborSampler,
-            node_sampler_kwargs={
-                'num_neighbors': num_neighbors,
-                'replace': replace,
-                'directed': directed,
-                'input_type': node_type,
-                'time_attr': time_attr,
-                'is_sorted': is_sorted,
-                'share_memory': kwargs.get('num_workers', 0) > 0,
-            },
-            initialize_sampler=neighbor_sampler is None,
+            node_sampler=neighbor_sampler,
             input_nodes=input_nodes,
             transform=transform,
             filter_per_worker=filter_per_worker,

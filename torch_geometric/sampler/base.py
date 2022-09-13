@@ -4,9 +4,6 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 # An input to a node-based sampler is a tensor of node indices:
@@ -76,19 +73,6 @@ class BaseSampler(ABC):
         amount of information stored in the sampler, and to initialize all this
         information at `__init__`.
     """
-    @abstractmethod
-    def __init__(
-        self,
-        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        *args,
-        **kwargs,
-    ):
-        r"""This is defined as an abstract method to guide implementations'
-        __init__ signatures. Implementations are expected to have their first
-        argument be a 'data' object, followed by additional arguments that
-        loaders will initialize via keyword argument unpacking."""
-        pass
-
     @abstractmethod
     def sample_from_nodes(
         self,
