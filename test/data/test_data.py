@@ -22,6 +22,9 @@ def test_data():
 
     assert data.x.tolist() == x.tolist()
     assert data['x'].tolist() == x.tolist()
+    assert data.get('x').tolist() == x.tolist()
+    assert data.get('y', 2) == 2
+    assert data.get('y', None) is None
 
     assert sorted(data.keys) == ['edge_index', 'x']
     assert len(data) == 2

@@ -37,6 +37,31 @@ def coalesce(
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
         (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[1, 1, 2, 3],
+        ...                            [3, 3, 1, 2]])
+        >>> edge_attr = torch.tensor([1., 1., 1., 1.])
+        >>> coalesce(edge_index)
+        tensor([[1, 2, 3],
+                [3, 1, 2]])
+
+        >>> # Sort `edge_index` column-wise
+        >>> coalesce(edge_index, sort_by_row=False)
+        tensor([[2, 3, 1],
+                [1, 2, 3]])
+
+        >>> coalesce(edge_index, edge_attr)
+        (tensor([[1, 2, 3],
+                [3, 1, 2]]),
+        tensor([2., 1., 1.]))
+
+        >>> # Use 'mean' operation to merge edge features
+        >>> coalesce(edge_index, edge_attr, reduce='mean')
+        (tensor([[1, 2, 3],
+                [3, 1, 2]]),
+        tensor([1., 1., 1.]))
     """
     nnz = edge_index.size(1)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)

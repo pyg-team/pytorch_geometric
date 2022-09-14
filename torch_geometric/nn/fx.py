@@ -261,7 +261,11 @@ def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
 
-    import torch.fx._symbolic_trace as st
+    # This is to support compatibility with pytorch version 1.9 and lower
+    try:
+        import torch.fx._symbolic_trace as st
+    except (ImportError, ModuleNotFoundError):
+        import torch.fx.symbolic_trace as st
 
     from torch_geometric.nn import Aggregation
 
@@ -319,6 +323,10 @@ def symbolic_trace(
             @st.functools.wraps(st._orig_module_getattr)
             def module_getattr_wrapper(mod, attr):
                 attr_val = st._orig_module_getattr(mod, attr)
+                # Support for PyTorch > 1.12, see:
+                # https://github.com/pytorch/pytorch/pull/84011
+                if hasattr(self, 'getattr'):
+                    return self.getattr(attr, attr_val, parameter_proxy_cache)
                 return self._module_getattr(attr, attr_val,
                                             parameter_proxy_cache)
 

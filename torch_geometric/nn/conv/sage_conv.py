@@ -34,8 +34,9 @@ class SAGEConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (string, optional): The aggregation scheme to use
-            (:obj:`"mean"`, :obj:`"max"`, :obj:`"lstm"`).
+        aggr (string or Aggregation, optional): The aggregation scheme to use.
+            Any aggregation of :obj:`torch_geometric.nn.aggr` can be used,
+            *e.g.*, :obj:`"mean"`, :obj:`"max"`, or :obj:`"lstm"`.
             (default: :obj:`"mean"`)
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
@@ -132,7 +133,7 @@ class SAGEConv(MessagePassing):
 
         x_r = x[1]
         if self.root_weight and x_r is not None:
-            out += self.lin_r(x_r)
+            out = out + self.lin_r(x_r)
 
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)

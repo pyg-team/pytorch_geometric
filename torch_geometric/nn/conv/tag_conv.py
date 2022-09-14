@@ -75,22 +75,23 @@ class TAGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim),
-                    improved=False, add_self_loops=False, dtype=x.dtype)
+                    improved=False, add_self_loops=False, flow=self.flow,
+                    dtype=x.dtype)
 
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim),
-                    add_self_loops=False, dtype=x.dtype)
+                    add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         out = self.lins[0](x)
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
             x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                size=None)
-            out += lin.forward(x)
+            out = out + lin.forward(x)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

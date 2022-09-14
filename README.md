@@ -11,7 +11,7 @@
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
 [contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/CONTRIBUTING.md
 [slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
-[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-p6br3yuo-BxRoe36OHHLF6jYU8xHtBA
+[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-1fs888jsh-AqW9R~k6GETdYqy4c2s24g
 
 <p align="center">
   <img height="150" src="https://raw.githubusercontent.com/pyg-team/pyg_sphinx_theme/master/pyg_sphinx_theme/static/img/pyg_logo_text.svg?sanitize=true" />
@@ -205,7 +205,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 * **[CGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.CGConv)** from Xie and Grossman: [Crystal Graph Convolutional Neural Networks for an Accurate and Interpretable Prediction of Material Properties](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.145301) (Physical Review Letters 120, 2018)
 * **[ECConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ECConv)** from Simonovsky and Komodakis: [Edge-Conditioned Convolution on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
 * **[EGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.EGConv)** from Tailor *et al.*: [Adaptive Filters and Aggregator Fusion for Efficient Graph Convolutions](https://arxiv.org/abs/2104.01481) (GNNSys 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/egc.py)]
-* **[GATv2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATv2Conv)** from Brody *et al.*: [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) (CoRR 2021)
+* **[GATv2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATv2Conv)** from Brody *et al.*: [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) (ICLR 2022)
 * **[TransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.TransformerConv)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/unimp_arxiv.py)]
 * **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup_ppi.py)]
 * **[GraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GraphConv)** from, *e.g.*, Morris *et al.*: [Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks](https://arxiv.org/abs/1810.02244) (AAAI 2019)
@@ -326,6 +326,7 @@ They follow an extensible design: It is easy to apply these operators and graph 
 * **[CorrectAndSmooth](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.CorrectAndSmooth)** from Huang *et al.*: [Combining Label Propagation And Simple Models Out-performs Graph Neural Networks](https://arxiv.org/abs/2010.13993) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/correct_and_smooth.py)]
 * **[Gini](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.gini)** and **[BRO](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.bro)** regularization from Henderson *et al.*: [Improving Molecular Graph Neural Network Explainability with Orthonormalization and Induced Sparsity](https://arxiv.org/abs/2105.04854) (ICML 2021)
 * **[RootedEgoNets](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.transforms.RootedEgoNets)** and **[RootedRWSubgraph](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.transforms.RootedRWSubgraph)** from Zhao *et al.*: [From Stars to Subgraphs: Uplifting Any GNN with Local Structure Awareness](https://arxiv.org/abs/2110.03753) (ICLR 2022)
+* **[FeaturePropagation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.transforms.FeaturePropagation)** from Rossi *et al.*: [On the Unreasonable Effectiveness of Feature Propagation in Learning on Graphs with Missing Node Features](https://arxiv.org/abs/2111.12128) (CoRR 2021)
 </details>
 
 **Scalable GNNs:**

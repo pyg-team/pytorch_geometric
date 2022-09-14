@@ -35,6 +35,22 @@ def dropout_adj(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6])
+        >>> dropout_adj(edge_index, edge_attr)
+        (tensor([[0, 1, 2, 3],
+                [1, 2, 3, 2]]),
+        tensor([1, 3, 5, 6]))
+
+        >>> # The returned graph is kept undirected
+        >>> dropout_adj(edge_index, edge_attr, force_undirected=True)
+        (tensor([[0, 1, 2, 1, 2, 3],
+                [1, 2, 3, 0, 1, 2]]),
+        tensor([1, 3, 5, 1, 3, 5]))
     """
 
     if p < 0. or p > 1.:
