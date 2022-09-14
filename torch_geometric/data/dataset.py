@@ -10,7 +10,7 @@ import numpy as np
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Summary
 from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
@@ -289,6 +289,10 @@ class Dataset(torch.utils.data.Dataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
+
+    def summary(self) -> Summary:
+        r"""Collects summary statistics for the dataset"""
+        return Summary(self)
 
 
 def to_list(value: Any) -> Sequence:
