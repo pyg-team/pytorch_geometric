@@ -11,7 +11,24 @@ from .num_nodes import maybe_num_nodes
 
 def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
-    from."""
+    from.
+
+    Example:
+
+        >>> class GNN(torch.nn.Module):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         self.conv1 = GCNConv(3, 16)
+        ...         self.conv2 = GCNConv(16, 16)
+        ...         self.lin = Linear(16, 2)
+        ...
+        ...     def forward(self, x, edge_index):
+        ...         x = torch.F.relu(self.conv1(x, edge_index))
+        ...         x = self.conv2(x, edge_index)
+        ...         return self.lin(x)
+        >>> get_num_hops(GNN())
+        2
+    """
     from torch_geometric.nn.conv import MessagePassing
     num_hops = 0
     for module in model.modules():
@@ -46,6 +63,24 @@ def subgraph(
             (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
+        ...                            [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5]])
+        >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+        >>> subset = torch.tensor([3, 4, 5])
+        >>> subgraph(subset, edge_index, edge_attr)
+        (tensor([[3, 4, 4, 5],
+                [4, 3, 5, 4]]),
+        tensor([ 7.,  8.,  9., 10.]))
+
+        >>> subgraph(subset, edge_index, edge_attr, return_edge_mask=True)
+        (tensor([[3, 4, 4, 5],
+                [4, 3, 5, 4]]),
+        tensor([ 7.,  8.,  9., 10.]),
+        tensor([False, False, False, False, False, False,  True,
+                True,  True,  True,  False, False]))
     """
 
     device = edge_index.device
@@ -103,6 +138,25 @@ def bipartite_subgraph(
             (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
+        ...                            [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
+        >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        >>> subset = (torch.tensor([2, 3, 5]), torch.tensor([2, 3]))
+        >>> bipartite_subgraph(subset, edge_index, edge_attr)
+        (tensor([[2, 3, 5, 5],
+                [3, 2, 2, 3]]),
+        tensor([ 3,  4,  9, 10]))
+
+        >>> bipartite_subgraph(subset, edge_index, edge_attr,
+        ...                    return_edge_mask=True)
+        (tensor([[2, 3, 5, 5],
+                [3, 2, 2, 3]]),
+        tensor([ 3,  4,  9, 10]),
+        tensor([False, False,  True,  True, False, False, False, False,
+                True,  True,  False]))
     """
 
     device = edge_index.device
@@ -181,6 +235,44 @@ def k_hop_subgraph(
 
     :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
              :class:`BoolTensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],
+        ...                            [2, 2, 4, 4, 6, 6]])
+
+        >>> # Center node 2, 2-hops
+        >>> subset, edge_index, mapping, edge_mask = k_hop_subgraph(
+        ...     6, 2, edge_index, relabel_nodes=True)
+        >>> subset
+        tensor([2, 3, 4, 5, 6])
+        >>> edge_index
+        tensor([[0, 1, 2, 3],
+                [2, 2, 4, 4]])
+        >>> mapping
+        tensor([4])
+        >>> edge_mask
+        tensor([False, False,  True,  True,  True,  True])
+        >>> subset[mapping]
+        tensor([6])
+
+        >>> edge_index = torch.tensor([[1, 2, 4, 5],
+        ...                            [0, 1, 5, 6]])
+        >>> (subset, edge_index,
+        ...  mapping, edge_mask) = k_hop_subgraph([0, 6], 2,
+        ...                                       edge_index,
+        ...                                       relabel_nodes=True)
+        >>> subset
+        tensor([0, 1, 2, 4, 5, 6])
+        >>> edge_index
+        tensor([[1, 2, 3, 4],
+                [0, 1, 4, 5]])
+        >>> mapping
+        tensor([0, 5])
+        >>> edge_mask
+        tensor([True, True, True, True])
+        >>> subset[mapping]
+        tensor([0, 6])
     """
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)

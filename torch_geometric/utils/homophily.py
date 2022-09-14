@@ -63,6 +63,23 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             either :obj:`"edge"` (first formula), :obj:`"node"` (second
             formula) or :obj:`"edge_insensitive"` (third formula).
             (default: :obj:`"edge"`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 2, 3],
+        ...                            [1, 2, 0, 4]])
+        >>> y = torch.tensor([0, 0, 0, 0, 1])
+        >>> # Edge homophily ratio
+        >>> homophily(edge_index, y, method='edge')
+        0.75
+
+        >>> # Node homophily ratio
+        >>> homophily(edge_index, y, method='node')
+        0.6000000238418579
+
+        >>> # Class insensitive edge homophily ratio
+        >>> homophily(edge_index, y, method='edge_insensitive')
+        0.19999998807907104
     """
     assert method in {'edge', 'node', 'edge_insensitive'}
     y = y.squeeze(-1) if y.dim() > 1 else y
