@@ -214,8 +214,8 @@ class AddMetaPaths2(BaseTransform):
 
     in which :math:`\mathcal{V}_i` represents node types, and :math:`R_j`
     represents the edge type connecting two node types.
-    The added edge type is given by the sequential multiplication  of
-    adjacency matrices along the metapath, and is added to the
+    The added edge type is given by random walks starting from the source node
+    of each metapath.
     :class:`~torch_geometric.data.HeteroData` object as edge type
     :obj:`(src_node_type, "metapath_*", dst_node_type)`, where
     :obj:`src_node_type` and :obj:`dst_node_type` denote :math:`\mathcal{V}_1`
