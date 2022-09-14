@@ -17,6 +17,34 @@ def to_dense_adj(edge_index, batch=None, edge_attr=None, max_num_nodes=None):
             (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 0, 1, 2, 3],
+        ...                            [0, 1, 0, 3, 0]])
+        >>> batch = torch.tensor([0, 0, 1, 1])
+        >>> to_dense_adj(edge_index, batch)
+        tensor([[[1., 1.],
+                [1., 0.]],
+                [[0., 1.],
+                [1., 0.]]])
+
+        >>> to_dense_adj(edge_index, batch, max_num_nodes=4)
+        tensor([[[1., 1., 0., 0.],
+                [1., 0., 0., 0.],
+                [0., 0., 0., 0.],
+                [0., 0., 0., 0.]],
+                [[0., 1., 0., 0.],
+                [1., 0., 0., 0.],
+                [0., 0., 0., 0.],
+                [0., 0., 0., 0.]]])
+
+        >>> edge_attr = torch.Tensor([1, 2, 3, 4, 5])
+        >>> to_dense_adj(edge_index, batch, edge_attr)
+        tensor([[[1., 2.],
+                [3., 0.]],
+                [[0., 4.],
+                [5., 0.]]])
     """
     if batch is None:
         batch = edge_index.new_zeros(edge_index.max().item() + 1)

@@ -31,6 +31,58 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         batch_size (int, optional) The batch size. (default: :obj:`None`)
 
     :rtype: (:class:`Tensor`, :class:`BoolTensor`)
+
+    Examples:
+
+        >>> x = torch.arange(12).view(6, 2)
+        >>> x
+        tensor([[ 0,  1],
+                [ 2,  3],
+                [ 4,  5],
+                [ 6,  7],
+                [ 8,  9],
+                [10, 11]])
+
+        >>> out, mask = to_dense_batch(x)
+        >>> mask
+        tensor([[True, True, True, True, True, True]])
+
+        >>> batch = torch.tensor([0, 0, 1, 2, 2, 2])
+        >>> out, mask = to_dense_batch(x, batch)
+        >>> out
+        tensor([[[ 0,  1],
+                [ 2,  3],
+                [ 0,  0]],
+                [[ 4,  5],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 6,  7],
+                [ 8,  9],
+                [10, 11]]])
+        >>> mask
+        tensor([[ True,  True, False],
+                [ True, False, False],
+                [ True,  True,  True]])
+
+        >>> out, mask = to_dense_batch(x, batch, max_num_nodes=4)
+        >>> out
+        tensor([[[ 0,  1],
+                [ 2,  3],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 4,  5],
+                [ 0,  0],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 6,  7],
+                [ 8,  9],
+                [10, 11],
+                [ 0,  0]]])
+
+        >>> mask
+        tensor([[ True,  True, False, False],
+                [ True, False, False, False],
+                [ True,  True,  True, False]])
     """
     if batch is None and max_num_nodes is None:
         mask = torch.ones(1, x.size(0), dtype=torch.bool, device=x.device)

@@ -35,6 +35,21 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
             (default: :obj:`0`)
 
     :rtype: Tensor
+
+    Example:
+
+        >>> pos = torch.Tensor([[0, 0, 0],
+        ...                     [2, 0, 0],
+        ...                     [0, 2, 0],
+        ...                     [2, 2, 0]])
+        >>> face = torch.tensor([[0, 0],
+        ...                      [1, 2],
+        ...                      [3, 3]])
+        >>> geodesic_distance(pos, face)
+        [[0, 1, 1, 1.4142135623730951],
+        [1, 0, 1.4142135623730951, 1],
+        [1, 1.4142135623730951, 0, 1],
+        [1.4142135623730951, 1, 1, 0]]
     """
     import gdist
 
