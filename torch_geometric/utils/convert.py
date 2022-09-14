@@ -277,6 +277,16 @@ def to_trimesh(data):
 
     Args:
         data (torch_geometric.data.Data): The data object.
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> to_trimesh(data)
+        <trimesh.Trimesh(vertices.shape=(4, 3), faces.shape=(2, 3))>
     """
     import trimesh
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
@@ -290,6 +300,19 @@ def from_trimesh(mesh):
 
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
+
+Example:
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> mesh = to_trimesh(data)
+        >>> from_trimesh(mesh)
+        Data(pos=[4, 3], face=[3, 2])
     """
     from torch_geometric.data import Data
 
