@@ -1,5 +1,3 @@
-import pandas as pd
-from tabulate import tabulate
 from tqdm import tqdm
 
 
@@ -10,6 +8,8 @@ class Summary:
         dataset (Dataset): :obj:`torch_geometric.data.Dataset`
     """
     def __init__(self, dataset):
+        import pandas as pd
+
         self.dataset_str = repr(dataset)
 
         def map_data(data):
@@ -76,6 +76,8 @@ class Summary:
         return self._desc['edges']['std']
 
     def __repr__(self) -> str:
+        from tabulate import tabulate
+
         prefix = self.__class__.__name__ + " " + self.dataset_str + "\n"
         t = self._desc.drop('count')
         body = tabulate(t, headers=t.columns)
