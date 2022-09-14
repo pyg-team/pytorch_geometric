@@ -177,15 +177,17 @@ class NeighborSampler(BaseSampler):
 
     def _set_num_neighbors_and_num_hops(self, num_neighbors):
         if isinstance(num_neighbors, (list, tuple)):
-            self.num_neighbors = {
-                key: num_neighbors
-                for key in self.edge_types
-            }
-        assert isinstance(self.num_neighbors, dict)
+            num_neighbors = {key: num_neighbors for key in self.edge_types}
+        assert isinstance(num_neighbors, dict)
+        self.num_neighbors = num_neighbors
 
         # Add at least one element to the list to ensure `max` is well-defined
-        self.num_hops = max([0] +
-                            [len(v) for v in self.num_neighbors.values()])
+        self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
+
+        for key, value in self.num_neighbors.items():
+            if len(value) != self.num_hops:
+                raise ValueError(f"Expected the edge type {key} to have "
+                                 f"{self.num_hops} entries (got {len(value)})")
 
     def _sample(
         self,

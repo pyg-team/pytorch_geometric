@@ -83,8 +83,28 @@ def test_heterogeneous_neighbor_loader(directed):
     )
 
     batch_size = 20
-    loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
-                            batch_size=batch_size, directed=directed)
+
+    with pytest.raises(ValueError, match="to have 2 entries"):
+        loader = NeighborLoader(
+            data,
+            num_neighbors={
+                ('paper', 'paper'): [-1],
+                ('paper', 'author'): [-1, -1],
+                ('author', 'paper'): [-1, -1],
+            },
+            input_nodes='paper',
+            batch_size=batch_size,
+            directed=directed,
+        )
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[10] * 2,
+        input_nodes='paper',
+        batch_size=batch_size,
+        directed=directed,
+    )
+
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == (100 + batch_size - 1) // batch_size
 
