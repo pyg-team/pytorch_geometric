@@ -27,6 +27,8 @@ def read_tu_data(folder, prefix):
     node_attributes = torch.empty((batch.size(0), 0))
     if 'node_attributes' in names:
         node_attributes = read_file(folder, prefix, 'node_attributes')
+        if node_attributes.dim() == 1:
+            node_attributes = node_attributes.unsqueeze(-1)
 
     node_labels = torch.empty((batch.size(0), 0))
     if 'node_labels' in names:
