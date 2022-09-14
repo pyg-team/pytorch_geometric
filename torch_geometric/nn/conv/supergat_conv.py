@@ -229,7 +229,7 @@ class SuperGATConv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

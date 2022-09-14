@@ -128,10 +128,11 @@ class ARMAConv(MessagePassing):
                                  size=None)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
-            out += root @ self.root_weight[0 if self.shared_weights else t]
+            root = root @ self.root_weight[0 if self.shared_weights else t]
+            out = out + root
 
             if self.bias is not None:
-                out += self.bias[0 if self.shared_weights else t]
+                out = out + self.bias[0 if self.shared_weights else t]
 
             if self.act is not None:
                 out = self.act(out)

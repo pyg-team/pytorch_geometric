@@ -80,6 +80,21 @@ def test_my_conv():
     conv.fuse = True
 
 
+def test_my_conv_out_of_bounds():
+    x = torch.randn(3, 8)
+    value = torch.randn(4)
+
+    conv = MyConv(8, 32)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+
 def test_my_conv_jittable():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
@@ -522,3 +537,22 @@ def test_message_passing_with_aggr_module(aggr_module):
     out = conv(x, edge_index)
     assert out.size(0) == 4 and out.size(1) in {8, 16}
     assert torch.allclose(conv(x, adj.t()), out)
+
+
+def test_message_passing_int32_edge_index():
+    # Check that we can dispatch an int32 edge_index up to aggregation
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], dtype=torch.int32)
+    edge_weight = torch.randn(edge_index.shape[1])
+
+    # Use a hook to promote the edge_index to long to workaround PyTorch CPU
+    # backend restriction to int64 for the index.
+    def cast_index_hook(module, inputs):
+        input_dict = inputs[-1]
+        input_dict['index'] = input_dict['index'].long()
+        return (input_dict, )
+
+    conv = MyConv(8, 32)
+    conv.register_aggregate_forward_pre_hook(cast_index_hook)
+
+    assert conv(x, edge_index, edge_weight).size() == (4, 32)

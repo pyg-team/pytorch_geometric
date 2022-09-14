@@ -22,7 +22,6 @@ Major TODOs for future implementation:
 """
 import copy
 from abc import abstractmethod
-from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
@@ -30,7 +29,7 @@ from typing import Any, List, Optional, Tuple, Union
 import numpy as np
 import torch
 
-from torch_geometric.typing import FeatureTensorType
+from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
 
 _field_status = Enum("FieldStatus", "UNSET")
@@ -53,7 +52,7 @@ class TensorAttr(CastMixin):
     """
 
     # The group name that the tensor corresponds to. Defaults to UNSET.
-    group_name: Optional[str] = _field_status.UNSET
+    group_name: Optional[NodeType] = _field_status.UNSET
 
     # The name of the tensor within its group. Defaults to UNSET.
     attr_name: Optional[str] = _field_status.UNSET
@@ -241,7 +240,14 @@ class AttrView(CastMixin):
                 f'attr={self._attr})')
 
 
-class FeatureStore(MutableMapping):
+# TODO (manan, matthias) Ideally, we want to let `FeatureStore` inherit from
+# `MutableMapping` to clearly indicate its behavior and usage to the user.
+# However, having `MutableMapping` as a base class leads to strange behavior
+# in combination with PyTorch and PyTorch Lightning, in particular since these
+# libraries use customized logic during mini-batch for `Mapping` base classes.
+
+
+class FeatureStore:
     def __init__(self, tensor_attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
         the ordering and required nature of their :class:`TensorAttr` tensor

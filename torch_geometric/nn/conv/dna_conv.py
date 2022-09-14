@@ -53,7 +53,7 @@ class Linear(torch.nn.Module):
             out = torch.matmul(src, self.weight.squeeze(0))
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

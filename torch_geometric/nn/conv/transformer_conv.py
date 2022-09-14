@@ -191,7 +191,7 @@ class TransformerConv(MessagePassing):
                 beta = beta.sigmoid()
                 out = beta * x_r + (1 - beta) * out
             else:
-                out += x_r
+                out = out + x_r
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -210,7 +210,7 @@ class TransformerConv(MessagePassing):
             assert edge_attr is not None
             edge_attr = self.lin_edge(edge_attr).view(-1, self.heads,
                                                       self.out_channels)
-            key_j += edge_attr
+            key_j = key_j + edge_attr
 
         alpha = (query_i * key_j).sum(dim=-1) / math.sqrt(self.out_channels)
         alpha = softmax(alpha, index, ptr, size_i)
@@ -219,9 +219,9 @@ class TransformerConv(MessagePassing):
 
         out = value_j
         if edge_attr is not None:
-            out += edge_attr
+            out = out + edge_attr
 
-        out *= alpha.view(-1, self.heads, 1)
+        out = out * alpha.view(-1, self.heads, 1)
         return out
 
     def __repr__(self) -> str:
