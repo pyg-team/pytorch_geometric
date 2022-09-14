@@ -10,8 +10,9 @@ import numpy as np
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data import Data, Summary
+from torch_geometric.data import Data
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.data.summary import Summary
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 

@@ -2,8 +2,6 @@ import pandas as pd
 from tabulate import tabulate
 from tqdm import tqdm
 
-from torch_geometric.data import Dataset
-
 
 class Summary:
     r"""Summary of graph datasets
@@ -11,7 +9,7 @@ class Summary:
     Args:
         dataset (Dataset): :obj:`torch_geometric.data.Dataset`
     """
-    def __init__(self, dataset: Dataset):
+    def __init__(self, dataset):
         self.dataset_str = repr(dataset)
 
         def map_data(data):
