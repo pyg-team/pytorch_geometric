@@ -35,6 +35,22 @@ def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
             in case :obj:`edge_weight=None`. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2],
+        ...                            [1, 0, 2, 1]])
+        >>> edge_weight = torch.tensor([1., 2., 2., 4.])
+
+        >>> # No normalization
+        >>> lap = get_laplacian(edge_index, edge_weight)
+
+        >>> # Symmetric normalization
+        >>> lap_sym = get_laplacian(edge_index, edge_weight,
+                                    normalization='sym')
+
+        >>> # Random-walk normalization
+        >>> lap_rw = get_laplacian(edge_index, edge_weight, normalization='rw')
     """
 
     if normalization is not None:
