@@ -278,9 +278,8 @@ class AddMetaPaths2(BaseTransform):
             node types not connected by any edge type. (default: :obj:`False`)
         walks_per_node (int, List[int], optional): The number of walks to
             sample for each starting node in a metapth. (default: :obj:`1`)
-        sample_ratio (float, optional): The ratio of the number of sampled
-            nodes from the whole graph, starting for random walks
-            at the beginning of a metapath. (default: :obj:`1.0`)
+        sample_ratio (float, optional): The ratio of source nodes to start random
+            walks from. (default: :obj:`1.0`)
     """
     def __init__(
         self,
