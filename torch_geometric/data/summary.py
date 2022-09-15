@@ -43,7 +43,7 @@ class Summary:
     @property
     def median_num_nodes(self) -> int:
         r"""The median number of nodes"""
-        return int(self._desc['nodes']['median'])
+        return int(self._desc['nodes']['50%'])
 
     @property
     def mean_num_nodes(self) -> float:
@@ -68,7 +68,7 @@ class Summary:
     @property
     def median_num_edges(self) -> int:
         r"""The median number of edges"""
-        return int(self._desc['edges']['median'])
+        return int(self._desc['edges']['50%'])
 
     @property
     def mean_num_edges(self) -> float:
@@ -104,5 +104,7 @@ class Summary:
             Summary._threshold = Summary._default_threshold
             return
 
-        assert isinstance(value, int) and not value < 0
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("threshold must be a positive integer.")
+
         Summary._threshold = value
