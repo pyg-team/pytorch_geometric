@@ -95,7 +95,7 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
     .. code-block:: python
 
         from captum.attr import IntegratedGradients
-        from torch_geometric.nn import GCN, from_captum
+        from torch_geometric.nn import GCN, to_captum
 
         model = GCN(...)
         ...  # Train the model.
