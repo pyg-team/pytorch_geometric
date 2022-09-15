@@ -27,6 +27,7 @@ def test_summary():
     seed_everything(0)
     dataset = FakeDataset(num_graphs=10)
     summary = dataset.summary()
+    assert "FakeDataset" in str(summary)
     assert summary.num_graphs == 10
     num_nodes = torch.tensor([d.num_nodes for d in dataset]).float()
     num_edges = torch.tensor([d.num_edges for d in dataset]).float()
@@ -50,6 +51,7 @@ def test_hetero_summary():
     seed_everything(0)
     dataset = FakeHeteroDataset(num_graphs=10)
     summary = dataset.summary()
+    assert "FakeHeteroDataset" in str(summary)
     assert summary.num_graphs == 10
     num_nodes = torch.tensor([d.num_nodes for d in dataset]).float()
     num_edges = torch.tensor([d.num_edges for d in dataset]).float()
