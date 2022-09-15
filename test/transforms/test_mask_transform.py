@@ -90,7 +90,7 @@ def test_hetero_index_to_mask():
         check_attr(out['v'], attr, 20, torch.bool)
 
 
-def test_hetero_index_to_mask():
+def test_hetero_mask_to_index():
     data = HeteroData()
 
     data['u'].train_mask = torch.tensor([1, 0, 1, 1, 0, 0, 0]).bool()
