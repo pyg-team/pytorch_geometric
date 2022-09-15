@@ -51,6 +51,7 @@ from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .feature_propagation import FeaturePropagation
+from .mask import IndexToMask, MaskToIndex
 
 __all__ = [
     'BaseTransform',
@@ -108,6 +109,8 @@ __all__ = [
     'AddLaplacianEigenvectorPE',
     'AddRandomWalkPE',
     'FeaturePropagation',
+    'IndexToMask',
+    'MaskToIndex',
 ]
 
 classes = __all__
