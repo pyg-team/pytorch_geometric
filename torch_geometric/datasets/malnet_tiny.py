@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
@@ -43,40 +43,43 @@ class MalNetTiny(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    data_url = 'http://malnet.cc.gatech.edu/' \
-               'graph-data/malnet-graphs-tiny.tar.gz'
+    data_url = ('http://malnet.cc.gatech.edu/'
+                'graph-data/malnet-graphs-tiny.tar.gz')
     split_url = 'http://malnet.cc.gatech.edu/split-info/split_info_tiny.zip'
     splits = ['train', 'val', 'test']
 
-    def __init__(self, root: str, split: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        assert split in {*self.splits, 'trainval', None},   \
-            f'Split "{split}" found, but expected either '  \
-            f'"train", "val", "trainval", "test" or None'
+    def __init__(
+        self,
+        root: str,
+        split: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
+        if split not in {'train', 'val', 'trainval', 'test', None}:
+            raise ValueError(f'Split "{split}" found, but expected either '
+                             f'"train", "val", "trainval", "test" or None')
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices, split_slices = torch.load(
-            self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0])
 
         if split is not None:
-            indices = self.indices()
-
-            if split == 'trainval':
-                self._indices = indices[:split_slices['val'][1]]
-            else:
-                self._indices = indices[slice(*split_slices[split])]
+            split_slices = torch.load(self.processed_paths[1])
+            if split == 'train':
+                self._indices = range(split_slices[0], split_slices[1])
+            elif split == 'val':
+                self._indices = range(split_slices[1], split_slices[2])
+            elif split == 'trainval':
+                self._indices = range(split_slices[0], split_slices[2])
+            elif split == 'test':
+                self._indices = range(split_slices[2], split_slices[3])
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [
-            osp.join('split_info_tiny', 'type', f'{split}.txt')
-            for split in self.splits
-        ] + ['malnet-graphs-tiny']
+        return ['malnet-graphs-tiny', osp.join('split_info_tiny', 'type')]
 
     @property
-    def processed_file_names(self) -> str:
-        return 'data.pt'
+    def processed_file_names(self) -> List[str]:
+        return ['data.pt', 'split_slices.pt']
 
     def download(self):
         path = download_url(self.data_url, self.raw_dir)
@@ -88,21 +91,19 @@ class MalNetTiny(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data_list = []
-        split_idxs = [0]
-        base_path = self.raw_paths[3]
         y_map = {}
+        data_list = []
+        split_slices = [0]
 
-        for path in self.raw_paths[:3]:
-            with open(path, 'r') as f:
-                filenames = f.readlines()
-
-            split_idxs.append(split_idxs[-1] + len(filenames))
+        for split in ['train', 'val', 'test']:
+            with open(osp.join(self.raw_paths[1], f'{split}.txt'), 'r') as f:
+                filenames = f.read().split('\n')[:-1]
+                split_slices.append(split_slices[-1] + len(filenames))
 
             for filename in filenames:
+                path = osp.join(self.raw_paths[0], f'{filename}.edgelist')
                 malware_type = filename.split('/')[0]
                 y = y_map.setdefault(malware_type, len(y_map))
-                path = osp.join(base_path, filename[:-1] + '.edgelist')
 
                 with open(path, 'r') as f:
                     edges = f.read().split('\n')[5:-1]
@@ -119,5 +120,5 @@ class MalNetTiny(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        slices = dict(zip(self.splits, zip(split_idxs[:-1], split_idxs[1:])))
-        torch.save((*self.collate(data_list), slices), self.processed_paths[0])
+        torch.save(self.collate(data_list), self.processed_paths[0])
+        torch.save(split_slices, self.processed_paths[1])
