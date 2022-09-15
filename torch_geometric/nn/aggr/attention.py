@@ -26,9 +26,9 @@ class AttentionalAggregation(Aggregation):
     Args:
         gate_nn (torch.nn.Module): A neural network :math:`h_{\mathrm{gate}}`
             that computes attention scores by mapping node features :obj:`x` of
-            shape :obj:`[-1, in_channels]` to shape :obj:`[-1, 1]` or
-            :obj:`[1, out_channels]`, *e.g.*, defined by
-            :class:`torch.nn.Sequential`.
+            shape :obj:`[-1, in_channels]` to shape :obj:`[-1, 1]` (for
+            node-level gating) or :obj:`[1, out_channels]` (for feature-level
+            gating), *e.g.*, defined by :class:`torch.nn.Sequential`.
         nn (torch.nn.Module, optional): A neural network
             :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x` of
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
