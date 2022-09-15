@@ -328,7 +328,7 @@ class AddRandomMetaPaths(BaseTransform):
                 adj = SparseTensor(row=edge_index[0], col=edge_index[1],
                                    sparse_sizes=data[edge_type].size())
                 col, mask = self.sample(adj, start)
-                row = row[mask]
+                row, col = row[mask], col[mask]
                 start = col
 
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
@@ -372,3 +372,8 @@ class AddRandomMetaPaths(BaseTransform):
         rand.add_(offset.view(-1, 1))
         col = src.storage.col()[rand].squeeze()
         return col, mask
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}('
+                f'sample_ratio={self.sample_ratio}, '
+                f'walks_per_node={self.walks_per_node})')
