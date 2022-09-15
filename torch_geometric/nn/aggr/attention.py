@@ -10,12 +10,13 @@ from ..inits import reset
 
 
 class AttentionalAggregation(Aggregation):
-    r"""The soft attention aggregation layer from the `"Gated Graph Sequence
-    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper
+    r"""The soft attention aggregation layer from the `"Graph Matching Networks
+    for Learning the Similarity of Graph Structured Objects"
+    <https://arxiv.org/abs/1904.12787>`_ paper
 
     .. math::
         \mathbf{r}_i = \sum_{n=1}^{N_i} \mathrm{softmax} \left(
-        h_{\mathrm{gate}} ( \mathbf{x}_n ) \right) \odot
+        h_{\mathrm{gate}} ( \mathbf{x}_n ) \right) \cdot
         h_{\mathbf{\Theta}} ( \mathbf{x}_n ),
 
     where :math:`h_{\mathrm{gate}} \colon \mathbb{R}^F \to
