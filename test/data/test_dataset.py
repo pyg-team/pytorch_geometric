@@ -1,4 +1,3 @@
-import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -42,20 +41,6 @@ def test_in_memory_dataset():
     assert dataset[1].face.tolist() == face.tolist()
     assert dataset[1].test_int == 2
     assert dataset[1].test_str == '2'
-
-    summary = dataset.summary()
-    num_nodes = torch.tensor([5., 10.])
-    assert summary.num_graphs == 2
-    assert summary.mean_num_nodes == pytest.approx(float(num_nodes.mean()))
-    assert summary.std_num_nodes == pytest.approx(float(num_nodes.std()))
-    assert summary.min_num_nodes == int(num_nodes.min())
-    assert summary.max_num_nodes == int(num_nodes.max())
-
-    num_edges = torch.tensor([4., 4.])
-    assert summary.mean_num_edges == pytest.approx(float(num_edges.mean()))
-    assert summary.std_num_edges == pytest.approx(float(num_edges.std()))
-    assert summary.min_num_edges == int(num_edges.min())
-    assert summary.max_num_edges == int(num_edges.max())
 
 
 def test_in_memory_sparse_tensor_dataset():
@@ -132,9 +117,6 @@ def test_hetero_in_memory_dataset():
     assert dataset[1]['paper'].x.tolist() == data2['paper'].x.tolist()
     assert (dataset[1]['paper', 'paper'].edge_index.tolist() == data2[
         'paper', 'paper'].edge_index.tolist())
-
-    summary = dataset.summary()
-    assert summary.num_graphs == 2
 
 
 def test_override_behaviour():
