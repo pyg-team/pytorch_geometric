@@ -26,6 +26,19 @@ def is_undirected(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     :rtype: bool
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                         [1, 0, 0]])
+        >>> weight = torch.tensor([0, 0, 1])
+        >>> is_undirected(edge_index, weight)
+        True
+
+        >>> weight = torch.tensor([0, 1, 1])
+        >>> is_undirected(edge_index, weight)
+        False
+
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -75,6 +88,28 @@ def to_undirected(
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
         (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1],
+        ...                            [1, 0, 2]])
+        >>> to_undirected(edge_index)
+        tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]])
+
+        >>> edge_index = torch.tensor([[0, 1, 1],
+        ...                            [1, 0, 2]])
+        >>> edge_weight = torch.tensor([1., 1., 1.])
+        >>> to_undirected(edge_index, edge_weight)
+        (tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]]),
+        tensor([2., 2., 1., 1.]))
+
+        >>> # Use 'mean' operation to merge edge features
+        >>>  to_undirected(edge_index, edge_weight, reduce='mean')
+        (tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]]),
+        tensor([1., 1., 1., 1.]))
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
