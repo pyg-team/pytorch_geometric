@@ -19,6 +19,16 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
             edge features. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> to_scipy_sparse_matrix(edge_index)
+        <4x4 sparse matrix of type '<class 'numpy.float32'>'
+            with 6 stored elements in COOrdinate format>
     """
     row, col = edge_index.cpu()
 
@@ -39,6 +49,19 @@ def from_scipy_sparse_matrix(A):
 
     Args:
         A (scipy.sparse): A sparse matrix.
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> adj = to_scipy_sparse_matrix(edge_index)
+        >>> # `edge_index` and `edge_weight` are both returned
+        >>> from_scipy_sparse_matrix(adj)
+        (tensor([[0, 1, 1, 2, 2, 3],
+                [1, 0, 2, 1, 3, 2]]),
+        tensor([1., 1., 1., 1., 1., 1.]))
     """
     A = A.tocoo()
     row = torch.from_numpy(A.row).to(torch.long)
@@ -72,6 +95,17 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
             :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> data = Data(edge_index=edge_index, num_nodes=4)
+        >>> to_networkx(data)
+        <networkx.classes.digraph.DiGraph at 0x2713fdb40d0>
+
     """
     import networkx as nx
 
@@ -140,6 +174,18 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
         All :attr:`group_node_attrs` and :attr:`group_edge_attrs` values must
         be numeric.
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> data = Data(edge_index=edge_index, num_nodes=4)
+        >>> g = to_networkx(data)
+        >>> # A `Data` object is returned
+        >>> from_networkx(g)
+        Data(edge_index=[2, 6], num_nodes=4)
     """
     import networkx as nx
 
@@ -231,6 +277,16 @@ def to_trimesh(data):
 
     Args:
         data (torch_geometric.data.Data): The data object.
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> to_trimesh(data)
+        <trimesh.Trimesh(vertices.shape=(4, 3), faces.shape=(2, 3))>
     """
     import trimesh
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
@@ -244,6 +300,19 @@ def from_trimesh(mesh):
 
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
+
+Example:
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> mesh = to_trimesh(data)
+        >>> from_trimesh(mesh)
+        Data(pos=[4, 3], face=[3, 2])
     """
     from torch_geometric.data import Data
 
