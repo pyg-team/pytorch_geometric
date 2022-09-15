@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, Dict, List, Optional
+from typing import Callable, List, Optional
 
 import torch
 
