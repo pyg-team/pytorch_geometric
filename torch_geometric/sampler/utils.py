@@ -12,7 +12,7 @@ from torch_geometric.typing import EdgeType, OptTensor
 # Edge Layout Conversion ######################################################
 
 
-# TODO deprecate when FeatureStore / GraphStore unification is complete
+# TODO(manan) deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
     data: Union[Data, EdgeStorage],
     device: Optional[torch.device] = None,

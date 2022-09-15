@@ -15,6 +15,19 @@ def grid(height, width, dtype=None, device=None):
             returned tensors.
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Example:
+
+        >>> (row, col), pos = grid(height=2, width=2)
+        >>> row
+        tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3])
+        >>> col
+        tensor([0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3])
+        >>> pos
+        tensor([[0., 1.],
+                [1., 1.],
+                [0., 0.],
+                [1., 0.]])
     """
 
     edge_index = grid_index(height, width, device)

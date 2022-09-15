@@ -26,6 +26,23 @@ def sort_edge_index(
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
         (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[2, 1, 1, 0],
+                                [1, 2, 0, 1]])
+        >>> edge_attr = torch.tensor([[1], [2], [3], [4]])
+        >>> sort_edge_index(edge_index)
+        tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]])
+
+        >>> sort_edge_index(edge_index, edge_attr)
+        (tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]]),
+        tensor([[4],
+                [3],
+                [2],
+                [1]]))
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 

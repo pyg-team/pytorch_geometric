@@ -22,7 +22,8 @@ models_dict = {
 
 def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
-    transform = T.ToSparseTensor() if use_sparse_tensor else None
+    transform = T.ToSparseTensor(
+        remove_edge_index=False) if use_sparse_tensor else None
     if name == 'ogbn-mag':
         if transform is None:
             transform = T.ToUndirected(merge=True)
