@@ -10,7 +10,6 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.link_neighbor_loader import (
     LinkNeighborLoader,
-    LinkNeighborSampler,
     get_edge_label_index,
 )
 from torch_geometric.loader.neighbor_loader import (
@@ -487,7 +486,7 @@ class LightningLinkData(LightningDataModule):
 
         if loader in ['neighbor', 'link_neighbor']:
             input_type = get_edge_label_index(data, input_train_edges)[0]
-            self.neighbor_sampler = LinkNeighborSampler(
+            self.neighbor_sampler = NeighborSampler(
                 data=data,
                 num_neighbors=kwargs.get('num_neighbors', None),
                 replace=kwargs.get('replace', False),
@@ -495,9 +494,9 @@ class LightningLinkData(LightningDataModule):
                 input_type=input_type,
                 time_attr=kwargs.get('time_attr', None),
                 is_sorted=kwargs.get('is_sorted', False),
-                neg_sampling_ratio=kwargs.get('neg_sampling_ratio', 0.0),
                 share_memory=num_workers > 0,
             )
+            self.neg_sampling_ratio = kwargs.get('neg_sampling_ratio', 0.0)
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -540,12 +539,16 @@ class LightningLinkData(LightningDataModule):
                                                **self.kwargs)
 
         if self.loader in ['neighbor', 'link_neighbor']:
-            return LinkNeighborLoader(data=self.data,
-                                      edge_label_index=input_edges,
-                                      edge_label=input_labels,
-                                      edge_label_time=input_time,
-                                      neighbor_sampler=self.neighbor_sampler,
-                                      shuffle=shuffle, **self.kwargs)
+            return LinkNeighborLoader(
+                data=self.data,
+                edge_label_index=input_edges,
+                edge_label=input_labels,
+                edge_label_time=input_time,
+                neighbor_sampler=self.neighbor_sampler,
+                shuffle=shuffle,
+                neg_sampling_ratio=self.neg_sampling_ratio,
+                **self.kwargs,
+            )
 
         raise NotImplementedError
 

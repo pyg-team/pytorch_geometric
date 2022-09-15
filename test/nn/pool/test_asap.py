@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
+from torch_geometric.testing import is_full_test
 
 
 def test_asap():
@@ -17,6 +18,9 @@ def test_asap():
         out = pool(x, edge_index)
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 2)
+
+        if is_full_test():
+            torch.jit.script(pool.jittable())
 
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN, add_self_loops=True)
         assert pool.__repr__() == ('ASAPooling(16, ratio=0.5)')

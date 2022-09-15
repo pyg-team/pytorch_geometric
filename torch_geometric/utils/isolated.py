@@ -15,6 +15,16 @@ def contains_isolated_nodes(edge_index, num_nodes=None):
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     :rtype: bool
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> contains_isolated_nodes(edge_index)
+        False
+
+        >>> contains_isolated_nodes(edge_index, num_nodes=3)
+        True
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     edge_index, _ = remove_self_loops(edge_index)
@@ -36,6 +46,19 @@ def remove_isolated_nodes(edge_index, edge_attr=None, num_nodes=None):
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     :rtype: (LongTensor, Tensor, BoolTensor)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> edge_index, edge_attr, mask = remove_isolated_nodes(edge_index)
+        >>> mask # node mask (2 nodes)
+        tensor([True, True])
+
+        >>> edge_index, edge_attr, mask = remove_isolated_nodes(edge_index,
+        ...                                                     num_nodes=3)
+        >>> mask # node mask (3 nodes)
+        tensor([True, True, False])
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 

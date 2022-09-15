@@ -11,6 +11,15 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
         idx (Tensor): The indices.
         size (int, optional). The size of the mask. If set to :obj:`None`, a
             minimal sized output mask is returned.
+
+    Example:
+
+        >>> index = torch.tensor([1, 3, 5])
+        >>> index_to_mask(index)
+        tensor([False,  True, False,  True, False,  True])
+
+        >>> index_to_mask(index, size=7)
+        tensor([False,  True, False,  True, False,  True, False])
     """
     index = index.view(-1)
     size = int(index.max()) + 1 if size is None else size
@@ -24,5 +33,11 @@ def mask_to_index(mask: Tensor) -> Tensor:
 
     Args:
         mask (Tensor): The mask.
+
+    Example:
+
+        >>> mask = torch.tensor([False, True, False])
+        >>> mask_to_index(mask)
+        tensor([1])
     """
     return mask.nonzero(as_tuple=False).view(-1)

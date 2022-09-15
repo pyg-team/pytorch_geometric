@@ -26,7 +26,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_homogeneous_neighbor_loader(directed):
     torch.manual_seed(12345)
 
@@ -57,7 +57,7 @@ def test_homogeneous_neighbor_loader(directed):
         assert is_subset(batch.edge_index, data.edge_index, batch.x, batch.x)
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_heterogeneous_neighbor_loader(directed):
     torch.manual_seed(12345)
 
@@ -83,8 +83,28 @@ def test_heterogeneous_neighbor_loader(directed):
     )
 
     batch_size = 20
-    loader = NeighborLoader(data, num_neighbors=[10] * 2, input_nodes='paper',
-                            batch_size=batch_size, directed=directed)
+
+    with pytest.raises(ValueError, match="to have 2 entries"):
+        loader = NeighborLoader(
+            data,
+            num_neighbors={
+                ('paper', 'paper'): [-1],
+                ('paper', 'author'): [-1, -1],
+                ('author', 'paper'): [-1, -1],
+            },
+            input_nodes='paper',
+            batch_size=batch_size,
+            directed=directed,
+        )
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[10] * 2,
+        input_nodes='paper',
+        batch_size=batch_size,
+        directed=directed,
+    )
+
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == (100 + batch_size - 1) // batch_size
 
@@ -165,7 +185,7 @@ def test_heterogeneous_neighbor_loader(directed):
         assert torch.cat([row, col]).unique().numel() == n_id.numel()
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -208,7 +228,7 @@ def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]

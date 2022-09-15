@@ -1,16 +1,17 @@
 import copy
 import math
-from typing import Dict, Optional, Union
+from collections.abc import Sequence
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, OptTensor
+from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
 
 def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
@@ -24,12 +25,6 @@ def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
         storage = value.storage()._new_shared(numel)
         out = value.new(storage).view(size)
     return torch.index_select(value, dim, index, out=out)
-
-
-def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets need to be converted into single strings.
-    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -100,30 +95,24 @@ def filter_hetero_data(
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, Tensor],
-    perm_dict: Dict[str, OptTensor],
+    perm_dict: Optional[Dict[str, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
     out = copy.copy(data)
-
-    # TODO(manan): consolidate behind 'EdgeType':
-    # TODO(manan): remove special handling of 'perm_dict':
-    row_dict_keys = list(row_dict.keys())
-    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
 
     for node_type in data.node_types:
         filter_node_store_(data[node_type], out[node_type],
                            node_dict[node_type])
 
     for edge_type in data.edge_types:
-        edge_type_str = edge_type_to_str(edge_type) if is_str else edge_type
         filter_edge_store_(
             data[edge_type],
             out[edge_type],
-            row_dict[edge_type_str],
-            col_dict[edge_type_str],
-            edge_dict[edge_type_str],
-            perm_dict[edge_type_to_str(edge_type)],
+            row_dict[edge_type],
+            col_dict[edge_type],
+            edge_dict[edge_type],
+            perm_dict[edge_type] if perm_dict else None,
         )
 
     return out
@@ -144,14 +133,10 @@ def filter_custom_store(
     # Construct a new `HeteroData` object:
     data = HeteroData()
 
-    # TODO(manan): consolidate behind 'EdgeType':
-    row_dict_keys = list(row_dict.keys())
-    is_str = len(row_dict_keys) > 0 and isinstance(row_dict_keys[0], str)
-
     # Filter edge storage:
     # TODO support edge attributes
     for attr in graph_store.get_all_edge_attrs():
-        key = edge_type_to_str(attr.edge_type) if is_str else attr.edge_type
+        key = attr.edge_type
         if key in row_dict and key in col_dict:
             edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
             data[attr.edge_type].edge_index = edge_index
@@ -172,3 +157,112 @@ def filter_custom_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
+
+
+# Input Utilities #############################################################
+
+
+def get_input_nodes(
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+    input_nodes: Union[InputNodes, TensorAttr],
+) -> Tuple[Optional[str], Sequence]:
+    def to_index(tensor):
+        if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
+            return tensor.nonzero(as_tuple=False).view(-1)
+        return tensor
+
+    if isinstance(data, Data):
+        if input_nodes is None:
+            return None, range(data.num_nodes)
+        return None, to_index(input_nodes)
+
+    elif isinstance(data, HeteroData):
+        assert input_nodes is not None
+
+        if isinstance(input_nodes, str):
+            return input_nodes, range(data[input_nodes].num_nodes)
+
+        assert isinstance(input_nodes, (list, tuple))
+        assert len(input_nodes) == 2
+        assert isinstance(input_nodes[0], str)
+
+        node_type, input_nodes = input_nodes
+        if input_nodes is None:
+            return node_type, range(data[node_type].num_nodes)
+        return node_type, to_index(input_nodes)
+
+    else:  # Tuple[FeatureStore, GraphStore]
+        feature_store, graph_store = data
+        assert input_nodes is not None
+
+        if isinstance(input_nodes, Tensor):
+            return None, to_index(input_nodes)
+
+        if isinstance(input_nodes, str):
+            return input_nodes, range(
+                remote_backend_utils.num_nodes(feature_store, graph_store,
+                                               input_nodes))
+
+        if isinstance(input_nodes, (list, tuple)):
+            assert len(input_nodes) == 2
+            assert isinstance(input_nodes[0], str)
+
+            node_type, input_nodes = input_nodes
+            if input_nodes is None:
+                return node_type, range(
+                    remote_backend_utils.num_nodes(feature_store, graph_store,
+                                                   input_nodes))
+            return node_type, to_index(input_nodes)
+
+
+def get_edge_label_index(
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+    edge_label_index: InputEdges,
+) -> Tuple[Optional[str], Tensor]:
+    edge_type = None
+    if isinstance(data, Data):
+        if edge_label_index is None:
+            return None, data.edge_index
+        return None, edge_label_index
+
+    assert edge_label_index is not None
+    assert isinstance(edge_label_index, (list, tuple))
+
+    if isinstance(data, HeteroData):
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            edge_type = data._to_canonical(*edge_type)
+            assert edge_type in data.edge_types
+            return edge_type, data[edge_type].edge_index
+
+        assert len(edge_label_index) == 2
+
+        edge_type, edge_label_index = edge_label_index
+        edge_type = data._to_canonical(*edge_type)
+
+        if edge_label_index is None:
+            return edge_type, data[edge_type].edge_index
+
+        return edge_type, edge_label_index
+
+    else:  # Tuple[FeatureStore, GraphStore]
+        _, graph_store = data
+
+        # Need the edge index in COO for LinkNeighborLoader:
+        def _get_edge_index(edge_type):
+            row_dict, col_dict, _ = graph_store.coo([edge_type])
+            row = list(row_dict.values())[0]
+            col = list(col_dict.values())[0]
+            return torch.stack((row, col), dim=0)
+
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            return edge_type, _get_edge_index(edge_type)
+
+        assert len(edge_label_index) == 2
+        edge_type, edge_label_index = edge_label_index
+
+        if edge_label_index is None:
+            return edge_type, _get_edge_index(edge_type)
+
+        return edge_type, edge_label_index
