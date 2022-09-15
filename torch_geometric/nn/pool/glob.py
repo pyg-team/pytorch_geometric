@@ -4,7 +4,7 @@ from torch import Tensor
 from torch_scatter import scatter
 
 
-def global_add_pool(x: Tensor, batch: Optional[Tensor],
+def global_add_pool(x: Tensor, batch: Optional[Tensor] = None,
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by adding node features
     across the node dimension, so that for a single graph
@@ -31,7 +31,7 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     return scatter(x, batch, dim=-2, dim_size=size, reduce='add')
 
 
-def global_mean_pool(x: Tensor, batch: Optional[Tensor],
+def global_mean_pool(x: Tensor, batch: Optional[Tensor] = None,
                      size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by averaging node features
     across the node dimension, so that for a single graph
@@ -58,7 +58,7 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     return scatter(x, batch, dim=-2, dim_size=size, reduce='mean')
 
 
-def global_max_pool(x: Tensor, batch: Optional[Tensor],
+def global_max_pool(x: Tensor, batch: Optional[Tensor] = None,
                     size: Optional[int] = None) -> Tensor:
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
     maximum across the node dimension, so that for a single graph
