@@ -49,6 +49,7 @@ from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
+from .hgcn_conv import HGCNConv
 
 __all__ = [
     'MessagePassing',
@@ -107,6 +108,7 @@ __all__ = [
     'HeteroConv',
     'HANConv',
     'LGConv',
+    'HGCNConv',
 ]
 
 classes = __all__
