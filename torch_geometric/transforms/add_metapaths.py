@@ -195,8 +195,8 @@ class AddMetaPaths(BaseTransform):
         return edge_weight
 
 
-@functional_transform('add_metapaths2')
-class AddMetaPaths2(BaseTransform):
+@functional_transform('add_random_metapaths')
+class AddRandomMetaPaths(BaseTransform):
     r""" Adds additional edge types to a
     :class:`~torch_geometric.data.HeteroData` object between the source node
     type and the destination node type of a given :obj:`metapath`, as described
@@ -226,7 +226,7 @@ class AddMetaPaths2(BaseTransform):
     metapath-based edge type to its original metapath.
 
     .. note::
-        :class:`AddMetaPaths2` samples metapaths based on multiple
+        :class:`AddRandomMetaPaths` samples metapaths based on multiple
         one-step random walks, starting from the beginning of a metapath.
         One might want to add more metapaths via increasing
         :obj:`walks_per_node` and achieve the same performance
@@ -236,7 +236,7 @@ class AddMetaPaths2(BaseTransform):
 
         from torch_geometric.datasets import DBLP
         from torch_geometric.data import HeteroData
-        from torch_geometric.transforms import AddMetaPaths2
+        from torch_geometric.transforms import AddRandomMetaPaths
 
         data = DBLP(root)[0]
         # 4 node types: "paper", "author", "conference", and "term"
@@ -249,7 +249,7 @@ class AddMetaPaths2(BaseTransform):
         # 2. From "author" to "conference" through "paper"
         metapaths = [[("paper", "conference"), ("conference", "paper")],
                      [("author", "paper"), ("paper", "conference")]]
-        data = AddMetaPaths2(metapaths)(data)
+        data = AddRandomMetaPaths(metapaths)(data)
 
         print(data.edge_types)
         >>> [("author", "to", "paper"), ("paper", "to", "author"),
@@ -278,8 +278,8 @@ class AddMetaPaths2(BaseTransform):
             node types not connected by any edge type. (default: :obj:`False`)
         walks_per_node (int, List[int], optional): The number of walks to
             sample for each starting node in a metapth. (default: :obj:`1`)
-        sample_ratio (float, optional): The ratio of source nodes to start random
-            walks from. (default: :obj:`1.0`)
+        sample_ratio (float, optional): The ratio of source nodes to start
+            random walks from. (default: :obj:`1.0`)
     """
     def __init__(
         self,
