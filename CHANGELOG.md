@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added `IndexToMask` and `MaskToIndex` transforms ([#5375](https://github.com/pyg-team/pytorch_geometric/pull/5375))
 - Added `FeaturePropagation` transform ([#5387](https://github.com/pyg-team/pytorch_geometric/pull/5387))
 - Added `PositionalEncoding` ([#5381](https://github.com/pyg-team/pytorch_geometric/pull/5381))
 - Consolidated sampler routines behind `torch_geometric.sampler`, enabling ease of extensibility in the future ([#5312](https://github.com/pyg-team/pytorch_geometric/pull/5312), [#5365](https://github.com/pyg-team/pytorch_geometric/pull/5365), [#5402](https://github.com/pyg-team/pytorch_geometric/pull/5402), [#5404](https://github.com/pyg-team/pytorch_geometric/pull/5404)), [#5418](https://github.com/pyg-team/pytorch_geometric/pull/5418))
@@ -20,6 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `BaseStorage.get()` functionality ([#5240](https://github.com/pyg-team/pytorch_geometric/pull/5240))
 - Added a test to confirm that `to_hetero` works with `SparseTensor` ([#5222](https://github.com/pyg-team/pytorch_geometric/pull/5222))
 ### Changed
+- The `AttentionalAggregation` module can now be applied to compute attentin on a per-feature level ([#5449](https://github.com/pyg-team/pytorch_geometric/pull/5449))
 - Ensure equal lenghts of `num_neighbors` across edge types in `NeighborLoader` ([#5444](https://github.com/pyg-team/pytorch_geometric/pull/5444))
 - Fixed a bug in `TUDataset` in which node features were wrongly constructed whenever `node_attributes` only hold a single feature (*e.g.*, in `PROTEINS`) ([#5441](https://github.com/pyg-team/pytorch_geometric/pull/5441))
 - Breaking change: removed `num_neighbors` as an attribute of loader ([#5404](https://github.com/pyg-team/pytorch_geometric/pull/5404))
