@@ -151,7 +151,9 @@ class LightningDataset(LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         """"""
         from torch.utils.data import IterableDataset
-        shuffle = not isinstance(self.train_dataset, IterableDataset)
+        shuffle = (not isinstance(self.train_dataset, IterableDataset)
+                   and 'sampler' not in self.kwargs
+                   and 'batch_sampler' not in self.kwargs)
 
         return self.dataloader(self.train_dataset, shuffle=shuffle,
                                **self.kwargs)
@@ -344,6 +346,7 @@ class LightningNodeData(LightningDataModule):
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
 
+            kwargs['shuffle'] = True
             kwargs.pop('sampler', None)
             kwargs.pop('batch_sampler', None)
 
@@ -365,7 +368,10 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_train_nodes, shuffle=True,
+        shuffle = ('sampler' not in self.kwargs
+                   and 'batch_sampler' not in self.kwargs)
+
+        return self.dataloader(self.input_train_nodes, shuffle=shuffle,
                                **self.kwargs)
 
     def val_dataloader(self) -> DataLoader:
@@ -564,6 +570,7 @@ class LightningLinkData(LightningDataModule):
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
 
+            kwargs['shuffle'] = True
             kwargs.pop('sampler', None)
             kwargs.pop('batch_sampler', None)
 
@@ -588,8 +595,11 @@ class LightningLinkData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
+        shuffle = ('sampler' not in self.kwargs
+                   and 'batch_sampler' not in self.kwargs)
+
         return self.dataloader(self.input_train_edges, self.input_train_labels,
-                               self.input_train_time, shuffle=True,
+                               self.input_train_time, shuffle=shuffle,
                                **self.kwargs)
 
     def val_dataloader(self) -> DataLoader:
