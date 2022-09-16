@@ -43,6 +43,7 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
 
         class GNN(torch.nn.Module):
             def __init__(self):
+                super().__init__()
                 self.conv1 = SAGEConv((16, 16), 32)
                 self.conv2 = SAGEConv((32, 32), 32)
 
@@ -56,7 +57,7 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         node_types = ['paper', 'author']
         edge_types = [
             ('paper', 'cites', 'paper'),
-            ('paper' 'written_by', 'author'),
+            ('paper', 'written_by', 'author'),
             ('author', 'writes', 'paper'),
         ]
         metadata = (node_types, edge_types)
