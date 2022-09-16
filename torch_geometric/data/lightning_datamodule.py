@@ -343,6 +343,10 @@ class LightningNodeData(LightningDataModule):
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
+
+            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
+
             return torch.utils.data.DataLoader(
                 [self.data],
                 collate_fn=lambda xs: xs[0],
@@ -559,6 +563,10 @@ class LightningLinkData(LightningDataModule):
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
+
+            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
+
             return torch.utils.data.DataLoader(
                 [self.data],
                 collate_fn=lambda xs: xs[0],
