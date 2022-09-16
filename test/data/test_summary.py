@@ -1,58 +1,45 @@
 import torch
-from pytest import approx, raises
 
-from torch_geometric import seed_everything
-from torch_geometric.data import Summary
+from torch_geometric.data.summary import Summary
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.testing import withPackage
 
 
-def check_summary(summary, num_nodes, num_edges):
-    assert summary.mean_num_nodes == approx(float(num_nodes.mean()))
-    assert summary.std_num_nodes == approx(float(num_nodes.std()))
-    assert summary.min_num_nodes == int(num_nodes.min())
-    assert summary.max_num_nodes == int(num_nodes.max())
-    assert summary.median_num_nodes == int(num_nodes.quantile(q=0.5))
-
-    assert summary.mean_num_edges == approx(float(num_edges.mean()))
-    assert summary.std_num_edges == approx(float(num_edges.std()))
-    assert summary.min_num_edges == int(num_edges.min())
-    assert summary.max_num_edges == int(num_edges.max())
-    assert summary.median_num_edges == int(num_edges.quantile(q=0.5))
-
-
-@withPackage('pandas')
-@withPackage('tabulate')
 def test_summary():
-    seed_everything(0)
     dataset = FakeDataset(num_graphs=10)
-    summary = dataset.summary()
-    assert "FakeDataset" in str(summary)
+    num_nodes = torch.Tensor([data.num_nodes for data in dataset])
+    num_edges = torch.Tensor([data.num_edges for data in dataset])
+
+    summary = dataset.get_summary()
+
+    assert summary.name == 'FakeDataset'
     assert summary.num_graphs == 10
-    num_nodes = torch.tensor([d.num_nodes for d in dataset]).float()
-    num_edges = torch.tensor([d.num_edges for d in dataset]).float()
-    check_summary(summary, num_nodes, num_edges)
 
-    Summary.progressbar_threshold(0)
-    summary = dataset.summary()
-    assert summary.num_graphs == 10
-    check_summary(summary, num_nodes, num_edges)
+    assert summary.num_nodes.mean == num_nodes.mean().item()
+    assert summary.num_nodes.std == num_nodes.std().item()
+    assert summary.num_nodes.min == num_nodes.min().item()
+    assert summary.num_nodes.quantile25 == num_nodes.quantile(0.25).item()
+    assert summary.num_nodes.median == num_nodes.median().item()
+    assert summary.num_nodes.quantile75 == num_nodes.quantile(0.75).item()
+    assert summary.num_nodes.max == num_nodes.max().item()
 
-    with raises(ValueError, match="threshold must be a positive integer"):
-        Summary.progressbar_threshold(-1)
+    assert summary.num_edges.mean == num_edges.mean().item()
+    assert summary.num_edges.std == num_edges.std().item()
+    assert summary.num_edges.min == num_edges.min().item()
+    assert summary.num_edges.quantile25 == num_edges.quantile(0.25).item()
+    assert summary.num_edges.median == num_edges.median().item()
+    assert summary.num_edges.quantile75 == num_edges.quantile(0.75).item()
+    assert summary.num_edges.max == num_edges.max().item()
 
-    with raises(ValueError, match="threshold must be a positive integer"):
-        Summary.progressbar_threshold(10.0)
 
-
-@withPackage('pandas')
 @withPackage('tabulate')
 def test_hetero_summary():
-    seed_everything(0)
-    dataset = FakeHeteroDataset(num_graphs=10)
-    summary = dataset.summary()
-    assert "FakeHeteroDataset" in str(summary)
-    assert summary.num_graphs == 10
-    num_nodes = torch.tensor([d.num_nodes for d in dataset]).float()
-    num_edges = torch.tensor([d.num_edges for d in dataset]).float()
-    check_summary(summary, num_nodes, num_edges)
+    dataset1 = FakeHeteroDataset(num_graphs=10)
+    summary1 = Summary.from_dataset(dataset1)
+
+    dataset2 = [data.to_homogeneous() for data in dataset1]
+    summary2 = Summary.from_dataset(dataset2)
+    summary2.name = 'FakeHeteroDataset'
+
+    assert summary1 == summary2
+    assert str(summary1) == str(summary2)

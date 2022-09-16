@@ -12,7 +12,6 @@ from .lightning_datamodule import (
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
-from .summary import Summary
 
 __all__ = [
     'Data',
@@ -30,7 +29,6 @@ __all__ = [
     'extract_zip',
     'extract_bz2',
     'extract_gz',
-    'Summary',
 ]
 
 classes = __all__
