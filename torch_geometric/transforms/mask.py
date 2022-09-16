@@ -34,7 +34,7 @@ class IndexToMask(BaseTransform):
         attrs (str, [str], optional): If given, will only perform index to mask
             conversion for the given attributes. If omitted, will infer the
             attributes from the suffix :obj:`_index`. (default: :obj:`None`)
-        sizes (int, [int], optional). The size of the mask. If set to
+        sizes (int, [int], optional): The size of the mask. If set to
             :obj:`None`, an automatically sized tensor is returned. The number
             of nodes will be used by default, except for edge attributes which
             will use the number of edges as the mask size.
@@ -69,6 +69,8 @@ class IndexToMask(BaseTransform):
                     f"the number of sizes provided (got {len(sizes)}).")
 
             for attr, size in zip(attrs, sizes):
+                if 'edge_index' in attr:
+                    continue
                 if attr not in store:
                     continue
                 size = get_mask_size(attr, store, size)

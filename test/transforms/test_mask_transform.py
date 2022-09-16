@@ -10,9 +10,12 @@ def test_index_to_mask():
     assert str(IndexToMask()) == ('IndexToMask(attrs=None, sizes=None, '
                                   'replace=False)')
 
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
     train_index = torch.arange(0, 3)
     test_index = torch.arange(3, 5)
-    data = Data(train_index=train_index, test_index=test_index, num_nodes=5)
+    data = Data(edge_index=edge_index, train_index=train_index,
+                test_index=test_index, num_nodes=5)
 
     out = IndexToMask(replace=True)(copy.copy(data))
     assert len(out) == len(data)
