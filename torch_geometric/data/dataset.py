@@ -83,7 +83,7 @@ class Dataset(torch.utils.data.Dataset):
         download_method = getattr(self, "download", None)
         if callable(download_method):
             self._download()
-        
+
         process_method = getattr(self, "process", None)
         if callable(process_method):
             self._process()
