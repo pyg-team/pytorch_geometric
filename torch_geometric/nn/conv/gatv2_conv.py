@@ -245,7 +245,7 @@ class GATv2Conv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -267,7 +267,7 @@ class GATv2Conv(MessagePassing):
             assert self.lin_edge is not None
             edge_attr = self.lin_edge(edge_attr)
             edge_attr = edge_attr.view(-1, self.heads, self.out_channels)
-            x += edge_attr
+            x = x + edge_attr
 
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)

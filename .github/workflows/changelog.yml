@@ -2,6 +2,7 @@ name: Changelog Enforcer
 
 on:  # yamllint disable-line rule:truthy
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
 
 jobs:
 

@@ -152,15 +152,23 @@ class Dataset(torch.utils.data.Dataset):
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         downloading."""
-        files = to_list(self.raw_file_names)
-        return [osp.join(self.raw_dir, f) for f in files]
+        files = self.raw_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.raw_dir, f) for f in to_list(files)]
 
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         processing."""
-        files = to_list(self.processed_file_names)
-        return [osp.join(self.processed_dir, f) for f in files]
+        files = self.processed_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
@@ -281,6 +289,15 @@ class Dataset(torch.utils.data.Dataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
+
+    def get_summary(self):
+        r"""Collects summary statistics for the dataset."""
+        from torch_geometric.data.summary import Summary
+        return Summary.from_dataset(self)
+
+    def print_summary(self):
+        r"""Prints summary statistics of the dataset to the console."""
+        return str(self.get_summary())
 
 
 def to_list(value: Any) -> Sequence:

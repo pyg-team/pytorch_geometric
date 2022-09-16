@@ -424,7 +424,7 @@ def to_csc(
                 f"Edge {edge_attr.edge_type} cannot be converted "
                 f"to a different type without specifying 'size' for "
                 f"the source and destination node types (got {size}). "
-                f"Please specify these parameters for successful execution. ")
+                f"Please specify these parameters for successful execution.")
         (row, col) = adj
         if not is_sorted:
             perm = (col * size[0]).add_(row).argsort()

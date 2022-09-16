@@ -51,15 +51,8 @@ class ScatterImpl(torch.nn.Module):
                     size[dim] = 0
                 out = src.new_zeros(size)
 
-            out = out.scatter_reduce_(dim, index, src, reduce,
-                                      include_self=include_self)
-
-            # TODO: For now, we need the clone here since otherwise, autograd
-            # will complain about inplace modifications.
-            # See: https://github.com/pyg-team/pytorch_geometric/pull/5120
-            out = out.clone()
-
-            return out
+            return out.scatter_reduce_(dim, index, src, reduce,
+                                       include_self=include_self)
 
         return torch_scatter.scatter(src, index, dim, out, dim_size, reduce)
 
