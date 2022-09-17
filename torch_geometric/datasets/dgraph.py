@@ -81,4 +81,4 @@ class DGraphFin(InMemoryDataset):
         torch.save((data, slices), self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}{self.name.capitalize()}()'
+        return f'{self.__class__.__name__}()'
