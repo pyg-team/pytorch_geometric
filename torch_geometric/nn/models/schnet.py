@@ -146,6 +146,7 @@ class SchNet(torch.nn.Module):
         import schnetpack as spk  # noqa
 
         assert target >= 0 and target <= 12
+        is_dipole = target == 0
 
         units = [1] * 12
         units[0] = ase.units.Debye
@@ -184,7 +185,7 @@ class SchNet(torch.nn.Module):
             state = torch.load(path, map_location='cpu')
 
         net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
-                     num_gaussians=50, cutoff=10.0,
+                     num_gaussians=50, cutoff=10.0, dipole=is_dipole,
                      atomref=dataset.atomref(target))
 
         net.embedding.weight = state.representation.embedding.weight
