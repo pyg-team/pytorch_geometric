@@ -39,6 +39,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
 
         class GNN(torch.nn.Module):
             def __init__(self):
+                super().__init__()
                 self.conv1 = SAGEConv((-1, -1), 32)
                 self.conv2 = SAGEConv((32, 32), 32)
 
@@ -52,7 +53,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         node_types = ['paper', 'author']
         edge_types = [
             ('paper', 'cites', 'paper'),
-            ('paper' 'written_by', 'author'),
+            ('paper', 'written_by', 'author'),
             ('author', 'writes', 'paper'),
         ]
         metadata = (node_types, edge_types)
