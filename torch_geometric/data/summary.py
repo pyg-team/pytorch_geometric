@@ -57,6 +57,8 @@ class Summary:
                 will automatically decide whether to show a progress bar based
                 on dataset size. (default: :obj:`None`)
         """
+        name = dataset.__class__.__name__
+
         if progress_bar is None:
             progress_bar = len(dataset) >= 10000
 
@@ -69,7 +71,7 @@ class Summary:
             num_edges_list.append(data.num_edges)
 
         return cls(
-            name=dataset.__class__.__name__,
+            name=name,
             num_graphs=len(dataset),
             num_nodes=Stats.from_data(num_nodes_list),
             num_edges=Stats.from_data(num_edges_list),
