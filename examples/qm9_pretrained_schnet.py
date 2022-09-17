@@ -8,7 +8,7 @@ from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch_geometric.logging import log
 from torch_geometric.nn import SchNet
-from torch_geometric.transforms import Compose, Distance, RadiusGraph
+from torch_geometric.transforms import RadiusGraph
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cutoff', type=float, default=10.0,
@@ -26,10 +26,7 @@ if not args.use_precomputed_edges:
     dataset = QM9(path)
 else:
     path = osp.join(pwd, '..', 'data', f'QM9_{args.cutoff}')
-    pre_transform = Compose(
-        [RadiusGraph(args.cutoff),
-         Distance(norm=False, cat=False)])
-    dataset = QM9(path, pre_transform=pre_transform)
+    dataset = QM9(path, pre_transform=RadiusGraph(args.cutoff))
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -39,7 +36,7 @@ def default_predict(model, data):
 
 
 def precomputed_predict(model, data):
-    return model(data.z, data.batch, data.edge_index, data.edge_attr)
+    return model(data.z, data.pos, data.batch, data.edge_index)
 
 
 if args.use_precomputed_edges:
