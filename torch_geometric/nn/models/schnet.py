@@ -226,33 +226,30 @@ class SchNet(torch.nn.Module):
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     @staticmethod
-    def _validate_fwd_args(z, pos, batch, edge_index, edge_weight):
+    def _validate_fwd_args(z, pos, batch, edge_index):
         assert z.dim() == 1 and z.dtype == torch.long
+        assert pos.dim() == 2 and pos.shape[1] == 3
 
         if batch is not None:
             assert batch.dim() == 1 and batch.dtype == torch.long
 
-        if pos is not None:
-            assert edge_index is None and edge_weight is None
-        else:
-            assert edge_index is not None and edge_weight is not None
+        if edge_index is not None:
+            assert edge_index.dim() == 2 and edge_index.shape[
+                0] == 2 and edge_index.dtype == torch.long
 
-    def forward(self, z, pos=None, batch=None, edge_index=None,
-                edge_weight=None):
+    def forward(self, z, pos, batch=None, edge_index=None):
         """"""
-        self._validate_fwd_args(z, pos, batch, edge_index, edge_weight)
+        self._validate_fwd_args(z, pos, batch, edge_index)
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
 
-        if edge_index is None and edge_weight is None:
+        if edge_index is None:
             edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                       max_num_neighbors=self.max_num_neighbors)
-            row, col = edge_index
-            edge_weight = (pos[row] - pos[col]).norm(dim=-1)
-        else:
-            assert edge_index is not None and edge_weight is not None
 
+        row, col = edge_index
+        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
         edge_attr = self.distance_expansion(edge_weight)
 
         for interaction in self.interactions:

@@ -5,7 +5,7 @@ from torch_geometric import seed_everything
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
 from torch_geometric.testing import onlyFullTest, withPackage
-from torch_geometric.transforms import Compose, Distance, RadiusGraph
+from torch_geometric.transforms import RadiusGraph
 
 
 def generate_data():
@@ -62,7 +62,7 @@ def test_schnet_batch_pre_compute():
     num_graphs = 3
     cutoff = 6.0
 
-    transform = Compose([RadiusGraph(cutoff), Distance(norm=False, cat=False)])
+    transform = RadiusGraph(cutoff)
 
     batch = [transform(generate_data()) for _ in range(num_graphs)]
     batch = Batch.from_data_list(batch)
@@ -71,6 +71,5 @@ def test_schnet_batch_pre_compute():
                    num_gaussians=10, cutoff=cutoff)
 
     with torch.no_grad():
-        out = model(batch.z, None, batch.batch, batch.edge_index,
-                    batch.edge_attr)
+        out = model(batch.z, batch.pos, batch.batch, batch.edge_index)
         assert out.size() == (num_graphs, 1)
