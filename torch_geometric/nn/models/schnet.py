@@ -225,19 +225,7 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    @staticmethod
-    def _validate_fwd_args(z, pos, edge_index, batch):
-        assert z.dim() == 1 and z.dtype == torch.long
-        assert pos.dim() == 2 and pos.shape[1] == 3
-
-        if batch is not None:
-            assert batch.dim() == 1 and batch.dtype == torch.long
-
-        if edge_index is not None:
-            assert edge_index.dim() == 2 and edge_index.shape[
-                0] == 2 and edge_index.dtype == torch.long
-
-    def forward(self, z, pos, edge_index=None, batch=None):
+    def forward(self, z, pos, batch=None, edge_index=None):
         r"""Forward pass of the SchNet model
 
         Args:
@@ -245,14 +233,14 @@ class SchNet(torch.nn.Module):
                 :obj:`[num_atoms]`
             pos (Tensor): Coordinates of each atom with shape
                 :obj:`[num_atoms, 3]`
-            edge_index (LongTensor, optional): Indices of interacting pairs of
-                atoms with shape :obj:`[2, num_edges]`. Will be computed in
-                every forward pass if not provided. (default: :obj:`None`)
             batch (LongTensor, optional): Batch indices assigning each atom to
                 a seperate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
+            edge_index (LongTensor, optional): Indices of interacting pairs of
+                atoms with shape :obj:`[2, num_edges]`. Will be computed in
+                every forward pass if not provided. (default: :obj:`None`)
         """
-        self._validate_fwd_args(z, pos, edge_index, batch)
+        assert z.dim() == 1 and z.dtype == torch.long
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
