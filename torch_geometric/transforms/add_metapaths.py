@@ -8,7 +8,7 @@ from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType
-from torch_geometric.utils import degree
+from torch_geometric.utils import coalesce, degree
 
 
 @functional_transform('add_metapaths')
@@ -332,7 +332,7 @@ class AddRandomMetaPaths(BaseTransform):
                 start = col
 
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
-            data[new_edge_type].edge_index = torch.vstack([row, col])
+            data[new_edge_type].edge_index = coalesce(torch.vstack([row, col]))
             data.metapath_dict[new_edge_type] = metapath
 
         if self.drop_orig_edges:
