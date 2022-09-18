@@ -14,7 +14,7 @@ from torch_geometric.utils import index_to_mask
 
 
 class DGraphFin(InMemoryDataset):
-    r"""The DGraphFin networks from the
+    r"""The DGraphFin networks dataset from the
     `"DGraph: A Large-Scale Financial Dataset for Graph Anomaly Detection"
     <https://arxiv.org/abs/2207.03579>`_ paper.
     It is a directed, unweighted dynamic graph consisting of millions of
