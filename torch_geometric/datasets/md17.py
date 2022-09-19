@@ -101,8 +101,8 @@ class MD17(InMemoryDataset):
     url = 'http://quantum-machine.org/gdml/data/npz'
 
     file_names = {
-        'benzene FHI-aims': 'benzene_dft.npz',
-        'benzene': 'benzene_old_dft.npz',
+        'benzene FHI-aims': 'benzene2018_dft.npz',
+        'benzene': 'benzene2017_dft.npz',
         'benzene CCSD(T)': 'benzene_ccsd_t.zip',
         'uracil': 'uracil_dft.npz',
         'napthalene': 'naphthalene_dft.npz',
