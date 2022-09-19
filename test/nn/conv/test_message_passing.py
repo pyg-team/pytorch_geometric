@@ -45,7 +45,13 @@ class MyConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        return spmm(adj_t, x[0], reduce=self.aggr)
+        if self.aggr in ['sum', 'add']:
+            rowptr, col, value = adj_t.csr()
+            if value is not None:
+                value = value.to(x[0].dtype)
+            return torch.spmm_sum(rowptr, col, value, x[0])
+        else:
+            return spmm(adj_t, x[0], reduce=self.aggr)
 
 
 def test_my_conv():
