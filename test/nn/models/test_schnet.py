@@ -28,17 +28,6 @@ def test_schnet():
         out = model(data.z, data.pos)
         assert out.size() == (1, 1)
 
-    num_steps = 10
-    losses = torch.empty(num_steps)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-    for i in range(num_steps):
-        optimizer.zero_grad()
-        out = model(data.z, data.pos)
-        loss = F.mse_loss(out.view(-1), data.y)
-        loss.backward()
-        optimizer.step()
-        losses[i] = loss.detach()
-    assert losses[num_steps - 1] < losses[0]
 
 
 @withPackage('torch_cluster')
@@ -57,7 +46,7 @@ def test_schnet_batch():
 
 
 @withPackage('torch_cluster')
-def test_schnet_batch_pre_compute():
+def test_schnet_pre_compute_edge_index():
     seed_everything(0)
     num_graphs = 3
     cutoff = 6.0
