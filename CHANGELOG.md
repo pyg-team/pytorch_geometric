@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added `AddRandomMetaPaths` that adds edges based on random walks along a metapath ([#5397](https://github.com/pyg-team/pytorch_geometric/pull/5397))
 - Added `WLConvContinuous` for performing WL refinement with continuous attributes ([#5316](https://github.com/pyg-team/pytorch_geometric/pull/5316))
 - Added `print_summary` method for the `torch_geometric.data.Dataset` interface ([#5438](https://github.com/pyg-team/pytorch_geometric/pull/5438))
 - Added `sampler` support to `LightningDataModule` ([#5456](https://github.com/pyg-team/pytorch_geometric/pull/5456), [#5457](https://github.com/pyg-team/pytorch_geometric/pull/5457))
