@@ -228,8 +228,7 @@ class AddRandomMetaPaths(BaseTransform):
         self.sample_ratio = sample_ratio
         if isinstance(walks_per_node, int):
             walks_per_node = [walks_per_node] * len(metapaths)
-        else:
-            assert len(walks_per_node) == len(metapaths)
+        assert len(walks_per_node) == len(metapaths)
         self.walks_per_node = walks_per_node
 
     def __call__(self, data: HeteroData) -> HeteroData:
