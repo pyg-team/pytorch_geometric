@@ -299,6 +299,7 @@ class AddRandomMetaPaths(BaseTransform):
     @staticmethod
     def sample(src: SparseTensor, subset: Tensor,
                num_neighbors: int = 1) -> Tensor:
+         """sample a neighbor form `src` each node in `subset`"""
 
         rowcount = src.storage.rowcount()[subset]
         mask = rowcount > 0
