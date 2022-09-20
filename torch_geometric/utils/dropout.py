@@ -133,4 +133,5 @@ def dropout_node(edge_index: Tensor, edge_attr: OptTensor = None,
     mask = torch.full_like(nodes, 1 - p, dtype=torch.float32)
     mask = torch.bernoulli(mask).to(torch.bool)
     subset = nodes[mask]
-    return subgraph(subset, edge_index, edge_attr, relabel_nodes=relabel_nodes)
+    return subgraph(subset, edge_index, edge_attr, num_nodes=num_nodes,
+                    relabel_nodes=relabel_nodes)
