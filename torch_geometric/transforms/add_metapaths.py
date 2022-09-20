@@ -197,7 +197,7 @@ class AddMetaPaths(BaseTransform):
 
 @functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r""" Adds metapaths similar to (AddMetaPaths)[hyperlink]. The key difference is 
+    r""" Adds metapaths similar to (AddMetaPaths)[hyperlink]. The key difference is
         :class:`AddRandomMetaPaths` samples metapaths based on multiple
         one-step random walks, starting from the beginning of a metapath.
         One might want to add more metapaths via increasing
