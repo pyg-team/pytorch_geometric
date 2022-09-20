@@ -197,72 +197,12 @@ class AddMetaPaths(BaseTransform):
 
 @functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r""" Adds additional edge types to a
-    :class:`~torch_geometric.data.HeteroData` object between the source node
-    type and the destination node type of a given :obj:`metapath`, as described
-    in the `"Heterogenous Graph Attention Networks"
-    <https://arxiv.org/abs/1903.07293>`_ paper
-    (functional name: :obj:`add_metapaths2`).
-    Meta-path based neighbors can exploit different aspects of structure
-    information in heterogeneous graphs.
-    Formally, a metapath is a path of the form
-
-    .. math::
-
-        \mathcal{V}_1 \xrightarrow{R_1} \mathcal{V}_2 \xrightarrow{R_2} \ldots
-        \xrightarrow{R_{\ell-1}} \mathcal{V}_{\ell}
-
-    in which :math:`\mathcal{V}_i` represents node types, and :math:`R_j`
-    represents the edge type connecting two node types.
-    The added edge type is given by random walks starting from the source node
-    of each metapath.
-    :class:`~torch_geometric.data.HeteroData` object as edge type
-    :obj:`(src_node_type, "metapath_*", dst_node_type)`, where
-    :obj:`src_node_type` and :obj:`dst_node_type` denote :math:`\mathcal{V}_1`
-    and :math:`\mathcal{V}_{\ell}`, repectively.
-
-    In addition, a :obj:`metapath_dict` object is added to the
-    :class:`~torch_geometric.data.HeteroData` object which maps the
-    metapath-based edge type to its original metapath.
-
-    .. note::
+    r""" Adds metapaths similar to (AddMetaPaths)[hyperlink]. The key difference is 
         :class:`AddRandomMetaPaths` samples metapaths based on multiple
         one-step random walks, starting from the beginning of a metapath.
         One might want to add more metapaths via increasing
         :obj:`walks_per_node` and achieve the same performance
         as :class:`AddMetaPaths`.
-
-    .. code-block:: python
-
-        from torch_geometric.datasets import DBLP
-        from torch_geometric.data import HeteroData
-        from torch_geometric.transforms import AddRandomMetaPaths
-
-        data = DBLP(root)[0]
-        # 4 node types: "paper", "author", "conference", and "term"
-        # 6 edge types: ("paper","author"), ("author", "paper"),
-        #               ("paper, "term"), ("paper", "conference"),
-        #               ("term, "paper"), ("conference", "paper")
-
-        # Add two metapaths:
-        # 1. From "paper" to "paper" through "conference"
-        # 2. From "author" to "conference" through "paper"
-        metapaths = [[("paper", "conference"), ("conference", "paper")],
-                     [("author", "paper"), ("paper", "conference")]]
-        data = AddRandomMetaPaths(metapaths)(data)
-
-        print(data.edge_types)
-        >>> [("author", "to", "paper"), ("paper", "to", "author"),
-             ("paper", "to", "term"), ("paper", "to", "conference"),
-             ("term", "to", "paper"), ("conference", "to", "paper"),
-             ("paper", "metapath_0", "paper"),
-             ("author", "metapath_1", "conference")]
-
-        print(data.metapath_dict)
-        >>> {("paper", "metapath_0", "paper"): [("paper", "conference"),
-                                                ("conference", "paper")],
-             ("author", "metapath_1", "conference"): [("author", "paper"),
-                                                      ("paper", "conference")]}
 
     Args:
         metapaths (List[List[Tuple[str, str, str]]]): The metapaths described
