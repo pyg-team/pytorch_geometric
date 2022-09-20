@@ -16,6 +16,7 @@ def generate_data():
     )
 
 
+@withPackage('torch_cluster')
 def test_schnet():
     seed_everything(0)
     data = generate_data()
