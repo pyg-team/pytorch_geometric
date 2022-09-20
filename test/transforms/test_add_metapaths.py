@@ -6,8 +6,7 @@ from torch import tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths, AddRandomMetaPaths
 
-
-def test_add_metapaths():
+def generate_data()->HeteroData:
     data = HeteroData()
     data['p'].x = torch.ones(5)
     data['a'].x = torch.ones(6)
@@ -17,7 +16,10 @@ def test_add_metapaths():
     data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
     data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
     data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
+    return data
 
+def test_add_metapaths():
+    data = generate_data()
     # Test transform options:
     metapaths = [[('p', 'c'), ('c', 'p')]]
 
@@ -72,15 +74,7 @@ def test_add_metapaths():
 def test_add_metapaths_max_sample():
     torch.manual_seed(12345)
 
-    data = HeteroData()
-    data['p'].x = torch.ones(5)
-    data['a'].x = torch.ones(6)
-    data['c'].x = torch.ones(3)
-    data['p', 'p'].edge_index = tensor([[0, 1, 2, 3], [1, 2, 4, 2]])
-    data['p', 'a'].edge_index = tensor([[0, 1, 2, 3, 4], [2, 2, 5, 2, 5]])
-    data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
-    data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
-    data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
+    data = generate_data()
 
     metapaths = [[('p', 'c'), ('c', 'p')]]
     transform = AddMetaPaths(metapaths, max_sample=1)
@@ -133,15 +127,7 @@ def test_add_weighted_metapaths():
 
 
 def test_add_random_metapaths():
-    data = HeteroData()
-    data['p'].x = torch.ones(5)
-    data['a'].x = torch.ones(6)
-    data['c'].x = torch.ones(3)
-    data['p', 'p'].edge_index = tensor([[0, 1, 2, 3], [1, 2, 4, 2]])
-    data['p', 'a'].edge_index = tensor([[0, 1, 2, 3, 4], [2, 2, 5, 2, 5]])
-    data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
-    data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
-    data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
+    data = generate_data()
 
     # Test transform options:
     metapaths = [[('p', 'c'), ('c', 'p')]]
