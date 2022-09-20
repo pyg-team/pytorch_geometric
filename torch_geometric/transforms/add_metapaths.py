@@ -183,9 +183,9 @@ class AddMetaPaths(BaseTransform):
 class AddRandomMetaPaths(BaseTransform):
     r""" Adds metapaths similar to :class:`AddMetaPaths`.
     The key difference is :class:`AddRandomMetaPaths` samples metapaths
-    based on multiple one-step random walks, starting from the beginning
-    of a metapath. One might want to add more metapaths via increasing
-    :obj:`walks_per_node` and achieve competitive performance with
+    based on multiple random walks, starting from the beginning
+    of a metapath. One might want to increase the number of random walks
+    via :obj:`walks_per_node` to achieve competitive performance with
     :class:`AddMetaPaths`.
 
     Args:
@@ -200,8 +200,8 @@ class AddRandomMetaPaths(BaseTransform):
             (default: :obj:`False`)
         drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
             node types not connected by any edge type. (default: :obj:`False`)
-        walks_per_node (int, List[int], optional): The number of walks to
-            sample for each starting node in a metapth. (default: :obj:`1`)
+        walks_per_node (int, List[int], optional): The number of random walks
+            for each starting node in a metapth. (default: :obj:`1`)
         sample_ratio (float, optional): The ratio of source nodes to start
             random walks from. (default: :obj:`1.0`)
     """
