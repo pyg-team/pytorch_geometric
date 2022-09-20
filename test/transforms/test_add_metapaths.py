@@ -6,7 +6,8 @@ from torch import tensor
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths, AddRandomMetaPaths
 
-def generate_data()->HeteroData:
+
+def generate_data() -> HeteroData:
     data = HeteroData()
     data['p'].x = torch.ones(5)
     data['a'].x = torch.ones(6)
@@ -17,6 +18,7 @@ def generate_data()->HeteroData:
     data['c', 'p'].edge_index = tensor([[0, 0, 1, 2, 2], [0, 1, 2, 3, 4]])
     data['p', 'c'].edge_index = data['c', 'p'].edge_index.flip([0])
     return data
+
 
 def test_add_metapaths():
     data = generate_data()
