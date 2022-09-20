@@ -62,8 +62,8 @@ class Net(torch.nn.Module):
         self.decimation = decimation
         self.return_logits = return_logits
 
-        # Authors use 8, which is a bottleneck 
-        # for the final MLP, and also when num_classes>8 
+        # Authors use 8, which is a bottleneck
+        # for the final MLP, and also when num_classes>8
         # or num_features>8.
         d_bottleneck = max(32, num_classes, num_features)
 
