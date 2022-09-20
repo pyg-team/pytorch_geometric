@@ -181,10 +181,10 @@ class AddMetaPaths(BaseTransform):
 
 @functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r""" Adds metapaths similar to :class:`AddMetaPaths`.
-    The key difference is :class:`AddRandomMetaPaths` samples metapaths
-    based on multiple random walks, starting from the beginning
-    of a metapath. One might want to increase the number of random walks
+    r""" Adds additional edge types similar to :class:`AddMetaPaths`.
+    The key difference is that the added edge type is given by
+    multiple random walks along the metapath.
+    One might want to increase the number of random walks
     via :obj:`walks_per_node` to achieve competitive performance with
     :class:`AddMetaPaths`.
 
