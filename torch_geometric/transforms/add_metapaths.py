@@ -265,19 +265,19 @@ class AddRandomMetaPaths(BaseTransform):
         return data
 
     @staticmethod
-    def sample(src: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
-        """sample a neighbor form `src` each node in `subset`"""
+    def sample(adj: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
+        """Sample a neighbor form `adj` for each node in `subset`"""
 
-        rowcount = src.storage.rowcount()[subset]
+        rowcount = adj.storage.rowcount()[subset]
         mask = rowcount > 0
         offset = torch.zeros_like(subset)
-        offset[mask] = src.storage.rowptr()[subset[mask]]
+        offset[mask] = adj.storage.rowptr()[subset[mask]]
 
         rand = torch.rand((rowcount.size(0), 1), device=subset.device)
         rand.mul_(rowcount.to(rand.dtype).view(-1, 1))
         rand = rand.to(torch.long)
         rand.add_(offset.view(-1, 1))
-        col = src.storage.col()[rand].squeeze()
+        col = adj.storage.col()[rand].squeeze()
         return col, mask
 
     def __repr__(self) -> str:
