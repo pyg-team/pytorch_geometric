@@ -16,7 +16,6 @@ def generate_data():
     )
 
 
-@onlyFullTest
 def test_schnet():
     seed_everything(0)
     data = generate_data()
