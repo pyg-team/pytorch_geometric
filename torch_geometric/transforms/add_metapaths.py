@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -153,24 +153,8 @@ class AddMetaPaths(BaseTransform):
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
 
-        if self.drop_orig_edges:
-            for i in edge_types:
-                if self.keep_same_node_type and i[0] == i[-1]:
-                    continue
-                else:
-                    del data[i]
-
-        # remove nodes not connected by any edge type.
-        if self.drop_unconnected_nodes:
-            new_edge_types = data.edge_types
-            node_types = data.node_types
-            connected_nodes = set()
-            for i in new_edge_types:
-                connected_nodes.add(i[0])
-                connected_nodes.add(i[-1])
-            for node in node_types:
-                if node not in connected_nodes:
-                    del data[node]
+        postprocess(data, edge_types, self.drop_orig_edges,
+                    self.keep_same_node_type, self.drop_unconnected_nodes)
 
         return data
 
@@ -197,12 +181,12 @@ class AddMetaPaths(BaseTransform):
 
 @functional_transform('add_random_metapaths')
 class AddRandomMetaPaths(BaseTransform):
-    r""" Adds metapaths similar to (AddMetaPaths)[hyperlink]. The key difference is
-        :class:`AddRandomMetaPaths` samples metapaths based on multiple
-        one-step random walks, starting from the beginning of a metapath.
-        One might want to add more metapaths via increasing
-        :obj:`walks_per_node` and achieve the same performance
-        as :class:`AddMetaPaths`.
+    r""" Adds metapaths similar to :class:`AddMetaPaths`.
+    The key difference is :class:`AddRandomMetaPaths` samples metapaths
+    based on multiple one-step random walks, starting from the beginning
+    of a metapath. One might want to add more metapaths via increasing
+    :obj:`walks_per_node` and achieve competitive performance with
+    :class:`AddMetaPaths`.
 
     Args:
         metapaths (List[List[Tuple[str, str, str]]]): The metapaths described
@@ -275,38 +259,21 @@ class AddRandomMetaPaths(BaseTransform):
             data[new_edge_type].edge_index = coalesce(torch.vstack([row, col]))
             data.metapath_dict[new_edge_type] = metapath
 
-        if self.drop_orig_edges:
-            for i in edge_types:
-                if self.keep_same_node_type and i[0] == i[-1]:
-                    continue
-                else:
-                    del data[i]
-
-        # remove nodes not connected by any edge type.
-        if self.drop_unconnected_nodes:
-            new_edge_types = data.edge_types
-            node_types = data.node_types
-            connected_nodes = set()
-            for i in new_edge_types:
-                connected_nodes.add(i[0])
-                connected_nodes.add(i[-1])
-            for node in node_types:
-                if node not in connected_nodes:
-                    del data[node]
+        postprocess(data, edge_types, self.drop_orig_edges,
+                    self.keep_same_node_type, self.drop_unconnected_nodes)
 
         return data
 
     @staticmethod
-    def sample(src: SparseTensor, subset: Tensor,
-         """sample a neighbor form `src` each node in `subset`"""
+    def sample(src: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
+        """sample a neighbor form `src` each node in `subset`"""
 
         rowcount = src.storage.rowcount()[subset]
         mask = rowcount > 0
         offset = torch.zeros_like(subset)
         offset[mask] = src.storage.rowptr()[subset[mask]]
 
-        rand = torch.rand((rowcount.size(0), num_neighbors),
-                          device=subset.device)
+        rand = torch.rand((rowcount.size(0), 1), device=subset.device)
         rand.mul_(rowcount.to(rand.dtype).view(-1, 1))
         rand = rand.to(torch.long)
         rand.add_(offset.view(-1, 1))
@@ -317,3 +284,27 @@ class AddRandomMetaPaths(BaseTransform):
         return (f'{self.__class__.__name__}('
                 f'sample_ratio={self.sample_ratio}, '
                 f'walks_per_node={self.walks_per_node})')
+
+
+def postprocess(data: HeteroData, edge_types: List[EdgeType],
+                drop_orig_edges: bool, keep_same_node_type: bool,
+                drop_unconnected_nodes: bool):
+
+    if drop_orig_edges:
+        for i in edge_types:
+            if keep_same_node_type and i[0] == i[-1]:
+                continue
+            else:
+                del data[i]
+
+    # remove nodes not connected by any edge type.
+    if drop_unconnected_nodes:
+        new_edge_types = data.edge_types
+        node_types = data.node_types
+        connected_nodes = set()
+        for i in new_edge_types:
+            connected_nodes.add(i[0])
+            connected_nodes.add(i[-1])
+        for node in node_types:
+            if node not in connected_nodes:
+                del data[node]
