@@ -2,7 +2,6 @@ import os.path
 
 import torch
 import torch.nn.functional as F
-from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile import (
@@ -10,8 +9,8 @@ from torch_geometric.profile import (
     profileit,
     rename_profile_file,
     timeit,
-    trace_handler,
 )
+from torch_geometric.profile.profile import torch_profile
 from torch_geometric.testing import onlyFullTest, withCUDA
 
 
@@ -69,7 +68,7 @@ def test_profile(get_dataset):
 
 
 @onlyFullTest
-def test_trace_handler(get_dataset):
+def test_torch_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     data = dataset[0].to(device)
@@ -77,10 +76,16 @@ def test_trace_handler(get_dataset):
                       out_channels=dataset.num_classes).to(device)
     model.eval()
 
+    @timeit()
+    def inference_e2e(model, data):
+        model(data.x, data.edge_index)
+
+    @torch_profile()
+    def inference_profile(model, data):
+        model(data.x, data.edge_index)
+
     for epoch in range(3):
-        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                     on_trace_ready=trace_handler) as p:
-            model(data.x, data.edge_index)
-            p.step()
+        inference_e2e(model, data)
+        inference_profile(model, data)
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')

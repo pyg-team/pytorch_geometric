@@ -6,7 +6,7 @@ import torch
 from torch_geometric.data import Dataset
 
 
-class DynamicBatchSampler(torch.utils.data.sampler.Sampler[List[int]]):
+class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
     r"""Dynamically adds samples to a mini-batch up to a maximum size (either
     based on number of nodes or number of edges). When data samples have a
     wide range in sizes, specifying a mini-batch size in terms of number of

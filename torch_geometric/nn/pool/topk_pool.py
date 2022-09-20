@@ -1,6 +1,7 @@
 from typing import Callable, Optional, Union
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
 
@@ -10,16 +11,22 @@ from ...utils.num_nodes import maybe_num_nodes
 from ..inits import uniform
 
 
-def topk(x, ratio, batch, min_score=None, tol=1e-7):
+def topk(
+    x: Tensor,
+    ratio: float,
+    batch: Tensor,
+    min_score: Optional[int] = None,
+    tol: float = 1e-7,
+) -> Tensor:
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
         scores_max = scatter_max(x, batch)[0].index_select(0, batch) - tol
         scores_min = scores_max.clamp(max=min_score)
 
-        perm = (x > scores_min).nonzero(as_tuple=False).view(-1)
+        perm = (x > scores_min).nonzero().view(-1)
     else:
         num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
-        batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
+        batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
 
         cum_num_nodes = torch.cat(
             [num_nodes.new_zeros(1),
@@ -28,8 +35,7 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
         index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
 
-        dense_x = x.new_full((batch_size * max_num_nodes, ),
-                             torch.finfo(x.dtype).min)
+        dense_x = x.new_full((batch_size * max_num_nodes, ), -60000.0)
         dense_x[index] = x
         dense_x = dense_x.view(batch_size, max_num_nodes)
 
@@ -38,8 +44,8 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         perm = perm + cum_num_nodes.view(-1, 1)
         perm = perm.view(-1)
 
-        if isinstance(ratio, int):
-            k = num_nodes.new_full((num_nodes.size(0), ), ratio)
+        if ratio >= 1:
+            k = num_nodes.new_full((num_nodes.size(0), ), int(ratio))
             k = torch.min(k, num_nodes)
         else:
             k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)

@@ -88,7 +88,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             batch.edge_index = torch.stack([row, col], dim=0)
 
         for k, v in self.data:
-            if k in ['edge_index', 'adj_t', 'num_nodes']:
+            if k in ['edge_index', 'adj_t', 'num_nodes', 'batch', 'ptr']:
                 continue
             if k == 'y' and v.size(0) == self.data.num_nodes:
                 batch[k] = v[n_id][root_n_id]

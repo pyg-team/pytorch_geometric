@@ -18,6 +18,7 @@ parser.add_argument('--lr_decay_step_size', type=int, default=50)
 parser.add_argument('--weight_decay', type=float, default=0)
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
+parser.add_argument('--bf16', action='store_true')
 args = parser.parse_args()
 
 
@@ -73,7 +74,7 @@ train_dataset, test_dataset = get_dataset(num_points=1024)
 model = Net(train_dataset.num_classes)
 run(train_dataset, test_dataset, model, args.epochs, args.batch_size, args.lr,
     args.lr_decay_factor, args.lr_decay_step_size, args.weight_decay,
-    args.inference, args.profile)
+    args.inference, args.profile, args.bf16)
 
 if args.profile:
     rename_profile_file('points', SplineConv.__name__)

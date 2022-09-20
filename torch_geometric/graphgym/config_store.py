@@ -11,6 +11,7 @@ EXCLUDE = {'self', 'args', 'kwargs'}
 
 MAPPING = {
     torch.nn.Module: Any,
+    torch.Tensor: Any,
 }
 
 

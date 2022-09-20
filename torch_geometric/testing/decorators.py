@@ -54,32 +54,8 @@ def withPackage(*args) -> Callable:
     def decorator(func: Callable) -> Callable:
         import pytest
         return pytest.mark.skipif(
-            not is_full_test() and len(na_packages) > 0,
+            len(na_packages) > 0,
             reason=f"Package(s) {na_packages} are not installed",
-        )(func)
-
-    return decorator
-
-
-def withRegisteredOp(*args) -> Callable:
-    r"""A decorator to skip tests if a certain op is not registered."""
-    def is_registered(op: str) -> bool:
-        module = torch.ops
-        for attr in op.split('.'):
-            try:
-                module = getattr(module, attr)
-            except RuntimeError:
-                return False
-        return True
-
-    na_ops = set(arg for arg in args if not is_registered(arg))
-
-    def decorator(func: Callable) -> Callable:
-        import pytest
-
-        return pytest.mark.skipif(
-            len(na_ops) > 0,
-            reason=f"Operator(s) {na_ops} are not registered",
         )(func)
 
     return decorator

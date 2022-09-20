@@ -18,4 +18,7 @@ class HeteroGraphSAGE(torch.nn.Module):
             loader = tqdm(loader, desc="Inference")
         for batch in loader:
             batch = batch.to(device)
-            self.model(batch.x_dict, batch.edge_index_dict)
+            if len(batch.adj_t_dict) > 0:
+                self.model(batch.x_dict, batch.adj_t_dict)
+            else:
+                self.model(batch.x_dict, batch.edge_index_dict)

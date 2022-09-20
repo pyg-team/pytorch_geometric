@@ -7,7 +7,27 @@ def dense_to_sparse(adj):
 
     Args:
         adj (Tensor): The dense adjacency matrix.
-     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Examples:
+
+        >>> # Forr a single adjacency matrix
+        >>> adj = torch.tensor([[3, 1],
+        ...                     [2, 0]])
+        >>> dense_to_sparse(adj)
+        (tensor([[0, 0, 1],
+                [0, 1, 0]]),
+        tensor([3, 1, 2]))
+
+        >>> # For two adjacency matrixes
+        >>> adj = torch.tensor([[[3, 1],
+        ...                      [2, 0]],
+        ...                     [[0, 1],
+        ...                      [0, 2]]])
+        >>> dense_to_sparse(adj)
+        (tensor([[0, 0, 1, 2, 3],
+                [0, 1, 0, 3, 3]]),
+        tensor([3, 1, 2, 1, 2]))
     """
     assert adj.dim() >= 2 and adj.dim() <= 3
     assert adj.size(-1) == adj.size(-2)

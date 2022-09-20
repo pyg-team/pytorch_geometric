@@ -1,0 +1,28 @@
+documentation:
+  - docs/**/*
+
+example:
+  - examples/**/*
+
+data:
+  - torch_geometric/data/**/*
+
+dataset:
+  - torch_geometric/datasets/**/*
+
+loader:
+  - torch_geometric/loader/**/*
+
+nn:
+  - torch_geometric/nn/**/*
+
+transform:
+  - torch_geometric/transforms/**/*
+
+graphgym:
+  - graphgym/**/*
+  - torch_geometric/graphgym/**/*
+
+benchmark:
+  - benchmark/**/*
+  - torch_geometric/profile/**/*
