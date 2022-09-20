@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, Data
