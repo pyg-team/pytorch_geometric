@@ -28,7 +28,6 @@ def test_schnet():
         assert out.size() == (1, 1)
 
 
-
 @withPackage('torch_cluster')
 def test_schnet_batch():
     seed_everything(0)
