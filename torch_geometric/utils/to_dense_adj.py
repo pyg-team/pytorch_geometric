@@ -47,9 +47,10 @@ def to_dense_adj(edge_index, batch=None, edge_attr=None, max_num_nodes=None):
                 [5., 0.]]])
     """
     if batch is None:
-        batch = edge_index.new_zeros(edge_index.max().item() + 1)
+        num_nodes = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+        batch = edge_index.new_zeros(num_nodes)
 
-    batch_size = batch.max().item() + 1
+    batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
     one = batch.new_ones(batch.size(0))
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='add')
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
@@ -61,7 +62,8 @@ def to_dense_adj(edge_index, batch=None, edge_attr=None, max_num_nodes=None):
     if max_num_nodes is None:
         max_num_nodes = num_nodes.max().item()
 
-    elif idx1.max() >= max_num_nodes or idx2.max() >= max_num_nodes:
+    elif ((idx1.numel() > 0 and idx1.max() >= max_num_nodes)
+          or (idx2.numel() > 0 and idx2.max() >= max_num_nodes)):
         mask = (idx1 < max_num_nodes) & (idx2 < max_num_nodes)
         idx0 = idx0[mask]
         idx1 = idx1[mask]
