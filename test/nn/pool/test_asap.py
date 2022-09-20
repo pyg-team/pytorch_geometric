@@ -5,7 +5,7 @@ import torch
 
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
 from torch_geometric.testing import is_full_test
-from torch_geometric.testing.decorators import onlyFullTest
+from torch_geometric.testing import onlyFullTest
 
 
 def test_asap():
