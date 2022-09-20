@@ -22,14 +22,15 @@ bn099_kwargs = {"momentum": 0.01, "eps": 1e-6}
 
 
 class SharedMLP(MLP):
-    """SharedMLP with new defauts BN and Activation following tensorflow implementation."""
+    """SharedMLP following RandLA-Net paper."""
     def __init__(self, *args, **kwargs):
         # BN + Act always active even at last layer.
         kwargs["plain_last"] = False
         # LeakyRelu with 0.2 slope by default.
         kwargs["act"] = kwargs.get("act", "LeakyReLU")
         kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
-        # BatchNorm with 1 - 0.99 = 0.01 momentum and 1e-6 eps by defaut (tensorflow momentum != pytorch momentum)
+        # BatchNorm with 1 - 0.99 = 0.01 momentum 
+        # and 1e-6 eps by defaut (tensorflow momentum != pytorch momentum)
         kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
         super().__init__(*args, **kwargs)
 
@@ -60,14 +61,14 @@ class LocalFeatureAggregation(MessagePassing):
 
     def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
                 index: Tensor) -> Tensor:
-        """
-        Local Spatial Encoding (locSE) and attentive pooling of features.
+        """Local Spatial Encoding (locSE) and attentive pooling of features.
 
         Args:
             x_j (Tensor): neighboors features (K,d)
             pos_i (Tensor): centroid position (repeated) (K,3)
             pos_j (Tensor): neighboors positions (K,3)
-            index (Tensor): index of centroid positions (e.g. [0,...,0,1,...,1,...,N,...,N])
+            index (Tensor): index of centroid positions 
+                (e.g. [0,...,0,1,...,1,...,N,...,N])
 
         returns:
             (Tensor): locSE weighted by feature attention scores.
@@ -82,7 +83,8 @@ class LocalFeatureAggregation(MessagePassing):
         local_features = torch.cat([x_j, local_spatial_encoding],
                                    dim=1)  # N * K, 2d
 
-        # Attention will weight the different features of x along the neighborhood dimension.
+        # Attention will weight the different features of x 
+        # along the neighborhood dimension.
         att_features = self.mlp_attention(local_features)  # N * K, d_out
         att_scores = softmax(att_features, index=index)  # N * K, d_out
 
@@ -129,7 +131,8 @@ class DilatedResidualBlock(MessagePassing):
 def get_decimation_idx(ptr, decimation):
     """Subsamples each point cloud by a decimation factor.
 
-    Decimation happens separately for each cloud to prevent emptying point clouds by accident.
+    Decimation happens separately for each cloud to prevent 
+    emptying smaller point clouds.
 
     """
     batch_size = ptr.size(0) - 1

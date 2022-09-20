@@ -1,10 +1,8 @@
 import os.path as osp
-from typing import Tuple
 
 import torch
 import torch.nn.functional as F
 from randlanet_classification import DilatedResidualBlock, SharedMLP, decimate
-from torch import Tensor
 from torch.nn import Linear, Sequential
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
@@ -64,8 +62,9 @@ class Net(torch.nn.Module):
         self.decimation = decimation
         self.return_logits = return_logits
 
-        # Authors use 8, which might become a bottleneck if num_classes>8 or num_features>8,
-        # and even for the final MLP.
+        # Authors use 8, which is a bottleneck 
+        # for the final MLP, and also when num_classes>8 
+        # or num_features>8.
         d_bottleneck = max(32, num_classes, num_features)
 
         self.fc0 = Linear(num_features, d_bottleneck)
