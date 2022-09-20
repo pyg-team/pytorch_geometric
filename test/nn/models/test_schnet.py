@@ -3,7 +3,7 @@ import torch
 from torch_geometric import seed_everything
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import RadiusGraph
 
 
