@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
 
 from .num_nodes import maybe_num_nodes
@@ -14,6 +15,7 @@ def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,
     return row[mask], col[mask], None if edge_attr is None else edge_attr[mask]
 
 
+@deprecated("use 'dropout_edge' instead")
 def dropout_adj(
     edge_index: Tensor,
     edge_attr: OptTensor = None,
@@ -135,3 +137,62 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
                                         num_nodes=num_nodes,
                                         return_edge_mask=True)
     return edge_index, edge_mask, node_mask
+
+
+def dropout_edge(edge_index: Tensor, p: float = 0.5,
+                 force_undirected: bool = False,
+                 training: bool = True) -> Tuple[Tensor, Tensor]:
+    r"""Randomly drops edges from the adjacency matrix
+    :obj:`edge_index` with probability :obj:`p` using samples from
+    a Bernoulli distribution.
+
+    The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
+    indicating which edges were retained.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        p (float, optional): Dropout probability. (default: :obj:`0.5`)
+        force_undirected (bool, optional): If set to :obj:`True`, will either
+            drop or keep both edges of an undirected edge.
+            (default: :obj:`False`)
+        training (bool, optional): If set to :obj:`False`, this operation is a
+            no-op. (default: :obj:`True`)
+
+    :rtype: (:class:`LongTensor`, :class:`BoolTensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> edge_index, edge_mask = dropout_edge(edge_index)
+        >>> edge_index
+        tensor([[0, 1],
+                [1, 0]])
+        >>> edge_mask
+        tensor([ True,  True, False, False, False, False])
+    """
+    if p < 0. or p > 1.:
+        raise ValueError(f'Dropout probability has to be between 0 and 1 '
+                         f'(got {p}')
+
+    if not training or p == 0.0:
+        edge_mask = edge_index.new_zeros(edge_index.size(1), dtype=torch.bool)
+        return edge_index, edge_mask
+
+    row, col = edge_index
+
+    edge_mask = torch.rand(row.size(0), device=edge_index.device) >= p
+
+    if force_undirected:
+        edge_mask[row > col] = False
+
+    row, col, _ = filter_adj(row, col, None, edge_mask)
+
+    if force_undirected:
+        edge_index = torch.stack(
+            [torch.cat([row, col], dim=0),
+             torch.cat([col, row], dim=0)], dim=0)
+    else:
+        edge_index = torch.stack([row, col], dim=0)
+
+    return edge_index, edge_mask
