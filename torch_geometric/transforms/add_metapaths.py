@@ -1,3 +1,4 @@
+import warnings
 from typing import List, Optional, Tuple, Union
 
 import torch
@@ -77,14 +78,15 @@ class AddMetaPaths(BaseTransform):
         metapaths (List[List[Tuple[str, str, str]]]): The metapaths described
             by a list of lists of
             :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
-        drop_orig_edges (bool, optional): If set to :obj:`True`, existing edge
-            types will be dropped. (default: :obj:`False`)
+        drop_orig_edge_types (bool, optional): If set to :obj:`True`, existing
+            edge types will be dropped. (default: :obj:`False`)
         keep_same_node_type (bool, optional): If set to :obj:`True`, existing
             edge types between the same node type are not dropped even in case
-            :obj:`drop_orig_edges` is set to :obj:`True`.
+            :obj:`drop_orig_edge_types` is set to :obj:`True`.
             (default: :obj:`False`)
-        drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
-            node types not connected by any edge type. (default: :obj:`False`)
+        drop_unconnected_node_types (bool, optional): If set to :obj:`True`,
+            will drop node types not connected by any edge type.
+            (default: :obj:`False`)
         max_sample (int, optional): If set, will sample at maximum
             :obj:`max_sample` neighbors within metapaths. Useful in order to
             tackle very dense metapath edges. (default: :obj:`None`)
@@ -97,12 +99,23 @@ class AddMetaPaths(BaseTransform):
     def __init__(
         self,
         metapaths: List[List[EdgeType]],
-        drop_orig_edges: bool = False,
+        drop_orig_edge_types: bool = False,
         keep_same_node_type: bool = False,
-        drop_unconnected_nodes: bool = False,
+        drop_unconnected_node_types: bool = False,
         max_sample: Optional[int] = None,
         weighted: bool = False,
+        **kwargs,
     ):
+
+        if 'drop_orig_edges' in kwargs:
+            warnings.warn("'drop_orig_edges' is dprecated. Use "
+                          "'drop_orig_edge_types' instead")
+            drop_orig_edge_types = kwargs['drop_orig_edges']
+
+        if 'drop_unconnected_nodes' in kwargs:
+            warnings.warn("'drop_unconnected_nodes' is dprecated. Use "
+                          "'drop_unconnected_node_types' instead")
+            drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
         for path in metapaths:
             assert len(path) >= 2, f"Invalid metapath '{path}'"
@@ -111,9 +124,9 @@ class AddMetaPaths(BaseTransform):
             ]), f"Invalid sequence of node types in '{path}'"
 
         self.metapaths = metapaths
-        self.drop_orig_edges = drop_orig_edges
+        self.drop_orig_edge_types = drop_orig_edge_types
         self.keep_same_node_type = keep_same_node_type
-        self.drop_unconnected_nodes = drop_unconnected_nodes
+        self.drop_unconnected_node_types = drop_unconnected_node_types
         self.max_sample = max_sample
         self.weighted = weighted
 
@@ -153,8 +166,8 @@ class AddMetaPaths(BaseTransform):
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
 
-        postprocess(data, edge_types, self.drop_orig_edges,
-                    self.keep_same_node_type, self.drop_unconnected_nodes)
+        postprocess(data, edge_types, self.drop_orig_edge_types,
+                    self.keep_same_node_type, self.drop_unconnected_node_types)
 
         return data
 
@@ -192,14 +205,15 @@ class AddRandomMetaPaths(BaseTransform):
         metapaths (List[List[Tuple[str, str, str]]]): The metapaths described
             by a list of lists of
             :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
-        drop_orig_edges (bool, optional): If set to :obj:`True`, existing edge
-            types will be dropped. (default: :obj:`False`)
+        drop_orig_edge_types (bool, optional): If set to :obj:`True`, existing
+            edge types will be dropped. (default: :obj:`False`)
         keep_same_node_type (bool, optional): If set to :obj:`True`, existing
             edge types between the same node type are not dropped even in case
-            :obj:`drop_orig_edges` is set to :obj:`True`.
+            :obj:`drop_orig_edge_types` is set to :obj:`True`.
             (default: :obj:`False`)
-        drop_unconnected_nodes (bool, optional): If set to :obj:`True` drop
-            node types not connected by any edge type. (default: :obj:`False`)
+        drop_unconnected_node_types (bool, optional): If set to :obj:`True`,
+            will drop node types not connected by any edge type.
+            (default: :obj:`False`)
         walks_per_node (int, List[int], optional): The number of random walks
             for each starting node in a metapth. (default: :obj:`1`)
         sample_ratio (float, optional): The ratio of source nodes to start
@@ -208,9 +222,9 @@ class AddRandomMetaPaths(BaseTransform):
     def __init__(
         self,
         metapaths: List[List[EdgeType]],
-        drop_orig_edges: bool = False,
+        drop_orig_edge_types: bool = False,
         keep_same_node_type: bool = False,
-        drop_unconnected_nodes: bool = False,
+        drop_unconnected_node_types: bool = False,
         walks_per_node: Union[int, List[int]] = 1,
         sample_ratio: float = 1.0,
     ):
@@ -222,9 +236,9 @@ class AddRandomMetaPaths(BaseTransform):
             ]), f"Invalid sequence of node types in '{path}'"
 
         self.metapaths = metapaths
-        self.drop_orig_edges = drop_orig_edges
+        self.drop_orig_edge_types = drop_orig_edge_types
         self.keep_same_node_type = keep_same_node_type
-        self.drop_unconnected_nodes = drop_unconnected_nodes
+        self.drop_unconnected_node_types = drop_unconnected_node_types
         self.sample_ratio = sample_ratio
         if isinstance(walks_per_node, int):
             walks_per_node = [walks_per_node] * len(metapaths)
@@ -258,8 +272,8 @@ class AddRandomMetaPaths(BaseTransform):
             data[new_edge_type].edge_index = coalesce(torch.vstack([row, col]))
             data.metapath_dict[new_edge_type] = metapath
 
-        postprocess(data, edge_types, self.drop_orig_edges,
-                    self.keep_same_node_type, self.drop_unconnected_nodes)
+        postprocess(data, edge_types, self.drop_orig_edge_types,
+                    self.keep_same_node_type, self.drop_unconnected_node_types)
 
         return data
 
@@ -286,10 +300,10 @@ class AddRandomMetaPaths(BaseTransform):
 
 
 def postprocess(data: HeteroData, edge_types: List[EdgeType],
-                drop_orig_edges: bool, keep_same_node_type: bool,
-                drop_unconnected_nodes: bool):
+                drop_orig_edge_types: bool, keep_same_node_type: bool,
+                drop_unconnected_node_types: bool):
 
-    if drop_orig_edges:
+    if drop_orig_edge_types:
         for i in edge_types:
             if keep_same_node_type and i[0] == i[-1]:
                 continue
@@ -297,7 +311,7 @@ def postprocess(data: HeteroData, edge_types: List[EdgeType],
                 del data[i]
 
     # remove nodes not connected by any edge type.
-    if drop_unconnected_nodes:
+    if drop_unconnected_node_types:
         new_edge_types = data.edge_types
         node_types = data.node_types
         connected_nodes = set()
