@@ -29,18 +29,18 @@ def test_add_metapaths():
     assert str(transform) == 'AddMetaPaths()'
     meta1 = transform(copy.copy(data))
 
-    transform = AddMetaPaths(metapaths, drop_orig_edges=True)
+    transform = AddMetaPaths(metapaths, drop_orig_edge_types=True)
     assert str(transform) == 'AddMetaPaths()'
     meta2 = transform(copy.copy(data))
 
-    transform = AddMetaPaths(metapaths, drop_orig_edges=True,
+    transform = AddMetaPaths(metapaths, drop_orig_edge_types=True,
                              keep_same_node_type=True)
     assert str(transform) == 'AddMetaPaths()'
     meta3 = transform(copy.copy(data))
 
-    transform = AddMetaPaths(metapaths, drop_orig_edges=True,
+    transform = AddMetaPaths(metapaths, drop_orig_edge_types=True,
                              keep_same_node_type=True,
-                             drop_unconnected_nodes=True)
+                             drop_unconnected_node_types=True)
     assert str(transform) == 'AddMetaPaths()'
     meta4 = transform(copy.copy(data))
 
@@ -140,36 +140,36 @@ def test_add_random_metapaths():
                ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
     meta1 = transform(copy.copy(data))
 
-    transform = AddRandomMetaPaths(metapaths, drop_orig_edges=True)
+    transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True)
     assert str(transform
                ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
     meta2 = transform(copy.copy(data))
 
-    transform = AddRandomMetaPaths(metapaths, drop_orig_edges=True,
+    transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True,
                                    keep_same_node_type=True)
     assert str(transform
                ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
     meta3 = transform(copy.copy(data))
 
-    transform = AddRandomMetaPaths(metapaths, drop_orig_edges=True,
+    transform = AddRandomMetaPaths(metapaths, drop_orig_edge_types=True,
                                    keep_same_node_type=True,
-                                   drop_unconnected_nodes=True)
+                                   drop_unconnected_node_types=True)
     assert str(transform
                ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[1])'
     meta4 = transform(copy.copy(data))
 
     transform = AddRandomMetaPaths(metapaths, sample_ratio=0.8,
-                                   drop_orig_edges=True,
+                                   drop_orig_edge_types=True,
                                    keep_same_node_type=True,
-                                   drop_unconnected_nodes=True)
+                                   drop_unconnected_node_types=True)
     assert str(transform
                ) == 'AddRandomMetaPaths(sample_ratio=0.8, walks_per_node=[1])'
     meta5 = transform(copy.copy(data))
 
     transform = AddRandomMetaPaths(metapaths, walks_per_node=5,
-                                   drop_orig_edges=True,
+                                   drop_orig_edge_types=True,
                                    keep_same_node_type=True,
-                                   drop_unconnected_nodes=True)
+                                   drop_unconnected_node_types=True)
     assert str(transform
                ) == 'AddRandomMetaPaths(sample_ratio=1.0, walks_per_node=[5])'
     meta6 = transform(copy.copy(data))
