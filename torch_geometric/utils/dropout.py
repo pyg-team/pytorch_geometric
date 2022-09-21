@@ -121,5 +121,4 @@ def dropout_node(edge_index: Tensor,
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     prob = torch.rand(num_nodes, device=edge_index.device)
     mask = prob > p
-    subset = nodes[mask]
-    return subgraph(subset, edge_index, edge_attr, num_nodes=num_nodes)
+    return subgraph(mask, edge_index, edge_attr, num_nodes=num_nodes)
