@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric import seed_everything
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
 from torch_geometric.testing import withPackage
@@ -17,7 +16,6 @@ def generate_data():
 @withPackage('torch_cluster')
 @withPackage('ase')
 def test_schnet():
-    seed_everything(0)
     data = generate_data()
 
     model = SchNet(hidden_channels=16, num_filters=16, num_interactions=2,
@@ -30,7 +28,6 @@ def test_schnet():
 
 @withPackage('torch_cluster')
 def test_schnet_batch():
-    seed_everything(0)
     num_graphs = 3
     batch = [generate_data() for _ in range(num_graphs)]
     batch = Batch.from_data_list(batch)
@@ -45,7 +42,6 @@ def test_schnet_batch():
 
 @withPackage('torch_cluster')
 def test_schnet_pre_compute_edge_index():
-    seed_everything(0)
     num_graphs = 3
     cutoff = 6.0
 
