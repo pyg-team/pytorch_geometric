@@ -94,8 +94,8 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
-    indicating which edges were dropped. (3) the node mask indicating
-    which nodes were dropped.
+    indicating which edges were retained. (3) the node mask indicating
+    which nodes were retained.
 
     Args:
         edge_index (LongTensor): The edge indices.
