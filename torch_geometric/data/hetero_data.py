@@ -26,7 +26,11 @@ from torch_geometric.typing import (
     NodeType,
     QueryType,
 )
-from torch_geometric.utils import bipartite_subgraph, is_undirected
+from torch_geometric.utils import (
+    bipartite_subgraph,
+    contains_isolated_nodes,
+    is_undirected,
+)
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -319,6 +323,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             key: store.num_edge_features
             for key, store in self._edge_store_dict.items()
         }
+
+    def has_isolated_nodes(self) -> bool:
+        r"""Returns :obj:`True` if the graph contains isolated nodes."""
+        edge_index, _, _ = to_homogeneous_edge_index(self)
+        return contains_isolated_nodes(edge_index, num_nodes=self.num_nodes)
 
     def is_undirected(self) -> bool:
         r"""Returns :obj:`True` if graph edges are undirected."""

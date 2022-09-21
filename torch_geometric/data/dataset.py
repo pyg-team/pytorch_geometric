@@ -290,6 +290,15 @@ class Dataset(torch.utils.data.Dataset):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
+    def get_summary(self):
+        r"""Collects summary statistics for the dataset."""
+        from torch_geometric.data.summary import Summary
+        return Summary.from_dataset(self)
+
+    def print_summary(self):
+        r"""Prints summary statistics of the dataset to the console."""
+        return str(self.get_summary())
+
 
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):

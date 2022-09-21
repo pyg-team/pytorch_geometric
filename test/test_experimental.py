@@ -7,7 +7,8 @@ from torch_geometric import (
 )
 
 
-@pytest.mark.parametrize('options', [None, 'scatter_reduce'])
+@pytest.mark.skip(reason='No experimental options available right now.')
+@pytest.mark.parametrize('options', [None])
 def test_experimental_mode(options):
     assert is_experimental_mode_enabled(options) is False
     with experimental_mode(options):
