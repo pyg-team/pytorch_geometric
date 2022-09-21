@@ -170,12 +170,11 @@ class HGTConv(MessagePassing):
                 out_dict[node_type] = None
                 continue
 
-            out = out + self.a_lin[node_type](x_dict[node_type])
-            # out = self.a_lin[node_type](F.gelu(out))
-            # if out.size(-1) == x_dict[node_type].size(-1):
+            out = self.a_lin[node_type](F.gelu(out))
+            if out.size(-1) == x_dict[node_type].size(-1):
 
-            #     alpha = self.skip[node_type].sigmoid()
-            #     out = alpha * out + (1 - alpha) * x_dict[node_type]
+                alpha = self.skip[node_type].sigmoid()
+                out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
         return out_dict
@@ -187,7 +186,6 @@ class HGTConv(MessagePassing):
         alpha = (q_i * k_j).sum(dim=-1) * rel
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
-        # alpha = alpha.sigmoid()
         out = v_j * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
 
