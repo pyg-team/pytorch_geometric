@@ -84,7 +84,7 @@ def dropout_adj(
     return edge_index, edge_attr
 
 
-def dropout_node(edge_index: Tensor, edge_attr: OptTensor = None,
+def dropout_node(edge_index: Tensor,
                  p: float = 0.5, num_nodes: Optional[int] = None,
                  training: bool = True) -> Tuple[Tensor, OptTensor]:
     r"""Randomly drops nodes from the adjacency matrix
