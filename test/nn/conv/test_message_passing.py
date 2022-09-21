@@ -7,7 +7,6 @@ from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-#from torch_sparse.matmul import spmm as spmm
 from torch.sparse.matmul import spmm
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
