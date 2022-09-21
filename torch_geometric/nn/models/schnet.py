@@ -108,6 +108,8 @@ class SchNet(torch.nn.Module):
             atomic_mass = torch.from_numpy(ase.data.atomic_masses)
             self.register_buffer('atomic_mass', atomic_mass)
 
+        # Support z == 0 for padding atoms so that their embedding vectors
+        # are zeroed and do not receive any gradients.
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
