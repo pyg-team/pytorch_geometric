@@ -172,7 +172,6 @@ class HGTConv(MessagePassing):
 
             out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
-
                 alpha = self.skip[node_type].sigmoid()
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
