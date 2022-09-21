@@ -1,22 +1,22 @@
 from typing import Iterable, Mapping, Optional
 
 import torch
-from torch.nn import Module
+from torch.nn import Parameter
 
 
-# `torch.nn.ModuleDict` doesn't allow `.` to be used in key names.
-# This `ModuleDict` will support it by converting the `.` to `#` in the
+# `torch.nn.ParameterDict` doesn't allow `.` to be used in key names.
+# This `ParameterDict` will support it by converting the `.` to `#` in the
 # internal representation and converts it back to `.` in the external
 # representation.
-class ModuleDict(torch.nn.ModuleDict):
-    def __init__(self, modules: Optional[Mapping[str, Module]] = None):
+class ParameterDict(torch.nn.ParameterDict):
+    def __init__(self, parameters: Optional[Mapping[str, Parameter]] = None):
         # Replace the keys in modules.
-        if modules:
-            modules = {
+        if parameters:
+            parameters = {
                 self.to_internal_key(key): module
-                for key, module in modules.items()
+                for key, module in parameters.items()
             }
-        super().__init__(modules)
+        super().__init__(parameters)
 
     @staticmethod
     def to_internal_key(key: str) -> str:
@@ -26,11 +26,11 @@ class ModuleDict(torch.nn.ModuleDict):
     def to_external_key(key: str) -> str:
         return key.replace("#", ".")
 
-    def __getitem__(self, key: str) -> Module:
+    def __getitem__(self, key: str) -> Parameter:
         return super().__getitem__(self.to_internal_key(key))
 
-    def __setitem__(self, key: str, module: Module) -> None:
-        return super().__setitem__(self.to_internal_key(key), module)
+    def __setitem__(self, key: str, parameter: Parameter) -> None:
+        return super().__setitem__(self.to_internal_key(key), parameter)
 
     def __delitem__(self, key: str) -> None:
         return super().__delitem__(self.to_internal_key(key))

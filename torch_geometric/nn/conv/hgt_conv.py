@@ -10,6 +10,8 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
+from torch_geometric.nn.module_dict import ModuleDict
+from torch_geometric.nn.parameter_dict import ParameterDict
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils import softmax
 
@@ -77,11 +79,11 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.group = group
 
-        self.k_lin = torch.nn.ModuleDict()
-        self.q_lin = torch.nn.ModuleDict()
-        self.v_lin = torch.nn.ModuleDict()
-        self.a_lin = torch.nn.ModuleDict()
-        self.skip = torch.nn.ParameterDict()
+        self.k_lin = ModuleDict()
+        self.q_lin = ModuleDict()
+        self.v_lin = ModuleDict()
+        self.a_lin = ModuleDict()
+        self.skip = ParameterDict()
         for node_type, in_channels in self.in_channels.items():
             self.k_lin[node_type] = Linear(in_channels, out_channels)
             self.q_lin[node_type] = Linear(in_channels, out_channels)
@@ -89,9 +91,9 @@ class HGTConv(MessagePassing):
             self.a_lin[node_type] = Linear(out_channels, out_channels)
             self.skip[node_type] = Parameter(torch.Tensor(1))
 
-        self.a_rel = torch.nn.ParameterDict()
-        self.m_rel = torch.nn.ParameterDict()
-        self.p_rel = torch.nn.ParameterDict()
+        self.a_rel = ParameterDict()
+        self.m_rel = ParameterDict()
+        self.p_rel = ParameterDict()
         dim = out_channels // heads
         for edge_type in metadata[1]:
             edge_type = '__'.join(edge_type)
