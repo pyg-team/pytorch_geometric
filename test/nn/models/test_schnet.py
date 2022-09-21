@@ -16,12 +16,13 @@ def generate_data():
 
 
 @withPackage('torch_cluster')
+@withPackage('ase')
 def test_schnet():
     seed_everything(0)
     data = generate_data()
 
     model = SchNet(hidden_channels=16, num_filters=16, num_interactions=2,
-                   num_gaussians=10, cutoff=6.0)
+                   num_gaussians=10, cutoff=6.0, dipole=True)
 
     with torch.no_grad():
         out = model(data.z, data.pos)
