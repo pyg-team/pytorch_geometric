@@ -86,39 +86,52 @@ def dropout_adj(
 
 def dropout_node(edge_index: Tensor, p: float = 0.5,
                  num_nodes: Optional[int] = None,
-                 training: bool = True) -> Tuple[Tensor, OptTensor]:
+                 training: bool = True) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Randomly drops nodes from the adjacency matrix
-    :obj:`(edge_index, edge_attr)` with probability :obj:`p` using samples from
+    :obj:`edge_index` with probability :obj:`p` using samples from
     a Bernoulli distribution.
+
+    The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
+    indicating which edges were dropped. (3) the node mask indicating
+    which nodes were dropped.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        edge_attr (Tensor, optional): Edge weights or multi-dimensional
-            edge features. (default: :obj:`None`)
         p (float, optional): Dropout probability. (default: :obj:`0.5`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
+    :rtype: (:class:`LongTensor`, :class:`BoolTensor`, :class:`BoolTensor`)
+
     Examples:
 
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
-        >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6])
-        >>> dropout_node(edge_index, edge_attr)
-        (tensor([[2, 3],
-                [3, 2]]),
-        tensor([5, 6]))
+        >>> edge_index, edge_mask, node_mask = dropout_node(edge_index)
+        >>> edge_index
+        tensor([[0, 1],
+                [1, 0]])
+        >>> edge_mask
+        tensor([ True,  True, False, False, False, False])
+        >>> node_mask
+        tensor([ True,  True, False, False])
     """
     if p < 0. or p > 1.:
         raise ValueError(f'Dropout probability has to be between 0 and 1 '
                          f'(got {p}')
 
-    if not training or p == 0.0:
-        return edge_index, edge_attr
-
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    if not training or p == 0.0:
+        node_mask = edge_index.new_zeros(num_nodes, dtype=torch.bool)
+        edge_mask = edge_index.new_zeros(edge_index.size(1), dtype=torch.bool)
+        return edge_index, edge_mask, node_mask
+
     prob = torch.rand(num_nodes, device=edge_index.device)
-    mask = prob > p
-    return subgraph(mask, edge_index, edge_attr, num_nodes=num_nodes)
+    node_mask = prob > p
+    edge_index, _, edge_mask = subgraph(node_mask, edge_index,
+                                        num_nodes=num_nodes,
+                                        return_edge_mask=True)
+    return edge_index, edge_mask, node_mask
