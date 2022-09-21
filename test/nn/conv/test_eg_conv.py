@@ -4,7 +4,6 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import EGConv
 from torch_geometric.testing import is_full_test
 
-
 def test_eg_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])

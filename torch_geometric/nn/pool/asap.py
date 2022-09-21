@@ -10,10 +10,11 @@ from torch_sparse import (
     SparseTensor,
     fill_diag,
     index_select,
-    matmul,
     remove_diag,
 )
 from torch_sparse import t as transpose
+
+from torch.sparse.matmul import matmul
 
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.topk_pool import topk
