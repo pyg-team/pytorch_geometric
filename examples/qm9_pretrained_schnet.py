@@ -6,7 +6,6 @@ from tqdm import tqdm
 
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
-from torch_geometric.logging import log
 from torch_geometric.nn import SchNet
 from torch_geometric.transforms import RadiusGraph
 
@@ -19,8 +18,6 @@ parser.add_argument(
 args = parser.parse_args()
 pwd = osp.dirname(osp.realpath(__file__))
 
-log(**vars(args))
-
 if not args.use_precomputed_edges:
     path = osp.join(pwd, '..', 'data', 'QM9')
     dataset = QM9(path)
@@ -29,20 +26,6 @@ else:
     dataset = QM9(path, pre_transform=RadiusGraph(args.cutoff))
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-
-def default_predict(model, data):
-    return model(data.z, data.pos, data.batch)
-
-
-def precomputed_predict(model, data):
-    return model(data.z, data.pos, data.batch, data.edge_index)
-
-
-if args.use_precomputed_edges:
-    predict = precomputed_predict
-else:
-    predict = default_predict
 
 for target in range(12):
     model, datasets = SchNet.from_qm9_pretrained(path, dataset, target)
@@ -56,9 +39,9 @@ for target in range(12):
         data = data.to(device)
         with torch.no_grad():
             if not args.use_precomputed_edges:
-                 pred = model(data.z, data.pos, data.batch)
+                pred = model(data.z, data.pos, data.batch)
             else:
-                 pred = model(data.z, data.pos, data.batch, data.edge_index)
+                pred = model(data.z, data.pos, data.batch, data.edge_index)
         mae = (pred.view(-1) - data.y[:, target]).abs()
         maes.append(mae)
 
