@@ -55,7 +55,10 @@ for target in range(12):
     for data in tqdm(loader):
         data = data.to(device)
         with torch.no_grad():
-            pred = predict(model, data)
+            if not args.use_precomputed_edges:
+                 pred = model(data.z, data.pos, data.batch)
+            else:
+                 pred = model(data.z, data.pos, data.batch, data.edge_index)
         mae = (pred.view(-1) - data.y[:, target]).abs()
         maes.append(mae)
 

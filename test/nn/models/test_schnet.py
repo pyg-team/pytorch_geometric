@@ -11,7 +11,6 @@ def generate_data():
     return Data(
         z=torch.randint(1, 10, (20, )),
         pos=torch.randn(20, 3),
-        y=torch.tensor([1.]),
     )
 
 

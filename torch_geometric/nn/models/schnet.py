@@ -227,13 +227,12 @@ class SchNet(torch.nn.Module):
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def forward(self, z, pos, batch=None, edge_index=None):
-        r"""Forward pass of the SchNet model
-
+        r"""
         Args:
             z (LongTensor): Atomic number of each atom with shape
-                :obj:`[num_atoms]`
+                :obj:`[num_atoms]`.
             pos (Tensor): Coordinates of each atom with shape
-                :obj:`[num_atoms, 3]`
+                :obj:`[num_atoms, 3]`.
             batch (LongTensor, optional): Batch indices assigning each atom to
                 a seperate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
