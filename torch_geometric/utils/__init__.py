@@ -38,9 +38,9 @@ from .scatter import scatter
 __all__ = [
     'degree',
     'softmax',
-    'dropout_adj',
-    'dropout_edge',
     'dropout_node',
+    'dropout_edge',
+    'dropout_adj',
     'sort_edge_index',
     'coalesce',
     'is_undirected',
