@@ -14,13 +14,13 @@ def test_eg_conv():
     assert conv.__repr__() == "EGConv(16, 32, aggregators=['symnorm'])"
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x, adj.t()), out, )
+    assert torch.allclose(conv(x, adj.t()), out)
 
     conv.cached = True
     conv(x, edge_index)
     assert conv(x, edge_index).tolist() == out.tolist()
     conv(x, adj.t())
-    assert torch.allclose(conv(x, adj.t()), out, )
+    assert torch.allclose(conv(x, adj.t()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
@@ -29,7 +29,7 @@ def test_eg_conv():
 
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out, )
+        assert torch.allclose(jit(x, adj.t()), out)
 
 
 def test_eg_conv_multiple_aggregators():
@@ -42,13 +42,13 @@ def test_eg_conv_multiple_aggregators():
     assert conv.__repr__() == "EGConv(16, 32, aggregators=['max', 'min'])"
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x, adj.t()), out, )
+    assert torch.allclose(conv(x, adj.t()), out)
 
     conv.cached = True
     conv(x, edge_index)
     assert conv(x, edge_index).tolist() == out.tolist()
     conv(x, adj.t())
-    assert torch.allclose(conv(x, adj.t()), out, )
+    assert torch.allclose(conv(x, adj.t()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
@@ -57,7 +57,7 @@ def test_eg_conv_multiple_aggregators():
 
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out, )
+        assert torch.allclose(jit(x, adj.t()), out)
 
 
 def test_eg_conv_with_sparse_input_feature():

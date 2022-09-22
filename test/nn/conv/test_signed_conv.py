@@ -44,7 +44,7 @@ def test_signed_conv():
     assert torch.allclose(conv1((x, x[:2]), adj.t(), adj.t()), out1[:2],
                           )
     assert torch.allclose(conv2((out1, out1[:2]), edge_index, edge_index),
-                          out2[:2], )
+                          out2[:2])
     assert torch.allclose(conv2((out1, out1[:2]), adj.t(), adj.t()), out2[:2],
                           )
 
@@ -53,9 +53,9 @@ def test_signed_conv():
         jit1 = torch.jit.script(conv1.jittable(t))
         jit2 = torch.jit.script(conv2.jittable(t))
         assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index),
-                              out1[:2], )
+                              out1[:2])
         assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
-                              out2[:2], )
+                              out2[:2])
 
         t = '(PairTensor, SparseTensor, SparseTensor) -> Tensor'
         jit1 = torch.jit.script(conv1.jittable(t))
@@ -63,4 +63,4 @@ def test_signed_conv():
         assert torch.allclose(jit1((x, x[:2]), adj.t(), adj.t()), out1[:2],
                               )
         assert torch.allclose(jit2((out1, out1[:2]), adj.t(), adj.t()),
-                              out2[:2], )
+                              out2[:2])
