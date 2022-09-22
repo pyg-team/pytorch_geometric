@@ -16,8 +16,8 @@ class PositionalEncoding(torch.nn.Module):
 
     Args:
         out_channels (int): Size :math:`d` of each output sample.
-        base_freq (float, optional): The base frequncy of sinusoidal functions.
-            (default: :obj:`1e-4`)
+        base_freq (float, optional): The base frequency of sinusoidal
+            functions. (default: :obj:`1e-4`)
         granularity (float, optional): The granularity of the positions. If
             set to smaller value, the encoder will capture more fine-grained
             changes in positions. (default: :obj:`1.0`)
