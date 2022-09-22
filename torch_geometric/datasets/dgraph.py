@@ -81,6 +81,3 @@ class DGraphFin(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
