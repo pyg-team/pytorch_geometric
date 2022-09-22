@@ -260,7 +260,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if edge_type_ptr is not None:
+        if edge_type_ptr is not None and 'cuda' in str(x_j.device):
             return segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j
