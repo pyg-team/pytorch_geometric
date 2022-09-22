@@ -89,8 +89,6 @@ class SchNet(torch.nn.Module):
                  atomref: Optional[torch.Tensor] = None):
         super().__init__()
 
-        import ase
-
         self.hidden_channels = hidden_channels
         self.num_filters = num_filters
         self.num_interactions = num_interactions
@@ -104,10 +102,15 @@ class SchNet(torch.nn.Module):
         self.std = std
         self.scale = None
 
-        atomic_mass = torch.from_numpy(ase.data.atomic_masses)
-        self.register_buffer('atomic_mass', atomic_mass)
+        if self.dipole:
+            import ase
 
-        self.embedding = Embedding(100, hidden_channels)
+            atomic_mass = torch.from_numpy(ase.data.atomic_masses)
+            self.register_buffer('atomic_mass', atomic_mass)
+
+        # Support z == 0 for padding atoms so that their embedding vectors
+        # are zeroed and do not receive any gradients.
+        self.embedding = Embedding(100, hidden_channels, padding_idx=0)
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
@@ -145,6 +148,7 @@ class SchNet(torch.nn.Module):
         import schnetpack as spk  # noqa
 
         assert target >= 0 and target <= 12
+        is_dipole = target == 0
 
         units = [1] * 12
         units[0] = ase.units.Debye
@@ -183,7 +187,7 @@ class SchNet(torch.nn.Module):
             state = torch.load(path, map_location='cpu')
 
         net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
-                     num_gaussians=50, cutoff=10.0,
+                     num_gaussians=50, cutoff=10.0, dipole=is_dipole,
                      atomref=dataset.atomref(target))
 
         net.embedding.weight = state.representation.embedding.weight
@@ -224,15 +228,29 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z, pos, batch=None):
-        """"""
+    def forward(self, z, pos, batch=None, edge_index=None):
+        r"""
+        Args:
+            z (LongTensor): Atomic number of each atom with shape
+                :obj:`[num_atoms]`.
+            pos (Tensor): Coordinates of each atom with shape
+                :obj:`[num_atoms, 3]`.
+            batch (LongTensor, optional): Batch indices assigning each atom to
+                a seperate molecule with shape :obj:`[num_atoms]`.
+                (default: :obj:`None`)
+            edge_index (LongTensor, optional): Indices of interacting pairs of
+                atoms with shape :obj:`[2, num_edges]`. Will be computed in
+                every forward pass if not provided. (default: :obj:`None`)
+        """
         assert z.dim() == 1 and z.dtype == torch.long
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
 
-        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                  max_num_neighbors=self.max_num_neighbors)
+        if edge_index is None:
+            edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                      max_num_neighbors=self.max_num_neighbors)
+
         row, col = edge_index
         edge_weight = (pos[row] - pos[col]).norm(dim=-1)
         edge_attr = self.distance_expansion(edge_weight)
