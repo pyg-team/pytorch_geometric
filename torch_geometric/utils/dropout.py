@@ -28,6 +28,12 @@ def dropout_adj(
     :obj:`(edge_index, edge_attr)` with probability :obj:`p` using samples from
     a Bernoulli distribution.
 
+    .. warning::
+
+        :class:`~torch_geometric.utils.dropout_adj` is deprecated and will
+        be removed in a future release.
+        Use :class:`torch_geometric.utils.dropout_edge` instead.
+
     Args:
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
