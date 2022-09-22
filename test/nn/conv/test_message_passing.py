@@ -57,7 +57,7 @@ def test_my_conv():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, )
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-5)
     conv.fuse = False
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-5)
@@ -106,14 +106,14 @@ def test_my_conv_jittable():
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
-    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    assert torch.allclose(jit(x1, edge_index, value), out, )
+    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, )
 
     t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x1, adj.t()), out, )
     jit.fuse = False
-    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x1, adj.t()), out, )
     jit.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -159,7 +159,7 @@ def test_my_static_graph_conv():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (3, 4, 32)
-    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, )
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-5)
 
     adj = adj.sparse_resize((4, 2))
@@ -199,7 +199,7 @@ def test_my_multiple_aggr_conv(multi_aggr_tuple):
     conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
     assert out.size() == (4, 16 * expand)
-    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x, adj.t()), out, )
 
 
 def test_my_multiple_aggr_conv_jittable():
@@ -213,11 +213,11 @@ def test_my_multiple_aggr_conv_jittable():
 
     t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
+    assert torch.allclose(jit(x, edge_index), out, )
 
     t = '(Tensor, SparseTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x, adj.t()), out, )
 
 
 def test_copy():
@@ -269,7 +269,7 @@ def test_my_edge_conv():
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
     assert torch.allclose(out, expected)
-    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x, adj.t()), out, )
 
 
 def test_my_edge_conv_jittable():
@@ -283,11 +283,11 @@ def test_my_edge_conv_jittable():
 
     t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
+    assert torch.allclose(jit(x, edge_index), out, )
 
     t = '(Tensor, SparseTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x, adj.t()), out, )
 
 
 num_pre_hook_calls = 0
@@ -534,7 +534,7 @@ def test_message_passing_with_aggr_module(aggr_module):
     assert isinstance(conv.aggr_module, aggr.Aggregation)
     out = conv(x, edge_index)
     assert out.size(0) == 4 and out.size(1) in {8, 16}
-    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x, adj.t()), out, )
 
 
 def test_message_passing_int32_edge_index():

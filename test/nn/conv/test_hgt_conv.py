@@ -39,7 +39,7 @@ def test_hgt_conv_same_dimensions():
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+                              )
 
     # TODO: Test JIT functionality. We need to wait on this one until PyTorch
     # allows indexing `ParameterDict` mappings :(
@@ -82,7 +82,7 @@ def test_hgt_conv_different_dimensions():
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+                              )
 
 
 def test_hgt_conv_lazy():
@@ -120,7 +120,7 @@ def test_hgt_conv_lazy():
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+                              )
 
 
 def test_hgt_conv_out_of_place():
