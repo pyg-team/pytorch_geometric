@@ -52,6 +52,10 @@ class DGraphFin(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
+    @property
+    def num_classes(self) -> int:
+        return 2
+
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
         path = os.path.join(self.raw_dir, "DGraphFin.npz")
