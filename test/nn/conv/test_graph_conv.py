@@ -4,6 +4,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import GraphConv
 from torch_geometric.testing import is_full_test
 
+
 def test_graph_conv():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
@@ -31,8 +32,7 @@ def test_graph_conv():
         assert torch.allclose(jit(x1, edge_index), out11)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out11)
         assert torch.allclose(jit(x1, edge_index, value), out12)
-        assert torch.allclose(jit(x1, edge_index, value,
-                   size=(4, 4)), out12)
+        assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out12)
 
         t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
@@ -60,15 +60,12 @@ def test_graph_conv():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2), edge_index), out21)
-        assert torch.allclose(jit((x1, x2), edge_index,
-                   size=(4, 2)), out21)
+        assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out21)
         assert torch.allclose(jit((x1, x2), edge_index, value), out22)
-        assert torch.allclose(jit((x1, x2), edge_index, value,
-                   (4, 2)), out22)
-        assert torch.allclose(jit((x1, None), edge_index,
-                   size=(4, 2)), out23)
-        assert torch.allclose(jit((x1, None), edge_index, value,
-                   (4, 2)), out24)
+        assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out22)
+        assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out23)
+        assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)),
+                              out24)
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))

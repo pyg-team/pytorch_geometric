@@ -10,6 +10,7 @@ from torch_geometric.testing import is_full_test
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
 
+
 @pytest.mark.parametrize('conf', confs)
 def test_rgcn_conv_equality(conf):
     num_bases, num_blocks = conf

@@ -5,9 +5,10 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear
+from torch.sparse.matmul import spmm
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-from torch.sparse.matmul import spmm
+
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
@@ -45,6 +46,7 @@ class MyConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
+
 
 def test_my_conv():
     x1 = torch.randn(4, 8)
@@ -138,7 +140,6 @@ def test_my_conv_jittable():
 
 
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])
-
 def test_my_conv_aggr(aggr):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -147,6 +148,7 @@ def test_my_conv_aggr(aggr):
     conv = MyConv(8, 32, aggr=aggr)
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (4, 32)
+
 
 def test_my_static_graph_conv():
     x1 = torch.randn(3, 4, 8)
