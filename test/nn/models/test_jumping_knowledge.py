@@ -29,8 +29,8 @@ def test_jumping_knowledge():
         assert torch.allclose(jit(xs), out)
 
     model = JumpingKnowledge('lstm', channels, num_layers)
-    assert model.__repr__() == 'JumpingKnowledge(lstm, Channels: ' +\
-                               f'{channels}, Layers: {num_layers})'
+    assert model.__repr__() == (f'JumpingKnowledge(lstm, channels='
+                                f'{channels}, layers={num_layers})')
 
     out = model(xs)
     assert out.size() == (num_nodes, channels)
