@@ -87,6 +87,6 @@ class JumpingKnowledge(torch.nn.Module):
 
     def __repr__(self) -> str:
         if self.mode == 'lstm':
-            return f'{self.__class__.__name__}({self.mode}, ' + \
-                   f'Channels: {self.channels}, Layers: {self.num_layers})'
+            return (f'{self.__class__.__name__}({self.mode}, '
+                    f'channels={self.channels}, layers={self.num_layers})')
         return f'{self.__class__.__name__}({self.mode})'
