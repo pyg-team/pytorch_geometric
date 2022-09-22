@@ -251,7 +251,7 @@ class HeteroLinear(torch.nn.Module):
             x (Tensor): The input features.
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
-        if self._WITH_PYG_LIB:
+        if self._WITH_PYG_LIB and 'cuda' in str(x.device):
             assert self.weight is not None
 
             if not self.is_sorted:
