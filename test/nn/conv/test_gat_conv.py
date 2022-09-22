@@ -17,7 +17,10 @@ def test_gat_conv():
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out)
-    assert torch.allclose(conv(x1, adj.t()), out, )
+    assert torch.allclose(
+        conv(x1, adj.t()),
+        out,
+    )
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size, NoneType) -> Tensor'
@@ -27,7 +30,10 @@ def test_gat_conv():
 
         t = '(Tensor, SparseTensor, OptTensor, Size, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj.t()), out, )
+        assert torch.allclose(
+            jit(x1, adj.t()),
+            out,
+        )
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, return_attention_weights=True)
@@ -37,7 +43,10 @@ def test_gat_conv():
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
 
     result = conv(x1, adj.t(), return_attention_weights=True)
-    assert torch.allclose(result[0], out, )
+    assert torch.allclose(
+        result[0],
+        out,
+    )
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
     if is_full_test():
@@ -54,7 +63,10 @@ def test_gat_conv():
              'Tuple[Tensor, SparseTensor]')
         jit = torch.jit.script(conv.jittable(t))
         result = jit(x1, adj.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out, )
+        assert torch.allclose(
+            result[0],
+            out,
+        )
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
     adj = adj.sparse_resize((4, 2))
@@ -66,8 +78,14 @@ def test_gat_conv():
     assert out1.size() == (2, 64)
     assert out2.size() == (2, 64)
     assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out1)
-    assert torch.allclose(conv((x1, x2), adj.t()), out1, )
-    assert torch.allclose(conv((x1, None), adj.t()), out2, )
+    assert torch.allclose(
+        conv((x1, x2), adj.t()),
+        out1,
+    )
+    assert torch.allclose(
+        conv((x1, None), adj.t()),
+        out2,
+    )
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size, NoneType) -> Tensor'
@@ -79,8 +97,14 @@ def test_gat_conv():
         t = ('(OptPairTensor, SparseTensor, OptTensor, Size, NoneType) -> '
              'Tensor')
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1, )
-        assert torch.allclose(jit((x1, None), adj.t()), out2, )
+        assert torch.allclose(
+            jit((x1, x2), adj.t()),
+            out1,
+        )
+        assert torch.allclose(
+            jit((x1, None), adj.t()),
+            out2,
+        )
 
 
 def test_gat_conv_with_edge_attr():

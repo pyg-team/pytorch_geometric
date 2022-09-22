@@ -1,6 +1,6 @@
 from torch import Tensor
-from torch_sparse import SparseTensor, set_diag
 from torch.sparse.matmul import matmul
+from torch_sparse import SparseTensor, set_diag
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing

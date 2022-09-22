@@ -20,7 +20,10 @@ def test_point_transformer_conv():
 
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, pos1, adj.t()), out, )
+    assert torch.allclose(
+        conv(x1, pos1, adj.t()),
+        out,
+    )
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor) -> Tensor'
@@ -29,7 +32,10 @@ def test_point_transformer_conv():
 
         t = '(Tensor, Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, pos1, adj.t()), out, )
+        assert torch.allclose(
+            jit(x1, pos1, adj.t()),
+            out,
+        )
 
     pos_nn = Sequential(Linear(3, 16), ReLU(), Linear(16, 32))
     attn_nn = Sequential(Linear(32, 32), ReLU(), Linear(32, 32))
@@ -37,15 +43,20 @@ def test_point_transformer_conv():
 
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, pos1, adj.t()), out, )
+    assert torch.allclose(
+        conv(x1, pos1, adj.t()),
+        out,
+    )
 
     conv = PointTransformerConv((16, 8), 32)
     adj = adj.sparse_resize((4, 2))
 
     out = conv((x1, x2), (pos1, pos2), edge_index)
     assert out.size() == (2, 32)
-    assert torch.allclose(conv((x1, x2), (pos1, pos2), adj.t()), out,
-                          )
+    assert torch.allclose(
+        conv((x1, x2), (pos1, pos2), adj.t()),
+        out,
+    )
 
     if is_full_test():
         t = '(PairTensor, PairTensor, Tensor) -> Tensor'
@@ -54,5 +65,7 @@ def test_point_transformer_conv():
 
         t = '(PairTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), (pos1, pos2), adj.t()), out,
-                              )
+        assert torch.allclose(
+            jit((x1, x2), (pos1, pos2), adj.t()),
+            out,
+        )

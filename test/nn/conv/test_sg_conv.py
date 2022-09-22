@@ -17,10 +17,16 @@ def test_sg_conv():
     assert conv.__repr__() == 'SGConv(16, 32, K=10)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
-    assert torch.allclose(conv(x, adj1.t()), out1, )
+    assert torch.allclose(
+        conv(x, adj1.t()),
+        out1,
+    )
     out2 = conv(x, edge_index, value)
     assert out2.size() == (4, 32)
-    assert torch.allclose(conv(x, adj2.t()), out2, )
+    assert torch.allclose(
+        conv(x, adj2.t()),
+        out2,
+    )
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
@@ -30,10 +36,19 @@ def test_sg_conv():
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj1.t()), out1, )
-        assert torch.allclose(jit(x, adj2.t()), out2, )
+        assert torch.allclose(
+            jit(x, adj1.t()),
+            out1,
+        )
+        assert torch.allclose(
+            jit(x, adj2.t()),
+            out2,
+        )
 
     conv.cached = True
     conv(x, edge_index)
     assert conv(x, edge_index).tolist() == out1.tolist()
-    assert torch.allclose(conv(x, adj1.t()), out1, )
+    assert torch.allclose(
+        conv(x, adj1.t()),
+        out1,
+    )

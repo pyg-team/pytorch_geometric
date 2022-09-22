@@ -18,10 +18,16 @@ def test_gcn2_conv():
     assert conv.__repr__() == 'GCN2Conv(16, alpha=0.2, beta=1.0)'
     out1 = conv(x, x_0, edge_index)
     assert out1.size() == (4, 16)
-    assert torch.allclose(conv(x, x_0, adj1.t()), out1, )
+    assert torch.allclose(
+        conv(x, x_0, adj1.t()),
+        out1,
+    )
     out2 = conv(x, x_0, edge_index, value)
     assert out2.size() == (4, 16)
-    assert torch.allclose(conv(x, x_0, adj2.t()), out2, )
+    assert torch.allclose(
+        conv(x, x_0, adj2.t()),
+        out2,
+    )
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor, OptTensor) -> Tensor'
@@ -31,11 +37,20 @@ def test_gcn2_conv():
 
         t = '(Tensor, Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, x_0, adj1.t()), out1, )
-        assert torch.allclose(jit(x, x_0, adj2.t()), out2, )
+        assert torch.allclose(
+            jit(x, x_0, adj1.t()),
+            out1,
+        )
+        assert torch.allclose(
+            jit(x, x_0, adj2.t()),
+            out2,
+        )
 
     conv.cached = True
     conv(x, x_0, edge_index)
     assert conv(x, x_0, edge_index).tolist() == out1.tolist()
     conv(x, x_0, adj1.t())
-    assert torch.allclose(conv(x, x_0, adj1.t()), out1, )
+    assert torch.allclose(
+        conv(x, x_0, adj1.t()),
+        out1,
+    )
