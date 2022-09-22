@@ -17,7 +17,14 @@ def test_feast_conv():
 
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
+<<<<<<< HEAD
     assert torch.allclose(conv(x1, adj.t()), out)
+=======
+    assert torch.allclose(
+        conv(x1, adj.t()),
+        out,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
@@ -26,12 +33,26 @@ def test_feast_conv():
 
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
+<<<<<<< HEAD
         assert torch.allclose(jit(x1, adj.t()), out)
+=======
+        assert torch.allclose(
+            jit(x1, adj.t()),
+            out,
+        )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     adj = adj.sparse_resize((4, 2))
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 32)
+<<<<<<< HEAD
     assert torch.allclose(conv((x1, x2), adj.t()), out)
+=======
+    assert torch.allclose(
+        conv((x1, x2), adj.t()),
+        out,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     if is_full_test():
         t = '(PairTensor, Tensor) -> Tensor'
@@ -40,4 +61,11 @@ def test_feast_conv():
 
         t = '(PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
+<<<<<<< HEAD
         assert torch.allclose(jit((x1, x2), adj.t()), out)
+=======
+        assert torch.allclose(
+            jit((x1, x2), adj.t()),
+            out,
+        )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049

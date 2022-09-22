@@ -15,5 +15,12 @@ def test_pan_conv():
     out1, M1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     out2, M2 = conv(x, adj.t())
+<<<<<<< HEAD
     assert torch.allclose(out1, out2)
+=======
+    assert torch.allclose(
+        out1,
+        out2,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
     assert torch.allclose(M1.to_dense(), M2.to_dense())

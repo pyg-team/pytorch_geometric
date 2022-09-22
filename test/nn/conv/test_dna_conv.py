@@ -52,10 +52,23 @@ def test_dna_conv():
     assert conv.__repr__() == 'DNAConv(32, heads=4, groups=8)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
+<<<<<<< HEAD
     assert torch.allclose(conv(x, adj1.t()), out1)
     out2 = conv(x, edge_index, value)
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2)
+=======
+    assert torch.allclose(
+        conv(x, adj1.t()),
+        out1,
+    )
+    out2 = conv(x, edge_index, value)
+    assert out2.size() == (4, 32)
+    assert torch.allclose(
+        conv(x, adj2.t()),
+        out2,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
@@ -65,11 +78,29 @@ def test_dna_conv():
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
+<<<<<<< HEAD
         assert torch.allclose(jit(x, adj1.t()), out1)
         assert torch.allclose(jit(x, adj2.t()), out2)
+=======
+        assert torch.allclose(
+            jit(x, adj1.t()),
+            out1,
+        )
+        assert torch.allclose(
+            jit(x, adj2.t()),
+            out2,
+        )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     conv.cached = True
     conv(x, edge_index)
     assert conv(x, edge_index).tolist() == out1.tolist()
     conv(x, adj1.t())
+<<<<<<< HEAD
     assert torch.allclose(conv(x, adj1.t()), out1)
+=======
+    assert torch.allclose(
+        conv(x, adj1.t()),
+        out1,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049

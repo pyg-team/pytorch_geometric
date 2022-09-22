@@ -16,7 +16,14 @@ def test_fa_conv():
     assert conv.__repr__() == 'FAConv(16, eps=1.0)'
     out = conv(x, x_0, edge_index)
     assert out.size() == (4, 16)
+<<<<<<< HEAD
     assert torch.allclose(conv(x, x_0, adj.t()), out)
+=======
+    assert torch.allclose(
+        conv(x, x_0, adj.t()),
+        out,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor'
@@ -25,7 +32,14 @@ def test_fa_conv():
 
         t = '(Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
+<<<<<<< HEAD
         assert torch.allclose(jit(x, x_0, adj.t()), out)
+=======
+        assert torch.allclose(
+            jit(x, x_0, adj.t()),
+            out,
+        )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
 
     # Test `return_attention_weights`.
     result = conv(x, x_0, edge_index, return_attention_weights=True)
@@ -35,7 +49,14 @@ def test_fa_conv():
     assert conv._alpha is None
 
     result = conv(x, x_0, adj.t(), return_attention_weights=True)
+<<<<<<< HEAD
     assert torch.allclose(result[0], out)
+=======
+    assert torch.allclose(
+        result[0],
+        out,
+    )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
     assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
     assert conv._alpha is None
 
@@ -53,6 +74,13 @@ def test_fa_conv():
              '-> Tuple[Tensor, SparseTensor]')
         jit = torch.jit.script(conv.jittable(t))
         result = jit(x, x_0, adj.t(), return_attention_weights=True)
+<<<<<<< HEAD
         assert torch.allclose(result[0], out)
+=======
+        assert torch.allclose(
+            result[0],
+            out,
+        )
+>>>>>>> 6d868987bf6879d01d72a714a92d5bb0bb30b049
         assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
         assert conv._alpha is None
