@@ -11,8 +11,8 @@ def test_hgt_conv_same_dimensions():
         'paper': torch.randn(6, 16),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    index1 = torch.randint(0, 4, (20), dtype=torch.long)
+    index2 = torch.randint(0, 6, (20), dtype=torch.long)
 
     edge_index_dict = {
         ('author', 'writes', 'paper'): torch.stack([index1, index2]),
@@ -51,8 +51,8 @@ def test_hgt_conv_different_dimensions():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    index1 = torch.randint(0, 4, (20), dtype=torch.long)
+    index2 = torch.randint(0, 6, (20), dtype=torch.long)
 
     edge_index_dict = {
         ('author', 'writes', 'paper'): torch.stack([index1, index2]),
@@ -91,8 +91,8 @@ def test_hgt_conv_lazy():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    index1 = torch.randint(0, 4, (20), dtype=torch.long)
+    index2 = torch.randint(0, 6, (20), dtype=torch.long)
 
     edge_index_dict = {
         ('author', 'writes', 'paper'): torch.stack([index1, index2]),
@@ -128,8 +128,8 @@ def test_hgt_conv_out_of_place():
     data['author'].x = torch.randn(4, 16)
     data['paper'].x = torch.randn(6, 32)
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    index1 = torch.randint(0, 4, (20), dtype=torch.long)
+    index2 = torch.randint(0, 6, (20), dtype=torch.long)
 
     data['author', 'paper'].edge_index = torch.stack([index1, index2], dim=0)
     data['paper', 'author'].edge_index = torch.stack([index2, index1], dim=0)
