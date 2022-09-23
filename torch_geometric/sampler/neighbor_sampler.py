@@ -137,9 +137,10 @@ class NeighborSampler(BaseSampler):
                 # neighborhoods, node indices should be sorted by time.
                 # TODO (matthias, manan) Find an alternative way to ensure
                 for edge_attr in edge_attrs:
-                    if edge_attr.layout != EdgeLayout.COO:
+                    if edge_attr.layout == EdgeLayout.CSR:
                         raise ValueError(
-                            "Temporal sampling requires COO edge layout")
+                            "Temporal sampling requires that edges are stored "
+                            "in either COO or CSC layout")
                     if not edge_attr.is_sorted:
                         raise ValueError(
                             "Temporal sampling requires that edges are "
