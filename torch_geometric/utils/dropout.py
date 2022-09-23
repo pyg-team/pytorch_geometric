@@ -153,7 +153,8 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
-    indicating which edges were retained.
+    or index indicating which edges were retained, depending on the argument
+    :obj:`force_undirected`.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -164,7 +165,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
-    :rtype: (:class:`LongTensor`, :class:`BoolTensor`)
+    :rtype: (:class:`LongTensor`, :class:`BoolTensor` or :class:`LongTensor`)
 
     Examples:
 
@@ -174,7 +175,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         >>> edge_index
         tensor([[0, 1, 2, 2],
                 [1, 2, 1, 3]])
-        >>> edge_mask
+        >>> edge_mask # masks indicating which edges are retained
         tensor([ True, False,  True,  True,  True, False])
 
         >>> edge_index, edge_mask = dropout_edge(edge_index,
@@ -182,7 +183,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         >>> edge_index
         tensor([[0, 1, 2, 1, 2, 3],
                 [1, 2, 3, 0, 1, 2]])
-        >>> edge_mask
+        >>> edge_mask # indices indicating which edges are retained
         >>> tensor([0, 2, 4, 0, 2, 4])
     """
     if p < 0. or p > 1.:
