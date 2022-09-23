@@ -410,15 +410,17 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
     )
     hetero_data['paper'].time = data.time
 
-    num_nodes = data.x.size(dim=0)
+    # Sort according to time in local neighborhoods:
     row, col = data.edge_index
     perm = ((col * (data.num_nodes + 1)) + data.time[row]).argsort()
+    edge_index = data.edge_index[:, perm]
+
     graph_store.put_edge_index(
-        edge_index=data.edge_index[:, perm],
+        edge_index,
         edge_type=('paper', 'to', 'paper'),
         layout='coo',
         is_sorted=True,
-        size=(num_nodes, num_nodes),
+        size=(data.num_nodes, data.num_nodes),
     )
     hetero_data['paper', 'to', 'paper'].edge_index = data.edge_index
 
