@@ -30,6 +30,20 @@ class DGraphFin(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 3,700,550
+              - 4,300,999
+              - 17
+              - 2
     """
 
     url = "https://dgraph.xinye.com"
