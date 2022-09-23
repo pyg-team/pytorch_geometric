@@ -44,8 +44,11 @@ from torch_geometric.utils.mixin import CastMixin
 #     CSR, or the col pointer for CSC
 #   * The perm dictionary contains the permutation of edges that was applied
 #     in converting between formats, if applicable.
-ConversionOutputType = Tuple[Dict[str, Tensor], Dict[str, Tensor],
-                             Dict[str, OptTensor]]
+ConversionOutputType = Tuple[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor],
+                             Dict[EdgeType, OptTensor]]
+
+ptr2ind = torch.ops.torch_sparse.ptr2ind
+ind2ptr = torch.ops.torch_sparse.ind2ptr
 
 
 class EdgeLayout(Enum):
@@ -58,30 +61,39 @@ class EdgeLayout(Enum):
 class EdgeAttr(CastMixin):
     r"""Defines the attributes of an :obj:`GraphStore` edge."""
 
-    # The type of the edge
-    edge_type: Optional[EdgeType]
+    # The type of the edge:
+    edge_type: EdgeType
 
-    # The layout of the edge representation
-    layout: Optional[EdgeLayout] = None
+    # The layout of the edge representation:
+    layout: EdgeLayout
 
-    # Whether the edge index is sorted, by destination node. Useful for
+    # Whether the edge index is sorted by destination node. Useful for
     # avoiding sorting costs when performing neighbor sampling, and only
-    # meaningful for COO (CSC and CSR are sorted by definition)
+    # meaningful for COO (CSC is sorted and CSR is not sorted by definition):
     is_sorted: bool = False
 
-    # The number of source and destination nodes in this edge type
+    # The number of source and destination nodes in this edge type:
     size: Optional[Tuple[int, int]] = None
 
     # NOTE we define __init__ to force-cast layout
     def __init__(
         self,
-        edge_type: Optional[Any],
-        layout: Optional[EdgeLayout] = None,
+        edge_type: Any,
+        layout: EdgeLayout,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
     ):
+        layout = EdgeLayout(layout)
+
+        if layout == EdgeLayout.CSR and is_sorted:
+            raise ValueError("Cannot create a CSR edge attribute with option "
+                             "'is_sorted=True'")
+
+        if layout == EdgeLayout.CSC:
+            is_sorted = True
+
         self.edge_type = edge_type
-        self.layout = EdgeLayout(layout) if layout else None
+        self.layout = layout
         self.is_sorted = is_sorted
         self.size = size
 
@@ -104,21 +116,14 @@ class GraphStore:
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
-        r"""Synchronously adds an edge_index tensor to the graph store.
+        r"""Synchronously adds the :obj:`edge_index` tensor to the graph store.
 
         Args:
-            tensor(EdgeTensorType): an edge_index in a format specified in
-            attr.
-            **attr(EdgeAttr): the edge attributes.
+            tensor (EdgeTensorType): The :obj:`edge_index` in the format
+                as specified in :obj:`attr`.
+            attr (EdgeAttr): The edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        assert edge_attr.layout is not None
-        edge_attr.layout = EdgeLayout(edge_attr.layout)
-
-        # Override is_sorted for CSC and CSR:
-        edge_attr.is_sorted = edge_attr.is_sorted or (edge_attr.layout in [
-            EdgeLayout.CSC, EdgeLayout.CSR
-        ])
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
@@ -130,209 +135,187 @@ class GraphStore:
         graph.
 
         Args:
-            **attr(EdgeAttr): the edge attributes.
+            attr (EdgeAttr): The edge attributes.
 
         Returns:
-            EdgeTensorType: an edge_index tensor corresonding to the provided
-            attributes, or None if there is no such tensor.
+            EdgeTensorType: The :obj:`edge_index` tensor corresonding to the
+                provided :obj:`attr`.
 
         Raises:
             KeyError: if the edge index corresponding to attr was not found.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        assert edge_attr.layout is not None
-        edge_attr.layout = EdgeLayout(edge_attr.layout)
-        # Override is_sorted for CSC and CSR:
-        # TODO treat is_sorted specially in this function, where is_sorted=True
-        # returns an edge index sorted by column.
-        edge_attr.is_sorted = edge_attr.is_sorted or (edge_attr.layout in [
-            EdgeLayout.CSC, EdgeLayout.CSR
-        ])
         edge_index = self._get_edge_index(edge_attr)
+
         if edge_index is None:
-            raise KeyError(f"An edge corresponding to '{edge_attr}' was not "
-                           f"found")
+            raise KeyError(f"'edge_index' for '{edge_attr}' not found")
+
         return edge_index
 
-    # Layout Conversion #######################################################
+    @abstractmethod
+    def _delete_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        pass
 
-    def _edge_to_layout(
-        self,
-        attr: EdgeAttr,
-        layout: EdgeLayout,
-    ) -> Tuple[Tensor, Tensor, OptTensor]:
-        r"""Converts one edge in the graph store to the desired output
-        layout, by fetching the edge index and performing in-memory
-        conversion."""
-        from_tuple = self.get_edge_index(attr)
+    def delete_edge_index(self, *args, **kwargs) -> bool:
+        r"""Synchronously deletes an :obj:`edge_index` tensor from the graph
+        store.
 
-        if layout == EdgeLayout.COO:
-            if attr.layout == EdgeLayout.CSR:
-                col = from_tuple[1]
-                row = torch.ops.torch_sparse.ptr2ind(from_tuple[0],
-                                                     col.numel())
-            else:
-                row = from_tuple[0]
-                col = torch.ops.torch_sparse.ptr2ind(from_tuple[1],
-                                                     row.numel())
-            perm = None
-
-        elif layout == EdgeLayout.CSR:
-            # We convert to CSR by converting to CSC on the transpose
-            if attr.layout == EdgeLayout.COO:
-                adj = edge_tensor_type_to_adj_type(
-                    attr, (from_tuple[1], from_tuple[0]))
-            else:
-                adj = edge_tensor_type_to_adj_type(attr, from_tuple).t()
-
-            # NOTE we set is_sorted=False here as is_sorted refers to
-            # the edge_index being sorted by the destination node
-            # (column), but here we deal with the transpose
-            attr_copy = copy.copy(attr)
-            attr_copy.is_sorted = False
-            attr_copy.size = None if attr.size is None else (attr.size[1],
-                                                             attr.size[0])
-
-            # Actually rowptr, col, perm
-            row, col, perm = to_csc(adj, attr_copy, device='cpu')
-
-        else:
-            adj = edge_tensor_type_to_adj_type(attr, from_tuple)
-
-            # Actually colptr, row, perm
-            col, row, perm = to_csc(adj, attr, device='cpu')
-
-        return row, col, perm
-
-    # TODO support `replace` to replace the existing edge index.
-    def _all_edges_to_layout(
-        self,
-        layout: EdgeLayout,
-        edge_types: Optional[List[Any]] = None,
-        store: bool = False,
-    ) -> ConversionOutputType:
-        r"""Converts all edge attributes in the graph store to the desired
-        layout, by fetching all edge indices and performing conversion on
-        the caller instance. Implementations that support conversion within
-        the graph store can override this method."""
-        # Obtain all edge attributes, grouped by type:
-        all_edge_attrs = self.get_all_edge_attrs()
-        edge_type_to_attrs: Dict[Any, List[EdgeAttr]] = defaultdict(list)
-        for attr in all_edge_attrs:
-            edge_type_to_attrs[attr.edge_type].append(attr)
-
-        # Edge types to convert:
-        edge_types = edge_types or [attr.edge_type for attr in all_edge_attrs]
-        for edge_type in edge_types:
-            if edge_type not in edge_type_to_attrs:
-                raise ValueError(
-                    f"The edge index {edge_type} was not found in the graph "
-                    f"store.")
-
-        # Convert layouts for each attribute from its most favorable original
-        # layout to the desired layout. Store permutations of edges if
-        # necessary as part of the conversion:
-        row_dict, col_dict, perm_dict = {}, {}, {}
-        for edge_type in edge_types:
-            edge_type_attrs = edge_type_to_attrs[edge_type]
-            edge_type_layouts = [attr.layout for attr in edge_type_attrs]
-
-            # Ignore if requested layout is already present:
-            if layout in edge_type_layouts:
-                from_attr = edge_type_attrs[edge_type_layouts.index(layout)]
-                row, col = self.get_edge_index(from_attr)
-                perm = None
-
-            # Convert otherwise:
-            else:
-                # Pick the most favorable layout to convert from. We prefer
-                # COO to CSC/CSR:
-                from_attr = None
-                if EdgeLayout.COO in edge_type_layouts:
-                    from_attr = edge_type_attrs[edge_type_layouts.index(
-                        EdgeLayout.COO)]
-                elif EdgeLayout.CSC in edge_type_layouts:
-                    from_attr = edge_type_attrs[edge_type_layouts.index(
-                        EdgeLayout.CSC)]
-                else:
-                    from_attr = edge_type_attrs[edge_type_layouts.index(
-                        EdgeLayout.CSR)]
-
-                row, col, perm = self._edge_to_layout(from_attr, layout)
-
-            row_dict[from_attr.edge_type] = row
-            col_dict[from_attr.edge_type] = col
-            perm_dict[from_attr.edge_type] = perm
-
-            if store and layout not in edge_type_layouts:
-                # We do not store converted edge indices if this conversion
-                # results in a permutation of nodes in the original edge index.
-                # This is to exercise an abundance of caution in the case that
-                # there are edge attributes.
-                if perm is not None:
-                    warnings.warn(f"Edge index {from_attr.edge_type} with "
-                                  f"layout {from_attr.layout} was not sorted "
-                                  f"by destination node, so conversion to "
-                                  f"{layout} resulted in a permutation of "
-                                  f"the order of edges. As a result, the "
-                                  f"converted edge is not being re-stored in "
-                                  f"the graph store. Please sort the edge "
-                                  f"index and set 'is_sorted=True' to avoid "
-                                  f"this warning.")
-                else:
-                    is_sorted = (layout != EdgeLayout.COO)
-                    self.put_edge_index((row, col),
-                                        EdgeAttr(from_attr.edge_type, layout,
-                                                 is_sorted, from_attr.size))
-
-        return row_dict, col_dict, perm_dict
-
-    def coo(
-        self,
-        edge_types: Optional[List[Any]] = None,
-        store: bool = False,
-    ) -> ConversionOutputType:
-        r"""Converts the edge indices in the graph store to COO format,
-        optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.COO, edge_types, store)
-
-    def csr(
-        self,
-        edge_types: Optional[List[Any]] = None,
-        store: bool = False,
-    ) -> ConversionOutputType:
-        r"""Converts the edge indices in the graph store to CSR format,
-        optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.CSR, edge_types, store)
-
-    def csc(
-        self,
-        edge_types: Optional[List[Any]] = None,
-        store: bool = False,
-    ) -> ConversionOutputType:
-        r"""Converts the edge indices in the graph store to CSC format,
-        optionally storing the converted edge indices in the graph store."""
-        return self._all_edges_to_layout(EdgeLayout.CSC, edge_types, store)
-
-    # Additional methods ######################################################
+        Args:
+            attr (EdgeAttr): The edge attributes.
+        """
+        edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
+        return self._delete_edge_index(edge_attr)
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         r"""Returns all edge attributes stored in the graph store."""
         pass
 
+    # Layout Conversion #######################################################
+
+    def coo(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        replace: bool = False,
+    ) -> ConversionOutputType:
+        r"""Returns the edge indices in the graph store in COO format.
+        Optionally replaces existing edge indices with the requested format."""
+        return self._edges_to_layout(EdgeLayout.COO, edge_types, replace)
+
+    def csr(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        replace: bool = False,
+    ) -> ConversionOutputType:
+        r"""Returns the edge indices in the graph store in CSR format.
+        Optionally replaces existing edge indices with the requested format."""
+        return self._edges_to_layout(EdgeLayout.CSR, edge_types, replace)
+
+    def csc(
+        self,
+        edge_types: Optional[List[Any]] = None,
+        replace: bool = False,
+    ) -> ConversionOutputType:
+        r"""Returns the edge indices in the graph store in CSS format.
+        Optionally replaces existing edge indices with the requested format."""
+        return self._edges_to_layout(EdgeLayout.CSC, edge_types, replace)
+
     # Python built-ins ########################################################
 
     def __setitem__(self, key: EdgeAttr, value: EdgeTensorType):
-        key = self._edge_attr_cls.cast(key)
         self.put_edge_index(value, key)
 
     def __getitem__(self, key: EdgeAttr) -> Optional[EdgeTensorType]:
-        key = self._edge_attr_cls.cast(key)
         return self.get_edge_index(key)
+
+    def __delitem__(self, key: EdgeAttr):
+        return self.delete_edge_index(key)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
+
+    # Helper methods ##########################################################
+
+    def _edge_to_layout(
+        self,
+        attr: EdgeAttr,
+        layout: EdgeLayout,
+        replace: bool = False,
+    ) -> Tuple[Tensor, Tensor, OptTensor]:
+        r"""Converts one :obj:`edge_index` in the graph store to the desired
+        output layout, by fetching the :obj:`edge_index` and performing
+        in-memory conversion. Implementations that support conversion within
+        the graph store can override this method."""
+        (row, col), perm = self.get_edge_index(attr), None
+
+        if layout == EdgeLayout.COO:  # COO output:
+            if attr.layout == EdgeLayout.CSR:
+                row = ptr2ind(row, row.numel())
+            else:
+                col = ptr2ind(col, col.numel())
+
+        elif layout == EdgeLayout.CSR:  # CSR output:
+            if attr.layout == EdgeLayout.CSC:
+                col = ptr2ind(col, row.numel())
+
+            if attr.layout != EdgeLayout.CSR:
+                perm = row.argsort()
+                row, col, = row[perm], col[perm]
+                num_rows = attr.size[0] if attr.size else int(row.max()) + 1
+                row = ind2ptr(row, num_rows)
+
+        else:  # CSC output:
+            if attr.layout == EdgeLayout.CSR:
+                row = ptr2ind(row, col.numel())
+
+            if attr.layout == EdgeLayout.CSR or (attr.layout == EdgeLayout.COO
+                                                 and not attr.is_sorted):
+                perm = col.argsort()
+                row, col, = row[perm], col[perm]
+
+            if attr.layout != EdgeLayout.CSC:
+                num_cols = attr.size[0] if attr.size else int(col.max()) + 1
+                col = ind2ptr(col, num_cols)
+
+        if replace:
+            if perm is not None:
+                warnings.warn(
+                    f"The 'edge_index' of type '{attr.edge_type}' and layout "
+                    f"'{attr.layout.value}' could not be converted to layout "
+                    f"'{layout.value}' without permuting its data. As a "
+                    f"result, the converted 'edge_index' is not being "
+                    f"replaced in the graph store.")
+            elif attr.layout != layout:
+                self.delete_edge_index(attr)
+                attr = copy.copy(attr)
+                attr.layout = layout
+                self.put_edge_index((row, col), attr)
+
+        return row, col, perm
+
+    def _edges_to_layout(
+        self,
+        layout: EdgeLayout,
+        edge_types: Optional[List[Any]] = None,
+        replace: bool = False,
+    ) -> ConversionOutputType:
+        r"""Converts all edge indices in the graph store to the desired output
+        layout."""
+        # Obtain all edge attributes, grouped by type:
+        all_edge_attrs = self.get_all_edge_attrs()
+        edge_type_to_attrs: Dict[EdgeType, List[EdgeAttr]] = defaultdict(list)
+        for attr in all_edge_attrs:
+            edge_type_to_attrs[attr.edge_type].append(attr)
+
+        # Edge types to convert:
+        for edge_type in (edge_types or []):
+            if edge_type not in edge_type_to_attrs:
+                raise ValueError(f"The 'edge_index' of type '{edge_type}' was "
+                                 f"not found in the graph store.")
+        edge_types = edge_types or [attr.edge_type for attr in all_edge_attrs]
+
+        # Convert layout from its most favorable original layout:
+        row_dict, col_dict, perm_dict = {}, {}, {}
+        for edge_type in edge_types:
+            attrs = edge_type_to_attrs[edge_type]
+            layouts = [attr.layout for attr in attrs]
+
+            if layout in layouts:  # No conversion needed.
+                attr = attrs[layouts.index(layout)]
+            elif EdgeLayout.COO in layouts:  # Prefer COO for conversion.
+                attr = attrs[layouts.index(EdgeLayout.COO)]
+            elif EdgeLayout.CSC in layouts:
+                attr = attrs[layouts.index(EdgeLayout.CSC)]
+            elif EdgeLayout.CSR in layouts:
+                attr = attrs[layouts.index(EdgeLayout.CSR)]
+
+            row, col, perm = self._edge_to_layout(attr, layout, replace)
+
+            row_dict[edge_type] = row
+            col_dict[edge_type] = col
+            perm_dict[edge_type] = perm
+
+        return row_dict, col_dict, perm_dict
 
 
 # Data and HeteroData utilities ###############################################
@@ -393,52 +376,3 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
         return edge_index.csr()[:-1]  # (rowptr, col)
     else:
         return edge_index.csr()[-2::-1]  # (row, colptr)
-
-
-###############################################################################
-
-
-def to_csc(
-    adj: Adj,
-    edge_attr: EdgeAttr,
-    device: Optional[torch.device] = None,
-    share_memory: bool = False,
-) -> Tuple[Tensor, Tensor, OptTensor]:
-    # Convert the graph data into a suitable format for sampling (CSC format).
-    # Returns the `colptr` and `row` indices of the graph, as well as an
-    # `perm` vector that denotes the permutation of edges.
-    # Since no permutation of edges is applied when using `SparseTensor`,
-    # `perm` can be of type `None`.
-    perm: Optional[Tensor] = None
-    layout = edge_attr.layout
-    is_sorted = edge_attr.is_sorted
-    size = edge_attr.size
-
-    if layout == EdgeLayout.CSR:
-        colptr, row, _ = adj.csc()
-    elif layout == EdgeLayout.CSC:
-        colptr, row, _ = adj.csr()
-    else:
-        if size is None:
-            raise ValueError(
-                f"Edge {edge_attr.edge_type} cannot be converted "
-                f"to a different type without specifying 'size' for "
-                f"the source and destination node types (got {size}). "
-                f"Please specify these parameters for successful execution.")
-        (row, col) = adj
-        if not is_sorted:
-            perm = (col * size[0]).add_(row).argsort()
-            row = row[perm]
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-
-    colptr = colptr.to(device)
-    row = row.to(device)
-    perm = perm.to(device) if perm is not None else None
-
-    if not colptr.is_cuda and share_memory:
-        colptr.share_memory_()
-        row.share_memory_()
-        if perm is not None:
-            perm.share_memory_()
-
-    return colptr, row, perm
