@@ -178,12 +178,12 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         >>> edge_mask # masks indicating which edges are retained
         tensor([ True, False,  True,  True,  True, False])
 
-        >>> edge_index, edge_mask = dropout_edge(edge_index,
+        >>> edge_index, edge_id = dropout_edge(edge_index,
         ...                                      force_undirected=True)
         >>> edge_index
         tensor([[0, 1, 2, 1, 2, 3],
                 [1, 2, 3, 0, 1, 2]])
-        >>> edge_mask # indices indicating which edges are retained
+        >>> edge_id # indices indicating which edges are retained
         >>> tensor([0, 2, 4, 0, 2, 4])
     """
     if p < 0. or p > 1.:
