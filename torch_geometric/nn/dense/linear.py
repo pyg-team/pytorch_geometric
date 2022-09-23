@@ -216,7 +216,7 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
+        self._WITH_PYG_LIB = _WITH_PYG_LIB
 
         if self._WITH_PYG_LIB:
             self.weight = torch.nn.Parameter(
@@ -251,7 +251,7 @@ class HeteroLinear(torch.nn.Module):
             x (Tensor): The input features.
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
-        if self._WITH_PYG_LIB and 'cuda' in str(x.device):
+        if self._WITH_PYG_LIB:
             assert self.weight is not None
 
             if not self.is_sorted:
