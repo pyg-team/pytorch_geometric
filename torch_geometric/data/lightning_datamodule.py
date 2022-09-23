@@ -152,7 +152,7 @@ class LightningDataset(LightningDataModule):
         """"""
         from torch.utils.data import IterableDataset
         shuffle = (not isinstance(self.train_dataset, IterableDataset)
-                   and self.kwargs.get('sampler', None) is None,
+                   and self.kwargs.get('sampler', None) is None
                    and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.train_dataset, shuffle=shuffle,
