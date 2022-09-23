@@ -191,7 +191,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
                          f'(got {p}')
 
     if not training or p == 0.0:
-        edge_mask = edge_index.new_zeros(edge_index.size(1), dtype=torch.bool)
+        edge_mask = edge_index.new_ones(edge_index.size(1), dtype=torch.bool)
         return edge_index, edge_mask
 
     row, col = edge_index
