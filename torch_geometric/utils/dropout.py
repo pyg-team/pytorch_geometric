@@ -172,10 +172,18 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_edge(edge_index)
         >>> edge_index
-        tensor([[0, 1],
-                [1, 0]])
+        tensor([[0, 1, 2, 2],
+                [1, 2, 1, 3]])
         >>> edge_mask
-        tensor([ True,  True, False, False, False, False])
+        tensor([ True, False,  True,  True,  True, False])
+
+        >>> edge_index, edge_mask = dropout_edge(edge_index,
+        ...                                      force_undirected=True)
+        >>> edge_index
+        tensor([[0, 1, 2, 1, 2, 3],
+                [1, 2, 3, 0, 1, 2]])
+        >>> edge_mask
+        >>> tensor([0, 2, 4, 0, 2, 4])
     """
     if p < 0. or p > 1.:
         raise ValueError(f'Dropout probability has to be between 0 and 1 '
@@ -192,13 +200,10 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     if force_undirected:
         edge_mask[row > col] = False
 
-    row, col, _ = filter_adj(row, col, None, edge_mask)
+    edge_index = edge_index[:, edge_mask]
 
     if force_undirected:
-        edge_index = torch.stack(
-            [torch.cat([row, col], dim=0),
-             torch.cat([col, row], dim=0)], dim=0)
-    else:
-        edge_index = torch.stack([row, col], dim=0)
+        edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
+        edge_mask = edge_mask.nonzero().repeat((2, 1)).squeeze()
 
     return edge_index, edge_mask
