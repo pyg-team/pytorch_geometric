@@ -133,8 +133,8 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if not training or p == 0.0:
-        node_mask = edge_index.new_zeros(num_nodes, dtype=torch.bool)
-        edge_mask = edge_index.new_zeros(edge_index.size(1), dtype=torch.bool)
+        node_mask = edge_index.new_ones(num_nodes, dtype=torch.bool)
+        edge_mask = edge_index.new_ones(edge_index.size(1), dtype=torch.bool)
         return edge_index, edge_mask, node_mask
 
     prob = torch.rand(num_nodes, device=edge_index.device)
