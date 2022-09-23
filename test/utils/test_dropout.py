@@ -48,7 +48,7 @@ def test_dropout_edge():
 
     out = dropout_edge(edge_index, training=False)
     assert edge_index.tolist() == out[0].tolist()
-    assert out[1].tolist() == [False, False, False, False, False, False]
+    assert out[1].tolist() == [True, True, True, True, True, True]
 
     torch.manual_seed(5)
     out = dropout_edge(edge_index)
