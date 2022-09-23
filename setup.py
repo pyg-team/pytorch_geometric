@@ -21,6 +21,7 @@ graphgym_requires = [
 ]
 
 full_requires = graphgym_requires + [
+    'ase',
     'h5py',
     'numba',
     'sympy',

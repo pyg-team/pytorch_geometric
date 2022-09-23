@@ -3,7 +3,6 @@ import argparse
 import torch
 from utils import get_dataset, get_model
 
-from torch_geometric import set_experimental_mode
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -58,11 +57,12 @@ def run(args: argparse.ArgumentParser) -> None:
                     )
 
                 for layers in args.num_layers:
+                    num_neighbors = [args.hetero_num_neighbors] * layers
                     if hetero:
+                        # batch-wise inference
                         subgraph_loader = NeighborLoader(
                             data,
-                            num_neighbors=[args.hetero_num_neighbors] *
-                            layers,  # batch-wise inference
+                            num_neighbors=num_neighbors,
                             input_nodes=mask,
                             batch_size=batch_size,
                             shuffle=False,
@@ -71,12 +71,11 @@ def run(args: argparse.ArgumentParser) -> None:
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
-                        print(
-                            f'Batch size={batch_size}, '
-                            f'Layers amount={layers}, '
-                            f'Num_neighbors={subgraph_loader.num_neighbors}, '
-                            f'Hidden features size={hidden_channels}, '
-                            f'Sparse tensor={args.use_sparse_tensor}')
+                        print(f'Batch size={batch_size}, '
+                              f'Layers amount={layers}, '
+                              f'Num_neighbors={num_neighbors}, '
+                              f'Hidden features size={hidden_channels}, '
+                              f'Sparse tensor={args.use_sparse_tensor}')
                         params = {
                             'inputs_channels': inputs_channels,
                             'hidden_channels': hidden_channels,
@@ -99,22 +98,22 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         with amp:
-                            with set_experimental_mode(args.experimental_mode):
-                                for _ in range(args.warmup):
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                                with timeit():
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                            for _ in range(args.warmup):
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                            with timeit():
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
 
                             if args.profile:
                                 with torch_profile():
                                     model.inference(subgraph_loader, device,
                                                     progress_bar=True)
-                                rename_profile_file(
-                                    model_name, dataset_name, str(batch_size),
-                                    str(layers), str(hidden_channels),
-                                    str(subgraph_loader.num_neighbors))
+                                rename_profile_file(model_name, dataset_name,
+                                                    str(batch_size),
+                                                    str(layers),
+                                                    str(hidden_channels),
+                                                    str(num_neighbors))
 
 
 if __name__ == '__main__':
@@ -142,8 +141,6 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=0, type=int)
-    argparser.add_argument('--experimental-mode', action='store_true',
-                           help='use experimental mode')
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
