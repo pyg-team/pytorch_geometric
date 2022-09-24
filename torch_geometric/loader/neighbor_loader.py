@@ -165,9 +165,7 @@ class NeighborLoader(NodeLoader):
         **kwargs,
     ):
         # Get input type:
-        # TODO(manan): this computation is repeated twice, once here and once
-        # in NodeLoader:
-        node_type, _ = get_input_nodes(data, input_nodes)
+        sampling_nodes = get_input_nodes(data, input_nodes)
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -175,7 +173,7 @@ class NeighborLoader(NodeLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
-                input_type=node_type,
+                input_type=sampling_nodes.node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -186,7 +184,7 @@ class NeighborLoader(NodeLoader):
         super().__init__(
             data=data,
             node_sampler=neighbor_sampler,
-            input_nodes=input_nodes,
+            input_nodes=sampling_nodes,
             transform=transform,
             filter_per_worker=filter_per_worker,
             **kwargs,

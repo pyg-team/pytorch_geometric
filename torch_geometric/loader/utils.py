@@ -1,6 +1,8 @@
 import copy
 import math
+from collections import defaultdict
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Dict, Optional, Tuple, Union
 
 import torch
@@ -11,7 +13,7 @@ from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import InputEdges, InputNodes, OptTensor
+from torch_geometric.typing import InputEdges, InputNodes, NodeType, OptTensor
 
 
 def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
@@ -162,10 +164,43 @@ def filter_custom_store(
 # Input Utilities #############################################################
 
 
+@dataclass
+class SamplingInputNodes:
+    input_nodes: Dict[Optional[str], Sequence]
+
+    @property
+    def node_types(self) -> Tuple[Optional[str]]:
+        return tuple(self.input_nodes.keys())
+
+    @property
+    def node_type(self) -> Optional[str]:
+        node_types = self.node_types
+        if len(node_types) != 1:
+            raise ValueError(
+                "Requested 'node_type' but there are multiple types in nodes")
+        return node_types[0]
+
+    def nodes(self, node_type: NodeType) -> OptTensor:
+        return self.input_nodes.get(node_type, None)
+
+    @property
+    def as_list(self) -> Tuple[Tuple[str, int]]:
+        return tuple([(node_type, int(i))
+                      for node_type, tensor in self.input_nodes.items()
+                      for i in tensor])
+
+    def from_list(self,
+                  node_list: Tuple[Tuple[str, int]]) -> Dict[NodeType, Tensor]:
+        node_dicts = defaultdict(list)
+        for t, node in node_list:
+            node_dicts[t].append(node)
+        return {k: torch.LongTensor(v) for k, v in node_dicts.items()}
+
+
 def get_input_nodes(
     data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
     input_nodes: Union[InputNodes, TensorAttr],
-) -> Tuple[Optional[str], Sequence]:
+) -> SamplingInputNodes:
     def to_index(tensor):
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
             return tensor.nonzero(as_tuple=False).view(-1)
@@ -174,7 +209,7 @@ def get_input_nodes(
     if isinstance(data, Data):
         if input_nodes is None:
             return None, range(data.num_nodes)
-        return None, to_index(input_nodes)
+        return SamplingInputNodes(input_nodes={None: to_index(input_nodes)})
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
@@ -196,12 +231,16 @@ def get_input_nodes(
         assert input_nodes is not None
 
         if isinstance(input_nodes, Tensor):
-            return None, to_index(input_nodes)
+            return SamplingInputNodes(
+                input_nodes={None: to_index(input_nodes)})
 
         if isinstance(input_nodes, str):
-            return input_nodes, range(
-                remote_backend_utils.num_nodes(feature_store, graph_store,
-                                               input_nodes))
+            return SamplingInputNodes(
+                input_nodes={
+                    input_nodes:
+                    remote_backend_utils.num_nodes(feature_store, graph_store,
+                                                   input_nodes)
+                })
 
         if isinstance(input_nodes, (list, tuple)):
             assert len(input_nodes) == 2
@@ -209,10 +248,15 @@ def get_input_nodes(
 
             node_type, input_nodes = input_nodes
             if input_nodes is None:
-                return node_type, range(
-                    remote_backend_utils.num_nodes(feature_store, graph_store,
-                                                   input_nodes))
-            return node_type, to_index(input_nodes)
+                return SamplingInputNodes(
+                    input_nodes={
+                        node_type:
+                        range(
+                            remote_backend_utils.num_nodes(
+                                feature_store, graph_store, input_nodes))
+                    })
+            return SamplingInputNodes(
+                input_nodes={node_type: to_index(input_nodes)})
 
 
 def get_edge_label_index(

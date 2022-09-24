@@ -7,10 +7,10 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
+    SamplingInputNodes,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
-    get_input_nodes,
 )
 from torch_geometric.sampler.base import (
     BaseSampler,
@@ -18,7 +18,6 @@ from torch_geometric.sampler.base import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.typing import InputNodes
 
 
 class NodeLoader(torch.utils.data.DataLoader):
@@ -62,7 +61,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         node_sampler: BaseSampler,
-        input_nodes: InputNodes = None,
+        sampling_nodes: SamplingInputNodes = None,
         transform: Callable = None,
         filter_per_worker: bool = False,
         **kwargs,
@@ -80,15 +79,14 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.node_sampler = node_sampler
 
         # Store additional arguments:
-        self.input_nodes = input_nodes
         self.transform = transform
         self.filter_per_worker = filter_per_worker
 
         # Get input type, or None for homogeneous graphs:
-        node_type, input_nodes = get_input_nodes(self.data, input_nodes)
-        self.input_type = node_type
+        self.input_type = sampling_nodes.node_type
 
-        super().__init__(input_nodes, collate_fn=self.collate_fn, **kwargs)
+        super().__init__(sampling_nodes.nodes(self.input_type),
+                         collate_fn=self.collate_fn, **kwargs)
 
     def filter_fn(
         self,
