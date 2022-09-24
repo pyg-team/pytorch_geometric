@@ -17,7 +17,9 @@ class DGraphFin(InMemoryDataset):
     in financial industry.
     Node represents a Finvolution user, and an edge from one
     user to another means that the user regards the other user
-    as the emergency contact person.
+    as the emergency contact person. Each edge is associated with a
+    timestamp ranging from 1 to 821 and a type of emergency contact
+    ranging from 0 to 11.
 
 
     Args:
