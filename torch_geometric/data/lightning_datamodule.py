@@ -152,8 +152,8 @@ class LightningDataset(LightningDataModule):
         """"""
         from torch.utils.data import IterableDataset
         shuffle = (not isinstance(self.train_dataset, IterableDataset)
-                   and 'sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+                   and self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.train_dataset, shuffle=shuffle,
                                **self.kwargs)
@@ -368,8 +368,8 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = ('sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.input_train_nodes, shuffle=shuffle,
                                **self.kwargs)
@@ -595,8 +595,8 @@ class LightningLinkData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = ('sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.input_train_edges, self.input_train_labels,
                                self.input_train_time, shuffle=shuffle,
