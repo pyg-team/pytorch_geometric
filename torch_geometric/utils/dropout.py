@@ -190,7 +190,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         tensor([[0, 1, 2, 1, 2, 3],
                 [1, 2, 3, 0, 1, 2]])
         >>> edge_id # indices indicating which edges are retained
-        >>> tensor([0, 2, 4, 0, 2, 4])
+        tensor([0, 2, 4, 0, 2, 4])
     """
     if p < 0. or p > 1.:
         raise ValueError(f'Dropout probability has to be between 0 and 1 '
@@ -232,10 +232,18 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
 
     Args:
         edge_index (LongTensor): The edge indices.
-        p (float, optional): Dropout probability. (default: :obj:`0.5`)
+        r (float, optional): The ratio of source nodes to start
+            random walks from. (default: :obj:`0.5`)
         force_undirected (bool, optional): If set to :obj:`True`, will either
             drop or keep both edges of an undirected edge.
             (default: :obj:`False`)
+        walks_per_node (int, optional): The number of walks per node.
+            (default: :obj:`1`)
+        walk_length (int, optional): The length per walk. (default: :obj:`3`)
+        p (float, optional): :obj:`p` in random walks. (default: :obj:`1`)
+        q (float, optional): :obj:`q` in random walks. (default: :obj:`1`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -247,19 +255,23 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_path(edge_index)
         >>> edge_index
-        tensor([[0, 1, 2, 2],
-                [1, 2, 1, 3]])
+        tensor([[1, 2],
+                [2, 3]])
         >>> edge_mask # masks indicating which edges are retained
-        tensor([ True, False,  True,  True,  True, False])
+        tensor([False, False,  True, False,  True, False])
 
         >>> edge_index, edge_id = dropout_path(edge_index,
         ...                                    force_undirected=True)
         >>> edge_index
-        tensor([[0, 1, 2, 1, 2, 3],
-                [1, 2, 3, 0, 1, 2]])
+        tensor([[2, 3],
+                [3, 2]])
         >>> edge_id # indices indicating which edges are retained
-        >>> tensor([0, 2, 4, 0, 2, 4])
+        tensor([4, 4])
     """
+
+    if r < 0. or r > 1.:
+        raise ValueError(f'Sampling ratio has to be between 0 and 1 '
+                         f'(got {r}')
 
     edge_mask = edge_index.new_ones(edge_index.size(1), dtype=torch.bool)
     if not training or r == 0.0:
