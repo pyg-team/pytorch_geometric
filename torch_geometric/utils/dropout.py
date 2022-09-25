@@ -1,6 +1,12 @@
 from typing import Optional, Tuple
 
 import torch
+
+try:
+    import torch_cluster  # noqa
+    random_walk = torch.ops.torch_cluster.random_walk
+except ImportError:
+    random_walk = None
 from torch import Tensor
 
 from torch_geometric.deprecation import deprecated
@@ -179,7 +185,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
         tensor([ True, False,  True,  True,  True, False])
 
         >>> edge_index, edge_id = dropout_edge(edge_index,
-        ...                                      force_undirected=True)
+        ...                                    force_undirected=True)
         >>> edge_index
         tensor([[0, 1, 2, 1, 2, 3],
                 [1, 2, 3, 0, 1, 2]])
@@ -197,6 +203,86 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     row, col = edge_index
 
     edge_mask = torch.rand(row.size(0), device=edge_index.device) >= p
+
+    if force_undirected:
+        edge_mask[row > col] = False
+
+    edge_index = edge_index[:, edge_mask]
+
+    if force_undirected:
+        edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
+        edge_mask = edge_mask.nonzero().repeat((2, 1)).squeeze()
+
+    return edge_index, edge_mask
+
+
+def dropout_path(edge_index: Tensor, r: float = 0.5,
+                 force_undirected: bool = False, walks_per_node: int = 1,
+                 walk_length: int = 3, p: float = 1, q: float = 1,
+                 num_nodes: Optional[int] = None,
+                 training: bool = True) -> Tuple[Tensor, Tensor, Tensor]:
+    r"""Drops edges from the adjacency matrix
+    :obj:`edge_index` based on random walks with probability :obj:`p`
+    using samples from
+    a Bernoulli distribution.
+
+    The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
+    or index indicating which edges were retained, depending on the argument
+    :obj:`force_undirected`.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        p (float, optional): Dropout probability. (default: :obj:`0.5`)
+        force_undirected (bool, optional): If set to :obj:`True`, will either
+            drop or keep both edges of an undirected edge.
+            (default: :obj:`False`)
+        training (bool, optional): If set to :obj:`False`, this operation is a
+            no-op. (default: :obj:`True`)
+
+    :rtype: (:class:`LongTensor`, :class:`BoolTensor` or :class:`LongTensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> edge_index, edge_mask = dropout_path(edge_index)
+        >>> edge_index
+        tensor([[0, 1, 2, 2],
+                [1, 2, 1, 3]])
+        >>> edge_mask # masks indicating which edges are retained
+        tensor([ True, False,  True,  True,  True, False])
+
+        >>> edge_index, edge_id = dropout_path(edge_index,
+        ...                                    force_undirected=True)
+        >>> edge_index
+        tensor([[0, 1, 2, 1, 2, 3],
+                [1, 2, 3, 0, 1, 2]])
+        >>> edge_id # indices indicating which edges are retained
+        >>> tensor([0, 2, 4, 0, 2, 4])
+    """
+
+    edge_mask = edge_index.new_ones(edge_index.size(1), dtype=torch.bool)
+    if not training or r == 0.0:
+        return edge_index, edge_mask
+
+    if random_walk is None:
+        raise ImportError('`dropout_path` requires `torch-cluster`.')
+
+    row, col = edge_index
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    deg = torch.zeros(num_nodes, device=row.device)
+    deg.scatter_add_(0, row, torch.ones(row.size(0), device=row.device))
+
+    num_starts = round(r * num_nodes)
+    start = torch.randperm(num_nodes, device=edge_index.device)[:num_starts]
+    start = start.repeat(walks_per_node)
+
+    rowptr = row.new_zeros(num_nodes + 1)
+    torch.cumsum(deg, 0, out=rowptr[1:])
+
+    n_id, e_id = random_walk(rowptr, col, start, walk_length, p, q)
+    e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
+    edge_mask[e_id] = False
 
     if force_undirected:
         edge_mask[row > col] = False
