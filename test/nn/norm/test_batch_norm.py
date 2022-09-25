@@ -17,3 +17,12 @@ def test_batch_norm(conf):
 
     out = norm(x)
     assert out.size() == (100, 16)
+
+    x = torch.randn(1, 16)
+    with pytest.raises(ValueError):
+        _ = norm(x)
+
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf,
+                     skip_no_batch=True)
+    out = norm(x)
+    assert torch.allclose(out, x)

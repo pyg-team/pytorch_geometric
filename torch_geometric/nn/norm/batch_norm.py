@@ -30,18 +30,26 @@ class BatchNorm(torch.nn.Module):
             :obj:`False`, this module does not track such statistics and always
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
+        skip_no_batch (bool, optional): If set to :obj:`True`, batches with
+            only a single element will skipped. (default: :obj:`False`)
     """
-    def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=True,
-                 track_running_stats=True):
+    def __init__(self, in_channels: int, eps: float = 1e-5,
+                 momentum: float = 0.1, affine: bool = True,
+                 track_running_stats: bool = True,
+                 skip_no_batch: bool = False):
         super().__init__()
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
                                            track_running_stats)
+        self.skip_no_batch = skip_no_batch
 
     def reset_parameters(self):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
+        if self.skip_no_batch and x.size(0) <= 1:
+            return x
+
         return self.module(x)
 
     def __repr__(self):
