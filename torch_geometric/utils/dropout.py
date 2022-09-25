@@ -220,11 +220,10 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
                  force_undirected: bool = False, walks_per_node: int = 1,
                  walk_length: int = 3, p: float = 1, q: float = 1,
                  num_nodes: Optional[int] = None,
-                 training: bool = True) -> Tuple[Tensor, Tensor, Tensor]:
-    r"""Drops edges from the adjacency matrix
-    :obj:`edge_index` based on random walks with probability :obj:`p`
-    using samples from
-    a Bernoulli distribution.
+                 training: bool = True) -> Tuple[Tensor, Tensor]:
+    r"""Drops edges from the adjacency matrix :obj:`edge_index`
+    based on random walks. The source nodes to start random walks from are
+    sampled with probability :obj:`r` from a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
     or index indicating which edges were retained, depending on the argument
