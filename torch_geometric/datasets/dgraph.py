@@ -90,7 +90,7 @@ class DGraphFin(InMemoryDataset):
             train_mask = index_to_mask(train_nodes, size=x.size(0))
             val_mask = index_to_mask(val_nodes, size=x.size(0))
             test_mask = index_to_mask(test_nodes, size=x.size(0))
-            data = Data(x=x, edge_index=edge_index.t(), edge_attr=edge_attr,
+            data = Data(x=x, edge_index=edge_index.t(), edge_type=edge_type,
                         edge_time=edge_time, y=y, train_mask=train_mask,
                         val_mask=val_mask, test_mask=test_mask)
 
