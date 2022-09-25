@@ -80,7 +80,7 @@ class DGraphFin(InMemoryDataset):
             x = torch.from_numpy(loader['x']).to(torch.float)
             y = torch.from_numpy(loader['y']).to(torch.long)
             edge_index = torch.from_numpy(loader['edge_index']).to(torch.long)
-            edge_attr = torch.from_numpy(loader['edge_type']).to(torch.long)
+            edge_type = torch.from_numpy(loader['edge_type']).to(torch.long)
             edge_time = torch.from_numpy(loader['edge_timestamp']).to(
                 torch.long)
             train_nodes = torch.from_numpy(loader['train_mask']).to(torch.long)
