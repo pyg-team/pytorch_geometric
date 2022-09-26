@@ -906,6 +906,8 @@ def to_homogeneous_label(data: HeteroData, ) -> Tensor:
         if 'y' in data[node_type].keys():
             labeled_node_types.append(i)
             y.append(data[node_type].y)
+        else:
+            y.append(-1 * torch.ones(data[node_type].num_nodes))
 
     if labeled_node_types:
         return torch.cat(y)
