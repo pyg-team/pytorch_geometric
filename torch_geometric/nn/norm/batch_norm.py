@@ -44,10 +44,6 @@ class BatchNorm(torch.nn.Module):
                                            track_running_stats)
         self.in_channels = in_channels
         self.allow_no_batch = allow_no_batch
-        self.default_mean = torch.zeros(self.in_channels)
-        self.default_var = torch.ones(self.in_channels)
-        self.register_buffer("default_mean", self.default_mean)
-        self.register_buffer("default_var", self.default_var)
 
     def reset_parameters(self):
         self.module.reset_parameters()
@@ -59,8 +55,10 @@ class BatchNorm(torch.nn.Module):
             running_mean = self.module.running_mean
             running_var = self.module.running_var
             if running_mean is None or running_var is None:
-                self.module.running_var = self.default_var
-                self.module.running_mean = self.default_mean
+                self.module.running_var = torch.ones(self.in_channels,
+                                                     device=x.device)
+                self.module.running_mean = torch.zeros(self.in_channels,
+                                                       device=x.device)
             self.module.eval()
             out = self.module(x)
             self.module.training = training
