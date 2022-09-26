@@ -218,8 +218,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     return edge_index, edge_mask
 
 
-def dropout_path(edge_index: Tensor, r: float = 0.5,
-                 force_undirected: bool = False, walks_per_node: int = 1,
+def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
                  walk_length: int = 3, p: float = 1, q: float = 1,
                  num_nodes: Optional[int] = None, is_sorted: bool = False,
                  training: bool = True) -> Tuple[Tensor, Tensor]:
@@ -228,16 +227,12 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
     sampled with probability :obj:`r` from a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
-    or index indicating which edges were retained, depending on the argument
-    :obj:`force_undirected`.
+    indicating which edges were retained.
 
     Args:
         edge_index (LongTensor): The edge indices.
         r (float, optional): The ratio of source nodes to start
             random walks from. (default: :obj:`0.5`)
-        force_undirected (bool, optional): If set to :obj:`True`, will either
-            drop or keep both edges of an undirected edge.
-            (default: :obj:`False`)
         walks_per_node (int, optional): The number of walks per node.
             (default: :obj:`1`)
         walk_length (int, optional): The walk length. (default: :obj:`3`)
@@ -254,9 +249,9 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
-    :rtype: (:class:`LongTensor`, :class:`BoolTensor` or :class:`LongTensor`)
+    :rtype: (:class:`LongTensor`, :class:`BoolTensor`)
 
-    Examples:
+    Example:
 
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
@@ -266,14 +261,6 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
                 [2, 3]])
         >>> edge_mask # masks indicating which edges are retained
         tensor([False, False,  True, False,  True, False])
-
-        >>> edge_index, edge_id = dropout_path(edge_index,
-        ...                                    force_undirected=True)
-        >>> edge_index
-        tensor([[2, 3],
-                [3, 2]])
-        >>> edge_id # indices indicating which edges are retained
-        tensor([4, 4])
     """
 
     if r < 0. or r > 1.:
@@ -304,14 +291,6 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
     n_id, e_id = random_walk(rowptr, col, start, walk_length, p, q)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
     edge_mask[e_id] = False
-
-    if force_undirected:
-        edge_mask[row > col] = False
-
     edge_index = edge_index[:, edge_mask]
-
-    if force_undirected:
-        edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
-        edge_mask = edge_mask.nonzero().repeat((2, 1)).squeeze()
 
     return edge_index, edge_mask

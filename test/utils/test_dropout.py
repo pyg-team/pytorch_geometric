@@ -78,11 +78,6 @@ def test_dropout_path():
     assert out[0].tolist() == [[1, 2], [2, 1]]
     assert out[1].tolist() == [False, False, True, True, False, False]
 
-    torch.manual_seed(7)
-    out = dropout_path(edge_index, force_undirected=True)
-    assert out[0].tolist() == [[0, 2, 1, 3], [1, 3, 0, 2]]
-    assert out[1].tolist() == [0, 4, 0, 4]
-
     # test with isolated nodes
     torch.manual_seed(8)
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 2, 4]])
