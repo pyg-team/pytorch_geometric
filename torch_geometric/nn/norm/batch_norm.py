@@ -30,26 +30,39 @@ class BatchNorm(torch.nn.Module):
             :obj:`False`, this module does not track such statistics and always
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
-        skip_no_batch (bool, optional): If set to :obj:`True`, batches with
-            only a single element will skipped. (default: :obj:`False`)
+        allow_no_batch (bool, optional): If set to :obj:`True`, batches with
+            only a single element will work as though in training mode. That is
+            the running mean and variance will be used.
+            (default: :obj:`False`)
     """
     def __init__(self, in_channels: int, eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
-                 skip_no_batch: bool = False):
+                 allow_no_batch: bool = False):
         super().__init__()
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
                                            track_running_stats)
-        self.skip_no_batch = skip_no_batch
+        self.allow_no_batch = allow_no_batch
+        self.in_channels = in_channels
 
     def reset_parameters(self):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
-        if self.skip_no_batch and x.size(0) <= 1:
-            return x
-
+        if self.allow_no_batch and x.size(0) <= 1:
+            training = self.module.training
+            running_mean = self.module.running_mean
+            running_var = self.module.running_var
+            if running_mean is None or running_var is None:
+                self.module.running_var = torch.ones(self.in_channels)
+                self.module.running_mean = torch.zeros(self.in_channels)
+            self.module.eval()
+            out = self.module(x)
+            self.module.training = training
+            self.module.running_mean = running_mean
+            self.module.running_var = running_var
+            return out
         return self.module(x)
 
     def __repr__(self):
