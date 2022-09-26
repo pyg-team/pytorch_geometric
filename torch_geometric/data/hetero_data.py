@@ -45,62 +45,42 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     behaviour of a regular **nested** Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
-
     .. code-block::
-
         from torch_geometric.data import HeteroData
-
         data = HeteroData()
-
         # Create two node types "paper" and "author" holding a feature matrix:
         data['paper'].x = torch.randn(num_papers, num_paper_features)
         data['author'].x = torch.randn(num_authors, num_authors_features)
-
         # Create an edge type "(author, writes, paper)" and building the
         # graph connectivity:
         data['author', 'writes', 'paper'].edge_index = ...  # [2, num_edges]
-
         data['paper'].num_nodes
         >>> 23
-
         data['author', 'writes', 'paper'].num_edges
         >>> 52
-
         # PyTorch tensor functionality:
         data = data.pin_memory()
         data = data.to('cuda:0', non_blocking=True)
-
     Note that there exists multiple ways to create a heterogeneous graph data,
     *e.g.*:
-
     * To initialize a node of type :obj:`"paper"` holding a node feature
       matrix :obj:`x_paper` named :obj:`x`:
-
       .. code-block:: python
-
         from torch_geometric.data import HeteroData
-
         data = HeteroData()
         data['paper'].x = x_paper
-
         data = HeteroData(paper={ 'x': x_paper })
-
         data = HeteroData({'paper': { 'x': x_paper }})
-
     * To initialize an edge from source node type :obj:`"author"` to
       destination node type :obj:`"paper"` with relation type :obj:`"writes"`
       holding a graph connectivity matrix :obj:`edge_index_author_paper` named
       :obj:`edge_index`:
-
       .. code-block:: python
-
         data = HeteroData()
         data['author', 'writes', 'paper'].edge_index = edge_index_author_paper
-
         data = HeteroData(author__writes__paper={
             'edge_index': edge_index_author_paper
         })
-
         data = HeteroData({
             ('author', 'writes', 'paper'):
             { 'edge_index': edge_index_author_paper }
@@ -432,14 +412,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
         r"""Returns the heterogeneous meta-data, *i.e.* its node and edge
         types.
-
         .. code-block:: python
-
             data = HeteroData()
             data['paper'].x = ...
             data['author'].x = ...
             data['author', 'writes', 'paper'].edge_index = ...
-
             print(data.metadata())
             >>> (['paper', 'author'], [('author', 'writes', 'paper')])
         """
@@ -447,18 +424,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
     def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
         r"""Collects the attribute :attr:`key` from all node and edge types.
-
         .. code-block:: python
-
             data = HeteroData()
             data['paper'].x = ...
             data['author'].x = ...
-
             print(data.collect('x'))
             >>> { 'paper': ..., 'author': ...}
-
         .. note::
-
             This is equivalent to writing :obj:`data.x_dict`.
         """
         mapping = {}
@@ -474,9 +446,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         If the storage is not present yet, will create a new
         :class:`torch_geometric.data.storage.NodeStorage` object for the given
         node type.
-
         .. code-block:: python
-
             data = HeteroData()
             node_storage = data.get_node_store('paper')
         """
@@ -492,9 +462,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         If the storage is not present yet, will create a new
         :class:`torch_geometric.data.storage.EdgeStorage` object for the given
         edge type.
-
         .. code-block:: python
-
             data = HeteroData()
             edge_storage = data.get_edge_store('author', 'writes', 'paper')
         """
@@ -526,9 +494,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def subgraph(self, subset_dict: Dict[NodeType, Tensor]) -> 'HeteroData':
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
-
         .. code-block:: python
-
             data = HeteroData()
             data['paper'].x = ...
             data['author'].x = ...
@@ -545,12 +511,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 (author, to, paper)={ edge_index=[2, 30] },
                 (paper, to, conference)={ edge_index=[2, 25] }
             )
-
             subset_dict = {
                 'paper': torch.tensor([3, 4, 5, 6]),
                 'author': torch.tensor([0, 2]),
             }
-
             print(data.subgraph(subset_dict))
             >>> HeteroData(
                 paper={ x=[4, 16] },
@@ -558,7 +522,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 (paper, cites, paper)={ edge_index=[2, 24] },
                 (author, to, paper)={ edge_index=[2, 5] }
             )
-
         Args:
             subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
                 holding the nodes to keep for each node type.
@@ -647,7 +610,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         will be added to the returned :class:`~torch_geometric.data.Data`
         object, denoting node-level and edge-level vectors holding the
         node and edge type as integers, respectively.
-
+        Additionally, labels will be merged, assigning the label -1 for unlabeled node types.
         Args:
             node_attrs (List[str], optional): The node features to combine
                 across all node types. These node features need to be of the
@@ -691,7 +654,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             data.edge_index = edge_index
         data._node_type_names = list(node_slices.keys())
         data._edge_type_names = list(edge_slices.keys())
-
+        node_labels = to_homogeneous_label(self)
+        if node_labels is not None:
+            data.y = node_labels
         # Combine node attributes into a single tensor:
         if node_attrs is None:
             node_attrs = _consistent_size(self.node_stores)
@@ -891,3 +856,16 @@ def to_homogeneous_edge_index(
         edge_index = torch.cat(edge_indices, dim=-1)
 
     return edge_index, node_slices, edge_slices
+
+def to_homogeneous_label(
+    data: HeteroData,
+) -> Tensor:
+    labeled_node_types = []
+    y = []
+    for i, node_type in enumerate(data.node_types):
+        if 'y' in data[node_type].keys():
+            labeled_node_types.append(i)
+            y.append(data[node_type].y)
+
+    if labeled_node_types:
+        return torch.cat(y)
