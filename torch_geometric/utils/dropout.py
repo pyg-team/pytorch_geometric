@@ -12,7 +12,9 @@ from torch import Tensor
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
 
+from .degree import degree
 from .num_nodes import maybe_num_nodes
+from .sort_edge_index import sort_edge_index
 from .subgraph import subgraph
 
 
@@ -219,7 +221,7 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
 def dropout_path(edge_index: Tensor, r: float = 0.5,
                  force_undirected: bool = False, walks_per_node: int = 1,
                  walk_length: int = 3, p: float = 1, q: float = 1,
-                 num_nodes: Optional[int] = None,
+                 num_nodes: Optional[int] = None, is_sorted: bool = False,
                  training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Drops edges from the adjacency matrix :obj:`edge_index`
     based on random walks. The source nodes to start random walks from are
@@ -238,11 +240,15 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
             (default: :obj:`False`)
         walks_per_node (int, optional): The number of walks per node.
             (default: :obj:`1`)
-        walk_length (int, optional): The length per walk. (default: :obj:`3`)
-        p (float, optional): :obj:`p` in random walks. (default: :obj:`1`)
-        q (float, optional): :obj:`q` in random walks. (default: :obj:`1`)
+        walk_length (int, optional): The walk length. (default: :obj:`3`)
+        p (float, optional): :obj:`p` in random walks,
+            same as :class:`~torch_geometric.nn.Node2Vec`. (default: :obj:`1`)
+        q (float, optional): :obj:`q` in random walks,
+            same as :class:`~torch_geometric.nn.Node2Vec`. (default: :obj:`1`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        is_sorted (bool, optional): If set to :obj:`True`, will expect
+            :obj:`edge_index` to be already sorted row-wise.
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -279,10 +285,12 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
     if random_walk is None:
         raise ImportError('`dropout_path` requires `torch-cluster`.')
 
-    row, col = edge_index
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    deg = torch.zeros(num_nodes, device=row.device)
-    deg.scatter_add_(0, row, torch.ones(row.size(0), device=row.device))
+
+    if not is_sorted:
+        edge_index = sort_edge_index(edge_index, num_nodes=num_nodes)
+    row, col = edge_index
+    deg = degree(row, num_nodes=num_nodes)
 
     num_starts = round(r * num_nodes)
     start = torch.randperm(num_nodes, device=edge_index.device)[:num_starts]
