@@ -267,7 +267,8 @@ def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
         raise ValueError(f'Sampling ratio has to be between 0 and 1 '
                          f'(got {r}')
 
-    edge_mask = edge_index.new_ones(edge_index.size(1), dtype=torch.bool)
+    num_edges = edge_index.size(1)
+    edge_mask = edge_index.new_ones(num_edges, dtype=torch.bool)
     if not training or r == 0.0:
         return edge_index, edge_mask
 
@@ -275,22 +276,28 @@ def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
         raise ImportError('`dropout_path` requires `torch-cluster`.')
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
+    edge_orders = None
+    ori_edge_index = edge_index
     if not is_sorted:
-        edge_index = sort_edge_index(edge_index, num_nodes=num_nodes)
+        edge_orders = torch.arange(num_edges, device=edge_index.device)
+        edge_index, edge_orders = sort_edge_index(edge_index, edge_orders,
+                                                  num_nodes=num_nodes)
+
     row, col = edge_index
     deg = degree(row, num_nodes=num_nodes)
-
     num_starts = round(r * num_nodes)
     start = torch.randperm(num_nodes, device=edge_index.device)[:num_starts]
     start = start.repeat(walks_per_node)
 
     rowptr = row.new_zeros(num_nodes + 1)
     torch.cumsum(deg, 0, out=rowptr[1:])
-
     n_id, e_id = random_walk(rowptr, col, start, walk_length, p, q)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
+
+    if edge_orders is not None:
+        # permute edge ids
+        e_id = edge_orders[e_id]
     edge_mask[e_id] = False
-    edge_index = edge_index[:, edge_mask]
+    edge_index = ori_edge_index[:, edge_mask]
 
     return edge_index, edge_mask
