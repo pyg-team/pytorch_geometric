@@ -12,7 +12,7 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import (
     add_self_loops,
     batched_negative_sampling,
-    dropout_adj,
+    dropout_edge,
     is_undirected,
     negative_sampling,
     remove_self_loops,
@@ -259,9 +259,9 @@ class SuperGATConv(MessagePassing):
         return neg_edge_index
 
     def positive_sampling(self, edge_index: Tensor) -> Tensor:
-        pos_edge_index, _ = dropout_adj(edge_index,
-                                        p=1. - self.edge_sample_ratio,
-                                        training=self.training)
+        pos_edge_index, _ = dropout_edge(edge_index,
+                                         p=1. - self.edge_sample_ratio,
+                                         training=self.training)
         return pos_edge_index
 
     def get_attention(self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor,

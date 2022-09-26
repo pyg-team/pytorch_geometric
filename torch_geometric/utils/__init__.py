@@ -1,6 +1,6 @@
 from .degree import degree
 from .softmax import softmax
-from .dropout import dropout_adj, dropout_node
+from .dropout import dropout_adj, dropout_node, dropout_edge
 from .sort_edge_index import sort_edge_index
 from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
@@ -38,8 +38,9 @@ from .scatter import scatter
 __all__ = [
     'degree',
     'softmax',
-    'dropout_adj',
     'dropout_node',
+    'dropout_edge',
+    'dropout_adj',
     'sort_edge_index',
     'coalesce',
     'is_undirected',
