@@ -857,9 +857,8 @@ def to_homogeneous_edge_index(
 
     return edge_index, node_slices, edge_slices
 
-def to_homogeneous_label(
-    data: HeteroData,
-) -> Tensor:
+
+def to_homogeneous_label(data: HeteroData, ) -> Tensor:
     labeled_node_types = []
     y = []
     for i, node_type in enumerate(data.node_types):
