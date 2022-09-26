@@ -46,6 +46,8 @@ class BatchNorm(torch.nn.Module):
         self.allow_no_batch = allow_no_batch
         self.default_mean = torch.zeros(self.in_channels)
         self.default_var = torch.ones(self.in_channels)
+        self.register_buffer("default_mean", self.default_mean)
+        self.register_buffer("default_var", self.default_var)
 
     def reset_parameters(self):
         self.module.reset_parameters()
