@@ -242,9 +242,11 @@ def dropout_path(edge_index: Tensor, r: float = 0.5,
             (default: :obj:`1`)
         walk_length (int, optional): The walk length. (default: :obj:`3`)
         p (float, optional): :obj:`p` in random walks,
-            same as :class:`~torch_geometric.nn.Node2Vec`. (default: :obj:`1`)
+            same as :class:`~torch_geometric.nn.models.Node2Vec`.
+            (default: :obj:`1`)
         q (float, optional): :obj:`q` in random walks,
-            same as :class:`~torch_geometric.nn.Node2Vec`. (default: :obj:`1`)
+            same as :class:`~torch_geometric.nn.models.Node2Vec`.
+            (default: :obj:`1`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
