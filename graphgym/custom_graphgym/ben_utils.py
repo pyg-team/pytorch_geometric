@@ -7,19 +7,19 @@ def get_k_hop_adjacencies(edge_index, max_k, stack_edge_indices=False):
   """Return list of matrices/edge indices for 1,..,k-hop adjacency matrices
   n.b. binary matrix
   n.b. pretty inefficient"""
-  tmp = to_dense_adj(edge_index).long()
-  adj = tmp.to_sparse()
+  tmp = to_dense_adj(edge_index).float()
+  adj = tmp.to_sparse().float()
   idxs, matrices = [edge_index], [tmp]
   cutoffs, n_edges_per_k = [0], edge_index.shape[-1]
   for k in range(2, max_k+1):
     tmp = torch.bmm(adj, tmp)
     for i in range(tmp.shape[-1]):
       tmp[0, i, i] = 0 # remove self-connections
-    tmp = (tmp>0).long() # remove edge multiples
+    tmp = (tmp>0).float() # remove edge multiples
     for m in matrices:
       tmp -= m
-    tmp = (tmp>0).long() # remove -ves, cancelled edges
-    idx, _ = dense_to_sparse(tmp)
+    tmp = (tmp>0).float() # remove -ves, cancelled edges
+    idx, _ = dense_to_sparse(tmp) # outputs int64, which we want
     matrices.append(tmp)
     idxs.append(idx)
     cutoffs.append(n_edges_per_k)
