@@ -265,6 +265,7 @@ def test_to_homogeneous_and_vice_versa():
     data = HeteroData()
 
     data['paper'].x = torch.randn(100, 128)
+    data['paper'].y = torch.randn(100)
     data['author'].x = torch.randn(200, 128)
 
     data['paper', 'paper'].edge_index = get_edge_index(100, 100, 250)
@@ -293,6 +294,8 @@ def test_to_homogeneous_and_vice_versa():
     assert out.edge_type.max() == 2
     assert len(out._node_type_names) == 2
     assert len(out._edge_type_names) == 3
+    assert out.y.size() == (300, )
+    assert out.y[-200:] == torch.full((200,), -1)
 
     out = out.to_heterogeneous()
     assert len(out) == 4
