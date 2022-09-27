@@ -163,7 +163,7 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
                 [1, 3, 2]])
     """
     if p < 0. or p > 1.:
-        raise ValueError(f'Sampling ratio has to be between 0 and 1 '
+        raise ValueError(f'Ratio of added edges has to be between 0 and 1 '
                          f'(got {p}')
 
     device = edge_index.device
