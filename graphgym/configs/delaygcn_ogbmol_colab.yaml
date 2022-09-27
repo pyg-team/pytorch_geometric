@@ -1,4 +1,4 @@
-out_dir: results
+out_dir: /content/drive/MyDrive/AIMS Graphs Miniproject/graphgym_results
 accelerator: cuda
 dataset:
   format: OGB
