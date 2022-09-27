@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
     dropout_adj,
     dropout_edge,
@@ -66,6 +67,7 @@ def test_dropout_edge():
     assert out[1].tolist() == [0, 2, 0, 2]
 
 
+@withPackage('torch_cluster')
 def test_dropout_path():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
 
