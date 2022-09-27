@@ -347,7 +347,7 @@ def test_to_homogeneous_and_vice_versa():
     del out._edge_type_names
     del out._node_type_names
     out = out.to_heterogeneous(node_type, edge_type)
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['0'].x)
     assert torch.allclose(data['author'].x, out['1'].x)
 
