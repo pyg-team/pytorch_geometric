@@ -281,7 +281,7 @@ def test_to_homogeneous_and_vice_versa():
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
     out = data.to_homogeneous()
-    assert len(out) == 6
+    assert len(out) == 7
     assert out.num_nodes == 300
     assert out.num_edges == 1750
     assert out.num_node_features == 128
