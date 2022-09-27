@@ -34,7 +34,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
 from .scatter import scatter
-from .augmentation import shuffle_node, mask_feature, add_edge
+from .augmentation import shuffle_node, mask_feature, add_random_edge
 
 __all__ = [
     'degree',
@@ -44,7 +44,7 @@ __all__ = [
     'dropout_adj',
     'shuffle_node',
     'mask_feature',
-    'add_edge',
+    'add_random_edge',
     'sort_edge_index',
     'coalesce',
     'is_undirected',
