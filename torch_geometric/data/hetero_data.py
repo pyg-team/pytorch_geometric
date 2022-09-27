@@ -706,9 +706,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             data.num_nodes = list(node_slices.values())[-1][1]
 
         # Combine labels
-        node_labels = to_homogeneous_label(self)
-        if node_labels is not None:
-            data.y = node_labels
+        if 'y' not in data.keys:
+            data.y = to_homogeneous_label(self)
 
         # Combine edge attributes into a single tensor:
         if edge_attrs is None:
@@ -902,12 +901,11 @@ def to_homogeneous_edge_index(
 def to_homogeneous_label(data: HeteroData) -> Tensor:
     labeled_node_types = []
     y = []
-    for i, node_type in enumerate(data.node_types):
-        if 'y' in data[node_type].keys():
-            labeled_node_types.append(i)
-            y.append(data[node_type].y)
-        else:
-            y.append(-1 * torch.ones(data[node_type].num_nodes))
-
-    if labeled_node_types:
+    if len(data.y_dict) > 0:
+        for i, node_type in enumerate(data.node_types):
+            if 'y' in data[node_type].keys():
+                labeled_node_types.append(i)
+                y.append(data[node_type].y)
+            else:
+                y.append(torch.full(data[node_type].num_nodes, -1))
         return torch.cat(y)
