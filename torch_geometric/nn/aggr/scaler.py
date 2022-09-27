@@ -76,17 +76,17 @@ class DegreeScalerAggregation(Aggregation):
         outs = []
         for scaler in self.scaler:
             if scaler == 'identity':
-                out_scaler = out
+                pass
             elif scaler == 'amplification':
-                out_scaler = out * (torch.log(deg + 1) / self.avg_deg['log'])
+                out = out * (torch.log(deg + 1) / self.avg_deg['log'])
             elif scaler == 'attenuation':
-                out_scaler = out * (self.avg_deg['log'] / torch.log(deg + 1))
+                out = out * (self.avg_deg['log'] / torch.log(deg + 1))
             elif scaler == 'linear':
-                out_scaler = out * (deg / self.avg_deg['lin'])
+                out = out * (deg / self.avg_deg['lin'])
             elif scaler == 'inverse_linear':
-                out_scaler = out * (self.avg_deg['lin'] / deg)
+                out = out * (self.avg_deg['lin'] / deg)
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
-            outs.append(out_scaler)
+            outs.append(out)
 
         return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]

@@ -12,7 +12,6 @@ from torch_geometric.graphgym.register import network_dict, register_network
 
 register_network('gnn', GNN)
 
-
 class GraphGymModule(LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()

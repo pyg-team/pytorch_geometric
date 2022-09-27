@@ -30,6 +30,7 @@ class GraphGymDataModule(LightningDataModule):
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
           trainer_config: Optional[dict] = None):
+    print('hello!')
     callbacks = []
     if logger:
         callbacks.append(LoggerCallback())
