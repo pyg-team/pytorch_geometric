@@ -295,12 +295,13 @@ def test_to_homogeneous_and_vice_versa():
     assert len(out._node_type_names) == 2
     assert len(out._edge_type_names) == 3
     assert out.y.size() == (300, )
-    assert (out.y[-200:] == torch.full((200, ), -1)).all()
+    assert torch.allclose(out.y[-200:], torch.full((200, ), -1))
 
     out = out.to_heterogeneous()
     assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['paper'].x)
     assert torch.allclose(data['author'].x, out['author'].x)
+    assert torch.allclose(data['paper'].y, out['paper'].y)
 
     edge_index1 = data['paper', 'paper'].edge_index
     edge_index2 = out['paper', 'paper'].edge_index
