@@ -907,5 +907,5 @@ def to_homogeneous_label(data: HeteroData) -> Tensor:
                 labeled_node_types.append(i)
                 y.append(data[node_type].y)
             else:
-                y.append(torch.full((data[node_type].num_nodes,), -1))
+                y.append(torch.full((data[node_type].num_nodes, ), -1))
         return torch.cat(y)
