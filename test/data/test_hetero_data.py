@@ -298,7 +298,7 @@ def test_to_homogeneous_and_vice_versa():
     assert (out.y[-200:] == torch.full((200, ), -1)).all()
 
     out = out.to_heterogeneous()
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['paper'].x)
     assert torch.allclose(data['author'].x, out['author'].x)
 
