@@ -647,7 +647,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         will be added to the returned :class:`~torch_geometric.data.Data`
         object, denoting node-level and edge-level vectors holding the
         node and edge type as integers, respectively.
-        Additionally, labels will be merged, assigning the label -1 for unlabeled node types.
+        Additionally, labels will be merged.
+        The label -1 will be assigned for unlabeled node types.
 
         Args:
             node_attrs (List[str], optional): The node features to combine
