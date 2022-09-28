@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added `dropout_path` augmentation that drops edges from a graph based on random walks ([#5531](https://github.com/pyg-team/pytorch_geometric/pull/5531))
 - Added the `DGraphFin` dynamic graph dataset ([#5504](https://github.com/pyg-team/pytorch_geometric/pull/5504))
 - Added `dropout_edge` augmentation that randomly drops edges from a graph - the usage of `dropout_adj` is now deprecated ([#5495](https://github.com/pyg-team/pytorch_geometric/pull/5495))
 - Add support for precomputed edges in `SchNet` model ([#5401](https://github.com/pyg-team/pytorch_geometric/pull/5401))
