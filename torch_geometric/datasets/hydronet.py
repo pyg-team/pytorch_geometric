@@ -32,22 +32,17 @@ class HydroNet(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
 
-        data = []
-        slices = []
+        if not hasattr(self, '_partitions'):
+            self._partitions = [
+                self._create_partitions(f) for f in self.raw_paths
+            ]
 
-        print("Loading...")
-        for file in tqdm(self.processed_paths):
-            d, s = torch.load(file)
-            data.append(d)
-            slices.append(s)
-
-        print("done!")
-
-        # TODO: figure out how to merge data/slices into one big object?
+        [p.load() for p in tqdm(self._partitions, desc="Loading")]
 
     @property
     def raw_file_names(self) -> List[str]:
-        return sorted(glob(self.raw_dir + '/*/*.zip'))
+        path = osp.join(self.raw_dir, '*.zip')
+        return sorted(glob(path))
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -60,45 +55,39 @@ class HydroNet(InMemoryDataset):
                                  filename=self.filename)
         extract_zip(file_path, self.raw_dir)
         os.unlink(file_path)
+        folder_name, _ = osp.splitext(self.filename)
+        files = glob(osp.join(self.raw_dir, folder_name, '*.zip'))
+
+        for f in files:
+            dst = osp.join(self.raw_dir, osp.basename(f))
+            os.rename(f, dst)
+
+        os.rmdir(osp.join(self.raw_dir, folder_name))
 
     def process(self):
-        process_map(self._process_file, self.raw_file_names, max_workers=16,
-                    position=0, leave=True)
+        self._partitions = process_map(self._create_partitions,
+                                       self.raw_file_names, max_workers=16,
+                                       position=0, leave=True)
 
-    def _process_file(self, file):
-        # the number of 3-atom clusters is in the filename
-        # extract this to determine the number of lines to read
+    def _create_partitions(self, file):
         name = osp.basename(file)
         name, _ = osp.splitext(name)
-        outfile = osp.join(self.processed_dir, name + ".pt")
+        return Partition(self.root, name, self.transform, self.pre_transform,
+                         self.pre_filter)
 
-        if osp.exists(outfile):
-            return outfile
+    def len(self) -> int:
+        r"""Returns the number of graphs stored in the dataset."""
+        return sum(len(p) for p in self._partitions)
 
-        num_clusters = int(name[1:name.find('_')])
-        num_nodes = num_clusters * 3
-        chunk_size = num_nodes + 2
-        y = read_energy(file, chunk_size)
-        z, pos = read_atoms(file, chunk_size)
-        num_graphs = z.shape[0]
-        data_list = []
-
-        for idx in tqdm(range(num_graphs), position=num_clusters - 2,
-                        leave=False, desc=name):
-            data = Data(z=torch.from_numpy(z[idx, :]),
-                        y=torch.from_numpy(y[idx]),
-                        pos=torch.from_numpy(pos[idx, :]))
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
-
-            data_list.append(data)
-
-        torch.save(self.collate(data_list), outfile)
-        return outfile
+    def get(self, idx: int) -> Data:
+        r"""Gets the data object at index :obj:`idx`."""
+        partition_sizes = torch.tensor([len(p) for p in self._partitions])
+        offsets = partition_sizes.cumsum(dim=0)
+        offsets = offsets.roll(shifts=1, dims=0)
+        offsets[0] = 0
+        partition_idx = torch.nonzero((idx - offsets) >= 0)[-1]
+        local_idx = idx - offsets[partition_idx]
+        return self._partitions[partition_idx].get(local_idx)
 
 
 def read_energy(file, chunk_size):
@@ -109,10 +98,10 @@ def read_energy(file, chunk_size):
         # Manually handle bad lines in W11
         df = pd.read_table(file, header=None, dtype="string",
                            skiprows=skipatoms)
-        df = df[0].str.split().str[-1].astype(float)
+        df = df[0].str.split().str[-1].astype(np.float32)
     else:
         df = pd.read_table(file, sep=r'\s+', names=["label", "energy"],
-                           dtype="float", skiprows=skipatoms,
+                           dtype=np.float32, skiprows=skipatoms,
                            usecols=['energy'], memory_map=True)
 
     return df.to_numpy().squeeze()
@@ -139,3 +128,47 @@ def read_atoms(file, chunk_size):
     z.shape = (num_graphs, num_nodes)
     pos.shape = (num_graphs, num_nodes, 3)
     return (z, pos)
+
+
+class Partition(InMemoryDataset):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        self.name = name
+        self.num_clusters = int(name[1:name.find('_')])
+        super().__init__(root, transform, pre_transform, pre_filter)
+
+    @property
+    def raw_file_names(self) -> List[str]:
+        return [self.name + ".zip"]
+
+    @property
+    def processed_file_names(self) -> str:
+        return self.name + '.pt'
+
+    def process(self):
+        num_nodes = self.num_clusters * 3
+        chunk_size = num_nodes + 2
+        y = read_energy(self.raw_paths[0], chunk_size)
+        z, pos = read_atoms(self.raw_paths[0], chunk_size)
+        num_graphs = z.shape[0]
+        data_list = []
+        (y, z, pos) = (torch.from_numpy(a) for a in (y, z, pos))
+
+        for idx in tqdm(range(num_graphs), position=self.num_clusters - 2,
+                        leave=False, desc=self.name):
+            data = Data(z=z[idx, :], y=y[idx], pos=pos[idx, :])
+
+            if self.pre_filter is not None and not self.pre_filter(data):
+                continue
+
+            if self.pre_transform is not None:
+                data = self.pre_transform(data)
+
+            data_list.append(data)
+
+        torch.save(self.collate(data_list), self.processed_paths[0])
+
+    def load(self):
+        self.data, self.slices = torch.load(self.processed_paths[0])
