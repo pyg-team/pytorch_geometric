@@ -75,24 +75,24 @@ def test_dropout_path():
     assert edge_index.tolist() == out[0].tolist()
     assert out[1].tolist() == [True, True, True, True, True, True]
 
-    torch.manual_seed(5)
-    out = dropout_path(edge_index)
-    assert out[0].tolist() == [[1, 2], [2, 1]]
-    assert out[1].tolist() == [False, False, True, True, False, False]
+    torch.manual_seed(4)
+    out = dropout_path(edge_index, p=0.2)
+    assert out[0].tolist() == [[0, 1], [1, 0]]
+    assert out[1].tolist() == [True, True, False, False, False, False]
     assert edge_index[:, out[1]].tolist() == out[0].tolist()
 
     # test with unsorted edges
-    torch.manual_seed(6)
-    edge_index = torch.tensor([[3, 3, 2, 2, 2, 1], [1, 0, 0, 1, 3, 2]])
-    out = dropout_path(edge_index)
-    assert out[0].tolist() == [[3, 2], [0, 0]]
-    assert out[1].tolist() == [False, True, True, False, False, False]
+    torch.manual_seed(5)
+    edge_index = torch.tensor([[3, 5, 2, 2, 2, 1], [1, 0, 0, 1, 3, 2]])
+    out = dropout_path(edge_index, p=0.2)
+    assert out[0].tolist() == [[3, 2, 2, 1], [1, 1, 3, 2]]
+    assert out[1].tolist() == [True, False, False, True, True, True]
     assert edge_index[:, out[1]].tolist() == out[0].tolist()
 
     # test with isolated nodes
     torch.manual_seed(7)
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 2, 4]])
-    out = dropout_path(edge_index)
+    out = dropout_path(edge_index, p=0.2)
     assert out[0].tolist() == [[2, 3], [2, 4]]
     assert out[1].tolist() == [False, False, True, True]
     assert edge_index[:, out[1]].tolist() == out[0].tolist()

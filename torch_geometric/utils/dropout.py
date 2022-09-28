@@ -218,30 +218,25 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     return edge_index, edge_mask
 
 
-def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
-                 walk_length: int = 3, p: float = 1, q: float = 1,
-                 num_nodes: Optional[int] = None, is_sorted: bool = False,
+def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
+                 walk_length: int = 3, num_nodes: Optional[int] = None,
+                 is_sorted: bool = False,
                  training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Drops edges from the adjacency matrix :obj:`edge_index`
     based on random walks. The source nodes to start random walks from are
-    sampled with probability :obj:`r` from a Bernoulli distribution.
+    sampled from :obj:`edge_index` with probability :obj:`p`, following
+    a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the edge mask
     indicating which edges were retained.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        r (float, optional): The ratio of source nodes to start
-            random walks from. (default: :obj:`0.5`)
-        walks_per_node (int, optional): The number of walks per node.
-            (default: :obj:`1`)
-        walk_length (int, optional): The walk length. (default: :obj:`3`)
-        p (float, optional): :obj:`p` in random walks,
-            same as :class:`~torch_geometric.nn.models.Node2Vec`.
-            (default: :obj:`1`)
-        q (float, optional): :obj:`q` in random walks,
-            same as :class:`~torch_geometric.nn.models.Node2Vec`.
-            (default: :obj:`1`)
+        p (float, optional): Sampling probability. (default: :obj:`0.2`)
+        walks_per_node (int, optional): The number of walks per node, same as
+            :class:`~torch_geometric.nn.models.Node2Vec`. (default: :obj:`1`)
+        walk_length (int, optional): The walk length, same as
+            :class:`~torch_geometric.nn.models.Node2Vec`. (default: :obj:`3`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
@@ -263,13 +258,13 @@ def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
         tensor([False, False,  True, False,  True, False])
     """
 
-    if r < 0. or r > 1.:
-        raise ValueError(f'Sampling ratio has to be between 0 and 1 '
-                         f'(got {r}')
+    if p < 0. or p > 1.:
+        raise ValueError(f'Sampling probability has to be between 0 and 1 '
+                         f'(got {p}')
 
     num_edges = edge_index.size(1)
     edge_mask = edge_index.new_ones(num_edges, dtype=torch.bool)
-    if not training or r == 0.0:
+    if not training or p == 0.0:
         return edge_index, edge_mask
 
     if random_walk is None:
@@ -285,13 +280,12 @@ def dropout_path(edge_index: Tensor, r: float = 0.5, walks_per_node: int = 1,
 
     row, col = edge_index
     deg = degree(row, num_nodes=num_nodes)
-    num_starts = round(r * num_nodes)
-    start = torch.randperm(num_nodes, device=edge_index.device)[:num_starts]
-    start = start.repeat(walks_per_node)
+    sample_mask = torch.rand(row.size(0), device=edge_index.device) <= p
+    start = edge_index[:, sample_mask].view(-1).repeat(walks_per_node)
 
     rowptr = row.new_zeros(num_nodes + 1)
     torch.cumsum(deg, 0, out=rowptr[1:])
-    n_id, e_id = random_walk(rowptr, col, start, walk_length, p, q)
+    n_id, e_id = random_walk(rowptr, col, start, walk_length, 1.0, 1.0)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
 
     if edge_orders is not None:
