@@ -240,7 +240,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
-            :obj:`edge_index` to be already sorted row-wise.
+            :obj:`edge_index` to be already sorted row-wise. (default: :obj:`False`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
