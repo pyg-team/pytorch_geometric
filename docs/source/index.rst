@@ -38,6 +38,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/nn
    modules/data
    modules/loader
+   modules/sampler
    modules/datasets
    modules/transforms
    modules/utils
