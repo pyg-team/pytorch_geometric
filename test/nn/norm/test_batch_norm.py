@@ -23,6 +23,6 @@ def test_batch_norm(conf):
         _ = norm(x)
 
     norm = BatchNorm(16, affine=conf, track_running_stats=conf,
-                     allow_no_batch=True)
+                     allow_single_element=True)
     out = norm(x)
     assert torch.allclose(out, x)
