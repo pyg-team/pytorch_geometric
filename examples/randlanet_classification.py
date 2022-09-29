@@ -132,16 +132,11 @@ def get_decimation_idx(ptr, decimation):
 
     """
     batch_size = ptr.size(0) - 1
-    num_nodes = torch.Tensor(
-        [ptr[i + 1] - ptr[i] for i in range(batch_size)]
-    ).long()
-    decimated_num_nodes = num_nodes // decimation
+    bincount = ptr[1:] - ptr[:-1]
+    decimated_bincount = torch.div(bincount, decimation, rounding_mode="floor")
     idx_decim = torch.cat(
         [
-            (
-                ptr[i]
-                + torch.randperm(decimated_num_nodes[i], device=ptr.device)
-            )
+            (ptr[i] + torch.randperm(decimated_bincount[i], device=ptr.device))
             for i in range(batch_size)
         ],
         dim=0,
@@ -149,7 +144,7 @@ def get_decimation_idx(ptr, decimation):
     # Update the ptr for future decimations
     ptr_decim = ptr.clone()
     for i in range(batch_size):
-        ptr_decim[i + 1] = ptr_decim[i] + decimated_num_nodes[i]
+        ptr_decim[i + 1] = ptr_decim[i] + decimated_bincount[i]
     return idx_decim, ptr_decim
 
 
