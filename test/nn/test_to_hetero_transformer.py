@@ -16,9 +16,9 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.utils import dropout_adj
+from torch_geometric.utils import dropout_edge
 
-torch.fx.wrap('dropout_adj')
+torch.fx.wrap('dropout_edge')
 
 
 class Net1(torch.nn.Module):
@@ -140,7 +140,7 @@ class Net10(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         x = F.dropout(x, p=0.5, training=self.training)
-        edge_index, _ = dropout_adj(edge_index, p=0.5, training=self.training)
+        edge_index, _ = dropout_edge(edge_index, p=0.5, training=self.training)
         return self.conv(x, edge_index)
 
 
