@@ -36,16 +36,6 @@ class SharedMLP(MLP):
         super().__init__(*args, **kwargs)
 
 
-class GlobalPooling(torch.nn.Module):
-    """Global Pooling to adapt RandLA-Net to a classification task."""
-
-    def forward(self, x, pos, batch):
-        x = global_max_pool(x, batch)
-        pos = pos.new_zeros((x.size(0), 3))
-        batch = torch.arange(x.size(0), device=batch.device)
-        return x, pos, batch
-
-
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
@@ -186,7 +176,6 @@ class Net(torch.nn.Module):
         self.block1 = DilatedResidualBlock(num_neighboors, 8, 32)
         self.block2 = DilatedResidualBlock(num_neighboors, 32, 128)
         self.mlp1 = SharedMLP([128, 128])
-        self.pool = GlobalPooling()
         self.mlp_end = Sequential(
             SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
@@ -201,7 +190,7 @@ class Net(torch.nn.Module):
         b2_decimated, _ = decimate(b2, ptr, self.decimation)
 
         x = self.mlp1(b2_decimated[0])
-        x, _, _ = self.pool(x, b2_decimated[1], b2_decimated[2])
+        x = global_max_pool(x, b2_decimated[2])
 
         logits = self.mlp_end(x)
         if self.return_logits:
