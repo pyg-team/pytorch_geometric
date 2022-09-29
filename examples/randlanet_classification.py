@@ -182,8 +182,8 @@ class Net(torch.nn.Module):
 
     def forward(self, batch):
         ptr = batch.ptr.clone()
-
-        b1 = self.block1(self.fc0(batch.x), batch.pos, batch.batch)
+        x = batch.x if batch.x is not None else batch.pos
+        b1 = self.block1(self.fc0(x), batch.pos, batch.batch)
         b1_decimated, ptr = decimate(b1, ptr, self.decimation)
 
         b2 = self.block2(*b1_decimated)
@@ -197,15 +197,6 @@ class Net(torch.nn.Module):
             return logits
         probas = logits.log_softmax(dim=-1)
         return probas
-
-
-class SetPosAsXIfNoX(BaseTransform):
-    """Avoid empty x Tensor by using positions as features."""
-
-    def __call__(self, data):
-        if not data.x:
-            data.x = data.pos
-        return data
 
 
 def train(epoch):
@@ -236,7 +227,7 @@ if __name__ == "__main__":
         osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10"
     )
     pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024), SetPosAsXIfNoX()]
+        [T.SamplePoints(1024)]
     )
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
