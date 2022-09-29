@@ -39,13 +39,13 @@ class SharedMLP(MLP):
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
-    def __init__(self, d_out):
+    def __init__(self, channels):
         super().__init__(aggr="add")
-        self.mlp_encoder = SharedMLP([10, d_out // 2])
+        self.mlp_encoder = SharedMLP([10, channels // 2])
         self.mlp_attention = SharedMLP(
-            [d_out, d_out], bias=False, act=None, norm=None
+            [channels, channels], bias=False, act=None, norm=None
         )
-        self.mlp_post_attention = SharedMLP([d_out, d_out])
+        self.mlp_post_attention = SharedMLP([channels, channels])
 
     def forward(self, edge_index, x, pos):
         out = self.propagate(edge_index, x=x, pos=pos)  # N, d_out
