@@ -110,6 +110,7 @@ class Logger(object):
     def classification_binary(self):
         from sklearn.metrics import (
             accuracy_score,
+            average_precision_score,
             f1_score,
             precision_score,
             recall_score,
@@ -124,6 +125,7 @@ class Logger(object):
             r_a_score = 0.0
         return {
             'accuracy': round(accuracy_score(true, pred_int), cfg.round),
+            'average_precision': round(average_precision_score(true, pred_int), cfg.round),
             'precision': round(precision_score(true, pred_int), cfg.round),
             'recall': round(recall_score(true, pred_int), cfg.round),
             'f1': round(f1_score(true, pred_int), cfg.round),

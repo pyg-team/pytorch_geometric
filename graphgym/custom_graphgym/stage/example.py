@@ -114,12 +114,7 @@ class DelayGNNStage(nn.Module):
             batch.x = torch.zeros_like(x[t])
             for k in range(1, (t+1)+1):
                 W = next(modules)
-                try:
-                    batch.x = batch.x + W(batch, x[t+1-k], k_hop_edges[k-1]).x
-                except:
-                    print("\nlen(x), (t+1-k), len(k_hop_edges), k")
-                    print(len(x), (t+1-k), len(k_hop_edges), k)
-                    assert False
+                batch.x = batch.x + W(batch, x[t+1-k], k_hop_edges[k-1]).x
             batch.x = x[t] + nn.ReLU()(batch.x)
             if cfg.gnn.l2norm: # normalises after every layer
                 batch.x = F.normalize(batch.x, p=2, dim=-1)

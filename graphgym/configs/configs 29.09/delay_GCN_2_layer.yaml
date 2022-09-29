@@ -1,4 +1,5 @@
 out_dir: results
+accelerator: cuda # *
 dataset:
   format: OGB
   name: ogbg-molhiv
@@ -20,11 +21,11 @@ model:
   graph_pooling: add
 gnn:
   layers_pre_mp: 1
-  layers_mp: 1              # number of DelayGNN layers, i.e. timesteps
+  layers_mp: 2
   layers_post_mp: 1
   dim_inner: 300
-  layer_type: my_gcnconv
-  stage_type: delay_gnn
+  layer_type: my_gcnconv # *
+  stage_type: delay_gnn  # *
   batchnorm: true
   act: prelu
   dropout: 0.0
@@ -33,9 +34,7 @@ gnn:
 optim:
   optimizer: adam
   base_lr: 0.01
-  max_epoch: 1
-tensorboard_each_run: True
+  max_epoch: 1 # * #################### FOR INITIAL TEST PURPOSES ONLY ##############################
+# ***
 delay:
-  max_k: 1
-
-  # do we need to do a special thing for the general gnn model as well? i.e. encoder + stage + head ?
+  max_k: 2 # graph diameter is 12 but need it to stop at num_layers regardless
