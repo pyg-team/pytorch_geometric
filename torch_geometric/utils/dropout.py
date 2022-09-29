@@ -232,7 +232,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
 
     Args:
         edge_index (LongTensor): The edge indices.
-        p (float, optional): Sampling probability. (default: :obj:`0.2`)
+        p (float, optional): Sample probability. (default: :obj:`0.2`)
         walks_per_node (int, optional): The number of walks per node, same as
             :class:`~torch_geometric.nn.models.Node2Vec`. (default: :obj:`1`)
         walk_length (int, optional): The walk length, same as
@@ -259,7 +259,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     """
 
     if p < 0. or p > 1.:
-        raise ValueError(f'Sampling probability has to be between 0 and 1 '
+        raise ValueError(f'Sample probability has to be between 0 and 1 '
                          f'(got {p}')
 
     num_edges = edge_index.size(1)
@@ -279,10 +279,10 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
                                                   num_nodes=num_nodes)
 
     row, col = edge_index
-    deg = degree(row, num_nodes=num_nodes)
     sample_mask = torch.rand(row.size(0), device=edge_index.device) <= p
-    start = edge_index[:, sample_mask].view(-1).repeat(walks_per_node)
+    start = row[sample_mask].repeat(walks_per_node)
 
+    deg = degree(row, num_nodes=num_nodes)
     rowptr = row.new_zeros(num_nodes + 1)
     torch.cumsum(deg, 0, out=rowptr[1:])
     n_id, e_id = random_walk(rowptr, col, start, walk_length, 1.0, 1.0)
