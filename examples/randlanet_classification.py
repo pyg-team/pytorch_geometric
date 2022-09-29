@@ -49,14 +49,13 @@ class GlobalPooling(torch.nn.Module):
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
 
-    def __init__(self, d_out, num_neighbors):
+    def __init__(self, d_out):
         super().__init__(aggr="add")
         self.mlp_encoder = SharedMLP([10, d_out // 2])
         self.mlp_attention = SharedMLP(
             [d_out, d_out], bias=False, act=None, norm=None
         )
         self.mlp_post_attention = SharedMLP([d_out, d_out])
-        self.num_neighbors = num_neighbors
 
     def forward(self, edge_index, x, pos):
         out = self.propagate(edge_index, x=x, pos=pos)  # N, d_out
@@ -117,8 +116,8 @@ class DilatedResidualBlock(torch.nn.Module):
         # MLP on output
         self.mlp2 = SharedMLP([d_out // 2, d_out], act=None)
 
-        self.lfa1 = LocalFeatureAggregation(d_out // 4, num_neighbors)
-        self.lfa2 = LocalFeatureAggregation(d_out // 2, num_neighbors)
+        self.lfa1 = LocalFeatureAggregation(d_out // 4)
+        self.lfa2 = LocalFeatureAggregation(d_out // 2)
 
         self.lrelu = torch.nn.LeakyReLU(**lrelu02_kwargs)
 
