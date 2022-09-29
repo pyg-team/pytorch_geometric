@@ -60,6 +60,7 @@ class EdgeLayout(Enum):
 @dataclass
 class EdgeAttr(CastMixin):
     r"""Defines the attributes of an :obj:`GraphStore` edge."""
+    # TODO (matthias) Rename to `EdgeProp`.
 
     # The type of the edge:
     edge_type: EdgeType
@@ -222,7 +223,7 @@ class GraphStore:
         layout: EdgeLayout,
         replace: bool = False,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
-        r"""Converts one :obj:`edge_index` in the graph store to the desired
+        r"""Converts an :obj:`edge_index` in the graph store to the desired
         output layout, by fetching the :obj:`edge_index` and performing
         in-memory conversion. Implementations that support conversion within
         the graph store can override this method."""
@@ -230,9 +231,9 @@ class GraphStore:
 
         if layout == EdgeLayout.COO:  # COO output:
             if attr.layout == EdgeLayout.CSR:
-                row = ptr2ind(row, row.numel())
-            else:
-                col = ptr2ind(col, col.numel())
+                row = ptr2ind(row, col.numel())
+            elif attr.layout == EdgeLayout.CSC:
+                col = ptr2ind(col, row.numel())
 
         elif layout == EdgeLayout.CSR:  # CSR output:
             if attr.layout == EdgeLayout.CSC:

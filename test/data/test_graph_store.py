@@ -58,7 +58,7 @@ def test_graph_store_conversion():
 
     coo = (edge_index[0], edge_index[1])
     csr = adj.csr()[:2]
-    csc = adj.csc()[-2::-1]
+    csc = adj.csc()[:2][::-1]
 
     # Put all edge indices:
     graph_store.put_edge_index(edge_index=coo, edge_type=('v', '1', 'v'),
@@ -68,33 +68,35 @@ def test_graph_store_conversion():
     graph_store.put_edge_index(edge_index=csc, edge_type=('v', '3', 'v'),
                                layout='csc', size=(100, 100))
 
-    def assert_edge_index_equal(expected: torch.Tensor, actual: torch.Tensor):
-        assert torch.equal(sort_edge_index(expected), sort_edge_index(actual))
-
     # Convert to COO:
     row_dict, col_dict, perm_dict = graph_store.coo()
     assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
     for key in row_dict.keys():
-        actual = torch.stack((row_dict[key], col_dict[key]))
-        assert_edge_index_equal(actual, edge_index)
+        assert SparseTensor(row=row_dict[key], col=col_dict[key],
+                            sparse_sizes=(100, 100)) == adj
         assert perm_dict[key] is None
 
     # Convert to CSR:
     rowptr_dict, col_dict, perm_dict = graph_store.csr()
     assert len(rowptr_dict) == len(col_dict) == len(perm_dict) == 3
     for key in rowptr_dict:
-        assert torch.equal(rowptr_dict[key], csr[0])
-        assert torch.equal(col_dict[key], csr[1])
-        if key == ('v', '1', 'v'):
+        assert SparseTensor(rowptr=rowptr_dict[key], col=col_dict[key],
+                            sparse_sizes=(100, 100)) == adj
+        if key == ('v', '2', 'v'):
+            assert perm_dict[key] is None
+        else:
             assert perm_dict[key] is not None
 
     # Convert to CSC:
     row_dict, colptr_dict, perm_dict = graph_store.csc()
     assert len(row_dict) == len(colptr_dict) == len(perm_dict) == 3
     for key in row_dict:
-        assert torch.equal(row_dict[key], csc[0])
-        assert torch.equal(colptr_dict[key], csc[1])
-        assert perm_dict[key] is None
+        assert SparseTensor(rowptr=colptr_dict[key], col=row_dict[key],
+                            sparse_sizes=(100, 100)).t() == adj
+        if key == ('v', '2', 'v'):
+            assert perm_dict[key] is not None
+        else:
+            assert perm_dict[key] is None
 
     # Ensure that 'edge_types' parameters work as intended:
     def _tensor_eq(expected: List[OptTensor], actual: List[OptTensor]):
@@ -105,11 +107,11 @@ def test_graph_store_conversion():
 
     edge_types = [('v', '1', 'v'), ('v', '2', 'v')]
     assert _tensor_eq(
-        list(graph_store.coo()[0].values())[:-1],
+        list(graph_store.coo()[0].values())[:2],
         graph_store.coo(edge_types=edge_types)[0].values())
     assert _tensor_eq(
-        list(graph_store.csr()[0].values())[:-1],
+        list(graph_store.csr()[0].values())[:2],
         graph_store.csr(edge_types=edge_types)[0].values())
     assert _tensor_eq(
-        list(graph_store.csc()[0].values())[:-1],
+        list(graph_store.csc()[0].values())[:2],
         graph_store.csc(edge_types=edge_types)[0].values())
