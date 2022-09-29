@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 - Added `AddRandomMetaPaths` that adds edges based on random walks along a metapath ([#5397](https://github.com/pyg-team/pytorch_geometric/pull/5397))
 - Added `WLConvContinuous` for performing WL refinement with continuous attributes ([#5316](https://github.com/pyg-team/pytorch_geometric/pull/5316))
 - Added `print_summary` method for the `torch_geometric.data.Dataset` interface ([#5438](https://github.com/pyg-team/pytorch_geometric/pull/5438))
@@ -114,7 +115,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `nn.aggr.EquilibrumAggregation` implicit global layer ([#4522](https://github.com/pyg-team/pytorch_geometric/pull/4522))
 - Added support for graph-level outputs in `to_hetero` ([#4582](https://github.com/pyg-team/pytorch_geometric/pull/4582))
 - Added `CHANGELOG.md` ([#4581](https://github.com/pyg-team/pytorch_geometric/pull/4581))
-- Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 - Added `HeteroData` support to the `RemoveIsolatedNodes` transform ([#4479](https://github.com/pyg-team/pytorch_geometric/pull/4479))
 - Added `HeteroData.num_features` functionality ([#4504](https://github.com/pyg-team/pytorch_geometric/pull/4504))
 - Added support for projecting features before propagation in `SAGEConv` ([#4437](https://github.com/pyg-team/pytorch_geometric/pull/4437))
