@@ -181,9 +181,7 @@ class Net(torch.nn.Module):
     def forward(self, batch):
         ptr = batch.ptr.clone()
 
-        in_0 = (self.fc0(batch.x), batch.pos, batch.batch)
-
-        b1 = self.block1(*in_0)
+        b1 = self.block1(self.fc0(x), pos, batch)
         b1_decimated, ptr = decimate(b1, ptr, self.decimation)
 
         b2 = self.block2(*b1_decimated)
