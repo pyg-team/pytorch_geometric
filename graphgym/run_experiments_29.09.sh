@@ -6,6 +6,11 @@ python main.py --cfg configs/configs_29.09/vanilla_GCN_2_layer.yaml --repeat 3
 # then one for delay GCN on ogb-molhiv
 python main.py --cfg configs/configs_29.09/delay_GCN_2_layer.yaml --repeat 3
 
+tensorboard dev upload --logdir ./results/vanilla_GCN_2_layer \
+  --name "VanillaGCN 2MP layers" \
+  --description "Results for vanilla GCN with GraphGym/OGB defaults (except GCN not GeneralConv and fewer epochs) to compare with DelayGCN version" \
+  --one_shot
+
 # vanilla GCN on ogb-molhiv: 5 layers
 python main.py --cfg configs/configs_29.09/vanilla_GCN_5_layer.yaml --repeat 3
 
@@ -19,10 +24,6 @@ python main.py --cfg configs/configs_29.09/vanilla_GCN_10_layer.yaml --repeat 3
 python main.py --cfg configs/configs_29.09/delay_GCN_10_layer.yaml --repeat 3
 
 # then tensorboards
-tensorboard dev upload --logdir ./results/vanilla_GCN_2_layer \
-  --name "VanillaGCN 2MP layers" \
-  --description "Results for vanilla GCN with GraphGym/OGB defaults (except GCN not GeneralConv and fewer epochs) to compare with DelayGCN version" \
-  --one_shot
 
 tensorboard dev upload --logdir ./results/delay_GCN_2_layer \
   --name "DelayGCN 2MP layers" \
