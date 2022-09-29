@@ -1,9 +1,15 @@
+"""
+An implementation of RandLA-Net based on the paper:
+RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
+Reference: https://arxiv.org/abs/1911.11236
+"""
+
 import os.path as osp
 
 import torch
 import torch.nn.functional as F
 from randlanet_classification import DilatedResidualBlock, SharedMLP, decimate
-from torch.nn import Linear, Sequential
+from torch.nn import Linear
 from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
@@ -69,8 +75,8 @@ class Net(torch.nn.Module):
     ):
         super().__init__()
 
-        # An option to return logits instead of probas
         self.decimation = decimation
+        # An option to return logits instead of probas
         self.return_logits = return_logits
 
         # Authors use 8, which is a bottleneck

@@ -1,9 +1,15 @@
+"""
+An adaptation of RandLA-Net to the classification task, which was not
+addressed in the paper:
+RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
+Reference: https://arxiv.org/abs/1911.11236
+"""
 import os.path as osp
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Linear, Sequential
+from torch.nn import Linear
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
