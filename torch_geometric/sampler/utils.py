@@ -12,6 +12,25 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 # Edge Layout Conversion ######################################################
 
 
+def sort_csc(
+    row: Tensor,
+    col: Tensor,
+    src_node_time: OptTensor = None,
+) -> Tuple[Tensor, Tensor, Tensor]:
+    if src_node_time is None:
+        col, perm = col.sort()
+        return row[perm], col, perm
+    else:
+        # Multiplying by raw `datetime[64ns]` values may cause overflows.
+        # As such, we normalize time into range [0, 1) before sorting:
+        src_node_time = src_node_time.to(torch.double, copy=True)
+        min_time, max_time = src_node_time.min(), src_node_time.max() + 1
+        src_node_time.sub_(min_time).div_(max_time)
+
+        perm = src_node_time[row].add_(col.to(torch.double)).argsort()
+        return row[perm], col[perm], perm
+
+
 # TODO(manan) deprecate when FeatureStore / GraphStore unification is complete
 def to_csc(
     data: Union[Data, EdgeStorage],
@@ -40,21 +59,11 @@ def to_csc(
         colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:
-        (row, col) = data.edge_index
-        if not is_sorted and src_node_time is None:
-            perm = (col * data.size(0)).add_(row).argsort()
-            row = row[perm]
-        if not is_sorted and src_node_time is not None:
-            # Multiplying by raw `datetime[64ns]` values may cause overflows.
-            # As such, we normalize time into range [0, 1) before sorting:
-            src_node_time = src_node_time.to(torch.double, copy=True)
-            min_time, max_time = src_node_time.min(), src_node_time.max() + 1
-            src_node_time.sub_(min_time).div_(max_time)
+        row, col = data.edge_index
+        if not is_sorted:
+            row, col, perm = sort_csc(row, col, src_node_time)
+        colptr = torch.ops.torch_sparse.ind2ptr(col, data.size(1))
 
-            perm = src_node_time[row].add_(col.to(torch.double)).argsort()
-            row = row[perm]
-
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], data.size(1))
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
         colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
