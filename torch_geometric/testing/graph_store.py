@@ -25,7 +25,7 @@ class MyGraphStore(GraphStore):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         return self.store.get(self.key(edge_attr), None)
 
-    def _delete_edge_index(self, edge_attr: EdgeAttr) -> bool:
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         return self.store.pop(self.key(edge_attr), None) is not None
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:

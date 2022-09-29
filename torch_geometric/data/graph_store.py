@@ -154,10 +154,10 @@ class GraphStore:
         return edge_index
 
     @abstractmethod
-    def _delete_edge_index(self, edge_attr: EdgeAttr) -> bool:
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         pass
 
-    def delete_edge_index(self, *args, **kwargs) -> bool:
+    def remove_edge_index(self, *args, **kwargs) -> bool:
         r"""Synchronously deletes an :obj:`edge_index` tensor from the graph
         store.
 
@@ -165,7 +165,7 @@ class GraphStore:
             attr (EdgeAttr): The edge attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._delete_edge_index(edge_attr)
+        return self._remove_edge_index(edge_attr)
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
@@ -210,7 +210,7 @@ class GraphStore:
         return self.get_edge_index(key)
 
     def __delitem__(self, key: EdgeAttr):
-        return self.delete_edge_index(key)
+        return self.remove_edge_index(key)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -267,7 +267,7 @@ class GraphStore:
                     f"result, the converted 'edge_index' is not being "
                     f"replaced in the graph store.")
             elif attr.layout != layout:
-                self.delete_edge_index(attr)
+                self.remove_edge_index(attr)
                 attr = copy.copy(attr)
                 attr.layout = layout
                 self.put_edge_index((row, col), attr)
