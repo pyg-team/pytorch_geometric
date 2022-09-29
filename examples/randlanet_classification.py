@@ -134,9 +134,18 @@ def get_decimation_idx(ptr, decimation):
     batch_size = ptr.size(0) - 1
     bincount = ptr[1:] - ptr[:-1]
     decimated_bincount = torch.div(bincount, decimation, rounding_mode="floor")
+    # Decimation should not empty clouds completely.
+    decimated_bincount = torch.max(
+        torch.ones_like(decimated_bincount), decimated_bincount
+    )
     idx_decim = torch.cat(
         [
-            (ptr[i] + torch.randperm(decimated_bincount[i], device=ptr.device))
+            (
+                ptr[i]
+                + torch.randperm(bincount[i], device=ptr.device)[
+                    : decimated_bincount[i]
+                ]
+            )
             for i in range(batch_size)
         ],
         dim=0,
