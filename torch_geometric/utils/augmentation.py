@@ -114,7 +114,7 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
         edge_index (LongTensor): The edge indices.
         p (float, optional): Ratio of added edges to the existing edges.
             (default: :obj:`0.2`)
-        force_undirected (bool, optional): If set to  :obj:`True` added edges will be undirected. 
+        force_undirected (bool, optional): If set to  :obj:`True` added edges will be undirected.
             (default: :obj:`False`)
             (default: :obj:`False`)
         num_nodes (int, Tuple[int], optional): The overall number of nodes,
