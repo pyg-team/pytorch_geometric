@@ -9,11 +9,11 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, global_max_pool
+from torch_geometric.nn import MLP
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn_graph
-from torch_geometric.transforms.base_transform import BaseTransform
 from torch_geometric.utils import softmax
+from torch_geometric.nn.aggr import MaxAggregation
 
 # Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
 lrelu02_kwargs = {"negative_slope": 0.2}
@@ -179,6 +179,7 @@ class Net(torch.nn.Module):
         self.mlp_end = Sequential(
             SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
+        self.max_agg = MaxAggregation()
 
     def forward(self, x, pos, batch, ptr):
         x = x if x is not None else pos
@@ -189,7 +190,7 @@ class Net(torch.nn.Module):
         b2_decimated, _ = decimate(b2, ptr1, self.decimation)
 
         x = self.mlp1(b2_decimated[0])
-        x = global_max_pool(x, b2_decimated[2])
+        x = self.max_agg(x, b2_decimated[2])
 
         logits = self.mlp_end(x)
         if self.return_logits:
