@@ -171,7 +171,7 @@ class Net(torch.nn.Module):
         super().__init__()
         self.decimation = decimation
         self.return_logits = return_logits
-        self.fc0 = Sequential(Linear(in_features=num_features, out_features=8))
+        self.fc0 = Linear(in_features=num_features, out_features=8)
         # 2 DilatedResidualBlock converges better than 4 on ModelNet.
         self.block1 = DilatedResidualBlock(num_neighboors, 8, 32)
         self.block2 = DilatedResidualBlock(num_neighboors, 32, 128)
