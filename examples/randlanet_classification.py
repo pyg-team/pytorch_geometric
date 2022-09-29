@@ -91,7 +91,7 @@ class LocalFeatureAggregation(MessagePassing):
         return att_scores * local_features  # N * K, d_out
 
 
-class DilatedResidualBlock(MessagePassing):
+class DilatedResidualBlock(torch.nn.Module):
     def __init__(
         self,
         num_neighbors,
