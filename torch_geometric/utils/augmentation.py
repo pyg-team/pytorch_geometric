@@ -105,8 +105,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
 def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
                     num_nodes: Optional[Union[Tuple[int], int]] = None,
                     training: bool = True) -> Tuple[Tensor, Tensor]:
-    r"""Randomly adds edges of ratio :obj:`p` into the existing edges
-    :obj:`edge_index`.
+    r"""Randomly adds edges  to :obj:`edge_index`.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the added
     edge indices.
