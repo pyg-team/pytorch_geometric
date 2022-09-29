@@ -29,7 +29,8 @@ except ImportError:
 
 
 class NeighborSampler(BaseSampler):
-    r"""An implementation of an in-memory neighbor sampler."""
+    r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
+    by :class:`~torch_geometric.loader.NeighborLoader`."""
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -319,8 +320,6 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the nodes specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
         if isinstance(index, (list, tuple)):
             index = torch.tensor(index)
 
@@ -347,8 +346,6 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the edges specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
         query = [torch.stack(s, dim=0) for s in zip(*index)]
         edge_label_index = torch.stack(query[:2], dim=0)

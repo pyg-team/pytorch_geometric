@@ -63,15 +63,16 @@ class HeteroSamplerOutput:
 
 
 class BaseSampler(ABC):
-    r"""A base class that initializes a graph sampler and provides a `sample`
-    routine that performs sampling on an input list or tensor of node indices.
+    r"""A base class that initializes a graph sampler and provides
+    :meth:`sample_from_nodes` and :meth:`sample_from_edges` routines.
 
-    .. warning ::
-        Any data stored in the sampler will be _replicated_ across data loading
-        workers that use the sampler. That is, each data loading worker has its
-        own instance of a sampler. As such, it is recommended to limit the
-        amount of information stored in the sampler, and to initialize all this
-        information at `__init__`.
+    .. note ::
+
+        Any data stored in the sampler will be *replicated* across data loading
+        workers that use the sampler since each data loading worker holds its
+        own instance of a sampler.
+        As such, it is recommended to limit the amount of information stored in
+        the sampler.
     """
     @abstractmethod
     def sample_from_nodes(
@@ -79,9 +80,13 @@ class BaseSampler(ABC):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
-        r"""Performs sampling from the nodes specified in 'index', returning
-        a sampled subgraph in the specified output format."""
-        raise NotImplementedError
+        r"""Performs sampling from the nodes specified in :obj:`index`,
+        returning a sampled subgraph in the specified output format.
+
+        Args:
+            index (Tensor): The node indices to start sampling from.
+        """
+        pass
 
     @abstractmethod
     def sample_from_edges(
@@ -89,9 +94,16 @@ class BaseSampler(ABC):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
-        r"""Performs sampling from the edges specified in 'index', returning
-        a sampled subgraph in the specified output format."""
-        raise NotImplementedError
+        r"""Performs sampling from the edges specified in :obj:`index`,
+        returning a sampled subgraph in the specified output format.
+
+        Args:
+            index (Tuple[Tensor, Tensor, Tensor, Optional[Tensor]]): The (1)
+                source node indices, the (2) destination node indices, the (3)
+                edge labels and the (4) optional timestamp of edges to start
+                sampling from.
+        """
+        pass
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
@@ -99,6 +111,6 @@ class BaseSampler(ABC):
         original graph, this function is expected to return the permutation
         tensor that defines the permutation from the edges in the original
         graph and the edges used in the sampler. If no such permutation was
-        applied, a default None tensor is returned. For heterogeneous graphs,
-        the expected return type is a permutation tensor for each edge type."""
+        applied, :obj:`None` is returned. For heterogeneous graphs, the
+        expected return type is a permutation tensor for each edge type."""
         return None
