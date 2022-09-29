@@ -88,10 +88,10 @@ class Net(torch.nn.Module):
         self.fp3 = FPModule(1, SharedMLP([256 + 128, 128]))
         self.fp2 = FPModule(1, SharedMLP([128 + 32, 32]))
         self.fp1 = FPModule(1, SharedMLP([32 + 32, d_bottleneck]))
-        self.mlp_end = Sequential(
-            SharedMLP([d_bottleneck, 64, 32], dropout=[0.0, 0.5]),
-            Linear(32, num_classes),
+        self.mlp_classif = SharedMLP(
+            [d_bottleneck, 64, 32], dropout=[0.0, 0.5]
         )
+        self.fc_classif = Linear(32, num_classes)
 
     def forward(self, x, pos, batch, ptr):
         x = x if x is not None else pos
@@ -119,13 +119,13 @@ class Net(torch.nn.Module):
         fp2_out = self.fp2(*fp3_out, *b1_out_decimated)
         fp1_out = self.fp1(*fp2_out, *b1_out)
 
-        logits = self.mlp_end(fp1_out[0])
+        x = self.mlp_classif(fp1_out[0])
+        logits = self.fc_classif(x)
 
         if self.return_logits:
             return logits
 
         probas = logits.log_softmax(dim=-1)
-
         return probas
 
 

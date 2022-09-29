@@ -180,10 +180,9 @@ class Net(torch.nn.Module):
         self.block1 = DilatedResidualBlock(num_neighboors, 8, 32)
         self.block2 = DilatedResidualBlock(num_neighboors, 32, 128)
         self.mlp1 = SharedMLP([128, 128])
-        self.mlp_end = Sequential(
-            SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
-        )
         self.max_agg = MaxAggregation()
+        self.mlp_classif = SharedMLP([128, 32], dropout=[0.5])
+        self.fc_classif = Linear(32, num_classes)
 
     def forward(self, x, pos, batch, ptr):
         x = x if x is not None else pos
@@ -196,7 +195,9 @@ class Net(torch.nn.Module):
         x = self.mlp1(b2_decimated[0])
         x = self.max_agg(x, b2_decimated[2])
 
-        logits = self.mlp_end(x)
+        x = self.mlp_classif(x)
+        logits = self.fc_classif(x)
+
         if self.return_logits:
             return logits
         probas = logits.log_softmax(dim=-1)
