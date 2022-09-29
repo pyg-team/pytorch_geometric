@@ -3,6 +3,8 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from .num_nodes import maybe_num_nodes
+
 
 def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Randomly shuffle the feature matrix :obj:`x` along the
@@ -49,7 +51,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
 
     Args:
         x (FloatTensor): The feature matrix.
-        p (float, optional): Masking probability. (default: :obj:`0.5`)
+        p (float, optional): Masking ratio. (default: :obj:`0.5`)
         column_wise (bool, optional): If set to :obj:`True`, this operation
             mask columns of the feature. Otherwise, the masked features
             are sampled uniformly. (default: :obj:`True`)
@@ -74,7 +76,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
                 [ True, False,  True],
                 [ True, False,  True]])
 
-        >>> # Masked features are sampled uniformly
+        >>> # Masked features are uniformly sampled
         >>> x, feat_mask = mask_feature(x, column_wise=False)
         >>> x
         tensor([[0., 0., 0.],
@@ -105,7 +107,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
 def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
                     num_nodes: Optional[Union[Tuple[int], int]] = None,
                     training: bool = True) -> Tuple[Tensor, Tensor]:
-    r"""Randomly adds edges  to :obj:`edge_index`.
+    r"""Randomly adds edges to :obj:`edge_index`.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the added
     edge indices.
@@ -114,8 +116,8 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
         edge_index (LongTensor): The edge indices.
         p (float, optional): Ratio of added edges to the existing edges.
             (default: :obj:`0.2`)
-        force_undirected (bool, optional): If set to  :obj:`True` added edges will be undirected.
-            (default: :obj:`False`)
+        force_undirected (bool, optional): If set to :obj:`True`,
+            added edges will be undirected.
             (default: :obj:`False`)
         num_nodes (int, Tuple[int], optional): The overall number of nodes,
             *i.e.* :obj:`max_val + 1`, or the number of source and
