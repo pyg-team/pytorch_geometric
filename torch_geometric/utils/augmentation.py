@@ -172,8 +172,8 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
 
     num_nodes = (num_nodes,
                  num_nodes) if not isinstance(num_nodes, tuple) else num_nodes
-    num_src_nodes = num_nodes[0] or edge_index[0].max().item() + 1
-    num_dst_nodes = num_nodes[1] or edge_index[1].max().item() + 1
+    num_src_nodes = maybe_num_nodes(edge_index, num_nodes[0])
+    num_dst_nodes = maybe_num_nodes(edge_index, num_nodes[1])
 
     num_edges_to_add = round(edge_index.size(1) * p)
     row = torch.randint(0, num_src_nodes, size=(num_edges_to_add, ))
