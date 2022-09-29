@@ -58,7 +58,7 @@ def test_add_random_edge():
     assert out[1].tolist() == [[3, 2, 3], [1, 2, 2]]
 
     torch.manual_seed(6)
-    out = add_random_edge(edge_index, p=0.5, force_undirected=1)
+    out = add_random_edge(edge_index, p=0.5, force_undirected=True)
     assert out[0].tolist() == [[0, 1, 1, 2, 2, 3, 2, 1, 3, 0, 2, 1],
                                [1, 0, 2, 1, 3, 2, 0, 2, 1, 2, 1, 3]]
     assert out[1].tolist() == [[2, 1, 3, 0, 2, 1], [0, 2, 1, 2, 1, 3]]
