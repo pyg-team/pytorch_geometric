@@ -22,14 +22,12 @@ from torch_geometric.nn import knn_interpolate
 category = "Airplane"  # Pass in `None` to train on all categories.
 category_num_classes = 4  # 4 for Airplane - see ShapeNet for details
 path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
-transform = T.Compose(
-    [
-        T.RandomJitter(0.01),
-        T.RandomRotate(15, axis=0),
-        T.RandomRotate(15, axis=1),
-        T.RandomRotate(15, axis=2),
-    ]
-)
+transform = T.Compose([
+    T.RandomJitter(0.01),
+    T.RandomRotate(15, axis=0),
+    T.RandomRotate(15, axis=1),
+    T.RandomRotate(15, axis=2),
+])
 pre_transform = T.NormalizeScale()
 train_dataset = ShapeNet(
     path,
@@ -38,20 +36,16 @@ train_dataset = ShapeNet(
     transform=transform,
     pre_transform=pre_transform,
 )
-test_dataset = ShapeNet(
-    path, category, split="test", pre_transform=pre_transform
-)
-train_loader = DataLoader(
-    train_dataset, batch_size=12, shuffle=True, num_workers=6
-)
-test_loader = DataLoader(
-    test_dataset, batch_size=12, shuffle=False, num_workers=6
-)
+test_dataset = ShapeNet(path, category, split="test",
+                        pre_transform=pre_transform)
+train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True,
+                          num_workers=6)
+test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
+                         num_workers=6)
 
 
 class FPModule(torch.nn.Module):
     """Upsampling with a skip connection."""
-
     def __init__(self, k, nn):
         super().__init__()
         self.k = k
@@ -94,9 +88,8 @@ class Net(torch.nn.Module):
         self.fp3 = FPModule(1, SharedMLP([256 + 128, 128]))
         self.fp2 = FPModule(1, SharedMLP([128 + 32, 32]))
         self.fp1 = FPModule(1, SharedMLP([32 + 32, d_bottleneck]))
-        self.mlp_classif = SharedMLP(
-            [d_bottleneck, 64, 32], dropout=[0.0, 0.5]
-        )
+        self.mlp_classif = SharedMLP([d_bottleneck, 64, 32],
+                                     dropout=[0.0, 0.5])
         self.fc_classif = Linear(32, num_classes)
 
     def forward(self, x, pos, batch, ptr):
@@ -156,10 +149,8 @@ def train():
         total_nodes += data.num_nodes
 
         if (i + 1) % 10 == 0:
-            print(
-                f"[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} "
-                f"Train Acc: {correct_nodes / total_nodes:.4f}"
-            )
+            print(f"[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} "
+                  f"Train Acc: {correct_nodes / total_nodes:.4f}")
             total_loss = correct_nodes = total_nodes = 0
 
 
@@ -174,9 +165,8 @@ def test(loader):
         outs = model(data.x, data.pos, data.batch, data.ptr)
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
-        for out, y, category in zip(
-            outs.split(sizes), data.y.split(sizes), data.category.tolist()
-        ):
+        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
+                                    data.category.tolist()):
             category = list(ShapeNet.seg_classes.keys())[category]
             part = ShapeNet.seg_classes[category]
             part = torch.tensor(part, device=device)
