@@ -180,10 +180,10 @@ class Net(torch.nn.Module):
             SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
         )
 
-    def forward(self, batch):
-        x = batch.x if batch.x is not None else batch.pos
-        b1 = self.block1(self.fc0(x), batch.pos, batch.batch)
-        b1_decimated, ptr1 = decimate(b1, batch.ptr, self.decimation)
+    def forward(self, x, pos, batch, ptr):
+        x = x if x is not None else pos
+        b1 = self.block1(self.fc0(x), pos, batch)
+        b1_decimated, ptr1 = decimate(b1, ptr, self.decimation)
 
         b2 = self.block2(*b1_decimated)
         b2_decimated, _ = decimate(b2, ptr1, self.decimation)
@@ -204,7 +204,9 @@ def train(epoch):
     for data in tqdm(train_loader):
         data = data.to(device)
         optimizer.zero_grad()
-        loss = F.nll_loss(model(data), data.y)
+        loss = F.nll_loss(
+            model(data.x, data.pos, data.batch, data.ptr), data.y
+        )
         loss.backward()
         optimizer.step()
 
@@ -216,7 +218,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
-            pred = model(data).argmax(dim=-1)
+            pred = model(data.x, data.pos, data.batch, data.ptr).argmax(dim=-1)
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
 

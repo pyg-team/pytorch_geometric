@@ -93,11 +93,11 @@ class Net(torch.nn.Module):
             Linear(32, num_classes),
         )
 
-    def forward(self, batch):
-        x = batch.x if batch.x is not None else batch.pos
+    def forward(self, x, pos, batch, ptr):
+        x = x if x is not None else pos
 
-        b1_out = self.block1(self.fc0(x), batch.pos, batch.batch)
-        b1_out_decimated, ptr1 = decimate(b1_out, batch.ptr, self.decimation)
+        b1_out = self.block1(self.fc0(x), pos, batch)
+        b1_out_decimated, ptr1 = decimate(b1_out, ptr, self.decimation)
 
         b2_out = self.block2(*b1_out_decimated)
         b2_out_decimated, ptr2 = decimate(b2_out, ptr1, self.decimation)
@@ -141,7 +141,7 @@ def train():
     for i, data in tqdm(enumerate(train_loader)):
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data)
+        out = model(data.x, data.pos, data.batch, data.ptr)
         loss = F.nll_loss(out, data.y)
         loss.backward()
         optimizer.step()
@@ -165,7 +165,7 @@ def test(loader):
     y_map = torch.empty(loader.dataset.num_classes, device=device).long()
     for data in loader:
         data = data.to(device)
-        outs = model(data)
+        outs = model(data.x, data.pos, data.batch, data.ptr)
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
         for out, y, category in zip(
