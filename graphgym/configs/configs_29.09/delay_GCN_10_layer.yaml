@@ -21,7 +21,7 @@ model:
   graph_pooling: add
 gnn:
   layers_pre_mp: 1
-  layers_mp: 2            # *
+  layers_mp: 10            # *
   layers_post_mp: 1
   dim_inner: 300
   layer_type: my_gcnconv  # *
@@ -37,4 +37,4 @@ optim:
   max_epoch: 1 # * #################### FOR INITIAL TEST PURPOSES ONLY ##############################
 # ***
 delay:
-  max_k: 2 # graph diameter is 12 but need it to stop at num_layers regardless
+  max_k: 10 # graph diameter is 12 but need it to stop at num_layers regardless
