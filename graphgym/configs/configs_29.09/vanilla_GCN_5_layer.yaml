@@ -34,4 +34,4 @@ gnn:
 optim:
   optimizer: adam
   base_lr: 0.01
-  max_epoch: 1 # * #################### FOR INITIAL TEST PURPOSES ONLY ##############################
+  max_epoch: 20 # * #################### FOR INITIAL TEST PURPOSES ONLY ##############################
