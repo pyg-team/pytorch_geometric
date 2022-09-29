@@ -23,6 +23,7 @@ bn099_kwargs = {"momentum": 0.01, "eps": 1e-6}
 
 class SharedMLP(MLP):
     """SharedMLP following RandLA-Net paper."""
+
     def __init__(self, *args, **kwargs):
         # BN + Act always active even at last layer.
         kwargs["plain_last"] = False
@@ -37,6 +38,7 @@ class SharedMLP(MLP):
 
 class GlobalPooling(torch.nn.Module):
     """Global Pooling to adapt RandLA-Net to a classification task."""
+
     def forward(self, x, pos, batch):
         x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
@@ -46,11 +48,13 @@ class GlobalPooling(torch.nn.Module):
 
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
+
     def __init__(self, d_out, num_neighbors):
         super().__init__(aggr="add")
         self.mlp_encoder = SharedMLP([10, d_out // 2])
-        self.mlp_attention = SharedMLP([d_out, d_out], bias=False, act=None,
-                                       norm=None)
+        self.mlp_attention = SharedMLP(
+            [d_out, d_out], bias=False, act=None, norm=None
+        )
         self.mlp_post_attention = SharedMLP([d_out, d_out])
         self.num_neighbors = num_neighbors
 
@@ -59,8 +63,9 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.mlp_post_attention(out)  # N, d_out
         return out
 
-    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
-                index: Tensor) -> Tensor:
+    def message(
+        self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor, index: Tensor
+    ) -> Tensor:
         """Local Spatial Encoding (locSE) and attentive pooling of features.
 
         Args:
@@ -77,11 +82,13 @@ class LocalFeatureAggregation(MessagePassing):
         # Encode local neighboorhod structural information
         pos_diff = pos_j - pos_i
         distance = torch.sqrt((pos_diff * pos_diff).sum(1, keepdim=True))
-        relative_infos = torch.cat([pos_i, pos_j, pos_diff, distance],
-                                   dim=1)  # N * K, d
+        relative_infos = torch.cat(
+            [pos_i, pos_j, pos_diff, distance], dim=1
+        )  # N * K, d
         local_spatial_encoding = self.mlp_encoder(relative_infos)  # N * K, d
-        local_features = torch.cat([x_j, local_spatial_encoding],
-                                   dim=1)  # N * K, 2d
+        local_features = torch.cat(
+            [x_j, local_spatial_encoding], dim=1
+        )  # N * K, 2d
 
         # Attention will weight the different features of x
         # along the neighborhood dimension.
@@ -136,12 +143,18 @@ def get_decimation_idx(ptr, decimation):
 
     """
     batch_size = ptr.size(0) - 1
-    num_nodes = torch.Tensor([ptr[i + 1] - ptr[i]
-                              for i in range(batch_size)]).long()
+    num_nodes = torch.Tensor(
+        [ptr[i + 1] - ptr[i] for i in range(batch_size)]
+    ).long()
     decimated_num_nodes = num_nodes // decimation
     idx_decim = torch.cat(
-        [(ptr[i] + torch.randperm(decimated_num_nodes[i], device=ptr.device))
-         for i in range(batch_size)],
+        [
+            (
+                ptr[i]
+                + torch.randperm(decimated_num_nodes[i], device=ptr.device)
+            )
+            for i in range(batch_size)
+        ],
         dim=0,
     )
     # Update the ptr for future decimations
@@ -175,13 +188,14 @@ class Net(torch.nn.Module):
         self.block2 = DilatedResidualBlock(num_neighboors, 32, 128)
         self.mlp1 = SharedMLP([128, 128])
         self.pool = GlobalPooling()
-        self.mlp_end = Sequential(SharedMLP([128, 32], dropout=[0.5]),
-                                  Linear(32, num_classes))
+        self.mlp_end = Sequential(
+            SharedMLP([128, 32], dropout=[0.5]), Linear(32, num_classes)
+        )
 
     def forward(self, batch):
         ptr = batch.ptr.clone()
 
-        b1 = self.block1(self.fc0(x), pos, batch)
+        b1 = self.block1(self.fc0(batch.x), batch.pos, batch.batch)
         b1_decimated, ptr = decimate(b1, ptr, self.decimation)
 
         b2 = self.block2(*b1_decimated)
@@ -199,6 +213,7 @@ class Net(torch.nn.Module):
 
 class SetPosAsXIfNoX(BaseTransform):
     """Avoid empty x Tensor by using positions as features."""
+
     def __call__(self, data):
         if not data.x:
             data.x = data.pos
@@ -229,22 +244,27 @@ def test(loader):
 
 
 if __name__ == "__main__":
-    path = osp.join(osp.dirname(osp.realpath(__file__)), "..",
-                    "data/ModelNet10")
+    path = osp.join(
+        osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10"
+    )
     pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024), SetPosAsXIfNoX()])
+        [T.SamplePoints(1024), SetPosAsXIfNoX()]
+    )
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,
-                              num_workers=6)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
-                             num_workers=6)
+    train_loader = DataLoader(
+        train_dataset, batch_size=32, shuffle=True, num_workers=6
+    )
+    test_loader = DataLoader(
+        test_dataset, batch_size=32, shuffle=False, num_workers=6
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = Net(3, train_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
-                                                gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, step_size=20, gamma=0.5
+    )
 
     for epoch in range(1, 201):
         train(epoch)
