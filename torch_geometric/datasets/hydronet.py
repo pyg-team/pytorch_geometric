@@ -29,7 +29,9 @@ class HydroNet(InMemoryDataset):
 
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_filter: Optional[Callable] = None,
+                 max_num_workers: int = 8):
+        self.max_num_workers = max_num_workers
         super().__init__(root, transform, pre_transform, pre_filter)
 
         if not hasattr(self, '_partitions'):
@@ -66,7 +68,8 @@ class HydroNet(InMemoryDataset):
 
     def process(self):
         self._partitions = process_map(self._create_partitions,
-                                       self.raw_file_names, max_workers=16,
+                                       self.raw_file_names,
+                                       max_workers=self.max_num_workers,
                                        position=0, leave=True)
 
     def _create_partitions(self, file):
@@ -81,12 +84,15 @@ class HydroNet(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
-        partition_sizes = torch.tensor([len(p) for p in self._partitions])
-        offsets = partition_sizes.cumsum(dim=0)
-        offsets = offsets.roll(shifts=1, dims=0)
-        offsets[0] = 0
-        partition_idx = torch.nonzero((idx - offsets) >= 0)[-1]
-        local_idx = idx - offsets[partition_idx]
+        if not hasattr(self, '_offsets'):
+            partition_sizes = torch.tensor([len(p) for p in self._partitions])
+            offsets = partition_sizes.cumsum(dim=0)
+            offsets = offsets.roll(shifts=1, dims=0)
+            offsets[0] = 0
+            self._offsets = offsets
+
+        partition_idx = torch.nonzero((idx - self._offsets) >= 0)[-1]
+        local_idx = int(idx - offsets[partition_idx])
         return self._partitions[partition_idx].get(local_idx)
 
 
@@ -137,7 +143,7 @@ class Partition(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
         self.name = name
         self.num_clusters = int(name[1:name.find('_')])
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter, log=False)
 
     @property
     def raw_file_names(self) -> List[str]:

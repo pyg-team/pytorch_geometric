@@ -68,7 +68,7 @@ class Dataset(torch.utils.data.Dataset):
     def __init__(self, root: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_filter: Optional[Callable] = None, log: bool = True):
         super().__init__()
 
         if isinstance(root, str):
@@ -78,6 +78,7 @@ class Dataset(torch.utils.data.Dataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+        self.log = log
         self._indices: Optional[Sequence] = None
 
         if self.download.__qualname__.split('.')[0] != 'Dataset':
@@ -197,7 +198,8 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        print('Processing...', file=sys.stderr)
+        if self.log:
+            print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
         self.process()
@@ -207,7 +209,8 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        print('Done!', file=sys.stderr)
+        if self.log:
+            print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""
