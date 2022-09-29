@@ -4,7 +4,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data.graph_store import EdgeLayout, GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -80,7 +80,7 @@ class NeighborSampler(BaseSampler):
 
             # Convert the graph data into a suitable format for sampling.
             out = to_csc(data, device='cpu', share_memory=share_memory,
-                         is_sorted=is_sorted)
+                         is_sorted=is_sorted, src_node_time=self.node_time)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
@@ -99,7 +99,8 @@ class NeighborSampler(BaseSampler):
 
             # Obtain CSC representations for in-memory sampling:
             out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
-                                is_sorted=is_sorted)
+                                is_sorted=is_sorted,
+                                node_time_dict=self.node_time_dict)
             colptr_dict, row_dict, perm_dict = out
 
             # Conversions to/from C++ string type:
@@ -125,16 +126,34 @@ class NeighborSampler(BaseSampler):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             feature_store, graph_store = data
 
+            # Obtain all node and edge metadata:
+            node_attrs = feature_store.get_all_tensor_attrs()
+            edge_attrs = graph_store.get_all_edge_attrs()
+
             # TODO support `collect` on `FeatureStore`:
             self.node_time_dict = None
             if time_attr is not None:
+                # If the `time_attr` is present, we expect that `GraphStore`
+                # holds all edges sorted by destination, and within local
+                # neighborhoods, node indices should be sorted by time.
+                # TODO (matthias, manan) Find an alternative way to ensure
+                for edge_attr in edge_attrs:
+                    if edge_attr.layout == EdgeLayout.CSR:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are stored "
+                            "in either COO or CSC layout")
+                    if not edge_attr.is_sorted:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are "
+                            "sorted by destination, and by source time "
+                            "within local neighborhoods")
+
                 # We need to obtain all features with 'attr_name=time_attr'
                 # from the feature store and store them in node_time_dict. To
                 # do so, we make an explicit feature store GET call here with
                 # the relevant 'TensorAttr's
                 time_attrs = [
-                    attr for attr in feature_store.get_all_tensor_attrs()
-                    if attr.attr_name == time_attr
+                    attr for attr in node_attrs if attr.attr_name == time_attr
                 ]
                 for attr in time_attrs:
                     attr.index = None
@@ -143,10 +162,6 @@ class NeighborSampler(BaseSampler):
                     time_attr.group_name: time_tensor
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
-
-            # Obtain all node and edge metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
-            edge_attrs = graph_store.get_all_edge_attrs()
 
             self.node_types = list(
                 set(node_attr.group_name for node_attr in node_attrs))
