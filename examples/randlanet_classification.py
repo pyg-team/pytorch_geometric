@@ -223,7 +223,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
-            pred = model(data).max(1)[1]
+            pred = model(data).argmax(dim=-1)
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
 
