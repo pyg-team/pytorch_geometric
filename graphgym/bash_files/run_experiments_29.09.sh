@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# Test for running a single experiment. --repeat means run how many different random seeds.
-python main.py --cfg configs/pyg/example_node.yaml --repeat 3 # node classification
-python main.py --cfg configs/pyg/example_link.yaml --repeat 3 # link prediction
-python main.py --cfg configs/pyg/example_graph.yaml --repeat 3 # graph classification
-
-
 # we want one for regular vanilla GCN on ogb-molhiv
 python main.py --cfg configs/configs_29.09/vanilla_GCN_2_layer.yaml --repeat 3
 
