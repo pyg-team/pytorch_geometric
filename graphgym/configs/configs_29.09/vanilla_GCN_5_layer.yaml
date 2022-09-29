@@ -1,4 +1,4 @@
-out_dir: results
+out_dir: my_results
 accelerator: cuda # *
 dataset:
   format: OGB
