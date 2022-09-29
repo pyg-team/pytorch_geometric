@@ -92,7 +92,7 @@ class HydroNet(InMemoryDataset):
             self._offsets = offsets
 
         partition_idx = torch.nonzero((idx - self._offsets) >= 0)[-1]
-        local_idx = int(idx - offsets[partition_idx])
+        local_idx = int(idx - self._offsets[partition_idx])
         return self._partitions[partition_idx].get(local_idx)
 
 
