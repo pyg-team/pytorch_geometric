@@ -94,20 +94,19 @@ class Net(torch.nn.Module):
         )
 
     def forward(self, batch):
-        ptr = batch.ptr.clone()
         x = batch.x if batch.x is not None else batch.pos
 
         b1_out = self.block1(self.fc0(x), batch.pos, batch.batch)
-        b1_out_decimated, ptr = decimate(b1_out, ptr, self.decimation)
+        b1_out_decimated, ptr1 = decimate(b1_out, batch.ptr, self.decimation)
 
         b2_out = self.block2(*b1_out_decimated)
-        b2_out_decimated, ptr = decimate(b2_out, ptr, self.decimation)
+        b2_out_decimated, ptr2 = decimate(b2_out, ptr1, self.decimation)
 
         b3_out = self.block3(*b2_out_decimated)
-        b3_out_decimated, ptr = decimate(b3_out, ptr, self.decimation)
+        b3_out_decimated, ptr3 = decimate(b3_out, ptr2, self.decimation)
 
         b4_out = self.block4(*b3_out_decimated)
-        b4_out_decimated, ptr = decimate(b4_out, ptr, self.decimation)
+        b4_out_decimated, _ = decimate(b4_out, ptr3, self.decimation)
 
         mlp_out = (
             self.mlp_summit(b4_out_decimated[0]),

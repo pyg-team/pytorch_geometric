@@ -181,13 +181,12 @@ class Net(torch.nn.Module):
         )
 
     def forward(self, batch):
-        ptr = batch.ptr.clone()
         x = batch.x if batch.x is not None else batch.pos
         b1 = self.block1(self.fc0(x), batch.pos, batch.batch)
-        b1_decimated, ptr = decimate(b1, ptr, self.decimation)
+        b1_decimated, ptr1 = decimate(b1, batch.ptr, self.decimation)
 
         b2 = self.block2(*b1_decimated)
-        b2_decimated, _ = decimate(b2, ptr, self.decimation)
+        b2_decimated, _ = decimate(b2, ptr1, self.decimation)
 
         x = self.mlp1(b2_decimated[0])
         x = global_max_pool(x, b2_decimated[2])
