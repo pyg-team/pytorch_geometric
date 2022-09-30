@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Add support for filling labels with dummy values in `HeteroData.to_homogeneous()` ([#5540](https://github.com/pyg-team/pytorch_geometric/pull/5540))
 - Added `temporal_strategy` option to `neighbor_sample` ([#5576](https://github.com/pyg-team/pyg-lib/pull/5576))
 - Added `torch_geometric.sampler` package to docs ([#5563](https://github.com/pyg-team/pytorch_geometric/pull/5563))
 - Added the `DGraphFin` dynamic graph dataset ([#5504](https://github.com/pyg-team/pytorch_geometric/pull/5504))
