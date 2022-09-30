@@ -168,7 +168,7 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
 
     device = edge_index.device
     if not training or p == 0.0:
-        edge_index_to_add = torch.tensor([], device=device).view(2, 0)
+        edge_index_to_add = torch.tensor([[], []], device=device)
         return edge_index, edge_index_to_add
 
     if not isinstance(num_nodes, (tuple, list)):
