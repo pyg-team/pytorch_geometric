@@ -40,20 +40,21 @@ def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
     return x[perm], perm
 
 
-def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
+def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
                  training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Randomly masks feature from the feature matrix
     :obj:`x` with probability :obj:`p` using samples from
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`x`, (2) the feature
-    mask with the same shape as :obj:`x`, indicating where features are retained.
+    mask with the same shape as :obj:`x`, indicating where features
+    are retained.
 
     Args:
         x (FloatTensor): The feature matrix.
         p (float, optional): The masking ratio. (default: :obj:`0.5`)
-        column_wise (bool, optional): If set to :obj:`True`, masks whole feature
-             columns with probability :obj:`p`.  (default: :obj:`True`)
+        mode (str, optional): The masked scheme to use for feature masking.
+            (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`). (default: :obj:`col`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -62,28 +63,39 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
     Examples:
 
         >>> # Masked features are column-wise sampled
-        >>> x = torch.tensor([[0, 1, 2],
-        ...                   [3, 4, 5],
-        ...                   [6, 7, 8]], dtype=torch.float)
+        >>> x = torch.tensor([[1, 2, 3],
+        ...                   [4, 5, 6],
+        ...                   [7, 8, 9]], dtype=torch.float)
         >>> x, feat_mask = mask_feature(x)
         >>> x
-        tensor([[0., 0., 2.],
-                [3., 0., 5.],
-                [6., 0., 8.]]),
+        tensor([[1., 0., 3.],
+                [4., 0., 6.],
+                [7., 0., 9.]]),
         >>> feat_mask
-        tensor([[ True, False,  True],
-                [ True, False,  True],
-                [ True, False,  True]])
+        tensor([[True, False, True],
+                [True, False, True],
+                [True, False, True]])
+
+        >>> # Masked features are row-wise sampled
+        >>> x, feat_mask = mask_feature(x, mode='row')
+        >>> x
+        tensor([[1., 2., 3.],
+                [0., 0., 0.],
+                [7., 8., 9.]]),
+        >>> feat_mask
+        tensor([[True, True, True],
+                [False, False, False],
+                [True, True, True]])
 
         >>> # Masked features are uniformly sampled
-        >>> x, feat_mask = mask_feature(x, column_wise=False)
+        >>> x, feat_mask = mask_feature(x, mode='all')
         >>> x
         tensor([[0., 0., 0.],
-                [3., 0., 5.],
-                [0., 0., 8.]])
+                [4., 0., 6.],
+                [0., 0., 9.]])
         >>> feat_mask
         tensor([[False, False, False],
-                [ True, False,  True],
+                [True, False,  True],
                 [False, False,  True]])
     """
     if p < 0. or p > 1.:
@@ -91,15 +103,18 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
                          f'(got {p}')
     if not training or p == 0.0:
         return x, torch.ones_like(x, dtype=torch.bool)
+    assert mode in ['row', 'col', 'all']
 
-    if column_wise:
+    if mode == 'row':
+        mask = torch.rand(x.size(0), device=x.device) >= p
+        mask = mask.unsqueeze(1).tile(1, x.size(1))
+    elif mode == 'col':
         mask = torch.rand(x.size(1), device=x.device) >= p
         mask = mask.tile(x.size(0), 1)
     else:
         mask = torch.randn_like(x) >= p
 
-    # To avoid inplace operation
-    x = x * (mask.float())
+    x = x.masked_fill(~mask, 0.)
     return x, mask
 
 
@@ -165,6 +180,9 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
     if p < 0. or p > 1.:
         raise ValueError(f'Ratio of added edges has to be between 0 and 1 '
                          f'(got {p}')
+    if force_undirected and isinstance(num_nodes, (tuple, list)):
+        raise RuntimeError('`force_undirected` is not supported for'
+                           ' heterogeneous graphs')
 
     device = edge_index.device
     if not training or p == 0.0:
@@ -181,10 +199,9 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
     col = torch.randint(0, num_dst_nodes, size=(num_edges_to_add, ))
 
     if force_undirected:
-        edge_index_to_add = torch.stack(
-            [torch.cat([row, col], dim=0),
-             torch.cat([col, row], dim=0)], dim=0).to(device)
-    else:
-        edge_index_to_add = torch.stack([row, col], dim=0).to(device)
+        mask = row < col
+        row, col = row[mask], col[mask]
+        row, col = torch.cat([row, col]), torch.cat([col, row])
+    edge_index_to_add = torch.stack([row, col], dim=0).to(device)
     edge_index = torch.cat([edge_index, edge_index_to_add], dim=1)
     return edge_index, edge_index_to_add

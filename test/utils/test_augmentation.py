@@ -37,7 +37,7 @@ def test_mask_feature():
                                [True, True, False]]
 
     torch.manual_seed(5)
-    out = mask_feature(x, column_wise=False)
+    out = mask_feature(x, mode='all')
     assert out[0].tolist() == [[0.0, 0.0, 0.0], [3.0, 0.0, 5.0],
                                [0.0, 0.0, 8.0]]
     assert out[1].tolist() == [[False, False, False], [True, False, True],
