@@ -51,7 +51,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
 
     Args:
         x (FloatTensor): The feature matrix.
-        p (float, optional): Masking ratio. (default: :obj:`0.5`)
+        p (float, optional): The masking ratio. (default: :obj:`0.5`)
         column_wise (bool, optional): If set to :obj:`True`, masks whole feature
              columns with probability :obj:`p`.  (default: :obj:`True`)
         training (bool, optional): If set to :obj:`False`, this operation is a
