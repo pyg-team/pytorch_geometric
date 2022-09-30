@@ -43,18 +43,14 @@ def typecheck(f: Callable) -> Callable:
                 if not isinstance(value, Data):
                     raise TypeError(f"{value} is not a pyg Data object")
                 attributes = value._store
-                if (
-                    hint.check_only_specified
-                    and set(attributes.keys()) != hint.attributes
-                ):
+                if (hint.check_only_specified
+                        and set(attributes.keys()) != hint.attributes):
                     raise TypeError(
                         f"{argument_name} Data attributes {set(attributes.keys())} do not match required set {hint.attributes}"
                     )
 
-                if (
-                    not hint.check_only_specified
-                    and not hint.attributes.issubset(attributes)
-                ):
+                if (not hint.check_only_specified
+                        and not hint.attributes.issubset(attributes)):
                     raise TypeError(
                         f"{argument_name} is missing some attributes from {hint.attributes}"
                     )
@@ -67,13 +63,16 @@ def typecheck(f: Callable) -> Callable:
                         if isinstance(dt, _AnnotatedType):
                             base_cls, *all_metadata = get_args(dt)
                             for metadata in all_metadata:
-                                if isinstance(metadata, dict) and "__torchtyping__" in metadata:
+                                if isinstance(
+                                        metadata, dict
+                                ) and "__torchtyping__" in metadata:
                                     break
                             _check_tensor(colname, value._store[colname],
                                           base_cls, metadata)
                         # Otherwise just check type
                         else:
-                            if not np.issubdtype(dtypes[colname], np.dtype(dt)):
+                            if not np.issubdtype(dtypes[colname],
+                                                 np.dtype(dt)):
                                 raise TypeError(
                                     f"{dtypes[colname]} is not a subtype of {dt} for graph attribute {colname}"
                                 )
@@ -99,20 +98,18 @@ def _resolve_type(t: Any) -> Any:
 
 class DataMeta(GenericMeta):
     """Metaclass for Data (internal)."""
-
     def __new__(metacls, name, bases, namespace, **kargs):
         return super().__new__(metacls, name, bases, namespace)
 
     @_tp_cache
     def __getitem__(self, parameters):
-        if hasattr(self, "__origin__") and (
-            self.__origin__ is not None or self._gorg is not Graph
-        ):
+        if hasattr(self, "__origin__") and (self.__origin__ is not None
+                                            or self._gorg is not Graph):
             return super().__getitem__(parameters)
         if parameters == ():
-            return super().__getitem__((_TypingEmpty,))
+            return super().__getitem__((_TypingEmpty, ))
         if not isinstance(parameters, tuple):
-            parameters = (parameters,)
+            parameters = (parameters, )
         parameters = list(parameters)
 
         check_only_specified = True
@@ -129,7 +126,9 @@ class DataMeta(GenericMeta):
         return meta
 
 
-def _get_attribute_dtypes(p: Union[str, slice, list, set, DataMeta]) -> Tuple[Set[str], Dict[str, Any]]:
+def _get_attribute_dtypes(
+    p: Union[str, slice, list, set,
+             DataMeta]) -> Tuple[Set[str], Dict[str, Any]]:
     attributes = set()
     dtypes = {}
     if isinstance(p, str):
@@ -159,9 +158,7 @@ class Graph(type(Data), extra=Generic, metaclass=DataMeta):
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is Graph:
-            raise TypeError(
-                "Type Graph cannot be instantiated."
-            )
+            raise TypeError("Type Graph cannot be instantiated.")
         return _generic_new(Data, cls, *args, **kwds)
 
 
@@ -171,7 +168,5 @@ class GraphBatch(type(Data), extra=Generic, metaclass=DataMeta):
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is Graph:
-            raise TypeError(
-                "Type Graph cannot be instantiated."
-            )
+            raise TypeError("Type Graph cannot be instantiated.")
         return _generic_new(GraphBatch, cls, *args, **kwds)
