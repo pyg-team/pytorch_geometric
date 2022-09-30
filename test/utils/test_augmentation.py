@@ -34,17 +34,13 @@ def test_mask_feature():
     out = mask_feature(x)
     assert out[0].tolist() == [[1.0, 2.0, 0.0, 0.0], [5.0, 6.0, 0.0, 0.0],
                                [9.0, 10.0, 0.0, 0.0]]
-    assert out[1].tolist() == [[True, True, False, False],
-                               [True, True, False, False],
-                               [True, True, False, False]]
+    assert out[1].tolist() == [[True, True, False, False]]
 
     torch.manual_seed(5)
     out = mask_feature(x, mode='row')
     assert out[0].tolist() == [[1.0, 2.0, 3.0, 4.0], [0.0, 0.0, 0.0, 0.0],
                                [9.0, 10.0, 11.0, 12.0]]
-    assert out[1].tolist() == [[True, True, True, True],
-                               [False, False, False, False],
-                               [True, True, True, True]]
+    assert out[1].tolist() == [[True], [False], [True]]
 
     torch.manual_seed(6)
     out = mask_feature(x, mode='all')

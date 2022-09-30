@@ -47,7 +47,8 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`x`, (2) the feature
-    mask with the same shape as :obj:`x`, indicating where features
+    mask broadcastable with :obj:`x` (mode='row' and mode='col') or
+    with the same shape as :obj:`x` (mode='all'), indicating where features
     are retained.
 
     Args:
@@ -72,9 +73,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
                 [4., 0., 6.],
                 [7., 0., 9.]]),
         >>> feat_mask
-        tensor([[True, False, True],
-                [True, False, True],
-                [True, False, True]])
+        tensor([[True, False, True]])
 
         >>> # Masked features are row-wise sampled
         >>> x, feat_mask = mask_feature(x, mode='row')
@@ -83,9 +82,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
                 [0., 0., 0.],
                 [7., 8., 9.]]),
         >>> feat_mask
-        tensor([[True, True, True],
-                [False, False, False],
-                [True, True, True]])
+        tensor([[True], [False], [True]])
 
         >>> # Masked features are uniformly sampled
         >>> x, feat_mask = mask_feature(x, mode='all')
@@ -107,10 +104,10 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
 
     if mode == 'row':
         mask = torch.rand(x.size(0), device=x.device) >= p
-        mask = mask.unsqueeze(1).tile(1, x.size(1))
+        mask = mask.view(-1, 1)
     elif mode == 'col':
         mask = torch.rand(x.size(1), device=x.device) >= p
-        mask = mask.tile(x.size(0), 1)
+        mask = mask.view(1, -1)
     else:
         mask = torch.randn_like(x) >= p
 
