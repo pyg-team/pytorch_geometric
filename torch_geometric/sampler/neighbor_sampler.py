@@ -37,6 +37,7 @@ class NeighborSampler(BaseSampler):
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
+        temporal_strategy: str = 'uniform',
         input_type: Optional[Any] = None,
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
@@ -47,6 +48,7 @@ class NeighborSampler(BaseSampler):
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
+        self.temporal_strategy = temporal_strategy
         self.node_time = None
         self.input_type = input_type
 
@@ -237,6 +239,7 @@ class NeighborSampler(BaseSampler):
                     self.replace,
                     self.directed,
                     disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
@@ -259,6 +262,7 @@ class NeighborSampler(BaseSampler):
                         self.directed,
                     )
                 else:
+                    assert self.temporal_strategy == 'uniform'
                     fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
                     out = fn(
                         self.node_types,
@@ -297,6 +301,7 @@ class NeighborSampler(BaseSampler):
                     self.replace,
                     self.directed,
                     disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )

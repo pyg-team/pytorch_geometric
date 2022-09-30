@@ -126,6 +126,13 @@ class NeighborLoader(NodeLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        temporal_strategy (string, optional): The sampling strategy when using
+            temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
+            (default: :obj:`"uniform"`)
         time_attr (str, optional): The name of the attribute that denotes
             timestamps for the nodes in the graph.
             If set, temporal sampling will be used such that neighbors are
@@ -159,6 +166,7 @@ class NeighborLoader(NodeLoader):
         input_nodes: InputNodes = None,
         replace: bool = False,
         directed: bool = True,
+        temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
@@ -177,6 +185,7 @@ class NeighborLoader(NodeLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                temporal_strategy=temporal_strategy,
                 input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,

@@ -54,8 +54,14 @@ def to_csc(
 
     elif hasattr(data, 'adj_t'):
         if src_node_time is not None:
-            raise NotImplementedError("Temporal sampling via 'SparseTensor' "
-                                      "format not yet supported")
+            # TODO (matthias) This only works when instantiating a
+            # `SparseTensor` with `is_sorted=True`. Otherwise, the
+            # `SparseTensor` will by default re-sort the neighbors according to
+            # column index.
+            # As such, we probably want to consider re-adding error:
+            # raise NotImplementedError("Temporal sampling via 'SparseTensor' "
+            #                           "format not yet supported")
+            pass
         colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:
