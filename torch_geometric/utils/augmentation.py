@@ -36,7 +36,7 @@ def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
     if not training:
         perm = torch.arange(x.size(0))
         return x, perm
-    perm = torch.randperm(x.size(0))
+    perm = torch.randperm(x.size(0), device=x.device)
     return x[perm], perm
 
 
