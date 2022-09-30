@@ -41,9 +41,9 @@ class BatchNorm(torch.nn.Module):
                  allow_single_element: bool = False):
         super().__init__()
 
-        if allow_single_element:
-            assert track_running_stats, "'allow_single_element' requires " \
-                                        "'track_running_stats' to be True"
+        if allow_single_element and not track_running_stats:
+            raise ValueError("'allow_single_element' requires "
+                             "'track_running_stats' to be set to `True`")
 
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
                                            track_running_stats)
