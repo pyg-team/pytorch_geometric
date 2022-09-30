@@ -648,7 +648,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         object, denoting node-level and edge-level vectors holding the
         node and edge type as integers, respectively.
         Additionally, labels will be merged.
-        The label -1 will be assigned for unlabeled node types.
+        The label :obj:`-1` will be assigned for unlabeled node types.
 
         Args:
             node_attrs (List[str], optional): The node features to combine

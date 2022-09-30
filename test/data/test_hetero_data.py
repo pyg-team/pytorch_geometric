@@ -295,7 +295,8 @@ def test_to_homogeneous_and_vice_versa():
     assert len(out._node_type_names) == 2
     assert len(out._edge_type_names) == 3
     assert out.y.size() == (300, )
-    assert torch.allclose(out.y[-200:], torch.full((200, ), -1).float())
+    assert torch.allclose(out.y[:100], data['paper'].y)
+    assert torch.all(out.y[100:] == -1)
 
     out = out.to_heterogeneous()
     assert len(out) == 5
