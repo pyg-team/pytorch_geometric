@@ -280,14 +280,13 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withPackage('torch_sparse>=0.6.14')
 def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
     hetero_data = HeteroData()
     hetero_data['paper'].x = data.x
-    hetero_data['paper'].time = torch.arange(data.num_nodes)
+    hetero_data['paper'].time = torch.arange(data.num_nodes, 0, -1)
     hetero_data['paper', 'paper'].edge_index = data.edge_index
 
     loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
@@ -381,7 +380,6 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-@withPackage('torch_sparse>=0.6.14')
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
@@ -389,29 +387,50 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
     # Initialize dataset (once):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
+    data.time = torch.arange(data.num_nodes, 0, -1)
 
     # Initialize feature store, graph store, and reference:
     feature_store = FeatureStore()
     graph_store = GraphStore()
     hetero_data = HeteroData()
 
-    feature_store.put_tensor(data.x, group_name='paper', attr_name='x',
-                             index=None)
+    feature_store.put_tensor(
+        data.x,
+        group_name='paper',
+        attr_name='x',
+        index=None,
+    )
     hetero_data['paper'].x = data.x
 
-    feature_store.put_tensor(torch.arange(data.num_nodes), group_name='paper',
-                             attr_name='time', index=None)
-    hetero_data['paper'].time = torch.arange(data.num_nodes)
+    feature_store.put_tensor(
+        data.time,
+        group_name='paper',
+        attr_name='time',
+        index=None,
+    )
+    hetero_data['paper'].time = data.time
 
-    num_nodes = data.x.size(dim=0)
-    graph_store.put_edge_index(edge_index=data.edge_index,
-                               edge_type=('paper', 'to', 'paper'),
-                               layout='coo', size=(num_nodes, num_nodes))
+    # Sort according to time in local neighborhoods:
+    row, col = data.edge_index
+    perm = ((col * (data.num_nodes + 1)) + data.time[row]).argsort()
+    edge_index = data.edge_index[:, perm]
+
+    graph_store.put_edge_index(
+        edge_index,
+        edge_type=('paper', 'to', 'paper'),
+        layout='coo',
+        is_sorted=True,
+        size=(data.num_nodes, data.num_nodes),
+    )
     hetero_data['paper', 'to', 'paper'].edge_index = data.edge_index
 
-    loader1 = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
-                             input_nodes='paper', time_attr='time',
-                             batch_size=128)
+    loader1 = NeighborLoader(
+        hetero_data,
+        num_neighbors=[-1, -1],
+        input_nodes='paper',
+        time_attr='time',
+        batch_size=128,
+    )
 
     loader2 = NeighborLoader(
         (feature_store, graph_store),
