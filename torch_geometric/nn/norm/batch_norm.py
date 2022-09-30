@@ -31,7 +31,7 @@ class BatchNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
         allow_single_element (bool, optional): If set to :obj:`True`, batches
-            with only a single element will work as though in evaluation.
+            with only a single element will work as during in evaluation.
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
