@@ -937,16 +937,3 @@ def to_homogeneous_edge_index(
         edge_index = torch.cat(edge_indices, dim=-1)
 
     return edge_index, node_slices, edge_slices
-
-
-def to_homogeneous_label(data: HeteroData) -> Tensor:
-    labeled_node_types = []
-    y = []
-    if len(data.y_dict) > 0:
-        for i, node_type in enumerate(data.node_types):
-            if 'y' in data[node_type].keys():
-                labeled_node_types.append(i)
-                y.append(data[node_type].y)
-            else:
-                y.append(torch.full((data[node_type].num_nodes, ), -1))
-        return torch.cat(y)
