@@ -58,6 +58,7 @@ def to_csc(
             # `SparseTensor` with `is_sorted=True`. Otherwise, the
             # `SparseTensor` will by default re-sort the neighbors according to
             # column index.
+            # As such, we probably want to consider re-adding error:
             # raise NotImplementedError("Temporal sampling via 'SparseTensor' "
             #                           "format not yet supported")
             pass
