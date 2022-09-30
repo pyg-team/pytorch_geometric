@@ -3,7 +3,7 @@ tensorboard_each_run: True  # *
 accelerator: cuda           # *
 dataset:
   format: OGB
-  name: ogbg-molhiv
+  name: ogbg-molpcba
   task: graph
   task_type: classification
   node_encoder: true
@@ -22,7 +22,7 @@ model:
   graph_pooling: add
 gnn:
   layers_pre_mp: 1
-  layers_mp: 10       # *
+  layers_mp: 5       # *
   layers_post_mp: 1
   dim_inner: 300
   layer_type: gcnconv # *

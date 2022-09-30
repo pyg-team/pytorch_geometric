@@ -22,8 +22,8 @@ from torch_geometric.graphgym.utils.device import auto_select_device
 
 
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_copy.yaml'
-argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_copy.yaml'
-# argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_2.yaml'
+# argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_copy.yaml'
+argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_2.yaml'
 
 repeat = 1
 

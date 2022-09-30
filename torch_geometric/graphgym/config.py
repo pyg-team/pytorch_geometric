@@ -455,7 +455,6 @@ def set_cfg(cfg):
     cfg.delay = CN()
     
     cfg.delay.max_k = 10
-    cfg.delay.num_layers = 10
 
 def assert_cfg(cfg):
     r"""Checks config values, do necessary post processing to the configs"""

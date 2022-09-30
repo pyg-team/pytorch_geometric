@@ -1,7 +1,7 @@
 out_dir: results
 dataset:
   format: OGB
-  name: ogbg-molhiv
+  name: ogbg-molpcba
   task: graph
   task_type: classification
   node_encoder: true

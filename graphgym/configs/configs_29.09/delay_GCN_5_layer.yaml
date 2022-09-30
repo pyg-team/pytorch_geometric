@@ -1,5 +1,6 @@
 out_dir: my_results
-accelerator: cuda # *
+tensorboard_each_run: True  # *
+accelerator: cuda           # *
 dataset:
   format: OGB
   name: ogbg-molhiv
