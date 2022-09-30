@@ -47,7 +47,7 @@ def mask_feature(x: Tensor, p: float = 0.5, column_wise: bool = True,
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`x`, (2) the feature
-    mask, the same shape as :obj:`x`, indicating where features are retained.
+    mask with the same shape as :obj:`x`, indicating where features are retained.
 
     Args:
         x (FloatTensor): The feature matrix.
