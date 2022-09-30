@@ -145,12 +145,16 @@ class Linear(torch.nn.Module):
         delattr(self, '_hook')
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
-        if is_uninitialized_parameter(self.weight):
+        if (is_uninitialized_parameter(self.weight)
+                or torch.onnx.is_in_onnx_export()):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            destination[prefix + 'bias'] = self.bias.detach()
+            if torch.onnx.is_in_onnx_export():
+                destination[prefix + 'bias'] = self.bias
+            else:
+                destination[prefix + 'bias'] = self.bias.detach()
 
     def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
                         missing_keys, unexpected_keys, error_msgs):

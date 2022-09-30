@@ -30,18 +30,37 @@ class BatchNorm(torch.nn.Module):
             :obj:`False`, this module does not track such statistics and always
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
+        allow_single_element (bool, optional): If set to :obj:`True`, batches
+            with only a single element will work as during in evaluation.
+            That is the running mean and variance will be used.
+            Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=True,
-                 track_running_stats=True):
+    def __init__(self, in_channels: int, eps: float = 1e-5,
+                 momentum: float = 0.1, affine: bool = True,
+                 track_running_stats: bool = True,
+                 allow_single_element: bool = False):
         super().__init__()
+
+        if allow_single_element and not track_running_stats:
+            raise ValueError("'allow_single_element' requires "
+                             "'track_running_stats' to be set to `True`")
+
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
                                            track_running_stats)
+        self.in_channels = in_channels
+        self.allow_single_element = allow_single_element
 
     def reset_parameters(self):
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
         """"""
+        if self.allow_single_element and x.size(0) <= 1:
+            training = self.module.training
+            self.module.eval()
+            out = self.module(x)
+            self.module.training = training
+            return out
         return self.module(x)
 
     def __repr__(self):
