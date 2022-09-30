@@ -31,15 +31,20 @@ class BatchNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
         allow_single_element (bool, optional): If set to :obj:`True`, batches
-            with only a single element will work as though in training mode.
+            with only a single element will work as though in evaluation.
             That is the running mean and variance will be used.
-            (default: :obj:`False`)
+            Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
     def __init__(self, in_channels: int, eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
                  allow_single_element: bool = False):
         super().__init__()
+
+        if allow_single_element:
+            assert track_running_stats, "'allow_single_element' requires " \
+                                        "'track_running_stats' to be True"
+
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
                                            track_running_stats)
         self.in_channels = in_channels
@@ -52,18 +57,9 @@ class BatchNorm(torch.nn.Module):
         """"""
         if self.allow_single_element and x.size(0) <= 1:
             training = self.module.training
-            running_mean = self.module.running_mean
-            running_var = self.module.running_var
-            if running_mean is None or running_var is None:
-                self.module.running_var = torch.ones(self.in_channels,
-                                                     device=x.device)
-                self.module.running_mean = torch.zeros(self.in_channels,
-                                                       device=x.device)
             self.module.eval()
             out = self.module(x)
             self.module.training = training
-            self.module.running_mean = running_mean
-            self.module.running_var = running_var
             return out
         return self.module(x)
 
