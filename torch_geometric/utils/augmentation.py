@@ -171,8 +171,8 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
         edge_index_to_add = torch.tensor([], device=device).view(2, 0)
         return edge_index, edge_index_to_add
 
-    num_nodes = (num_nodes,
-                 num_nodes) if not isinstance(num_nodes, tuple) else num_nodes
+    if not isinstance(num_nodes, (tuple, list)):
+        num_nodes = (num_nodes, num_nodes)
     num_src_nodes = maybe_num_nodes(edge_index, num_nodes[0])
     num_dst_nodes = maybe_num_nodes(edge_index, num_nodes[1])
 
