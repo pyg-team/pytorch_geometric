@@ -4,7 +4,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data.graph_store import EdgeLayout, GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -29,13 +29,15 @@ except ImportError:
 
 
 class NeighborSampler(BaseSampler):
-    r"""An implementation of an in-memory neighbor sampler."""
+    r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
+    by :class:`~torch_geometric.loader.NeighborLoader`."""
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
+        temporal_strategy: str = 'uniform',
         input_type: Optional[Any] = None,
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
@@ -46,6 +48,7 @@ class NeighborSampler(BaseSampler):
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
+        self.temporal_strategy = temporal_strategy
         self.node_time = None
         self.input_type = input_type
 
@@ -79,7 +82,7 @@ class NeighborSampler(BaseSampler):
 
             # Convert the graph data into a suitable format for sampling.
             out = to_csc(data, device='cpu', share_memory=share_memory,
-                         is_sorted=is_sorted)
+                         is_sorted=is_sorted, src_node_time=self.node_time)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
@@ -98,7 +101,8 @@ class NeighborSampler(BaseSampler):
 
             # Obtain CSC representations for in-memory sampling:
             out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
-                                is_sorted=is_sorted)
+                                is_sorted=is_sorted,
+                                node_time_dict=self.node_time_dict)
             colptr_dict, row_dict, perm_dict = out
 
             # Conversions to/from C++ string type:
@@ -124,16 +128,34 @@ class NeighborSampler(BaseSampler):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             feature_store, graph_store = data
 
+            # Obtain all node and edge metadata:
+            node_attrs = feature_store.get_all_tensor_attrs()
+            edge_attrs = graph_store.get_all_edge_attrs()
+
             # TODO support `collect` on `FeatureStore`:
             self.node_time_dict = None
             if time_attr is not None:
+                # If the `time_attr` is present, we expect that `GraphStore`
+                # holds all edges sorted by destination, and within local
+                # neighborhoods, node indices should be sorted by time.
+                # TODO (matthias, manan) Find an alternative way to ensure
+                for edge_attr in edge_attrs:
+                    if edge_attr.layout == EdgeLayout.CSR:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are stored "
+                            "in either COO or CSC layout")
+                    if not edge_attr.is_sorted:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are "
+                            "sorted by destination, and by source time "
+                            "within local neighborhoods")
+
                 # We need to obtain all features with 'attr_name=time_attr'
                 # from the feature store and store them in node_time_dict. To
                 # do so, we make an explicit feature store GET call here with
                 # the relevant 'TensorAttr's
                 time_attrs = [
-                    attr for attr in feature_store.get_all_tensor_attrs()
-                    if attr.attr_name == time_attr
+                    attr for attr in node_attrs if attr.attr_name == time_attr
                 ]
                 for attr in time_attrs:
                     attr.index = None
@@ -142,10 +164,6 @@ class NeighborSampler(BaseSampler):
                     time_attr.group_name: time_tensor
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
-
-            # Obtain all node and edge metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
-            edge_attrs = graph_store.get_all_edge_attrs()
 
             self.node_types = list(
                 set(node_attr.group_name for node_attr in node_attrs))
@@ -221,6 +239,7 @@ class NeighborSampler(BaseSampler):
                     self.replace,
                     self.directed,
                     disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
@@ -243,6 +262,7 @@ class NeighborSampler(BaseSampler):
                         self.directed,
                     )
                 else:
+                    assert self.temporal_strategy == 'uniform'
                     fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
                     out = fn(
                         self.node_types,
@@ -281,6 +301,7 @@ class NeighborSampler(BaseSampler):
                     self.replace,
                     self.directed,
                     disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
@@ -319,8 +340,6 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the nodes specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
         if isinstance(index, (list, tuple)):
             index = torch.tensor(index)
 
@@ -347,8 +366,6 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the edges specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
         query = [torch.stack(s, dim=0) for s in zip(*index)]
         edge_label_index = torch.stack(query[:2], dim=0)
