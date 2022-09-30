@@ -55,6 +55,30 @@ class ZINC(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - ZINC Full
+              - 249,456
+              - ~23.2
+              - ~49.8
+              - 1
+              - 1
+            * - ZINC Subset
+              - 12,000
+              - ~23.2
+              - ~49.8
+              - 1
+              - 1
     """
 
     url = 'https://www.dropbox.com/s/feo9qle74kg48gy/molecules.zip?dl=1'
