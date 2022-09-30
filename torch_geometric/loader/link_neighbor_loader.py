@@ -103,6 +103,10 @@ class LinkNeighborLoader(LinkLoader):
             edges between all sampled nodes. (default: :obj:`True`)
         temporal_strategy (string, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
             (default: :obj:`"uniform"`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges.

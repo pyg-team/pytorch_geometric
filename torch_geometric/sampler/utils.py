@@ -54,8 +54,9 @@ def to_csc(
 
     elif hasattr(data, 'adj_t'):
         if src_node_time is not None:
-            raise NotImplementedError("Temporal sampling via 'SparseTensor' "
-                                      "format not yet supported")
+            pass
+            # raise NotImplementedError("Temporal sampling via 'SparseTensor' "
+            #                           "format not yet supported")
         colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:

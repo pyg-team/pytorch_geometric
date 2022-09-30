@@ -128,6 +128,10 @@ class NeighborLoader(NodeLoader):
             edges between all sampled nodes. (default: :obj:`True`)
         temporal_strategy (string, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
             (default: :obj:`"uniform"`)
         time_attr (str, optional): The name of the attribute that denotes
             timestamps for the nodes in the graph.

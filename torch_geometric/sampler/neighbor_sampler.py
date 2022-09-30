@@ -262,7 +262,7 @@ class NeighborSampler(BaseSampler):
                         self.directed,
                     )
                 else:
-                    assert self.temporal_strategy == "uniform"
+                    assert self.temporal_strategy == 'uniform'
                     fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
                     out = fn(
                         self.node_types,
