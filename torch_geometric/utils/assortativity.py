@@ -6,11 +6,12 @@ from torch_geometric.utils import coalesce, degree, to_dense_adj
 
 
 def assortativity(edge_index: Adj) -> float:
-    r"""Computes degree assortativity of a graph by
-    Pearson correlation coefficient of the node degrees.
+    r"""The degree assortativity coeffeicent from the
+    `"Mixing patterns in networks"
+    <https://arxiv.org/abs/cond-mat/0209450>`_ paper
     Assortativity measures the similarity of connections in
-    the graph with respect to the node degree.
-
+    the graph with respect to the node degree. It is computed by
+    Pearson correlation coefficient of the node degrees.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
