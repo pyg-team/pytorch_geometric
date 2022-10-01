@@ -16,6 +16,10 @@ def assortativity(edge_index: Adj) -> float:
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
 
+    Returns:
+        The value of the degree assortativity coefficient for the input
+        graph :math:`\in [-1, 1]`
+
     Example:
 
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 2],
