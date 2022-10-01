@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 from glob import glob
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -15,6 +15,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.data.summary import Stats, Summary
 
 
 class HydroNet(InMemoryDataset):
@@ -30,21 +31,19 @@ class HydroNet(InMemoryDataset):
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None,
-                 max_num_workers: int = 8):
+                 max_num_workers: int = 8, lazy_loading: bool = False):
         self.max_num_workers = max_num_workers
+        self.lazy_loading = lazy_loading
+        self._partitions = None
+        self._is_loaded = False
         super().__init__(root, transform, pre_transform, pre_filter)
-
-        if not hasattr(self, '_partitions'):
-            self._partitions = [
-                self._create_partitions(f) for f in self.raw_paths
-            ]
-
-        [p.load() for p in tqdm(self._partitions, desc="Loading")]
+        self._load()
 
     @property
     def raw_file_names(self) -> List[str]:
-        path = osp.join(self.raw_dir, '*.zip')
-        return sorted(glob(path))
+        path = glob(osp.join(self.raw_dir, '*.zip'))
+        path.sort(key=get_num_clusters)
+        return path
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -78,22 +77,61 @@ class HydroNet(InMemoryDataset):
         return Partition(self.root, name, self.transform, self.pre_transform,
                          self.pre_filter)
 
+    def select_clusters(self, clusters: Union[int, List[int]]):
+        clusters = [clusters] if isinstance(clusters, int) else clusters
+
+        def is_valid_cluster(x):
+            return isinstance(x, int) and x >= 3 and x <= 30
+
+        if not all([is_valid_cluster(x) for x in clusters]):
+            raise ValueError(
+                "Selected clusters must be an integer in the range [3, 30]")
+
+        self._is_loaded = False
+        self._init_partitions()
+        self._partitions = [self._partitions[c - 3] for c in clusters]
+        return self
+
+    def _init_partitions(self):
+        self._partitions = [
+            self._create_partitions(f) for f in self.raw_file_names
+        ]
+
+    def _load(self, force=False):
+        if self._is_loaded:
+            return
+
+        if self._partitions is None:
+            self._init_partitions()
+
+        if not self.lazy_loading or force:
+            [p.load() for p in self._partitions]
+            self._is_loaded = True
+
+    @property
+    def _offsets(self):
+        self._load(force=True)
+        partition_sizes = torch.tensor([len(p) for p in self._partitions])
+        offsets = partition_sizes.cumsum(dim=0)
+        offsets = offsets.roll(shifts=1, dims=0)
+        offsets[0] = 0
+        return offsets
+
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
         return sum(len(p) for p in self._partitions)
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
-        if not hasattr(self, '_offsets'):
-            partition_sizes = torch.tensor([len(p) for p in self._partitions])
-            offsets = partition_sizes.cumsum(dim=0)
-            offsets = offsets.roll(shifts=1, dims=0)
-            offsets[0] = 0
-            self._offsets = offsets
-
+        self._load(force=True)
         partition_idx = torch.nonzero((idx - self._offsets) >= 0)[-1]
         local_idx = int(idx - self._offsets[partition_idx])
         return self._partitions[partition_idx].get(local_idx)
+
+
+def get_num_clusters(filepath):
+    name = osp.basename(filepath)
+    return int(name[1:name.find('_')])
 
 
 def read_energy(file, chunk_size):
@@ -142,16 +180,17 @@ class Partition(InMemoryDataset):
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
         self.name = name
-        self.num_clusters = int(name[1:name.find('_')])
+        self.num_clusters = get_num_clusters(name)
         super().__init__(root, transform, pre_transform, pre_filter, log=False)
+        self.summary = torch.load(self.processed_paths[1])
 
     @property
     def raw_file_names(self) -> List[str]:
         return [self.name + ".zip"]
 
     @property
-    def processed_file_names(self) -> str:
-        return self.name + '.pt'
+    def processed_file_names(self) -> List[str]:
+        return [self.name + '.pt', self.name.replace('all', 'summary') + '.pt']
 
     def process(self):
         num_nodes = self.num_clusters * 3
@@ -159,7 +198,7 @@ class Partition(InMemoryDataset):
         y = read_energy(self.raw_paths[0], chunk_size)
         z, pos = read_atoms(self.raw_paths[0], chunk_size)
         num_graphs = z.shape[0]
-        data_list = []
+        data_list, num_nodes_list, num_edges_list = [], [], []
         (y, z, pos) = (torch.from_numpy(a) for a in (y, z, pos))
 
         for idx in tqdm(range(num_graphs), position=self.num_clusters - 2,
@@ -173,8 +212,18 @@ class Partition(InMemoryDataset):
                 data = self.pre_transform(data)
 
             data_list.append(data)
+            num_nodes_list.append(data.num_nodes)
+            num_edges_list.append(data.num_edges)
 
         torch.save(self.collate(data_list), self.processed_paths[0])
+        summary = Summary(name=self.name, num_graphs=len(data_list),
+                          num_nodes=Stats.from_data(num_nodes_list),
+                          num_edges=Stats.from_data(num_edges_list))
+        torch.save(summary, self.processed_paths[1])
 
     def load(self):
         self.data, self.slices = torch.load(self.processed_paths[0])
+
+    def len(self) -> int:
+        r"""Returns the number of graphs stored in the dataset."""
+        return self.summary.num_graphs
