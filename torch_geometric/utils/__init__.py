@@ -1,6 +1,6 @@
 from .degree import degree
 from .softmax import softmax
-from .dropout import dropout_adj
+from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
 from .sort_edge_index import sort_edge_index
 from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
@@ -33,10 +33,14 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
+from .scatter import scatter
 
 __all__ = [
     'degree',
     'softmax',
+    'dropout_node',
+    'dropout_edge',
+    'dropout_path',
     'dropout_adj',
     'sort_edge_index',
     'coalesce',
@@ -84,6 +88,7 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
+    'scatter',
 ]
 
 classes = __all__

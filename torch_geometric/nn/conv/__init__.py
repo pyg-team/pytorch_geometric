@@ -38,6 +38,7 @@ from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
 from .pan_conv import PANConv
 from .wl_conv import WLConv
+from .wl_conv_continuous import WLConvContinuous
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
@@ -96,6 +97,7 @@ __all__ = [
     'GCN2Conv',
     'PANConv',
     'WLConv',
+    'WLConvContinuous',
     'FiLMConv',
     'SuperGATConv',
     'FAConv',

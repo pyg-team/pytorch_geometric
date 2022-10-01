@@ -40,7 +40,9 @@ class RandomLinkSplit(BaseTransform):
             (default: :obj:`0.2`)
         is_undirected (bool): If set to :obj:`True`, the graph is assumed to be
             undirected, and positive and negative samples will not leak
-            (reverse) edge connectivity across different splits.
+            (reverse) edge connectivity across different splits. Note that this
+            only affects the graph split, label data will not be returned
+            undirected.
             (default: :obj:`False`)
         key (str, optional): The name of the attribute holding
             ground-truth labels.

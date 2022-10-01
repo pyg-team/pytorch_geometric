@@ -17,10 +17,11 @@ graphgym_requires = [
     'yacs',
     'hydra-core',
     'protobuf<4.21',
-    'pytorch-lightning==1.6.*',
+    'pytorch-lightning',
 ]
 
 full_requires = graphgym_requires + [
+    'ase',
     'h5py',
     'numba',
     'sympy',
@@ -75,5 +76,5 @@ setup(
         'dev': dev_requires,
     },
     packages=find_packages(),
-    include_package_data=True,
+    include_package_data=True,  # Ensure that `*.jinja` files are found.
 )

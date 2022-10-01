@@ -95,7 +95,7 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
     .. code-block:: python
 
         from captum.attr import IntegratedGradients
-        from torch_geometric.nn import GCN, from_captum
+        from torch_geometric.nn import GCN, to_captum
 
         model = GCN(...)
         ...  # Train the model.
@@ -232,7 +232,7 @@ class Explainer(torch.nn.Module):
     def get_initial_prediction(self, x: Tensor, edge_index: Tensor,
                                batch: Optional[Tensor] = None, **kwargs):
         if batch is not None:
-            out = self.model(x, edge_index, batch, **kwargs)
+            out = self.model(x, edge_index, batch=batch, **kwargs)
         else:
             out = self.model(x, edge_index, **kwargs)
         if self.return_type == 'regression':

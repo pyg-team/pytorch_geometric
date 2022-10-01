@@ -30,6 +30,25 @@ def softmax(
             (default: :obj:`0`)
 
     :rtype: :class:`Tensor`
+
+    Examples:
+
+        >>> src = torch.tensor([1., 1., 1., 1.])
+        >>> index = torch.tensor([0, 0, 1, 2])
+        >>> ptr = torch.tensor([0, 2, 3, 4])
+        >>> softmax(src, index)
+        tensor([0.5000, 0.5000, 1.0000, 1.0000])
+
+        >>> softmax(src, None, ptr)
+        tensor([0.5000, 0.5000, 1.0000, 1.0000])
+
+        >>> src = torch.randn(4, 4)
+        >>> ptr = torch.tensor([0, 4])
+        >>> softmax(src, index, dim=-1)
+        tensor([[0.7404, 0.2596, 1.0000, 1.0000],
+                [0.1702, 0.8298, 1.0000, 1.0000],
+                [0.7607, 0.2393, 1.0000, 1.0000],
+                [0.8062, 0.1938, 1.0000, 1.0000]])
     """
     if ptr is not None:
         dim = dim + src.dim() if dim < 0 else dim

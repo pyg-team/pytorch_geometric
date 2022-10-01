@@ -1,35 +1,48 @@
 import os.path as osp
 
+import torch
 from hetero_gat import HeteroGAT
 from hetero_sage import HeteroGraphSAGE
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
-from torch_geometric.nn.models.basic_gnn import GAT, GCN, PNA, EdgeCNN
+from torch_geometric.nn import GAT, GCN, PNA, EdgeCNN, GraphSAGE
 
 models_dict = {
     'edge_cnn': EdgeCNN,
     'gat': GAT,
     'gcn': GCN,
     'pna': PNA,
+    'sage': GraphSAGE,
     'rgat': HeteroGAT,
     'rgcn': HeteroGraphSAGE,
 }
 
 
-def get_dataset(name, root):
+def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
+    transform = T.ToSparseTensor(
+        remove_edge_index=False) if use_sparse_tensor else None
     if name == 'ogbn-mag':
-        transform = T.ToUndirected(merge=True)
+        if transform is None:
+            transform = T.ToUndirected(merge=True)
+        else:
+            transform = T.Compose([T.ToUndirected(merge=True), transform])
         dataset = OGB_MAG(root=path, preprocess='metapath2vec',
                           transform=transform)
     elif name == 'ogbn-products':
-        dataset = PygNodePropPredDataset('ogbn-products', root=path)
+        dataset = PygNodePropPredDataset('ogbn-products', root=path,
+                                         transform=transform)
     elif name == 'Reddit':
-        dataset = Reddit(root=path)
+        dataset = Reddit(root=path, transform=transform)
 
-    return dataset[0], dataset.num_classes
+    data = dataset[0]
+
+    if bf16:
+        data.x = data.x.to(torch.bfloat16)
+
+    return data, dataset.num_classes
 
 
 def get_model(name, params, metadata=None):
