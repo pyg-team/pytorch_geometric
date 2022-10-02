@@ -55,7 +55,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
         x (FloatTensor): The feature matrix.
         p (float, optional): The masking ratio. (default: :obj:`0.5`)
         mode (str, optional): The masked scheme to use for feature masking.
-            (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`). (default: :obj:`col`)
+            (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`). (default: :obj:`"col"`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
