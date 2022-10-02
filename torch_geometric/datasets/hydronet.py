@@ -41,9 +41,7 @@ class HydroNet(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        path = glob(osp.join(self.raw_dir, '*.zip'))
-        path.sort(key=get_num_clusters)
-        return path
+        return [f'W{c}_geoms_all.zip' for c in range(3, 31)]
 
     @property
     def processed_file_names(self) -> List[str]:
