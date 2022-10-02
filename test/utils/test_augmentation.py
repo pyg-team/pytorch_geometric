@@ -21,6 +21,15 @@ def test_shuffle_node():
     assert out[0].tolist() == [[3.0, 4.0, 5.0], [0.0, 1.0, 2.0]]
     assert out[1].tolist() == [1, 0]
 
+    torch.manual_seed(1)
+    x = torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]],
+                     dtype=torch.float)
+    batch = torch.tensor([0, 0, 1, 1])
+    out = shuffle_node(x, batch)
+    assert out[0].tolist() == [[3.0, 4.0, 5.0], [0.0, 1.0, 2.0],
+                               [9.0, 10.0, 11.0], [6.0, 7.0, 8.0]]
+    assert out[1].tolist() == [1, 0, 3, 2]
+
 
 def test_mask_feature():
     x = torch.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]],
@@ -53,7 +62,7 @@ def test_mask_feature():
 
 def test_add_random_edge():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
-    out = add_random_edge(edge_index, training=False)
+    out = add_random_edge(edge_index, p=0.5, training=False)
     assert out[0].tolist() == edge_index.tolist()
     assert out[1].tolist() == [[], []]
 
@@ -77,7 +86,7 @@ def test_add_random_edge():
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5], [2, 3, 1, 4, 2, 1]])
     with pytest.raises(RuntimeError,
                        match="not supported for heterogeneous graphs"):
-        out = add_random_edge(edge_index, force_undirected=True,
+        out = add_random_edge(edge_index, p=0.5, force_undirected=True,
                               num_nodes=(6, 5))
     out = add_random_edge(edge_index, p=0.5, num_nodes=(6, 5))
     out[0].tolist() == [[0, 1, 2, 3, 4, 5, 3, 4, 1],

@@ -2,11 +2,13 @@ from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
+from torch_scatter import scatter_add
 
 from .num_nodes import maybe_num_nodes
 
 
-def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
+def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
+                 training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Randomly shuffle the feature matrix :obj:`x` along the
     first dimmension.
 
@@ -15,6 +17,9 @@ def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
 
     Args:
         x (FloatTensor): The feature matrix.
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example. Must be ordered. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -22,21 +27,43 @@ def shuffle_node(x: Tensor, training: bool = True) -> Tuple[Tensor, Tensor]:
 
     Example:
 
+        >>> # Standard case
         >>> x = torch.tensor([[0, 1, 2],
         ...                   [3, 4, 5],
-        ...                   [6, 7, 8]], dtype=torch.float)
+        ...                   [6, 7, 8],
+        ...                   [9, 10, 11]], dtype=torch.float)
         >>> x, node_perm = shuffle_node(x)
         >>> x
-        tensor([[6., 7., 8.],
-                [3., 4., 5.],
-                [0., 1., 2.]])
+        tensor([[ 3.,  4.,  5.],
+                [ 9., 10., 11.],
+                [ 0.,  1.,  2.],
+                [ 6.,  7.,  8.]])
         >>> node_perm
-        tensor([2, 1, 0])
+        tensor([1, 3, 0, 2])
+
+        >>> # For batched graphs as inputs
+        >>> batch = torch.tensor([0, 0, 1, 1])
+        >>> x, node_perm = shuffle_node(x, batch)
+        >>> x
+        tensor([[ 3.,  4.,  5.],
+                [ 0.,  1.,  2.],
+                [ 9., 10., 11.],
+                [ 6.,  7.,  8.]])
+        >>> node_perm
+        tensor([1, 0, 3, 2])
     """
     if not training:
         perm = torch.arange(x.size(0), device=x.device)
         return x, perm
-    perm = torch.randperm(x.size(0), device=x.device)
+    if batch is None:
+        batch = x.new_zeros(x.size(0), dtype=torch.long)
+    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
+                            dim_size=int(batch.max()) + 1)
+    num_nodes = torch.cat([batch.new_zeros(1), num_nodes])
+    perm = torch.cat([
+        torch.randperm(n, device=x.device) + offset
+        for offset, n in zip(num_nodes[:-1], num_nodes[1:])
+    ])
     return x[perm], perm
 
 
@@ -47,15 +74,19 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`x`, (2) the feature
-    mask broadcastable with :obj:`x` (mode=:obj:`'row'` and mode=:obj:`'col'`) or
-    with the same shape as :obj:`x` (mode=:obj:`'all'`), indicating where features
-    are retained.
+    mask broadcastable with :obj:`x` (mode=:obj:`'row'` and mode=:obj:`'col'`)
+    or with the same shape as :obj:`x` (mode=:obj:`'all'`),
+    indicating where features are retained.
 
     Args:
         x (FloatTensor): The feature matrix.
         p (float, optional): The masking ratio. (default: :obj:`0.5`)
         mode (str, optional): The masked scheme to use for feature masking.
-            (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`). (default: :obj:`"col"`)
+            (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`).
+            If mode=:obj:`'col'`, will mask entire features of all nodes
+            from the feature matrix. If mode=:obj:`'row'`, will mask entire
+            nodes from the feature matrix. If mode=:obj:`'all'`, will mask
+            individual features across all nodes. (default: :obj:`"col"`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -115,7 +146,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
     return x, mask
 
 
-def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
+def add_random_edge(edge_index, p: float, force_undirected: bool = False,
                     num_nodes: Optional[Union[Tuple[int], int]] = None,
                     training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Randomly adds edges to :obj:`edge_index`.
@@ -125,8 +156,7 @@ def add_random_edge(edge_index, p: float = 0.2, force_undirected: bool = False,
 
     Args:
         edge_index (LongTensor): The edge indices.
-        p (float, optional): Ratio of added edges to the existing edges.
-            (default: :obj:`0.2`)
+        p (float): Ratio of added edges to the existing edges.
         force_undirected (bool, optional): If set to :obj:`True`,
             added edges will be undirected.
             (default: :obj:`False`)
