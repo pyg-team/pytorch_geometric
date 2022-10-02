@@ -31,13 +31,11 @@ class HydroNet(InMemoryDataset):
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None,
-                 max_num_workers: int = 8, lazy_loading: bool = False):
+                 max_num_workers: int = 8,
+                 clusters: Optional[Union[int, List[int]]] = None):
         self.max_num_workers = max_num_workers
-        self.lazy_loading = lazy_loading
-        self._partitions = None
-        self._is_loaded = False
         super().__init__(root, transform, pre_transform, pre_filter)
-        self._load()
+        self.select_clusters(clusters)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -64,8 +62,7 @@ class HydroNet(InMemoryDataset):
         os.rmdir(osp.join(self.raw_dir, folder_name))
 
     def process(self):
-        self._partitions = process_map(self._create_partitions,
-                                       self.raw_file_names,
+        self._partitions = process_map(self._create_partitions, self.raw_paths,
                                        max_workers=self.max_num_workers,
                                        position=0, leave=True)
 
@@ -76,6 +73,11 @@ class HydroNet(InMemoryDataset):
                          self.pre_filter)
 
     def select_clusters(self, clusters: Union[int, List[int]]):
+        self._partitions = [self._create_partitions(f) for f in self.raw_paths]
+
+        if clusters is None:
+            return
+
         clusters = [clusters] if isinstance(clusters, int) else clusters
 
         def is_valid_cluster(x):
@@ -85,30 +87,14 @@ class HydroNet(InMemoryDataset):
             raise ValueError(
                 "Selected clusters must be an integer in the range [3, 30]")
 
-        self._is_loaded = False
-        self._init_partitions()
         self._partitions = [self._partitions[c - 3] for c in clusters]
         return self
 
-    def _init_partitions(self):
-        self._partitions = [
-            self._create_partitions(f) for f in self.raw_file_names
-        ]
-
-    def _load(self, force=False):
-        if self._is_loaded:
-            return
-
-        if self._partitions is None:
-            self._init_partitions()
-
-        if not self.lazy_loading or force:
-            [p.load() for p in self._partitions]
-            self._is_loaded = True
+    def pre_load(self):
+        [p.load() for p in tqdm(self._partitions)]
 
     @property
     def _offsets(self):
-        self._load(force=True)
         partition_sizes = torch.tensor([len(p) for p in self._partitions])
         offsets = partition_sizes.cumsum(dim=0)
         offsets = offsets.roll(shifts=1, dims=0)
@@ -121,7 +107,6 @@ class HydroNet(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
-        self._load(force=True)
         partition_idx = torch.nonzero((idx - self._offsets) >= 0)[-1]
         local_idx = int(idx - self._offsets[partition_idx])
         return self._partitions[partition_idx].get(local_idx)
@@ -181,6 +166,7 @@ class Partition(InMemoryDataset):
         self.num_clusters = get_num_clusters(name)
         super().__init__(root, transform, pre_transform, pre_filter, log=False)
         self.summary = torch.load(self.processed_paths[1])
+        self.is_loaded = False
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -220,8 +206,17 @@ class Partition(InMemoryDataset):
         torch.save(summary, self.processed_paths[1])
 
     def load(self):
+        if self.is_loaded:
+            return
+
         self.data, self.slices = torch.load(self.processed_paths[0])
+        self.is_loaded = True
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
         return self.summary.num_graphs
+
+    def get(self, idx: int) -> Data:
+        r"""Gets the data object at index :obj:`idx`."""
+        self.load()
+        return super().get(idx)
