@@ -103,6 +103,9 @@ def set_cfg(cfg):
     # Size of out dimension, i.e., number of labels to be predicted
     cfg.share.dim_out = 1
 
+    # Number of tasks, e.g., for multitask binary classification
+    cfg.share.num_tasks = 1 # my addition
+
     # Number of dataset splits: train/val/test
     cfg.share.num_splits = 1
 

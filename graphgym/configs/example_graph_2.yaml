@@ -20,8 +20,8 @@ model:
   graph_pooling: add
 gnn:
   layers_pre_mp: 1
-  layers_mp: 1              # number of DelayGNN layers, i.e. timesteps
-  layers_post_mp: 1
+  layers_mp: 3              # number of DelayGNN layers, i.e. timesteps
+  layers_post_mp: 1         # the 'head', i.e. final MLP
   dim_inner: 300
   layer_type: my_gcnconv
   stage_type: delay_gnn

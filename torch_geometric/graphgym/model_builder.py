@@ -30,7 +30,14 @@ class GraphGymModule(LightningModule):
     def _shared_step(self, batch, split: str) -> Dict:
         batch.split = split
         pred, true = self(batch)
-        loss, pred_score = compute_loss(pred, true)
+        ### fixes the case for multitask binary (also works for binary)
+        if cfg.share.num_tasks > 1:
+            is_labelled = (true==true)
+            pred, true = pred[is_labelled], true[is_labelled]
+            loss, pred_score = compute_loss(pred, true)
+        ###
+        else:
+            loss, pred_score = compute_loss(pred, true)
         step_end_time = time.time()
         return dict(loss=loss, true=true, pred_score=pred_score.detach(),
                     step_end_time=step_end_time)

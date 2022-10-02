@@ -239,6 +239,8 @@ class Logger(object):
 
 
 def infer_task():
+    if cfg.share.num_tasks > 1: # only supports multitask binary classification
+        return 'classification_binary' 
     num_label = cfg.share.dim_out
     if cfg.dataset.task_type == 'classification':
         if num_label <= 2:

@@ -207,14 +207,23 @@ def set_dataset_info(dataset):
 
     """
 
+    
+    try: # not all datasets have a num_tasks attr
+        cfg.share.num_tasks = dataset.num_tasks
+    except:
+        pass
     # get dim_in and dim_out
     try:
         cfg.share.dim_in = dataset.data.x.shape[1]
     except Exception:
         cfg.share.dim_in = 1
     try:
-        if cfg.dataset.task_type == 'classification':
-            cfg.share.dim_out = torch.unique(dataset.data.y).shape[0]
+        if cfg.dataset.task_type == 'classification': # generalises to multiclass, so binary is 2 neurons and softmax
+            # dealing with nan fields in dataset (multitask binary classification w/ multiple labels)
+            if cfg.share.num_tasks > 1:
+                cfg.share.dim_out = cfg.share.num_tasks # multitask binary classification
+            else: # multiclass classification (binary is 2-class)
+                cfg.share.dim_out = torch.unique(dataset.data.y[~torch.isnan(dataset.data.y)]).shape[0]
         else:
             cfg.share.dim_out = dataset.data.y.shape[1]
     except Exception:

@@ -98,7 +98,7 @@ class GNNGraphHead(nn.Module):
 
     Args:
         dim_in (int): Input dimension
-        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+        dim_out (int): Output dimension. For binary prediction, dim_out=1. # FOR MULTITASK BINARY dim_out will be num_tasks
     """
     def __init__(self, dim_in, dim_out):
         super().__init__()
