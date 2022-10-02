@@ -48,7 +48,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
 
     The method returns (1) the retained :obj:`x`, (2) the feature
     mask broadcastable with :obj:`x` (mode=:obj:`'row'` and mode=:obj:`'col'`) or
-    with the same shape as :obj:`x` (mode='all'), indicating where features
+    with the same shape as :obj:`x` (mode=:obj:`'all'`), indicating where features
     are retained.
 
     Args:
