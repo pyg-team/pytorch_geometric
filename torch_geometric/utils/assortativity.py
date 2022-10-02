@@ -6,7 +6,7 @@ from torch_geometric.utils import coalesce, degree, to_dense_adj
 
 
 def assortativity(edge_index: Adj) -> float:
-    r"""The degree assortativity coeffeicent from the
+    r"""The degree assortativity coefficient from the
     `"Mixing patterns in networks"
     <https://arxiv.org/abs/cond-mat/0209450>`_ paper
     Assortativity measures the similarity of connections in
