@@ -9,9 +9,9 @@ def assortativity(edge_index: Adj) -> float:
     r"""The degree assortativity coefficient from the
     `"Mixing patterns in networks"
     <https://arxiv.org/abs/cond-mat/0209450>`_ paper.
-    Assortativity measures the similarity of connections in
-    the graph with respect to the node degree. It is computed from
-    Pearson correlation coefficient of the node degrees.
+    Assortativity in a network refers to the tendency of nodes to
+    connect with other similar nodes over dissimilar nodes.
+    It is computed from Pearson correlation coefficient of the node degrees.
 
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
