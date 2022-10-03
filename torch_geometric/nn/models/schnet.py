@@ -79,6 +79,8 @@ class SchNet(torch.nn.Module):
         atomref (torch.Tensor, optional): The reference of single-atom
             properties.
             Expects a vector of shape :obj:`(max_atomic_number, )`.
+        batch_size (int, optional): The number of molecules in the batch. This
+            will be inferred from the batch input when not supplied.
     """
 
     url = 'http://www.quantum-machine.org/datasets/trained_schnet_models.zip'
@@ -95,7 +97,8 @@ class SchNet(torch.nn.Module):
         dipole: bool = False,
         mean: Optional[float] = None,
         std: Optional[float] = None,
-        atomref: OptTensor = None,
+        atomref: Optional[torch.Tensor] = None,
+        batch_size=None,
     ):
         super().__init__()
 
@@ -111,6 +114,7 @@ class SchNet(torch.nn.Module):
         self.mean = mean
         self.std = std
         self.scale = None
+        self.batch_size = batch_size
 
         if self.dipole:
             import ase
@@ -257,7 +261,8 @@ class SchNet(torch.nn.Module):
                 atoms with shape :obj:`[2, num_edges]`. Will be computed in
                 every forward pass if not provided. (default: :obj:`None`)
         """
-        assert z.dim() == 1 and z.dtype == torch.long
+        assert z.dim() == 1 and z.dtype in (torch.uint8, torch.int8,
+                                            torch.int32, torch.int64)
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
@@ -280,7 +285,8 @@ class SchNet(torch.nn.Module):
         if self.dipole:
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
-            c = scatter(mass * pos, batch, dim=0) / scatter(mass, batch, dim=0)
+            M = scatter(mass, batch, dim=0, dim_size=self.batch_size)
+            c = scatter(mass * pos, batch, dim=0, dim_size=self.batch_size) / M
             h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
@@ -289,7 +295,8 @@ class SchNet(torch.nn.Module):
         if not self.dipole and self.atomref is not None:
             h = h + self.atomref(z)
 
-        out = scatter(h, batch, dim=0, reduce=self.readout)
+        out = scatter(h, batch, dim=0, dim_size=self.batch_size,
+                      reduce=self.readout)
 
         if self.dipole:
             out = torch.norm(out, dim=-1, keepdim=True)
