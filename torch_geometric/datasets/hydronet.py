@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from functools import cached_property
 from glob import glob
 from typing import Callable, List, Optional, Union
 
@@ -19,6 +20,32 @@ from torch_geometric.data.summary import Stats, Summary
 
 
 class HydroNet(InMemoryDataset):
+    r"""The HydroNet dataest from the `"HydroNet: Benchmark Tasks for
+    Preserving Intermolecular Interactions and Structural Motifs in Predictive
+    and Generative Models for Molecular Data"
+    <https://arxiv.org/abs/2012.00131>` _ paper, consisting of 5 million water
+    clusters held together by hydrogen bonding networks.  This dataset
+    provides atomic coordinates and total energy in kcal/mol for the cluster.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+        max_num_workers (int): Number of multiprocessing workers to use for
+            pre-processing the dataset. (default :obj:`8`)
+        clusters (int or List[int], optional): Select a subset of clusters
+            from the full dataset. (default :obj:`None` to select all)
+    """
     # url currently fails with unauthorized
     raw_url = ('https://g-83fdd0.1beed.03c0.data.globus.org/static_datasets/'
                'W3-W30_all_geoms_TTM2.1-F.zip')
@@ -33,6 +60,8 @@ class HydroNet(InMemoryDataset):
                  pre_filter: Optional[Callable] = None,
                  max_num_workers: int = 8,
                  clusters: Optional[Union[int, List[int]]] = None):
+        # the base Dataset class is responsible for checking if the on-disk
+        # cached data is available or needs to be processed
         self.max_num_workers = max_num_workers
         super().__init__(root, transform, pre_transform, pre_filter)
         self.select_clusters(clusters)
@@ -93,7 +122,7 @@ class HydroNet(InMemoryDataset):
     def pre_load(self):
         [p.load() for p in tqdm(self._partitions)]
 
-    @property
+    @cached_property
     def _offsets(self):
         partition_sizes = torch.tensor([len(p) for p in self._partitions])
         offsets = partition_sizes.cumsum(dim=0)
