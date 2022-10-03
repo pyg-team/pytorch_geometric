@@ -68,7 +68,7 @@ class MultiAggregation(Aggregation):
         ])
 
         self.mode = mode
-        mode_kwargs = mode_kwargs.copy() or {}
+        mode_kwargs = (mode_kwargs or {}).copy()
         self.in_channels = mode_kwargs.pop('in_channels', None)
         self.out_channels = mode_kwargs.pop('out_channels', None)
         if mode == 'proj' or mode == 'attn':
