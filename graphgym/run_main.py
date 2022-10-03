@@ -23,7 +23,8 @@ from torch_geometric.graphgym.utils.device import auto_select_device
 
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_copy.yaml'
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_copy.yaml'
-argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_2.yaml'
+# argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_2.yaml'
+argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/configs_03.10/Cora_V_2MP.yaml'
 
 repeat = 1
 
