@@ -5,10 +5,8 @@ from glob import glob
 from typing import Callable, List, Optional, Union
 
 import numpy as np
-import pandas as pd
 import torch
 from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
 
 from torch_geometric.data import (
     Data,
@@ -91,6 +89,8 @@ class HydroNet(InMemoryDataset):
         os.rmdir(osp.join(self.raw_dir, folder_name))
 
     def process(self):
+        from tqdm.contrib.concurrent import process_map
+
         self._partitions = process_map(self._create_partitions, self.raw_paths,
                                        max_workers=self.max_num_workers,
                                        position=0, leave=True)
@@ -147,6 +147,8 @@ def get_num_clusters(filepath):
 
 
 def read_energy(file, chunk_size):
+    import pandas as pd
+
     def skipatoms(i: int):
         return (i - 1) % chunk_size != 0
 
@@ -164,6 +166,8 @@ def read_energy(file, chunk_size):
 
 
 def read_atoms(file, chunk_size):
+    import pandas as pd
+
     def skipheaders(i: int):
         return i % chunk_size == 0 or (i - 1) % chunk_size == 0
 
