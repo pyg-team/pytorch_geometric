@@ -140,7 +140,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
         mask = torch.rand(x.size(1), device=x.device) >= p
         mask = mask.view(1, -1)
     else:
-        mask = x.bernoulli(1-p).to(torch.bool)
+        mask = x.bernoulli(1 - p).to(torch.bool)
 
     x = x.masked_fill(~mask, 0.)
     return x, mask
