@@ -19,6 +19,9 @@ nn:
 transform:
   - torch_geometric/transforms/**/*
 
+utils:
+  - torch_geometric/utils/**/*
+
 graphgym:
   - graphgym/**/*
   - torch_geometric/graphgym/**/*
