@@ -54,19 +54,20 @@ def test_mask_feature():
 
     torch.manual_seed(7)
     out = mask_feature(x, mode='all')
-    assert out[0].tolist() == [[1.0, 2.0, 0.0, 0.0], [0.0, 0.0, 7.0, 0.0],
-                               [0.0, 0.0, 11.0, 12.0]]
-    assert out[1].tolist() == [[True, True, False, False],
-                               [False, False, True, False],
-                               [False, False, True, True]]
+    assert out[0].tolist() == [[1.0, 0.0, 0.0, 4.0], [5.0, 6.0, 7.0, 0.0],
+                               [9.0, 10.0, 0.0, 12.0]]
+
+    assert out[1].tolist() == [[True, False, False, True],
+                               [True, True, True, False],
+                               [True, True, False, True]]
 
     torch.manual_seed(7)
     out = mask_feature(x, mode='all', fill_value=-1)
-    assert out[0].tolist() == [[1.0, 2.0, -1., -1.], [-1., -1., 7.0, -1.],
-                               [-1., -1., 11.0, 12.0]]
-    assert out[1].tolist() == [[True, True, False, False],
-                               [False, False, True, False],
-                               [False, False, True, True]]
+    assert out[0].tolist() == [[1.0, -1., -1., 4.0], [5.0, 6.0, 7.0, -1.],
+                               [9.0, 10.0, -1., 12.0]]
+    assert out[1].tolist() == [[True, False, False, True],
+                               [True, True, True, False],
+                               [True, True, False, True]]
 
 
 def test_add_random_edge():
