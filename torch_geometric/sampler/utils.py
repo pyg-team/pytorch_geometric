@@ -1,13 +1,11 @@
-import copy
 from typing import Any, Dict, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_min
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import NodeType, OptTensor
 
 # Edge Layout Conversion ######################################################
 
@@ -24,8 +22,8 @@ def sort_csc(
         # Multiplying by raw `datetime[64ns]` values may cause overflows.
         # As such, we normalize time into range [0, 1) before sorting:
         src_node_time = src_node_time.to(torch.double, copy=True)
-        min_time, max_time = src_node_time.min(), src_node_time.max() + 1
-        src_node_time.sub_(min_time).div_(max_time)
+        src_node_time.sub_(src_node_time.min())
+        src_node_time.div_(src_node_time.max() + 1)
 
         perm = src_node_time[row].add_(col.to(torch.double)).argsort()
         return row[perm], col[perm], perm
@@ -149,32 +147,6 @@ def add_negative_samples(
     edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
 
     return edge_label_index, edge_label, edge_label_time
-
-
-def set_node_time_dict(
-    node_time_dict,
-    input_type: EdgeType,
-    edge_label_index,
-    edge_label_time,
-    num_src_nodes: int,
-    num_dst_nodes: int,
-):
-    """For edges in a batch replace `src` and `dst` node times by the min
-    across all edge times."""
-    def update_time_(node_time_dict, index, node_type, num_nodes):
-        node_time_dict[node_type] = node_time_dict[node_type].clone()
-        node_time, _ = scatter_min(edge_label_time, index, dim=0,
-                                   dim_size=num_nodes)
-        # NOTE We assume that node_time is always less than edge_time.
-        index_unique = index.unique()
-        node_time_dict[node_type][index_unique] = node_time[index_unique]
-
-    node_time_dict = copy.copy(node_time_dict)
-    update_time_(node_time_dict, edge_label_index[0], input_type[0],
-                 num_src_nodes)
-    update_time_(node_time_dict, edge_label_index[1], input_type[-1],
-                 num_dst_nodes)
-    return node_time_dict
 
 
 ###############################################################################
