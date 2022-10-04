@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
+from torch_scatter import scatter_min
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
@@ -15,7 +16,6 @@ from torch_geometric.sampler.base import (
 from torch_geometric.sampler.utils import (
     add_negative_samples,
     remap_keys,
-    set_node_time_dict,
     to_csc,
     to_hetero_csc,
 )
@@ -234,7 +234,8 @@ class NeighborSampler(BaseSampler):
                     self.row_dict,
                     seed,  # seed_dict
                     self.num_neighbors,
-                    kwargs.get('node_time_dict', self.node_time_dict),
+                    self.node_time_dict,
+                    kwargs.get('seed_time_dict', None),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -249,33 +250,20 @@ class NeighborSampler(BaseSampler):
                     node = {k: v[1] for k, v in node.items()}
 
             else:
-                if self.node_time_dict is None:
-                    out = torch.ops.torch_sparse.hetero_neighbor_sample(
-                        self.node_types,
-                        self.edge_types,
-                        self.colptr_dict,
-                        self.row_dict,
-                        seed,  # seed_dict
-                        self.num_neighbors,
-                        self.num_hops,
-                        self.replace,
-                        self.directed,
-                    )
-                else:
-                    assert self.temporal_strategy == 'uniform'
-                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                    out = fn(
-                        self.node_types,
-                        self.edge_types,
-                        self.colptr_dict,
-                        self.row_dict,
-                        seed,  # seed_dict
-                        self.num_neighbors,
-                        kwargs.get('node_time_dict', self.node_time_dict),
-                        self.num_hops,
-                        self.replace,
-                        self.directed,
-                    )
+                if self.node_time_dict is not None:
+                    raise ValueError("'time_attr' not supported for "
+                                     "neighbor sampling via 'torch-sparse'")
+                out = torch.ops.torch_sparse.hetero_neighbor_sample(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    seed,  # seed_dict
+                    self.num_neighbors,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
                 node, row, col, edge, batch = out + (None, )
 
             return HeteroSamplerOutput(
@@ -296,7 +284,8 @@ class NeighborSampler(BaseSampler):
                     self.row,
                     seed,  # seed
                     self.num_neighbors,
-                    kwargs.get('node_time', self.node_time),
+                    self.node_time,
+                    kwargs.get('seed_time', None),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -377,41 +366,54 @@ class NeighborSampler(BaseSampler):
                                    self.num_dst_nodes, negative_sampling_ratio)
         edge_label_index, edge_label, edge_label_time = out
 
-        orig_edge_label_index = edge_label_index
+        seed_time_dict = None
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
-                query_src = edge_label_index[0]
-                query_src, reverse_src = query_src.unique(return_inverse=True)
-                query_dst = edge_label_index[1]
-                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
-                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
-                query_node_dict = {
-                    self.input_type[0]: query_src,
-                    self.input_type[-1]: query_dst,
+                # TODO In temporal link prediction, we do not want to share
+                # seed nodes across different timstamps.
+                seed_src = edge_label_index[0]
+                seed_src, inverse_src = seed_src.unique(return_inverse=True)
+                seed_dst = edge_label_index[1]
+                seed_dst, inverse_dst = seed_dst.unique(return_inverse=True)
+                edge_label_index = torch.stack([inverse_src, inverse_dst], 0)
+                seed_dict = {
+                    self.input_type[0]: seed_src,
+                    self.input_type[-1]: seed_dst,
                 }
+                if edge_label_time is not None:
+                    seed_time_dict = {
+                        self.input_type[0]:
+                        scatter_min(edge_label_time, inverse_src)[0],
+                        self.input_type[-1]:
+                        scatter_min(edge_label_time, inverse_dst)[0],
+                    }
+
             else:  # Merge both source and destination node indices:
-                query_nodes = edge_label_index.view(-1)
-                query_nodes, reverse = query_nodes.unique(return_inverse=True)
-                edge_label_index = reverse.view(2, -1)
-                query_node_dict = {self.input_type[0]: query_nodes}
+                seed_nodes = edge_label_index.view(-1)
+                seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
+                edge_label_index = inverse.view(2, -1)
+                seed_dict = {self.input_type[0]: seed_nodes}
+                if edge_label_time is not None:
+                    tmp = torch.cat([edge_label_time, edge_label_time])
+                    seed_time_dict = {
+                        self.input_type[0]: scatter_min(tmp, inverse)[0]
+                    }
 
-            node_time_dict = self.node_time_dict
-            if edge_label_time is not None:
-                node_time_dict = set_node_time_dict(
-                    node_time_dict, self.input_type, orig_edge_label_index,
-                    edge_label_time, self.num_src_nodes, self.num_dst_nodes)
+            output = self._sample(
+                seed=seed_dict,
+                seed_time_dict=seed_time_dict,
+            )
 
-            output = self._sample(seed=query_node_dict,
-                                  node_time_dict=node_time_dict)
             output.metadata = (edge_label_index, edge_label, edge_label_time)
 
         elif issubclass(self.data_cls, Data):
-            query_nodes = edge_label_index.view(-1)
-            query_nodes, reverse = query_nodes.unique(return_inverse=True)
-            edge_label_index = reverse.view(2, -1)
+            assert self.node_time is None  # TODO
+            seed_nodes = edge_label_index.view(-1)
+            seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
+            edge_label_index = inverse.view(2, -1)
 
-            output = self._sample(seed=query_nodes)
+            output = self._sample(seed=seed_nodes, seed_time=None)
             output.metadata = (edge_label_index, edge_label)
 
         else:
