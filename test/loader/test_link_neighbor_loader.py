@@ -194,18 +194,25 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
 
     with pytest.raises(ValueError, match=r"'edge_label_time' was not set.*"):
-        loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                    edge_label_index=('paper', 'paper'),
-                                    batch_size=32, time_attr='time')
+        loader = LinkNeighborLoader(
+            data,
+            num_neighbors=[-1] * 2,
+            edge_label_index=('paper', 'paper'),
+            batch_size=32,
+            time_attr='time',
+        )
 
     # With edge_time:
     edge_time = torch.arange(data['paper', 'paper'].edge_index.size(1))
-    paper_time_original = data['paper'].time.clone()
-    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=('paper', 'paper'),
-                                edge_label_time=edge_time, batch_size=32,
-                                time_attr='time', neg_sampling_ratio=0.5,
-                                num_workers=2)
+    loader = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        edge_label_index=('paper', 'paper'),
+        edge_label_time=edge_time,
+        batch_size=32,
+        time_attr='time',
+        neg_sampling_ratio=0.5,
+    )
     for batch in loader:
         author_max = batch['author'].time.max()
         edge_max = batch['paper', 'paper'].edge_label_time.max()
@@ -213,8 +220,6 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         author_min = batch['author'].time.min()
         edge_min = batch['paper', 'paper'].edge_label_time.min()
         assert edge_min >= author_min
-        assert author_min >= 0
-        assert torch.allclose(data['paper'].time, paper_time_original)
 
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
