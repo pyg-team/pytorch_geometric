@@ -204,7 +204,6 @@ def test_temporal_heterogeneous_link_neighbor_loader():
 
     # With edge_time:
     edge_time = torch.arange(data['paper', 'paper'].edge_index.size(1))
-    paper_time_original = data['paper'].time.clone()
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1] * 2,
@@ -221,8 +220,6 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         author_min = batch['author'].time.min()
         edge_min = batch['paper', 'paper'].edge_label_time.min()
         assert edge_min >= author_min
-        assert author_min >= 0
-        assert torch.allclose(data['paper'].time, paper_time_original)
 
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])

@@ -370,36 +370,38 @@ class NeighborSampler(BaseSampler):
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
-                query_src = edge_label_index[0]
-                query_src, reverse_src = query_src.unique(return_inverse=True)
-                query_dst = edge_label_index[1]
-                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
-                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
-                query_node_dict = {
-                    self.input_type[0]: query_src,
-                    self.input_type[-1]: query_dst,
+                # TODO In temporal link prediction, we do not want to share
+                # seed nodes across different timstamps.
+                seed_src = edge_label_index[0]
+                seed_src, inverse_src = seed_src.unique(return_inverse=True)
+                seed_dst = edge_label_index[1]
+                seed_dst, inverse_dst = seed_dst.unique(return_inverse=True)
+                edge_label_index = torch.stack([inverse_src, inverse_dst], 0)
+                seed_dict = {
+                    self.input_type[0]: seed_src,
+                    self.input_type[-1]: seed_dst,
                 }
                 if edge_label_time is not None:
                     seed_time_dict = {
                         self.input_type[0]:
-                        scatter_min(edge_label_time, reverse_src)[0],
+                        scatter_min(edge_label_time, inverse_src)[0],
                         self.input_type[-1]:
-                        scatter_min(edge_label_time, reverse_dst)[0],
+                        scatter_min(edge_label_time, inverse_dst)[0],
                     }
 
             else:  # Merge both source and destination node indices:
-                query_nodes = edge_label_index.view(-1)
-                query_nodes, reverse = query_nodes.unique(return_inverse=True)
-                edge_label_index = reverse.view(2, -1)
-                query_node_dict = {self.input_type[0]: query_nodes}
+                seed_nodes = edge_label_index.view(-1)
+                seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
+                edge_label_index = inverse.view(2, -1)
+                seed_dict = {self.input_type[0]: seed_nodes}
                 if edge_label_time is not None:
                     tmp = torch.cat([edge_label_time, edge_label_time])
                     seed_time_dict = {
-                        self.input_type[0]: scatter_min(tmp, reverse)[0]
+                        self.input_type[0]: scatter_min(tmp, inverse)[0]
                     }
 
             output = self._sample(
-                seed=query_node_dict,
+                seed=seed_dict,
                 seed_time_dict=seed_time_dict,
             )
 
@@ -407,11 +409,11 @@ class NeighborSampler(BaseSampler):
 
         elif issubclass(self.data_cls, Data):
             assert self.node_time is None  # TODO
-            query_nodes = edge_label_index.view(-1)
-            query_nodes, reverse = query_nodes.unique(return_inverse=True)
-            edge_label_index = reverse.view(2, -1)
+            seed_nodes = edge_label_index.view(-1)
+            seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
+            edge_label_index = inverse.view(2, -1)
 
-            output = self._sample(seed=query_nodes, seed_time=None)
+            output = self._sample(seed=seed_nodes, seed_time=None)
             output.metadata = (edge_label_index, edge_label)
 
         else:
