@@ -68,14 +68,15 @@ def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
 
 
 def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
+                 fill_value: float = 0.,
                  training: bool = True) -> Tuple[Tensor, Tensor]:
     r"""Randomly masks feature from the feature matrix
     :obj:`x` with probability :obj:`p` using samples from
     a Bernoulli distribution.
 
     The method returns (1) the retained :obj:`x`, (2) the feature
-    mask broadcastable with :obj:`x` (mode=:obj:`'row'` and mode=:obj:`'col'`)
-    or with the same shape as :obj:`x` (mode=:obj:`'all'`),
+    mask broadcastable with :obj:`x` (:obj:`mode='row'` and :obj:`mode='col'`)
+    or with the same shape as :obj:`x` (:obj:`mode='all'`),
     indicating where features are retained.
 
     Args:
@@ -83,10 +84,12 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
         p (float, optional): The masking ratio. (default: :obj:`0.5`)
         mode (str, optional): The masked scheme to use for feature masking.
             (:obj:`"row"`, :obj:`"col"` or :obj:`"all"`).
-            If mode=:obj:`'col'`, will mask entire features of all nodes
-            from the feature matrix. If mode=:obj:`'row'`, will mask entire
-            nodes from the feature matrix. If mode=:obj:`'all'`, will mask
-            individual features across all nodes. (default: :obj:`"col"`)
+            If :obj:`mode='col'`, will mask entire features of all nodes
+            from the feature matrix. If :obj:`mode='row'`, will mask entire
+            nodes from the feature matrix. If :obj:`mode='all'`, will mask
+            individual features across all nodes. (default: :obj:`'col'`)
+        fill_value (float, optional): The value for masked features in the
+            output tensor. (default: :obj:`0`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
 
@@ -142,7 +145,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
     else:
         mask = x.bernoulli(1 - p).to(torch.bool)
 
-    x = x.masked_fill(~mask, 0.)
+    x = x.masked_fill(~mask, fill_value)
     return x, mask
 
 

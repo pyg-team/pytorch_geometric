@@ -59,6 +59,14 @@ def test_mask_feature():
                                [True, False, True, False],
                                [False, False, True, True]]
 
+    torch.manual_seed(6)
+    out = mask_feature(x, mode='all', fill_value=-1)
+    assert out[0].tolist() == [[-1, -1, -1, 4.0], [5.0, -1, 7.0, -1],
+                               [-1, -1, 11.0, 12.0]]
+    assert out[1].tolist() == [[False, False, False, True],
+                               [True, False, True, False],
+                               [False, False, True, True]]
+
 
 def test_add_random_edge():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
