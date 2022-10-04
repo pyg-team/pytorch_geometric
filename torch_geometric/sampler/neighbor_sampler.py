@@ -234,7 +234,8 @@ class NeighborSampler(BaseSampler):
                     self.row_dict,
                     seed,  # seed_dict
                     self.num_neighbors,
-                    kwargs.get('node_time_dict', self.node_time_dict),
+                    self.node_time_dict,
+                    kwargs.get('seed_time_dict', None),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -296,7 +297,8 @@ class NeighborSampler(BaseSampler):
                     self.row,
                     seed,  # seed
                     self.num_neighbors,
-                    kwargs.get('node_time', self.node_time),
+                    self.node_time,
+                    kwargs.get('seed_time', None),
                     True,  # csc
                     self.replace,
                     self.directed,
@@ -407,6 +409,7 @@ class NeighborSampler(BaseSampler):
             output.metadata = (edge_label_index, edge_label, edge_label_time)
 
         elif issubclass(self.data_cls, Data):
+            assert self.node_time is None  # TODO
             query_nodes = edge_label_index.view(-1)
             query_nodes, reverse = query_nodes.unique(return_inverse=True)
             edge_label_index = reverse.view(2, -1)
