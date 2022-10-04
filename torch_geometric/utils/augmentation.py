@@ -59,10 +59,10 @@ def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
         perm = torch.randperm(x.size(0), device=x.device)
         return x[perm], perm
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
-    num_nodes = torch.cat([batch.new_zeros(1), num_nodes])
+    cumsum = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
-        for offset, n in zip(num_nodes[:-1], num_nodes[1:])
+        for offset, n in zip(cumsum[:-1], num_nodes)
     ])
     return x[perm], perm
 
