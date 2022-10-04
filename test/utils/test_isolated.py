@@ -12,7 +12,7 @@ def test_contains_isolated_nodes():
     assert not contains_isolated_nodes(edge_index)
     assert contains_isolated_nodes(edge_index, num_nodes=3)
 
-    if is_full_test:
+    if is_full_test():
         jit = torch.jit.script(contains_isolated_nodes)
         assert not jit(edge_index)
         assert jit(edge_index, num_nodes=3)
