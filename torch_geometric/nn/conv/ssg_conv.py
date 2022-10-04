@@ -25,18 +25,22 @@ class SSGConv(MessagePassing):
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
     The adjacency matrix can include other values than :obj:`1` representing
     edge weights via the optional :obj:`edge_weight` tensor.
+    :class:`~torch_geometric.nn.conv.SSGConv` is an improved operator of
+    :class:`~torch_geometric.nn.conv.SGConv` by introducing the :obj:`alpha`
+    parameter to address the oversmoothing issue.
 
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        alpha (float): Teleport probability :math:`\alpha`.
+        alpha (float): Teleport probability :math:`\alpha \in [0, 1]`.
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
-            the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
-            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K \mathbf{X}` on
-            first execution, and will use the cached version for further
-            executions.
+            the computation of :math:`\frac{1}{K} \sum_{k=1}^K\left((1-\alpha)
+            {\left(\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+            \mathbf{\hat{D}}^{-1/2} \right)}^k \mathbf{X}+
+            \alpha \mathbf{X}\right)` on first execution, and will use the
+            cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
