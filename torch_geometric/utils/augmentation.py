@@ -57,8 +57,7 @@ def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
         return x, perm
     if batch is None:
         batch = x.new_zeros(x.size(0), dtype=torch.long)
-    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
-                            dim_size=int(batch.max()) + 1)
+    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
     num_nodes = torch.cat([batch.new_zeros(1), num_nodes])
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
