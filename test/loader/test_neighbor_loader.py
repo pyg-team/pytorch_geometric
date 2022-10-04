@@ -454,7 +454,7 @@ def test_pyg_lib_homogeneous_neighbor_loader():
     seed = torch.arange(10)
 
     sample = torch.ops.pyg.neighbor_sample
-    out1 = sample(colptr, row, seed, [-1, -1], time=None, csc=True)
+    out1 = sample(colptr, row, seed, [-1, -1], None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
@@ -494,7 +494,8 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
 
     sample = torch.ops.pyg.hetero_neighbor_sample_cpu
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
-                  num_neighbors_dict, None, True, False, True, False, True)
+                  num_neighbors_dict, None, None, True, False, True, False,
+                  "uniform", True)
     sample = torch.ops.torch_sparse.hetero_neighbor_sample
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
