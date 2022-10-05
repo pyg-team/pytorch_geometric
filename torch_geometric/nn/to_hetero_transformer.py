@@ -19,6 +19,10 @@ except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
+def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    return mapping if mapping is not None else {}
+
+
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = False) -> GraphModule:
@@ -35,6 +39,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
 
         class GNN(torch.nn.Module):
             def __init__(self):
+                super().__init__()
                 self.conv1 = SAGEConv((-1, -1), 32)
                 self.conv2 = SAGEConv((32, 32), 32)
 
@@ -48,7 +53,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         node_types = ['paper', 'author']
         edge_types = [
             ('paper', 'cites', 'paper'),
-            ('paper' 'written_by', 'author'),
+            ('paper', 'written_by', 'author'),
             ('author', 'writes', 'paper'),
         ]
         metadata = (node_types, edge_types)
@@ -158,9 +163,14 @@ class ToHeteroTransformer(Transformer):
             node.type = Dict[Type, node.type]
 
         self.graph.inserting_after(node)
+
+        dict_node = self.graph.create_node('call_function', target=get_dict,
+                                           args=(node, ), name=f'{name}_dict')
+        self.graph.inserting_after(dict_node)
+
         for key in self.metadata[int(self.is_edge_level(node))]:
             out = self.graph.create_node('call_method', target='get',
-                                         args=(node, key),
+                                         args=(dict_node, key, None),
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
@@ -259,7 +269,6 @@ class ToHeteroTransformer(Transformer):
                 args=(self.find_by_name(key), len(self.metadata[0])),
                 name=f'{name}_{i}')
             self.graph.inserting_after(out)
-
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):

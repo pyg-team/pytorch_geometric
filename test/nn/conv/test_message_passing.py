@@ -9,7 +9,7 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
@@ -78,6 +78,21 @@ def test_my_conv():
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
     conv.fuse = True
+
+
+def test_my_conv_out_of_bounds():
+    x = torch.randn(3, 8)
+    value = torch.randn(4)
+
+    conv = MyConv(8, 32)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+    with pytest.raises(ValueError, match="valid indices"):
+        edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
 
 
 def test_my_conv_jittable():
@@ -161,26 +176,31 @@ def test_my_static_graph_conv():
 
 
 class MyMultipleAggrConv(MessagePassing):
-    def __init__(self):
-        super().__init__(aggr=['add', 'mean', 'max'])
+    def __init__(self, **kwargs):
+        super().__init__(aggr=['add', 'mean', 'max'], **kwargs)
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor)
         return self.propagate(edge_index, x=x, size=None)
 
 
-def test_my_multiple_aggr_conv():
+@pytest.mark.parametrize('multi_aggr_tuple', [
+    (dict(mode='cat'), 3),
+    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1)
+])
+def test_my_multiple_aggr_conv(multi_aggr_tuple):
+    # The 'cat' combine mode will expand the output dimensions by
+    # the number of aggregators which is 3 here, while the 'proj'
+    # mode keeps output dimensions unchanged.
+    aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = MyMultipleAggrConv()
+    conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
-    assert out.size() == (4, 48)
-    assert not torch.allclose(out[:, 0:16], out[:, 16:32])
-    assert not torch.allclose(out[:, 0:16], out[:, 32:48])
-    assert not torch.allclose(out[:, 16:32], out[:, 32:48])
+    assert out.size() == (4, 16 * expand)
     assert torch.allclose(conv(x, adj.t()), out)
 
 
@@ -487,3 +507,52 @@ def test_explain_message():
     conv._edge_mask = torch.tensor([0, 0, 0, 0], dtype=torch.float)
     conv._apply_sigmoid = False
     assert conv(x, edge_index).abs().sum() == 0.
+
+
+class MyAggregatorConv(MessagePassing):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        # propagate_type: (x: TEnsor)
+        return self.propagate(edge_index, x=x, size=None)
+
+
+@pytest.mark.parametrize('aggr_module', [
+    aggr.MeanAggregation(),
+    aggr.SumAggregation(),
+    aggr.MaxAggregation(),
+    aggr.SoftmaxAggregation(),
+    aggr.PowerMeanAggregation(),
+    aggr.MultiAggregation(['mean', 'max'])
+])
+def test_message_passing_with_aggr_module(aggr_module):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyAggregatorConv(aggr=aggr_module)
+    assert isinstance(conv.aggr_module, aggr.Aggregation)
+    out = conv(x, edge_index)
+    assert out.size(0) == 4 and out.size(1) in {8, 16}
+    assert torch.allclose(conv(x, adj.t()), out)
+
+
+def test_message_passing_int32_edge_index():
+    # Check that we can dispatch an int32 edge_index up to aggregation
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], dtype=torch.int32)
+    edge_weight = torch.randn(edge_index.shape[1])
+
+    # Use a hook to promote the edge_index to long to workaround PyTorch CPU
+    # backend restriction to int64 for the index.
+    def cast_index_hook(module, inputs):
+        input_dict = inputs[-1]
+        input_dict['index'] = input_dict['index'].long()
+        return (input_dict, )
+
+    conv = MyConv(8, 32)
+    conv.register_aggregate_forward_pre_hook(cast_index_hook)
+
+    assert conv(x, edge_index, edge_weight).size() == (4, 32)

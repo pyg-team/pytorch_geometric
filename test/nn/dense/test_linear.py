@@ -47,6 +47,10 @@ def test_load_lazy_linear(dim1, dim2):
         assert hasattr(lin1, '_hook')
         assert hasattr(lin2, '_hook')
 
+    with pytest.raises(RuntimeError, match="in state_dict"):
+        lin1.load_state_dict({}, strict=True)
+    lin1.load_state_dict({}, strict=False)
+
 
 @pytest.mark.parametrize('lazy', [True, False])
 def test_identical_linear_default_initialization(lazy):
@@ -98,7 +102,7 @@ def test_hetero_linear():
     node_type = torch.tensor([0, 1, 2])
 
     lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
-    assert str(lin) == 'HeteroLinear(16, 32, bias=True)'
+    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
     out = lin(x, node_type)
     assert out.size() == (3, 32)

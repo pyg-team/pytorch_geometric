@@ -59,7 +59,7 @@ test_mask = index_to_mask(split_idx['test'], size=data.num_nodes)
 def train(label_rate=0.65):  # How many labels to use for propagation.
     model.train()
 
-    propagation_mask = MaskLabel.ratio_mask(train_mask, ratio=1 - label_rate)
+    propagation_mask = MaskLabel.ratio_mask(train_mask, ratio=label_rate)
     supervision_mask = train_mask ^ propagation_mask
 
     optimizer.zero_grad()

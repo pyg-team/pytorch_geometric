@@ -1,15 +1,15 @@
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
-from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.utils import filter_hetero_data, to_hetero_csc
+from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.loader.utils import get_input_nodes
+from torch_geometric.sampler.hgt_sampler import HGTSampler
 from torch_geometric.typing import NodeType
 
 
-class HGTLoader(torch.utils.data.DataLoader):
+class HGTLoader(NodeLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper.
     This loader allows for mini-batch training of GNNs on large-scale graphs
@@ -52,7 +52,7 @@ class HGTLoader(torch.utils.data.DataLoader):
             num_samples={key: [512] * 4 for key in hetero_data.node_types},
             # Use a batch size of 128 for sampling training nodes of type paper
             batch_size=128,
-            input_nodes=('paper': hetero_data['paper'].train_mask),
+            input_nodes=('paper', hetero_data['paper'].train_mask),
         )
 
         sampled_hetero_data = next(iter(loader))
@@ -77,6 +77,18 @@ class HGTLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by column. This avoids internal
+            re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` is generally not recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -86,66 +98,24 @@ class HGTLoader(torch.utils.data.DataLoader):
         data: HeteroData,
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
         input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
+        is_sorted: bool = False,
         transform: Callable = None,
+        filter_per_worker: bool = False,
         **kwargs,
     ):
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-
-        if isinstance(num_samples, (list, tuple)):
-            num_samples = {key: num_samples for key in data.node_types}
-
-        if isinstance(input_nodes, str):
-            input_nodes = (input_nodes, None)
-        assert isinstance(input_nodes, (list, tuple))
-        assert len(input_nodes) == 2
-        assert isinstance(input_nodes[0], str)
-        if input_nodes[1] is None:
-            index = torch.arange(data[input_nodes[0]].num_nodes)
-            input_nodes = (input_nodes[0], index)
-        elif input_nodes[1].dtype == torch.bool:
-            index = input_nodes[1].nonzero(as_tuple=False).view(-1)
-            input_nodes = (input_nodes[0], index)
-
-        self.data = data
-        self.num_samples = num_samples
-        self.input_nodes = input_nodes
-        self.num_hops = max([len(v) for v in num_samples.values()])
-        self.transform = transform
-        self.sample_fn = torch.ops.torch_sparse.hgt_sample
-
-        # Convert the graph data into a suitable format for sampling.
-        # NOTE: Since C++ cannot take dictionaries with tuples as key as
-        # input, edge type triplets are converted into single strings.
-        self.colptr_dict, self.row_dict, self.perm_dict = to_hetero_csc(
-            data, device='cpu', share_memory=kwargs.get('num_workers', 0) > 0)
-
-        super().__init__(input_nodes[1].tolist(), collate_fn=self.sample,
-                         **kwargs)
-
-    def sample(self, indices: List[int]) -> HeteroData:
-        input_node_dict = {self.input_nodes[0]: torch.tensor(indices)}
-        node_dict, row_dict, col_dict, edge_dict = self.sample_fn(
-            self.colptr_dict,
-            self.row_dict,
-            input_node_dict,
-            self.num_samples,
-            self.num_hops,
+        node_type, _ = get_input_nodes(data, input_nodes)
+        node_sampler = HGTSampler(
+            data,
+            num_samples=num_samples,
+            input_type=node_type,
+            is_sorted=is_sorted,
+            share_memory=kwargs.get('num_workers', 0) > 0,
         )
-        return node_dict, row_dict, col_dict, edge_dict, len(indices)
-
-    def transform_fn(self, out: Any) -> HeteroData:
-        # NOTE This function will always be executed on the main thread!
-        node_dict, row_dict, col_dict, edge_dict, batch_size = out
-
-        data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                  edge_dict, self.perm_dict)
-        data[self.input_nodes[0]].batch_size = batch_size
-
-        return data if self.transform is None else self.transform(data)
-
-    def _get_iterator(self) -> Iterator:
-        return DataLoaderIterator(super()._get_iterator(), self.transform_fn)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        super().__init__(
+            data=data,
+            node_sampler=node_sampler,
+            input_nodes=input_nodes,
+            transform=transform,
+            filter_per_worker=filter_per_worker,
+            **kwargs,
+        )

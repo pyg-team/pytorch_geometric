@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn import LayerNorm, Linear
 
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
 
 
@@ -13,6 +13,7 @@ class MAB(torch.nn.Module):
     r"""Multihead-Attention Block."""
     def __init__(self, dim_Q: int, dim_K: int, dim_V: int, num_heads: int,
                  Conv: Optional[Type] = None, layer_norm: bool = False):
+
         super().__init__()
         self.dim_V = dim_V
         self.num_heads = num_heads
@@ -132,8 +133,8 @@ class PMA(torch.nn.Module):
         return self.mab(self.S.repeat(x.size(0), 1, 1), x, graph, mask)
 
 
-class GraphMultisetTransformer(torch.nn.Module):
-    r"""The global Graph Multiset Transformer pooling operator from the
+class GraphMultisetTransformer(Aggregation):
+    r"""The Graph Multiset Transformer pooling operator from the
     `"Accurate Learning of Graph Representations
     with Graph Multiset Pooling" <https://arxiv.org/abs/2102.11533>`_ paper.
 
@@ -170,14 +171,6 @@ class GraphMultisetTransformer(torch.nn.Module):
             (default: :obj:`4`)
         layer_norm (bool, optional): If set to :obj:`True`, will make use of
             layer normalization. (default: :obj:`False`)
-
-    Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})`,
-          batch vector :math:`(|\mathcal{V}|)`,
-          edge indices :math:`(2, |\mathcal{E}|)` *(optional)*
-        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` where
-          :math:`|\mathcal{G}|` denotes the number of graphs in the batch
     """
     def __init__(
         self,
@@ -191,6 +184,7 @@ class GraphMultisetTransformer(torch.nn.Module):
         num_heads: int = 4,
         layer_norm: bool = False,
     ):
+        from torch_geometric.nn import GCNConv  # noqa: avoid circular import
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -238,15 +232,16 @@ class GraphMultisetTransformer(torch.nn.Module):
         for pool in self.pools:
             pool.reset_parameters()
 
-    def forward(self, x: Tensor, batch: Tensor,
-                edge_index: Optional[Tensor] = None) -> Tensor:
-        """"""
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2, edge_index: Optional[Tensor] = None) -> Tensor:
+
         x = self.lin1(x)
-        batch_x, mask = to_dense_batch(x, batch)
+        batch_x, mask = self.to_dense_batch(x, index)
         mask = (~mask).unsqueeze(1).to(dtype=x.dtype) * -1e9
 
         for i, (name, pool) in enumerate(zip(self.pool_sequences, self.pools)):
-            graph = (x, edge_index, batch) if name == 'GMPool_G' else None
+            graph = (x, edge_index, index) if name == 'GMPool_G' else None
             batch_x = pool(batch_x, graph, mask)
             mask = None
 

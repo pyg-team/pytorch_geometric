@@ -39,6 +39,7 @@ def test_init_hetero_data():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
+    data.validate(raise_on_error=True)
 
     assert len(data) == 2
     assert data.node_types == ['v1', 'paper', 'author']
@@ -217,6 +218,16 @@ def test_hetero_data_subgraph():
     assert len(out['author', 'paper']) == 1
     assert out['author', 'paper'].edge_index is not None
 
+    out = data.node_type_subgraph(['paper', 'author'])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'paper'),
+                              ('author', 'to', 'paper'),
+                              ('paper', 'to', 'author')]
+
+    out = data.edge_type_subgraph([('paper', 'author')])
+    assert out.node_types == ['paper', 'author']
+    assert out.edge_types == [('paper', 'to', 'author')]
+
 
 def test_copy_hetero_data():
     data = HeteroData()
@@ -254,6 +265,7 @@ def test_to_homogeneous_and_vice_versa():
     data = HeteroData()
 
     data['paper'].x = torch.randn(100, 128)
+    data['paper'].y = torch.randint(0, 10, (100, ))
     data['author'].x = torch.randn(200, 128)
 
     data['paper', 'paper'].edge_index = get_edge_index(100, 100, 250)
@@ -269,7 +281,7 @@ def test_to_homogeneous_and_vice_versa():
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
     out = data.to_homogeneous()
-    assert len(out) == 6
+    assert len(out) == 7
     assert out.num_nodes == 300
     assert out.num_edges == 1750
     assert out.num_node_features == 128
@@ -282,11 +294,16 @@ def test_to_homogeneous_and_vice_versa():
     assert out.edge_type.max() == 2
     assert len(out._node_type_names) == 2
     assert len(out._edge_type_names) == 3
+    assert out.y.size() == (300, )
+    assert torch.allclose(out.y[:100], data['paper'].y)
+    assert torch.all(out.y[100:] == -1)
+    assert 'y' not in data['author']
 
     out = out.to_heterogeneous()
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['paper'].x)
     assert torch.allclose(data['author'].x, out['author'].x)
+    assert torch.allclose(data['paper'].y, out['paper'].y)
 
     edge_index1 = data['paper', 'paper'].edge_index
     edge_index2 = out['paper', 'paper'].edge_index
@@ -332,7 +349,7 @@ def test_to_homogeneous_and_vice_versa():
     del out._edge_type_names
     del out._node_type_names
     out = out.to_heterogeneous(node_type, edge_type)
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['0'].x)
     assert torch.allclose(data['author'].x, out['1'].x)
 
@@ -428,6 +445,9 @@ def test_basic_feature_store():
     assert data.get_tensor_size(group_name='paper', attr_name='x') == (20, 20)
 
     # Get tensor attrs:
+    data['paper'].num_nodes = 20  # don't include, not a tensor attr
+    data['paper'].bad_attr = torch.randn(10, 20)  # don't include, bad cat_dim
+
     tensor_attrs = data.get_all_tensor_attrs()
     assert len(tensor_attrs) == 1
     assert tensor_attrs[0].group_name == 'paper'
@@ -461,9 +481,12 @@ def test_basic_graph_store():
     csc = adj.csc()[-2::-1]  # (row, colptr)
 
     # Put:
-    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'))
-    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'))
-    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'))
+    data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),
+                        size=(3, 3))
+    data.put_edge_index(csr, layout='csr', edge_type=('a', 'to', 'c'),
+                        size=(3, 3))
+    data.put_edge_index(csc, layout='csc', edge_type=('b', 'to', 'c'),
+                        size=(3, 3))
 
     # Get:
     assert_equal_tensor_tuple(

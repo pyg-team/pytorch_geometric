@@ -1,8 +1,7 @@
 import copy
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -54,16 +53,9 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_classes(self) -> int:
-        r"""Returns the number of classes in the dataset."""
-        y = self.data.y
-        if y is None:
-            return 0
-        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
-            return int(self.data.y.max()) + 1
-        elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
-        else:
-            return self.data.y.size(-1)
+        if self.transform is None:
+            return self._infer_num_classes(self.data.y)
+        return super().num_classes
 
     def len(self) -> int:
         if self.slices is None:
@@ -130,10 +122,13 @@ class InMemoryDataset(Dataset):
         return dataset
 
 
-def nested_iter(mapping: Mapping) -> Iterable:
-    for key, value in mapping.items():
-        if isinstance(value, Mapping):
+def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+    if isinstance(node, Mapping):
+        for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-        else:
-            yield key, value
+    elif isinstance(node, Sequence):
+        for i, inner_value in enumerate(node):
+            yield i, inner_value
+    else:
+        yield None, node

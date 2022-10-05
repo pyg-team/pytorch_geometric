@@ -12,9 +12,14 @@ from .dense_data_loader import DenseDataLoader
 from .temporal_dataloader import TemporalDataLoader
 from .neighbor_sampler import NeighborSampler
 from .imbalanced_sampler import ImbalancedSampler
+from .dynamic_batch_sampler import DynamicBatchSampler
+from .node_loader import NodeLoader
+from .link_loader import LinkLoader
 
 __all__ = classes = [
     'DataLoader',
+    'NodeLoader',
+    'LinkLoader',
     'NeighborLoader',
     'LinkNeighborLoader',
     'HGTLoader',
@@ -31,4 +36,5 @@ __all__ = classes = [
     'TemporalDataLoader',
     'NeighborSampler',
     'ImbalancedSampler',
+    'DynamicBatchSampler',
 ]

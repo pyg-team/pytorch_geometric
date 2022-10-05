@@ -1,6 +1,7 @@
 from .degree import degree
 from .softmax import softmax
-from .dropout import dropout_adj
+from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
+from .augmentation import shuffle_node, mask_feature, add_random_edge
 from .sort_edge_index import sort_edge_index
 from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
@@ -11,13 +12,14 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
 from .homophily import homophily
+from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import dense_to_sparse
-from .unbatch import unbatch
+from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
@@ -33,11 +35,18 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
+from .scatter import scatter
 
 __all__ = [
     'degree',
     'softmax',
+    'dropout_node',
+    'dropout_edge',
+    'dropout_path',
     'dropout_adj',
+    'shuffle_node',
+    'mask_feature',
+    'add_random_edge',
     'sort_edge_index',
     'coalesce',
     'is_undirected',
@@ -55,6 +64,7 @@ __all__ = [
     'bipartite_subgraph',
     'k_hop_subgraph',
     'homophily',
+    'assortativity',
     'get_laplacian',
     'get_mesh_laplacian',
     'index_to_mask',
@@ -63,6 +73,7 @@ __all__ = [
     'to_dense_adj',
     'dense_to_sparse',
     'unbatch',
+    'unbatch_edge_index',
     'normalized_cut',
     'grid',
     'geodesic_distance',
@@ -83,6 +94,7 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
+    'scatter',
 ]
 
 classes = __all__

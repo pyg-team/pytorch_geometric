@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.8]
-        torch-version: [1.11.0]
+        torch-version: [1.12.0]
 
     steps:
       - uses: actions/checkout@v3
@@ -26,12 +26,13 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}+cpu
         run: |
+          pip install numpy typing-extensions dataclasses
           pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
       - name: Install internal dependencies
         run: |
-          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
 
       - name: Install main package

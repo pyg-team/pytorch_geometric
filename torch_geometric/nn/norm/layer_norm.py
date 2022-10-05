@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter
@@ -29,12 +30,19 @@ class LayerNorm(torch.nn.Module):
         affine (bool, optional): If set to :obj:`True`, this module has
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
+        mode (str, optinal): The normalization mode to use for layer
+            normalization. (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"`
+            is used, each graph will be considered as an element to be
+            normalized. If `"node"` is used, each node will be considered as
+            an element to be normalized. (default: :obj:`"graph"`)
     """
-    def __init__(self, in_channels, eps=1e-5, affine=True):
+    def __init__(self, in_channels: int, eps: float = 1e-5,
+                 affine: bool = True, mode: str = 'graph'):
         super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps
+        self.mode = mode
 
         if affine:
             self.weight = Parameter(torch.Tensor(in_channels))
@@ -51,31 +59,39 @@ class LayerNorm(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
-        if batch is None:
-            x = x - x.mean()
-            out = x / (x.std(unbiased=False) + self.eps)
+        if self.mode == 'graph':
+            if batch is None:
+                x = x - x.mean()
+                out = x / (x.std(unbiased=False) + self.eps)
 
-        else:
-            batch_size = int(batch.max()) + 1
+            else:
+                batch_size = int(batch.max()) + 1
 
-            norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
-            norm = norm.mul_(x.size(-1)).view(-1, 1)
+                norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
+                norm = norm.mul_(x.size(-1)).view(-1, 1)
 
-            mean = scatter(x, batch, dim=0, dim_size=batch_size,
-                           reduce='add').sum(dim=-1, keepdim=True) / norm
+                mean = scatter(x, batch, dim=0, dim_size=batch_size,
+                               reduce='add').sum(dim=-1, keepdim=True) / norm
 
-            x = x - mean.index_select(0, batch)
+                x = x - mean.index_select(0, batch)
 
-            var = scatter(x * x, batch, dim=0, dim_size=batch_size,
-                          reduce='add').sum(dim=-1, keepdim=True)
-            var = var / norm
+                var = scatter(x * x, batch, dim=0, dim_size=batch_size,
+                              reduce='add').sum(dim=-1, keepdim=True)
+                var = var / norm
 
-            out = x / (var + self.eps).sqrt().index_select(0, batch)
+                out = x / (var + self.eps).sqrt().index_select(0, batch)
 
-        if self.weight is not None and self.bias is not None:
-            out = out * self.weight + self.bias
+            if self.weight is not None and self.bias is not None:
+                out = out * self.weight + self.bias
 
-        return out
+            return out
+
+        if self.mode == 'node':
+            return F.layer_norm(x, (self.in_channels, ), self.weight,
+                                self.bias, self.eps)
+
+        raise ValueError(f"Unknow normalization mode: {self.mode}")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.in_channels})'
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'mode={self.mode})')

@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import (
     contains_isolated_nodes,
     remove_isolated_nodes,
@@ -10,6 +11,11 @@ def test_contains_isolated_nodes():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     assert not contains_isolated_nodes(edge_index)
     assert contains_isolated_nodes(edge_index, num_nodes=3)
+
+    if is_full_test():
+        jit = torch.jit.script(contains_isolated_nodes)
+        assert not jit(edge_index)
+        assert jit(edge_index, num_nodes=3)
 
     edge_index = torch.tensor([[0, 1, 2, 0], [1, 0, 2, 0]])
     assert contains_isolated_nodes(edge_index)

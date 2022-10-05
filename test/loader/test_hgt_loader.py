@@ -5,6 +5,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.testing import onlyFullTest, withPackage
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -55,8 +56,9 @@ def test_hgt_loader():
     for batch in loader:
         assert isinstance(batch, HeteroData)
 
-        # Test node type selection:
+        # Test node and types:
         assert set(batch.node_types) == {'paper', 'author'}
+        assert set(batch.edge_types) == set(data.edge_types)
 
         assert len(batch['paper']) == 2
         assert batch['paper'].x.size() == (40, )  # 20 + 4 * 5
@@ -174,3 +176,14 @@ def test_hgt_loader_on_cora(get_dataset):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@onlyFullTest
+@withPackage('torch_sparse>=0.6.15')
+def test_hgt_loader_on_dblp(get_dataset):
+    data = get_dataset(name='DBLP')[0]
+    loader = HGTLoader(data, num_samples=[10, 10],
+                       input_nodes=('author', data['author'].train_mask))
+
+    for batch in loader:
+        assert set(batch.edge_types) == set(data.edge_types)

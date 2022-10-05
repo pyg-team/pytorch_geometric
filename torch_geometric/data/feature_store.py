@@ -22,7 +22,6 @@ Major TODOs for future implementation:
 """
 import copy
 from abc import abstractmethod
-from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
@@ -30,7 +29,7 @@ from typing import Any, List, Optional, Tuple, Union
 import numpy as np
 import torch
 
-from torch_geometric.typing import FeatureTensorType
+from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
 
 _field_status = Enum("FieldStatus", "UNSET")
@@ -53,7 +52,7 @@ class TensorAttr(CastMixin):
     """
 
     # The group name that the tensor corresponds to. Defaults to UNSET.
-    group_name: Optional[str] = _field_status.UNSET
+    group_name: Optional[NodeType] = _field_status.UNSET
 
     # The name of the tensor within its group. Defaults to UNSET.
     attr_name: Optional[str] = _field_status.UNSET
@@ -119,11 +118,12 @@ class AttrView(CastMixin):
     # Advanced indexing #######################################################
 
     def __getattr__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
-        r"""Sets the first unset field of the backing :class:`TensorAttr` object
-        to the attribute. This allows for :class:`AttrView` to be indexed by
-        different values of attributes, in order. In particular, for a feature
-        store that we want to index by :obj:`group_name` and :obj:`attr_name`,
-        the following code will do so:
+        r"""Sets the first unset field of the backing :class:`TensorAttr`
+        object to the attribute.
+        This allows for :class:`AttrView` to be indexed by different values of
+        attributes, in order.
+        In particular, for a feature store that we want to index by
+        :obj:`group_name` and :obj:`attr_name`, the following code will do so:
 
         .. code-block:: python
 
@@ -153,11 +153,12 @@ class AttrView(CastMixin):
         return out
 
     def __getitem__(self, key: Any) -> Union['AttrView', FeatureTensorType]:
-        r"""Sets the first unset field of the backing :class:`TensorAttr` object
-        to the attribute via indexing. This allows for :class:`AttrView` to be
-        indexed by different values of attributes, in order. In particular, for
-        a feature store that we want to index by :obj:`group_name` and
-        :obj:`attr_name`, the following code will do so:
+        r"""Sets the first unset field of the backing :class:`TensorAttr`
+        object to the attribute via indexing.
+        This allows for :class:`AttrView` to be indexed by different values of
+        attributes, in order.
+        In particular, for a feature store that we want to index by
+        :obj:`group_name` and :obj:`attr_name`, the following code will do so:
 
         .. code-block:: python
 
@@ -227,8 +228,9 @@ class AttrView(CastMixin):
         return out
 
     def __eq__(self, obj: Any) -> bool:
-        r"""Compares two :class:`AttrView` objects by checking equality of their
-        :class:`FeatureStore` references and :class:`TensorAttr` attributes."""
+        r"""Compares two :class:`AttrView` objects by checking equality of
+        their :class:`FeatureStore` references and :class:`TensorAttr`
+        attributes."""
         if not isinstance(obj, AttrView):
             return False
         return self._store == obj._store and self._attr == obj._attr
@@ -238,7 +240,14 @@ class AttrView(CastMixin):
                 f'attr={self._attr})')
 
 
-class FeatureStore(MutableMapping):
+# TODO (manan, matthias) Ideally, we want to let `FeatureStore` inherit from
+# `MutableMapping` to clearly indicate its behavior and usage to the user.
+# However, having `MutableMapping` as a base class leads to strange behavior
+# in combination with PyTorch and PyTorch Lightning, in particular since these
+# libraries use customized logic during mini-batch for `Mapping` base classes.
+
+
+class FeatureStore:
     def __init__(self, tensor_attr_cls: Any = TensorAttr):
         r"""Initializes the feature store. Implementor classes can customize
         the ordering and required nature of their :class:`TensorAttr` tensor

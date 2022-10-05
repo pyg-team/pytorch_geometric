@@ -38,6 +38,20 @@ def negative_sampling(edge_index: Tensor,
             negative edges will be undirected. (default: :obj:`False`)
 
     :rtype: LongTensor
+
+    Examples:
+
+        >>> # Standard usage
+        >>> edge_index = torch.as_tensor([[0, 0, 1, 2],
+        ...                               [0, 1, 2, 3]])
+        >>> negative_sampling(edge_index)
+        tensor([[3, 0, 0, 3],
+                [2, 3, 2, 1]])
+
+        >>> # For bipartite graph
+        >>> negative_sampling(edge_index, num_nodes=(3, 4))
+        tensor([[0, 2, 2, 1],
+                [2, 2, 1, 3]])
     """
     assert method in ['sparse', 'dense']
 
@@ -124,6 +138,35 @@ def batched_negative_sampling(
             negative edges will be undirected. (default: :obj:`False`)
 
     :rtype: LongTensor
+
+    Examples:
+
+        >>> # Standard usage
+        >>> edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
+        >>> edge_index = torch.cat([edge_index, edge_index + 4], dim=1)
+        >>> edge_index
+        tensor([[0, 0, 1, 2, 4, 4, 5, 6],
+                [0, 1, 2, 3, 4, 5, 6, 7]])
+        >>> batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
+        >>> batched_negative_sampling(edge_index, batch)
+        tensor([[3, 1, 3, 2, 7, 7, 6, 5],
+                [2, 0, 1, 1, 5, 6, 4, 4]])
+
+        >>> # For bipartite graph
+        >>> edge_index1 = torch.as_tensor([[0, 0, 1, 1], [0, 1, 2, 3]])
+        >>> edge_index2 = edge_index1 + torch.tensor([[2], [4]])
+        >>> edge_index3 = edge_index2 + torch.tensor([[2], [4]])
+        >>> edge_index = torch.cat([edge_index1, edge_index2,
+        ...                         edge_index3], dim=1)
+        >>> edge_index
+        tensor([[ 0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5],
+                [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11]])
+        >>> src_batch = torch.tensor([0, 0, 1, 1, 2, 2])
+        >>> dst_batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2])
+        >>> batched_negative_sampling(edge_index,
+        ...                           (src_batch, dst_batch))
+        tensor([[ 0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5],
+                [ 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9]])
     """
     if isinstance(batch, Tensor):
         src_batch, dst_batch = batch, batch
@@ -173,6 +216,14 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
             (default: :obj:`True`)
 
     :rtype: (LongTensor, LongTensor, LongTensor)
+
+    Example:
+
+        >>> edge_index = torch.as_tensor([[0, 0, 1, 2],
+        ...                               [0, 1, 2, 3]])
+        >>> structured_negative_sampling(edge_index)
+        (tensor([0, 0, 1, 2]), tensor([0, 1, 2, 3]), tensor([2, 3, 0, 2]))
+
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -216,6 +267,16 @@ def structured_negative_sampling_feasible(
             (default: :obj:`True`)
 
     :rtype: bool
+
+    Examples:
+
+        >>> edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
+        ...                                [1, 2, 0, 2, 0, 1, 1]])
+        >>> structured_negative_sampling_feasible(edge_index, 3, False)
+        False
+
+        >>> structured_negative_sampling_feasible(edge_index, 3, True)
+        True
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     max_num_neighbors = num_nodes

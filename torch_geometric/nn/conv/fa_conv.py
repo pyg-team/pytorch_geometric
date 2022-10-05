@@ -115,7 +115,7 @@ class FAConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, None, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -127,7 +127,7 @@ class FAConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, None, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -149,7 +149,7 @@ class FAConv(MessagePassing):
         self._alpha = None
 
         if self.eps != 0.0:
-            out += self.eps * x_0
+            out = out + self.eps * x_0
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None

@@ -57,13 +57,13 @@ def test_to_superpixels():
     assert y == 7
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
-    for data, y in loader:
-        assert len(data) == 4
-        assert data.pos.dim() == 2 and data.pos.size(1) == 2
-        assert data.x.dim() == 2 and data.x.size(1) == 1
-        assert data.batch.dim() == 1
-        assert data.ptr.dim() == 1
-        assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
+    for batch, y in loader:
+        assert batch.num_graphs == len(batch) == 2
+        assert batch.pos.dim() == 2 and batch.pos.size(1) == 2
+        assert batch.x.dim() == 2 and batch.x.size(1) == 1
+        assert batch.batch.dim() == 1
+        assert batch.ptr.dim() == 1
+        assert batch.pos.size(0) == batch.x.size(0) == batch.batch.size(0)
         assert y.tolist() == [7, 2]
         break
 
@@ -81,15 +81,15 @@ def test_to_superpixels():
     assert y == 7
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
-    for data, y in loader:
-        assert len(data) == 6
-        assert data.pos.dim() == 2 and data.pos.size(1) == 2
-        assert data.x.dim() == 2 and data.x.size(1) == 1
-        assert data.batch.dim() == 1
-        assert data.ptr.dim() == 1
-        assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
-        assert data.seg.size() == (2, 28, 28)
-        assert data.img.size() == (2, 1, 28, 28)
+    for batch, y in loader:
+        assert batch.num_graphs == len(batch) == 2
+        assert batch.pos.dim() == 2 and batch.pos.size(1) == 2
+        assert batch.x.dim() == 2 and batch.x.size(1) == 1
+        assert batch.batch.dim() == 1
+        assert batch.ptr.dim() == 1
+        assert batch.pos.size(0) == batch.x.size(0) == batch.batch.size(0)
+        assert batch.seg.size() == (2, 28, 28)
+        assert batch.img.size() == (2, 1, 28, 28)
         assert y.tolist() == [7, 2]
         break
 

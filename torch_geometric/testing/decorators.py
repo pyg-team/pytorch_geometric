@@ -1,8 +1,11 @@
 import os
+import sys
+from importlib import import_module
 from importlib.util import find_spec
 from typing import Callable
 
 import torch
+from packaging.requirements import Requirement
 
 
 def is_full_test() -> bool:
@@ -20,40 +23,39 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
-def withPackage(*args) -> Callable:
-    r"""A decorator to skip tests if certain packages are not installed."""
-    na_packages = set(arg for arg in args if find_spec(arg) is None)
-
+def withPython(*args) -> Callable:
+    r"""A decorator to skip tests for any Python version not listed."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
+        python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
         return pytest.mark.skipif(
-            not is_full_test() and len(na_packages) > 0,
-            reason=f"Package(s) {na_packages} are not installed",
+            python_version not in args,
+            reason=f"Python {python_version} not supported",
         )(func)
 
     return decorator
 
 
-def withRegisteredOp(*args) -> Callable:
-    r"""A decorator to skip tests if a certain op is not registered."""
-    def is_registered(op: str) -> bool:
-        module = torch.ops
-        for attr in op.split('.'):
-            try:
-                module = getattr(module, attr)
-            except RuntimeError:
-                return False
-        return True
+def withPackage(*args) -> Callable:
+    r"""A decorator to skip tests if certain packages are not installed.
+    Also supports version specification."""
+    def is_installed(package: str) -> bool:
+        req = Requirement(package)
+        if find_spec(req.name) is None:
+            return False
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
+        return module.__version__ in req.specifier
 
-    na_ops = set(arg for arg in args if not is_registered(arg))
+    na_packages = set(package for package in args if not is_installed(package))
 
     def decorator(func: Callable) -> Callable:
         import pytest
-
         return pytest.mark.skipif(
-            len(na_ops) > 0,
-            reason=f"Operator(s) {na_ops} are not registered",
+            len(na_packages) > 0,
+            reason=f"Package(s) {na_packages} are not installed",
         )(func)
 
     return decorator
