@@ -110,8 +110,8 @@ def read_ego(files, name):
         edge_index = torch.stack([row, col], dim=0)
 
         edge_index, _ = coalesce(edge_index, None, N, N)
-        data = Data(x=x, edge_index=edge_index, circle=circle,
-                    circle_batch=circle_batch)
+        data = EgoData(x=x, edge_index=edge_index, circle=circle,
+                       circle_batch=circle_batch)
 
         data_list.append(data)
 
