@@ -2,7 +2,9 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.typing import Adj
-from torch_geometric.utils import coalesce, degree, to_dense_adj
+from torch_geometric.utils import coalesce, degree
+
+from .to_dense_adj import to_dense_adj
 
 
 def assortativity(edge_index: Adj) -> float:
@@ -41,7 +43,6 @@ def assortativity(edge_index: Adj) -> float:
 
     # Compute degree mixing matrix (joint probability distribution) `M`
     num_degrees = degrees.size(0)
-    M = torch.zeros(num_degrees, num_degrees, device=device)
     src_deg = mapping[out_deg[row]]
     dst_deg = mapping[in_deg[col]]
 
