@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added `SSGConv` layer ([#5599](https://github.com/pyg-team/pytorch_geometric/pull/5599))
 - Added `shuffle_node`, `mask_feature` and `add_random_edge` augmentation methdos ([#5548](https://github.com/pyg-team/pytorch_geometric/pull/5548))
 - Added `dropout_path` augmentation that drops edges from a graph based on random walks ([#5531](https://github.com/pyg-team/pytorch_geometric/pull/5531))
 - Add support for filling labels with dummy values in `HeteroData.to_homogeneous()` ([#5540](https://github.com/pyg-team/pytorch_geometric/pull/5540))
