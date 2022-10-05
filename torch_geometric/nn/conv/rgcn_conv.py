@@ -225,7 +225,9 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if self._WITH_PYG_LIB and isinstance(edge_index, Tensor):
+            if (self._WITH_PYG_LIB and self.num_bases is None
+                    and x_l.is_floating_point()
+                    and isinstance(edge_index, Tensor)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = edge_type.sort()
