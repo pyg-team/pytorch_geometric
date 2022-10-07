@@ -145,11 +145,11 @@ class GENConv(MessagePassing):
 
         channels = [in_channels[0]]
         for i in range(num_layers - 1):
-            channels.append(in_channels[0] * 2)
+            channels.append(out_channels * 2)
         channels.append(out_channels)
         self.mlp = MLP(channels, norm=norm)
 
-        if in_channels[0] != in_channels[1]:
+        if in_channels[0] != in_channels[1] and in_channels[0] != -1:
             self.lin_r = Linear(in_channels[1], in_channels[0], bias=True)
 
         if msg_norm:
