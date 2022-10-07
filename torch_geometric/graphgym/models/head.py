@@ -74,10 +74,8 @@ class GNNEdgeHead(nn.Module):
                     cfg.model.edge_decoding))
 
     def _apply_index(self, batch):
-        index = '{}_edge_index'.format(batch.split)
-        label = '{}_edge_label'.format(batch.split)
-        return batch.x[batch[index]], \
-            batch[label]
+        return batch.x[batch["edge_label_index"]], \
+            batch["edge_label"]
 
     def forward(self, batch):
         if cfg.model.edge_decoding != 'concat':

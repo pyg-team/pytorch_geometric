@@ -17,12 +17,13 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
+from torch_geometric.data.lightning_datamodule import LightningDataModule
 from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
 from torch_geometric.graphgym.models.head import GNNNodeHead
-from torch_geometric.graphgym.train import GraphGymDataModule, train
+from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (
     agg_runs,
     auto_select_device,
@@ -80,8 +81,8 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
         cfg.metric_best = 'auto'
         cfg.custom_metrics = []
 
-    datamodule = GraphGymDataModule()
-    assert len(datamodule.loaders) == 3
+    datamodule = create_loader()
+    assert isinstance(datamodule, LightningDataModule)
 
     model = create_model()
     assert isinstance(model, torch.nn.Module)
@@ -126,7 +127,7 @@ def test_graphgym_module(tmpdir):
     set_run_dir(cfg.out_dir)
 
     loaders = create_loader()
-    assert len(loaders) == 3
+    assert isinstance(loaders, LightningDataModule)
 
     model = create_model()
     assert isinstance(model, pl.LightningModule)
@@ -140,21 +141,21 @@ def test_graphgym_module(tmpdir):
 
     keys = {"loss", "true", "pred_score", "step_end_time"}
     # test training step
-    batch = next(iter(loaders[0]))
+    batch = next(iter(loaders.train_dataloader()))
     batch.to(model.device)
     outputs = model.training_step(batch)
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
     # test validation step
-    batch = next(iter(loaders[1]))
+    batch = next(iter(loaders.val_dataloader()))
     batch.to(model.device)
     outputs = model.validation_step(batch)
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
     # test test step
-    batch = next(iter(loaders[2]))
+    batch = next(iter(loaders.test_dataloader()))
     batch.to(model.device)
     outputs = model.test_step(batch)
     assert keys == set(outputs.keys())
@@ -187,7 +188,8 @@ def test_train(tmpdir):
     logger = LoggerCallback()
     trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=logger,
                          log_every_n_steps=1)
-    train_loader, val_loader = loaders[0], loaders[1]
+    train_loader, val_loader = loaders.train_dataloader(
+    ), loaders.val_dataloader()
     trainer.fit(model, train_loader, val_loader)
 
     shutil.rmtree(cfg.out_dir)

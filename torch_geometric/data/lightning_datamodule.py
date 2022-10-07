@@ -349,6 +349,7 @@ class LightningNodeData(LightningDataModule):
             kwargs['shuffle'] = True
             kwargs.pop('sampler', None)
             kwargs.pop('batch_sampler', None)
+            kwargs.pop('num_neighbors', None)
 
             return torch.utils.data.DataLoader(
                 [self.data],
@@ -573,9 +574,14 @@ class LightningLinkData(LightningDataModule):
             kwargs['shuffle'] = True
             kwargs.pop('sampler', None)
             kwargs.pop('batch_sampler', None)
+            kwargs.pop('num_neighbors', None)
+
+            data = self.data
+            data.edge_label_index = input_edges
+            data.edge_label = input_labels
 
             return torch.utils.data.DataLoader(
-                [self.data],
+                [data],
                 collate_fn=lambda xs: xs[0],
                 **kwargs,
             )
