@@ -32,7 +32,7 @@ class Aggregation(torch.nn.Module):
        # Assign each element to one of three sets:
        index = torch.tensor([0, 0, 1, 0, 2, 0, 2, 1, 0, 2])
 
-       output = aggr(x, index)  #  Output shape: [4, 64]
+       output = aggr(x, index)  #  Output shape: [3, 64]
 
     Alternatively, aggregation can be achieved via a "compressed" index vector
     called :obj:`ptr`. Here, elements within the same set need to be grouped
