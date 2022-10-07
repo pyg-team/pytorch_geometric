@@ -4,6 +4,10 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
+from torch_geometric.data.lightning_datamodule import (
+    LightningLinkData,
+    LightningNodeData,
+)
 from torch_geometric.datasets import (
     PPI,
     Amazon,
@@ -24,7 +28,6 @@ from torch_geometric.utils import (
     negative_sampling,
     to_undirected,
 )
-from torch_geometric.data.lightning_datamodule import LightningLinkData, LightningNodeData
 
 index2mask = index_to_mask  # TODO Backward compatibility
 

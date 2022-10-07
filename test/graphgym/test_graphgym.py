@@ -8,6 +8,7 @@ import pytest
 import torch
 
 from torch_geometric import seed_everything
+from torch_geometric.data.lightning_datamodule import LightningDataModule
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import (
@@ -17,7 +18,6 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.data.lightning_datamodule import LightningDataModule
 from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model

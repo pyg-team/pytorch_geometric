@@ -13,8 +13,8 @@ from torch_geometric.graphgym.config import (
     set_out_dir,
     set_run_dir,
 )
-from torch_geometric.graphgym.logger import set_printing
 from torch_geometric.graphgym.loader import create_loader
+from torch_geometric.graphgym.logger import set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils.agg_runs import agg_runs
