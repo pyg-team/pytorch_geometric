@@ -64,6 +64,8 @@ class GENConv(MessagePassing):
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`, :obj:`max`).
