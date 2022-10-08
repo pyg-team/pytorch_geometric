@@ -1,11 +1,14 @@
+import copy
 import os
 import os.path as osp
 from functools import cached_property
 from glob import glob
 from typing import Callable, List, Optional, Union
+from warnings import warn
 
 import numpy as np
 import torch
+from torch.utils.data import ConcatDataset
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -14,7 +17,6 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.data.summary import Stats, Summary
 
 
 class HydroNet(InMemoryDataset):
@@ -61,6 +63,10 @@ class HydroNet(InMemoryDataset):
         # the base Dataset class is responsible for checking if the on-disk
         # cached data is available or needs to be processed
         self.max_num_workers = max_num_workers
+        if pre_filter is not None:
+            warn("Ignoring the `pre_filter` argument as it is not supported "
+                 "by the HydroNet dataset")
+
         super().__init__(root, transform, pre_transform, pre_filter)
         self.select_clusters(clusters)
 
@@ -72,7 +78,7 @@ class HydroNet(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         names = [osp.basename(f) for f in self.raw_file_names]
         names = [osp.splitext(f)[0] for f in names]
-        return [f + ".pt" for f in names]
+        return [f + ".npz" for f in names]
 
     def download(self):
         file_path = download_url(self.raw_url2, self.raw_dir,
@@ -98,8 +104,7 @@ class HydroNet(InMemoryDataset):
     def _create_partitions(self, file):
         name = osp.basename(file)
         name, _ = osp.splitext(name)
-        return Partition(self.root, name, self.transform, self.pre_transform,
-                         self.pre_filter)
+        return Partition(self.root, name, self.transform, self.pre_transform)
 
     def select_clusters(self, clusters: Union[int, List[int]]):
         self._partitions = [self._create_partitions(f) for f in self.raw_paths]
@@ -123,12 +128,8 @@ class HydroNet(InMemoryDataset):
         [p.load() for p in tqdm(self._partitions)]
 
     @cached_property
-    def _offsets(self):
-        partition_sizes = torch.tensor([len(p) for p in self._partitions])
-        offsets = partition_sizes.cumsum(dim=0)
-        offsets = offsets.roll(shifts=1, dims=0)
-        offsets[0] = 0
-        return offsets
+    def _dataset(self):
+        return ConcatDataset(self._partitions)
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
@@ -136,9 +137,7 @@ class HydroNet(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
-        partition_idx = torch.nonzero((idx - self._offsets) >= 0)[-1]
-        local_idx = int(idx - self._offsets[partition_idx])
-        return self._partitions[partition_idx].get(local_idx)
+        return self._dataset[idx]
 
 
 def get_num_clusters(filepath):
@@ -173,9 +172,9 @@ def read_atoms(file, chunk_size):
 
     dtypes = {
         'atom': 'string',
-        'x': np.float32,
-        'y': np.float32,
-        'z': np.float32
+        'x': np.float16,
+        'y': np.float16,
+        'z': np.float16
     }
     df = pd.read_table(file, sep=r'\s+', names=list(dtypes.keys()),
                        dtype=dtypes, skiprows=skipheaders, memory_map=True)
@@ -194,11 +193,12 @@ class Partition(InMemoryDataset):
     def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 backend: Optional[str] = 'npz'):
         self.name = name
         self.num_clusters = get_num_clusters(name)
-        super().__init__(root, transform, pre_transform, pre_filter, log=False)
-        self.summary = torch.load(self.processed_paths[1])
+        self.backend = backend
+        super().__init__(root, transform, pre_transform, pre_filter=None,
+                         log=False)
         self.is_loaded = False
 
     @property
@@ -207,49 +207,50 @@ class Partition(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return [self.name + '.pt', self.name.replace('all', 'summary') + '.pt']
+        return [self.name + '.npz']
 
     def process(self):
         num_nodes = self.num_clusters * 3
         chunk_size = num_nodes + 2
-        y = read_energy(self.raw_paths[0], chunk_size)
         z, pos = read_atoms(self.raw_paths[0], chunk_size)
-        num_graphs = z.shape[0]
-        data_list, num_nodes_list, num_edges_list = [], [], []
-        (y, z, pos) = (torch.from_numpy(a) for a in (y, z, pos))
-
-        for idx in tqdm(range(num_graphs), position=self.num_clusters - 2,
-                        leave=False, desc=self.name):
-            data = Data(z=z[idx, :], y=y[idx], pos=pos[idx, :])
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
-
-            data_list.append(data)
-            num_nodes_list.append(data.num_nodes)
-            num_edges_list.append(data.num_edges)
-
-        torch.save(self.collate(data_list), self.processed_paths[0])
-        summary = Summary(name=self.name, num_graphs=len(data_list),
-                          num_nodes=Stats.from_data(num_nodes_list),
-                          num_edges=Stats.from_data(num_edges_list))
-        torch.save(summary, self.processed_paths[1])
+        y = read_energy(self.raw_paths[0], chunk_size)
+        np.savez_compressed(self.processed_paths[0], z=z, pos=pos, y=y,
+                            num_graphs=z.shape[0])
 
     def load(self):
         if self.is_loaded:
             return
 
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        with np.load(self.processed_paths[0]) as npzfile:
+            self.z = npzfile['z']
+            self.pos = npzfile['pos']
+            self.y = npzfile['y']
+
         self.is_loaded = True
+
+    @cached_property
+    def num_graphs(self) -> int:
+        with np.load(self.processed_paths[0]) as npzfile:
+            return int(npzfile['num_graphs'])
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
-        return self.summary.num_graphs
+        return self.num_graphs
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
         self.load()
-        return super().get(idx)
+        if not hasattr(self, '_data_list') or self._data_list is None:
+            self._data_list = self.len() * [None]
+        elif self._data_list[idx] is not None:
+            return copy.copy(self._data_list[idx])
+
+        data = Data(z=torch.from_numpy(self.z[idx, :]),
+                    pos=torch.from_numpy(self.pos[idx, :, :]),
+                    y=float(self.y[idx]))
+
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
+        self._data_list[idx] = copy.copy(data)
+        return data
