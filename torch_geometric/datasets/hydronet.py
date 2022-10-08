@@ -192,11 +192,9 @@ def read_atoms(file, chunk_size):
 class Partition(InMemoryDataset):
     def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 backend: Optional[str] = 'npz'):
+                 pre_transform: Optional[Callable] = None):
         self.name = name
         self.num_clusters = get_num_clusters(name)
-        self.backend = backend
         super().__init__(root, transform, pre_transform, pre_filter=None,
                          log=False)
         self.is_loaded = False
