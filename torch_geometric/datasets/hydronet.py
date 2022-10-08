@@ -225,7 +225,9 @@ class Partition(InMemoryDataset):
             self.z = npzfile['z']
             self.pos = npzfile['pos']
             self.y = npzfile['y']
+            num_graphs = int(npzfile['num_graphs'])
 
+        self._data_list = num_graphs * [None]
         self.is_loaded = True
 
     @cached_property
@@ -240,9 +242,7 @@ class Partition(InMemoryDataset):
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
         self.load()
-        if not hasattr(self, '_data_list') or self._data_list is None:
-            self._data_list = self.len() * [None]
-        elif self._data_list[idx] is not None:
+        if self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
 
         data = Data(z=torch.from_numpy(self.z[idx, :]),
