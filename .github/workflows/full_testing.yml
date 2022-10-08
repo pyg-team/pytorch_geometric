@@ -40,6 +40,7 @@ jobs:
 
       - name: Install internal dependencies
         run: |
+          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
 
       - name: Install main package

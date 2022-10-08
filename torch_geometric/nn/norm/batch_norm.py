@@ -56,11 +56,16 @@ class BatchNorm(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """"""
         if self.allow_single_element and x.size(0) <= 1:
-            training = self.module.training
-            self.module.eval()
-            out = self.module(x)
-            self.module.training = training
-            return out
+            return torch.nn.functional.batch_norm(
+                x,
+                self.module.running_mean,
+                self.module.running_var,
+                self.module.weight,
+                self.module.bias,
+                False,  # bn_training
+                0.0,  # momentum
+                self.module.eps,
+            )
         return self.module(x)
 
     def __repr__(self):
