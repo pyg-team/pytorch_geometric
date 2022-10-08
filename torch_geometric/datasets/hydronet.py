@@ -247,7 +247,7 @@ class Partition(InMemoryDataset):
 
         data = Data(z=torch.from_numpy(self.z[idx, :]),
                     pos=torch.from_numpy(self.pos[idx, :, :]),
-                    y=float(self.y[idx]))
+                    y=torch.tensor(self.y[idx]))
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
