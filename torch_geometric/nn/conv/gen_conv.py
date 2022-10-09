@@ -11,6 +11,7 @@ from torch.nn import (
 )
 from torch_sparse import SparseTensor
 
+from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
@@ -67,9 +68,10 @@ class GENConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
-            :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`, :obj:`max`).
-            (default: :obj:`"softmax"`)
+        aggr (string or Aggregation, optional): The aggregation scheme to use.
+            Any aggregation of :obj:`torch_geometric.nn.aggr` can be used,
+            (:obj:`"softmax"`, :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`,
+            :obj:`max`). (default: :obj:`"softmax"`)
         t (float, optional): Initial inverse temperature for softmax
             aggregation. (default: :obj:`1.0`)
         learn_t (bool, optional): If set to :obj:`True`, will learn the value
@@ -90,6 +92,8 @@ class GENConv(MessagePassing):
             (default: :obj:`2`)
         eps (float, optional): The epsilon value of the message construction
             function. (default: :obj:`1e-7`)
+        bias (bool, optional): If set to :obj:`True`, the linear layers will
+            learn an additive bias. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
 
@@ -107,7 +111,7 @@ class GENConv(MessagePassing):
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
-        aggr: str = 'softmax',
+        aggr: Optional[Union[str, List[str], Aggregation]] = 'softmax',
         t: float = 1.0,
         learn_t: bool = False,
         p: float = 1.0,
@@ -117,6 +121,7 @@ class GENConv(MessagePassing):
         norm: str = 'batch',
         num_layers: int = 2,
         eps: float = 1e-7,
+        bias: bool = False,
         **kwargs,
     ):
 
@@ -143,14 +148,23 @@ class GENConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        channels = [in_channels[0]]
+        if isinstance(self.aggr_module, MultiAggregation):
+            aggr_out_channels = self.aggr_module.get_out_channels(
+                in_channels[0])
+        else:
+            aggr_out_channels = in_channels[0]
+
+        if aggr_out_channels != out_channels:
+            self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
+
+        if in_channels[1] != out_channels:
+            self.lin_r = Linear(in_channels[1], out_channels, bias=bias)
+
+        channels = [out_channels]
         for i in range(num_layers - 1):
             channels.append(out_channels * 2)
         channels.append(out_channels)
         self.mlp = MLP(channels, norm=norm)
-
-        if in_channels[0] != in_channels[1] and in_channels[0] != -1:
-            self.lin_r = Linear(in_channels[1], in_channels[0], bias=True)
 
         if msg_norm:
             self.msg_norm = MessageNorm(learn_msg_scale)
@@ -160,8 +174,10 @@ class GENConv(MessagePassing):
         self.aggr_module.reset_parameters()
         if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
+        if hasattr(self, 'lin_l'):
+            self.lin_l.reset_parameters()
         if hasattr(self, 'lin_r'):
-            self.proj_r.reset_parameters()
+            self.lin_r.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
@@ -180,6 +196,9 @@ class GENConv(MessagePassing):
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
+
+        if hasattr(self, 'lin_l'):
+            out = self.lin_l(out)
 
         if hasattr(self, 'msg_norm'):
             out = self.msg_norm(x[1] if x[1] is not None else x[0], out)
