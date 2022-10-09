@@ -79,7 +79,19 @@ def test_gen_conv(aggr):
     x2 = torch.randn(2, 16)
     adj = adj1.sparse_resize((4, 2))
     conv = GENConv((8, 16), 32, aggr)
+    conv.reset_parameters()
     assert str(conv) == f'GENConv((8, 16), 32, aggr={aggr})'
+    out1 = conv((x1, x2), edge_index)
+    out2 = conv((x1, None), edge_index, size=(4, 2))
+    assert out1.size() == (2, 32)
+    assert out2.size() == (2, 32)
+    assert conv((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+
+    conv = GENConv((-1, -1), 32, aggr)
+    conv.reset_parameters()
+    assert str(conv) == f'GENConv((-1, -1), 32, aggr={aggr})'
     out1 = conv((x1, x2), edge_index)
     out2 = conv((x1, None), edge_index, size=(4, 2))
     assert out1.size() == (2, 32)
