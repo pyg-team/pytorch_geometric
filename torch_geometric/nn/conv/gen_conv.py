@@ -94,6 +94,11 @@ class GENConv(MessagePassing):
             function. (default: :obj:`1e-7`)
         bias (bool, optional): If set to :obj:`True`, the linear layers will
             learn an additive bias. (default: :obj:`False`)
+        edge_dim (int, optional): Edge feature dimensionality. If set to
+            :obj:`None`, Edge feature dimensionality is expected to match
+            the `out_channels`. Other-wise, edge features are linearly
+            transformed to match `out_channels` of node feature dimensionality.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
 
@@ -122,6 +127,7 @@ class GENConv(MessagePassing):
         num_layers: int = 2,
         eps: float = 1e-7,
         bias: bool = False,
+        edge_dim: Optional[int] = None,
         **kwargs,
     ):
 
@@ -148,11 +154,16 @@ class GENConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
+        if in_channels[0] != out_channels:
+            self.lin_n = Linear(in_channels[0], out_channels, bias=bias)
+
+        if edge_dim is not None and edge_dim != out_channels:
+            self.lin_e = Linear(edge_dim, out_channels, bias=bias)
+
         if isinstance(self.aggr_module, MultiAggregation):
-            aggr_out_channels = self.aggr_module.get_out_channels(
-                in_channels[0])
+            aggr_out_channels = self.aggr_module.get_out_channels(out_channels)
         else:
-            aggr_out_channels = in_channels[0]
+            aggr_out_channels = out_channels
 
         if aggr_out_channels != out_channels:
             self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
@@ -174,6 +185,10 @@ class GENConv(MessagePassing):
         self.aggr_module.reset_parameters()
         if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
+        if hasattr(self, 'lin_n'):
+            self.lin_n.reset_parameters()
+        if hasattr(self, 'lin_e'):
+            self.lin_e.reset_parameters()
         if hasattr(self, 'lin_l'):
             self.lin_l.reset_parameters()
         if hasattr(self, 'lin_r'):
@@ -185,14 +200,18 @@ class GENConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        # Node and edge feature dimensionalites need to match.
-        if isinstance(edge_index, Tensor):
-            if edge_attr is not None:
-                assert x[0].size(-1) == edge_attr.size(-1)
-        elif isinstance(edge_index, SparseTensor):
+        if hasattr(self, 'lin_n'):
+            x = (self.lin_n(x[0]), x[1])
+
+        if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
-            if edge_attr is not None:
-                assert x[0].size(-1) == edge_attr.size(-1)
+
+        if edge_attr is not None and hasattr(self, 'lin_e'):
+            edge_attr = self.lin_e(edge_attr)
+
+        # Node and edge feature dimensionalites need to match.
+        if edge_attr is not None:
+            assert x[0].size(-1) == edge_attr.size(-1)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
