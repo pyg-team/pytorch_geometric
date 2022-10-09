@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import (
@@ -62,8 +62,10 @@ class GENConv(MessagePassing):
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`, :obj:`max`).
@@ -101,21 +103,36 @@ class GENConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,
-                 p: float = 1.0, learn_p: bool = False, msg_norm: bool = False,
-                 learn_msg_scale: bool = False, norm: str = 'batch',
-                 num_layers: int = 2, eps: float = 1e-7, **kwargs):
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        aggr: str = 'softmax',
+        t: float = 1.0,
+        learn_t: bool = False,
+        p: float = 1.0,
+        learn_p: bool = False,
+        msg_norm: bool = False,
+        learn_msg_scale: bool = False,
+        norm: str = 'batch',
+        num_layers: int = 2,
+        eps: float = 1e-7,
+        **kwargs,
+    ):
 
         # Backward compatibility:
+        semi_grad = True if aggr == 'softmax_sg' else False
         aggr = 'softmax' if aggr == 'softmax_sg' else aggr
         aggr = 'powermean' if aggr == 'power' else aggr
 
-        aggr_kwargs = {}
-        if aggr == 'softmax':
-            aggr_kwargs = dict(t=t, learn=learn_t)
-        elif aggr == 'powermean':
-            aggr_kwargs = dict(p=p, learn=learn_p)
+        aggr_kwargs = kwargs.get('aggr_kwargs', {})
+
+        # Override args of aggregator if `aggr_kwargs` is specified
+        if aggr_kwargs == {}:
+            if aggr == 'softmax':
+                aggr_kwargs = dict(t=t, learn=learn_t, semi_grad=semi_grad)
+            elif aggr == 'powermean':
+                aggr_kwargs = dict(p=p, learn=learn_p)
 
         super().__init__(aggr=aggr, aggr_kwargs=aggr_kwargs, **kwargs)
 
@@ -123,19 +140,28 @@ class GENConv(MessagePassing):
         self.out_channels = out_channels
         self.eps = eps
 
-        channels = [in_channels]
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
+        channels = [in_channels[0]]
         for i in range(num_layers - 1):
-            channels.append(in_channels * 2)
+            channels.append(out_channels * 2)
         channels.append(out_channels)
         self.mlp = MLP(channels, norm=norm)
 
-        self.msg_norm = MessageNorm(learn_msg_scale) if msg_norm else None
+        if in_channels[0] != in_channels[1] and in_channels[0] != -1:
+            self.lin_r = Linear(in_channels[1], in_channels[0], bias=True)
+
+        if msg_norm:
+            self.msg_norm = MessageNorm(learn_msg_scale)
 
     def reset_parameters(self):
         reset(self.mlp)
         self.aggr_module.reset_parameters()
-        if self.msg_norm is not None:
+        if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
+        if hasattr(self, 'lin_r'):
+            self.proj_r.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
@@ -155,11 +181,13 @@ class GENConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
-        if self.msg_norm is not None:
-            out = self.msg_norm(x[0], out)
+        if hasattr(self, 'msg_norm'):
+            out = self.msg_norm(x[1] if x[1] is not None else x[0], out)
 
         x_r = x[1]
         if x_r is not None:
+            if hasattr(self, 'lin_r'):
+                x_r = self.lin_r(x_r)
             out = out + x_r
 
         return self.mlp(out)
