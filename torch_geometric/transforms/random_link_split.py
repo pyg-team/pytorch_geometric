@@ -169,6 +169,7 @@ class RandomLinkSplit(BaseTransform):
                 num_test = int(num_test * perm.numel())
 
             num_train = perm.numel() - num_val - num_test
+
             if num_train <= 0:
                 raise ValueError("Insufficient number of edges for training")
 
@@ -210,7 +211,7 @@ class RandomLinkSplit(BaseTransform):
                                                method='sparse')
 
             # Adjust ratio if not enough negative edges exist
-            if len(neg_edge_index) < num_neg:
+            if neg_edge_index.size(1) < num_neg:
                 num_neg_found = neg_edge_index.size(1)
                 ratio = num_neg_found / num_neg
                 warnings.warn(
