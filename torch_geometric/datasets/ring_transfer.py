@@ -79,9 +79,9 @@ class RingTransferDataset(InMemoryDataset):
     def generate_ring_transfer_graph_dataset(self, nodes, classes=5, samples=10000):
         # Generate the dataset
         dataset = []
-        samples_per_class = samples // classes
+        samples_per_class = torch.div(samples, classes, rounding_mode="floor")
         for i in range(samples):
-            label = i // samples_per_class
+            label = torch.div(i, samples_per_class, rounding_mode="floor")
             target_class = np.zeros(classes)
             target_class[label] = 1.0
             graph = self.generate_ring_transfer_graph(nodes, target_class)
