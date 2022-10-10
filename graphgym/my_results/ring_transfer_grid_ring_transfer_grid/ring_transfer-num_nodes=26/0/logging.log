@@ -273,3 +273,7 @@ val: {'epoch': 1, 'loss': 1.6153, 'lr': 0.009, 'params': 1713683, 'time_iter': 3
 train: {'epoch': 1, 'eta': 61035.3897, 'loss': 1.6153, 'lr': 0.009, 'params': 1713683, 'time_iter': 139.3774, 'accuracy': 0.196}
 val: {'epoch': 2, 'loss': 1.6275, 'lr': 0.0079, 'params': 1713683, 'time_iter': 17.7875, 'accuracy': 0.2}
 train: {'epoch': 2, 'eta': 57515.0765, 'loss': 1.6174, 'lr': 0.0079, 'params': 1713683, 'time_iter': 149.0551, 'accuracy': 0.1875}
+val: {'epoch': 3, 'loss': 1.6187, 'lr': 0.0065, 'params': 1713683, 'time_iter': 35.2257, 'accuracy': 0.2}
+train: {'epoch': 3, 'eta': 51809.4228, 'loss': 1.6169, 'lr': 0.0065, 'params': 1713683, 'time_iter': 156.9888, 'accuracy': 0.2035}
+val: {'epoch': 4, 'loss': 1.615, 'lr': 0.005, 'params': 1713683, 'time_iter': 33.5017, 'accuracy': 0.2}
+train: {'epoch': 4, 'eta': 45288.4898, 'loss': 1.6146, 'lr': 0.005, 'params': 1713683, 'time_iter': 170.6171, 'accuracy': 0.205}

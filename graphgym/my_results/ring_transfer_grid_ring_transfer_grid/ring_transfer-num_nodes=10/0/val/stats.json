@@ -8,3 +8,4 @@
 {"epoch": 6, "loss": 0.0097, "lr": 0.0021, "params": 661003, "time_iter": 20.1799, "accuracy": 1.0}
 {"epoch": 7, "loss": 0.009, "lr": 0.001, "params": 661003, "time_iter": 12.0229, "accuracy": 1.0}
 {"epoch": 8, "loss": 0.0084, "lr": 0.0002, "params": 661003, "time_iter": 20.1855, "accuracy": 1.0}
+{"epoch": 9, "loss": 0.0083, "lr": 0.0, "params": 661003, "time_iter": 14.7019, "accuracy": 1.0}

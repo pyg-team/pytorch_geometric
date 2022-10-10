@@ -3,3 +3,5 @@
 {"epoch": 1, "loss": 1.6196, "lr": 0.009, "params": 1318928, "time_iter": 12.396, "accuracy": 0.2}
 {"epoch": 2, "loss": 1.6178, "lr": 0.0079, "params": 1318928, "time_iter": 20.0935, "accuracy": 0.2}
 {"epoch": 3, "loss": 1.6157, "lr": 0.0065, "params": 1318928, "time_iter": 16.4635, "accuracy": 0.2}
+{"epoch": 4, "loss": 1.6136, "lr": 0.005, "params": 1318928, "time_iter": 26.26, "accuracy": 0.2}
+{"epoch": 5, "loss": 1.6106, "lr": 0.0035, "params": 1318928, "time_iter": 24.0667, "accuracy": 0.2}

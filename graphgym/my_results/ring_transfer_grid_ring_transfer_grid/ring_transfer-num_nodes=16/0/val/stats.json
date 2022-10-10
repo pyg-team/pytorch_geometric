@@ -4,3 +4,6 @@
 {"epoch": 2, "loss": 1.6142, "lr": 0.0079, "params": 1055758, "time_iter": 15.895, "accuracy": 0.2}
 {"epoch": 3, "loss": 1.8304, "lr": 0.0065, "params": 1055758, "time_iter": 21.2235, "accuracy": 0.2}
 {"epoch": 4, "loss": 1.7847, "lr": 0.005, "params": 1055758, "time_iter": 17.9139, "accuracy": 0.2}
+{"epoch": 5, "loss": 2.0449, "lr": 0.0035, "params": 1055758, "time_iter": 25.9877, "accuracy": 0.2}
+{"epoch": 6, "loss": 1.1226, "lr": 0.0021, "params": 1055758, "time_iter": 14.0342, "accuracy": 0.4}
+{"epoch": 7, "loss": 1.6139, "lr": 0.001, "params": 1055758, "time_iter": 24.7694, "accuracy": 0.2}

@@ -1,7 +1,7 @@
 # The recommended basic settings for GNN
-out_dir: my_results
+out_dir: results
 tensorboard_each_run: True
-num_workers: 10   # no. of CPUs on Macbook
+# num_workers: 10   # no. of CPUs on Macbook
 dataset:
   format: PyG
   name: RingTransfer
@@ -21,7 +21,7 @@ model:
   graph_pooling: add
 gnn:
   layers_pre_mp: 1
-  # layers_mp: 4 # determined by length of ring -- floor(n_nodes/2)
+  # layers_mp: 4 # IF BLANK, determined by length of ring -- floor(n_nodes/2)
   # layers_post_mp: 1 # custom head only allows for one layer
   head: ring_transfer           # *
   dim_inner: 256

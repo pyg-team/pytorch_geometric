@@ -53,7 +53,8 @@ class RingTransferDataset(InMemoryDataset):
         self.num_nodes = num_nodes
         self._num_classes = num_classes
         self.kwargs = kwargs
-        cfg.gnn.layers_mp = num_nodes//2
+        if cfg.gnn.layers_mp == 1: # the default - otherwise use specified no.
+            cfg.gnn.layers_mp = num_nodes//2
         
         split = (self.num_graphs * torch.tensor(cfg.dataset.split)).long()
         data_list, split = self.load_ring_transfer_dataset(self.num_nodes, 

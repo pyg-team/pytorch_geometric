@@ -218,3 +218,10 @@ val: {'epoch': 5, 'loss': 3.3315, 'lr': 0.0035, 'params': 792588, 'time_iter': 2
 train: {'epoch': 5, 'eta': 18842.7591, 'loss': 0.0099, 'lr': 0.0035, 'params': 792588, 'time_iter': 74.6392, 'accuracy': 1.0}
 val: {'epoch': 6, 'loss': 0.6577, 'lr': 0.0021, 'params': 792588, 'time_iter': 11.7572, 'accuracy': 0.8}
 train: {'epoch': 6, 'eta': 13689.1949, 'loss': 0.5805, 'lr': 0.0021, 'params': 792588, 'time_iter': 58.3701, 'accuracy': 0.859}
+val: {'epoch': 7, 'loss': 0.0125, 'lr': 0.001, 'params': 792588, 'time_iter': 14.7184, 'accuracy': 1.0}
+train: {'epoch': 7, 'eta': 9159.182, 'loss': 0.0176, 'lr': 0.001, 'params': 792588, 'time_iter': 74.5281, 'accuracy': 1.0}
+val: {'epoch': 8, 'loss': 0.0109, 'lr': 0.0002, 'params': 792588, 'time_iter': 18.6984, 'accuracy': 1.0}
+train: {'epoch': 8, 'eta': 4676.4173, 'loss': 0.0117, 'lr': 0.0002, 'params': 792588, 'time_iter': 86.5242, 'accuracy': 1.0}
+val: {'epoch': 9, 'loss': 0.0106, 'lr': 0.0, 'params': 792588, 'time_iter': 15.1685, 'accuracy': 1.0}
+train: {'epoch': 9, 'eta': 0.0, 'loss': 0.011, 'lr': 0.0, 'params': 792588, 'time_iter': 64.8268, 'accuracy': 1.0}
+test: {'epoch': 10, 'loss': 0.0106, 'lr': 0.0, 'params': 792588, 'time_iter': 18.7751, 'accuracy': 1.0}

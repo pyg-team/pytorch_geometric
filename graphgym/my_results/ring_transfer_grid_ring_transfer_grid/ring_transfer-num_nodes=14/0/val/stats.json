@@ -5,3 +5,6 @@
 {"epoch": 3, "loss": 1.3436, "lr": 0.0065, "params": 924173, "time_iter": 14.0514, "accuracy": 0.8}
 {"epoch": 4, "loss": 4.0059, "lr": 0.005, "params": 924173, "time_iter": 19.8173, "accuracy": 0.4}
 {"epoch": 5, "loss": 0.5467, "lr": 0.0035, "params": 924173, "time_iter": 19.0774, "accuracy": 0.8}
+{"epoch": 6, "loss": 0.3162, "lr": 0.0021, "params": 924173, "time_iter": 19.4345, "accuracy": 0.8}
+{"epoch": 7, "loss": 0.0787, "lr": 0.001, "params": 924173, "time_iter": 18.7162, "accuracy": 1.0}
+{"epoch": 8, "loss": 0.0097, "lr": 0.0002, "params": 924173, "time_iter": 31.6751, "accuracy": 1.0}

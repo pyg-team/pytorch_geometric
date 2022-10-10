@@ -2,3 +2,4 @@
 {"epoch": 0, "loss": 1.6289, "lr": 0.0098, "params": 1976853, "time_iter": 32.536, "accuracy": 0.2}
 {"epoch": 1, "loss": 1.6209, "lr": 0.009, "params": 1976853, "time_iter": 31.8637, "accuracy": 0.2}
 {"epoch": 2, "loss": 1.6245, "lr": 0.0079, "params": 1976853, "time_iter": 23.473, "accuracy": 0.2}
+{"epoch": 3, "loss": 1.6112, "lr": 0.0065, "params": 1976853, "time_iter": 40.5796, "accuracy": 0.2}

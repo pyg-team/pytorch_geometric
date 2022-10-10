@@ -4,3 +4,5 @@
 {"epoch": 2, "loss": 1.6246, "lr": 0.0079, "params": 1187343, "time_iter": 27.626, "accuracy": 0.2}
 {"epoch": 3, "loss": 1.635, "lr": 0.0065, "params": 1187343, "time_iter": 20.6133, "accuracy": 0.2}
 {"epoch": 4, "loss": 1.61, "lr": 0.005, "params": 1187343, "time_iter": 16.4856, "accuracy": 0.2}
+{"epoch": 5, "loss": 1.612, "lr": 0.0035, "params": 1187343, "time_iter": 31.4842, "accuracy": 0.2}
+{"epoch": 6, "loss": 1.9288, "lr": 0.0021, "params": 1187343, "time_iter": 21.5607, "accuracy": 0.2}

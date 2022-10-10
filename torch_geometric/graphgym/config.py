@@ -342,7 +342,7 @@ def set_cfg(cfg):
     cfg.gnn.layers_pre_mp = 0
 
     # Number of layers for message passing
-    cfg.gnn.layers_mp = 2
+    cfg.gnn.layers_mp = 1
 
     # Number of layers after message passing
     cfg.gnn.layers_post_mp = 0

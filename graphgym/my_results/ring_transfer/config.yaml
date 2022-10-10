@@ -1,4 +1,4 @@
-accelerator: auto
+accelerator: cpu
 benchmark: false
 bn:
   eps: 1.0e-05
@@ -60,7 +60,7 @@ gnn:
   keep_edge: 0.5
   l2norm: true
   layer_type: my_gcnconv
-  layers_mp: 2
+  layers_mp: 4
   layers_post_mp: 1
   layers_pre_mp: 1
   msg_direction: single
@@ -96,6 +96,7 @@ optim:
   - 90
   weight_decay: 0.0005
 out_dir: my_results/ring_transfer
+params: 663568
 print: both
 ring_dataset:
   num_classes: 5
@@ -103,11 +104,11 @@ ring_dataset:
   num_nodes: 10
 round: 4
 run_dir: my_results
-seed: 0
+seed: 1
 share:
-  dim_in: 1
-  dim_out: 1
-  num_splits: 1
+  dim_in: 5
+  dim_out: 5
+  num_splits: 3
   num_tasks: 1
 tensorboard_agg: true
 tensorboard_each_run: true
