@@ -210,7 +210,7 @@ class RandomLinkSplit(BaseTransform):
                                                method='sparse')
 
             # Adjust ratio if not enough negative edges exist
-            if len(neg_edge_index) < num_neg:
+            if neg_edge_index.size(1) < num_neg:
                 num_neg_found = neg_edge_index.size(1)
                 ratio = num_neg_found / num_neg
                 warnings.warn(
