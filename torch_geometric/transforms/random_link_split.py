@@ -217,9 +217,9 @@ class RandomLinkSplit(BaseTransform):
                 warnings.warn(
                     f"There are not enough negative edges to satisfy "
                     "the provided sampling ratio. The ratio will be "
-                    f"adjusted to {ratio:.3f}")
-                num_neg_train = int(num_neg_train / num_neg * num_neg_found)
-                num_neg_val = int(num_neg_val / num_neg * num_neg_found)
+                    f"adjusted to {ratio:.2f}.")
+                num_neg_train = int((num_neg_train / num_neg) * num_neg_found)
+                num_neg_val = int((num_neg_val / num_neg) * num_neg_found)
                 num_neg_test = num_neg_found - num_neg_train - num_neg_val
 
             # Create labels:
