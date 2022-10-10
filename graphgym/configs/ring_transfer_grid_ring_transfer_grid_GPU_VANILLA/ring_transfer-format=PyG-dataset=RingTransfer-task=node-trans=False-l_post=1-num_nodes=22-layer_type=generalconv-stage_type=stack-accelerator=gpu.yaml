@@ -1,3 +1,4 @@
+accelerator: gpu
 dataset:
   format: PyG
   name: RingTransfer
@@ -34,7 +35,7 @@ out_dir: results/ring_transfer_grid_ring_transfer_grid_GPU_VANILLA
 ring_dataset:
   num_classes: 5
   num_graphs: 2000
-  num_nodes: 12
+  num_nodes: 22
 tensorboard_each_run: true
 train:
   batch_size: 32

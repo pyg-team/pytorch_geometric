@@ -1,3 +1,4 @@
+accelerator: gpu
 dataset:
   format: PyG
   name: RingTransfer
@@ -16,11 +17,11 @@ gnn:
   dim_inner: 256
   dropout: 0.0
   head: ring_transfer
-  layer_type: my_gcnconv
+  layer_type: generalconv
   layers_post_mp: 1
   layers_pre_mp: 1
   normalize_adj: false
-  stage_type: delay_gnn
+  stage_type: stack
 model:
   edge_decoding: dot
   graph_pooling: add
@@ -34,7 +35,7 @@ out_dir: results/ring_transfer_grid_ring_transfer_grid_GPU_VANILLA
 ring_dataset:
   num_classes: 5
   num_graphs: 2000
-  num_nodes: 10
+  num_nodes: 14
 tensorboard_each_run: true
 train:
   batch_size: 32

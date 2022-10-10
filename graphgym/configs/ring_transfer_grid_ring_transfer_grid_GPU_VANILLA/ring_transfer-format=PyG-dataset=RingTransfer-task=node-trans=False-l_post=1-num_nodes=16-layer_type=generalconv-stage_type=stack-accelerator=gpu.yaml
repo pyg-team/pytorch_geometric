@@ -1,3 +1,4 @@
+accelerator: gpu
 dataset:
   format: PyG
   name: RingTransfer
