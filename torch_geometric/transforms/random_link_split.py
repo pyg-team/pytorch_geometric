@@ -169,6 +169,7 @@ class RandomLinkSplit(BaseTransform):
                 num_test = int(num_test * perm.numel())
 
             num_train = perm.numel() - num_val - num_test
+
             if num_train <= 0:
                 raise ValueError("Insufficient number of edges for training")
 

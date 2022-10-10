@@ -200,12 +200,11 @@ def test_random_link_split_on_undirected_hetero_data():
 
 def test_random_link_split_insufficient_negative_edges():
     data = Data()
-    data.edge_index = torch.tensor([[0, 0, 0, 1, 1, 2, 2],
-                                    [1, 2, 3, 0, 2, 0, 1]])
-    transform = RandomLinkSplit(num_val=0.33, num_test=0.33,
+    data.edge_index = torch.tensor([[0, 0, 1, 1, 2, 2], [1, 3, 0, 2, 0, 1]])
+    transform = RandomLinkSplit(num_val=0.34, num_test=0.34,
                                 is_undirected=False, neg_sampling_ratio=2,
                                 split_labels=True)
     train_data, val_data, test_data = transform(data)
-    assert len(train_data.neg_edge_label) != 0
-    assert len(val_data.neg_edge_label) != 0
-    assert len(test_data.neg_edge_label) != 0
+    assert len(train_data.neg_edge_label) == 2
+    assert len(val_data.neg_edge_label) == 2
+    assert len(test_data.neg_edge_label) == 2
