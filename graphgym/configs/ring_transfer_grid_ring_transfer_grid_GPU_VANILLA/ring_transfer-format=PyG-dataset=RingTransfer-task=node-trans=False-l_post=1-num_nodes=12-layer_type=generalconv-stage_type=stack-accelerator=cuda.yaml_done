@@ -1,4 +1,4 @@
-accelerator: gpu
+accelerator: cuda
 dataset:
   format: PyG
   name: RingTransfer
@@ -27,6 +27,7 @@ model:
   graph_pooling: add
   loss_fun: cross_entropy
   type: gnn
+num_workers: 8
 optim:
   base_lr: 0.01
   max_epoch: 10
@@ -35,7 +36,7 @@ out_dir: results/ring_transfer_grid_ring_transfer_grid_GPU_VANILLA
 ring_dataset:
   num_classes: 5
   num_graphs: 2000
-  num_nodes: 18
+  num_nodes: 12
 tensorboard_each_run: true
 train:
   batch_size: 32
