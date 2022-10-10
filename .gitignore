@@ -12,6 +12,7 @@ lightning_logs/
 outputs/
 graphgym/datasets/
 graphgym/results/
+graphgym/my_results/
 *.egg-info/
 .ipynb_checkpoints
 .coverage
