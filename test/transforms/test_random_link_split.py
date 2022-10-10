@@ -196,3 +196,17 @@ def test_random_link_split_on_undirected_hetero_data():
                                 rev_edge_types=('p', 'p'))
     train_data, val_data, test_data = transform(data)
     assert train_data['p', 'p'].is_undirected()
+
+
+def test_random_link_split_insufficient_negative_edges():
+    edge_index = torch.tensor([[0, 0, 1, 1, 2, 2], [1, 3, 0, 2, 0, 1]])
+    data = Data(edge_index=edge_index, num_nodes=4)
+
+    transform = RandomLinkSplit(num_val=0.34, num_test=0.34,
+                                is_undirected=False, neg_sampling_ratio=2,
+                                split_labels=True)
+    train_data, val_data, test_data = transform(data)
+
+    assert train_data.neg_edge_label_index.size() == (2, 2)
+    assert val_data.neg_edge_label_index.size() == (2, 2)
+    assert test_data.neg_edge_label_index.size() == (2, 2)
