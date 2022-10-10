@@ -1,9 +1,0 @@
-{"epoch": 0, "eta": 50889.088, "loss": 0.9199, "lr": 0.0098, "params": 924173, "time_iter": 89.7515, "accuracy": 0.6235}
-{"epoch": 1, "eta": 42565.2398, "loss": 0.1743, "lr": 0.009, "params": 924173, "time_iter": 79.1582, "accuracy": 0.959}
-{"epoch": 2, "eta": 38167.0568, "loss": 0.0182, "lr": 0.0079, "params": 924173, "time_iter": 90.7302, "accuracy": 1.0}
-{"epoch": 3, "eta": 31843.2442, "loss": 0.0112, "lr": 0.0065, "params": 924173, "time_iter": 77.3257, "accuracy": 1.0}
-{"epoch": 4, "eta": 26340.9088, "loss": 0.0094, "lr": 0.005, "params": 924173, "time_iter": 81.1441, "accuracy": 1.0}
-{"epoch": 5, "eta": 20897.8287, "loss": 0.0089, "lr": 0.0035, "params": 924173, "time_iter": 79.4577, "accuracy": 1.0}
-{"epoch": 6, "eta": 15920.3806, "loss": 0.009, "lr": 0.0021, "params": 924173, "time_iter": 92.0764, "accuracy": 1.0}
-{"epoch": 7, "eta": 10939.0035, "loss": 0.0088, "lr": 0.001, "params": 924173, "time_iter": 104.8962, "accuracy": 1.0}
-{"epoch": 8, "eta": 5440.6298, "loss": 0.0087, "lr": 0.0002, "params": 924173, "time_iter": 82.6929, "accuracy": 1.0}

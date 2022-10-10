@@ -1,5 +1,0 @@
-{"epoch": 0, "eta": 234.9367, "eta_std": 0.0, "loss": -6.0189, "loss_std": 0.0, "lr": 0.009, "lr_std": 0.0, "params": 265220.0, "params_std": 0.0, "time_iter": 0.9323, "time_iter_std": 0.0, "accuracy": 0.2, "accuracy_std": 0.0}
-{"epoch": 1, "eta": 168.0008, "eta_std": 0.0, "loss": -15.6241, "loss_std": 0.0, "lr": 0.0065, "lr_std": 0.0, "params": 265220.0, "params_std": 0.0, "time_iter": 0.8455, "time_iter_std": 0.0, "accuracy": 0.2, "accuracy_std": 0.0}
-{"epoch": 2, "eta": 113.6544, "eta_std": 0.0, "loss": -23.7991, "loss_std": 0.0, "lr": 0.0035, "lr_std": 0.0, "params": 265220.0, "params_std": 0.0, "time_iter": 0.9283, "time_iter_std": 0.0, "accuracy": 0.2, "accuracy_std": 0.0}
-{"epoch": 3, "eta": 58.7657, "eta_std": 0.0, "loss": -29.0305, "loss_std": 0.0, "lr": 0.001, "lr_std": 0.0, "params": 265220.0, "params_std": 0.0, "time_iter": 1.0251, "time_iter_std": 0.0, "accuracy": 0.2, "accuracy_std": 0.0}
-{"epoch": 4, "eta": 0.0, "eta_std": 0.0, "loss": -31.3669, "loss_std": 0.0, "lr": 0.0, "lr_std": 0.0, "params": 265220.0, "params_std": 0.0, "time_iter": 0.9495, "time_iter_std": 0.0, "accuracy": 0.2, "accuracy_std": 0.0}
