@@ -1,0 +1,43 @@
+dataset:
+  format: PyG
+  name: RingTransfer
+  split:
+  - 0.8
+  - 0.1
+  - 0.1
+  task: node
+  task_type: classification
+  transductive: false
+  transform: none
+gnn:
+  act: prelu
+  agg: add
+  batchnorm: true
+  dim_inner: 256
+  dropout: 0.0
+  head: ring_transfer
+  layer_type: generalconv
+  layers_post_mp: 1
+  layers_pre_mp: 1
+  normalize_adj: false
+  stage_type: stack
+model:
+  edge_decoding: dot
+  graph_pooling: add
+  loss_fun: cross_entropy
+  type: gnn
+num_workers: 10
+optim:
+  base_lr: 0.01
+  max_epoch: 10
+  optimizer: adam
+out_dir: my_results/ring_transfer_grid_ring_transfer_grid
+ring_dataset:
+  num_classes: 5
+  num_graphs: 2000
+  num_nodes: 22
+tensorboard_each_run: true
+train:
+  batch_size: 32
+  ckpt_period: 100
+  eval_period: 20

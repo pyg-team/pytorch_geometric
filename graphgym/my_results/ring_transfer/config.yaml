@@ -1,0 +1,139 @@
+accelerator: auto
+benchmark: false
+bn:
+  eps: 1.0e-05
+  mom: 0.1
+cfg_dest: config.yaml
+custom_metrics: []
+dataset:
+  cache_load: false
+  cache_save: false
+  dir: ./datasets
+  edge_dim: 128
+  edge_encoder: false
+  edge_encoder_bn: true
+  edge_encoder_name: Bond
+  edge_message_ratio: 0.8
+  edge_negative_sampling_ratio: 1.0
+  edge_train_mode: all
+  encoder: true
+  encoder_bn: true
+  encoder_dim: 128
+  encoder_name: db
+  format: PyG
+  label_column: none
+  label_table: none
+  location: local
+  name: RingTransfer
+  node_encoder: false
+  node_encoder_bn: true
+  node_encoder_name: Atom
+  remove_feature: false
+  resample_disjoint: false
+  resample_negative: false
+  shuffle_split: true
+  split:
+  - 0.8
+  - 0.1
+  - 0.1
+  split_mode: random
+  task: node
+  task_type: classification
+  to_undirected: false
+  transductive: false
+  transform: none
+  tu_simple: true
+delay:
+  max_k: 10
+devices: null
+gnn:
+  act: prelu
+  agg: add
+  att_final_linear: false
+  att_final_linear_bn: false
+  att_heads: 1
+  batchnorm: true
+  clear_feature: true
+  dim_inner: 256
+  dropout: 0.0
+  head: ring_transfer
+  keep_edge: 0.5
+  l2norm: true
+  layer_type: my_gcnconv
+  layers_mp: 2
+  layers_post_mp: 1
+  layers_pre_mp: 1
+  msg_direction: single
+  normalize_adj: false
+  self_msg: concat
+  skip_every: 1
+  stage_type: delay_gnn
+gpu_mem: false
+mem:
+  inplace: false
+metric_agg: argmax
+metric_best: auto
+model:
+  edge_decoding: dot
+  graph_pooling: add
+  loss_fun: cross_entropy
+  match_upper: true
+  size_average: mean
+  thresh: 0.5
+  type: gnn
+num_threads: 6
+num_workers: 10
+optim:
+  base_lr: 0.01
+  lr_decay: 0.1
+  max_epoch: 10
+  momentum: 0.9
+  optimizer: adam
+  scheduler: cos
+  steps:
+  - 30
+  - 60
+  - 90
+  weight_decay: 0.0005
+out_dir: my_results/ring_transfer
+print: both
+ring_dataset:
+  num_classes: 5
+  num_graphs: 2000
+  num_nodes: 10
+round: 4
+run_dir: my_results
+seed: 0
+share:
+  dim_in: 1
+  dim_out: 1
+  num_splits: 1
+  num_tasks: 1
+tensorboard_agg: true
+tensorboard_each_run: true
+train:
+  auto_resume: false
+  batch_size: 32
+  ckpt_clean: true
+  ckpt_period: 100
+  enable_ckpt: true
+  epoch_resume: -1
+  eval_period: 20
+  iter_per_epoch: 32
+  neighbor_sizes:
+  - 20
+  - 15
+  - 10
+  - 5
+  node_per_graph: 32
+  radius: extend
+  sample_node: false
+  sampler: full_batch
+  skip_train_eval: false
+  walk_length: 4
+val:
+  node_per_graph: 32
+  radius: extend
+  sample_node: false
+  sampler: full_batch
+view_emb: false

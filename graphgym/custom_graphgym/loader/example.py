@@ -1,6 +1,30 @@
-from torch_geometric.datasets import QM7b
+from torch_geometric.datasets import QM7b, ZINC, RingTransferDataset
 from torch_geometric.graphgym.register import register_loader
+from torch_geometric.graphgym.config import cfg
 
+
+@register_loader('load_ZINC')
+def load_zinc_dataset(format, name, dataset_dir):
+    dataset_dir = f'{dataset_dir}/{name}'
+    if format == 'PyG':
+        if name == 'ZINC':
+            dataset_raw = ZINC(dataset_dir)
+            return dataset_raw
+
+####################
+
+@register_loader('load_RingTransfer')
+def load_ring_transfer_dataset(format, name, dataset_dir):
+    dataset_dir = f'{dataset_dir}/{name}'
+    if format == 'PyG':
+        if name == 'RingTransfer':
+            dataset_raw = RingTransferDataset(num_graphs=cfg.ring_dataset.num_graphs,
+                                              num_nodes=cfg.ring_dataset.num_nodes,
+                                              num_classes=cfg.ring_dataset.num_classes)
+            return dataset_raw
+
+
+####################
 
 @register_loader('example')
 def load_dataset_example(format, name, dataset_dir):
@@ -26,8 +50,15 @@ index2mask = index_to_mask
 from torch_geometric.graphgym.loader import set_dataset_attr
 import torch
 
+from torch_geometric.graphgym.config import cfg
 
-# @register_loader('my_ogb_loader')
+def make_khop_adjacencies(dataset, K):
+    #########
+    # STUFF #
+    #########
+    return dataset
+
+@register_loader('my_ogb_loader')
 def load_ogb(format, name, dataset_dir):
     r"""
 
@@ -66,6 +97,9 @@ def load_ogb(format, name, dataset_dir):
         for i, key in enumerate(splits.keys()):
             id = splits[key]
             set_dataset_attr(dataset, split_names[i], id, len(id))
+        ###
+        dataset = make_khop_adjacencies(dataset, K=cfg.delay.max_k)
+        ###
 
     elif name[:4] == "ogbl":
         dataset = PygLinkPropPredDataset(name=name, root=dataset_dir)
@@ -95,6 +129,7 @@ def load_ogb(format, name, dataset_dir):
         label = create_link_label(id, id_neg)
         set_dataset_attr(dataset, 'test_edge_index', id_all, id_all.shape[1])
         set_dataset_attr(dataset, 'test_edge_label', label, len(label))
+        
 
     else:
         raise ValueError('OGB dataset: {} non-exist')

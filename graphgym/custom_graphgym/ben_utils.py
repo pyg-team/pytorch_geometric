@@ -1,6 +1,8 @@
 import torch
 from torch_geometric.utils import to_dense_adj, dense_to_sparse, remove_self_loops
 from tqdm import tqdm
+import torch_geometric
+import networkx as nx
 
 
 def get_k_hop_adjacencies(edge_index, max_k, stack_edge_indices=False):
@@ -40,3 +42,13 @@ def get_khop_labels(cutoffs):
   for k in range(1, len(cutoffs)):
     edge_khop_labels.append(k*torch.ones(num_per_k[k-1]))
   return torch.cat(edge_khop_labels).reshape((-1, 1))
+
+
+def plot_topology(edge_index):
+  """Plot topology of graph"""
+  # edge_index = torch.tensor([[0, 1, 1, 2],
+  #                           [1, 0, 2, 1]], dtype=torch.long)
+  x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
+  data = torch_geometric.data.Data(x=x, edge_index=edge_index)
+  g = torch_geometric.utils.to_networkx(data, to_undirected=True)
+  nx.draw(g, with_labels=True)

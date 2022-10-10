@@ -1,0 +1,2 @@
+{"epoch": 0, "eta": 67596.6282, "loss": 1.6369, "lr": 0.0098, "params": 1976853, "time_iter": 119.218, "accuracy": 0.1845}
+{"epoch": 1, "eta": 68666.6555, "loss": 1.6213, "lr": 0.009, "params": 1976853, "time_iter": 153.2687, "accuracy": 0.194}

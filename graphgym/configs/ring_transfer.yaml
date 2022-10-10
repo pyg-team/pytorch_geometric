@@ -1,0 +1,42 @@
+# The recommended basic settings for GNN
+out_dir: my_results
+tensorboard_each_run: True
+num_workers: 10   # no. of CPUs on Macbook
+dataset:
+  format: PyG
+  name: RingTransfer
+  task: node
+  task_type: classification  # automatically sets to multi-class
+  transductive: false # true
+  split: [0.8, 0.1, 0.1]
+  transform: none
+train:
+  batch_size: 32
+  eval_period: 20
+  ckpt_period: 100
+model:
+  type: gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: add
+gnn:
+  layers_pre_mp: 1
+  # layers_mp: 4 # determined by length of ring -- floor(n_nodes/2)
+  # layers_post_mp: 1 # custom head only allows for one layer
+  head: ring_transfer           # *
+  dim_inner: 256
+  layer_type: my_gcnconv  # generalconv
+  stage_type: delay_gnn   # stack
+  batchnorm: true
+  act: prelu
+  dropout: 0.0
+  agg: add
+  normalize_adj: false
+optim:
+  optimizer: adam
+  base_lr: 0.01
+  max_epoch: 10
+ring_dataset:
+  num_nodes: 10
+  num_graphs: 2000
+  num_classes: 5

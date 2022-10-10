@@ -76,6 +76,8 @@ from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
 
+from .ring_transfer import RingTransferDataset
+
 import torch_geometric.datasets.utils  # noqa
 
 __all__ = [

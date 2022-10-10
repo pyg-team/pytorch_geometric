@@ -1,0 +1,51 @@
+# # Running GCN baseline for Peptides-func.
+# python main.py --cfg configs/GCN/peptides-func-GCN.yaml  wandb.use False
+
+# # Running SAN baseline for PascalVOC-SP.
+# python main.py --cfg configs/SAN/vocsuperpixels-SAN.yaml  wandb.use False
+
+out_dir: results
+metric_best: ap
+# wandb:
+#   use: True
+#   project: peptides-func
+dataset:
+  format: OGB
+  name: peptides-functional
+  task: graph
+  task_type: classification_multilabel
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom
+  node_encoder_bn: False
+  edge_encoder: False
+train:
+  # mode: custom
+  batch_size: 128
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: gnn
+  loss_fun: cross_entropy
+  graph_pooling: mean
+gnn:
+  layers_pre_mp: 0
+  layers_mp: 5
+  layers_post_mp: 1
+  dim_inner: 300
+  layer_type: gcnconv
+  stage_type: stack
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+  agg: mean
+  normalize_adj: False
+optim:
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 500
+  scheduler: reduce_on_plateau
+  # reduce_factor: 0.5
+  # schedule_patience: 20
+  # min_lr: 1e-5

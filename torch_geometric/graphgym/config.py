@@ -459,6 +459,16 @@ def set_cfg(cfg):
     
     cfg.delay.max_k = 10
 
+    # ----------------------------------------------------------------------- #
+    # Ring Transfer dataset options ADDED BY ME
+    # ----------------------------------------------------------------------- #
+    cfg.ring_dataset = CN()
+    
+    cfg.ring_dataset.num_nodes = 10
+    cfg.ring_dataset.num_graphs = 6000
+    cfg.ring_dataset.num_classes = 5
+
+
 def assert_cfg(cfg):
     r"""Checks config values, do necessary post processing to the configs"""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
