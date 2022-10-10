@@ -457,7 +457,7 @@ def set_cfg(cfg):
     # ----------------------------------------------------------------------- #
     cfg.delay = CN()
     
-    cfg.delay.max_k = 10
+    cfg.delay.max_k = 1000 # default to no. layers, presumably always <1000
 
     # ----------------------------------------------------------------------- #
     # Ring Transfer dataset options ADDED BY ME

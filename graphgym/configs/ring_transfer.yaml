@@ -2,6 +2,7 @@
 out_dir: results
 tensorboard_each_run: True
 # num_workers: 10   # no. of CPUs on Macbook
+# num_workers: 8   # no. of ?? on verges
 dataset:
   format: PyG
   name: RingTransfer
