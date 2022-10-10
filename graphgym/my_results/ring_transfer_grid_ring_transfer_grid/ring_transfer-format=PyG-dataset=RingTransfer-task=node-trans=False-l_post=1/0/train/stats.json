@@ -6,3 +6,4 @@
 {"epoch": 5, "eta": 16840.2719, "loss": 0.0195, "lr": 0.0035, "params": 661003, "time_iter": 74.1406, "accuracy": 1.0}
 {"epoch": 6, "eta": 12037.3908, "loss": 0.0104, "lr": 0.0021, "params": 661003, "time_iter": 44.8704, "accuracy": 1.0}
 {"epoch": 7, "eta": 7836.6409, "loss": 0.0091, "lr": 0.001, "params": 661003, "time_iter": 51.7352, "accuracy": 1.0}
+{"epoch": 8, "eta": 3982.9705, "loss": 0.0086, "lr": 0.0002, "params": 661003, "time_iter": 71.4313, "accuracy": 1.0}

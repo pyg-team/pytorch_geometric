@@ -22,4 +22,4 @@ bash parallel.sh configs/${CONFIG}_grid_${GRID} $REPEAT $MAX_JOBS $SLEEP $MAIN
 bash parallel.sh configs/${CONFIG}_grid_${GRID} $REPEAT $MAX_JOBS $SLEEP $MAIN
 
 # aggregate results for the batch
-python agg_batch.py --dir my_results/${CONFIG}_grid_${GRID}
+python agg_batch.py --dir results/${CONFIG}_grid_${GRID}
