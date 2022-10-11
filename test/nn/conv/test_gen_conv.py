@@ -79,7 +79,6 @@ def test_gen_conv(aggr):
     x2 = torch.randn(2, 16)
     adj = adj1.sparse_resize((4, 2))
     conv = GENConv((8, 16), 32, aggr)
-    conv.reset_parameters()
     assert str(conv) == f'GENConv((8, 16), 32, aggr={aggr})'
     out1 = conv((x1, x2), edge_index)
     out2 = conv((x1, None), edge_index, size=(4, 2))
@@ -92,7 +91,6 @@ def test_gen_conv(aggr):
     value = torch.randn(row.size(0), 4)
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 2))
     conv = GENConv((-1, -1), 32, aggr, edge_dim=-1)
-    conv.reset_parameters()
     assert str(conv) == f'GENConv((-1, -1), 32, aggr={aggr})'
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, size=(4, 2))

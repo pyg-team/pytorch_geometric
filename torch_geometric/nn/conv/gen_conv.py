@@ -157,7 +157,7 @@ class GENConv(MessagePassing):
             in_channels = (in_channels, in_channels)
 
         if in_channels[0] != out_channels:
-            self.lin_n = Linear(in_channels[0], out_channels, bias=bias)
+            self.lin_src = Linear(in_channels[0], out_channels, bias=bias)
 
         if edge_dim is not None and edge_dim != out_channels:
             self.lin_edge = Linear(edge_dim, out_channels, bias=bias)
@@ -168,7 +168,8 @@ class GENConv(MessagePassing):
             aggr_out_channels = out_channels
 
         if aggr_out_channels != out_channels:
-            self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
+            self.lin_aggr_out = Linear(aggr_out_channels, out_channels,
+                                       bias=bias)
 
         if in_channels[1] != out_channels:
             self.lin_dst = Linear(in_channels[1], out_channels, bias=bias)
@@ -187,14 +188,14 @@ class GENConv(MessagePassing):
         self.aggr_module.reset_parameters()
         if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
-        if hasattr(self, 'lin_n'):
-            self.lin_n.reset_parameters()
-        if hasattr(self, 'lin_e'):
-            self.lin_e.reset_parameters()
-        if hasattr(self, 'lin_l'):
-            self.lin_l.reset_parameters()
-        if hasattr(self, 'lin_r'):
-            self.lin_r.reset_parameters()
+        if hasattr(self, 'lin_src'):
+            self.lin_src.reset_parameters()
+        if hasattr(self, 'lin_edge'):
+            self.lin_edge.reset_parameters()
+        if hasattr(self, 'lin_aggr_out'):
+            self.lin_aggr_out.reset_parameters()
+        if hasattr(self, 'lin_dst'):
+            self.lin_dst.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
@@ -202,14 +203,14 @@ class GENConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        if hasattr(self, 'lin_n'):
-            x = (self.lin_n(x[0]), x[1])
+        if hasattr(self, 'lin_src'):
+            x = (self.lin_src(x[0]), x[1])
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
 
-        if edge_attr is not None and hasattr(self, 'lin_e'):
-            edge_attr = self.lin_e(edge_attr)
+        if edge_attr is not None and hasattr(self, 'lin_edge'):
+            edge_attr = self.lin_edge(edge_attr)
 
         # Node and edge feature dimensionalites need to match.
         if edge_attr is not None:
@@ -218,17 +219,17 @@ class GENConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
-        if hasattr(self, 'lin_l'):
-            out = self.lin_l(out)
+        if hasattr(self, 'lin_aggr_out'):
+            out = self.lin_aggr_out(out)
 
         if hasattr(self, 'msg_norm'):
             out = self.msg_norm(x[1] if x[1] is not None else x[0], out)
 
-        x_r = x[1]
-        if x_r is not None:
-            if hasattr(self, 'lin_r'):
-                x_r = self.lin_r(x_r)
-            out = out + x_r
+        x_dst = x[1]
+        if x_dst is not None:
+            if hasattr(self, 'lin_dst'):
+                x_dst = self.lin_dst(x_dst)
+            out = out + x_dst
 
         return self.mlp(out)
 
