@@ -90,10 +90,12 @@ class GENConv(MessagePassing):
             :obj:`"layer"`, :obj:`"instance"`) (default: :obj:`batch`)
         num_layers (int, optional): The number of MLP layers.
             (default: :obj:`2`)
+        expansion (int, optional): The expansion factor of hidden channels in
+            MLP layers. (default: :obj:`2`)
         eps (float, optional): The epsilon value of the message construction
             function. (default: :obj:`1e-7`)
-        bias (bool, optional): If set to :obj:`True`, the linear layers will
-            learn an additive bias. (default: :obj:`False`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
         edge_dim (int, optional): Edge feature dimensionality. If set to
             :obj:`None`, Edge feature dimensionality is expected to match
             the `out_channels`. Other-wise, edge features are linearly
@@ -125,6 +127,7 @@ class GENConv(MessagePassing):
         learn_msg_scale: bool = False,
         norm: str = 'batch',
         num_layers: int = 2,
+        expansion: int = 2,
         eps: float = 1e-7,
         bias: bool = False,
         edge_dim: Optional[int] = None,
@@ -172,9 +175,9 @@ class GENConv(MessagePassing):
 
         channels = [out_channels]
         for i in range(num_layers - 1):
-            channels.append(out_channels * 2)
+            channels.append(out_channels * expansion)
         channels.append(out_channels)
-        self.mlp = MLP(channels, norm=norm)
+        self.mlp = MLP(channels, norm=norm, bias=bias)
 
         if msg_norm:
             self.msg_norm = MessageNorm(learn_msg_scale)
