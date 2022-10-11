@@ -263,6 +263,7 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
         if edge_type_ptr is not None:
+            # TODO Re-weight according to edge weight for `aggr=mean`.
             return segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j
