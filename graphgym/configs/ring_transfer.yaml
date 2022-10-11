@@ -1,8 +1,8 @@
 # The recommended basic settings for GNN
 out_dir: results
 tensorboard_each_run: True
-# num_workers: 10        # no. of CPUs on Macbook
-num_workers: 8         # no. of machines(?) on verges 
+num_workers: 10        # no. of CPUs on Macbook
+# num_workers: 8         # no. of machines(?) on verges 
 dataset:
   format: PyG
   name: RingTransfer
@@ -38,6 +38,6 @@ optim:
   base_lr: 0.01
   max_epoch: 10
 ring_dataset:
-  num_nodes: 10
+  num_nodes: 30
   num_graphs: 2000
   num_classes: 5
