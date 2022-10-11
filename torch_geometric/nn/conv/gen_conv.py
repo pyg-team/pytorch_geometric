@@ -160,7 +160,7 @@ class GENConv(MessagePassing):
             self.lin_n = Linear(in_channels[0], out_channels, bias=bias)
 
         if edge_dim is not None and edge_dim != out_channels:
-            self.lin_e = Linear(edge_dim, out_channels, bias=bias)
+            self.lin_edge = Linear(edge_dim, out_channels, bias=bias)
 
         if isinstance(self.aggr_module, MultiAggregation):
             aggr_out_channels = self.aggr_module.get_out_channels(out_channels)
