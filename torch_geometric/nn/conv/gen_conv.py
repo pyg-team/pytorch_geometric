@@ -171,7 +171,7 @@ class GENConv(MessagePassing):
             self.lin_l = Linear(aggr_out_channels, out_channels, bias=bias)
 
         if in_channels[1] != out_channels:
-            self.lin_r = Linear(in_channels[1], out_channels, bias=bias)
+            self.lin_dst = Linear(in_channels[1], out_channels, bias=bias)
 
         channels = [out_channels]
         for i in range(num_layers - 1):
