@@ -107,7 +107,7 @@ class GENConv(MessagePassing):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or
-          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{t}))`
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
           if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
