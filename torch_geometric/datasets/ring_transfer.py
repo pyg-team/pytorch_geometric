@@ -13,6 +13,8 @@ from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
 from torch_geometric.transforms import RandomNodeSplit
 from torch_geometric.graphgym.config import cfg
 
+from custom_graphgym.ben_utils import get_k_hop_adjacencies
+
 
 class RingTransferDataset(InMemoryDataset):
     r"""A synthetic dataset that returns a Ring Transfer dataset.
@@ -67,7 +69,10 @@ class RingTransferDataset(InMemoryDataset):
         self.data.train_mask = index_to_mask(torch.tensor(split[0]), size=len(self.data.x))
         self.data.val_mask = index_to_mask(torch.tensor(split[1]), size=len(self.data.x))
         self.data.test_mask = index_to_mask(torch.tensor(split[2]), size=len(self.data.x))
-    
+        
+        # adding k-hop edge indices
+        k_hop_edges, _ = get_k_hop_adjacencies(self.data.edge_index, cfg.delay.max_k)    
+        
 
     def load_ring_transfer_dataset(self, nodes=10, split=[5000, 500, 500], classes=5):
         train = self.generate_ring_transfer_graph_dataset(nodes, classes=classes, samples=split[0])

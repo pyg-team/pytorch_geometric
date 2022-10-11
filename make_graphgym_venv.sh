@@ -1,8 +1,10 @@
+#!/usr/bin/env bash
+
 # generate graphgym-ready venv and dependencies
 
-conda update conda
-conda create -n graphgym_v0
-conda activate graphgym_v0
+# conda update conda
+# conda create -n graphgym_v0
+# conda activate graphgym_v0
 
 # # Mac (CPU only)
 conda install pytorch torchvision torchaudio -c pytorch
