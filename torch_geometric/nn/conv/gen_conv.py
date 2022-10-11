@@ -136,16 +136,15 @@ class GENConv(MessagePassing):
         aggr = 'softmax' if aggr == 'softmax_sg' else aggr
         aggr = 'powermean' if aggr == 'power' else aggr
 
-        aggr_kwargs = kwargs.get('aggr_kwargs', {})
-
         # Override args of aggregator if `aggr_kwargs` is specified
-        if aggr_kwargs == {}:
+        if kwargs.get('aggr_kwargs', {}) == {}:
             if aggr == 'softmax':
-                aggr_kwargs = dict(t=t, learn=learn_t, semi_grad=semi_grad)
+                kwargs['aggr_kwargs'] = dict(t=t, learn=learn_t,
+                                             semi_grad=semi_grad)
             elif aggr == 'powermean':
-                aggr_kwargs = dict(p=p, learn=learn_p)
+                kwargs['aggr_kwargs'] = dict(p=p, learn=learn_p)
 
-        super().__init__(aggr=aggr, aggr_kwargs=aggr_kwargs, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
