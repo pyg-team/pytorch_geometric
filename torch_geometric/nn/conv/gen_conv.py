@@ -140,7 +140,7 @@ class GENConv(MessagePassing):
         aggr = 'powermean' if aggr == 'power' else aggr
 
         # Override args of aggregator if `aggr_kwargs` is specified
-        if kwargs.get('aggr_kwargs', {}) == {}:
+        if 'aggr_kwargs' not in kwargs:
             if aggr == 'softmax':
                 kwargs['aggr_kwargs'] = dict(t=t, learn=learn_t,
                                              semi_grad=semi_grad)
