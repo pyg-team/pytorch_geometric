@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import Node2Vec
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import is_full_test, withPackage
 
 
 @withPackage('torch_cluster')
@@ -23,3 +23,18 @@ def test_node2vec():
     acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
                      torch.ones(20, 16), torch.randint(10, (20, )))
     assert 0 <= acc and acc <= 1
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+
+        z = jit(torch.arange(3))
+        assert z.size() == (3, 16)
+
+        pos_rw, neg_rw = jit.sample(torch.arange(3))
+
+        loss = jit.loss(pos_rw, neg_rw)
+        assert 0 <= loss.item()
+
+        acc = jit.test(torch.ones(20, 16), torch.randint(10, (20, )),
+                       torch.ones(20, 16), torch.randint(10, (20, )))
+        assert 0 <= acc and acc <= 1
