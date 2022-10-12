@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -38,10 +38,8 @@ def contains_isolated_nodes(
 
 
 def remove_isolated_nodes(
-        edge_index: Tensor,
-        edge_attr: Optional[Tensor] = None,
-        num_nodes: Optional[int] = None
-) -> Tuple[Tensor, Tensor, Tensor]:
+        edge_index: Tensor, edge_attr: Optional[Tensor] = None,
+        num_nodes: Optional[int] = None) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Removes the isolated nodes from the graph given by :attr:`edge_index`
     with optional edge attributes :attr:`edge_attr`.
     In addition, returns a mask of shape :obj:`[num_nodes]` to manually filter
