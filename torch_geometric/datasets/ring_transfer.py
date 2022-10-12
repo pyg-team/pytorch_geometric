@@ -13,7 +13,7 @@ from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
 from torch_geometric.transforms import RandomNodeSplit
 from torch_geometric.graphgym.config import cfg
 
-from custom_graphgym.ben_utils import get_k_hop_adjacencies
+from ben_utils import get_k_hop_adjacencies
 
 
 class RingTransferDataset(InMemoryDataset):
@@ -70,9 +70,6 @@ class RingTransferDataset(InMemoryDataset):
         self.data.val_mask = index_to_mask(torch.tensor(split[1]), size=len(self.data.x))
         self.data.test_mask = index_to_mask(torch.tensor(split[2]), size=len(self.data.x))
         
-        # adding k-hop edge indices
-        k_hop_edges, _ = get_k_hop_adjacencies(self.data.edge_index, cfg.delay.max_k)    
-        
 
     def load_ring_transfer_dataset(self, nodes=10, split=[5000, 500, 500], classes=5):
         train = self.generate_ring_transfer_graph_dataset(nodes, classes=classes, samples=split[0])
@@ -122,4 +119,28 @@ class RingTransferDataset(InMemoryDataset):
 
         # Add the label of the graph as a graph label
         y = torch.tensor([np.argmax(target_label)], dtype=torch.long)
-        return Data(x=x, edge_index=edge_index, mask=mask, y=y)
+        
+        k_hop_edges, _ = get_k_hop_adjacencies(edge_index, cfg.delay.max_k)
+        assert torch.mean((k_hop_edges[0] == edge_index).float())==1.0
+        cutoffs = torch.tensor([v.shape[-1] for v in k_hop_edges])
+        k_hop_edges = torch.cat(k_hop_edges, dim=1)
+        # cutoffs = [int(sum(cutoffs[:i])) for i in range(len(cutoffs))] 
+        # cutoffs += [int(k_hop_edges.shape[-1])]
+            
+        
+        # make edge labels for k-hops
+        k_hop_labels = []
+        for i in range(len(cutoffs)):
+            k = i + 1
+            k_hop_labels.append(k * torch.ones(cutoffs[i]))
+        k_hop_labels = torch.cat(k_hop_labels)
+            
+        
+        return Data(x=x, edge_index=k_hop_edges, 
+                    edge_attr=k_hop_labels,
+                    mask=mask, y=y,
+
+                    # k_hop_edges=k_hop_edges, 
+                    # test_edge_idx=torch.arange(22).reshape((2,-1)),
+                    # test_list=[torch.arange(4).reshape((2,-1)) for _ in range(5)],
+                    )
