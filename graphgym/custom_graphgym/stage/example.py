@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.register import register_stage
-from custom_graphgym.ben_utils import get_k_hop_adjacencies
 
 # # OUT OF DATE
 # def GNNLayer(dim_in, dim_out, has_act=True):
