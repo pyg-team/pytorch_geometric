@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
@@ -5,8 +7,9 @@ from torch_geometric.io import read_txt_array
 
 
 class EventDataset(InMemoryDataset):
-    def __init__(self, root, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
 
     @property
@@ -64,8 +67,9 @@ class ICEWS18(EventDataset):
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root: str, split: str = 'train', transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index(f'{split}.pt')
