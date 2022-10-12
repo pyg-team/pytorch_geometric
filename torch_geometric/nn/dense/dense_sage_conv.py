@@ -1,6 +1,7 @@
+from typing import Optional
 import torch
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, BoolTensor
 from torch.nn import Linear
 
 from torch_geometric.typing import Adj
@@ -34,7 +35,7 @@ class DenseSAGEConv(torch.nn.Module):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, adj: Adj, mask: bool = None) -> Tensor:
+    def forward(self, x: Tensor, adj: Adj, mask: Optional[BoolTensor] = None) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
