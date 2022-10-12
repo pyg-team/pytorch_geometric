@@ -1,5 +1,8 @@
+from typing import Optional, Union
+
 import torch
 
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -13,10 +16,11 @@ class ToDense(BaseTransform):
         num_nodes (int): The number of nodes. If set to :obj:`None`, the number
             of nodes will get automatically inferred. (default: :obj:`None`)
     """
-    def __init__(self, num_nodes=None):
+    def __init__(self, num_nodes: Optional[int] = None):
         self.num_nodes = num_nodes
 
-    def __call__(self, data):
+    def __call__(self, data: Union[Data,
+                                   HeteroData]) -> Union[Data, HeteroData]:
         assert data.edge_index is not None
 
         orig_num_nodes = data.num_nodes
