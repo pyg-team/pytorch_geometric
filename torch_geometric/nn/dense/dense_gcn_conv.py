@@ -1,6 +1,8 @@
+from typing import Optional
+from torch_geometric.typing import Adj
 import torch
+from torch import Tensor, BoolTensor
 from torch.nn import Parameter
-
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 
@@ -8,7 +10,7 @@ from torch_geometric.nn.inits import zeros
 class DenseGCNConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GCNConv`.
     """
-    def __init__(self, in_channels, out_channels, improved=False, bias=True):
+    def __init__(self, in_channels: int, out_channels: int, improved: bool = False, bias: bool = True):
         super().__init__()
 
         self.in_channels = in_channels
@@ -25,11 +27,11 @@ class DenseGCNConv(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.lin.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x, adj, mask=None, add_loop=True):
+    def forward(self, x: Tensor, adj: Adj, mask: Optional[BoolTensor] = None, add_loop: Optional[bool] = True) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
