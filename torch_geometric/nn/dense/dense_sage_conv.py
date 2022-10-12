@@ -1,8 +1,10 @@
-from torch_geometric.typing import Adj
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear
 from torch import Tensor
+from torch.nn import Linear
+
+from torch_geometric.typing import Adj
+
 
 class DenseSAGEConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.SAGEConv`.
@@ -15,7 +17,8 @@ class DenseSAGEConv(torch.nn.Module):
         use :class:`torch_geometric.nn.dense.DenseGraphConv` instead.
 
     """
-    def __init__(self, in_channels: int, out_channels: int, normalize: bool = False, bias: bool = True):
+    def __init__(self, in_channels: int, out_channels: int,
+                 normalize: bool = False, bias: bool = True):
         super().__init__()
 
         self.in_channels = in_channels
