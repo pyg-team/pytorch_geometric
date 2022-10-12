@@ -104,9 +104,9 @@ class DelayGNNStage(nn.Module):
         x_{t+1} = x_t + f(x_t, x_{t-1})
         first pass: uses regular edge index for each layer
         """
-        # making the k-hop edge indices
-        k_hop_edges, _ = get_k_hop_adjacencies(batch.edge_index, self.max_k)
-
+        # k-hop adj matrix
+        A = lambda k : batch.edge_index[:, batch.edge_attr==k]
+        # run through layers
         t, x = 0, [] # length t list with x_0, x_1, ..., x_t
         modules = self.children()
         for t in range(self.num_layers):
@@ -114,7 +114,7 @@ class DelayGNNStage(nn.Module):
             batch.x = torch.zeros_like(x[t])
             for k in range(1, (t+1)+1):
                 W = next(modules)
-                batch.x = batch.x + W(batch, x[t+1-k], k_hop_edges[k-1]).x
+                batch.x = batch.x + W(batch, x[t+1-k], A(k)).x
             batch.x = x[t] + nn.ReLU()(batch.x)
             if cfg.gnn.l2norm: # normalises after every layer
                 batch.x = F.normalize(batch.x, p=2, dim=-1)

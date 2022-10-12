@@ -38,6 +38,6 @@ optim:
   base_lr: 0.01
   max_epoch: 10
 ring_dataset:
-  num_nodes: 30
+  num_nodes: 10
   num_graphs: 2000
   num_classes: 5
