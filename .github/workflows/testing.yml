@@ -16,10 +16,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.9]
-        torch-version: [1.11.0, 1.12.0]
+        torch-version: [1.12.0]
         include:
-          - torch-version: 1.11.0
-            torchvision-version: 0.12.0
           - torch-version: 1.12.0
             torchvision-version: 0.13.0
 
