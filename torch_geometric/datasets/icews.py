@@ -67,7 +67,8 @@ class ICEWS18(EventDataset):
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
-    def __init__(self, root: str, split: str = 'train', transform: Optional[Callable] = None,
+    def __init__(self, root: str, split: str = 'train',
+                 transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
         assert split in ['train', 'val', 'test']
