@@ -1,7 +1,8 @@
+from torch_geometric.typing import Adj
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-
+from torch import Tensor
 
 class DenseSAGEConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.SAGEConv`.
@@ -14,7 +15,7 @@ class DenseSAGEConv(torch.nn.Module):
         use :class:`torch_geometric.nn.dense.DenseGraphConv` instead.
 
     """
-    def __init__(self, in_channels, out_channels, normalize=False, bias=True):
+    def __init__(self, in_channels: int, out_channels: int, normalize: bool = False, bias: bool = True):
         super().__init__()
 
         self.in_channels = in_channels
@@ -26,11 +27,11 @@ class DenseSAGEConv(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, adj, mask=None):
+    def forward(self, x: Tensor, adj: Adj, mask: bool = None) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
