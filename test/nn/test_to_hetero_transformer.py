@@ -312,7 +312,7 @@ def test_to_hetero_with_basic_model():
 
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
-        super().__init__(aggr='mean')
+        super().__init__(aggr='sum')
         self.lin = Linear(in_channels, out_channels, bias=False)
 
     def reset_parameters(self):
@@ -351,7 +351,7 @@ def test_to_hetero_and_rgcn_equal_output():
     edge_type[(row >= 6) & (col < 6)] = 2
     assert edge_type.min() == 0
 
-    conv = RGCNConv(16, 32, num_relations=3)
+    conv = RGCNConv(16, 32, num_relations=3, aggr='sum')
     out1 = conv(x, edge_index, edge_type)
 
     # Run `to_hetero`:
