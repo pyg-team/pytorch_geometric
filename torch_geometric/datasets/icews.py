@@ -7,20 +7,24 @@ from torch_geometric.io import read_txt_array
 
 
 class EventDataset(InMemoryDataset):
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform, pre_filter)
 
     @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
         raise NotImplementedError
 
     @property
-    def num_rels(self):
+    def num_rels(self) -> int:
         raise NotImplementedError
 
-    def process_events(self):
+    def process_events(self) -> int:
         raise NotImplementedError
 
     def process(self) -> List[Data]:
@@ -67,10 +71,14 @@ class ICEWS18(EventDataset):
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
-    def __init__(self, root: str, split: str = 'train',
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index(f'{split}.pt')
