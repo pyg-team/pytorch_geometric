@@ -12,13 +12,10 @@ def test_node2vec():
                      context_size=2)
     assert model.__repr__() == 'Node2Vec(3, 16)'
 
-    z = model(torch.arange(3))
-    assert z.size() == (3, 16)
+    assert model(torch.arange(3)).size() == (3, 16)
 
     pos_rw, neg_rw = model.sample(torch.arange(3))
-
-    loss = model.loss(pos_rw, neg_rw)
-    assert 0 <= loss.item()
+    assert float(model.loss(pos_rw, neg_rw)) >= 0
 
     acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
                      torch.ones(20, 16), torch.randint(10, (20, )))
@@ -27,14 +24,7 @@ def test_node2vec():
     if is_full_test():
         jit = torch.jit.export(model)
 
-        z = jit(torch.arange(3))
-        assert z.size() == (3, 16)
+        assert jit(torch.arange(3)).size() == (3, 16)
 
         pos_rw, neg_rw = jit.sample(torch.arange(3))
-
-        loss = jit.loss(pos_rw, neg_rw)
-        assert 0 <= loss.item()
-
-        acc = jit.test(torch.ones(20, 16), torch.randint(10, (20, )),
-                       torch.ones(20, 16), torch.randint(10, (20, )))
-        assert 0 <= acc and acc <= 1
+        assert float(jit.loss(pos_rw, neg_rw)) >= 0

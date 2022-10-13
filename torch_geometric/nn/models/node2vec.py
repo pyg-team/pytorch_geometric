@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -127,7 +127,7 @@ class Node2Vec(torch.nn.Module):
 
     def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
-            batch = Tensor(batch)
+            batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
 
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
