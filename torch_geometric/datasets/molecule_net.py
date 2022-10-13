@@ -149,7 +149,7 @@ class MoleculeNet(InMemoryDataset):
     def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_filter: Optional[Callable] = None, ):
         self.name = name.lower()
         assert self.name in self.names.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
