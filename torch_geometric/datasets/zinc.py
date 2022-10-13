@@ -86,9 +86,15 @@ class ZINC(InMemoryDataset):
     split_url = ('https://raw.githubusercontent.com/graphdeeplearning/'
                  'benchmarking-gnns/master/data/molecules/{}.index')
 
-    def __init__(self, root: str, subset: bool = False, split: str = 'train',
-                 transform: Optional[Callable] = None, pre_transform: Optional[Callable] =None,
-                 pre_filter: Optional[Callable] =None, ):
+    def __init__(
+        self,
+        root: str,
+        subset: bool = False,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.subset = subset
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
