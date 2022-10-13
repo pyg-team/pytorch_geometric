@@ -38,7 +38,8 @@ def contains_isolated_nodes(
 
 
 def remove_isolated_nodes(
-    edge_index: Tensor, edge_attr: Optional[Tensor] = None,
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor], Tensor]:
     r"""Removes the isolated nodes from the graph given by :attr:`edge_index`
