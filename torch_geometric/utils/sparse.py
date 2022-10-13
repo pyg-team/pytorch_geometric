@@ -1,7 +1,10 @@
+from typing import Tuple
+
 import torch
+from torch import Tensor
 
 
-def dense_to_sparse(adj):
+def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
     r"""Converts a dense adjacency matrix to a sparse adjacency matrix defined
     by edge indices and edge attributes.
 
