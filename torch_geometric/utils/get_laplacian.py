@@ -10,9 +10,12 @@ from .num_nodes import maybe_num_nodes
 
 
 def get_laplacian(
-        edge_index: torch.Tensor, edge_weight: OptTensor = None,
-        normalization: Optional[str] = None, dtype: Optional[int] = None,
-        num_nodes: Optional[int] = None, ) -> Tuple[torch.Tensor, OptTensor]:
+    edge_index: torch.Tensor,
+    edge_weight: OptTensor = None,
+    normalization: Optional[str] = None,
+    dtype: Optional[int] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[torch.Tensor, OptTensor]:
     r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 
