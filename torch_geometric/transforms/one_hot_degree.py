@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 import torch.nn.functional as F
 
@@ -22,8 +20,12 @@ class OneHotDegree(BaseTransform):
         cat (bool, optional): Concat node degrees to node features instead
             of replacing them. (default: :obj:`True`)
     """
-    def __init__(self, max_degree: int, in_degree: bool = False,
-                 cat: bool = True):
+    def __init__(
+        self,
+        max_degree: int,
+        in_degree: bool = False,
+        cat: bool = True,
+    ):
         self.max_degree = max_degree
         self.in_degree = in_degree
         self.cat = cat
