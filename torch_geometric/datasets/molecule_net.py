@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 import re
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 import torch
 
