@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
 import torch
-from torch import LongTensor, Tensor
+from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
@@ -50,10 +50,19 @@ class Node2Vec(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
-    def __init__(self, edge_index: LongTensor, embedding_dim: int,
-                 walk_length: int, context_size: int, walks_per_node: int = 1,
-                 p: float = 1, q: float = 1, num_negative_samples: int = 1,
-                 num_nodes: Optional[int] = None, sparse: bool = False):
+    def __init__(
+        self,
+        edge_index: Tensor,
+        embedding_dim: int,
+        walk_length: int,
+        context_size: int,
+        walks_per_node: int = 1,
+        p: float = 1.0,
+        q: float = 1.0,
+        num_negative_samples: int = 1,
+        num_nodes: Optional[int] = None,
+        sparse: bool = False,
+    ):
         super().__init__()
 
         if random_walk is None:
@@ -86,7 +95,7 @@ class Node2Vec(torch.nn.Module):
         emb = self.embedding.weight
         return emb if batch is None else emb.index_select(0, batch)
 
-    def loader(self, **kwargs):
+    def loader(self, **kwargs) -> DataLoader:
         return DataLoader(range(self.adj.sparse_size(0)),
                           collate_fn=self.sample, **kwargs)
 
@@ -148,9 +157,17 @@ class Node2Vec(torch.nn.Module):
 
         return pos_loss + neg_loss
 
-    def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
-             test_y: Tensor, solver: str = 'lbfgs', multi_class: str = 'auto',
-             *args: List[str], **kwargs) -> float:
+    def test(
+        self,
+        train_z: Tensor,
+        train_y: Tensor,
+        test_z: Tensor,
+        test_y: Tensor,
+        solver: str = 'lbfgs',
+        multi_class: str = 'auto',
+        *args,
+        **kwargs,
+    ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
         from sklearn.linear_model import LogisticRegression
