@@ -1,4 +1,3 @@
-import logging
 import os
 import subprocess
 
@@ -38,39 +37,12 @@ def get_current_gpu_usage():
         return -1
 
 
-def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
-    r'''
-    Auto select device for the experiment. Useful when having multiple GPUs.
-
-    Args:
-        memory_max (int): Threshold of existing GPU memory usage. GPUs with
-        memory usage beyond this threshold will be deprioritized.
-        memory_bias (int): A bias GPU memory usage added to all the GPUs.
-        Avoild dvided by zero error.
-        strategy (str, optional): 'random' (random select GPU) or 'greedy'
-        (greedily select GPU)
-
-    '''
-    if cfg.accelerator != 'cpu' and torch.cuda.is_available():
-        if cfg.accelerator == 'auto':
-            memory_raw = get_gpu_memory_map()
-            if strategy == 'greedy' or np.all(memory_raw > memory_max):
-                cuda = np.argmin(memory_raw)
-                logging.info('GPU Mem: {}'.format(memory_raw))
-                logging.info(
-                    'Greedy select GPU, select GPU {} with mem: {}'.format(
-                        cuda, memory_raw[cuda]))
-            elif strategy == 'random':
-                memory = 1 / (memory_raw + memory_bias)
-                memory[memory_raw > memory_max] = 0
-                gpu_prob = memory / memory.sum()
-                cuda = np.random.choice(len(gpu_prob), p=gpu_prob)
-                logging.info('GPU Mem: {}'.format(memory_raw))
-                logging.info('GPU Prob: {}'.format(gpu_prob.round(2)))
-                logging.info(
-                    'Random select GPU, select GPU {} with mem: {}'.format(
-                        cuda, memory_raw[cuda]))
-
-            cfg.accelerator = 'cuda:{}'.format(cuda)
-    else:
-        cfg.accelerator = 'cpu'
+def auto_select_device():
+    r"""Auto select device for the current experiment."""
+    if cfg.accelerator == 'auto':
+        if torch.cuda.is_available():
+            cfg.accelerator = 'cuda'
+            cfg.devices = 1
+        else:
+            cfg.accelerator = 'cpu'
+            cfg.devices = None
