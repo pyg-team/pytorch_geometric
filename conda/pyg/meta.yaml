@@ -34,7 +34,6 @@ test:
     - torch_scatter
     - torch_sparse
     - torch_cluster
-    - torch_spline_conv
     - torch_geometric
     - torch_geometric.nn
     - torch_geometric.data
