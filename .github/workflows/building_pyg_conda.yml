@@ -34,8 +34,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: 653f5e70bc45da33741f425e138c5781da685c16
 
       - name: Set up Conda for Python ${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
