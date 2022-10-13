@@ -28,8 +28,7 @@ class OneHotDegree(BaseTransform):
         self.in_degree = in_degree
         self.cat = cat
 
-    def __call__(self, data: Union[Data,
-                                   HeteroData]) -> Union[Data, HeteroData]:
+    def __call__(self, data: Data) -> Data:
         idx, x = data.edge_index[1 if self.in_degree else 0], data.x
         deg = degree(idx, data.num_nodes, dtype=torch.long)
         deg = F.one_hot(deg, num_classes=self.max_degree + 1).to(torch.float)
