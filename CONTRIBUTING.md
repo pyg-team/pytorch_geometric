@@ -96,6 +96,9 @@ Everytime you send a Pull Request, your commit will be built and checked against
 
    (which runs a set of additional but time-consuming tests) dependening on your needs.
 
+3. Add your feature/bugfix to the [`CHANGELOG.md`](https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md?plain=1).
+   If multiple PRs move towards integrating a single feature, it is advised to group them together into one bullet point.
+
 ## Building Documentation
 
 To build the documentation:
