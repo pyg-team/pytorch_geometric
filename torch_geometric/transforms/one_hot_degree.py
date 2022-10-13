@@ -3,7 +3,7 @@ from typing import Union
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
