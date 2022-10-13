@@ -1,5 +1,5 @@
 from typing import Optional
-
+from torch_geometric.typing import OptTensor
 import torch
 from torch_scatter import scatter_add
 
@@ -8,7 +8,8 @@ from torch_geometric.utils import add_self_loops, remove_self_loops
 from .num_nodes import maybe_num_nodes
 
 
-def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
+def get_laplacian(edge_index:  torch.Tensor,
+                  edge_weight: OptTensor = None,
                   normalization: Optional[str] = None,
                   dtype: Optional[int] = None,
                   num_nodes: Optional[int] = None):
