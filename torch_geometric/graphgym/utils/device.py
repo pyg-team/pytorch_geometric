@@ -1,4 +1,3 @@
-import logging
 import os
 import subprocess
 
@@ -39,9 +38,11 @@ def get_current_gpu_usage():
 
 
 def auto_select_device():
-    r"""Auto select device for the experiment."""
-    if cfg.accelerator != 'cpu' and torch.cuda.is_available():
-        cfg.accelerator = 'cuda'
-        cfg.devices = 1
-    else:
-        cfg.accelerator = 'cpu'
+    r"""Auto select device for the current experiment."""
+    if cfg.accelerator == 'auto':
+        if torch.cuda.is_available():
+            cfg.accelerator = 'cuda'
+            cfg.devices = 1
+        else:
+            cfg.accelerator = 'cpu'
+            cfg.devices = None
