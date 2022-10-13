@@ -1,6 +1,6 @@
 import torch
-from torch_geometric.testing import is_full_test
 
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_dense_adj
 
 

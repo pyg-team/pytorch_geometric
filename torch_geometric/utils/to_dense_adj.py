@@ -1,14 +1,17 @@
 from typing import Optional
-from torch_geometric.typing import OptTensor
+
 import torch
 from torch_scatter import scatter
 
+from torch_geometric.typing import OptTensor
 
-def to_dense_adj(edge_index: torch.Tensor,
-                 batch: OptTensor = None,
-                 edge_attr: OptTensor = None,
-                 max_num_nodes: Optional[int] = None,
-                 ) -> torch.Tensor:
+
+def to_dense_adj(
+    edge_index: torch.Tensor,
+    batch: OptTensor = None,
+    edge_attr: OptTensor = None,
+    max_num_nodes: Optional[int] = None,
+) -> torch.Tensor:
     r"""Converts batched sparse adjacency matrices given by edge indices and
     edge attributes to a single dense batched adjacency matrix.
 
