@@ -2,6 +2,7 @@ import os
 import os.path as osp
 import pickle
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -85,7 +86,8 @@ class ZINC(InMemoryDataset):
     split_url = ('https://raw.githubusercontent.com/graphdeeplearning/'
                  'benchmarking-gnns/master/data/molecules/{}.index')
 
-    def __init__(self, root, subset=False, split='train', transform=None,
+    def __init__(self, root: str, subset: bool = False, split: str ='train',
+                 transform: Optional[Callable] =None,
                  pre_transform=None, pre_filter=None):
         self.subset = subset
         assert split in ['train', 'val', 'test']
@@ -94,19 +96,19 @@ class ZINC(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'train.pickle', 'val.pickle', 'test.pickle', 'train.index',
             'val.index', 'test.index'
         ]
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         name = 'subset' if self.subset else 'full'
         return osp.join(self.root, name, 'processed')
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
