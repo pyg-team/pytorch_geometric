@@ -1,11 +1,9 @@
-from typing import Optional
-
 import torch
 import torch.nn.functional as F
-from torch import BoolTensor, Tensor
+from torch import Tensor
 from torch.nn import Linear
 
-from torch_geometric.typing import Adj
+from torch_geometric.typing import OptTensor
 
 
 class DenseSAGEConv(torch.nn.Module):
@@ -19,8 +17,13 @@ class DenseSAGEConv(torch.nn.Module):
         use :class:`torch_geometric.nn.dense.DenseGraphConv` instead.
 
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 normalize: bool = False, bias: bool = True):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        normalize: bool = False,
+        bias: bool = True,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -32,12 +35,12 @@ class DenseSAGEConv(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x: Tensor, adj: Adj,
-                mask: Optional[BoolTensor] = None) -> Tensor:
+    def forward(self, x: Tensor, adj: Tensor,
+                mask: OptTensor = None) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
@@ -61,7 +64,7 @@ class DenseSAGEConv(torch.nn.Module):
         out = self.lin_rel(out) + self.lin_root(x)
 
         if self.normalize:
-            out = F.normalize(out, p=2, dim=-1)
+            out = F.normalize(out, p=2.0, dim=-1)
 
         if mask is not None:
             out = out * mask.view(B, N, 1).to(x.dtype)
