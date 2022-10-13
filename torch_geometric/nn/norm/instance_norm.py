@@ -38,7 +38,7 @@ class InstanceNorm(_InstanceNorm):
     """
     def __init__(self, in_channels: int, eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = False,
-                 track_running_stats: bool = False):
+                 track_running_stats: bool = False, ):
         super().__init__(in_channels, eps, momentum, affine,
                          track_running_stats)
 
