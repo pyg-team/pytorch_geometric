@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 import re
+from typing import Callable, Optional
 
 import torch
 
@@ -145,27 +146,33 @@ class MoleculeNet(InMemoryDataset):
                     slice(1, 3)],
     }
 
-    def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in self.names.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return f'{self.names[self.name][2]}.csv'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

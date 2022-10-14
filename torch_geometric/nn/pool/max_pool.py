@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, Tuple
 
+from torch import Tensor
 from torch_scatter import scatter
 
 from torch_geometric.data import Batch
@@ -9,11 +10,13 @@ from .consecutive import consecutive_cluster
 from .pool import pool_batch, pool_edge, pool_pos
 
 
-def _max_pool_x(cluster, x, size: Optional[int] = None):
+def _max_pool_x(cluster: Tensor, x: Tensor,
+                size: Optional[int] = None) -> Tensor:
     return scatter(x, cluster, dim=0, dim_size=size, reduce='max')
 
 
-def max_pool_x(cluster, x, batch, size: Optional[int] = None):
+def max_pool_x(cluster: Tensor, x: Tensor, batch: Tensor,
+               size: Optional[int] = None) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Max-Pools node features according to the clustering defined in
     :attr:`cluster`.
 

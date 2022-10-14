@@ -14,7 +14,8 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 
 class HGTSampler(BaseSampler):
-    r"""An implementation of an in-memory HGT sampler."""
+    r"""An implementation of an in-memory heterogeneous layer-wise sampler
+    user by :class:`~torch_geometric.loader.HGTLoader`."""
     def __init__(
         self,
         data: HeteroData,

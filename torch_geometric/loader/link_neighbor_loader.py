@@ -101,6 +101,13 @@ class LinkNeighborLoader(LinkLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        temporal_strategy (string, optional): The sampling strategy when using
+            temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
+            (default: :obj:`"uniform"`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges.
             If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
@@ -124,9 +131,11 @@ class LinkNeighborLoader(LinkLoader):
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
-            :obj:`edge_index` is sorted by column. This avoids internal
-            re-sorting of the data and can improve runtime and memory
-            efficiency. (default: :obj:`False`)
+            :obj:`edge_index` is sorted by column.
+            If :obj:`time_attr` is set, additionally requires that rows are
+            sorted according to time within individual neighborhoods.
+            This avoids internal re-sorting of the data and can improve
+            runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -148,6 +157,7 @@ class LinkNeighborLoader(LinkLoader):
         edge_label_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        temporal_strategy: str = 'uniform',
         neg_sampling_ratio: float = 0.0,
         time_attr: Optional[str] = None,
         transform: Callable = None,
@@ -178,6 +188,7 @@ class LinkNeighborLoader(LinkLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                temporal_strategy=temporal_strategy,
                 input_type=edge_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
