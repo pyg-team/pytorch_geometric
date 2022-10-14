@@ -66,7 +66,7 @@ class Reddit(InMemoryDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self) -> None:
+    def process(self):
         data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
         x = torch.from_numpy(data['feature']).to(torch.float)
         y = torch.from_numpy(data['label']).to(torch.long)
