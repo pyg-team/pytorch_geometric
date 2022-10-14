@@ -55,7 +55,7 @@ class DeepGCNLayer(torch.nn.Module):
     def __init__(self, conv: Optional[Module] = None,
                  norm: Optional[Module] = None, act: Optional[Module] = None,
                  block: str = 'res+', dropout: float = 0.,
-                 ckpt_grad: bool = False):
+                 ckpt_grad: bool = False, ):
         super().__init__()
 
         self.conv = conv
