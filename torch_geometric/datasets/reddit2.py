@@ -68,7 +68,7 @@ class Reddit2(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self) -> None:
+    def download(self):
         path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
 
