@@ -17,8 +17,7 @@ def test_deepgcn(block_tuple, ckpt_grad):
     conv = GENConv(8, 8)
     norm = LayerNorm(8)
     act = ReLU()
-    layer = DeepGCNLayer(conv, norm, act, block=block, dropout=0.1,
-                         ckpt_grad=ckpt_grad)
+    layer = DeepGCNLayer(conv, norm, act, block=block, ckpt_grad=ckpt_grad)
     assert layer.__repr__() == f'DeepGCNLayer(block={block})'
 
     out = layer(x, edge_index)
