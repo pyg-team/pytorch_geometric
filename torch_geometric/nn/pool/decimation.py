@@ -6,7 +6,7 @@ from numbers import Number
 
 def decimation_indices(
     ptr: LongTensor, decimation_factor: Number
-) -> Tuple[Tensor, Tensor]:
+) -> Tuple[Tensor, LongTensor]:
     """Get indices which downsample each point cloud by a decimation factor.
 
     Decimation happens separately for each cloud to prevent emptying smaller
@@ -14,7 +14,7 @@ def decimation_indices(
     one node after decimation.
 
     Args:
-        ptr (LongTensor): indices of each sample's first point in the batch.
+        ptr (LongTensor): indices of samples in the batch.
         decimation_factor (Number): value to divide number of nodes with.
             Should be higher than 1 for downsampling.
 
