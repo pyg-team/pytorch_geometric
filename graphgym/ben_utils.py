@@ -52,3 +52,8 @@ def plot_topology(edge_index):
   data = torch_geometric.data.Data(x=x, edge_index=edge_index)
   g = torch_geometric.utils.to_networkx(data, to_undirected=True)
   nx.draw(g, with_labels=True)
+
+def make_k_hop_edge_dataset(dataset):
+  """Append k-hop edges to edge_index and set edge_attrs with k-hop labels"""
+  # DO STUFF
+  return dataset

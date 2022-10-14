@@ -71,7 +71,7 @@ class BaseStorage(MutableMapping):
         else:
             self[key] = value
 
-    def __delattr__(sdisplayelf, key: str):
+    def __delattr__(self, key: str):
         if key[:1] == '_':
             del self.__dict__[key]
         else:

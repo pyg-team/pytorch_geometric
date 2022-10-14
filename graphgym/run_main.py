@@ -21,12 +21,17 @@ from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
 
 
+# argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfer.yaml'
+
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example.yaml'
-argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfer.yaml'
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_copy.yaml'
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example_graph_2.yaml'
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/configs_03.10/Cora_V_2MP.yaml'
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/lrgb_peptides-func-GCN.yaml'
+
+# REPRODUCIBILITY TEST
+# argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfer_REPRO_1.yaml'
+argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfer_REPRO_2.yaml'
 
 repeat = 1
 

@@ -17,11 +17,6 @@ class GNNRingHead(nn.Module):
         super().__init__()
         self.layer_post_mp = nn.Linear(dim_in, dim_out)
 
-    # def _apply_index(self, batch): # just indexes the right thing and returns it after an MLP layer - i.e. train or val node
-    #     mask = '{}_mask'.format(batch.split)
-    #     return batch.x[batch[mask]], \
-    #         batch.y[batch[mask]]
-
     def forward(self, batch):
         x = batch.x[batch.mask]
         x = self.layer_post_mp(x)
