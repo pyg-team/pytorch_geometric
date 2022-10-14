@@ -82,7 +82,7 @@ def max_pool(cluster, data, transform=None):
     return data
 
 
-def max_pool_neighbor_x(data, flow='source_to_target'):
+def max_pool_neighbor_x(data: Data, flow: Optional[str] = 'source_to_target') -> Data:
     r"""Max pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the feature value with the maximum value from
     the central node and its neighbors.
