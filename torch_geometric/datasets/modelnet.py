@@ -58,11 +58,15 @@ class ModelNet(InMemoryDataset):
         '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
-    def __init__(self, root: str, name: Optional[str] = '10',
-                 train: Optional[bool] = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None, ):
+    def __init__(
+        self,
+        root: str,
+        name: Optional[str] = '10',
+        train: Optional[bool] = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
