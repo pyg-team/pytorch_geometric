@@ -50,7 +50,7 @@ class DeepGraphInfomax(torch.nn.Module):
         return pos_z, neg_z, summary
 
     def discriminate(self, z: Tensor, summary: Tensor,
-                     sigmoid: Optional[bool] = True) -> Tensor:
+                     sigmoid: bool = True) -> Tensor:
         r"""Given the patch-summary pair :obj:`z` and :obj:`summary`, computes
         the probability scores assigned to this patch-summary pair.
 
