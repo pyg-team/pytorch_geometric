@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.testing import withPackage
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
 
@@ -181,6 +182,7 @@ def test_link_neighbor_loader_edge_label():
         assert torch.all(batch.edge_label[10:] == 0)
 
 
+@withPackage('pyg_lib')
 def test_temporal_heterogeneous_link_neighbor_loader():
     data = HeteroData()
 
