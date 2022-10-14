@@ -62,7 +62,7 @@ class ModelNet(InMemoryDataset):
                  train: Optional[bool] = True,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_filter: Optional[Callable] = None, ):
         assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
