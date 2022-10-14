@@ -6,10 +6,6 @@ def test_decimation_basic():
     # params
     N_1, N_2 = 4, 6
     decimation_factor = 2
-
-    # data
-    batch = torch.tensor([0 for _ in range(N_1)] + [1 for _ in range(N_2)])
-    x = torch.randn(N_1 + N_2, 4)
     ptr = torch.LongTensor([0, N_1, N_1 + N_2])
 
     idx_decim, ptr_decim = decimation_indices(ptr, decimation_factor)
@@ -20,8 +16,8 @@ def test_decimation_basic():
     )
 
     # usage
-    batch_decim = batch[idx_decim]
-    x_decim = x[idx_decim]
+    # x = torch.randn(N_1 + N_2, 4)
+    # x_decim = x[idx_decim]
 
 
 def test_decimation_single_cloud():

@@ -24,8 +24,8 @@ def decimation_indices(
     """
     if decimation_factor < 1:
         raise ValueError(
-            "Argument `decimation_factor` should be higher than (or equal to) 1 for "
-            f"downsampling. (Current value: {decimation_factor})"
+            "Argument `decimation_factor` should be higher than (or equal to) "
+            f"1 for downsampling. (Current value: {decimation_factor})"
         )
 
     batch_size = ptr.size(0) - 1
