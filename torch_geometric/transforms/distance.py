@@ -1,8 +1,11 @@
 from typing import Optional
+
 import torch
+
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.data import Data
+
 
 @functional_transform('distance')
 class Distance(BaseTransform):
@@ -18,7 +21,8 @@ class Distance(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-    def __init__(self, norm: bool = True, max_value: Optional[float] = None, cat: bool = True):
+    def __init__(self, norm: bool = True, max_value: Optional[float] = None,
+                 cat: bool = True):
         self.norm = norm
         self.max = max_value
         self.cat = cat
