@@ -94,7 +94,10 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             if perm is None:
                 out_store[key] = index_select(value, index, dim=dim)
             else:
-                perm = perm.to(value.device)
+                if isinstance(value, Tensor):
+                    perm = perm.to(value.device)
+                elif isinstance(value, np.ndarray):
+                    perm = perm.cpu()
                 out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store

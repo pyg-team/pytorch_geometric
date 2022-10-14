@@ -296,6 +296,8 @@ class NodeStorage(BaseStorage):
     def num_node_features(self) -> int:
         if 'x' in self and isinstance(self.x, (Tensor, np.ndarray)):
             return 1 if self.x.ndim == 1 else self.x.shape[-1]
+        if 'x' in self and isinstance(self.x, SparseTensor):
+            return 1 if self.x.dim() == 1 else self.x.size(-1)
         return 0
 
     @property
