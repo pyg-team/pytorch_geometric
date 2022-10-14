@@ -5,10 +5,11 @@ RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
 Reference: https://arxiv.org/abs/1911.11236
 """
 import os.path as osp
+from typing import Tuple
 
 import torch
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, LongTensor
 from torch.nn import Linear
 from tqdm import tqdm
 
@@ -29,6 +30,7 @@ bn099_kwargs = {"momentum": 0.01, "eps": 1e-6}
 
 class SharedMLP(MLP):
     """SharedMLP following RandLA-Net paper."""
+
     def __init__(self, *args, **kwargs):
         # BN + Act always active even at last layer.
         kwargs["plain_last"] = False
@@ -43,11 +45,13 @@ class SharedMLP(MLP):
 
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
+
     def __init__(self, channels):
         super().__init__(aggr="add")
         self.mlp_encoder = SharedMLP([10, channels // 2])
-        self.mlp_attention = SharedMLP([channels, channels], bias=False,
-                                       act=None, norm=None)
+        self.mlp_attention = SharedMLP(
+            [channels, channels], bias=False, act=None, norm=None
+        )
         self.mlp_post_attention = SharedMLP([channels, channels])
 
     def forward(self, edge_index, x, pos):
@@ -55,8 +59,9 @@ class LocalFeatureAggregation(MessagePassing):
         out = self.mlp_post_attention(out)  # N, d_out
         return out
 
-    def message(self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
-                index: Tensor) -> Tensor:
+    def message(
+        self, x_j: Tensor, pos_i: Tensor, pos_j: Tensor, index: Tensor
+    ) -> Tensor:
         """Local Spatial Encoding (locSE) and attentive pooling of features.
 
         Args:
@@ -73,11 +78,13 @@ class LocalFeatureAggregation(MessagePassing):
         # Encode local neighboorhod structural information
         pos_diff = pos_j - pos_i
         distance = torch.sqrt((pos_diff * pos_diff).sum(1, keepdim=True))
-        relative_infos = torch.cat([pos_i, pos_j, pos_diff, distance],
-                                   dim=1)  # N * K, d
+        relative_infos = torch.cat(
+            [pos_i, pos_j, pos_diff, distance], dim=1
+        )  # N * K, d
         local_spatial_encoding = self.mlp_encoder(relative_infos)  # N * K, d
-        local_features = torch.cat([x_j, local_spatial_encoding],
-                                   dim=1)  # N * K, 2d
+        local_features = torch.cat(
+            [x_j, local_spatial_encoding], dim=1
+        )  # N * K, 2d
 
         # Attention will weight the different features of x
         # along the neighborhood dimension.
@@ -124,23 +131,48 @@ class DilatedResidualBlock(torch.nn.Module):
         return x, pos, batch
 
 
-def get_decimation_idx(ptr, decimation):
-    """Subsamples each point cloud by a decimation factor.
+def get_decimation_idx(
+    ptr: LongTensor, decimation: int
+) -> Tuple[Tensor, Tensor]:
+    """Get indices which downsample each point cloud by a (decimation) factor.
 
-    Decimation happens separately for each cloud to prevent
-    emptying smaller point clouds.
+    Decimation happens separately for each cloud to prevent emptying smaller
+    point clouds. Empty clouds are prevented and clouds with have a least
+    one node after decimation.
+
+    Args:
+        ptr (LongTensor): indices of each sample's first point.
+        decimation (int): decimation value to divide number of nodes with.
+        Should be a positive and above 1 for downsampling.
+
+    Returns:
+        Tensor: indices to use to downsample input point clouds.
+        Tensor: updated ptr which would result from the downsampling.
 
     """
+    if decimation < 1:
+        raise ValueError(
+            "Argument `decimation` should be higher than (or equal to) 1 for "
+            f"downsampling. (Current value: {decimation})"
+        )
+
     batch_size = ptr.size(0) - 1
     bincount = ptr[1:] - ptr[:-1]
     decimated_bincount = torch.div(bincount, decimation, rounding_mode="floor")
     # Decimation should not empty clouds completely.
-    decimated_bincount = torch.max(torch.ones_like(decimated_bincount),
-                                   decimated_bincount)
+    decimated_bincount = torch.max(
+        torch.ones_like(decimated_bincount), decimated_bincount
+    )
     idx_decim = torch.cat(
-        [(ptr[i] + torch.randperm(bincount[i],
-                                  device=ptr.device)[:decimated_bincount[i]])
-         for i in range(batch_size)],
+        [
+            (
+                ptr[i]
+                + torch.randperm(bincount[i], device=ptr.device)[
+                    : decimated_bincount[i]
+                ]
+            )
+            for i in range(batch_size)
+        ],
         dim=0,
     )
     # Update the ptr for future decimations
@@ -150,10 +182,11 @@ def get_decimation_idx(ptr, decimation):
     return idx_decim, ptr_decim
 
 
-def decimate(b_out, ptr, decimation):
-    decimation_idx, decimation_ptr = get_decimation_idx(ptr, decimation)
-    b_out_decim = tuple(t[decimation_idx] for t in b_out)
-    return b_out_decim, decimation_ptr
+def decimate(tensors, ptr: Tensor, decimation: int):
+    """Decimate each element of the given tuple of tensors."""
+    idx_decim, ptr_decim = get_decimation_idx(ptr, decimation)
+    tensors_decim = tuple(tensor[idx_decim] for tensor in tensors)
+    return tensors_decim, ptr_decim
 
 
 class Net(torch.nn.Module):
@@ -203,8 +236,9 @@ def train(epoch):
     for data in tqdm(train_loader):
         data = data.to(device)
         optimizer.zero_grad()
-        loss = F.nll_loss(model(data.x, data.pos, data.batch, data.ptr),
-                          data.y)
+        loss = F.nll_loss(
+            model(data.x, data.pos, data.batch, data.ptr), data.y
+        )
         loss.backward()
         optimizer.step()
 
@@ -222,22 +256,27 @@ def test(loader):
 
 
 if __name__ == "__main__":
-    path = osp.join(osp.dirname(osp.realpath(__file__)), "..",
-                    "data/ModelNet10")
+    path = osp.join(
+        osp.dirname(osp.realpath(__file__)), "..", "data/ModelNet10"
+    )
     pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024)])
+        [T.SamplePoints(1024)]
+    )
     train_dataset = ModelNet(path, "10", True, transform, pre_transform)
     test_dataset = ModelNet(path, "10", False, transform, pre_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,
-                              num_workers=6)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
-                             num_workers=6)
+    train_loader = DataLoader(
+        train_dataset, batch_size=32, shuffle=True, num_workers=6
+    )
+    test_loader = DataLoader(
+        test_dataset, batch_size=32, shuffle=False, num_workers=6
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = Net(3, train_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
-                                                gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, step_size=20, gamma=0.5
+    )
 
     for epoch in range(1, 201):
         train(epoch)
