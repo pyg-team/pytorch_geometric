@@ -2,14 +2,18 @@ import glob
 import os
 import os.path as osp
 import shutil
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip, Data
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_off
-
-from typing import Optional, Callable, List, Tuple, Dict
 
 
 class ModelNet(InMemoryDataset):
@@ -54,13 +58,15 @@ class ModelNet(InMemoryDataset):
         '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
-    def __init__(self,
-                 root: str,
-                 name: Optional[str] = '10',
-                 train: Optional[bool] = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: Optional[str] = '10',
+        train: Optional[bool] = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
