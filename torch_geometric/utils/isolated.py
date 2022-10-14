@@ -94,6 +94,7 @@ def remove_isolated_nodes(
     edge_index = torch.cat([edge_index, loop_edge_index], dim=1)
 
     if edge_attr is not None:
+        assert loop_edge_attr is not None
         loop_edge_attr = loop_edge_attr[loop_idx]
         edge_attr = torch.cat([edge_attr, loop_edge_attr], dim=0)
 

@@ -1,3 +1,7 @@
+import os
+import random
+import sys
+
 import numpy as np
 import pytest
 import torch
@@ -516,3 +520,25 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
     assert len(edge_id1_dict) == len(edge_id2_dict)
     for key in edge_id1_dict.keys():
         assert torch.equal(edge_id1_dict[key], edge_id2_dict[key])
+
+
+def test_memmap_neighbor_loader():
+    path = os.path.join(os.sep, 'tmp', f'{random.randrange(sys.maxsize)}.npy')
+    x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
+    x[:] = np.random.randn(100, 32)
+
+    data = Data()
+    data.x = np.memmap(path, dtype=np.float32, mode='r', shape=(100, 32))
+    data.edge_index = get_edge_index(100, 100, 500)
+
+    assert str(data) == 'Data(x=[100, 32], edge_index=[2, 500])'
+    assert data.num_nodes == 100
+
+    loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
+                            num_workers=6)
+    batch = next(iter(loader))
+    assert batch.num_nodes <= 100
+    assert isinstance(batch.x, torch.Tensor)
+    assert batch.x.size() == (batch.num_nodes, 32)
+
+    os.remove(path)
