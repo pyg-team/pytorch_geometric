@@ -529,7 +529,7 @@ def test_memmap_neighbor_loader():
 
     data = Data()
     data.x = np.memmap(path, dtype=np.float32, mode='r', shape=(100, 32))
-    data.edge_index = get_edge_index(90, 90, 500)
+    data.edge_index = get_edge_index(100, 100, 500)
 
     assert str(data) == 'Data(x=[100, 32], edge_index=[2, 500])'
     assert data.num_nodes == 100
