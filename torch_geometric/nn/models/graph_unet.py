@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_sparse import spspmm
 
 from torch_geometric.nn import GCNConv, TopKPooling
-from torch_geometric.typing import PairTensor
+from torch_geometric.typing import PairTensor, OptTensor
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -84,7 +84,7 @@ class GraphUNet(torch.nn.Module):
             self,
             x: Tensor,
             edge_index: Tensor,
-            batch: Optional[Tensor] = None
+            batch: OptTensor = None
     ) -> Tensor:
         """"""
         if batch is None:
