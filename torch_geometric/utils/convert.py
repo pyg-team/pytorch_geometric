@@ -158,7 +158,8 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
 
 
 def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
-                  group_edge_attrs: Optional[Union[List[str], all]] = None):
+                  group_edge_attrs: Optional[Union[List[str], all]] = None,
+                  ignore_missing_attrs: Optional[bool] = False):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -169,6 +170,9 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         group_edge_attrs (List[str] or all, optional): The edge attributes to
             be concatenated and added to :obj:`data.edge_attr`.
             (default: :obj:`None`)
+        ignore_missing_attrs (bool, optional): Whether to ignore attributes
+            that are not present in every node.
+            (default: :obj:`False`)
 
     .. note::
 
@@ -203,32 +207,60 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
     data = defaultdict(list)
 
-    if G.number_of_nodes() > 0:
-        node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
-    else:
-        node_attrs = {}
+    node_data = [feat_dict for _, feat_dict in G.nodes(data=True)]
+    node_union_attrs = set([]) if len(node_data) == 0 else set.union(
+        *[set(nd) for nd in node_data])
+    node_intersection_attrs = set(
+        []) if len(node_data) == 0 else set.intersection(
+            *[set(nd) for nd in node_data])
 
-    if G.number_of_edges() > 0:
-        edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
-    else:
-        edge_attrs = {}
+    edge_data = [feat_dict for _, _, feat_dict in G.edges(data=True)]
+    edge_union_attrs = set([]) if len(edge_data) == 0 else set.union(
+        *[set(ed) for ed in edge_data])
+    edge_intersection_attrs = set(
+        []) if len(edge_data) == 0 else set.intersection(
+            *[set(ed) for ed in edge_data])
 
-    for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
-        if set(feat_dict.keys()) != set(node_attrs):
-            raise ValueError('Not all nodes contain the same attributes')
-        for key, value in feat_dict.items():
-            data[str(key)].append(value)
+    if (not ignore_missing_attrs
+            and len(node_union_attrs) > len(node_intersection_attrs)):
+        part_missing_node_attrs = node_union_attrs.difference(
+            node_intersection_attrs)
+        raise ValueError("""Not all nodes contain the same attributes.
+            Node attribute{} {} sometimes missing.""".format(
+            's' if len(part_missing_node_attrs) > 1 else '',
+            part_missing_node_attrs))
 
-    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
-        if set(feat_dict.keys()) != set(edge_attrs):
-            raise ValueError('Not all edges contain the same attributes')
-        for key, value in feat_dict.items():
-            key = f'edge_{key}' if key in node_attrs else key
-            data[str(key)].append(value)
+    if not ignore_missing_attrs and len(edge_union_attrs) > len(
+            edge_intersection_attrs):
+        part_missing_edge_attrs = edge_union_attrs.difference(
+            edge_intersection_attrs)
+        raise ValueError("""Not all edges contain the same attributes.
+            Edge attribute{} {} sometimes missing.""".format(
+            's' if len(part_missing_edge_attrs) > 1 else '',
+            part_missing_edge_attrs))
 
-    for key, value in G.graph.items():
-        key = f'graph_{key}' if key in node_attrs else key
-        data[str(key)] = value
+    node_attrs = [] if len(node_data) == 0 else [
+        attr for attr in node_data[0] if attr in node_intersection_attrs
+    ]
+    edge_attrs = [] if len(edge_data) == 0 else [
+        attr for attr in edge_data[0] if attr in edge_intersection_attrs
+    ]
+
+    formatted_node_data = {
+        key: [i[key] for i in node_data]
+        for key in node_intersection_attrs
+    }
+    data = formatted_node_data
+    formatted_edge_data = {
+        f'edge_{key}' if key in data else key: [i[key] for i in edge_data]
+        for key in edge_intersection_attrs
+    }
+    data = {**data, **formatted_edge_data}
+    formatted_graph_data = {
+        f'graph_{key}' if key in data else key: value
+        for key, value in G.graph.items()
+    }
+    data = {**data, **formatted_graph_data}
 
     for key, value in data.items():
         if isinstance(value, (tuple, list)) and isinstance(value[0], Tensor):
