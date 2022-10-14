@@ -98,19 +98,20 @@ def test_gen_conv(aggr):
     assert out2.size() == (2, 32)
     assert conv((x1, x2), edge_index, value,
                 size=(4, 2)).tolist() == out1.tolist()
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e6)
+    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e6)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), edge_index, value), out1)
+        assert torch.allclose(jit((x1, x2), edge_index, value), out1,
+                              atol=1e-6)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
-                              out1)
+                              out1, atol=1e-6)
         assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
-                              out2)
+                              out2, atol=1e-6)
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1)
-        assert torch.allclose(jit((x1, None), adj.t()), out2)
+        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
