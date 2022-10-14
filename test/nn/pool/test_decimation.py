@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.nn.pool.decimation import decimation_indices
 
 
@@ -12,8 +13,7 @@ def test_decimation_basic():
     size_decim = (N_1 // decimation_factor) + (N_2 // decimation_factor)
     assert idx_decim.size(0) == size_decim
     assert torch.equal(
-        ptr_decim, torch.LongTensor([0, N_1 // decimation_factor, size_decim])
-    )
+        ptr_decim, torch.LongTensor([0, N_1 // decimation_factor, size_decim]))
 
     # usage
     # x = torch.randn(N_1 + N_2, 4)
@@ -27,9 +27,8 @@ def test_decimation_single_cloud():
     ptr = torch.LongTensor([0, N_1])
     idx_decim, ptr_decim = decimation_indices(ptr, decimation_factor)
     assert idx_decim.size(0) == N_1 // decimation_factor
-    assert torch.equal(
-        ptr_decim, torch.LongTensor([0, N_1 // decimation_factor])
-    )
+    assert torch.equal(ptr_decim,
+                       torch.LongTensor([0, N_1 // decimation_factor]))
 
 
 def test_decimation_almost_empty():

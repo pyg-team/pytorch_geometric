@@ -1,12 +1,12 @@
-from typing import Tuple
-import torch
-from torch import Tensor, LongTensor
 from numbers import Number
+from typing import Tuple
+
+import torch
+from torch import LongTensor, Tensor
 
 
-def decimation_indices(
-    ptr: LongTensor, decimation_factor: Number
-) -> Tuple[Tensor, LongTensor]:
+def decimation_indices(ptr: LongTensor,
+                       decimation_factor: Number) -> Tuple[Tensor, LongTensor]:
     """Get indices which downsample each point cloud by a decimation factor.
 
     Decimation happens separately for each cloud to prevent emptying smaller
@@ -25,28 +25,19 @@ def decimation_indices(
     if decimation_factor < 1:
         raise ValueError(
             "Argument `decimation_factor` should be higher than (or equal to) "
-            f"1 for downsampling. (Current value: {decimation_factor})"
-        )
+            f"1 for downsampling. (Current value: {decimation_factor})")
 
     batch_size = ptr.size(0) - 1
     bincount = ptr[1:] - ptr[:-1]
-    decimated_bincount = torch.div(
-        bincount, decimation_factor, rounding_mode="floor"
-    )
+    decimated_bincount = torch.div(bincount, decimation_factor,
+                                   rounding_mode="floor")
     # Decimation should not empty clouds completely.
-    decimated_bincount = torch.max(
-        torch.ones_like(decimated_bincount), decimated_bincount
-    )
+    decimated_bincount = torch.max(torch.ones_like(decimated_bincount),
+                                   decimated_bincount)
     idx_decim = torch.cat(
-        [
-            (
-                ptr[i]
-                + torch.randperm(bincount[i], device=ptr.device)[
-                    : decimated_bincount[i]
-                ]
-            )
-            for i in range(batch_size)
-        ],
+        [(ptr[i] + torch.randperm(bincount[i],
+                                  device=ptr.device)[:decimated_bincount[i]])
+         for i in range(batch_size)],
         dim=0,
     )
     # Get updated ptr (e.g. for future decimations)
