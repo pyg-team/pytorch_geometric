@@ -101,7 +101,7 @@ class ModelNet(InMemoryDataset):
         torch.save(self.process_set('train'), self.processed_paths[0])
         torch.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset) -> Tuple[Data, Dict[str, Tensor]]:
+    def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
