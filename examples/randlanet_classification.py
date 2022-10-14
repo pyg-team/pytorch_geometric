@@ -5,11 +5,10 @@ RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
 Reference: https://arxiv.org/abs/1911.11236
 """
 import os.path as osp
-from typing import Tuple
 
 import torch
 import torch.nn.functional as F
-from torch import Tensor, LongTensor
+from torch import Tensor
 from torch.nn import Linear
 from tqdm import tqdm
 
@@ -20,6 +19,7 @@ from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import MaxAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn_graph
+from torch_geometric.nn.pool.decimation import decimation_indices
 from torch_geometric.utils import softmax
 
 # Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
@@ -131,60 +131,9 @@ class DilatedResidualBlock(torch.nn.Module):
         return x, pos, batch
 
 
-def get_decimation_idx(
-    ptr: LongTensor, decimation: int
-) -> Tuple[Tensor, Tensor]:
-    """Get indices which downsample each point cloud by a (decimation) factor.
-
-    Decimation happens separately for each cloud to prevent emptying smaller
-    point clouds. Empty clouds are prevented and clouds with have a least
-    one node after decimation.
-
-    Args:
-        ptr (LongTensor): indices of each sample's first point.
-        decimation (int): decimation value to divide number of nodes with.
-        Should be a positive and above 1 for downsampling.
-
-    Returns:
-        Tensor: indices to use to downsample input point clouds.
-        Tensor: updated ptr which would result from the downsampling.
-
-    """
-    if decimation < 1:
-        raise ValueError(
-            "Argument `decimation` should be higher than (or equal to) 1 for "
-            f"downsampling. (Current value: {decimation})"
-        )
-
-    batch_size = ptr.size(0) - 1
-    bincount = ptr[1:] - ptr[:-1]
-    decimated_bincount = torch.div(bincount, decimation, rounding_mode="floor")
-    # Decimation should not empty clouds completely.
-    decimated_bincount = torch.max(
-        torch.ones_like(decimated_bincount), decimated_bincount
-    )
-    idx_decim = torch.cat(
-        [
-            (
-                ptr[i]
-                + torch.randperm(bincount[i], device=ptr.device)[
-                    : decimated_bincount[i]
-                ]
-            )
-            for i in range(batch_size)
-        ],
-        dim=0,
-    )
-    # Update the ptr for future decimations
-    ptr_decim = ptr.clone()
-    for i in range(batch_size):
-        ptr_decim[i + 1] = ptr_decim[i] + decimated_bincount[i]
-    return idx_decim, ptr_decim
-
-
-def decimate(tensors, ptr: Tensor, decimation: int):
+def decimate(tensors, ptr: Tensor, decimation_factor: int):
     """Decimate each element of the given tuple of tensors."""
-    idx_decim, ptr_decim = get_decimation_idx(ptr, decimation)
+    idx_decim, ptr_decim = decimation_indices(ptr, decimation_factor)
     tensors_decim = tuple(tensor[idx_decim] for tensor in tensors)
     return tensors_decim, ptr_decim
 
