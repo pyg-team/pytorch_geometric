@@ -76,6 +76,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.1.0] - 2022-08-17
 ### Added
+- Added the test for `DeepGCNLayer` ([#5704](https://github.com/pyg-team/pytorch_geometric/pull/5704))
 - Allow `.` in `ModuleDict` key names ([#5227](https://github.com/pyg-team/pytorch_geometric/pull/5227))
 - Added `edge_label_time` argument to `LinkNeighborLoader` ([#5137](https://github.com/pyg-team/pytorch_geometric/pull/5137), [#5173](https://github.com/pyg-team/pytorch_geometric/pull/5173))
 - Let `ImbalancedSampler` accept `torch.Tensor` as input ([#5138](https://github.com/pyg-team/pytorch_geometric/pull/5138))
@@ -160,7 +161,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added temporal sampling support to `NeighborLoader` ([#4025](https://github.com/pyg-team/pytorch_geometric/pull/4025))
 - Added an example for unsupervised heterogeneous graph learning based on "Deep Multiplex Graph Infomax" ([#3189](https://github.com/pyg-team/pytorch_geometric/pull/3189))
 ### Changed
-- Fixed `path` in `heter_conv_dblp` example ([#5686](https://github.com/pyg-team/pytorch_geometric/pull/5686))
 - Changed docstring for `RandomLinkSplit` ([#5190](https://github.com/pyg-team/pytorch_geometric/issues/5190))
 - Switched to PyTorch `scatter_reduce` implementation - experimental feature ([#5120](https://github.com/pyg-team/pytorch_geometric/pull/5120))
 - Fixed `RGATConv` device mismatches for `f-scaled` mode ([#5187](https://github.com/pyg-team/pytorch_geometric/pull/5187)]
