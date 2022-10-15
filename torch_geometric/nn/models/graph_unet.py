@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Union
 
 import torch
 import torch.nn.functional as F
