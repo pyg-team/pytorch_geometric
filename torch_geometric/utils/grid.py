@@ -57,8 +57,7 @@ def grid_index(height: int, width: int,
     row, col = row[mask], col[mask]
 
     edge_index = torch.stack([row, col], dim=0)
-    edge_index, _ = coalesce(edge_index, None, height * width)
-
+    edge_index = coalesce(edge_index, None, height * width)
     return edge_index
 
 
