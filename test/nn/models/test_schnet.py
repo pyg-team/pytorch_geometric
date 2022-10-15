@@ -2,7 +2,7 @@ import torch
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
-from torch_geometric.testing import withPackage, is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.transforms import RadiusGraph
 
 
