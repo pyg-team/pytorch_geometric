@@ -2,7 +2,8 @@ from typing import Optional, Tuple
 
 import torch
 from torch import LongTensor, Tensor
-from torch_sparse import coalesce
+
+from .coalesce import coalesce
 
 
 def grid(height: int, width: int, dtype: Optional[torch.dtype] = None,
@@ -56,7 +57,7 @@ def grid_index(height: int, width: int,
     row, col = row[mask], col[mask]
 
     edge_index = torch.stack([row, col], dim=0)
-    edge_index, _ = coalesce(edge_index, None, height * width, height * width)
+    edge_index, _ = coalesce(edge_index, None, height * width)
 
     return edge_index
 
