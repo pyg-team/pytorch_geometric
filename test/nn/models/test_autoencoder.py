@@ -3,6 +3,7 @@ from torch import Tensor as T
 
 from torch_geometric.data import Data
 from torch_geometric.nn import ARGA, ARGVA, GAE, VGAE
+from torch_geometric.testing import is_full_test
 from torch_geometric.transforms import RandomLinkSplit
 
 
@@ -59,6 +60,12 @@ def test_arga():
     assert model.reg_loss(z).item() > 0
     assert model.discriminator_loss(z).item() > 0
 
+    if is_full_test():
+        jit = torch.jit.export(model)
+        z = jit.encode(x)
+        assert jit.reg_loss(z).item() > 0
+        assert jit.discriminator_loss(z).item() > 0
+
 
 def test_argva():
     model = ARGVA(encoder=lambda x: (x, x), discriminator=lambda x: T([0.5]))
@@ -67,6 +74,12 @@ def test_argva():
     model.encode(x)
     model.reparametrize(model.__mu__, model.__logstd__)
     assert model.kl_loss().item() > 0
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+        jit.encode(x)
+        jit.reparametrize(jit.__mu__, jit.__logstd__)
+        assert jit.kl_loss().item() > 0
 
 
 def test_init():
