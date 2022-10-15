@@ -1,6 +1,6 @@
-from torch_geometric.datasets import QM7b, ZINC, RingTransferDataset
-from torch_geometric.graphgym.register import register_loader
+from torch_geometric.datasets import ZINC, QM7b, RingTransferDataset
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.register import register_loader
 
 
 @register_loader('load_ZINC')
@@ -11,20 +11,24 @@ def load_zinc_dataset(format, name, dataset_dir):
             dataset_raw = ZINC(dataset_dir)
             return dataset_raw
 
+
 ####################
+
 
 @register_loader('load_RingTransfer')
 def load_ring_transfer_dataset(format, name, dataset_dir):
     dataset_dir = f'{dataset_dir}/{name}'
     if format == 'PyG':
         if name == 'RingTransfer':
-            dataset_raw = RingTransferDataset(num_graphs=cfg.ring_dataset.num_graphs,
-                                              num_nodes=cfg.ring_dataset.num_nodes,
-                                              num_classes=cfg.ring_dataset.num_classes)
+            dataset_raw = RingTransferDataset(
+                num_graphs=cfg.ring_dataset.num_graphs,
+                num_nodes=cfg.ring_dataset.num_nodes,
+                num_classes=cfg.ring_dataset.num_classes)
             return dataset_raw
 
 
 ####################
+
 
 @register_loader('example')
 def load_dataset_example(format, name, dataset_dir):
@@ -37,26 +41,29 @@ def load_dataset_example(format, name, dataset_dir):
 
 ####################
 
+from torch_geometric.graphgym.models.transform import (
+    create_link_label,
+    neg_sampling_transform,
+)
 from torch_geometric.utils import (
     index_to_mask,
     negative_sampling,
     to_undirected,
 )
-from torch_geometric.graphgym.models.transform import (
-    create_link_label,
-    neg_sampling_transform,
-)
+
 index2mask = index_to_mask
-from torch_geometric.graphgym.loader import set_dataset_attr
 import torch
 
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.loader import set_dataset_attr
+
 
 def make_khop_adjacencies(dataset, K):
     #########
     # STUFF #
     #########
     return dataset
+
 
 @register_loader('my_ogb_loader')
 def load_ogb(format, name, dataset_dir):
@@ -129,7 +136,6 @@ def load_ogb(format, name, dataset_dir):
         label = create_link_label(id, id_neg)
         set_dataset_attr(dataset, 'test_edge_index', id_all, id_all.shape[1])
         set_dataset_attr(dataset, 'test_edge_label', label, len(label))
-        
 
     else:
         raise ValueError('OGB dataset: {} non-exist')

@@ -2,15 +2,16 @@ import torch
 import torch.nn as nn
 from torch.nn import Parameter
 
+import torch_geometric as pyg
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.models.layer import LayerConfig
 from torch_geometric.graphgym.register import register_layer
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 
 ####################
 
-import torch_geometric as pyg
-from torch_geometric.graphgym.models.layer import LayerConfig
+
 
 @register_layer('my_gcnconv')
 class GCNConv(nn.Module):
@@ -27,6 +28,7 @@ class GCNConv(nn.Module):
     def forward(self, batch, x, edge_index):
         batch.x = self.model(x, edge_index)
         return batch
+
 
 ####################
 

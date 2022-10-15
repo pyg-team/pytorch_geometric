@@ -20,7 +20,6 @@ from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
 
-
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfer.yaml'
 
 # argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/example.yaml'
@@ -36,6 +35,8 @@ argpath = '/Users/beng/Documents/pytorch_geometric/graphgym/configs/ring_transfe
 repeat = 1
 
 import argparse
+
+
 def parse_args() -> argparse.Namespace:
     r"""Parses the command line arguments."""
     parser = argparse.ArgumentParser(description='GraphGym')
@@ -49,8 +50,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('opts', default=None, nargs=argparse.REMAINDER,
                         help='See graphgym/config.py for remaining options.')
 
-    return parser.parse_args("--cfg {} --repeat {}".format(argpath, repeat).split())
-    
+    return parser.parse_args("--cfg {} --repeat {}".format(argpath,
+                                                           repeat).split())
+
 
 if __name__ == '__main__':
     # Load cmd line args

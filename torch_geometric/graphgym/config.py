@@ -104,7 +104,7 @@ def set_cfg(cfg):
     cfg.share.dim_out = 1
 
     # Number of tasks, e.g., for multitask binary classification
-    cfg.share.num_tasks = 1 # my addition
+    cfg.share.num_tasks = 1  # my addition
 
     # Number of dataset splits: train/val/test
     cfg.share.num_splits = 1
@@ -345,7 +345,7 @@ def set_cfg(cfg):
     cfg.gnn.layers_mp = 1
 
     # Number of layers after message passing
-    cfg.gnn.layers_post_mp = 1 # need a head
+    cfg.gnn.layers_post_mp = 1  # need a head
 
     # Hidden layer dim. Automatically set if train.auto_match = True
     cfg.gnn.dim_inner = 16
@@ -456,14 +456,14 @@ def set_cfg(cfg):
     # Misc DelayGNN options ADDED BY ME
     # ----------------------------------------------------------------------- #
     cfg.delay = CN()
-    
-    cfg.delay.max_k = 1000 # default to no. layers, presumably always <1000
+
+    cfg.delay.max_k = 1000  # default to no. layers, presumably always <1000
 
     # ----------------------------------------------------------------------- #
     # Ring Transfer dataset options ADDED BY ME
     # ----------------------------------------------------------------------- #
     cfg.ring_dataset = CN()
-    
+
     cfg.ring_dataset.num_nodes = 10
     cfg.ring_dataset.num_graphs = 6000
     cfg.ring_dataset.num_classes = 5

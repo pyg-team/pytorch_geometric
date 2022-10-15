@@ -1,8 +1,9 @@
 import torch.nn as nn
 
-from torch_geometric.graphgym.register import register_head
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.layer import MLP, new_layer_config
+from torch_geometric.graphgym.register import register_head
+
 
 @register_head('ring_transfer')
 class GNNRingHead(nn.Module):
@@ -23,7 +24,9 @@ class GNNRingHead(nn.Module):
         pred, label = x, batch.y
         return pred, label
 
+
 ###########################################
+
 
 @register_head('head')
 class ExampleNodeHead(nn.Module):

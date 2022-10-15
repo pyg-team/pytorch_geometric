@@ -124,12 +124,18 @@ class Logger(object):
         except ValueError:
             r_a_score = 0.0
         return {
-            'accuracy': round(accuracy_score(true, pred_int), cfg.round),
-            'average_precision': round(average_precision_score(true, pred_int), cfg.round),
-            'precision': round(precision_score(true, pred_int), cfg.round),
-            'recall': round(recall_score(true, pred_int), cfg.round),
-            'f1': round(f1_score(true, pred_int), cfg.round),
-            'auc': round(r_a_score, cfg.round),
+            'accuracy':
+            round(accuracy_score(true, pred_int), cfg.round),
+            'average_precision':
+            round(average_precision_score(true, pred_int), cfg.round),
+            'precision':
+            round(precision_score(true, pred_int), cfg.round),
+            'recall':
+            round(recall_score(true, pred_int), cfg.round),
+            'f1':
+            round(f1_score(true, pred_int), cfg.round),
+            'auc':
+            round(r_a_score, cfg.round),
         }
 
     def classification_multi(self):
@@ -239,8 +245,8 @@ class Logger(object):
 
 
 def infer_task():
-    if cfg.share.num_tasks > 1: # only supports multitask binary classification
-        return 'classification_binary' 
+    if cfg.share.num_tasks > 1:  # only supports multitask binary classification
+        return 'classification_binary'
     num_label = cfg.share.dim_out
     if cfg.dataset.task_type == 'classification':
         if num_label <= 2:

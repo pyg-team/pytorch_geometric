@@ -12,6 +12,7 @@ from torch_geometric.graphgym.register import network_dict, register_network
 
 register_network('gnn', GNN)
 
+
 class GraphGymModule(LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
@@ -32,7 +33,7 @@ class GraphGymModule(LightningModule):
         pred, true = self(batch)
         ### fixes the case for multitask binary (also works for binary)
         if cfg.share.num_tasks > 1:
-            is_labelled = (true==true)
+            is_labelled = (true == true)
             pred, true = pred[is_labelled], true[is_labelled]
             loss, pred_score = compute_loss(pred, true)
         ###

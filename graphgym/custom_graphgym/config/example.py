@@ -434,7 +434,9 @@ def my_set_cfg(cfg):
     for func in register.config_dict.values():
         func(cfg)
 
+
 # -----------------------------------------------------------------------------
+
 
 @register_config('example')
 def set_cfg_example(cfg):

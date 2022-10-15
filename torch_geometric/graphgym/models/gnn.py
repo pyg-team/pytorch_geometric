@@ -46,9 +46,9 @@ def GNNPreMP(dim_in, dim_out, num_layers):
                                       has_act=False, has_bias=False, cfg=cfg))
 
 
-@register_stage('stack')      # xt+1 = f(x)       (NON-RESIDUAL)
-@register_stage('skipsum')    # xt+1 = x + f(x)   (RESIDUAL, sum)
-@register_stage('skipconcat') # xt+1 = [x, f(x)]  (RESIDUAL, concat)
+@register_stage('stack')  # xt+1 = f(x)       (NON-RESIDUAL)
+@register_stage('skipsum')  # xt+1 = x + f(x)   (RESIDUAL, sum)
+@register_stage('skipconcat')  # xt+1 = [x, f(x)]  (RESIDUAL, concat)
 class GNNStackStage(nn.Module):
     """
     Simple Stage that stack GNN layers

@@ -1,17 +1,18 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym import register
+from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.models.gnn import GNNLayer
+# UPDATED FROM gnn.py
+from torch_geometric.graphgym.models.layer import LayerConfig, new_layer_config
 from torch_geometric.graphgym.register import register_stage
 
 # # OUT OF DATE
 # def GNNLayer(dim_in, dim_out, has_act=True):
 #     return GeneralLayer(cfg.gnn.layer_type, dim_in, dim_out, has_act)
 
-# UPDATED FROM gnn.py
-from torch_geometric.graphgym.models.layer import LayerConfig, new_layer_config
-from torch_geometric.graphgym.models.gnn import GNNLayer 
+
 
 # my General Layer
 class GeneralLayer(nn.Module):
@@ -58,6 +59,7 @@ class GeneralLayer(nn.Module):
                 batch.x = F.normalize(batch.x, p=2, dim=1)
         return batch
 
+
 def GNNLayer(dim_in, dim_out, has_act=True):
     """
     Wrapper for a GNN layer
@@ -73,11 +75,14 @@ def GNNLayer(dim_in, dim_out, has_act=True):
         layer_config=new_layer_config(dim_in, dim_out, 1, has_act=has_act,
                                       has_bias=False, cfg=cfg))
 
+
 ####################
 # Delay skip
 
 import torch
-@register_stage('delay_gnn')      # xt+1 = f(x)       (NON-RESIDUAL)
+
+
+@register_stage('delay_gnn')  # xt+1 = f(x)       (NON-RESIDUAL)
 class DelayGNNStage(nn.Module):
     """
     Stage that stack GNN layers and includes a 1-hop skip (Delay GNN for max K = 2)
@@ -93,10 +98,10 @@ class DelayGNNStage(nn.Module):
         self.max_k = cfg.delay.max_k
         for t in range(num_layers):
             d_in = dim_in if t == 0 else dim_out
-            K = min(self.max_k, t+1)
-            for k in range(1, K+1):
-                W = GNNLayer(d_in, dim_out) # regular GCN layers
-                self.add_module('W_k{}_t{}'.format(k,t), W)
+            K = min(self.max_k, t + 1)
+            for k in range(1, K + 1):
+                W = GNNLayer(d_in, dim_out)  # regular GCN layers
+                self.add_module('W_k{}_t{}'.format(k, t), W)
 
     def forward(self, batch):
         """
@@ -104,18 +109,18 @@ class DelayGNNStage(nn.Module):
         first pass: uses regular edge index for each layer
         """
         # k-hop adj matrix
-        A = lambda k : batch.edge_index[:, batch.edge_attr==k]
+        A = lambda k: batch.edge_index[:, batch.edge_attr == k]
         # run through layers
-        t, x = 0, [] # length t list with x_0, x_1, ..., x_t
+        t, x = 0, []  # length t list with x_0, x_1, ..., x_t
         modules = self.children()
         for t in range(self.num_layers):
             x.append(batch.x)
             batch.x = torch.zeros_like(x[t])
-            for k in range(1, (t+1)+1):
+            for k in range(1, (t + 1) + 1):
                 W = next(modules)
-                batch.x = batch.x + W(batch, x[t+1-k], A(k)).x
+                batch.x = batch.x + W(batch, x[t + 1 - k], A(k)).x
             batch.x = x[t] + nn.ReLU()(batch.x)
-            if cfg.gnn.l2norm: # normalises after every layer
+            if cfg.gnn.l2norm:  # normalises after every layer
                 batch.x = F.normalize(batch.x, p=2, dim=-1)
         return batch
 
@@ -123,7 +128,8 @@ class DelayGNNStage(nn.Module):
 ##############################################################################
 # copied from 'stack' to test custom stage
 
-@register_stage('my_stack')      # xt+1 = f(x)       (NON-RESIDUAL)
+
+@register_stage('my_stack')  # xt+1 = f(x)       (NON-RESIDUAL)
 class GNNStackStage(nn.Module):
     """
     Simple Stage that stack GNN layers

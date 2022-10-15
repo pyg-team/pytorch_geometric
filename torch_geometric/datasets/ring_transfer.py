@@ -3,17 +3,15 @@ from collections import defaultdict
 from itertools import product
 from typing import Callable, Optional
 
-import torch
 import numpy as np
-from torch_geometric.utils.mask import index_to_mask
+import torch
+from ben_utils import get_k_hop_adjacencies
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
-from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
-
-from torch_geometric.transforms import RandomNodeSplit
 from torch_geometric.graphgym.config import cfg
-
-from ben_utils import get_k_hop_adjacencies
+from torch_geometric.transforms import RandomNodeSplit
+from torch_geometric.utils import coalesce, remove_self_loops, to_undirected
+from torch_geometric.utils.mask import index_to_mask
 
 
 class RingTransferDataset(InMemoryDataset):
@@ -55,30 +53,36 @@ class RingTransferDataset(InMemoryDataset):
         self.num_nodes = num_nodes
         self._num_classes = num_classes
         self.kwargs = kwargs
-        if cfg.gnn.layers_mp == 1: # the default - otherwise use specified no.
-            cfg.gnn.layers_mp = num_nodes//2
-        
-        split = (self.num_graphs * torch.tensor(cfg.dataset.split)).long()
-        data_list, split = self.load_ring_transfer_dataset(self.num_nodes, 
-                                                           split=split,
-                                                           classes=self._num_classes)        
-        
-        self.data, self.slices = self.collate(data_list)
-        
-        # add train/val split masks
-        self.data.train_mask = index_to_mask(torch.tensor(split[0]), size=len(self.data.x))
-        self.data.val_mask = index_to_mask(torch.tensor(split[1]), size=len(self.data.x))
-        self.data.test_mask = index_to_mask(torch.tensor(split[2]), size=len(self.data.x))
-        
+        if cfg.gnn.layers_mp == 1:  # the default - otherwise use specified no.
+            cfg.gnn.layers_mp = num_nodes // 2
 
-    def load_ring_transfer_dataset(self, nodes=10, split=[5000, 500, 500], classes=5):
-        train = self.generate_ring_transfer_graph_dataset(nodes, classes=classes, samples=split[0])
-        val = self.generate_ring_transfer_graph_dataset(nodes, classes=classes, samples=split[1])
-        test = self.generate_ring_transfer_graph_dataset(nodes, classes=classes, samples=split[2])
+        split = (self.num_graphs * torch.tensor(cfg.dataset.split)).long()
+        data_list, split = self.load_ring_transfer_dataset(
+            self.num_nodes, split=split, classes=self._num_classes)
+
+        self.data, self.slices = self.collate(data_list)
+
+        # add train/val split masks
+        self.data.train_mask = index_to_mask(torch.tensor(split[0]),
+                                             size=len(self.data.x))
+        self.data.val_mask = index_to_mask(torch.tensor(split[1]),
+                                           size=len(self.data.x))
+        self.data.test_mask = index_to_mask(torch.tensor(split[2]),
+                                            size=len(self.data.x))
+
+    def load_ring_transfer_dataset(self, nodes=10, split=[5000, 500, 500],
+                                   classes=5):
+        train = self.generate_ring_transfer_graph_dataset(
+            nodes, classes=classes, samples=split[0])
+        val = self.generate_ring_transfer_graph_dataset(
+            nodes, classes=classes, samples=split[1])
+        test = self.generate_ring_transfer_graph_dataset(
+            nodes, classes=classes, samples=split[2])
         dataset = train + val + test
         return dataset, [list(range(int(split[i]))) for i in range(3)]
 
-    def generate_ring_transfer_graph_dataset(self, nodes, classes=5, samples=10000):
+    def generate_ring_transfer_graph_dataset(self, nodes, classes=5,
+                                             samples=10000):
         # Generate the dataset
         dataset = []
         samples_per_class = torch.div(samples, classes, rounding_mode="floor")
@@ -102,7 +106,7 @@ class RingTransferDataset(InMemoryDataset):
         x = torch.tensor(x, dtype=torch.float32)
 
         edge_index = []
-        for i in range(nodes-1):
+        for i in range(nodes - 1):
             edge_index.append([i, i + 1])
             edge_index.append([i + 1, i])
 
@@ -119,28 +123,29 @@ class RingTransferDataset(InMemoryDataset):
 
         # Add the label of the graph as a graph label
         y = torch.tensor([np.argmax(target_label)], dtype=torch.long)
-        
+
         k_hop_edges, _ = get_k_hop_adjacencies(edge_index, cfg.delay.max_k)
-        assert torch.mean((k_hop_edges[0] == edge_index).float())==1.0
+        assert torch.mean((k_hop_edges[0] == edge_index).float()) == 1.0
         cutoffs = torch.tensor([v.shape[-1] for v in k_hop_edges])
         k_hop_edges = torch.cat(k_hop_edges, dim=1)
-        # cutoffs = [int(sum(cutoffs[:i])) for i in range(len(cutoffs))] 
+        # cutoffs = [int(sum(cutoffs[:i])) for i in range(len(cutoffs))]
         # cutoffs += [int(k_hop_edges.shape[-1])]
-            
-        
+
         # make edge labels for k-hops
         k_hop_labels = []
         for i in range(len(cutoffs)):
             k = i + 1
             k_hop_labels.append(k * torch.ones(cutoffs[i]))
         k_hop_labels = torch.cat(k_hop_labels)
-            
-        
-        return Data(x=x, edge_index=k_hop_edges, 
-                    edge_attr=k_hop_labels,
-                    mask=mask, y=y,
 
-                    # k_hop_edges=k_hop_edges, 
-                    # test_edge_idx=torch.arange(22).reshape((2,-1)),
-                    # test_list=[torch.arange(4).reshape((2,-1)) for _ in range(5)],
-                    )
+        return Data(
+            x=x,
+            edge_index=k_hop_edges,
+            edge_attr=k_hop_labels,
+            mask=mask,
+            y=y,
+
+            # k_hop_edges=k_hop_edges,
+            # test_edge_idx=torch.arange(22).reshape((2,-1)),
+            # test_list=[torch.arange(4).reshape((2,-1)) for _ in range(5)],
+        )

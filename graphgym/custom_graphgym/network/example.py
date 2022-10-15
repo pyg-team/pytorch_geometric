@@ -6,17 +6,16 @@ import torch_geometric.graphgym.models.head  # noqa, register module
 import torch_geometric.graphgym.register as register
 import torch_geometric.nn as pyg_nn
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.init import init_weights
+from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNPreMP
 from torch_geometric.graphgym.register import register_network
-
-
 
 ####################
 # copy of GNN class from models/gnn, testing the custom settings
 
-from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNPreMP
-from torch_geometric.graphgym.init import init_weights
 
 # register_network('gnn_copy_example', GNN)
+
 
 @register_network('my_gnn')
 class GNN(nn.Module):
@@ -55,6 +54,7 @@ class GNN(nn.Module):
 
 
 ####################
+
 
 @register_network('example')
 class ExampleGNN(torch.nn.Module):
