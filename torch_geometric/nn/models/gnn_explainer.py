@@ -68,18 +68,30 @@ class GNNExplainer(Explainer):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(self, model: Module, epochs: int = 100, lr: float = 0.01,
-                 num_hops: Optional[int] = None, return_type: str = 'log_prob',
-                 feat_mask_type: str = 'feature', allow_edge_mask: bool = True,
-                 log: bool = True, **kwargs):
+    def __init__(
+        self,
+        model: Module,
+        epochs: int = 100,
+        lr: float = 0.01,
+        num_hops: Optional[int] = None,
+        return_type: str = 'log_prob',
+        feat_mask_type: str = 'feature',
+        allow_edge_mask: bool = True,
+        log: bool = True,
+        **kwargs,
+    ):
         super().__init__(model, lr, epochs, num_hops, return_type, log)
         assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
         self.allow_edge_mask = allow_edge_mask
         self.feat_mask_type = feat_mask_type
         self.coeffs.update(kwargs)
 
-    def _initialize_masks(self, x: Tensor, edge_index: Tensor,
-                          init: str = "normal"):
+    def _initialize_masks(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        init: str = "normal",
+    ):
         (N, F), E = x.size(), edge_index.size(1)
         std = 0.1
 
@@ -132,8 +144,12 @@ class GNNExplainer(Explainer):
 
         return loss
 
-    def explain_graph(self, x: Tensor, edge_index: Tensor,
-                      **kwargs) -> Tuple[Tensor, Tensor]:
+    def explain_graph(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Learns and returns a node feature mask and an edge mask that play a
         crucial role to explain the prediction made by the GNN for a graph.
 
@@ -192,8 +208,13 @@ class GNNExplainer(Explainer):
         self._clear_masks()
         return node_feat_mask, edge_mask
 
-    def explain_node(self, node_idx: Tensor, x: Tensor, edge_index: Tensor,
-                     **kwargs) -> Tuple[Tensor, Tensor]:
+    def explain_node(
+        self,
+        node_idx: Tensor,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Learns and returns a node feature mask and an edge mask that play a
         crucial role to explain the prediction made by the GNN for node
         :attr:`node_idx`.
