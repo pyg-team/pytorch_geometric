@@ -227,7 +227,7 @@ class NeighborSampler(BaseSampler):
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 disjoint = self.node_time_dict is not None
-                out = torch.ops.pyg.hetero_neighbor_sample_cpu(
+                out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,

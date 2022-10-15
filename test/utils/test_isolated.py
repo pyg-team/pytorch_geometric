@@ -28,6 +28,12 @@ def test_remove_isolated_nodes():
     assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
     assert mask.tolist() == [1, 1]
 
+    if is_full_test():
+        jit = torch.jit.script(remove_isolated_nodes)
+        out, _, mask = jit(edge_index)
+        assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
+        assert mask.tolist() == [1, 1]
+
     out, _, mask = remove_isolated_nodes(edge_index, num_nodes=3)
     assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
     assert mask.tolist() == [1, 1, 0]

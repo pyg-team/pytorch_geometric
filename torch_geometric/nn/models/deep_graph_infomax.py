@@ -1,5 +1,8 @@
+from typing import Callable, Tuple
+
 import torch
-from torch.nn import Parameter
+from torch import Tensor
+from torch.nn import Module, Parameter
 
 from ..inits import reset, uniform
 
@@ -19,7 +22,13 @@ class DeepGraphInfomax(torch.nn.Module):
         summary (callable): The readout function :math:`\mathcal{R}`.
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
-    def __init__(self, hidden_channels, encoder, summary, corruption):
+    def __init__(
+        self,
+        hidden_channels: int,
+        encoder: Module,
+        summary: Callable,
+        corruption: Callable,
+    ):
         super().__init__()
         self.hidden_channels = hidden_channels
         self.encoder = encoder
@@ -35,7 +44,7 @@ class DeepGraphInfomax(torch.nn.Module):
         reset(self.summary)
         uniform(self.hidden_channels, self.weight)
 
-    def forward(self, *args, **kwargs):
+    def forward(self, *args, **kwargs) -> Tuple[Tensor, Tensor, Tensor]:
         """Returns the latent space for the input arguments, their
         corruptions and their summary representation."""
         pos_z = self.encoder(*args, **kwargs)
@@ -45,7 +54,8 @@ class DeepGraphInfomax(torch.nn.Module):
         summary = self.summary(pos_z, *args, **kwargs)
         return pos_z, neg_z, summary
 
-    def discriminate(self, z, summary, sigmoid=True):
+    def discriminate(self, z: Tensor, summary: Tensor,
+                     sigmoid: bool = True) -> Tensor:
         r"""Given the patch-summary pair :obj:`z` and :obj:`summary`, computes
         the probability scores assigned to this patch-summary pair.
 
@@ -60,7 +70,7 @@ class DeepGraphInfomax(torch.nn.Module):
         value = torch.matmul(z, torch.matmul(self.weight, summary))
         return torch.sigmoid(value) if sigmoid else value
 
-    def loss(self, pos_z, neg_z, summary):
+    def loss(self, pos_z: Tensor, neg_z: Tensor, summary: Tensor) -> Tensor:
         r"""Computes the mutual information maximization objective."""
         pos_loss = -torch.log(
             self.discriminate(pos_z, summary, sigmoid=True) + EPS).mean()
@@ -70,8 +80,17 @@ class DeepGraphInfomax(torch.nn.Module):
 
         return pos_loss + neg_loss
 
-    def test(self, train_z, train_y, test_z, test_y, solver='lbfgs',
-             multi_class='auto', *args, **kwargs):
+    def test(
+        self,
+        train_z: Tensor,
+        train_y: Tensor,
+        test_z: Tensor,
+        test_y: Tensor,
+        solver: str = 'lbfgs',
+        multi_class: str = 'auto',
+        *args,
+        **kwargs,
+    ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
         from sklearn.linear_model import LogisticRegression
