@@ -41,7 +41,7 @@ def set_cfg(cfg):
     # Set print destination: stdout / file / both
     cfg.print = 'both'
 
-    # Select device: 'cpu', 'gpu', 'tpu', 'auto'
+    # Select device: 'cpu', 'cuda', 'auto'
     cfg.accelerator = 'auto'
 
     # number of devices: eg. for 2 GPU set cfg.devices=2

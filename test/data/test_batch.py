@@ -196,7 +196,7 @@ def test_pickling():
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    path = f'{random.randrange(sys.maxsize)}.pt'
+    path = os.path.join(os.sep, 'tmp', f'{random.randrange(sys.maxsize)}.pt')
     torch.save(batch, path)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20

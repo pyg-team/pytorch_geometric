@@ -23,8 +23,6 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 
     conda install pyg -c pyg
 
-**Note:** Conda packages are not published for PyTorch 1.12 yet.
-
 Installation via Pip Wheels
 ---------------------------
 

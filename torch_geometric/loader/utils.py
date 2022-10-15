@@ -3,6 +3,7 @@ import math
 from collections.abc import Sequence
 from typing import Dict, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -11,20 +12,34 @@ from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import InputEdges, InputNodes, OptTensor
+from torch_geometric.typing import (
+    FeatureTensorType,
+    InputEdges,
+    InputNodes,
+    OptTensor,
+)
 
 
-def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
-    out: Optional[Tensor] = None
-    if torch.utils.data.get_worker_info() is not None:
-        # If we are in a background process, we write directly into a shared
-        # memory tensor to avoid an extra copy:
-        size = list(value.size())
-        size[dim] = index.numel()
-        numel = math.prod(size)
-        storage = value.storage()._new_shared(numel)
-        out = value.new(storage).view(size)
-    return torch.index_select(value, dim, index, out=out)
+def index_select(value: FeatureTensorType, index: Tensor,
+                 dim: int = 0) -> Tensor:
+    if isinstance(value, Tensor):
+        out: Optional[Tensor] = None
+        if torch.utils.data.get_worker_info() is not None:
+            # If we are in a background process, we write directly into a
+            # shared memory tensor to avoid an extra copy:
+            size = list(value.shape)
+            size[dim] = index.numel()
+            numel = math.prod(size)
+            storage = value.storage()._new_shared(numel)
+            out = value.new(storage).view(size)
+
+        return torch.index_select(value, dim, index, out=out)
+
+    elif isinstance(value, np.ndarray):
+        return torch.from_numpy(np.take(value, index, axis=dim))
+
+    raise ValueError(f"Encountered invalid feature tensor type "
+                     f"(got '{type(value)}')")
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -35,7 +50,10 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            index = index.to(value.device)
+            if isinstance(value, Tensor):
+                index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
             dim = store._parent().__cat_dim__(key, value, store)
             out_store[key] = index_select(value, index, dim=dim)
 
@@ -69,12 +87,17 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
         elif store.is_edge_attr(key):
             dim = store._parent().__cat_dim__(key, value, store)
-            if perm is None:
+            if isinstance(value, Tensor):
                 index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
+            if perm is None:
                 out_store[key] = index_select(value, index, dim=dim)
             else:
-                perm = perm.to(value.device)
-                index = index.to(value.device)
+                if isinstance(value, Tensor):
+                    perm = perm.to(value.device)
+                elif isinstance(value, np.ndarray):
+                    perm = perm.cpu()
                 out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store
