@@ -78,6 +78,8 @@ class ExplainerSetter(torch.nn.Module):
 
         self.model = model
 
+    # TODO: have to add target index and check that the user did not provide
+    # model level explanation
     def forward(self, inputs: Tuple[torch.Tensor, ...],
                 target: torch.Tensor) -> Tuple[torch.Tensor, ...]:
         """Compute the explanation of the GNN  for the given inputs and target.

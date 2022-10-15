@@ -17,6 +17,7 @@ class ExplainerAlgorithm(torch.nn.Module):
                        torch.Tensor]
         r"""
         This method compute the loss to be used for the explanation algorithm.
+        Subclasses should override this method to define their own loss.
 
         Args:
             inputs (Tuple[torch.Tensor, ...]): the inputs of the GNN.
@@ -67,3 +68,18 @@ class ExplainerAlgorithm(torch.nn.Module):
             **kwargs: the user-defined explanation settings.
         """
         pass
+
+
+class Saliency(ExplainerAlgorithm):
+    """Saliency explainer."""
+    def __init__(self) -> None:
+        super().__init__()
+
+    def explain(
+        self,
+        inputs: Tuple[torch.Tensor, ...],
+        target: torch.Tensor,
+        model: torch.nn.Module,
+    ) -> Tuple[torch.Tensor, ...]:
+        # TODO: implement it, check captum or do it manually.
+        raise NotImplementedError()
