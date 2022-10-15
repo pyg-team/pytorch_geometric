@@ -61,8 +61,8 @@ class ModelNet(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        name: Optional[str] = '10',
-        train: Optional[bool] = True,
+        name: str = '10',
+        train: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
