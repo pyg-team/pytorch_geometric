@@ -71,7 +71,7 @@ class GraphUNet(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         for conv in self.down_convs:
             conv.reset_parameters()
         for pool in self.pools:

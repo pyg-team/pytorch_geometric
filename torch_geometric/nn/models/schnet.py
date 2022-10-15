@@ -1,19 +1,17 @@
-from __future__ import annotations
-
 import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch import LongTensor, Tensor
+from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
 from torch_scatter import scatter
 
-from torch_geometric.data import Data, Dataset, download_url, extract_zip
+from torch_geometric.data import Dataset, download_url, extract_zip
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import MessagePassing, radius_graph
 from torch_geometric.typing import OptTensor
@@ -85,12 +83,20 @@ class SchNet(torch.nn.Module):
 
     url = 'http://www.quantum-machine.org/datasets/trained_schnet_models.zip'
 
-    def __init__(self, hidden_channels: int = 128, num_filters: int = 128,
-                 num_interactions: int = 6, num_gaussians: int = 50,
-                 cutoff: float = 10.0, max_num_neighbors: int = 32,
-                 readout: str = 'add', dipole: bool = False,
-                 mean: Optional[float] = None, std: Optional[float] = None,
-                 atomref: OptTensor = None, ):
+    def __init__(
+        self,
+        hidden_channels: int = 128,
+        num_filters: int = 128,
+        num_interactions: int = 6,
+        num_gaussians: int = 50,
+        cutoff: float = 10.0,
+        max_num_neighbors: int = 32,
+        readout: str = 'add',
+        dipole: bool = False,
+        mean: Optional[float] = None,
+        std: Optional[float] = None,
+        atomref: OptTensor = None,
+    ):
         super().__init__()
 
         self.hidden_channels = hidden_channels
@@ -135,7 +141,7 @@ class SchNet(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         self.embedding.reset_parameters()
         for interaction in self.interactions:
             interaction.reset_parameters()
@@ -148,8 +154,10 @@ class SchNet(torch.nn.Module):
 
     @staticmethod
     def from_qm9_pretrained(
-        root: str, dataset: Dataset, target: int
-    ) -> Tuple[SchNet, Dataset, Dataset, Dataset]:
+        root: str,
+        dataset: Dataset,
+        target: int,
+    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:
         import ase
         import schnetpack as spk  # noqa
 
@@ -234,9 +242,8 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z: Tensor, pos: Tensor,
-                batch: Optional[LongTensor] = None,
-                edge_index: Optional[LongTensor] = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor, batch: OptTensor = None,
+                edge_index: OptTensor = None) -> Tensor:
         r"""
         Args:
             z (LongTensor): Atomic number of each atom with shape
@@ -303,7 +310,7 @@ class SchNet(torch.nn.Module):
 
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels: int, num_gaussians: int,
-                 num_filters: int, cutoff: float) -> None:
+                 num_filters: int, cutoff: float):
         super().__init__()
         self.mlp = Sequential(
             Linear(num_gaussians, num_filters),
@@ -317,7 +324,7 @@ class InteractionBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.mlp[0].weight)
         self.mlp[0].bias.data.fill_(0)
         torch.nn.init.xavier_uniform_(self.mlp[2].weight)
@@ -336,7 +343,7 @@ class InteractionBlock(torch.nn.Module):
 
 class CFConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, num_filters: int,
-                 nn: Sequential, cutoff: float) -> None:
+                 nn: Sequential, cutoff: float):
         super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
@@ -345,7 +352,7 @@ class CFConv(MessagePassing):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.lin1.weight)
         torch.nn.init.xavier_uniform_(self.lin2.weight)
         self.lin2.bias.data.fill_(0)
@@ -366,7 +373,7 @@ class CFConv(MessagePassing):
 
 class GaussianSmearing(torch.nn.Module):
     def __init__(self, start: float = 0.0, stop: float = 5.0,
-                 num_gaussians: int = 50) -> None:
+                 num_gaussians: int = 50):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
@@ -378,7 +385,7 @@ class GaussianSmearing(torch.nn.Module):
 
 
 class ShiftedSoftplus(torch.nn.Module):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         self.shift = torch.log(torch.tensor(2.0)).item()
 
