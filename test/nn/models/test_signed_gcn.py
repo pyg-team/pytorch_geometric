@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import SignedGCN
+from torch_geometric.testing import is_full_test
 
 
 def test_signed_gcn():
@@ -30,3 +31,9 @@ def test_signed_gcn():
     auc, f1 = model.test(z, test_pos_index, test_neg_index)
     assert auc >= 0
     assert f1 >= 0
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+
+        z = jit(x, train_pos_index, train_neg_index)
+        assert z.size() == (10, 16)
