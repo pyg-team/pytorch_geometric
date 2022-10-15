@@ -2,10 +2,17 @@ import glob
 import os
 import os.path as osp
 import shutil
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
+from torch import Tensor
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_off
 
 
@@ -51,8 +58,15 @@ class ModelNet(InMemoryDataset):
         '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
-    def __init__(self, root, name='10', train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str = '10',
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert name in ['10', '40']
         self.name = name
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -60,14 +74,14 @@ class ModelNet(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'bathtub', 'bed', 'chair', 'desk', 'dresser', 'monitor',
             'night_stand', 'sofa', 'table', 'toilet'
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
     def download(self):
@@ -87,7 +101,7 @@ class ModelNet(InMemoryDataset):
         torch.save(self.process_set('train'), self.processed_paths[0])
         torch.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset):
+    def process_set(self, dataset: str) -> Tuple[Data, Dict[str, Tensor]]:
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
