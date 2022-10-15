@@ -223,6 +223,7 @@ class HeteroLinear(torch.nn.Module):
         self._WITH_PYG_LIB = _WITH_PYG_LIB
 
         if self._WITH_PYG_LIB:
+            self.lins = None
             self.weight = torch.nn.Parameter(
                 torch.Tensor(num_types, in_channels, out_channels))
             if kwargs.get('bias', True):
@@ -269,6 +270,7 @@ class HeteroLinear(torch.nn.Module):
             if self.bias is not None:
                 out += self.bias[type_vec]
         else:
+            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
                 mask = type_vec == i
