@@ -1,3 +1,4 @@
+import warnings
 from copy import copy
 from typing import List, Optional, Union
 
@@ -80,7 +81,7 @@ class RandomLinkSplit(BaseTransform):
             The reverse edge types of :obj:`edge_types` in case of operating
             on :class:`~torch_geometric.data.HeteroData` objects.
             This will ensure that edges of the reverse direction will be
-            splitted accordingly to prevent any data leakage.
+            split accordingly to prevent any data leakage.
             Can be :obj:`None` in case no reverse connection exists.
             (default: :obj:`None`)
     """
@@ -168,6 +169,7 @@ class RandomLinkSplit(BaseTransform):
                 num_test = int(num_test * perm.numel())
 
             num_train = perm.numel() - num_val - num_test
+
             if num_train <= 0:
                 raise ValueError("Insufficient number of edges for training")
 
@@ -207,6 +209,18 @@ class RandomLinkSplit(BaseTransform):
             neg_edge_index = negative_sampling(edge_index, size,
                                                num_neg_samples=num_neg,
                                                method='sparse')
+
+            # Adjust ratio if not enough negative edges exist
+            if neg_edge_index.size(1) < num_neg:
+                num_neg_found = neg_edge_index.size(1)
+                ratio = num_neg_found / num_neg
+                warnings.warn(
+                    f"There are not enough negative edges to satisfy "
+                    "the provided sampling ratio. The ratio will be "
+                    f"adjusted to {ratio:.2f}.")
+                num_neg_train = int((num_neg_train / num_neg) * num_neg_found)
+                num_neg_val = int((num_neg_val / num_neg) * num_neg_found)
+                num_neg_test = num_neg_found - num_neg_train - num_neg_val
 
             # Create labels:
             if num_disjoint > 0:
