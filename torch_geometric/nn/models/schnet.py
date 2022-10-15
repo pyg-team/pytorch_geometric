@@ -90,7 +90,7 @@ class SchNet(torch.nn.Module):
                  cutoff: float = 10.0, max_num_neighbors: int = 32,
                  readout: str = 'add', dipole: bool = False,
                  mean: Optional[float] = None, std: Optional[float] = None,
-                 atomref: OptTensor = None) -> None:
+                 atomref: OptTensor = None, ):
         super().__init__()
 
         self.hidden_channels = hidden_channels
