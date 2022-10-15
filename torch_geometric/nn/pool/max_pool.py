@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 from torch import Tensor
 from torch_scatter import scatter
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from torch_geometric.utils import add_self_loops
 
 from .consecutive import consecutive_cluster
@@ -82,7 +82,10 @@ def max_pool(cluster, data, transform=None):
     return data
 
 
-def max_pool_neighbor_x(data, flow='source_to_target'):
+def max_pool_neighbor_x(
+    data: Data,
+    flow: Optional[str] = 'source_to_target',
+) -> Data:
     r"""Max pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the feature value with the maximum value from
     the central node and its neighbors.

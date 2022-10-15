@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 from torch import Tensor
 from torch_scatter import scatter
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from torch_geometric.utils import add_self_loops
 
 from .consecutive import consecutive_cluster
@@ -78,7 +78,10 @@ def avg_pool(cluster, data, transform=None):
     return data
 
 
-def avg_pool_neighbor_x(data, flow='source_to_target'):
+def avg_pool_neighbor_x(
+    data: Data,
+    flow: Optional[str] = 'source_to_target',
+) -> Data:
     r"""Average pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the average feature values from the central
     node and its neighbors.
