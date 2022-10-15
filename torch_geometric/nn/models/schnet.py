@@ -149,8 +149,7 @@ class SchNet(torch.nn.Module):
     @staticmethod
     def from_qm9_pretrained(
         root: str, dataset: Dataset, target: int
-    ) -> Tuple[SchNet, Tuple[Union[Dataset, Data], Union[Dataset, Data], Union[
-            Dataset, Data]]]:
+    ) -> Tuple[SchNet, Dataset, Dataset, Dataset]:
         import ase
         import schnetpack as spk  # noqa
 
