@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn.pool.topk_pool import TopKPooling, filter_adj, topk
+from torch_geometric.testing import is_full_test
 
 
 def test_topk():
@@ -19,6 +20,21 @@ def test_topk():
     assert x[perm].tolist() == [4, 2, 9, 6, 5]
     assert batch[perm].tolist() == [0, 0, 1, 1, 1]
 
+    if is_full_test():
+        jit = torch.jit.script(topk)
+
+        perm = jit(x, 0.5, batch)
+
+        assert perm.tolist() == [1, 5, 3]
+        assert x[perm].tolist() == [4, 9, 6]
+        assert batch[perm].tolist() == [0, 1, 1]
+
+        perm = jit(x, 3, batch)
+
+        assert perm.tolist() == [1, 0, 5, 3, 2]
+        assert x[perm].tolist() == [4, 2, 9, 6, 5]
+        assert batch[perm].tolist() == [0, 0, 1, 1, 1]
+
 
 def test_filter_adj():
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3],
@@ -29,6 +45,17 @@ def test_filter_adj():
     edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm)
     assert edge_index.tolist() == [[0, 1], [1, 0]]
     assert edge_attr.tolist() == [6, 8]
+
+    if is_full_test():
+        jit = torch.jit.script(filter_adj)
+
+        edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3],
+                                   [1, 3, 0, 2, 1, 3, 0, 2]])
+        edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6, 7, 8])
+
+        edge_index, edge_attr = jit(edge_index, edge_attr, perm)
+        assert edge_index.tolist() == [[0, 1], [1, 0]]
+        assert edge_attr.tolist() == [6, 8]
 
 
 def test_topk_pooling():
@@ -57,3 +84,29 @@ def test_topk_pooling():
     x, edge_index, _, _, _, _ = pool(x, edge_index)
     assert x.size() == (2, in_channels)
     assert edge_index.size() == (2, 2)
+
+    if is_full_test():
+        edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
+                                   [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2]])
+        num_nodes = edge_index.max().item() + 1
+        x = torch.randn((num_nodes, in_channels))
+
+        pool = TopKPooling(in_channels, ratio=0.5)
+        jit = torch.jit.script(pool)
+
+        x, edge_index, _, _, _, _ = jit(x, edge_index)
+        assert x.size() == (num_nodes // 2, in_channels)
+        assert edge_index.size() == (2, 2)
+
+        pool = TopKPooling(in_channels, ratio=None, min_score=0.1)
+        jit = torch.jit.script(pool)
+        out = jit(x, edge_index)
+        assert out[0].size(0) <= x.size(0) and out[0].size(1) == (16)
+        assert out[1].size(0) == 2 and out[1].size(1) <= edge_index.size(1)
+
+        pool = TopKPooling(in_channels, ratio=2)
+        jit = torch.jit.script(pool)
+
+        x, edge_index, _, _, _, _ = jit(x, edge_index)
+        assert x.size() == (2, in_channels)
+        assert edge_index.size() == (2, 2)
