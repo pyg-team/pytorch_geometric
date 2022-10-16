@@ -34,6 +34,4 @@ def test_signed_gcn():
 
     if is_full_test():
         jit = torch.jit.export(model)
-
-        z = jit(x, train_pos_index, train_neg_index)
-        assert z.size() == (10, 16)
+        assert torch.allclose(jit(x, train_pos_index, train_neg_index), z)
