@@ -1,7 +1,9 @@
 from collections import namedtuple
+from typing import NamedTuple, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch_scatter import scatter_add
 from torch_sparse import coalesce
 
@@ -52,8 +54,10 @@ class EdgePooling(torch.nn.Module):
         "UnpoolDescription",
         ["edge_index", "cluster", "batch", "new_edge_score"])
 
-    def __init__(self, in_channels, edge_score_method=None, dropout=0,
-                 add_to_edge_score=0.5):
+    def __init__(self, in_channels: int,
+                 edge_score_method: Optional[callable] = None,
+                 dropout: Optional[float] = 0,
+                 add_to_edge_score: Optional[float] = 0.5):
         super().__init__()
         self.in_channels = in_channels
         if edge_score_method is None:
@@ -70,18 +74,22 @@ class EdgePooling(torch.nn.Module):
         self.lin.reset_parameters()
 
     @staticmethod
-    def compute_edge_score_softmax(raw_edge_score, edge_index, num_nodes):
+    def compute_edge_score_softmax(raw_edge_score: Tensor, edge_index: Tensor,
+                                   num_nodes: int) -> Tensor:
         return softmax(raw_edge_score, edge_index[1], num_nodes=num_nodes)
 
     @staticmethod
-    def compute_edge_score_tanh(raw_edge_score, edge_index, num_nodes):
+    def compute_edge_score_tanh(raw_edge_score: Tensor, edge_index: Tensor,
+                                num_nodes: int) -> Tensor:
         return torch.tanh(raw_edge_score)
 
     @staticmethod
-    def compute_edge_score_sigmoid(raw_edge_score, edge_index, num_nodes):
+    def compute_edge_score_sigmoid(raw_edge_score: Tensor, edge_index: Tensor,
+                                   num_nodes: int) -> Tensor:
         return torch.sigmoid(raw_edge_score)
 
-    def forward(self, x, edge_index, batch):
+    def forward(self, x: Tensor, edge_index: Tensor,
+                batch: Tensor) -> Tuple[Tensor, Tensor, Tensor, NamedTuple]:
         r"""Forward computation which computes the raw edge score, normalizes
         it, and merges the edges.
 
@@ -110,7 +118,9 @@ class EdgePooling(torch.nn.Module):
 
         return x, edge_index, batch, unpool_info
 
-    def __merge_edges__(self, x, edge_index, batch, edge_score):
+    def __merge_edges__(
+            self, x: Tensor, edge_index: Tensor, batch: Tensor,
+            edge_score: Tensor) -> Tuple[Tensor, Tensor, Tensor, NamedTuple]:
         nodes_remaining = set(range(x.size(0)))
 
         cluster = torch.empty_like(batch, device=torch.device('cpu'))
@@ -168,7 +178,8 @@ class EdgePooling(torch.nn.Module):
 
         return new_x, new_edge_index, new_batch, unpool_info
 
-    def unpool(self, x, unpool_info):
+    def unpool(self, x: Tensor,
+               unpool_info: NamedTuple) -> Tuple[Tensor, Tensor, Tensor]:
         r"""Unpools a previous edge pooling step.
 
         For unpooling, :obj:`x` should be of same shape as those produced by
