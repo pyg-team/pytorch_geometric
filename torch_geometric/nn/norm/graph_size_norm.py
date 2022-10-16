@@ -18,7 +18,7 @@ class GraphSizeNorm(nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, x: Tensor, batch: OptTensor = None):
+    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
