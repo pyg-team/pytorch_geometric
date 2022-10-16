@@ -206,7 +206,7 @@ class ARGA(GAE):
         super().reset_parameters()
         reset(self.discriminator)
 
-    def reg_loss(self, z: Tensor) -> float:
+    def reg_loss(self, z: Tensor) -> Tensor:
         r"""Computes the regularization loss of the encoder.
 
         Args:
@@ -216,7 +216,7 @@ class ARGA(GAE):
         real_loss = -torch.log(real + EPS).mean()
         return real_loss
 
-    def discriminator_loss(self, z: Tensor) -> float:
+    def discriminator_loss(self, z: Tensor) -> Tensor:
         r"""Computes the loss of the discriminator.
 
         Args:
@@ -268,5 +268,9 @@ class ARGVA(ARGA):
         """"""
         return self.VGAE.encode(*args, **kwargs)
 
-    def kl_loss(self, mu=None, logstd=None) -> float:
+    def kl_loss(
+        self,
+        mu: Optional[Tensor] = None,
+        logstd: Optional[Tensor] = None,
+    ) -> Tensor:
         return self.VGAE.kl_loss(mu, logstd)
