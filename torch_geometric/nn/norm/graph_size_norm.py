@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
+from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import degree
 
 
@@ -16,7 +18,7 @@ class GraphSizeNorm(nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, x, batch=None):
+    def forward(self, x: Tensor, batch: OptTensor = None):
         """"""
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
