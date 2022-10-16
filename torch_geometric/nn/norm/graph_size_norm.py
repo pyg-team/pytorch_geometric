@@ -25,3 +25,6 @@ class GraphSizeNorm(nn.Module):
 
         inv_sqrt_deg = degree(batch, dtype=x.dtype).pow(-0.5)
         return x * inv_sqrt_deg.index_select(0, batch).view(-1, 1)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
