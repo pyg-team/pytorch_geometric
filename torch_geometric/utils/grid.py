@@ -1,13 +1,17 @@
 from typing import Optional, Tuple
 
 import torch
-from torch import LongTensor, Tensor
+from torch import Tensor
 
-from .coalesce import coalesce
+from torch_geometric.utils.coalesce import coalesce
 
 
-def grid(height: int, width: int, dtype: Optional[torch.dtype] = None,
-         device: Optional[torch.device] = None) -> Tuple[LongTensor, Tensor]:
+def grid(
+    height: int,
+    width: int,
+    dtype: Optional[torch.dtype] = None,
+    device: Optional[torch.device] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Returns the edge indices of a two-dimensional grid graph with height
     :attr:`height` and width :attr:`width` and its node positions.
 
@@ -34,14 +38,17 @@ def grid(height: int, width: int, dtype: Optional[torch.dtype] = None,
                 [0., 0.],
                 [1., 0.]])
     """
-
     edge_index = grid_index(height, width, device)
     pos = grid_pos(height, width, dtype, device)
     return edge_index, pos
 
 
-def grid_index(height: int, width: int,
-               device: Optional[torch.device] = None) -> LongTensor:
+def grid_index(
+    height: int,
+    width: int,
+    device: Optional[torch.device] = None,
+) -> Tensor:
+
     w = width
     kernel = [-w - 1, -1, w - 1, -w, 0, w, -w + 1, 1, w + 1]
     kernel = torch.tensor(kernel, device=device)
@@ -61,8 +68,13 @@ def grid_index(height: int, width: int,
     return edge_index
 
 
-def grid_pos(height: int, width: int, dtype: Optional[torch.dtype] = None,
-             device: Optional[torch.device] = None) -> Tensor:
+def grid_pos(
+    height: int,
+    width: int,
+    dtype: Optional[torch.dtype] = None,
+    device: Optional[torch.device] = None,
+) -> Tensor:
+
     dtype = torch.float if dtype is None else dtype
     x = torch.arange(width, dtype=dtype, device=device)
     y = (height - 1) - torch.arange(height, dtype=dtype, device=device)
