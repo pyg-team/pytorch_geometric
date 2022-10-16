@@ -1,4 +1,5 @@
 import torch_geometric
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import to_undirected
@@ -30,10 +31,10 @@ class KNNGraph(BaseTransform):
     """
     def __init__(
         self,
-        k=6,
-        loop=False,
-        force_undirected=False,
-        flow='source_to_target',
+        k: int = 6,
+        loop: bool = False,
+        force_undirected: bool = False,
+        flow: str = 'source_to_target',
         cosine: bool = False,
         num_workers: int = 1,
     ):
@@ -44,7 +45,7 @@ class KNNGraph(BaseTransform):
         self.cosine = cosine
         self.num_workers = num_workers
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
 
