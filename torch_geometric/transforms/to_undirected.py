@@ -34,7 +34,10 @@ class ToUndirected(BaseTransform):
         self.reduce = reduce
         self.merge = merge
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue
@@ -74,6 +77,3 @@ class ToUndirected(BaseTransform):
                     store[key] = value
 
         return data
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
