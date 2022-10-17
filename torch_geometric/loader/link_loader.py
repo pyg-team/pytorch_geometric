@@ -126,11 +126,13 @@ class LinkLoader(torch.utils.data.DataLoader):
         returning the resulting (Data or HeteroData) object to be used
         downstream."""
         if isinstance(out, SamplerOutput):
-            edge_label_index, edge_label = out.metadata
+            edge_label_index, edge_label, edge_label_time = out.metadata
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
+            data.batch = out.batch
             data.edge_label_index = edge_label_index
             data.edge_label = edge_label
+            data.edge_label_time = edge_label_time
 
         elif isinstance(out, HeteroSamplerOutput):
             edge_label_index, edge_label, edge_label_time = out.metadata
@@ -143,6 +145,8 @@ class LinkLoader(torch.utils.data.DataLoader):
                                            out.col, out.edge)
 
             edge_type = self.input_type
+            for key, batch in (out.batch or {}).items():
+                data[key].batch = batch
             data[edge_type].edge_label_index = edge_label_index
             data[edge_type].edge_label = edge_label
             if edge_label_time is not None:
