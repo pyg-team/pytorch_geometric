@@ -462,7 +462,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def __expm__(self, matrix: Tensor, symmetric: bool):
+    def __expm__(self, matrix: Tensor, symmetric: bool) -> Tensor:
         r"""Calculates matrix exponential.
 
         Args:
@@ -543,7 +543,13 @@ def get_calc_ppr():
     import numba
 
     @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(indptr, indices, out_degree, alpha, eps):
+    def calc_ppr(
+        indptr: np.ndarray,
+        indices: np.ndarray,
+        out_degree: np.ndarray,
+        alpha: float,
+        eps: float,
+    ) -> Tuple[List[List[int]], List[List[float]]]:
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
