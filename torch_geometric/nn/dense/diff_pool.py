@@ -4,10 +4,10 @@ import torch
 from torch import Tensor
 
 
-def dense_diff_pool(x: Tensor, adj: Tensor,
-                    s: Tensor, mask: Optional[Tensor] = None,
-                    normalize: Optional[bool] = True
-                ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+def dense_diff_pool(
+        x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None,
+        normalize: Optional[bool] = True
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The differentiable pooling operator from the `"Hierarchical Graph
     Representation Learning with Differentiable Pooling"
     <https://arxiv.org/abs/1806.08804>`_ paper
