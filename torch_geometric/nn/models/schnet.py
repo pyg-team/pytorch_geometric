@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 import torch
@@ -61,10 +61,14 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
+        interaction_graph (Callable, optional): The function used to compute
+            the pairwise interaction graph. If provided will override the
+            default radius graph method. (default :obj:`None`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
-            collect for each node within the :attr:`cutoff` distance.
+            collect for each node within the :attr:`cutoff` distance with the
+            default interaction graph method.
             (default: :obj:`32`)
         readout (string, optional): Whether to apply :obj:`"add"` or
             :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
@@ -92,6 +96,7 @@ class SchNet(torch.nn.Module):
         num_interactions: int = 6,
         num_gaussians: int = 50,
         cutoff: float = 10.0,
+        interaction_graph: Optional[Callable] = None,
         max_num_neighbors: int = 32,
         readout: str = 'add',
         dipole: bool = False,
@@ -124,7 +129,12 @@ class SchNet(torch.nn.Module):
         # Support z == 0 for padding atoms so that their embedding vectors
         # are zeroed and do not receive any gradients.
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
-        self.interaction_graph = InteractionGraph(cutoff, max_num_neighbors)
+        if interaction_graph is not None:
+            self.interaction_graph = interaction_graph
+        else:
+            self.interaction_graph = RadiusInteractionGraph(
+                cutoff, max_num_neighbors)
+
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
@@ -306,7 +316,7 @@ class SchNet(torch.nn.Module):
                 f'cutoff={self.cutoff})')
 
 
-class InteractionGraph(torch.nn.Module):
+class RadiusInteractionGraph(torch.nn.Module):
     def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
         super().__init__()
         self.cutoff = cutoff
