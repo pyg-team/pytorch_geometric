@@ -99,8 +99,8 @@ class RENet(torch.nn.Module):
                 hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
                 return hist + hist_inc.tolist()
 
-            def get_history(self, hist: List, node: int,
-                            rel: int) -> Tuple[Tensor, Tensor]:
+            def get_history(self, hist: List[int], node: int,
+                            rel: int, ) -> Tuple[Tensor, Tensor]:
                 hists, ts = [], []
                 for s in range(seq_len):
                     h = hist[node][s]
