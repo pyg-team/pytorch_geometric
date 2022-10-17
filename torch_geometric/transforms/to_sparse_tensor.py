@@ -38,8 +38,10 @@ class ToSparseTensor(BaseTransform):
         self.remove_edge_index = remove_edge_index
         self.fill_cache = fill_cache
 
-    def __call__(self, data: Union[Data,
-                                   HeteroData]) -> Union[Data, HeteroData]:
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue
