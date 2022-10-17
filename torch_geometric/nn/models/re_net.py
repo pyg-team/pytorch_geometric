@@ -95,7 +95,7 @@ class RENet(torch.nn.Module):
                 self.sub_hist = self.increase_hist_node_size([])
                 self.obj_hist = self.increase_hist_node_size([])
 
-            def increase_hist_node_size(self, hist: List) -> List:
+            def increase_hist_node_size(self, hist: List[int]) -> List[int]:
                 hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
                 return hist + hist_inc.tolist()
 
