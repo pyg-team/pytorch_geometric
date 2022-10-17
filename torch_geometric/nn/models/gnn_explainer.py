@@ -117,7 +117,7 @@ class GNNExplainer(Explainer):
         log_logits: Tensor,
         prediction: Tensor,
         node_idx: Optional[Tensor] = None,
-    ):
+    ) -> Tensor:
         if self.return_type == 'regression':
             if node_idx is not None and node_idx >= 0:
                 loss = torch.cdist(log_logits[node_idx], prediction[node_idx])
