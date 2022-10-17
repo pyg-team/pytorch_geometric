@@ -76,6 +76,7 @@ def dense_diff_pool(x: Tensor, adj: Tensor,
     if normalize is True:
         link_loss = link_loss / adj.numel()
 
+    # Moved EPS from global to local variable for TorchScript support
     EPS = 1e-15
     ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
 
