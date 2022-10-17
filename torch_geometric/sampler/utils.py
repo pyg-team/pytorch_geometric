@@ -170,8 +170,7 @@ def update_batch_for_sample_edge(
             batch[key] = torch.where(value >= num_seed_edges,
                                      value - num_seed_edges, value)
     else:
-        batch = torch.where(batch >= num_seed_edges, batch - num_seed_edges,
-                            batch)
+        batch = batch % num_seed_edges
     return batch
 
 
