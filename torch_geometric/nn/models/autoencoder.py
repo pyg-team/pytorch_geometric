@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -60,7 +60,11 @@ class GAE(torch.nn.Module):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
-    def __init__(self, encoder, decoder=None):
+    def __init__(
+        self,
+        encoder: Module,
+        decoder: Optional[Module] = None,
+    ):
         super().__init__()
         self.encoder = encoder
         self.decoder = InnerProductDecoder() if decoder is None else decoder
@@ -78,7 +82,12 @@ class GAE(torch.nn.Module):
         r"""Runs the decoder and computes edge probabilities."""
         return self.decoder(*args, **kwargs)
 
-    def recon_loss(self, z, pos_edge_index, neg_edge_index=None):
+    def recon_loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Optional[Tensor] = None,
+    ) -> Tensor:
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and negative
         sampled edges.
@@ -102,7 +111,12 @@ class GAE(torch.nn.Module):
 
         return pos_loss + neg_loss
 
-    def test(self, z, pos_edge_index, neg_edge_index):
+    def test(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tuple[float, float]:
         r"""Given latent variables :obj:`z`, positive edges
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`,
         computes area under the ROC curve (AUC) and average precision (AP)
@@ -143,10 +157,18 @@ class VGAE(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
-    def __init__(self, encoder, decoder=None):
+    def __init__(
+        self,
+        encoder: Module,
+        decoder: Optional[Module] = None,
+    ):
         super().__init__(encoder, decoder)
 
-    def reparametrize(self, mu, logstd):
+    def reparametrize(
+        self,
+        mu: Tensor,
+        logstd: Tensor,
+    ) -> Tensor:
         if self.training:
             return mu + torch.randn_like(logstd) * torch.exp(logstd)
         else:
@@ -159,7 +181,11 @@ class VGAE(GAE):
         z = self.reparametrize(self.__mu__, self.__logstd__)
         return z
 
-    def kl_loss(self, mu=None, logstd=None):
+    def kl_loss(
+        self,
+        mu: Optional[Tensor] = None,
+        logstd: Optional[Tensor] = None,
+    ) -> Tensor:
         r"""Computes the KL loss, either for the passed arguments :obj:`mu`
         and :obj:`logstd`, or based on latent variables from last encoding.
 
