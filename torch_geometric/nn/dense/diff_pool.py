@@ -4,9 +4,6 @@ import torch
 from torch import Tensor
 
 
-EPS = 1e-15
-
-
 def dense_diff_pool(x: Tensor, adj: Tensor,
                     s: Tensor, mask: Optional[Tensor] = None,
                     normalize: Optional[bool] = True
@@ -79,6 +76,7 @@ def dense_diff_pool(x: Tensor, adj: Tensor,
     if normalize is True:
         link_loss = link_loss / adj.numel()
 
+    EPS = 1e-15
     ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
 
     return out, out_adj, link_loss, ent_loss
