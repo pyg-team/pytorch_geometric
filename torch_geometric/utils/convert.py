@@ -11,7 +11,7 @@ from .num_nodes import maybe_num_nodes
 
 def to_scipy_sparse_matrix(
         edge_index: Tensor, edge_attr: Optional[Tensor] = None,
-        num_nodes: Optional[int] = None) -> scipy.sparse.coo_matrix:
+        num_nodes: Optional[int] = None, ) -> scipy.sparse.coo_matrix:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
