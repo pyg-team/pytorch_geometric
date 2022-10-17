@@ -47,7 +47,7 @@ def to_scipy_sparse_matrix(
 
 
 def from_scipy_sparse_matrix(
-        A: scipy.sparse.base.spmatrix) -> Tuple[Tensor, Tensor]:
+        A: scipy.sparse.base.spmatrix, ) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
