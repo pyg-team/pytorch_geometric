@@ -68,7 +68,7 @@ class RENet(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.ent, gain=math.sqrt(2.0))
         torch.nn.init.xavier_uniform_(self.rel, gain=math.sqrt(2.0))
 
