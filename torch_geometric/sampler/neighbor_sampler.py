@@ -378,7 +378,7 @@ class NeighborSampler(BaseSampler):
                         self.input_type[0]: seed_src,
                         self.input_type[-1]: seed_dst,
                     }
-                    if self.node_time_dict is not None:
+                    if edge_label_time is not None:
                         seed_time_dict = {
                             self.input_type[0]: edge_label_time,
                             self.input_type[-1]: edge_label_time
@@ -405,7 +405,7 @@ class NeighborSampler(BaseSampler):
                     edge_label_index = torch.arange(0, 2 * num_seed_edges)
                     edge_label_index = edge_label_index.view(2, -1)
                     seed_dict = {self.input_type[0]: seed_nodes}
-                    if self.node_time_dict is not None:
+                    if edge_label_time is not None:
                         tmp = torch.cat([edge_label_time, edge_label_time])
                         seed_time_dict = {self.input_type[0]: tmp}
                 else:
@@ -431,7 +431,7 @@ class NeighborSampler(BaseSampler):
                 seed_nodes = edge_label_index.view(-1)
                 edge_label_index = torch.arange(0, 2 * num_seed_edges)
                 edge_label_index = edge_label_index.view(2, -1)
-                if self.node_time is not None:
+                if edge_label_time is not None:
                     seed_time = torch.cat([edge_label_time, edge_label_time])
 
             else:
@@ -444,7 +444,7 @@ class NeighborSampler(BaseSampler):
             if self.disjoint_sampling:
                 output.batch = output.batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label)
+            output.metadata = (edge_label_index, edge_label, edge_label_time)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
