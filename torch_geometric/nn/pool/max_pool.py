@@ -47,7 +47,8 @@ def max_pool_x(cluster: Tensor, x: Tensor, batch: Tensor,
     return x, batch
 
 
-def max_pool(cluster, data, transform=None):
+def max_pool(cluster: Tensor, data: Data,
+             transform: Optional[callable] = None) -> Data:
     r"""Pools and coarsens a graph given by the
     :class:`torch_geometric.data.Data` object according to the clustering
     defined in :attr:`cluster`.
