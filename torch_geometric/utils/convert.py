@@ -9,7 +9,11 @@ from torch.utils.dlpack import from_dlpack, to_dlpack
 from .num_nodes import maybe_num_nodes
 
 
-def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
+def to_scipy_sparse_matrix(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> scipy.sparse.coo_matrix:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
@@ -44,7 +48,8 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
     return out
 
 
-def from_scipy_sparse_matrix(A):
+def from_scipy_sparse_matrix(
+        A: scipy.sparse.base.spmatrix) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
