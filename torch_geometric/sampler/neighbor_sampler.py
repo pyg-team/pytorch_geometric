@@ -365,7 +365,7 @@ class NeighborSampler(BaseSampler):
                                    self.num_dst_nodes, negative_sampling_ratio)
         edge_label_index, edge_label, edge_label_time = out
         num_seed_edges = edge_label_index.size(1)
-        seed_time_dict = None
+        seed_time = seed_time_dict = None
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
