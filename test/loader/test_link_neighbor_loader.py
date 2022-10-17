@@ -206,7 +206,6 @@ def test_temporal_heterogeneous_link_neighbor_loader():
 
     # With edge_time:
     edge_time = torch.arange(data['paper', 'paper'].edge_index.size(1))
-    neg_sampling_ratio = 0.5
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1] * 2,
@@ -214,15 +213,15 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         edge_label_time=edge_time,
         batch_size=32,
         time_attr='time',
-        neg_sampling_ratio=neg_sampling_ratio,
+        neg_sampling_ratio=0.5,
         drop_last=True,
     )
     for batch in loader:
-        # check if each seed edge has a different batch
-        assert (batch['paper'].batch.max() + 1 == 32 + 32 * neg_sampling_ratio)
-        # check if each seed edge has a different source
-        # and destination node
-        assert batch['paper'].num_nodes >= 96
+        # Check if each seed edge has a different batch:
+        assert int(batch['paper'].batch.max()) + 1 == 32 + 16
+        # Check if each seed edge has a different source and dstination node:
+        assert batch['paper'].num_nodes >= 2 * (32 + 16)
+
         author_max = batch['author'].time.max()
         edge_max = batch['paper', 'paper'].edge_label_time.max()
         assert edge_max >= author_max
