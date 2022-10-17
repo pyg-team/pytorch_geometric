@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
-from torch_scatter import scatter_min
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
@@ -387,11 +386,10 @@ class NeighborSampler(BaseSampler):
                         self.input_type[0]: seed_src,
                         self.input_type[-1]: seed_dst,
                     }
-                    if edge_label_time is not None:
-                        seed_time_dict = {
-                            self.input_type[0]: edge_label_time,
-                            self.input_type[-1]: edge_label_time
-                        }
+                    seed_time_dict = {
+                        self.input_type[0]: edge_label_time,
+                        self.input_type[-1]: edge_label_time
+                    }
                 else:
                     seed_src = edge_label_index[0]
                     seed_src, inverse_src = seed_src.unique(
@@ -405,13 +403,6 @@ class NeighborSampler(BaseSampler):
                         self.input_type[0]: seed_src,
                         self.input_type[-1]: seed_dst,
                     }
-                    if edge_label_time is not None:
-                        seed_time_dict = {
-                            self.input_type[0]:
-                            scatter_min(edge_label_time, inverse_src)[0],
-                            self.input_type[-1]:
-                            scatter_min(edge_label_time, inverse_dst)[0],
-                        }
 
             else:  # Merge both source and destination node indices:
                 if self.disjoint_sampling:
@@ -420,20 +411,14 @@ class NeighborSampler(BaseSampler):
                                                     2 * num_seed_edges).view(
                                                         2, -1)
                     seed_dict = {self.input_type[0]: seed_nodes}
-                    if edge_label_time is not None:
-                        tmp = torch.cat([edge_label_time, edge_label_time])
-                        seed_time_dict = {self.input_type[0]: tmp}
+                    tmp = torch.cat([edge_label_time, edge_label_time])
+                    seed_time_dict = {self.input_type[0]: tmp}
                 else:
                     seed_nodes = edge_label_index.view(-1)
                     seed_nodes, inverse = seed_nodes.unique(
                         return_inverse=True)
                     edge_label_index = inverse.view(2, -1)
                     seed_dict = {self.input_type[0]: seed_nodes}
-                    if edge_label_time is not None:
-                        tmp = torch.cat([edge_label_time, edge_label_time])
-                        seed_time_dict = {
-                            self.input_type[0]: scatter_min(tmp, inverse)[0]
-                        }
 
             output = self._sample(
                 seed=seed_dict,
