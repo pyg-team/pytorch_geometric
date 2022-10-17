@@ -221,7 +221,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         assert batch['paper'].batch.max() == 47
         # check if each seed edge has a different source
         # and destination node
-        assert len(batch['paper'].x) > 96
+        assert batch['paper'].num_nodes >= 96
         author_max = batch['author'].time.max()
         edge_max = batch['paper', 'paper'].edge_label_time.max()
         assert edge_max >= author_max
