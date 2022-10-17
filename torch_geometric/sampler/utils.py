@@ -165,7 +165,7 @@ def update_batch_for_sample_edge(
 
     Retruns updated batch values.
     """
-    if isinstance(batch, Dict):
+    if isinstance(batch, dict):
         for key, value in batch.items():
             batch[key] = value % num_seed_edges
     else:
