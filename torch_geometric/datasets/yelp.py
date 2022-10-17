@@ -73,7 +73,7 @@ class Yelp(InMemoryDataset):
         path = download_url(self.url.format(self.role_id), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, 'role.json'))
 
-    def process(self) -> None:
+    def process(self):
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
