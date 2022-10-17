@@ -11,19 +11,19 @@ class ExplainerSetter(torch.nn.Module):
 
     Args:
         explanation_type (str): the type of explanation to be computed.
-        Supported types are `model` and `phenomenon`.
+            Supported types are `model` and `phenomenon`.
         explanation_algorithm (ExplainerAlgorithm): the explanation
-        algorithm to be used.
+            algorithm to be used.
         mask_type (str): the type of mask to be used. Supported types are
-        `node`, `edge`, `global`. `global` returns masks for both nodes
-        and edges.
+            `node`, `edge`, `global`. `global` returns masks for both nodes
+            and edges.
         threshold (str): post-processing thresholding method on the mask.
-        Supported methods are `soft`, `hard`, `connected`.
+            Supported methods are `soft`, `hard`, `connected`.
         loss (torch.nn.Module): the loss function to be used for the
-        explanation algorithm.
+            explanation algorithm.
         model (torch.nn.Module): the GNN module to explain.
         model_return_type (str): the output type of the model.
-        Supported outputs are `logits`, `probs`, and `regression`.
+            Supported outputs are `logits`, `probs`, and `regression`.
     """
     def __init__(
         self,
