@@ -440,8 +440,9 @@ class NeighborSampler(BaseSampler):
                 seed_time_dict=seed_time_dict,
             )
 
-            output.batch = update_batch_for_sample_edge(
-                output.batch, num_seed_edges)
+            if self.disjoint_sampling:
+                output.batch = update_batch_for_sample_edge(
+                    output.batch, num_seed_edges)
             output.metadata = (edge_label_index, edge_label, edge_label_time)
 
         elif issubclass(self.data_cls, Data):
@@ -456,8 +457,9 @@ class NeighborSampler(BaseSampler):
                 seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
                 edge_label_index = inverse.view(2, -1)
             output = self._sample(seed=seed_nodes, seed_time=None)
-            output.batch = update_batch_for_sample_edge(
-                output.batch, num_seed_edges)
+            if self.disjoint_sampling:
+                output.batch = update_batch_for_sample_edge(
+                    output.batch, num_seed_edges)
             output.metadata = (edge_label_index, edge_label)
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
