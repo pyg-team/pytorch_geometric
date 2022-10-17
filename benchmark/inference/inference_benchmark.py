@@ -55,23 +55,20 @@ def run(args: argparse.ArgumentParser) -> None:
                         shuffle=False,
                         num_workers=args.num_workers,
                         use_cpu_worker_affinity=args.cpu_affinity,
-                        cpu_worker_affinity_cores=list(range(args.num_workers))
-                    )
+                        cpu_worker_affinity_cores=list(range(
+                            args.num_workers)))
 
                 for layers in args.num_layers:
                     num_neighbors = [args.hetero_num_neighbors] * layers
                     if hetero:
                         # batch-wise inference
                         subgraph_loader = NeighborLoader(
-                            data,
-                            num_neighbors=num_neighbors,
-                            input_nodes=mask,
-                            batch_size=batch_size,
-                            shuffle=False,
-                            num_workers=args.num_workers,
+                            data, num_neighbors=num_neighbors,
+                            input_nodes=mask, batch_size=batch_size,
+                            shuffle=False, num_workers=args.num_workers,
                             use_cpu_worker_affinity=args.cpu_affinity,
-                            cpu_worker_affinity_cores=list(range(args.num_workers))
-                        )
+                            cpu_worker_affinity_cores=list(
+                                range(args.num_workers)))
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -149,7 +146,6 @@ if __name__ == '__main__':
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
     argparser.add_argument('--cpu_affinity', default=False, type=bool)
-
 
     args = argparser.parse_args()
 
