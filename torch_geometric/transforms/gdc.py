@@ -503,7 +503,7 @@ class GDC(BaseTransform):
         neighbors: List[List[int]],
         neighbor_weights: List[List[float]],
         normalization: str = 'row',
-        device: str = 'cpu',
+        device: torch.device = 'cpu',
     ) -> Tuple[Tensor, Tensor]:
         r"""Combine a list of neighbors and neighbor weights to create a sparse
         graph.
