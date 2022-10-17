@@ -49,13 +49,8 @@ class NeighborSampler(BaseSampler):
         self.replace = replace
         self.directed = directed
         self.temporal_strategy = temporal_strategy
-        self.node_time = None
+        self.node_time_dict = self.node_time = None
         self.input_type = input_type
-
-        # TODO if self.edge_time is not None and
-        # `src` or `dst` nodes don't have time attribute
-        # i.e node_time_dict[input_type[0/-1]] doesn't exist
-        # set it to largest representable torch.long.
 
         # Set the number of source and destination nodes if we can, otherwise
         # ignore:
