@@ -3,10 +3,9 @@ import time
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
-from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.loader import DataLoader
-from torch_geometric.profile import trace_handler
+from torch_geometric.profile import timeit, torch_profile
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -42,40 +41,37 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
 
 
 @torch.no_grad()
-def run_inference(test_dataset, model, epochs, batch_size, profiling):
+def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16):
     model = model.to(device)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
-    for epoch in range(1, epochs + 1):
-        if epoch == epochs:
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_start = time.time()
+    if torch.cuda.is_available():
+        amp = torch.cuda.amp.autocast(enabled=False)
+    else:
+        amp = torch.cpu.amp.autocast(enabled=bf16)
 
-        inference(model, test_loader, device)
+    with amp:
+        for epoch in range(1, epochs + 1):
+            print("Epoch: ", epoch)
+            if epoch == epochs:
+                with timeit():
+                    inference(model, test_loader, device, bf16)
+            else:
+                inference(model, test_loader, device, bf16)
 
-        if epoch == epochs:
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            t_end = time.time()
-            duration = t_end - t_start
-            print(f'End-to-End Inference Time: {duration:.8f}s', flush=True)
-
-    if profiling:
-        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                     on_trace_ready=trace_handler) as p:
-            inference(model, test_loader, device)
-            p.step()
+        if profiling:
+            with torch_profile():
+                inference(model, test_loader, device, bf16)
 
 
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
         lr_decay_factor, lr_decay_step_size, weight_decay, inference,
-        profiling):
+        profiling, bf16):
     if not inference:
         run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
                   lr_decay_factor, lr_decay_step_size, weight_decay)
     else:
-        run_inference(test_dataset, model, epochs, batch_size, profiling)
+        run_inference(test_dataset, model, epochs, batch_size, profiling, bf16)
 
 
 def train(model, optimizer, train_loader, device):
@@ -105,8 +101,11 @@ def test(model, test_loader, device):
 
 
 @torch.no_grad()
-def inference(model, test_loader, device):
+def inference(model, test_loader, device, bf16):
     model.eval()
     for data in test_loader:
         data = data.to(device)
+        if bf16:
+            data.pos = data.pos.to(torch.bfloat16)
+            model = model.to(torch.bfloat16)
         model(data.pos, data.batch)

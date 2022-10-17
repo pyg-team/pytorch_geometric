@@ -5,17 +5,26 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import (
+    HeteroData,
     LightningDataset,
     LightningLinkData,
     LightningNodeData,
 )
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.testing.graph_store import MyGraphStore
 
 try:
     from pytorch_lightning import LightningModule
 except ImportError:
     LightningModule = torch.nn.Module
+
+
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+    return torch.stack([row, col], dim=0)
 
 
 class LinearGraphModule(LightningModule):
@@ -273,10 +282,18 @@ def test_lightning_hetero_node_data(get_dataset):
 @withCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
-def test_lightning_hetero_link_data(get_dataset):
-    # TODO: Add more datasets.
-    dataset = get_dataset(name='DBLP')
-    data = dataset[0]
+def test_lightning_hetero_link_data():
+    torch.manual_seed(12345)
+
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(10)
+    data['author'].x = torch.arange(10)
+    data['term'].x = torch.arange(10)
+
+    data['paper', 'author'].edge_index = get_edge_index(10, 10, 10)
+    data['author', 'paper'].edge_index = get_edge_index(10, 10, 10)
+    data['paper', 'term'].edge_index = get_edge_index(10, 10, 10)
 
     datamodule = LightningLinkData(
         data,
@@ -312,3 +329,40 @@ def test_lightning_hetero_link_data(get_dataset):
         assert 'edge_label_index' in batch['author', 'paper']
         assert 'edge_label_time' in batch['author', 'paper']
         break
+
+
+@withPackage('pytorch_lightning')
+def test_lightning_hetero_link_data_custom_store():
+    torch.manual_seed(12345)
+
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
+
+    x = torch.arange(10)
+    feature_store.put_tensor(x, group_name='paper', attr_name='x', index=None)
+    feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
+    feature_store.put_tensor(x, group_name='term', attr_name='x', index=None)
+
+    edge_index = get_edge_index(10, 10, 10)
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('paper', 'to', 'author'),
+                               layout='coo', size=(10, 10))
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('author', 'to', 'paper'),
+                               layout='coo', size=(10, 10))
+    graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
+                               edge_type=('paper', 'to', 'term'), layout='coo',
+                               size=(10, 10))
+
+    datamodule = LightningLinkData(
+        (feature_store, graph_store),
+        input_train_edges=('author', 'to', 'paper'),
+        loader='neighbor',
+        num_neighbors=[5],
+        batch_size=32,
+        num_workers=0,
+    )
+
+    batch = next(iter(datamodule.train_dataloader()))
+    assert 'edge_label' in batch['author', 'paper']
+    assert 'edge_label_index' in batch['author', 'paper']

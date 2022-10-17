@@ -2,6 +2,7 @@ import os
 import os.path as osp
 import pickle
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -55,14 +56,45 @@ class ZINC(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - ZINC Full
+              - 249,456
+              - ~23.2
+              - ~49.8
+              - 1
+              - 1
+            * - ZINC Subset
+              - 12,000
+              - ~23.2
+              - ~49.8
+              - 1
+              - 1
     """
 
     url = 'https://www.dropbox.com/s/feo9qle74kg48gy/molecules.zip?dl=1'
     split_url = ('https://raw.githubusercontent.com/graphdeeplearning/'
                  'benchmarking-gnns/master/data/molecules/{}.index')
 
-    def __init__(self, root, subset=False, split='train', transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        subset: bool = False,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.subset = subset
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -70,19 +102,19 @@ class ZINC(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'train.pickle', 'val.pickle', 'test.pickle', 'train.index',
             'val.index', 'test.index'
         ]
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         name = 'subset' if self.subset else 'full'
         return osp.join(self.root, name, 'processed')
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):

@@ -1,8 +1,12 @@
+from typing import Callable, List, Union
+
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import spspmm
 
 from torch_geometric.nn import GCNConv, TopKPooling
+from torch_geometric.typing import OptTensor, PairTensor
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -29,8 +33,16 @@ class GraphUNet(torch.nn.Module):
         act (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.nn.functional.relu`)
     """
-    def __init__(self, in_channels, hidden_channels, out_channels, depth,
-                 pool_ratios=0.5, sum_res=True, act=F.relu):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        depth: int,
+        pool_ratios: Union[float, List[float]] = 0.5,
+        sum_res: bool = True,
+        act: Callable = F.relu,
+    ) -> None:
         super().__init__()
         assert depth >= 1
         self.in_channels = in_channels
@@ -67,7 +79,8 @@ class GraphUNet(torch.nn.Module):
         for conv in self.up_convs:
             conv.reset_parameters()
 
-    def forward(self, x, edge_index, batch=None):
+    def forward(self, x: Tensor, edge_index: Tensor,
+                batch: OptTensor = None) -> Tensor:
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
@@ -113,7 +126,8 @@ class GraphUNet(torch.nn.Module):
 
         return x
 
-    def augment_adj(self, edge_index, edge_weight, num_nodes):
+    def augment_adj(self, edge_index: Tensor, edge_weight: Tensor,
+                    num_nodes: int) -> PairTensor:
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  num_nodes=num_nodes)

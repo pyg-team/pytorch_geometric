@@ -94,7 +94,8 @@ def test_copy_linear(lazy):
         assert torch.allclose(copied_lin.weight, lin.weight)
     assert id(copied_lin.bias) != id(lin.bias)
     assert copied_lin.bias.data_ptr() != lin.bias.data_ptr()
-    assert torch.allclose(copied_lin.bias, lin.bias, atol=1e-6)
+    if int(torch.isnan(lin.bias).sum()) == 0:
+        assert torch.allclose(copied_lin.bias, lin.bias)
 
 
 def test_hetero_linear():
@@ -102,7 +103,7 @@ def test_hetero_linear():
     node_type = torch.tensor([0, 1, 2])
 
     lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
-    assert str(lin) == 'HeteroLinear(16, 32, bias=True)'
+    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
     out = lin(x, node_type)
     assert out.size() == (3, 32)

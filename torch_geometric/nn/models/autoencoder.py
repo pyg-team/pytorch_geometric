@@ -1,4 +1,8 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
+from torch.nn import Module
 
 from torch_geometric.utils import negative_sampling
 
@@ -188,7 +192,12 @@ class ARGA(GAE):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
-    def __init__(self, encoder, discriminator, decoder=None):
+    def __init__(
+        self,
+        encoder: Module,
+        discriminator: Module,
+        decoder: Optional[Module] = None,
+    ):
         super().__init__(encoder, decoder)
         self.discriminator = discriminator
         reset(self.discriminator)
@@ -197,7 +206,7 @@ class ARGA(GAE):
         super().reset_parameters()
         reset(self.discriminator)
 
-    def reg_loss(self, z):
+    def reg_loss(self, z: Tensor) -> Tensor:
         r"""Computes the regularization loss of the encoder.
 
         Args:
@@ -207,7 +216,7 @@ class ARGA(GAE):
         real_loss = -torch.log(real + EPS).mean()
         return real_loss
 
-    def discriminator_loss(self, z):
+    def discriminator_loss(self, z: Tensor) -> Tensor:
         r"""Computes the loss of the discriminator.
 
         Args:
@@ -235,24 +244,33 @@ class ARGVA(ARGA):
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
-    def __init__(self, encoder, discriminator, decoder=None):
+    def __init__(
+        self,
+        encoder: Module,
+        discriminator: Module,
+        decoder: Optional[Module] = None,
+    ):
         super().__init__(encoder, discriminator, decoder)
         self.VGAE = VGAE(encoder, decoder)
 
     @property
-    def __mu__(self):
+    def __mu__(self) -> Tensor:
         return self.VGAE.__mu__
 
     @property
-    def __logstd__(self):
+    def __logstd__(self) -> Tensor:
         return self.VGAE.__logstd__
 
-    def reparametrize(self, mu, logstd):
+    def reparametrize(self, mu: Tensor, logstd: Tensor) -> Tensor:
         return self.VGAE.reparametrize(mu, logstd)
 
-    def encode(self, *args, **kwargs):
+    def encode(self, *args, **kwargs) -> Tensor:
         """"""
         return self.VGAE.encode(*args, **kwargs)
 
-    def kl_loss(self, mu=None, logstd=None):
+    def kl_loss(
+        self,
+        mu: Optional[Tensor] = None,
+        logstd: Optional[Tensor] = None,
+    ) -> Tensor:
         return self.VGAE.kl_loss(mu, logstd)

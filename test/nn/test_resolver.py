@@ -38,6 +38,7 @@ def test_aggregation_resolver(aggr_tuple):
 
 
 @pytest.mark.parametrize('norm_tuple', [
+    (torch_geometric.nn.norm.BatchNorm, 'batch', (16, )),
     (torch_geometric.nn.norm.BatchNorm, 'batch_norm', (16, )),
     (torch_geometric.nn.norm.InstanceNorm, 'instance_norm', (16, )),
     (torch_geometric.nn.norm.LayerNorm, 'layer_norm', (16, )),

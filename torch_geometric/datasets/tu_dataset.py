@@ -123,7 +123,7 @@ class TUDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
 
         out = torch.load(self.processed_paths[0])
-        if not isinstance(out, tuple) and len(out) != 3:
+        if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "

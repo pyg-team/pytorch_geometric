@@ -14,6 +14,16 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
         edge_prob (float): Probability of an edge.
         directed (bool, optional): If set to :obj:`True`, will return a
             directed graph. (default: :obj:`False`)
+
+    Examples:
+
+        >>> erdos_renyi_graph(5, 0.2, directed=False)
+        tensor([[0, 1, 1, 4],
+                [1, 0, 4, 1]])
+
+        >>> erdos_renyi_graph(5, 0.2, directed=True)
+        tensor([[0, 1, 3, 3, 4, 4],
+                [4, 3, 1, 2, 1, 3]])
     """
 
     if directed:
@@ -49,6 +59,22 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
             graph is undirected.
         directed (bool, optional): If set to :obj:`True`, will return a
             directed graph. (default: :obj:`False`)
+
+    Examples:
+
+        >>> block_sizes = [2, 2, 4]
+        >>> edge_probs = [[0.25, 0.05, 0.02],
+        ...               [0.05, 0.35, 0.07],
+        ...               [0.02, 0.07, 0.40]]
+        >>> stochastic_blockmodel_graph(block_sizes, edge_probs,
+        ...                             directed=False)
+        tensor([[2, 4, 4, 5, 5, 6, 7, 7],
+                [5, 6, 7, 2, 7, 4, 4, 5]])
+
+        >>> stochastic_blockmodel_graph(block_sizes, edge_probs,
+        ...                             directed=True)
+        tensor([[0, 2, 3, 4, 4, 5, 5],
+                [3, 4, 1, 5, 6, 6, 7]])
     """
 
     size, prob = block_sizes, edge_probs
@@ -95,6 +121,12 @@ def barabasi_albert_graph(num_nodes, num_edges):
     Args:
         num_nodes (int): The number of nodes.
         num_edges (int): The number of edges from a new node to existing nodes.
+
+    Example:
+
+        >>> barabasi_albert_graph(num_nodes=4, num_edges=3)
+        tensor([[0, 0, 0, 1, 1, 2, 2, 3],
+                [1, 2, 3, 0, 2, 0, 1, 0]])
     """
 
     assert num_edges > 0 and num_edges < num_nodes
