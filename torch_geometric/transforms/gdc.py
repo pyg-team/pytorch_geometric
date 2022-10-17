@@ -74,10 +74,8 @@ class GDC(BaseTransform):
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
         diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
-        sparsification_kwargs: Dict[str,
-                                    Union[str,
-                                          int]] = dict(method='threshold',
-                                                       avg_degree=64),
+        sparsification_kwargs: Dict[str, Any] = dict(method='threshold',
+                                                     avg_degree=64),
         exact: bool = True,
     ):
 
