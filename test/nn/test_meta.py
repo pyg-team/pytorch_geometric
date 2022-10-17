@@ -20,18 +20,10 @@ def test_meta_layer():
                                 '  global_model=None\n'
                                 ')')
 
-    class DummyModel(torch.nn.Module):
-        def __init__(self):
-            super().__init__()
-
-        def forward(self, src: Optional[Tensor], dest: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Optional[Tensor]:
-            global count
-            count += 1
-            return None
-
-    dummy_model = DummyModel()
+    def dummy_model(*args):
+        global count
+        count += 1
+        return None
 
     x = torch.randn(20, 10)
     edge_index = torch.randint(0, high=10, size=(2, 20), dtype=torch.long)
