@@ -112,7 +112,7 @@ class RENet(torch.nn.Module):
                 t = torch.cat(ts, dim=0)[r == rel]
                 return node, t
 
-            def step(self, hist: List) -> List:
+            def step(self, hist: List[int]) -> List[int]:
                 for i in range(len(hist)):
                     hist[i] = hist[i][1:]
                     hist[i].append([])
