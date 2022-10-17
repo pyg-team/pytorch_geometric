@@ -66,8 +66,8 @@ def test_re_net():
         log_prob_obj, log_prob_sub = model(data)
         if is_full_test():
             log_prob_obj_jit, log_prob_sub_jit = jit(data)
-            assert torch.equal(log_prob_obj_jit, log_prob_obj)
-            assert torch.equal(log_prob_sub_jit, log_prob_sub)
+            assert torch.allclose(log_prob_obj_jit, log_prob_obj)
+            assert torch.allclose(log_prob_sub_jit, log_prob_sub)
         model.test(log_prob_obj, data.obj)
         model.test(log_prob_sub, data.sub)
 
