@@ -17,7 +17,8 @@ class NormalizeFeatures(BaseTransform):
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(self, data: Union[Data,
+                                   HeteroData]) -> Union[Data, HeteroData]:
         for store in data.stores:
             for key, value in store.items(*self.attrs):
                 value = value - value.min()
