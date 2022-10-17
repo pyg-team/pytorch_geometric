@@ -1,6 +1,9 @@
+from typing import Optional, Tuple
+
 import scipy.sparse
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch_sparse import coalesce
 
 from torch_geometric.nn import SignedConv
@@ -25,8 +28,14 @@ class SignedGCN(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-    def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
-                 bias=True):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        lamb: float = 5,
+        bias: bool = True,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -52,7 +61,11 @@ class SignedGCN(torch.nn.Module):
             conv.reset_parameters()
         self.lin.reset_parameters()
 
-    def split_edges(self, edge_index, test_ratio=0.2):
+    def split_edges(
+        self,
+        edge_index: Tensor,
+        test_ratio: float = 0.2,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Splits the edges :obj:`edge_index` into train and test edges.
 
         Args:
@@ -68,8 +81,12 @@ class SignedGCN(torch.nn.Module):
 
         return train_edge_index, test_edge_index
 
-    def create_spectral_features(self, pos_edge_index, neg_edge_index,
-                                 num_nodes=None):
+    def create_spectral_features(
+        self,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         r"""Creates :obj:`in_channels` spectral node features based on
         positive and negative edges.
 
@@ -107,7 +124,12 @@ class SignedGCN(torch.nn.Module):
         x = svd.components_.T
         return torch.from_numpy(x).to(torch.float).to(pos_edge_index.device)
 
-    def forward(self, x, pos_edge_index, neg_edge_index):
+    def forward(
+        self,
+        x: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes node embeddings :obj:`z` based on positive edges
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`.
 
@@ -121,7 +143,7 @@ class SignedGCN(torch.nn.Module):
             z = F.relu(conv(z, pos_edge_index, neg_edge_index))
         return z
 
-    def discriminate(self, z, edge_index):
+    def discriminate(self, z: Tensor, edge_index: Tensor) -> Tensor:
         """Given node embeddings :obj:`z`, classifies the link relation
         between node pairs :obj:`edge_index` to be either positive,
         negative or non-existent.
@@ -134,7 +156,12 @@ class SignedGCN(torch.nn.Module):
         value = self.lin(value)
         return torch.log_softmax(value, dim=1)
 
-    def nll_loss(self, z, pos_edge_index, neg_edge_index):
+    def nll_loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the discriminator loss based on node embeddings :obj:`z`,
         and positive edges :obj:`pos_edge_index` and negative nedges
         :obj:`neg_edge_index`.
@@ -160,7 +187,11 @@ class SignedGCN(torch.nn.Module):
             none_edge_index.new_full((none_edge_index.size(1), ), 2))
         return nll_loss / 3.0
 
-    def pos_embedding_loss(self, z, pos_edge_index):
+    def pos_embedding_loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the triplet loss between positive node pairs and sampled
         non-node pairs.
 
@@ -173,7 +204,7 @@ class SignedGCN(torch.nn.Module):
         out = (z[i] - z[j]).pow(2).sum(dim=1) - (z[i] - z[k]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
-    def neg_embedding_loss(self, z, neg_edge_index):
+    def neg_embedding_loss(self, z: Tensor, neg_edge_index: Tensor) -> Tensor:
         """Computes the triplet loss between negative node pairs and sampled
         non-node pairs.
 
@@ -186,7 +217,12 @@ class SignedGCN(torch.nn.Module):
         out = (z[i] - z[k]).pow(2).sum(dim=1) - (z[i] - z[j]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
-    def loss(self, z, pos_edge_index, neg_edge_index):
+    def loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the overall objective.
 
         Args:
@@ -199,7 +235,12 @@ class SignedGCN(torch.nn.Module):
         loss_2 = self.neg_embedding_loss(z, neg_edge_index)
         return nll_loss + self.lamb * (loss_1 + loss_2)
 
-    def test(self, z, pos_edge_index, neg_edge_index):
+    def test(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tuple[float, float]:
         """Evaluates node embeddings :obj:`z` on positive and negative test
         edges by computing AUC and F1 scores.
 
