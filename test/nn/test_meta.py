@@ -20,10 +20,18 @@ def test_meta_layer():
                                 '  global_model=None\n'
                                 ')')
 
-    def dummy_model(*args):
-        global count
-        count += 1
-        return None
+    class DummyModel(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, src: Optional[Tensor], dest: Tensor,
+                    edge_attr: Optional[Tensor], u: Optional[Tensor],
+                    batch: Optional[Tensor]) -> Optional[Tensor]:
+            global count
+            count += 1
+            return None
+
+    dummy_model = DummyModel()
 
     x = torch.randn(20, 10)
     edge_index = torch.randint(0, high=10, size=(2, 20), dtype=torch.long)
@@ -36,6 +44,26 @@ def test_meta_layer():
                 assert isinstance(out, tuple) and len(out) == 3
 
     assert count == 12
+
+    if is_full_test():
+
+        class DummyModelJit(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+
+            def forward(self, src: Optional[Tensor], dest: Tensor,
+                        edge_attr: Optional[Tensor], u: Optional[Tensor],
+                        batch: Optional[Tensor]) -> Optional[Tensor]:
+                return None
+
+        dummy_model_jit = DummyModelJit()
+
+        for edge_model in (dummy_model_jit, None):
+            for node_model in (dummy_model_jit, None):
+                for global_model in (dummy_model_jit, None):
+                    model = MetaLayer(edge_model, node_model, global_model)
+                    out = torch.jit.script(model)(x, edge_index)
+                    assert isinstance(out, tuple) and len(out) == 3
 
 
 def test_meta_layer_example():
@@ -95,10 +123,15 @@ def test_meta_layer_example():
     edge_index = torch.randint(0, high=10, size=(2, 20), dtype=torch.long)
     edge_index = torch.cat([edge_index, 10 + edge_index], dim=1)
 
-    x, edge_attr, u, op(x, edge_index, edge_attr, u, batch)
-    assert x.size() == (20, 10)
-    assert edge_attr.size() == (40, 5)
-    assert u.size() == (2, 20)
+    x_out, edge_attr_out, u_out = op(x, edge_index, edge_attr, u, batch)
+    assert x_out.size() == (20, 10)
+    assert edge_attr_out.size() == (40, 5)
+    assert u_out.size() == (2, 20)
 
     if is_full_test():
-        torch.jit.script(op)
+        jit = torch.jit.script(op)
+
+        x_out, edge_attr_out, u_out = jit(x, edge_index, edge_attr, u, batch)
+        assert x_out.size() == (20, 10)
+        assert edge_attr_out.size() == (40, 5)
+        assert u_out.size() == (2, 20)
