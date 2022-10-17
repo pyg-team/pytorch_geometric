@@ -53,7 +53,7 @@ class Yelp(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> list:
+    def raw_file_names(self) -> List[str]:
         return ['adj_full.npz', 'feats.npy', 'class_map.json', 'role.json']
 
     @property
