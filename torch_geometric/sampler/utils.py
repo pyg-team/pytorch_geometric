@@ -149,6 +149,32 @@ def add_negative_samples(
     return edge_label_index, edge_label, edge_label_time
 
 
+def update_batch_for_sample_edge(
+        batch: Union[Dict[NodeType, Tensor], Tensor],
+        num_seed_edges: int) -> Union[Dict[NodeType, Tensor], Tensor]:
+    """ Internally the pyg-lib sampler assigns a different
+    batch to subgraph sampled from a seed node. While sampling from edges
+    the `src` node and `dst` node of an edge are considered as
+    different seed nodes and gets assigned a different batch id.
+    This function modifies the batch id so that a subgraph of
+    a seed edge (`src`, `dst`) has same batch id.
+    Args:
+        batch: batch vector or dict assiging each
+            node to a seed node.
+        num_edges: Number of seed edges for sampling.
+
+    Retruns updated batch values.
+    """
+    if isinstance(batch, Dict):
+        for key, value in batch.items():
+            batch[key] = torch.where(value >= num_seed_edges,
+                                     value - num_seed_edges, value)
+    else:
+        batch = torch.where(batch >= num_seed_edges, batch - num_seed_edges,
+                            batch)
+    return batch
+
+
 ###############################################################################
 
 

@@ -18,6 +18,7 @@ from torch_geometric.sampler.utils import (
     remap_keys,
     to_csc,
     to_hetero_csc,
+    update_batch_for_sample_edge,
 )
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
@@ -372,7 +373,7 @@ class NeighborSampler(BaseSampler):
                                    edge_label_time, self.num_src_nodes,
                                    self.num_dst_nodes, negative_sampling_ratio)
         edge_label_index, edge_label, edge_label_time = out
-        num_seed_edges = len(edge_label_index)
+        num_seed_edges = edge_label_index.shape[1]
         seed_time_dict = None
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
@@ -438,8 +439,9 @@ class NeighborSampler(BaseSampler):
                 seed=seed_dict,
                 seed_time_dict=seed_time_dict,
             )
-            # TODO: update batch vector. Now samples from each seed edge
-            # belongs to same batch
+
+            output.batch = update_batch_for_sample_edge(
+                output.batch, num_seed_edges)
             output.metadata = (edge_label_index, edge_label, edge_label_time)
 
         elif issubclass(self.data_cls, Data):
@@ -454,7 +456,8 @@ class NeighborSampler(BaseSampler):
                 seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
                 edge_label_index = inverse.view(2, -1)
             output = self._sample(seed=seed_nodes, seed_time=None)
-            # TODO: Update batch vector
+            output.batch = update_batch_for_sample_edge(
+                output.batch, num_seed_edges)
             output.metadata = (edge_label_index, edge_label)
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
