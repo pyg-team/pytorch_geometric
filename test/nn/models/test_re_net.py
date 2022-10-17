@@ -51,7 +51,6 @@ def test_re_net():
     model = RENet(dataset.num_nodes, dataset.num_rels, hidden_channels=16,
                   seq_len=4)
 
-    jit = None
     if is_full_test():
         jit = torch.jit.export(model)
 
