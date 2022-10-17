@@ -54,6 +54,8 @@ def run(args: argparse.ArgumentParser) -> None:
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=args.num_workers,
+                        use_cpu_worker_affinity=args.cpu_affinity,
+                        cpu_worker_affinity_cores=list(range(args.num_workers))
                     )
 
                 for layers in args.num_layers:
@@ -67,6 +69,8 @@ def run(args: argparse.ArgumentParser) -> None:
                             batch_size=batch_size,
                             shuffle=False,
                             num_workers=args.num_workers,
+                            use_cpu_worker_affinity=args.cpu_affinity,
+                            cpu_worker_affinity_cores=list(range(args.num_workers))
                         )
 
                     for hidden_channels in args.num_hidden_channels:
@@ -144,6 +148,8 @@ if __name__ == '__main__':
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
+    argparser.add_argument('--cpu_affinity', default=False, type=bool)
+
 
     args = argparser.parse_args()
 
