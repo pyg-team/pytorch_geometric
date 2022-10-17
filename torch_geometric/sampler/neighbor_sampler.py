@@ -48,7 +48,7 @@ class NeighborSampler(BaseSampler):
         self.replace = replace
         self.directed = directed
         self.temporal_strategy = temporal_strategy
-        self.node_time_dict = self.node_time = None
+        self.node_time = self.node_time_dict = None
         self.input_type = input_type
 
         # Set the number of source and destination nodes if we can, otherwise
