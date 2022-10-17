@@ -129,10 +129,6 @@
       $("#command pre").text('# PyTorch 1.11.* binaries do not support CUDA 11.6');
     }
 
-    else if (package == "conda" && torch == "torch-1.12.0") {
-      $("#command pre").text('# Conda packages are not published for PyTorch 1.12 yet');
-    }
-
     else if (package == "conda") {
       $("#command pre").text('conda install pyg -c pyg');
     }

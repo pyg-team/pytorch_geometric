@@ -280,6 +280,7 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@withPackage('pyg_lib')
 def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -380,6 +381,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
+@withPackage('pyg_lib')
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
