@@ -42,16 +42,11 @@ class DiffGroupNorm(torch.nn.Module):
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
     """
-    def __init__(
-        self,
-        in_channels: int,
-        groups: int,
-        lamda: Optional[float] = 0.01,
-        eps: Optional[float] = 1e-5,
-        momentum: Optional[float] = 0.1,
-        affine: Optional[bool] = True,
-        track_running_stats: Optional[bool] = True
-    ):
+    def __init__(self, in_channels: int, groups: int,
+                 lamda: Optional[float] = 0.01, eps: Optional[float] = 1e-5,
+                 momentum: Optional[float] = 0.1,
+                 affine: Optional[bool] = True,
+                 track_running_stats: Optional[bool] = True):
         super().__init__()
 
         self.in_channels = in_channels
