@@ -44,9 +44,16 @@ class RENet(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-    def __init__(self, num_nodes: int, num_rels: int, hidden_channels: int,
-                 seq_len: int, num_layers: int = 1, dropout: float = 0.,
-                 bias: bool = True, ):
+    def __init__(
+        self,
+        num_nodes: int,
+        num_rels: int,
+        hidden_channels: int,
+        seq_len: int,
+        num_layers: int = 1,
+        dropout: float = 0.,
+        bias: bool = True,
+    ):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -99,8 +106,12 @@ class RENet(torch.nn.Module):
                 hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
                 return hist + hist_inc.tolist()
 
-            def get_history(self, hist: List[int], node: int,
-                            rel: int, ) -> Tuple[Tensor, Tensor]:
+            def get_history(
+                self,
+                hist: List[int],
+                node: int,
+                rel: int,
+            ) -> Tuple[Tensor, Tensor]:
                 hists, ts = [], []
                 for s in range(seq_len):
                     h = hist[node][s]
