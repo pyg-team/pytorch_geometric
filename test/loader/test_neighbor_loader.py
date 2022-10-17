@@ -523,7 +523,7 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
 
 
 def test_memmap_neighbor_loader():
-    path = os.path.join(os.sep, 'tmp', f'{random.randrange(sys.maxsize)}.npy')
+    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
     x[:] = np.random.randn(100, 32)
 
