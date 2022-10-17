@@ -1,7 +1,7 @@
 import json
 import os
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
