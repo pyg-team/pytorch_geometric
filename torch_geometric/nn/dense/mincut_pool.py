@@ -4,9 +4,9 @@ import torch
 from torch import Tensor
 
 
-def dense_mincut_pool(x: Tensor, adj: Tensor, s: Tensor,
-                        mask: Optional[Tensor] = None
-                    ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+def dense_mincut_pool(
+        x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
     paper
@@ -90,7 +90,6 @@ def dense_mincut_pool(x: Tensor, adj: Tensor, s: Tensor,
 
     # Moved EPS from global to local variable for TorchScript support
     EPS = 1e-15
-
 
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
