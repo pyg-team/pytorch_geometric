@@ -1,7 +1,7 @@
 import torch
 
-from torch_geometric.testing import is_full_test
 from torch_geometric.nn import dense_mincut_pool
+from torch_geometric.testing import is_full_test
 
 
 def test_dense_mincut_pool():
