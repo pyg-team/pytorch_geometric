@@ -211,7 +211,8 @@ class NeighborSampler(BaseSampler):
     def disjoint_sampling(self) -> bool:
         """True if nodes have time attribute. If `True`
         each seed node will have a disjoint subgraph"""
-        return (getattr(self, 'node_time') is not None or getattr(self, 'node_time_dict') is not None)
+        return (getattr(self, 'node_time') is not None
+                or getattr(self, 'node_time_dict') is not None)
 
     def _sample(
         self,
