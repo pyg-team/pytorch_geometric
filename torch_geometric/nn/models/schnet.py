@@ -107,7 +107,6 @@ class SchNet(torch.nn.Module):
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
-        self.max_num_neighbors = max_num_neighbors
         self.readout = readout
         self.dipole = dipole
         self.readout = 'add' if self.dipole else self.readout
@@ -125,6 +124,7 @@ class SchNet(torch.nn.Module):
         # Support z == 0 for padding atoms so that their embedding vectors
         # are zeroed and do not receive any gradients.
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
+        self.interaction_graph = InteractionGraph(cutoff, max_num_neighbors)
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
@@ -246,8 +246,8 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z: Tensor, pos: Tensor, batch: OptTensor = None,
-                edge_index: OptTensor = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor,
+                batch: OptTensor = None) -> Tensor:
         r"""
         Args:
             z (LongTensor): Atomic number of each atom with shape
@@ -257,22 +257,13 @@ class SchNet(torch.nn.Module):
             batch (LongTensor, optional): Batch indices assigning each atom to
                 a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
-            edge_index (LongTensor, optional): Indices of interacting pairs of
-                atoms with shape :obj:`[2, num_edges]`. Will be computed in
-                every forward pass if not provided. (default: :obj:`None`)
         """
         assert z.dim() == 1 and z.dtype in (torch.uint8, torch.int8,
                                             torch.int32, torch.int64)
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
-
-        if edge_index is None:
-            edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                      max_num_neighbors=self.max_num_neighbors)
-
-        row, col = edge_index
-        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        edge_index, edge_weight = self.interaction_graph(pos, batch)
         edge_attr = self.distance_expansion(edge_weight)
 
         for interaction in self.interactions:
@@ -313,6 +304,20 @@ class SchNet(torch.nn.Module):
                 f'num_interactions={self.num_interactions}, '
                 f'num_gaussians={self.num_gaussians}, '
                 f'cutoff={self.cutoff})')
+
+
+class InteractionGraph(torch.nn.Module):
+    def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
+        super().__init__()
+        self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
+
+    def forward(self, pos, batch):
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
+        row, col = edge_index
+        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        return edge_index, edge_weight
 
 
 class InteractionBlock(torch.nn.Module):
