@@ -48,7 +48,7 @@ class Yelp(InMemoryDataset):
     role_id = '1NI5pa5Chpd-52eSmLW60OnB3WS5ikxq_'
 
     def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+                 pre_transform: Optional[Callable] = None, ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
