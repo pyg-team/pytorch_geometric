@@ -98,7 +98,7 @@ class SchNet(torch.nn.Module):
         mean: Optional[float] = None,
         std: Optional[float] = None,
         atomref: Optional[torch.Tensor] = None,
-        batch_size=None,
+        batch_size: Optional[int] = None,
     ):
         super().__init__()
 
