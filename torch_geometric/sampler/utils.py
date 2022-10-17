@@ -167,8 +167,7 @@ def update_batch_for_sample_edge(
     """
     if isinstance(batch, Dict):
         for key, value in batch.items():
-            batch[key] = torch.where(value >= num_seed_edges,
-                                     value - num_seed_edges, value)
+            batch[key] = value % num_seed_edges
     else:
         batch = batch % num_seed_edges
     return batch
