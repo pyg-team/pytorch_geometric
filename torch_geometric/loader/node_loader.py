@@ -1,7 +1,7 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
-import torch
 import psutil
+import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
@@ -90,7 +90,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         # Get input type, or None for homogeneous graphs:
         node_type, input_nodes = get_input_nodes(self.data, input_nodes)
         self.input_type = node_type
-        
+
         worker_init_fn = None
         if use_cpu_worker_affinity:
             nw_work = kwargs.get('num_workers', 0)
@@ -99,19 +99,22 @@ class NodeLoader(torch.utils.data.DataLoader):
                 cpu_worker_affinity_cores = []
 
             if not isinstance(cpu_worker_affinity_cores, list):
-                raise Exception('ERROR: cpu_worker_affinity_cores should be a list of cores')
+                raise Exception(
+                    'ERROR: cpu_worker_affinity_cores should be a list of cores'
+                )
             if not nw_work > 0:
-                raise Exception('ERROR: affinity should be used with --num_workers=X')
+                raise Exception(
+                    'ERROR: affinity should be used with --num_workers=X')
             if len(cpu_worker_affinity_cores) not in [0, nw_work]:
                 raise Exception('ERROR: cpu_affinity incorrect '
-                                'settings for cores={} num_workers={}'
-                                .format(cpu_worker_affinity_cores, nw_work))
+                                'settings for cores={} num_workers={}'.format(
+                                    cpu_worker_affinity_cores, nw_work))
 
             self.cpu_cores = (cpu_worker_affinity_cores
-                                if len(cpu_worker_affinity_cores)
-                                else range(0, nw_work))
-            worker_init_fn=self.worker_init_function
-            
+                              if len(cpu_worker_affinity_cores) else range(
+                                  0, nw_work))
+            worker_init_fn = self.worker_init_function
+
         super().__init__(input_nodes, collate_fn=self.collate_fn,
                          worker_init_fn=worker_init_fn, **kwargs)
 
@@ -176,9 +179,9 @@ class NodeLoader(torch.utils.data.DataLoader):
         """
         try:
             psutil.Process().cpu_affinity([self.cpu_cores[worker_id]])
-            print('CPU-affinity worker {} has been assigned to core={}'
-                    .format(worker_id, self.cpu_cores[worker_id]))
+            print('CPU-affinity worker {} has been assigned to core={}'.format(
+                worker_id, self.cpu_cores[worker_id]))
         except:
-            raise Exception('ERROR: cannot use affinity id={} cpu_cores={}'
-                            .format(worker_id, self.cpu_cores))
-
+            raise Exception(
+                'ERROR: cannot use affinity id={} cpu_cores={}'.format(
+                    worker_id, self.cpu_cores))
