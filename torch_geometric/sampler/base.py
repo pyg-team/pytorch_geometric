@@ -2,19 +2,23 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Tuple, Union
 
-import torch
+from torch import Tensor
 
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
-# An input to a node-based sampler is a tensor of node indices:
-NodeSamplerInput = torch.Tensor
+# An input to a node-based sampler consists of two tensors:
+#  * The example indices
+#  * The node indices
+#  * The timestamps of the given node indices (optional)
+NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 
 # An input to an edge-based sampler consists of four tensors:
+#   * The example indices
 #   * The row of the edge index in COO format
 #   * The column of the edge index in COO format
 #   * The labels of the edges
-#   * (Optionally) the time attribute corresponding to the edge label
-EdgeSamplerInput = Tuple[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
+#   * The time attribute corresponding to the edge label (optional)
+EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, Tensor, OptTensor]
 
 
 # A sampler output contains the following information.
@@ -40,11 +44,11 @@ EdgeSamplerInput = Tuple[torch.Tensor, torch.Tensor, torch.Tensor, OptTensor]
 # There exist both homogeneous and heterogeneous versions.
 @dataclass
 class SamplerOutput:
-    node: torch.Tensor
-    row: torch.Tensor
-    col: torch.Tensor
-    edge: torch.Tensor
-    batch: Optional[torch.Tensor] = None
+    node: Tensor
+    row: Tensor
+    col: Tensor
+    edge: Tensor
+    batch: OptTensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
@@ -52,11 +56,11 @@ class SamplerOutput:
 
 @dataclass
 class HeteroSamplerOutput:
-    node: Dict[NodeType, torch.Tensor]
-    row: Dict[EdgeType, torch.Tensor]
-    col: Dict[EdgeType, torch.Tensor]
-    edge: Dict[EdgeType, torch.Tensor]
-    batch: Optional[Dict[NodeType, torch.Tensor]] = None
+    node: Dict[NodeType, Tensor]
+    row: Dict[EdgeType, Tensor]
+    col: Dict[EdgeType, Tensor]
+    edge: Dict[EdgeType, Tensor]
+    batch: Optional[Dict[NodeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None

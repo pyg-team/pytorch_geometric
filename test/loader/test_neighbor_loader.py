@@ -48,10 +48,9 @@ def test_homogeneous_neighbor_loader(directed):
 
     for batch in loader:
         assert isinstance(batch, Data)
-
-        assert len(batch) == 4
+        assert len(batch) == 5
         assert batch.x.size(0) <= 100
-        assert batch.batch_size == 20
+        assert batch.input_nodes.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -118,8 +117,9 @@ def test_heterogeneous_neighbor_loader(directed):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 2
+        assert len(batch['paper']) == 3
         assert batch['paper'].x.size(0) <= 100
+        assert batch['paper'].input_nodes.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
@@ -498,7 +498,7 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
         'author__to__paper': [-1, -1],
     }
 
-    sample = torch.ops.pyg.hetero_neighbor_sample_cpu
+    sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, None, None, True, False, True, False,
                   "uniform", True)

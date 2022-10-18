@@ -60,8 +60,9 @@ def test_hgt_loader():
         assert set(batch.node_types) == {'paper', 'author'}
         assert set(batch.edge_types) == set(data.edge_types)
 
-        assert len(batch['paper']) == 2
+        assert len(batch['paper']) == 3
         assert batch['paper'].x.size() == (40, )  # 20 + 4 * 5
+        assert batch['paper'].input_nodes.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 

@@ -51,9 +51,10 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     for batch in loader:
         assert isinstance(batch, Data)
 
-        assert len(batch) == 5
+        assert len(batch) == 6
         assert batch.x.size(0) <= 100
         assert batch.x.min() >= 0 and batch.x.max() < 100
+        assert batch.input_links.numel() == 20
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
         assert batch.edge_attr.min() >= 0
@@ -110,7 +111,7 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 5
+        assert len(batch) == 6
         if neg_sampling_ratio == 0.0:
             # Assert only positive samples are present in the original graph:
             assert batch['paper', 'author'].edge_label.sum() == 0
@@ -120,7 +121,6 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
             assert len(edge_index | edge_label_index) == len(edge_index)
 
         else:
-
             assert batch['paper', 'author'].edge_label_index.size(1) == 40
             assert torch.all(batch['paper', 'author'].edge_label[:20] == 1)
             assert torch.all(batch['paper', 'author'].edge_label[20:] == 0)
@@ -195,7 +195,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
     data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
 
-    with pytest.raises(ValueError, match=r"'edge_label_time' was not set.*"):
+    with pytest.raises(ValueError, match=r"'edge_label_time' is not set"):
         loader = LinkNeighborLoader(
             data,
             num_neighbors=[-1] * 2,
@@ -312,7 +312,8 @@ def test_homogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 3
+        assert len(batch) == 4
+        assert batch.input_links.numel() == 20
         assert batch.num_nodes <= 40
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
@@ -328,8 +329,9 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 3
+        assert len(batch) == 4
         assert batch['paper'].num_nodes <= 40
+        assert batch['paper', 'paper'].input_links.numel() == 20
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
             'paper', 'paper'].edge_label_index.unique().numel()
