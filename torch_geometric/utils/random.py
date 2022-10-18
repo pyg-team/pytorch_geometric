@@ -8,7 +8,7 @@ from torch_geometric.utils import remove_self_loops, to_undirected
 
 
 def erdos_renyi_graph(num_nodes: int, edge_prob: float,
-                      directed: Optional[bool] = False) -> torch.Tensor:
+                      directed: bool = False, ) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a random Erdos-Renyi graph.
 
     Args:
