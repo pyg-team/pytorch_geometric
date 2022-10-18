@@ -73,15 +73,37 @@ def is_undirected(
         sort_by_row=False,
     )
 
-    return (bool(torch.all(edge_index1[0] == edge_index2[1]))
-            and bool(torch.all(edge_index1[1] == edge_index2[0])) and all([
-                torch.all(e == e_T) for e, e_T in zip(edge_attrs1, edge_attrs2)
-            ]))
+    if not torch.equal(edge_index1[0], edge_index2[1]):
+        return False
+    if not torch.equal(edge_index1[1], edge_index2[0]):
+        return False
+    for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2):
+        if not torch.equal(edge_attr1, edge_attr2):
+            return False
+    return True
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, Optional[bool], Optional[int], str) -> Tensor  # noqa
+    pass
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, Tensor, Optional[int], str) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
+    pass
 
 
 def to_undirected(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
     reduce: str = "add",
 ) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
@@ -131,13 +153,13 @@ def to_undirected(
         edge_attr = None
         num_nodes = edge_attr
 
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
     edge_index = torch.stack([row, col], dim=0)
 
-    if edge_attr is not None and isinstance(edge_attr, Tensor):
+    if isinstance(edge_attr, Tensor):
         edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-    elif edge_attr is not None:
+    elif isinstance(edge_attr, (list, tuple)):
         edge_attr = [torch.cat([e, e], dim=0) for e in edge_attr]
 
     return coalesce(edge_index, edge_attr, num_nodes, reduce)
