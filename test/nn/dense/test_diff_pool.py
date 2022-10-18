@@ -19,8 +19,8 @@ def test_dense_diff_pool():
 
     if is_full_test():
         jit = torch.jit.script(dense_diff_pool)
-        x_out, adj_out, link_loss, ent_loss = jit(x, adj, s, mask)
-        assert x_out.size() == (2, 10, 16)
-        assert adj_out.size() == (2, 10, 10)
+        x_jit, adj_jit, link_loss, ent_loss = jit(x, adj, s, mask)
+        assert torch.allclose(x_jit, x_out)
+        assert torch.allclose(adj_jit, adj_out)
         assert link_loss.item() >= 0
         assert ent_loss.item() >= 0
