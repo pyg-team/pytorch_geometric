@@ -1,3 +1,4 @@
+import copy
 import warnings
 from typing import Optional, Tuple, Union
 
@@ -7,16 +8,10 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.link_neighbor_loader import (
-    LinkNeighborLoader,
-    get_edge_label_index,
-)
-from torch_geometric.loader.neighbor_loader import (
-    NeighborLoader,
-    NeighborSampler,
-    get_input_nodes,
-)
+from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
+from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -144,26 +139,34 @@ class LightningDataset(LightningDataModule):
         self.val_dataset = val_dataset
         self.test_dataset = test_dataset
 
-    def dataloader(
-        self,
-        dataset: Dataset,
-        shuffle: bool = False,
-    ) -> DataLoader:
-        return DataLoader(dataset, shuffle=shuffle, **self.kwargs)
+    def dataloader(self, dataset: Dataset, **kwargs) -> DataLoader:
+        return DataLoader(dataset, **kwargs)
 
     def train_dataloader(self) -> DataLoader:
         """"""
         from torch.utils.data import IterableDataset
-        shuffle = not isinstance(self.train_dataset, IterableDataset)
-        return self.dataloader(self.train_dataset, shuffle=shuffle)
+        shuffle = (not isinstance(self.train_dataset, IterableDataset)
+                   and self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
+
+        return self.dataloader(self.train_dataset, shuffle=shuffle,
+                               **self.kwargs)
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.val_dataset, shuffle=False)
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.val_dataset, shuffle=False, **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.test_dataset, shuffle=False)
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.test_dataset, shuffle=False, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(train_dataset=self.train_dataset,
@@ -331,37 +334,63 @@ class LightningNodeData(LightningDataModule):
     def dataloader(
         self,
         input_nodes: InputNodes,
-        shuffle: bool = False,
+        **kwargs,
     ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
-            return torch.utils.data.DataLoader([self.data], shuffle=False,
-                                               collate_fn=lambda xs: xs[0],
-                                               **self.kwargs)
+
+            kwargs['shuffle'] = True
+            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
+
+            return torch.utils.data.DataLoader(
+                [self.data],
+                collate_fn=lambda xs: xs[0],
+                **kwargs,
+            )
 
         if self.loader == 'neighbor':
-            return NeighborLoader(data=self.data, input_nodes=input_nodes,
-                                  neighbor_sampler=self.neighbor_sampler,
-                                  shuffle=shuffle, **self.kwargs)
+            return NeighborLoader(
+                self.data,
+                input_nodes=input_nodes,
+                neighbor_sampler=self.neighbor_sampler,
+                **kwargs,
+            )
 
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_train_nodes, shuffle=True)
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
+
+        return self.dataloader(self.input_train_nodes, shuffle=shuffle,
+                               **self.kwargs)
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_val_nodes, shuffle=False)
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.input_val_nodes, shuffle=False, **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_test_nodes, shuffle=False)
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.input_test_nodes, shuffle=False, **kwargs)
 
     def predict_dataloader(self) -> DataLoader:
         """"""
-        return self.dataloader(self.input_pred_nodes, shuffle=False)
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.input_pred_nodes, shuffle=False, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
@@ -529,43 +558,61 @@ class LightningLinkData(LightningDataModule):
         input_edges: InputEdges,
         input_labels: Optional[Tensor],
         input_time: Optional[Tensor] = None,
-        shuffle: bool = False,
+        **kwargs,
     ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
-            return torch.utils.data.DataLoader([self.data], shuffle=False,
-                                               collate_fn=lambda xs: xs[0],
-                                               **self.kwargs)
+
+            kwargs['shuffle'] = True
+            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
+
+            return torch.utils.data.DataLoader(
+                [self.data],
+                collate_fn=lambda xs: xs[0],
+                **kwargs,
+            )
 
         if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(
-                data=self.data,
+                self.data,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
                 neighbor_sampler=self.neighbor_sampler,
-                shuffle=shuffle,
                 neg_sampling_ratio=self.neg_sampling_ratio,
-                **self.kwargs,
+                **kwargs,
             )
 
         raise NotImplementedError
 
     def train_dataloader(self) -> DataLoader:
         """"""
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
+
         return self.dataloader(self.input_train_edges, self.input_train_labels,
-                               self.input_train_time, shuffle=True)
+                               self.input_train_time, shuffle=shuffle,
+                               **self.kwargs)
 
     def val_dataloader(self) -> DataLoader:
         """"""
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
         return self.dataloader(self.input_val_edges, self.input_val_labels,
-                               self.input_val_time, shuffle=False)
+                               self.input_val_time, shuffle=False, **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
         return self.dataloader(self.input_test_edges, self.input_test_labels,
-                               self.input_test_time, shuffle=False)
+                               self.input_test_time, shuffle=False, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)

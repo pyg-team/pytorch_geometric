@@ -94,7 +94,8 @@ def test_copy_linear(lazy):
         assert torch.allclose(copied_lin.weight, lin.weight)
     assert id(copied_lin.bias) != id(lin.bias)
     assert copied_lin.bias.data_ptr() != lin.bias.data_ptr()
-    assert torch.allclose(copied_lin.bias, lin.bias, atol=1e-6)
+    if int(torch.isnan(lin.bias).sum()) == 0:
+        assert torch.allclose(copied_lin.bias, lin.bias)
 
 
 def test_hetero_linear():

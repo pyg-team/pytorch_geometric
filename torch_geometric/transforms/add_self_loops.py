@@ -32,7 +32,10 @@ class AddSelfLoops(BaseTransform):
         self.attr = attr
         self.fill_value = fill_value
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
             if store.is_bipartite() or 'edge_index' not in store:
                 continue

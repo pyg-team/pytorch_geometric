@@ -101,6 +101,13 @@ class LinkNeighborLoader(LinkLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        temporal_strategy (string, optional): The sampling strategy when using
+            temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
+            (default: :obj:`"uniform"`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges.
             If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
@@ -124,9 +131,11 @@ class LinkNeighborLoader(LinkLoader):
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
-            :obj:`edge_index` is sorted by column. This avoids internal
-            re-sorting of the data and can improve runtime and memory
-            efficiency. (default: :obj:`False`)
+            :obj:`edge_index` is sorted by column.
+            If :obj:`time_attr` is set, additionally requires that rows are
+            sorted according to time within individual neighborhoods.
+            This avoids internal re-sorting of the data and can improve
+            runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -148,6 +157,7 @@ class LinkNeighborLoader(LinkLoader):
         edge_label_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        temporal_strategy: str = 'uniform',
         neg_sampling_ratio: float = 0.0,
         time_attr: Optional[str] = None,
         transform: Callable = None,
@@ -156,21 +166,16 @@ class LinkNeighborLoader(LinkLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Get input type:
-        # TODO(manan): this computation is required twice, once here and once
-        # in LinkLoader:
+        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
         edge_type, _ = get_edge_label_index(data, edge_label_index)
 
-        has_time_attr = time_attr is not None
-        has_edge_label_time = edge_label_time is not None
-        if has_edge_label_time != has_time_attr:
+        if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
-                f"Received conflicting 'time_attr' and 'edge_label_time' "
-                f"arguments: 'time_attr' was "
-                f"{'set' if has_time_attr else 'not set'} and "
-                f"'edge_label_time' was "
-                f"{'set' if has_edge_label_time else 'not set'}. Please "
-                f"resolve these conflicting arguments.")
+                f"Received conflicting 'edge_label_time' and 'time_attr' "
+                f"arguments: 'edge_label_time' is "
+                f"{'set' if edge_label_time is not None else 'not set'} "
+                f"while 'input_time' is "
+                f"{'set' if time_attr is not None else 'not set'}.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -178,6 +183,7 @@ class LinkNeighborLoader(LinkLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                temporal_strategy=temporal_strategy,
                 input_type=edge_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
