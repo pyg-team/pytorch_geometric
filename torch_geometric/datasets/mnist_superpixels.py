@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Callable, List, Optional
 
 import torch
 
@@ -38,8 +38,14 @@ class MNISTSuperpixels(InMemoryDataset):
 
     url = 'https://data.pyg.org/datasets/MNISTSuperpixels.zip'
 
-    def __init__(self, root, train=True, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
