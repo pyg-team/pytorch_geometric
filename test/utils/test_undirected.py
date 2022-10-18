@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import is_undirected, to_undirected
 
 
@@ -17,6 +18,14 @@ def test_is_undirected():
     col = torch.tensor([1, 0, 2])
 
     assert not is_undirected(torch.stack([row, col], dim=0))
+
+    if is_full_test():
+
+        @torch.jit.script
+        def jit(edge_index, edge_attr) -> bool:
+            return is_undirected(edge_index, edge_attr)
+
+        assert not jit(torch.stack([row, col], dim=0))
 
 
 def test_to_undirected():
