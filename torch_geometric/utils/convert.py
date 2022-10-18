@@ -83,7 +83,7 @@ def to_networkx(data: torch_geometric.data.Data,
                 edge_attrs: Optional[Iterable[str]] = None,
                 graph_attrs: Optional[Iterable[str]] = None,
                 to_undirected: Optional[Union[bool, str]] = False,
-                remove_self_loops: Optional[bool] = False) -> Any:
+                remove_self_loops: bool = False, ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
