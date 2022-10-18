@@ -328,18 +328,16 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
+        input_nodes, input_time = index
 
-        # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
-        # sampling:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            output = self._sample(seed={self.input_type: index})
-            output.metadata = index.numel()
+            output = self._sample(seed={self.input_type: input_nodes},
+                                  seed_time_dict={self.input_type: input_time})
+            output.metadata = input_nodes.numel()
 
         elif issubclass(self.data_cls, Data):
-            output = self._sample(seed=index)
-            output.metadata = index.numel()
+            output = self._sample(seed=input_nodes, seed_time=input_time)
+            output.metadata = input_nodes.numel()
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -354,11 +352,9 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        row, col, edge_label, edge_label_time = index
+        edge_label_index = torch.stack([row, col], dim=0)
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
-        query = [torch.stack(s, dim=0) for s in zip(*index)]
-        edge_label_index = torch.stack(query[:2], dim=0)
-        edge_label = query[2]
-        edge_label_time = query[3] if len(query) == 4 else None
 
         out = add_negative_samples(edge_label_index, edge_label,
                                    edge_label_time, self.num_src_nodes,
