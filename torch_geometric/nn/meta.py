@@ -109,7 +109,7 @@ class MetaLayer(torch.nn.Module):
         self, x: Tensor, edge_index: Tensor,
         edge_attr: Optional[Tensor] = None, u: Optional[Tensor] = None,
         batch: Optional[Tensor] = None
-    ) -> Tuple[Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
+    ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
         """"""
         row = edge_index[0]
         col = edge_index[1]
