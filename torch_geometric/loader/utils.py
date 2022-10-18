@@ -25,8 +25,8 @@ class InputData:
         self.args = args
 
     def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
 
         outs = []
         for arg in self.args:
