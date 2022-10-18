@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
-import torch_geometric.data
+import torch_geometric
 
 from .num_nodes import maybe_num_nodes
 
