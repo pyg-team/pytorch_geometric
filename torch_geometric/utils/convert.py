@@ -121,7 +121,7 @@ def to_networkx(
     """
     import networkx as nx
 
-    G = nx.Graph() if to_undirected else nx.DiGraph
+    G = nx.Graph() if to_undirected else nx.DiGraph()
 
     G.add_nodes_from(range(data.num_nodes))
 
