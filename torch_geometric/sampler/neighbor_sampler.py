@@ -220,9 +220,7 @@ class NeighborSampler(BaseSampler):
         Note that the 'metadata' field of the output is not filled; it is the
         job of the caller to appropriately fill out this field for downstream
         loaders."""
-
-        # TODO(manan): remote backends only support heterogeneous graphs for
-        # now:
+        # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
@@ -328,18 +326,19 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
+        index, input_nodes, input_time = index
 
-        # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
-        # sampling:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            output = self._sample(seed={self.input_type: index})
-            output.metadata = index.numel()
+            seed_time_dict = None
+            if input_time is not None:
+                seed_time_dict = {self.input_type: input_time}
+            output = self._sample(seed={self.input_type: input_nodes},
+                                  seed_time_dict=seed_time_dict)
+            output.metadata = index
 
         elif issubclass(self.data_cls, Data):
-            output = self._sample(seed=index)
-            output.metadata = index.numel()
+            output = self._sample(seed=input_nodes, seed_time=input_time)
+            output.metadata = index
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -354,11 +353,9 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        index, row, col, edge_label, edge_label_time = index
+        edge_label_index = torch.stack([row, col], dim=0)
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
-        query = [torch.stack(s, dim=0) for s in zip(*index)]
-        edge_label_index = torch.stack(query[:2], dim=0)
-        edge_label = query[2]
-        edge_label_time = query[3] if len(query) == 4 else None
 
         out = add_negative_samples(edge_label_index, edge_label,
                                    edge_label_time, self.num_src_nodes,
@@ -424,7 +421,8 @@ class NeighborSampler(BaseSampler):
                 for key, batch in output.batch.items():
                     output.batch[key] = batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         elif issubclass(self.data_cls, Data):
             if self.disjoint_sampling:
@@ -444,7 +442,8 @@ class NeighborSampler(BaseSampler):
             if self.disjoint_sampling:
                 output.batch = output.batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

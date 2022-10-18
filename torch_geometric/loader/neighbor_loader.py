@@ -6,7 +6,7 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.node_loader import NodeLoader
 from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputNodes, NumNeighbors
+from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
 
 
 class NeighborLoader(NodeLoader):
@@ -122,6 +122,11 @@ class NeighborLoader(NodeLoader):
             If set to :obj:`None`, all nodes will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the node type and node indices. (default: :obj:`None`)
+        input_time (torch.Tensor, optional): Optional values to override the
+            timestamp for the input nodes given in :obj:`input_nodes`. If not
+            set, will use the timestamps in :obj:`time_attr` as default (if
+            present). The :obj:`time_attr` needs to be set for this to work.
+            (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
@@ -164,6 +169,7 @@ class NeighborLoader(NodeLoader):
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         input_nodes: InputNodes = None,
+        input_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
         temporal_strategy: str = 'uniform',
@@ -174,10 +180,13 @@ class NeighborLoader(NodeLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Get input type:
-        # TODO(manan): this computation is repeated twice, once here and once
-        # in NodeLoader:
+        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
         node_type, _ = get_input_nodes(data, input_nodes)
+
+        if input_time is not None and time_attr is None:
+            raise ValueError("Received conflicting 'input_time' and "
+                             "'time_attr' arguments: 'input_time' is set "
+                             "while 'time_attr' is not set.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -192,12 +201,11 @@ class NeighborLoader(NodeLoader):
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        # A NeighborLoader is simply a NodeLoader that uses the NeighborSampler
-        # sampling implementation:
         super().__init__(
             data=data,
             node_sampler=neighbor_sampler,
             input_nodes=input_nodes,
+            input_time=input_time,
             transform=transform,
             filter_per_worker=filter_per_worker,
             **kwargs,
