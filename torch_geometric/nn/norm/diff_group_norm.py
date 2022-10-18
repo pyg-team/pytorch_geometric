@@ -43,10 +43,10 @@ class DiffGroupNorm(torch.nn.Module):
             (default: :obj:`True`)
     """
     def __init__(self, in_channels: int, groups: int,
-                 lamda: Optional[float] = 0.01, eps: Optional[float] = 1e-5,
-                 momentum: Optional[float] = 0.1,
-                 affine: Optional[bool] = True,
-                 track_running_stats: Optional[bool] = True):
+                 lamda: float = 0.01, eps: float = 1e-5,
+                 momentum: float = 0.1,
+                 affine: bool = True,
+                 track_running_stats: bool = True, ):
         super().__init__()
 
         self.in_channels = in_channels
