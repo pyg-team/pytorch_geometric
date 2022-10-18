@@ -60,7 +60,7 @@ class HGTSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> HeteroSamplerOutput:
-        input_nodes, _ = index
+        index, input_nodes, _ = index
         input_node_dict = {self.input_type: input_nodes}
         sample_fn = torch.ops.torch_sparse.hgt_sample
         out = sample_fn(
@@ -77,7 +77,7 @@ class HGTSampler(BaseSampler):
             col=remap_keys(col, self.to_edge_type),
             edge=remap_keys(edge, self.to_edge_type),
             batch=batch,
-            metadata=input_nodes.size(0),
+            metadata=index,
         )
 
     def sample_from_edges(

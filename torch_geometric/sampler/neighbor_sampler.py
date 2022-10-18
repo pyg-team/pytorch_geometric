@@ -326,7 +326,7 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        input_nodes, input_time = index
+        index, input_nodes, input_time = index
 
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             seed_time_dict = None
@@ -334,11 +334,11 @@ class NeighborSampler(BaseSampler):
                 seed_time_dict = {self.input_type: input_time}
             output = self._sample(seed={self.input_type: input_nodes},
                                   seed_time_dict=seed_time_dict)
-            output.metadata = input_nodes.numel()
+            output.metadata = index
 
         elif issubclass(self.data_cls, Data):
             output = self._sample(seed=input_nodes, seed_time=input_time)
-            output.metadata = input_nodes.numel()
+            output.metadata = index
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -353,7 +353,7 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        row, col, edge_label, edge_label_time = index
+        index, row, col, edge_label, edge_label_time = index
         edge_label_index = torch.stack([row, col], dim=0)
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
 
@@ -421,7 +421,8 @@ class NeighborSampler(BaseSampler):
                 for key, batch in output.batch.items():
                     output.batch[key] = batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         elif issubclass(self.data_cls, Data):
             if self.disjoint_sampling:
@@ -441,7 +442,8 @@ class NeighborSampler(BaseSampler):
             if self.disjoint_sampling:
                 output.batch = output.batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

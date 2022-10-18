@@ -7,16 +7,18 @@ from torch import Tensor
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 # An input to a node-based sampler consists of two tensors:
+#  * The example indices
 #  * The node indices
 #  * The timestamps of the given node indices (optional)
-NodeSamplerInput = Tuple[Tensor, OptTensor]
+NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 
 # An input to an edge-based sampler consists of four tensors:
+#   * The example indices
 #   * The row of the edge index in COO format
 #   * The column of the edge index in COO format
 #   * The labels of the edges
 #   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, OptTensor]
+EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, Tensor, OptTensor]
 
 
 # A sampler output contains the following information.

@@ -28,7 +28,7 @@ class InputData:
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
-        outs = []
+        outs = [index]
         for arg in self.args:
             outs.append(arg[index] if arg is not None else None)
         return tuple(outs)

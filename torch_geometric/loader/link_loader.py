@@ -135,9 +135,10 @@ class LinkLoader(torch.utils.data.DataLoader):
                                self.link_sampler.edge_permutation)
 
             data.batch = out.batch
-            data.edge_label_index = out.metadata[0]
-            data.edge_label = out.metadata[1]
-            data.edge_label_time = out.metadata[2]
+            data.input_links = out.metadata[0]
+            data.edge_label_index = out.metadata[1]
+            data.edge_label = out.metadata[2]
+            data.edge_label_time = out.metadata[3]
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -150,9 +151,10 @@ class LinkLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.edge_type].edge_label_index = out.metadata[0]
-            data[self.edge_type].edge_label = out.metadata[1]
-            data[self.edge_type].edge_label_time = out.metadata[2]
+            data[self.edge_type].input_links = out.metadata[0]
+            data[self.edge_type].edge_label_index = out.metadata[1]
+            data[self.edge_type].edge_label = out.metadata[2]
+            data[self.edge_type].edge_label_time = out.metadata[3]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
