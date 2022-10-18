@@ -79,7 +79,7 @@ def from_scipy_sparse_matrix(
 
 
 def to_networkx(
-    data: torch_geometric.data.Data,
+    data: 'torch_geometric.data.Data',
     node_attrs: Optional[Iterable[str]] = None,
     edge_attrs: Optional[Iterable[str]] = None,
     graph_attrs: Optional[Iterable[str]] = None,
@@ -170,7 +170,7 @@ def from_networkx(
     G: Any,
     group_node_attrs: Optional[Union[List[str], all]] = None,
     group_edge_attrs: Optional[Union[List[str], all]] = None,
-) -> torch_geometric.data.Data:
+) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
