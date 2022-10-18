@@ -84,6 +84,12 @@ class LinkLoader(torch.utils.data.DataLoader):
         filter_per_worker: bool = False,
         **kwargs,
     ):
+        # Remove for PyTorch Lightning:
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
+        if 'collate_fn' in kwargs:
+            del kwargs['collate_fn']
+
         # Get edge type (or `None` for homogeneous graphs):
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)

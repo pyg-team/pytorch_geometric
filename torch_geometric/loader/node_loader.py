@@ -74,6 +74,12 @@ class NodeLoader(torch.utils.data.DataLoader):
         filter_per_worker: bool = False,
         **kwargs,
     ):
+        # Remove for PyTorch Lightning:
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
+        if 'collate_fn' in kwargs:
+            del kwargs['collate_fn']
+
         # Get node type (or `None` for homogeneous graphs):
         node_type, input_nodes = get_input_nodes(data, input_nodes)
 
