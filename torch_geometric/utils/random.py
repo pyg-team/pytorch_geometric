@@ -1,5 +1,5 @@
 import warnings
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import numpy as np
 import torch
@@ -54,8 +54,7 @@ def erdos_renyi_graph(num_nodes: int, edge_prob: float,
 def stochastic_blockmodel_graph(
         block_sizes: Union[List[int], torch.LongTensor],
         edge_probs: Union[List[List[float]], torch.FloatTensor],
-        directed: Optional[bool] = False
-) -> torch.Tensor:
+        directed: Optional[bool] = False) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a stochastic blockmodel graph.
 
     Args:

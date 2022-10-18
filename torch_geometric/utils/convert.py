@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Optional, Tuple, Union, Iterable, Any
+from typing import Any, Iterable, List, Optional, Tuple, Union
 
 import scipy.sparse
 import torch
@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
 import torch_geometric.data
+
 from .num_nodes import maybe_num_nodes
 
 
@@ -77,13 +78,12 @@ def from_scipy_sparse_matrix(
     return edge_index, edge_weight
 
 
-def to_networkx(
-        data: torch_geometric.data.Data,
-        node_attrs: Optional[Iterable[str]] = None,
-        edge_attrs: Optional[Iterable[str]] = None,
-        graph_attrs: Optional[Iterable[str]] = None,
-        to_undirected: Optional[Union[bool, str]] = False,
-        remove_self_loops: Optional[bool] = False) -> Any:
+def to_networkx(data: torch_geometric.data.Data,
+                node_attrs: Optional[Iterable[str]] = None,
+                edge_attrs: Optional[Iterable[str]] = None,
+                graph_attrs: Optional[Iterable[str]] = None,
+                to_undirected: Optional[Union[bool, str]] = False,
+                remove_self_loops: Optional[bool] = False) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
@@ -164,9 +164,10 @@ def to_networkx(
     return G
 
 
-def from_networkx(G: Any, group_node_attrs: Optional[Union[List[str], all]] = None,
-                  group_edge_attrs: Optional[Union[List[str], all]] = None
-                  ) -> torch_geometric.data.Data:
+def from_networkx(
+    G: Any, group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None
+) -> torch_geometric.data.Data:
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
