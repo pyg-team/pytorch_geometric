@@ -92,7 +92,7 @@ class MetaLayer(torch.nn.Module):
     """
     def __init__(self, edge_model: Optional[torch.nn.Module] = None,
                  node_model: Optional[torch.nn.Module] = None,
-                 global_model: Optional[torch.nn.Module] = None):
+                 global_model: Optional[torch.nn.Module] = None, ):
         super().__init__()
         self.edge_model = edge_model
         self.node_model = node_model
