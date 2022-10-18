@@ -108,7 +108,7 @@ class MetaLayer(torch.nn.Module):
     def forward(
         self, x: Tensor, edge_index: Tensor,
         edge_attr: Optional[Tensor] = None, u: Optional[Tensor] = None,
-        batch: Optional[Tensor] = None
+        batch: Optional[Tensor] = None, 
     ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
         """"""
         row = edge_index[0]
