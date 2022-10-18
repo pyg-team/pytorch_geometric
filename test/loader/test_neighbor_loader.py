@@ -50,7 +50,7 @@ def test_homogeneous_neighbor_loader(directed):
         assert isinstance(batch, Data)
         assert len(batch) == 5
         assert batch.x.size(0) <= 100
-        assert batch.input_nodes.numel() == batch.batch_size == 20
+        assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
@@ -119,7 +119,7 @@ def test_heterogeneous_neighbor_loader(directed):
 
         assert len(batch['paper']) == 3
         assert batch['paper'].x.size(0) <= 100
-        assert batch['paper'].input_nodes.numel() == batch_size
+        assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 

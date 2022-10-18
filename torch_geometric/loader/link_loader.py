@@ -135,7 +135,7 @@ class LinkLoader(torch.utils.data.DataLoader):
                                self.link_sampler.edge_permutation)
 
             data.batch = out.batch
-            data.input_links = out.metadata[0]
+            data.input_id = out.metadata[0]
             data.edge_label_index = out.metadata[1]
             data.edge_label = out.metadata[2]
             data.edge_label_time = out.metadata[3]
@@ -151,7 +151,7 @@ class LinkLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.edge_type].input_links = out.metadata[0]
+            data[self.edge_type].input_id = out.metadata[0]
             data[self.edge_type].edge_label_index = out.metadata[1]
             data[self.edge_type].edge_label = out.metadata[2]
             data[self.edge_type].edge_label_time = out.metadata[3]
