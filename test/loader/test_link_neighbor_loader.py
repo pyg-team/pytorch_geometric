@@ -54,7 +54,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
         assert len(batch) == 6
         assert batch.x.size(0) <= 100
         assert batch.x.min() >= 0 and batch.x.max() < 100
-        assert batch.input_links.numel() == 20
+        assert batch.input_id.numel() == 20
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
         assert batch.edge_attr.min() >= 0
@@ -313,7 +313,7 @@ def test_homogeneous_link_neighbor_loader_no_edges():
     for batch in loader:
         assert isinstance(batch, Data)
         assert len(batch) == 4
-        assert batch.input_links.numel() == 20
+        assert batch.input_id.numel() == 20
         assert batch.num_nodes <= 40
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
@@ -331,7 +331,7 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
         assert isinstance(batch, HeteroData)
         assert len(batch) == 4
         assert batch['paper'].num_nodes <= 40
-        assert batch['paper', 'paper'].input_links.numel() == 20
+        assert batch['paper', 'paper'].input_id.numel() == 20
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
             'paper', 'paper'].edge_label_index.unique().numel()

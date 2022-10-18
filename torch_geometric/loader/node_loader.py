@@ -116,7 +116,7 @@ class NodeLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
             data.batch = out.batch
-            data.input_nodes = out.metadata
+            data.input_id = out.metadata
             data.batch_size = out.metadata.size(0)
 
         elif isinstance(out, HeteroSamplerOutput):
@@ -130,7 +130,7 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.node_type].input_nodes = out.metadata
+            data[self.node_type].input_id = out.metadata
             data[self.node_type].batch_size = out.metadata.size(0)
 
         else:
