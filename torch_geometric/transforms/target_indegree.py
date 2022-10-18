@@ -1,5 +1,8 @@
+from typing import Optional
+
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import degree
@@ -20,12 +23,17 @@ class TargetIndegree(BaseTransform):
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
     """
-    def __init__(self, norm=True, max_value=None, cat=True):
+    def __init__(
+        self,
+        norm: bool = True,
+        max_value: Optional[float] = None,
+        cat: bool = True,
+    ):
         self.norm = norm
         self.max = max_value
         self.cat = cat
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         col, pseudo = data.edge_index[1], data.edge_attr
 
         deg = degree(col, data.num_nodes)
