@@ -34,7 +34,7 @@ class GATEConv(MessagePassing):
 
         self.reset_parameters()
 
-    def reset_parameters(self)
+    def reset_parameters(self):
         glorot(self.att_l)
         glorot(self.att_r)
         glorot(self.lin1.weight)
