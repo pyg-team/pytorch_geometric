@@ -1,7 +1,7 @@
 import copy
 import math
 from collections.abc import Sequence
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -18,6 +18,20 @@ from torch_geometric.typing import (
     InputNodes,
     OptTensor,
 )
+
+
+class InputData:
+    def __init__(self, *args):
+        self.args = args
+
+    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        outs = [index]
+        for arg in self.args:
+            outs.append(arg[index] if arg is not None else None)
+        return tuple(outs)
 
 
 def index_select(value: FeatureTensorType, index: Tensor,
@@ -192,18 +206,20 @@ def get_input_nodes(
     def to_index(tensor):
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
             return tensor.nonzero(as_tuple=False).view(-1)
+        if not isinstance(tensor, Tensor):
+            return torch.tensor(tensor, dtype=torch.long)
         return tensor
 
     if isinstance(data, Data):
         if input_nodes is None:
-            return None, range(data.num_nodes)
+            return None, torch.arange(data.num_nodes)
         return None, to_index(input_nodes)
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
 
         if isinstance(input_nodes, str):
-            return input_nodes, range(data[input_nodes].num_nodes)
+            return input_nodes, torch.arange(data[input_nodes].num_nodes)
 
         assert isinstance(input_nodes, (list, tuple))
         assert len(input_nodes) == 2
@@ -211,7 +227,7 @@ def get_input_nodes(
 
         node_type, input_nodes = input_nodes
         if input_nodes is None:
-            return node_type, range(data[node_type].num_nodes)
+            return node_type, torch.arange(data[node_type].num_nodes)
         return node_type, to_index(input_nodes)
 
     else:  # Tuple[FeatureStore, GraphStore]
@@ -222,7 +238,7 @@ def get_input_nodes(
             return None, to_index(input_nodes)
 
         if isinstance(input_nodes, str):
-            return input_nodes, range(
+            return input_nodes, torch.arange(
                 remote_backend_utils.num_nodes(feature_store, graph_store,
                                                input_nodes))
 
@@ -232,7 +248,7 @@ def get_input_nodes(
 
             node_type, input_nodes = input_nodes
             if input_nodes is None:
-                return node_type, range(
+                return node_type, torch.arange(
                     remote_backend_utils.num_nodes(feature_store, graph_store,
                                                    input_nodes))
             return node_type, to_index(input_nodes)

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, Tuple, Union
+from typing import Any, Callable, Iterator, List, Tuple, Union
 
 import torch
 
@@ -7,6 +7,7 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
+    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -89,53 +90,57 @@ class LinkLoader(torch.utils.data.DataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        self.data = data
-
-        # Initialize sampler with keyword arguments:
-        # NOTE sampler is an attribute of 'DataLoader', so we use link_sampler
-        # here:
-        self.link_sampler = link_sampler
-
-        # Store additional arguments:
-        self.edge_label = edge_label
-        self.edge_label_index = edge_label_index
-        self.edge_label_time = edge_label_time
-        self.transform = transform
-        self.filter_per_worker = filter_per_worker
-        self.neg_sampling_ratio = neg_sampling_ratio
-
-        # Get input type, or None for homogeneous graphs:
+        # Get edge type (or `None` for homogeneous graphs):
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
         if edge_label is None:
             edge_label = torch.zeros(edge_label_index.size(1),
                                      device=edge_label_index.device)
-        self.input_type = edge_type
 
-        super().__init__(
-            Dataset(edge_label_index, edge_label, edge_label_time),
-            collate_fn=self.collate_fn,
-            **kwargs,
+        self.data = data
+        self.edge_type = edge_type
+        self.link_sampler = link_sampler
+        self.input_data = InputData(edge_label_index[0], edge_label_index[1],
+                                    edge_label, edge_label_time)
+        self.neg_sampling_ratio = neg_sampling_ratio
+        self.transform = transform
+        self.filter_per_worker = filter_per_worker
+
+        iterator = range(edge_label_index.size(1))
+        super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
+
+    def collate_fn(self, index: List[int]) -> Any:
+        r"""Samples a subgraph from a batch of input nodes."""
+        input_data: EdgeSamplerInput = self.input_data[index]
+        out = self.link_sampler.sample_from_edges(
+            input_data,
+            negative_sampling_ratio=self.neg_sampling_ratio,
         )
+
+        if self.filter_per_worker:  # Execute `filter_fn` in the worker process
+            out = self.filter_fn(out)
+
+        return out
 
     def filter_fn(
         self,
         out: Union[SamplerOutput, HeteroSamplerOutput],
     ) -> Union[Data, HeteroData]:
         r"""Joins the sampled nodes with their corresponding features,
-        returning the resulting (Data or HeteroData) object to be used
-        downstream."""
+        returning the resulting :class:`~torch_geometric.data.Data` or
+        :class:`~torch_geometric.data.HeteroData` object to be used downstream.
+        """
         if isinstance(out, SamplerOutput):
-            edge_label_index, edge_label, edge_label_time = out.metadata
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
+
             data.batch = out.batch
-            data.edge_label_index = edge_label_index
-            data.edge_label = edge_label
-            data.edge_label_time = edge_label_time
+            data.input_links = out.metadata[0]
+            data.edge_label_index = out.metadata[1]
+            data.edge_label = out.metadata[2]
+            data.edge_label_time = out.metadata[3]
 
         elif isinstance(out, HeteroSamplerOutput):
-            edge_label_index, edge_label, edge_label_time = out.metadata
             if isinstance(self.data, HeteroData):
                 data = filter_hetero_data(self.data, out.node, out.row,
                                           out.col, out.edge,
@@ -144,13 +149,12 @@ class LinkLoader(torch.utils.data.DataLoader):
                 data = filter_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge)
 
-            edge_type = self.input_type
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[edge_type].edge_label_index = edge_label_index
-            data[edge_type].edge_label = edge_label
-            if edge_label_time is not None:
-                data[edge_type].edge_label_time = edge_label_time
+            data[self.edge_type].input_links = out.metadata[0]
+            data[self.edge_type].edge_label_index = out.metadata[1]
+            data[self.edge_type].edge_label = out.metadata[2]
+            data[self.edge_type].edge_label_time = out.metadata[3]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -158,61 +162,12 @@ class LinkLoader(torch.utils.data.DataLoader):
 
         return data if self.transform is None else self.transform(data)
 
-    def collate_fn(self, index: EdgeSamplerInput) -> Any:
-        r"""Samples a subgraph from a batch of input nodes."""
-        out = self.link_sampler.sample_from_edges(
-            index,
-            negative_sampling_ratio=self.neg_sampling_ratio,
-        )
-        if self.filter_per_worker:
-            # We execute `filter_fn` in the worker process.
-            out = self.filter_fn(out)
-        return out
-
     def _get_iterator(self) -> Iterator:
         if self.filter_per_worker:
             return super()._get_iterator()
-        # We execute `filter_fn` in the main process.
+
+        # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
-
-
-###############################################################################
-
-
-class Dataset(torch.utils.data.Dataset):
-    def __init__(
-        self,
-        edge_label_index: torch.Tensor,
-        edge_label: torch.Tensor,
-        edge_label_time: OptTensor = None,
-    ):
-        # NOTE see documentation of LinkLoader for details on these three
-        # input parameters:
-        self.edge_label_index = edge_label_index
-        self.edge_label = edge_label
-        self.edge_label_time = edge_label_time
-
-    def __getitem__(
-        self,
-        idx: int,
-    ) -> Union[Tuple[torch.Tensor, torch.Tensor, torch.Tensor], Tuple[
-            torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]]:
-        if self.edge_label_time is None:
-            return (
-                self.edge_label_index[0, idx],
-                self.edge_label_index[1, idx],
-                self.edge_label[idx],
-            )
-        else:
-            return (
-                self.edge_label_index[0, idx],
-                self.edge_label_index[1, idx],
-                self.edge_label[idx],
-                self.edge_label_time[idx],
-            )
-
-    def __len__(self) -> int:
-        return self.edge_label_index.size(1)
