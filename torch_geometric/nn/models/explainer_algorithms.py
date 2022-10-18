@@ -58,7 +58,7 @@ class ExplainerAlgorithm(torch.nn.Module):
 
     # TODO: improve on just passing a general dict
     @abstractmethod
-    def support(self, *args, **kwargs) -> bool:
+    def supports(self, *args, **kwargs) -> bool:
         r"""Check if the explainer supports the user-defined settings.
 
         Returns true if the explainer supports the settings.
