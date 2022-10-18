@@ -6,7 +6,7 @@ from torch_geometric.nn.models.explainer_algorithms import ExplainerAlgorithm
 
 
 class ExplainerSetter(torch.nn.Module):
-    r"""A user configuration class for the instance level-explanation
+    r"""A user configuration class for the instance-level explanation
     of Graph Neural Networks, *e.g.* :class:`~torch_geometric.nn.GCN`.
 
     Args:
