@@ -10,6 +10,9 @@ if [ "${CUDA_VERSION}" = "cpu" ]; then
   export CONDA_CUDATOOLKIT_CONSTRAINT="cpuonly  # [not osx]"
 else
   case $CUDA_VERSION in
+    cu116)
+      export CONDA_CUDATOOLKIT_CONSTRAINT="cudatoolkit==11.6.*"
+      ;;
     cu115)
       export CONDA_CUDATOOLKIT_CONSTRAINT="cudatoolkit==11.5.*"
       ;;
@@ -36,4 +39,8 @@ echo "PyTorch $TORCH_VERSION+$CUDA_VERSION"
 echo "- $CONDA_PYTORCH_CONSTRAINT"
 echo "- $CONDA_CUDATOOLKIT_CONSTRAINT"
 
-conda build . -c pytorch -c rusty1s -c default -c nvidia --output-folder "$HOME/conda-bld"
+if [ "${CUDA_VERSION}" = "cu116" ]; then
+  conda build . -c pytorch -c rusty1s -c default -c nvidia -c conda-forge --output-folder "$HOME/conda-bld"
+else
+  conda build . -c pytorch -c rusty1s -c default -c nvidia --output-folder "$HOME/conda-bld"
+fi

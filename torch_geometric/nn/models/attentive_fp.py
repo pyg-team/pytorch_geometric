@@ -13,8 +13,13 @@ from ..inits import glorot, zeros
 
 
 class GATEConv(MessagePassing):
-    def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
-                 dropout: float = 0.0):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        edge_dim: int,
+        dropout: float = 0.0,
+    ):
         super().__init__(aggr='add', node_dim=0)
 
         self.dropout = dropout
@@ -73,9 +78,16 @@ class AttentiveFP(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
 
     """
-    def __init__(self, in_channels: int, hidden_channels: int,
-                 out_channels: int, edge_dim: int, num_layers: int,
-                 num_timesteps: int, dropout: float = 0.0):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        edge_dim: int,
+        num_layers: int,
+        num_timesteps: int,
+        dropout: float = 0.0,
+    ):
         super().__init__()
 
         self.num_layers = num_layers
@@ -103,7 +115,7 @@ class AttentiveFP(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.lin1.reset_parameters()
         for conv, gru in zip(self.atom_convs, self.atom_grus):
             conv.reset_parameters()
@@ -112,7 +124,8 @@ class AttentiveFP(torch.nn.Module):
         self.mol_gru.reset_parameters()
         self.lin2.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, x: Tensor, edge_index: Tensor, edge_attr: Tensor,
+                batch: Tensor) -> Tensor:
         """"""
         # Atom Embedding:
         x = F.leaky_relu_(self.lin1(x))

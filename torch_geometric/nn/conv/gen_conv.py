@@ -11,6 +11,7 @@ from torch.nn import (
 )
 from torch_sparse import SparseTensor
 
+from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
@@ -67,9 +68,10 @@ class GENConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
-            :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`, :obj:`max`).
-            (default: :obj:`"softmax"`)
+        aggr (string or Aggregation, optional): The aggregation scheme to use.
+            Any aggregation of :obj:`torch_geometric.nn.aggr` can be used,
+            (:obj:`"softmax"`, :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`,
+            :obj:`max`). (default: :obj:`"softmax"`)
         t (float, optional): Initial inverse temperature for softmax
             aggregation. (default: :obj:`1.0`)
         learn_t (bool, optional): If set to :obj:`True`, will learn the value
@@ -88,15 +90,24 @@ class GENConv(MessagePassing):
             :obj:`"layer"`, :obj:`"instance"`) (default: :obj:`batch`)
         num_layers (int, optional): The number of MLP layers.
             (default: :obj:`2`)
+        expansion (int, optional): The expansion factor of hidden channels in
+            MLP layers. (default: :obj:`2`)
         eps (float, optional): The epsilon value of the message construction
             function. (default: :obj:`1e-7`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
+        edge_dim (int, optional): Edge feature dimensionality. If set to
+            :obj:`None`, Edge feature dimensionality is expected to match
+            the `out_channels`. Other-wise, edge features are linearly
+            transformed to match `out_channels` of node feature dimensionality.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
 
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or
-          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in})`
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
           if bipartite,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge attributes :math:`(|\mathcal{E}|, D)` *(optional)*
@@ -107,7 +118,7 @@ class GENConv(MessagePassing):
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
-        aggr: str = 'softmax',
+        aggr: Optional[Union[str, List[str], Aggregation]] = 'softmax',
         t: float = 1.0,
         learn_t: bool = False,
         p: float = 1.0,
@@ -116,7 +127,10 @@ class GENConv(MessagePassing):
         learn_msg_scale: bool = False,
         norm: str = 'batch',
         num_layers: int = 2,
+        expansion: int = 2,
         eps: float = 1e-7,
+        bias: bool = False,
+        edge_dim: Optional[int] = None,
         **kwargs,
     ):
 
@@ -125,16 +139,15 @@ class GENConv(MessagePassing):
         aggr = 'softmax' if aggr == 'softmax_sg' else aggr
         aggr = 'powermean' if aggr == 'power' else aggr
 
-        aggr_kwargs = kwargs.get('aggr_kwargs', {})
-
         # Override args of aggregator if `aggr_kwargs` is specified
-        if aggr_kwargs == {}:
+        if 'aggr_kwargs' not in kwargs:
             if aggr == 'softmax':
-                aggr_kwargs = dict(t=t, learn=learn_t, semi_grad=semi_grad)
+                kwargs['aggr_kwargs'] = dict(t=t, learn=learn_t,
+                                             semi_grad=semi_grad)
             elif aggr == 'powermean':
-                aggr_kwargs = dict(p=p, learn=learn_p)
+                kwargs['aggr_kwargs'] = dict(p=p, learn=learn_p)
 
-        super().__init__(aggr=aggr, aggr_kwargs=aggr_kwargs, **kwargs)
+        super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -143,14 +156,29 @@ class GENConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        channels = [in_channels[0]]
-        for i in range(num_layers - 1):
-            channels.append(out_channels * 2)
-        channels.append(out_channels)
-        self.mlp = MLP(channels, norm=norm)
+        if in_channels[0] != out_channels:
+            self.lin_src = Linear(in_channels[0], out_channels, bias=bias)
 
-        if in_channels[0] != in_channels[1] and in_channels[0] != -1:
-            self.lin_r = Linear(in_channels[1], in_channels[0], bias=True)
+        if edge_dim is not None and edge_dim != out_channels:
+            self.lin_edge = Linear(edge_dim, out_channels, bias=bias)
+
+        if isinstance(self.aggr_module, MultiAggregation):
+            aggr_out_channels = self.aggr_module.get_out_channels(out_channels)
+        else:
+            aggr_out_channels = out_channels
+
+        if aggr_out_channels != out_channels:
+            self.lin_aggr_out = Linear(aggr_out_channels, out_channels,
+                                       bias=bias)
+
+        if in_channels[1] != out_channels:
+            self.lin_dst = Linear(in_channels[1], out_channels, bias=bias)
+
+        channels = [out_channels]
+        for i in range(num_layers - 1):
+            channels.append(out_channels * expansion)
+        channels.append(out_channels)
+        self.mlp = MLP(channels, norm=norm, bias=bias)
 
         if msg_norm:
             self.msg_norm = MessageNorm(learn_msg_scale)
@@ -160,8 +188,14 @@ class GENConv(MessagePassing):
         self.aggr_module.reset_parameters()
         if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
-        if hasattr(self, 'lin_r'):
-            self.proj_r.reset_parameters()
+        if hasattr(self, 'lin_src'):
+            self.lin_src.reset_parameters()
+        if hasattr(self, 'lin_edge'):
+            self.lin_edge.reset_parameters()
+        if hasattr(self, 'lin_aggr_out'):
+            self.lin_aggr_out.reset_parameters()
+        if hasattr(self, 'lin_dst'):
+            self.lin_dst.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
@@ -169,26 +203,33 @@ class GENConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        # Node and edge feature dimensionalites need to match.
-        if isinstance(edge_index, Tensor):
-            if edge_attr is not None:
-                assert x[0].size(-1) == edge_attr.size(-1)
-        elif isinstance(edge_index, SparseTensor):
+        if hasattr(self, 'lin_src'):
+            x = (self.lin_src(x[0]), x[1])
+
+        if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
-            if edge_attr is not None:
-                assert x[0].size(-1) == edge_attr.size(-1)
+
+        if edge_attr is not None and hasattr(self, 'lin_edge'):
+            edge_attr = self.lin_edge(edge_attr)
+
+        # Node and edge feature dimensionalites need to match.
+        if edge_attr is not None:
+            assert x[0].size(-1) == edge_attr.size(-1)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
+        if hasattr(self, 'lin_aggr_out'):
+            out = self.lin_aggr_out(out)
+
         if hasattr(self, 'msg_norm'):
             out = self.msg_norm(x[1] if x[1] is not None else x[0], out)
 
-        x_r = x[1]
-        if x_r is not None:
-            if hasattr(self, 'lin_r'):
-                x_r = self.lin_r(x_r)
-            out = out + x_r
+        x_dst = x[1]
+        if x_dst is not None:
+            if hasattr(self, 'lin_dst'):
+                x_dst = self.lin_dst(x_dst)
+            out = out + x_dst
 
         return self.mlp(out)
 
