@@ -167,8 +167,9 @@ def to_networkx(
 
 
 def from_networkx(
-    G: Any, group_node_attrs: Optional[Union[List[str], all]] = None,
-    group_edge_attrs: Optional[Union[List[str], all]] = None, 
+    G: Any,
+    group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None,
 ) -> torch_geometric.data.Data:
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.

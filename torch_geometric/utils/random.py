@@ -7,8 +7,11 @@ import torch
 from torch_geometric.utils import remove_self_loops, to_undirected
 
 
-def erdos_renyi_graph(num_nodes: int, edge_prob: float,
-                      directed: bool = False, ) -> torch.Tensor:
+def erdos_renyi_graph(
+    num_nodes: int,
+    edge_prob: float,
+    directed: bool = False,
+) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a random Erdos-Renyi graph.
 
     Args:
@@ -52,9 +55,10 @@ def erdos_renyi_graph(num_nodes: int, edge_prob: float,
 
 
 def stochastic_blockmodel_graph(
-        block_sizes: Union[List[int], torch.Tensor],
-        edge_probs: Union[List[List[float]], torch.Tensor],
-        directed: bool = False, ) -> torch.Tensor:
+    block_sizes: Union[List[int], torch.Tensor],
+    edge_probs: Union[List[List[float]], torch.Tensor],
+    directed: bool = False,
+) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a stochastic blockmodel graph.
 
     Args:
