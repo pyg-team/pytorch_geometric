@@ -11,7 +11,8 @@ def test_dense_mincut_pool():
     s = torch.randn((batch_size, num_nodes, num_clusters))
     mask = torch.randint(0, 2, (batch_size, num_nodes), dtype=torch.bool)
 
-    x_out, adj_out, mincut_loss, ortho_loss = dense_mincut_pool(x, adj, s, mask)
+    x_out, adj_out, mincut_loss, ortho_loss = dense_mincut_pool(
+        x, adj, s, mask)
     assert x_out.size() == (2, 10, 16)
     assert adj_out.size() == (2, 10, 10)
     assert -1 <= mincut_loss <= 0
