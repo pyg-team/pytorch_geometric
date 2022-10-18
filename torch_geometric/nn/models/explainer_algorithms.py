@@ -46,7 +46,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         target: torch.Tensor,
         model: torch.nn.Module,
     ) -> Tuple[torch.Tensor, ...]:
-        r"""This method compute the explanation of the GNN and return
+        r"""This method computes the explanation of the GNN and return
         a list of masks.
 
         Args:
