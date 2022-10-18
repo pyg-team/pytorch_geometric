@@ -498,7 +498,7 @@ def test_pyg_lib_heterogeneous_neighbor_loader():
         'author__to__paper': [-1, -1],
     }
 
-    sample = torch.ops.pyg.hetero_neighbor_sample_cpu
+    sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, None, None, True, False, True, False,
                   "uniform", True)

@@ -206,6 +206,8 @@ def get_input_nodes(
     def to_index(tensor):
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
             return tensor.nonzero(as_tuple=False).view(-1)
+        if not isinstance(tensor, Tensor):
+            return torch.tensor(tensor, dtype=torch.long)
         return tensor
 
     if isinstance(data, Data):

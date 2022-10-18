@@ -123,7 +123,7 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.input_type].batch_size = out.metadata
+            data[self.node_type].batch_size = out.metadata
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

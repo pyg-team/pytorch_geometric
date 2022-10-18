@@ -220,9 +220,7 @@ class NeighborSampler(BaseSampler):
         Note that the 'metadata' field of the output is not filled; it is the
         job of the caller to appropriately fill out this field for downstream
         loaders."""
-
-        # TODO(manan): remote backends only support heterogeneous graphs for
-        # now:
+        # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
                 # TODO (matthias) Add `disjoint` option to `NeighborSampler`
@@ -331,8 +329,11 @@ class NeighborSampler(BaseSampler):
         input_nodes, input_time = index
 
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
+            seed_time_dict = None
+            if input_time is not None:
+                seed_time_dict = {self.input_type: input_time}
             output = self._sample(seed={self.input_type: input_nodes},
-                                  seed_time_dict={self.input_type: input_time})
+                                  seed_time_dict=seed_time_dict)
             output.metadata = input_nodes.numel()
 
         elif issubclass(self.data_cls, Data):

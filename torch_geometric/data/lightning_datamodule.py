@@ -8,13 +8,9 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.link_neighbor_loader import (
-    LinkNeighborLoader,
-    get_edge_label_index,
-)
-from torch_geometric.loader.utils import get_input_nodes
+from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
@@ -311,7 +307,6 @@ class LightningNodeData(LightningDataModule):
                 directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
                 time_attr=kwargs.get('time_attr', None),
-                seed_time=kwargs.get('seed_time', None),
                 is_sorted=kwargs.get('is_sorted', False),
                 share_memory=num_workers > 0,
             )
