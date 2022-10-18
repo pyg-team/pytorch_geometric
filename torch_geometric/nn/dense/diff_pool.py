@@ -1,9 +1,13 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 
-EPS = 1e-15
 
-
-def dense_diff_pool(x, adj, s, mask=None, normalize=True):
+def dense_diff_pool(
+        x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None,
+        normalize: Optional[bool] = True
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The differentiable pooling operator from the `"Hierarchical Graph
     Representation Learning with Differentiable Pooling"
     <https://arxiv.org/abs/1806.08804>`_ paper
@@ -72,6 +76,8 @@ def dense_diff_pool(x, adj, s, mask=None, normalize=True):
     if normalize is True:
         link_loss = link_loss / adj.numel()
 
+    # Moved EPS from global to local variable for TorchScript support
+    EPS = 1e-15
     ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
 
     return out, out_adj, link_loss, ent_loss
