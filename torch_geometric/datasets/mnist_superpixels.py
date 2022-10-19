@@ -34,6 +34,22 @@ class MNISTSuperpixels(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 70,000
+              - 75
+              - ~1,393.0
+              - 1
+              - 10
     """
 
     url = 'https://data.pyg.org/datasets/MNISTSuperpixels.zip'
