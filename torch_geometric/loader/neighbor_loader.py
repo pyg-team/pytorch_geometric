@@ -160,6 +160,8 @@ class NeighborLoader(NodeLoader):
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will 
+            create its own disjoint subgraph. 
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -178,6 +180,7 @@ class NeighborLoader(NodeLoader):
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
+        disjoint: bool = False,
         **kwargs,
     ):
         # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
@@ -199,6 +202,7 @@ class NeighborLoader(NodeLoader):
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
+                disjoint=disjoint,
             )
 
         super().__init__(

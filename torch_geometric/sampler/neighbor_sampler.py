@@ -41,6 +41,7 @@ class NeighborSampler(BaseSampler):
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
+        disjoint: bool = False,
     ):
         self.data_cls = data.__class__ if isinstance(
             data, (Data, HeteroData)) else 'custom'
@@ -50,6 +51,7 @@ class NeighborSampler(BaseSampler):
         self.temporal_strategy = temporal_strategy
         self.node_time = self.node_time_dict = None
         self.input_type = input_type
+        self.disjoint = disjoint
 
         # Set the number of source and destination nodes if we can, otherwise
         # ignore:
@@ -206,7 +208,8 @@ class NeighborSampler(BaseSampler):
         """Returns :obj:`True` if nodes have a time attribute. If :obj:`True`,
         each seed node will create its own disjoint subgraph."""
         return (getattr(self, 'node_time') is not None
-                or getattr(self, 'node_time_dict') is not None)
+                or getattr(self, 'node_time_dict') is not None
+                or getattr(self, 'disjoint'))
 
     def _sample(
         self,
