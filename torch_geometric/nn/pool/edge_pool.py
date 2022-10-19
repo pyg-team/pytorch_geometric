@@ -77,18 +77,27 @@ class EdgePooling(torch.nn.Module):
         self.lin.reset_parameters()
 
     @staticmethod
-    def compute_edge_score_softmax(raw_edge_score: Tensor, edge_index: Tensor,
-                                   num_nodes: int) -> Tensor:
+    def compute_edge_score_softmax(
+        raw_edge_score: Tensor,
+        edge_index: Tensor,
+        num_nodes: int,
+    ) -> Tensor:
         return softmax(raw_edge_score, edge_index[1], num_nodes=num_nodes)
 
     @staticmethod
-    def compute_edge_score_tanh(raw_edge_score: Tensor, edge_index: Tensor,
-                                num_nodes: int) -> Tensor:
+    def compute_edge_score_tanh(
+        raw_edge_score: Tensor,
+        edge_index: Optional[Tensor] = None,
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         return torch.tanh(raw_edge_score)
 
     @staticmethod
-    def compute_edge_score_sigmoid(raw_edge_score: Tensor, edge_index: Tensor,
-                                   num_nodes: int) -> Tensor:
+    def compute_edge_score_sigmoid(
+        raw_edge_score: Tensor,
+        edge_index: Optional[Tensor] = None,
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         return torch.sigmoid(raw_edge_score)
 
     def forward(
