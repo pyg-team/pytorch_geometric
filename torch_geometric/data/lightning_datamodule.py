@@ -1,4 +1,5 @@
 import copy
+import inspect
 import warnings
 from typing import Optional, Tuple, Union
 
@@ -300,15 +301,20 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
+
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
@@ -514,18 +520,20 @@ class LightningLinkData(LightningDataModule):
         self.loader = loader
 
         if loader in ['neighbor', 'link_neighbor']:
-            input_type = get_edge_label_index(data, input_train_edges)[0]
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                input_type=input_type,
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
+                input_type=get_edge_label_index(data, input_train_edges)[0],
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
-            self.neg_sampling_ratio = kwargs.get('neg_sampling_ratio', 0.0)
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -581,7 +589,6 @@ class LightningLinkData(LightningDataModule):
                 edge_label=input_labels,
                 edge_label_time=input_time,
                 neighbor_sampler=self.neighbor_sampler,
-                neg_sampling_ratio=self.neg_sampling_ratio,
                 **kwargs,
             )
 
