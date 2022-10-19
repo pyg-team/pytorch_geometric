@@ -37,46 +37,6 @@ def test_meta_layer():
 
     assert count == 12
 
-    if is_full_test():
-
-        class DummyEdgeModelJit(torch.nn.Module):
-            def __init__(self):
-                super().__init__()
-
-            def forward(self, src: Tensor, dest: Tensor,
-                        edge_attr: Optional[Tensor], u: Optional[Tensor],
-                        batch: Optional[Tensor]) -> Optional[Tensor]:
-                return None
-
-        class DummyNodeModelJit(torch.nn.Module):
-            def __init__(self):
-                super().__init__()
-
-            def forward(self, x: Tensor, edge_index: Tensor,
-                        edge_attr: Optional[Tensor], u: Optional[Tensor],
-                        batch: Optional[Tensor]) -> Tensor:
-                return x
-
-        class DummyGlobalModelJit(torch.nn.Module):
-            def __init__(self):
-                super().__init__()
-
-            def forward(self, x: Tensor, edge_index: Tensor,
-                        edge_attr: Optional[Tensor], u: Optional[Tensor],
-                        batch: Optional[Tensor]) -> Optional[Tensor]:
-                return None
-
-        dummy_edge_model_jit = DummyEdgeModelJit()
-        dummy_node_model_jit = DummyNodeModelJit()
-        dummy_global_model_jit = DummyGlobalModelJit()
-
-        for edge_model in (dummy_edge_model_jit, None):
-            for node_model in (dummy_node_model_jit, None):
-                for global_model in (dummy_global_model_jit, None):
-                    model = MetaLayer(edge_model, node_model, global_model)
-                    out = torch.jit.script(model)(x, edge_index)
-                    assert isinstance(out, tuple) and len(out) == 3
-
 
 def test_meta_layer_example():
     class EdgeModel(torch.nn.Module):
@@ -84,9 +44,14 @@ def test_meta_layer_example():
             super().__init__()
             self.edge_mlp = Seq(Lin(2 * 10 + 5 + 20, 5), ReLU(), Lin(5, 5))
 
-        def forward(self, src: Tensor, dest: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            src: Tensor,
+            dest: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert edge_attr is not None
             assert u is not None
             assert batch is not None
@@ -99,9 +64,14 @@ def test_meta_layer_example():
             self.node_mlp_1 = Seq(Lin(15, 10), ReLU(), Lin(10, 10))
             self.node_mlp_2 = Seq(Lin(2 * 10 + 20, 10), ReLU(), Lin(10, 10))
 
-        def forward(self, x: Tensor, edge_index: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            x: Tensor,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert edge_attr is not None
             assert u is not None
             assert batch is not None
@@ -118,9 +88,14 @@ def test_meta_layer_example():
             super().__init__()
             self.global_mlp = Seq(Lin(20 + 10, 20), ReLU(), Lin(20, 20))
 
-        def forward(self, x: Tensor, edge_index: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            x: Tensor,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert u is not None
             assert batch is not None
             out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
