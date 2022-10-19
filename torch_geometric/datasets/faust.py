@@ -43,20 +43,20 @@ class FAUST(InMemoryDataset):
             final dataset. (default: :obj:`None`)
 
     Stats:
-    .. list-table::
-        :widths: 10 10 10 10 10
-        :header-rows: 1
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
 
-        * - #graphs
-          - #nodes
-          - #edges
-          - #features
-          - #classes
-        * - 100
-          - 6,890
-          - 41,328
-          - 3
-          - 10
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 100
+              - 6,890
+              - 41,328
+              - 3
+              - 10
     """
 
     url = 'http://faust.is.tue.mpg.de/'

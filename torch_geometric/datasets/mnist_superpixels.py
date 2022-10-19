@@ -47,7 +47,7 @@ class MNISTSuperpixels(InMemoryDataset):
               - #classes
             * - 70,000
               - 75
-              - ~1393.0
+              - ~1,393.0
               - 1
               - 10
     """

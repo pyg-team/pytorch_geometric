@@ -47,15 +47,15 @@ class CoMA(InMemoryDataset):
             :header-rows: 1
 
             * - #graphs
-            - #nodes
-            - #edges
-            - #features
-            - #classes
+              - #nodes
+              - #edges
+              - #features
+              - #classes
             * - 20,465
-            - 5,023
-            - 29,990
-            - 3
-            - 12
+              - 5,023
+              - 29,990
+              - 3
+              - 12
     """
 
     url = 'https://coma.is.tue.mpg.de/'
