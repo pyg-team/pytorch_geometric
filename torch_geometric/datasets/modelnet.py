@@ -62,8 +62,8 @@ class ModelNet(InMemoryDataset):
               - #features
               - #classes
             * - 4,011
-              - 9,882.5
-              - 38,831.8
+              - ~9,882.5
+              - ~38,831.8
               - 3
               - 10
     """
