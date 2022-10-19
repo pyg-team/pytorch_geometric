@@ -71,10 +71,15 @@ class PascalVOCKeypoints(InMemoryDataset):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
-    def __init__(self, root: str, category: str, train: bool = True,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.category = category.lower()
         assert self.category in self.categories
         super().__init__(root, transform, pre_transform, pre_filter)
