@@ -39,20 +39,40 @@ def test_meta_layer():
 
     if is_full_test():
 
-        class DummyModelJit(torch.nn.Module):
+        class DummyEdgeModelJit(torch.nn.Module):
             def __init__(self):
                 super().__init__()
 
-            def forward(self, src: Optional[Tensor], dest: Tensor,
+            def forward(self, src: Tensor, dest: Tensor,
                         edge_attr: Optional[Tensor], u: Optional[Tensor],
                         batch: Optional[Tensor]) -> Optional[Tensor]:
                 return None
 
-        dummy_model_jit = DummyModelJit()
+        class DummyNodeModelJit(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
 
-        for edge_model in (dummy_model_jit, None):
-            for node_model in (dummy_model_jit, None):
-                for global_model in (dummy_model_jit, None):
+            def forward(self, x: Tensor, edge_index: Tensor,
+                        edge_attr: Optional[Tensor], u: Optional[Tensor],
+                        batch: Optional[Tensor]) -> Tensor:
+                return x
+
+        class DummyGlobalModelJit(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+
+            def forward(self, x: Tensor, edge_index: Tensor,
+                        edge_attr: Optional[Tensor], u: Optional[Tensor],
+                        batch: Optional[Tensor]) -> Optional[Tensor]:
+                return None
+
+        dummy_edge_model_jit = DummyEdgeModelJit()
+        dummy_node_model_jit = DummyNodeModelJit()
+        dummy_global_model_jit = DummyGlobalModelJit()
+
+        for edge_model in (dummy_edge_model_jit, None):
+            for node_model in (dummy_node_model_jit, None):
+                for global_model in (dummy_global_model_jit, None):
                     model = MetaLayer(edge_model, node_model, global_model)
                     out = torch.jit.script(model)(x, edge_index)
                     assert isinstance(out, tuple) and len(out) == 3
