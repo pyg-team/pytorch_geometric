@@ -24,6 +24,7 @@ def topk(
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero().view(-1)
+
     elif ratio is not None:
         num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
         batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
@@ -48,8 +49,7 @@ def topk(
             k = num_nodes.new_full((num_nodes.size(0), ), int(ratio))
             k = torch.min(k, num_nodes)
         else:
-            k = (float(ratio) * num_nodes.to(torch.float)).ceil().to(
-                torch.long)
+            k = (float(ratio) * num_nodes.to(x.dtype)).ceil().to(torch.long)
 
         mask = [
             torch.arange(k[i], dtype=torch.long, device=x.device) +
@@ -58,17 +58,20 @@ def topk(
         mask = torch.cat(mask, dim=0)
 
         perm = perm[mask]
+
     else:
-        raise ValueError(
-            "at least one of the min_score and ratio parameters must be "
-            "specified")
+        raise ValueError("At least one of 'min_score' and 'ratio' parameters "
+                         "must be specified")
 
     return perm
 
 
 def filter_adj(
-        edge_index: Tensor, edge_attr: Optional[Tensor], perm: Tensor,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, Optional[Tensor]]:
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    perm: Tensor,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     mask = perm.new_full((num_nodes, ), -1)
@@ -141,10 +144,10 @@ class TopKPooling(torch.nn.Module):
     def __init__(
         self,
         in_channels: int,
-        ratio: Optional[Union[int, float]] = 0.5,
+        ratio: Union[int, float] = 0.5,
         min_score: Optional[float] = None,
-        multiplier: Optional[float] = 1.,
-        nonlinearity: Optional[Callable] = torch.tanh,
+        multiplier: float = 1.,
+        nonlinearity: Callable = torch.tanh,
     ):
         super().__init__()
 
