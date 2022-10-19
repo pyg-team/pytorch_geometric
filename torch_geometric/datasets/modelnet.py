@@ -53,19 +53,27 @@ class ModelNet(InMemoryDataset):
 
     Stats:
         .. list-table::
-            :widths: 10 10 10 10 10
+            :widths: 20 10 10 10 10 10
             :header-rows: 1
 
-            * - #graphs
+            * - Name
+              - #graphs
               - #nodes
               - #edges
               - #features
               - #classes
-            * - 4,011
-              - ~9,882.5
-              - ~38,831.8
+            * - ModelNet10
+              - 4,899
+              - ~9,508.2
+              - ~37,450.5
               - 3
               - 10
+            * - ModelNet40
+              - 12,311
+              - ~17,744.4
+              - ~66,060.9
+              - 3
+              - 40
     """
 
     urls = {
