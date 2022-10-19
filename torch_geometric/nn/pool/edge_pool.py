@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional, Set, Tuple
+from typing import Callable, List, NamedTuple, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
