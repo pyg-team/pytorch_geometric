@@ -66,7 +66,7 @@ def test_edge_pooling():
     batch = torch.tensor([0, 0, 0, 0, 1, 1, 0])
 
     op = EdgePooling(in_channels=1)
-    assert op.__repr__() == 'EdgePooling(1)'
+    assert str(op) == 'EdgePooling(1)'
 
     # Setting parameters fixed so we can test the expected outcome:
     op.lin.weight.data.fill_(1.)
@@ -108,6 +108,7 @@ def test_edge_pooling():
 
         op = EdgePooling(in_channels=1)
         assert op.__repr__() == 'EdgePooling(1)'
+        op = torch.jit.script(op)
 
         # Setting parameters fixed so we can test the expected outcome:
         op.lin.weight.data.fill_(1.)
@@ -121,9 +122,9 @@ def test_edge_pooling():
         assert torch.all(new_batch == torch.tensor([1, 0, 0, 0]))
         assert new_edge_index.tolist() == [[0, 1, 1, 2, 2, 3],
                                            [0, 1, 2, 1, 2, 2]]
-        unpool = torch.jit.script(op.unpool)
+        # unpool = torch.jit.script(op.unpool)
         # Test unpooling.
-        unpooled_x, unpooled_edge_index, unpooled_batch = unpool(
+        unpooled_x, unpooled_edge_index, unpooled_batch = op.unpool(
             new_x, unpool_info)
         assert unpooled_edge_index.tolist() == edge_index.tolist()
         assert unpooled_batch.tolist() == batch.tolist()
