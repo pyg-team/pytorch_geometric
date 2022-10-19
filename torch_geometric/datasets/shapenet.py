@@ -66,7 +66,7 @@ class ShapeNet(InMemoryDataset):
               - #features
               - #classes
             * - 16,881
-              - 2,616.2
+              - ~2,616.2
               - 0
               - 3
               - 50
