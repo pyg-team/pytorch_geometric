@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional, Set, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -19,13 +20,14 @@ def sort_csc(
         col, perm = col.sort()
         return row[perm], col, perm
     else:
-        # Multiplying by raw `datetime[64ns]` values may cause overflows.
-        # As such, we normalize time into range [0, 1) before sorting:
-        src_node_time = src_node_time.to(torch.double, copy=True)
-        src_node_time.sub_(src_node_time.min())
-        src_node_time.div_(src_node_time.max() + 100)
+        # We use `np.lexsort` to sort based on multiple keys.
+        # TODO There does not seem to exist a PyTorch equivalent yet :(
+        perm = np.lexsort([
+            src_node_time[row].detach().cpu().numpy(),
+            col.detach().cpu().numpy()
+        ])
+        perm = torch.from_numpy(perm).to(col.device)
 
-        perm = src_node_time[row].add_(col.to(torch.double)).argsort()
         return row[perm], col[perm], perm
 
 
