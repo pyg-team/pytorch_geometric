@@ -11,8 +11,8 @@ from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
 from torch_geometric.utils import softmax
 
 
-def group(xs: List[Tensor], q: nn.Parameter,
-          k_lin: nn.Module) -> Optional[Tensor]:
+def group(xs: List[Tensor], q: nn.Parameter, k_lin: nn.Module,
+          return_semantic_attention_weights=None):
     if len(xs) == 0:
         return None
     else:
@@ -23,6 +23,8 @@ def group(xs: List[Tensor], q: nn.Parameter,
         attn_score = (q * torch.tanh(k_lin(out)).mean(1)).sum(-1)
         attn = F.softmax(attn_score, dim=0)
         out = torch.sum(attn.view(num_edge_types, 1, -1) * out, dim=0)
+        if isinstance(return_semantic_attention_weights, bool):
+            return out, attn
         return out
 
 
@@ -103,10 +105,9 @@ class HANConv(MessagePassing):
         self.k_lin.reset_parameters()
         glorot(self.q)
 
-    def forward(
-        self, x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType,
-                              Adj]) -> Dict[NodeType, Optional[Tensor]]:
+    def forward(self, x_dict: Dict[NodeType, Tensor],
+                edge_index_dict: Dict[EdgeType, Adj],
+                return_semantic_attention_weights=None):
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
@@ -116,12 +117,20 @@ class HANConv(MessagePassing):
                 individual edge type, either as a :obj:`torch.LongTensor` of
                 shape :obj:`[2, num_edges]` or a
                 :obj:`torch_sparse.SparseTensor`.
-
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
-            for each node type.
-            In case a node type does not receive any message, its output will
-            be set to :obj:`None`.
+            return_semantic_attention_weights (bool, optional):
+                If set to :obj:`True`,
+                will additionally return the tensor
+                :obj:`semantic_attention_weights`, holding the computed
+                attention weights for each edge type
+                at semantic-level attention. (default: :obj:`None`)
         """
+        # NOTE: semantic_attention weights will be returned whenever
+        # `return_attention_weights` is set to a value, regardless of its
+        # actual value (might be `True` or `False`). This is a current somewhat
+        # hacky workaround to allow for TorchScript support via the
+        # `torch.jit._overload` decorator, as we can only change the output
+        # arguments conditioned on type (`None` or `bool`), not based on its
+        # actual value.
         H, D = self.heads, self.out_channels // self.heads
         x_node_dict, out_dict = {}, {}
 
@@ -149,13 +158,19 @@ class HANConv(MessagePassing):
 
         # iterate over node types:
         for node_type, outs in out_dict.items():
-            out = group(outs, self.q, self.k_lin)
+            if isinstance(return_semantic_attention_weights, bool):
+                out, semantic_attention_weights = group(
+                    outs, self.q, self.k_lin,
+                    return_semantic_attention_weights)
+            else:
+                out = group(outs, self.q, self.k_lin)
 
             if out is None:
                 out_dict[node_type] = None
                 continue
             out_dict[node_type] = out
-
+        if isinstance(return_semantic_attention_weights, bool):
+            return out_dict, semantic_attention_weights
         return out_dict
 
     def message(self, x_j: Tensor, alpha_i: Tensor, alpha_j: Tensor,
