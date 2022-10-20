@@ -28,7 +28,7 @@ def onlyUnix(func: Callable) -> Callable:
     UNIX-like systems."""
     import pytest
     return pytest.mark.skipif(
-        not sys.platform == 'win32',
+        sys.platform == 'win32',
         reason="Windows not supported",
     )(func)
 
