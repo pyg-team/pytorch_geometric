@@ -50,6 +50,30 @@ class ModelNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - ModelNet10
+              - 4,899
+              - ~9,508.2
+              - ~37,450.5
+              - 3
+              - 10
+            * - ModelNet40
+              - 12,311
+              - ~17,744.4
+              - ~66,060.9
+              - 3
+              - 40
     """
 
     urls = {
