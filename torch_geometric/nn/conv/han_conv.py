@@ -109,7 +109,8 @@ class HANConv(MessagePassing):
 
     def forward(self, x_dict: Dict[NodeType, Tensor],
                 edge_index_dict: Dict[EdgeType, Adj],
-                return_semantic_attention_weights=None):
+                return_semantic_attention_weights: bool = False) -> Union[Dict[NodeType, OptTensor], TupleDict[NodeType, OptTensor], Tensor]]:
+
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
