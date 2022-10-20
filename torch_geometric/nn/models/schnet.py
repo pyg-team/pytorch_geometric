@@ -296,6 +296,9 @@ class SchNet(torch.nn.Module):
         if not self.dipole and self.atomref is not None:
             h = h + self.atomref(z)
 
+        # zero out embeddings for any padding atoms
+        h.masked_fill_((z == 0).view(-1, 1), 0.)
+
         out = scatter(h, batch, dim=0, dim_size=self.batch_size,
                       reduce=self.readout)
 
