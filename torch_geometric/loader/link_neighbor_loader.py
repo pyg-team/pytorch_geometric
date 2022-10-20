@@ -101,6 +101,12 @@ class LinkNeighborLoader(LinkLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+            create its own disjoint subgraph.
+            If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
+            vector holding the mapping of nodes to their respective subgraph.
+            Will get automatically set to :obj:`True` in case of temporal
+            sampling. (default: :obj:`False`)
         temporal_strategy (string, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
@@ -157,6 +163,7 @@ class LinkNeighborLoader(LinkLoader):
         edge_label_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         neg_sampling_ratio: float = 0.0,
         time_attr: Optional[str] = None,
@@ -166,21 +173,16 @@ class LinkNeighborLoader(LinkLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Get input type:
-        # TODO(manan): this computation is required twice, once here and once
-        # in LinkLoader:
+        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
         edge_type, _ = get_edge_label_index(data, edge_label_index)
 
-        has_time_attr = time_attr is not None
-        has_edge_label_time = edge_label_time is not None
-        if has_edge_label_time != has_time_attr:
+        if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
-                f"Received conflicting 'time_attr' and 'edge_label_time' "
-                f"arguments: 'time_attr' was "
-                f"{'set' if has_time_attr else 'not set'} and "
-                f"'edge_label_time' was "
-                f"{'set' if has_edge_label_time else 'not set'}. Please "
-                f"resolve these conflicting arguments.")
+                f"Received conflicting 'edge_label_time' and 'time_attr' "
+                f"arguments: 'edge_label_time' is "
+                f"{'set' if edge_label_time is not None else 'not set'} "
+                f"while 'input_time' is "
+                f"{'set' if time_attr is not None else 'not set'}.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -188,6 +190,7 @@ class LinkNeighborLoader(LinkLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 input_type=edge_type,
                 time_attr=time_attr,

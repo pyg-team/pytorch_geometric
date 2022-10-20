@@ -2,7 +2,7 @@ import torch
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.transforms import RadiusGraph
 
 
@@ -24,6 +24,11 @@ def test_schnet():
     with torch.no_grad():
         out = model(data.z, data.pos)
         assert out.size() == (1, 1)
+
+        if is_full_test():
+            jit = torch.jit.export(model)
+            out = jit(data.z, data.pos)
+            assert out.size() == (1, 1)
 
 
 @withPackage('torch_cluster')

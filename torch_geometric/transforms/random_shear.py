@@ -1,5 +1,8 @@
+from typing import Union
+
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, LinearTransformation
 
@@ -23,10 +26,10 @@ class RandomShear(BaseTransform):
         shear (float or int): maximum shearing factor defining the range
             :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
     """
-    def __init__(self, shear):
+    def __init__(self, shear: Union[float, int]):
         self.shear = abs(shear)
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         dim = data.pos.size(-1)
 
         matrix = data.pos.new_empty(dim, dim).uniform_(-self.shear, self.shear)

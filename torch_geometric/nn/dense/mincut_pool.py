@@ -1,9 +1,15 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 
-EPS = 1e-15
 
-
-def dense_mincut_pool(x, adj, s, mask=None):
+def dense_mincut_pool(
+    x: Tensor,
+    adj: Tensor,
+    s: Tensor,
+    mask: Optional[Tensor] = None,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
     paper
@@ -85,6 +91,8 @@ def dense_mincut_pool(x, adj, s, mask=None):
         i_s / torch.norm(i_s), dim=(-1, -2))
     ortho_loss = torch.mean(ortho_loss)
 
+    EPS = 1e-15
+
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
     out_adj[:, ind, ind] = 0
@@ -95,11 +103,12 @@ def dense_mincut_pool(x, adj, s, mask=None):
     return out, out_adj, mincut_loss, ortho_loss
 
 
-def _rank3_trace(x):
+def _rank3_trace(x: Tensor) -> Tensor:
     return torch.einsum('ijj->i', x)
 
 
-def _rank3_diag(x):
+def _rank3_diag(x: Tensor) -> Tensor:
     eye = torch.eye(x.size(1)).type_as(x)
-    out = eye * x.unsqueeze(2).expand(*x.size(), x.size(1))
+    out = eye * x.unsqueeze(2).expand(x.size(0), x.size(1), x.size(1))
+
     return out
