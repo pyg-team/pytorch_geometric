@@ -101,6 +101,12 @@ class LinkNeighborLoader(LinkLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+            create its own disjoint subgraph.
+            If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
+            vector holding the mapping of nodes to their respective subgraph.
+            Will get automatically set to :obj:`True` in case of temporal
+            sampling. (default: :obj:`False`)
         temporal_strategy (string, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
@@ -157,6 +163,7 @@ class LinkNeighborLoader(LinkLoader):
         edge_label_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         neg_sampling_ratio: float = 0.0,
         time_attr: Optional[str] = None,
@@ -183,6 +190,7 @@ class LinkNeighborLoader(LinkLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 input_type=edge_type,
                 time_attr=time_attr,
