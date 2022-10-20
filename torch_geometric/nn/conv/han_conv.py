@@ -128,13 +128,6 @@ class HANConv(MessagePassing):
                 at semantic-level attention. (default: :obj:`False`)
 
         """
-        # NOTE: semantic_attention weights will be returned whenever
-        # `return_attention_weights` is set to a value, regardless of its
-        # actual value (might be `True` or `False`). This is a current somewhat
-        # hacky workaround to allow for TorchScript support via the
-        # `torch.jit._overload` decorator, as we can only change the output
-        # arguments conditioned on type (`None` or `bool`), not based on its
-        # actual value.
         H, D = self.heads, self.out_channels // self.heads
         x_node_dict, out_dict = {}, {}
 
