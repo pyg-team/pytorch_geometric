@@ -174,7 +174,8 @@ class HANConv(MessagePassing):
                 out_dict[node_type] = None
                 continue
             out_dict[node_type] = out
-        if isinstance(return_semantic_attention_weights, bool):
+        if return_semantic_attention_weights:
+
             return out_dict, semantic_attention_weights
         return out_dict
 
