@@ -113,7 +113,7 @@ class HANConv(MessagePassing):
         edge_index_dict: Dict[EdgeType, Adj],
         return_semantic_attention_weights: bool = False,
     ) -> Union[Dict[NodeType, OptTensor], Tuple[Dict[NodeType, OptTensor],
-                                                Dict[NodeType, Tensor]]]:
+                                                Dict[NodeType, OptTensor]]]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
