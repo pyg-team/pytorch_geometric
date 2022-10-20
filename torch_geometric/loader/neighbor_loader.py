@@ -131,6 +131,12 @@ class NeighborLoader(NodeLoader):
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+            create its own disjoint subgraph.
+            If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
+            vector holding the mapping of nodes to their respective subgraph.
+            Will get automatically set to :obj:`True` in case of temporal
+            sampling. (default: :obj:`False`)
         temporal_strategy (string, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
@@ -160,8 +166,6 @@ class NeighborLoader(NodeLoader):
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
-        disjoint (bool, optional): If set to :obj: `True`, each seed node will 
-            create its own disjoint subgraph. 
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -174,13 +178,13 @@ class NeighborLoader(NodeLoader):
         input_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
-        disjoint: bool = False,
         **kwargs,
     ):
         # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
@@ -197,12 +201,12 @@ class NeighborLoader(NodeLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
-                disjoint=disjoint,
             )
 
         super().__init__(
