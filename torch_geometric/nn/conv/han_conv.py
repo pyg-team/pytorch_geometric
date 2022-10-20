@@ -12,7 +12,8 @@ from torch_geometric.utils import softmax
 
 
 def group(xs: List[Tensor], q: nn.Parameter, k_lin: nn.Module,
-          return_semantic_attention_weights=None):
+          return_semantic_attention_weights: bool = False) -> Union[OptTensor, Tuple[Tensor, Tensor]]:
+
     if len(xs) == 0:
         return None
     else:
