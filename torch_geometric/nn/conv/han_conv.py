@@ -24,7 +24,8 @@ def group(xs: List[Tensor], q: nn.Parameter, k_lin: nn.Module,
         attn_score = (q * torch.tanh(k_lin(out)).mean(1)).sum(-1)
         attn = F.softmax(attn_score, dim=0)
         out = torch.sum(attn.view(num_edge_types, 1, -1) * out, dim=0)
-        if isinstance(return_semantic_attention_weights, bool):
+        if return_semantic_attention_weights:
+
             return out, attn
         return out
 
