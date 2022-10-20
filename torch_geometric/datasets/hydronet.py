@@ -131,9 +131,13 @@ class HydroNet(InMemoryDataset):
     def _dataset(self):
         return ConcatDataset(self._partitions)
 
+    @cached_property
+    def _len(self) -> int:
+        return sum(len(p) for p in self._partitions)
+
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
-        return sum(len(p) for p in self._partitions)
+        return self._len
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
@@ -212,8 +216,8 @@ class Partition(InMemoryDataset):
         chunk_size = num_nodes + 2
         z, pos = read_atoms(self.raw_paths[0], chunk_size)
         y = read_energy(self.raw_paths[0], chunk_size)
-        np.savez_compressed(self.processed_paths[0], z=z, pos=pos, y=y,
-                            num_graphs=z.shape[0])
+        np.savez(self.processed_paths[0], z=z, pos=pos, y=y,
+                 num_graphs=z.shape[0])
 
     def load(self):
         if self.is_loaded:
