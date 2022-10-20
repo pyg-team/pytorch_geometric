@@ -162,7 +162,8 @@ class HANConv(MessagePassing):
 
         # iterate over node types:
         for node_type, outs in out_dict.items():
-            if isinstance(return_semantic_attention_weights, bool):
+            if return_semantic_attention_weights:
+
                 out, semantic_attention_weights = group(
                     outs, self.q, self.k_lin,
                     return_semantic_attention_weights)
