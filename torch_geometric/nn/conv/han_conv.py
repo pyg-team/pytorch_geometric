@@ -125,7 +125,8 @@ class HANConv(MessagePassing):
                 will additionally return the tensor
                 :obj:`semantic_attention_weights`, holding the computed
                 attention weights for each edge type
-                at semantic-level attention. (default: :obj:`None`)
+                at semantic-level attention. (default: :obj:`False`)
+
         """
         # NOTE: semantic_attention weights will be returned whenever
         # `return_attention_weights` is set to a value, regardless of its
