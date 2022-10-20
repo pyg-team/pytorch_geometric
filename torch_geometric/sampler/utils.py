@@ -23,7 +23,7 @@ def sort_csc(
         # As such, we normalize time into range [0, 1) before sorting:
         src_node_time = src_node_time.to(torch.double, copy=True)
         src_node_time.sub_(src_node_time.min())
-        src_node_time.div_(src_node_time.max() + 1)
+        src_node_time.div_(src_node_time.max() + 100)
 
         perm = src_node_time[row].add_(col.to(torch.double)).argsort()
         return row[perm], col[perm], perm
