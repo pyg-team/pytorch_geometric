@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -7,23 +7,27 @@ from torch import Tensor, nn
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
-from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils import softmax
 
 
-def group(xs: List[Tensor], q: nn.Parameter,
-          k_lin: nn.Module) -> Optional[Tensor]:
+def group(
+    xs: List[Tensor],
+    q: nn.Parameter,
+    k_lin: nn.Module,
+) -> Tuple[OptTensor, OptTensor]:
+
     if len(xs) == 0:
-        return None
+        return None, None
     else:
         num_edge_types = len(xs)
         out = torch.stack(xs)
         if out.numel() == 0:
-            return out.view(0, out.size(-1))
+            return out.view(0, out.size(-1)), None
         attn_score = (q * torch.tanh(k_lin(out)).mean(1)).sum(-1)
         attn = F.softmax(attn_score, dim=0)
         out = torch.sum(attn.view(num_edge_types, 1, -1) * out, dim=0)
-        return out
+        return out, attn
 
 
 class HANConv(MessagePassing):
@@ -104,9 +108,12 @@ class HANConv(MessagePassing):
         glorot(self.q)
 
     def forward(
-        self, x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType,
-                              Adj]) -> Dict[NodeType, Optional[Tensor]]:
+        self,
+        x_dict: Dict[NodeType, Tensor],
+        edge_index_dict: Dict[EdgeType, Adj],
+        return_semantic_attention_weights: bool = False,
+    ) -> Union[Dict[NodeType, OptTensor], Tuple[Dict[NodeType, OptTensor],
+                                                Dict[NodeType, OptTensor]]]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
@@ -116,11 +123,10 @@ class HANConv(MessagePassing):
                 individual edge type, either as a :obj:`torch.LongTensor` of
                 shape :obj:`[2, num_edges]` or a
                 :obj:`torch_sparse.SparseTensor`.
-
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
-            for each node type.
-            In case a node type does not receive any message, its output will
-            be set to :obj:`None`.
+            return_semantic_attention_weights (bool, optional): If set to
+                :obj:`True`, will additionally return the semantic-level
+                attention weights for each destination node type.
+                (default: :obj:`False`)
         """
         H, D = self.heads, self.out_channels // self.heads
         x_node_dict, out_dict = {}, {}
@@ -148,13 +154,14 @@ class HANConv(MessagePassing):
             out_dict[dst_type].append(out)
 
         # iterate over node types:
+        semantic_attn_dict = {}
         for node_type, outs in out_dict.items():
-            out = group(outs, self.q, self.k_lin)
-
-            if out is None:
-                out_dict[node_type] = None
-                continue
+            out, attn = group(outs, self.q, self.k_lin)
             out_dict[node_type] = out
+            semantic_attn_dict[node_type] = attn
+
+        if return_semantic_attention_weights:
+            return out_dict, semantic_attn_dict
 
         return out_dict
 
