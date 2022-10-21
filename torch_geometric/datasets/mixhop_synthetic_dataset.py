@@ -1,6 +1,6 @@
 import os.path as osp
 import pickle
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
