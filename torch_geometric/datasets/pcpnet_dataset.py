@@ -72,15 +72,10 @@ class PCPNetDataset(InMemoryDataset):
         'VarDensityGradient': 'testset_vardensity_gradient.txt'
     }
 
-    def __init__(
-        self,
-        root: str,
-        category: str,
-        split: str = 'train',
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None
-    ):
+    def __init__(self, root: str, category: str, split: str = 'train',
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
 
         assert split in ['train', 'val', 'test']
 

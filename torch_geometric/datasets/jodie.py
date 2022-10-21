@@ -10,13 +10,9 @@ class JODIEDataset(InMemoryDataset):
     url = 'http://snap.stanford.edu/jodie/{}.csv'
     names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
 
-    def __init__(
-        self,
-        root: str,
-        name: str,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None
-    ):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name.lower()
         assert self.name in self.names
 
