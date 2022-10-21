@@ -53,7 +53,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
         return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> List[str]:
         name = f'ind.n5000-h{self.homophily:0.1f}-c10'
         return [f'{name}.allx', f'{name}.ally', f'{name}.graph']
 
