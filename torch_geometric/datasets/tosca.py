@@ -63,7 +63,7 @@ class TOSCA(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        categories: List[str] = None,
+        categories: Optional[List[str]] = None,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
