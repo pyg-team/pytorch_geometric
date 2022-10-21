@@ -23,6 +23,16 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
+def onlyUnix(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should only execute on
+    UNIX-like systems."""
+    import pytest
+    return pytest.mark.skipif(
+        sys.platform == 'win32',
+        reason="Windows not supported",
+    )(func)
+
+
 def withPython(*args) -> Callable:
     r"""A decorator to skip tests for any Python version not listed."""
     def decorator(func: Callable) -> Callable:
