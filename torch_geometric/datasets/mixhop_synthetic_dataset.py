@@ -37,7 +37,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
 
     def __init__(self, root: str, homophily: float,
                  transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+                 pre_transform: Optional[Callable] = None, ):
         self.homophily = homophily
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         super().__init__(root, transform, pre_transform)
