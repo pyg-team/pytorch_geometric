@@ -1,8 +1,8 @@
 import glob
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
-from typing import List, Callable, Optional
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
@@ -60,8 +60,10 @@ class SHREC2016(InMemoryDataset):
     ]
     partialities = ['holes', 'cuts']
 
-    def __init__(self, root:str, partiality:str, category:str, train:bool=True, transform: Optional[Callable]=None,
-                 pre_transform:Optional[Callable]=None, pre_filter:Optional[Callable]=None):
+    def __init__(self, root: str, partiality: str, category: str,
+                 train: bool = True, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         assert partiality.lower() in self.partialities
         self.part = partiality.lower()
         assert category.lower() in self.categories
