@@ -60,10 +60,14 @@ class TOSCA(InMemoryDataset):
         'victoria', 'wolf'
     ]
 
-    def __init__(self, root: str, categories: List[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None, ):
+    def __init__(
+        self,
+        root: str,
+        categories: List[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         categories = self.categories if categories is None else categories
         categories = [cat.lower() for cat in categories]
         for cat in categories:
