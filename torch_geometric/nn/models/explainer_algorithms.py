@@ -13,8 +13,9 @@ class ExplainerAlgorithm(torch.nn.Module):
         super().__init__()
 
         # TODO: check if this is good practice, took the idea from captum
-        loss: Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor],
-                       torch.Tensor]
+        objective: Callable[
+            [Tuple[torch.Tensor,
+                   ...], torch.Tensor, torch.Tensor], torch.Tensor]
         r"""
         This method compute the loss to be used for the explanation algorithm.
         Subclasses should override this method to define their own loss.
@@ -25,20 +26,19 @@ class ExplainerAlgorithm(torch.nn.Module):
             target (torch.Tensor): the target of the GNN.
         """
 
-    def _set_loss(
+    def set_objective(
         self,
-        loss: Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor],
-                       torch.Tensor],
+        objective: Callable[
+            [Tuple[torch.Tensor,
+                   ...], torch.Tensor, torch.Tensor], torch.Tensor],
     ) -> None:
         """Sets the loss function to be used for the explanation algorithm.
 
         Args:
-            loss (Callable): loss function.
+            objective (Callable): loss function.
         """
-        self.loss = loss
+        self.objective = objective
 
-    # TODO: how to work with the inputs for all kind of models?
-    # (index, features...)
     @abstractmethod
     def explain(
         self,

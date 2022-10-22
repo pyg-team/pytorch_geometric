@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Callable, Tuple
 
 import torch
 
@@ -65,8 +65,8 @@ class ExplainerSetter(torch.nn.Module):
         self.model_return_type = model_return_type
 
         self.explanation_algorithm = explanation_algorithm
-        if not self.explanation_algorithm.support(self.explanation_type,
-                                                  self.mask_type):
+        if not self.explanation_algorithm.supports(self.explanation_type,
+                                                   self.mask_type):
             raise ValueError(
                 "The explanation algorithm does not support the configuration."
             )
@@ -74,7 +74,7 @@ class ExplainerSetter(torch.nn.Module):
         # accept a loss ? raise error in the explanation algorithm ?
         # should this method instantiate the explaination algorithm ?
         self.loss = loss
-        self.explanation_algorithm._set_loss(self._create_objective())
+        self.explanation_algorithm.set_objective(self._create_objective())
 
         self.model = model
 
@@ -95,7 +95,10 @@ class ExplainerSetter(torch.nn.Module):
         explanation_masks = self._compute_explanation(inputs, target)
         return self._post_process_explanation(explanation_masks)
 
-    def _create_objective(self):
+    def _create_objective(
+        self
+    ) -> Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor],
+                  torch.Tensor]:
         """Creates the objective function for the explanation module depending
         on the loss function and the explanation type.
 
