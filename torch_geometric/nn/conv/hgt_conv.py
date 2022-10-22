@@ -71,6 +71,10 @@ class HGTConv(MessagePassing):
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
 
+        if out_channels % heads != 0:
+            raise ValueError(f"'out_channels' (got {out_channels}) must be "
+                             f"divisible by the number of heads (got {heads})")
+
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
 
