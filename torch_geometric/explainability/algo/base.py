@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
 
 import torch
 
@@ -14,7 +14,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         # TODO: check if this is good practice, took the idea from captum
         self.objective: Callable[
             [Tuple[torch.Tensor,
-                   ...], torch.Tensor, torch.Tensor], torch.Tensor]
+                   ...], torch.Tensor, torch.Tensor, int], torch.Tensor]
         r"""
         This method compute the loss to be used for the explanation algorithm.
         Subclasses should override this method to define their own loss.
@@ -23,13 +23,14 @@ class ExplainerAlgorithm(torch.nn.Module):
             inputs (Tuple[torch.Tensor, ...]): the inputs of the GNN.
             output (torch.Tensor): the output of the GNN.
             target (torch.Tensor): the target of the GNN.
+            target_index (int): the index of the target to explain.
         """
 
     def set_objective(
         self,
         objective: Callable[
             [Tuple[torch.Tensor,
-                   ...], torch.Tensor, torch.Tensor], torch.Tensor],
+                   ...], torch.Tensor, torch.Tensor, int], torch.Tensor],
     ) -> None:
         """Sets the loss function to be used for the explanation algorithm.
 
@@ -45,6 +46,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         edge_index: torch.Tensor,
         target: torch.Tensor,
         model: torch.nn.Module,
+        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""This method computes the explanation of the GNN.
@@ -57,10 +59,17 @@ class ExplainerAlgorithm(torch.nn.Module):
                 (used to create the explanation object)
         """
 
-    def forward(self, *x: torch.Tensor, edge_index: torch.Tensor,
-                target: torch.Tensor, model: torch.nn.Module,
-                **kwargs) -> Explanation:
-        return self.explain(x, edge_index, target, model, **kwargs)
+    def forward(
+        self,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        target: torch.Tensor,
+        model: torch.nn.Module,
+        target_index: Optional[int] = None,
+        **kwargs,
+    ) -> Explanation:
+        return self.explain(x, edge_index, target, model, target_index,
+                            **kwargs)
 
     @abstractmethod
     def supports(

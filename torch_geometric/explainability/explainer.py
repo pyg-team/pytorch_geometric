@@ -1,4 +1,4 @@
-import dataclasses
+from dataclasses import dataclass
 from typing import Callable, Tuple
 
 import torch
@@ -9,7 +9,7 @@ from torch_geometric.explainability.explanations import Explanation
 from torch_geometric.explainability.utils import to_captum
 
 
-@dataclasses.dataclass
+@dataclass
 class Threshold:
     type: str
     threshold: float
@@ -24,7 +24,7 @@ class Threshold:
                              f'Valid values are in [0, 1].')
 
 
-@dataclasses.dataclass
+@dataclass
 class ExplainerConfig:
     explanation_type: str
     mask_type: str
@@ -111,57 +111,66 @@ class Explainer(torch.nn.Module):
         self.explanation_algorithm.set_objective(self._create_objective())
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
-                y: torch.Tensor, **kwargs) -> Explanation:
+                y: torch.Tensor, target_index: int = 0,
+                **kwargs) -> Explanation:
         """Compute the explanation of the GNN  for the given inputs and target.
 
         Args:
             x (torch.Tensor): the node features.
             edge_index (torch.Tensor): the edge indices.
             y (torch.Tensor): the target of the GNN.
+            target_index (int, optional): the  index of the target to explain.
+                If not provided, the explanation is computed for all the first
+                index of the target. (default: 0)
             **kwargs: additional arguments to pass to the GNN.
 
         Returns:
             Explanation: explanations for the inputs and target.
         """
         target = y
+
         if self.explanation_config.explanation_type == "model":
             target = self.model(x=x, edge_index=edge_index, **kwargs)
 
-        if self.model_return_type in ["probs", "logits"]:
-            target = target.argmax()
+            if self.model_return_type in ["probs", "logits"]:
+                target_index = target.argmax()
 
         if isinstance(self.explanation_algorithm, CaptumExplainer):
             raw_explanation = self._compute_explanation_captum(
-                x, edge_index, target, **kwargs)
+                x, edge_index, target, target_index, **kwargs)
         else:
             raw_explanation = self._compute_explanation_pyg(
-                x, edge_index, target, **kwargs)
+                x, edge_index, target, target_index, **kwargs)
 
         return self._post_process_explanation(raw_explanation)
 
     def _compute_explanation_pyg(self, x: torch.Tensor,
                                  edge_index: torch.Tensor,
-                                 target: torch.Tensor,
+                                 target: torch.Tensor, target_index: int,
                                  **kwargs) -> Explanation:
         return self.explanation_algorithm.explain(x=x, edge_index=edge_index,
                                                   target=target,
-                                                  model=self.model, **kwargs)
+                                                  model=self.model,
+                                                  target_index=target_index,
+                                                  **kwargs)
 
     def _compute_explanation_captum(self, x: torch.Tensor,
                                     edge_index: torch.Tensor,
-                                    target: torch.Tensor,
+                                    target: torch.Tensor, target_index: int,
                                     **kwargs) -> Explanation:
 
         captum_model = to_captum(self.model, self.explanation_config.mask_type,
-                                 target.item())
+                                 target_index)
 
         return self.explanation_algorithm.explain(x=x, edge_index=edge_index,
                                                   target=target,
-                                                  model=captum_model, **kwargs)
+                                                  model=captum_model,
+                                                  target_index=target_index,
+                                                  **kwargs)
 
     def _create_objective(
         self,
-    ) -> Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor],
+    ) -> Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor, int],
                   torch.Tensor]:
         """Creates the objective function for the explanation module depending
         on the loss function and the explanation type.
@@ -171,9 +180,9 @@ class Explainer(torch.nn.Module):
         applied on the true output.
         """
         if self.explanation_config.explanation_type == "model":
-            return lambda x, y, z: self.loss(x, y)
-        else:
-            return lambda x, y, z: self.loss(x, z)
+            return lambda x, y, z, i: self.loss(x[i], y[i])
+
+        return lambda x, y, z, i: self.loss(x[i], z[i])
 
     def _post_process_explanation(self,
                                   explanation: Explanation) -> Explanation:
