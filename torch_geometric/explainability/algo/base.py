@@ -3,6 +3,8 @@ from typing import Callable, Tuple
 
 import torch
 
+from torch_geometric.explainability.explanations import Explanation
+
 
 class ExplainerAlgorithm(torch.nn.Module):
     r"""An abstract class for explainer algorithms."""
@@ -42,10 +44,12 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def explain(
         self,
-        inputs: Tuple[torch.Tensor, ...],
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
         target: torch.Tensor,
         model: torch.nn.Module,
-    ) -> Tuple[torch.Tensor, ...]:
+        **kwargs,
+    ) -> Explanation:
         r"""This method computes the explanation of the GNN and return
         a list of masks.
 
@@ -53,33 +57,61 @@ class ExplainerAlgorithm(torch.nn.Module):
             inputs (Tuple[torch.Tensor, ...]): the inputs of the GNN.
             target (torch.Tensor): the target of the GNN.
             model (torch.nn.Module): the GNN to explain.
+            name_inputs (List[str]): the name of the inputs of the GNN.
+                (used to create the explanation object)
         """
         pass
 
-    # TODO: improve on just passing a general dict
-    @abstractmethod
-    def supports(self, *args, **kwargs) -> bool:
+    def supports(
+        self,
+        explanation_type: str,
+        mask_type: str,
+    ) -> bool:
         r"""Check if the explainer supports the user-defined settings.
 
         Returns true if the explainer supports the settings.
 
+        Responsability of the children to exclude the settings that are not
+        supported.
+
         Args:
-            *args: the user-defined explanation settings.
-            **kwargs: the user-defined explanation settings.
+
         """
-        pass
+        return True
 
 
-class Saliency(ExplainerAlgorithm):
-    """Saliency explainer."""
+class RandomExplainer(ExplainerAlgorithm):
+    """Dummy explainer."""
     def __init__(self) -> None:
         super().__init__()
 
     def explain(
         self,
-        inputs: Tuple[torch.Tensor, ...],
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
         target: torch.Tensor,
         model: torch.nn.Module,
-    ) -> Tuple[torch.Tensor, ...]:
-        # TODO: implement it, check captum or do it manually.
-        raise NotImplementedError()
+        **kwargs,
+    ) -> Explanation:
+
+        node_features_mask = torch.rand(x.shape)
+        node_mask = torch.rand(x.shape[0])
+        edge_mask = torch.rand(edge_index.shape[1])
+        if "edge_attr" in kwargs:
+            edge_features_mask = torch.rand(kwargs["edge_attr"].shape)
+        return Explanation(
+            x=x,
+            edge_index=edge_index,
+            node_features_mask=node_features_mask,
+            node_mask=node_mask,
+            edge_mask=edge_mask,
+            edge_features_mask=edge_features_mask,
+            **kwargs,
+        )
+
+    def supports(
+        self,
+        explanation_type: str,
+        mask_type: str,
+    ) -> bool:
+        return mask_type != "layers"
