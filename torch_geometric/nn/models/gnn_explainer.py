@@ -1,7 +1,9 @@
 from math import sqrt
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
+from torch import Tensor
+from torch.nn import Module
 from tqdm import tqdm
 
 from torch_geometric.nn.models.explainer import (
@@ -66,17 +68,30 @@ class GNNExplainer(Explainer):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(self, model, epochs: int = 100, lr: float = 0.01,
-                 num_hops: Optional[int] = None, return_type: str = 'log_prob',
-                 feat_mask_type: str = 'feature', allow_edge_mask: bool = True,
-                 log: bool = True, **kwargs):
+    def __init__(
+        self,
+        model: Module,
+        epochs: int = 100,
+        lr: float = 0.01,
+        num_hops: Optional[int] = None,
+        return_type: str = 'log_prob',
+        feat_mask_type: str = 'feature',
+        allow_edge_mask: bool = True,
+        log: bool = True,
+        **kwargs,
+    ):
         super().__init__(model, lr, epochs, num_hops, return_type, log)
         assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
         self.allow_edge_mask = allow_edge_mask
         self.feat_mask_type = feat_mask_type
         self.coeffs.update(kwargs)
 
-    def _initialize_masks(self, x, edge_index, init="normal"):
+    def _initialize_masks(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        init: str = "normal",
+    ):
         (N, F), E = x.size(), edge_index.size(1)
         std = 0.1
 
@@ -97,7 +112,12 @@ class GNNExplainer(Explainer):
         self.node_feat_masks = None
         self.edge_mask = None
 
-    def _loss(self, log_logits, prediction, node_idx: Optional[int] = None):
+    def _loss(
+        self,
+        log_logits: Tensor,
+        prediction: Tensor,
+        node_idx: Optional[Tensor] = None,
+    ) -> Tensor:
         if self.return_type == 'regression':
             if node_idx is not None and node_idx >= 0:
                 loss = torch.cdist(log_logits[node_idx], prediction[node_idx])
@@ -124,7 +144,12 @@ class GNNExplainer(Explainer):
 
         return loss
 
-    def explain_graph(self, x, edge_index, **kwargs):
+    def explain_graph(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Learns and returns a node feature mask and an edge mask that play a
         crucial role to explain the prediction made by the GNN for a graph.
 
@@ -183,7 +208,13 @@ class GNNExplainer(Explainer):
         self._clear_masks()
         return node_feat_mask, edge_mask
 
-    def explain_node(self, node_idx, x, edge_index, **kwargs):
+    def explain_node(
+        self,
+        node_idx: Tensor,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Learns and returns a node feature mask and an edge mask that play a
         crucial role to explain the prediction made by the GNN for node
         :attr:`node_idx`.
@@ -261,5 +292,5 @@ class GNNExplainer(Explainer):
 
         return node_feat_mask, edge_mask
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
