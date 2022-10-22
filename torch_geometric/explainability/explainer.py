@@ -27,6 +27,8 @@ class Explainer(torch.nn.Module):
         model (torch.nn.Module): the GNN module to explain.
         model_return_type (str): the output type of the model.
             Supported outputs are `logits`, `probs`, and `regression`.
+        threshold_value (float, optional): the threshold value to be used
+            for the `hard` thresholding method. (default: :obj:`0.5`)
     """
     def __init__(
         self,
@@ -38,6 +40,7 @@ class Explainer(torch.nn.Module):
         loss: torch.nn.Module,
         model: torch.nn.Module,
         model_return_type: str,
+        threshold_value: float = 0.5,
     ) -> None:
 
         super().__init__()
@@ -62,6 +65,7 @@ class Explainer(torch.nn.Module):
                 "The thresholding method must be either 'soft', 'hard' or"
                 "'connected'.")
         self.threshold = threshold
+        self.threshold_value = threshold_value
 
         # details of the model
         if model_return_type.lower() not in ["logits", "probs", "regression"]:
@@ -164,3 +168,9 @@ class Explainer(torch.nn.Module):
             Explanation: the post-processed explanation mask.
         """
         raise NotImplementedError()
+
+    def _threshold(self, explanation: Explanation) -> Explanation:
+        if self.threshold == "hard":
+            explanation.threshold(self.threshold_value)
+        if self.threshold == "connected":
+            raise NotImplementedError()

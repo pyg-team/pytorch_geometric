@@ -41,11 +41,36 @@ class Explanation(Data):
                  node_features_mask: Optional[Tensor] = None,
                  edge_features_mask: Optional[Tensor] = None, **kwargs):
 
+        self.node_mask: Optional[Tensor]
+        self.edge_mask: Optional[Tensor]
+        self.node_features_mask: Optional[Tensor]
+        self.edge_features_mask: Optional[Tensor]
+
         super().__init__(x, edge_index, edge_attr, y, pos, node_mask=node_mask,
                          edge_mask=edge_mask,
                          node_features_mask=node_features_mask,
                          edge_features_mask=edge_features_mask, **kwargs)
         # how to update number of nodes of super() based only on masks ?
+
+    def threshold(self, threshold: float) -> None:
+        r"""Thresholds the attributions of the graph.
+
+        Modify the explanation in place by setting to zero the attributions
+        below the threshold.
+
+        Args:
+            threshold (float): Sets a threshold for important nodes and edges.
+        """
+        if self.node_mask is not None:
+            self.node_mask = (self.node_mask > threshold).float()
+        if self.edge_mask is not None:
+            self.edge_mask = (self.edge_mask > threshold).float()
+        if self.node_features_mask is not None:
+            self.node_features_mask = (self.node_features_mask >
+                                       threshold).float()
+        if self.edge_features_mask is not None:
+            self.edge_features_mask = (self.edge_features_mask >
+                                       threshold).float()
 
     def visualise_graph(self, threshold_node: Optional[float] = None,
                         threhsold_edge: Optional[float] = None, **kwargs):
