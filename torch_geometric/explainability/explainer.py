@@ -19,8 +19,8 @@ class Threshold:
         if self.type not in self._valid_type:
             raise ValueError(f'Invalid threshold type {self.type}. '
                              f'Valid types are {self._valid_type}.')
-        if self.threshold < 0 or self.threshold > 1:
-            raise ValueError(f'Invalid threshold value {self.threshold}. '
+        if self.value < 0 or self.value > 1:
+            raise ValueError(f'Invalid threshold value {self.value}. '
                              f'Valid values are in [0, 1].')
 
 
