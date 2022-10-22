@@ -62,6 +62,7 @@ class ExplainerAlgorithm(torch.nn.Module):
                 **kwargs) -> Explanation:
         return self.explain(x, edge_index, target, model, **kwargs)
 
+    @abstractmethod
     def supports(
         self,
         explanation_type: str,
@@ -75,6 +76,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         supported.
 
         Args:
-
+            explanation_type (str): the type of explanation to compute.
+            mask_type (str): the type of mask to use.
         """
         return True
