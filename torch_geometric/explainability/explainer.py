@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Callable, Tuple
 
 import torch
@@ -6,6 +7,38 @@ from torch_geometric.explainability.algo.base import ExplainerAlgorithm
 from torch_geometric.explainability.algo.captumexplainer import CaptumExplainer
 from torch_geometric.explainability.explanations import Explanation
 from torch_geometric.explainability.utils import to_captum
+
+
+@dataclasses.dataclass
+class Threshold:
+    type: str
+    threshold: float
+    _valid_type = ["soft", "hard", "connected"]
+
+    def __post_init__(self):
+        if self.type not in self._valid_type:
+            raise ValueError(f'Invalid threshold type {self.type}. '
+                             f'Valid types are {self._valid_type}.')
+        if self.threshold < 0 or self.threshold > 1:
+            raise ValueError(f'Invalid threshold value {self.threshold}. '
+                             f'Valid values are in [0, 1].')
+
+
+@dataclasses.dataclass
+class ExplainerConfig:
+    explanation_type: str
+    mask_type: str
+    _valid_explanation_type = ["model", "phenomenon"]
+    _valid_mask_type = ["node", "edge", "node_and_edge"]
+
+    def __post_init__(self):
+        if self.explanation_type not in self._valid_explanation_type:
+            raise ValueError(
+                f'Invalid explanation type {self.explanation_type}. '
+                f'Valid types are {self._valid_explanation_type}.')
+        if self.mask_type not in self._valid_mask_type:
+            raise ValueError(f'Invalid mask type {self.mask_type}. '
+                             f'Valid types are {self._valid_mask_type}.')
 
 
 class Explainer(torch.nn.Module):
@@ -28,7 +61,8 @@ class Explainer(torch.nn.Module):
         model_return_type (str): the output type of the model.
             Supported outputs are `logits`, `probs`, and `regression`.
         threshold_value (float, optional): the threshold value to be used
-            for the `hard` thresholding method. (default: :obj:`0.5`)
+            for the `hard` thresholding method. Should be between 0 and 1.
+            (default: :obj:`0.5`)
     """
     def __init__(
         self,
@@ -46,27 +80,6 @@ class Explainer(torch.nn.Module):
         super().__init__()
 
         self.model = model
-
-        # high level type of explanations
-        if explanation_type.lower() not in ["model", "phenomenon"]:
-            raise ValueError(
-                "The explanation type must be either 'model' or 'phenomenon'.")
-        self.explanation_type = explanation_type
-
-        # details of desired output
-        if mask_type.lower() not in ["node", "edge", "node_and_edge"]:
-            raise ValueError(
-                "The mask type must be in 'node', 'edge' or 'node_and_edge'.")
-        self.mask_type = mask_type
-
-        # details for post-processing the ouput of the explanation algorithm
-        if threshold.lower() not in ["soft", "hard", "connected"]:
-            raise ValueError(
-                "The thresholding method must be either 'soft', 'hard' or"
-                "'connected'.")
-        self.threshold = threshold
-        self.threshold_value = threshold_value
-
         # details of the model
         if model_return_type.lower() not in ["logits", "probs", "regression"]:
             raise ValueError(
@@ -74,17 +87,21 @@ class Explainer(torch.nn.Module):
                 "'regression'.")
         self.model_return_type = model_return_type
 
+        self.explanation_config = ExplainerConfig(
+            explanation_type=explanation_type.lower(),
+            mask_type=mask_type.lower())
+
+        # details for post-processing the ouput of the explanation algorithm
+        self.threshold = Threshold(type=threshold, threshold=threshold_value)
+
         # details of the explanation algorithm
         self.explanation_algorithm = explanation_algorithm
-        if isinstance(self.explanation_algorithm, CaptumExplainer):
-            self.backend = "captum"
-        else:
-            self.backend = "pyg"
 
         # check that the explanation algorithm supports the
         # desired setup
-        if not self.explanation_algorithm.supports(self.explanation_type,
-                                                   self.mask_type):
+        if not self.explanation_algorithm.supports(
+                self.explanation_config.explanation_type,
+                self.explanation_config.mask_type):
             raise ValueError(
                 "The explanation algorithm does not support the configuration."
             )
@@ -107,18 +124,19 @@ class Explainer(torch.nn.Module):
             Explanation: explanations for the inputs and target.
         """
         target = y
-        if self.explanation_type == "model":
+        if self.explanation_config.explanation_type == "model":
             target = self.model(x=x, edge_index=edge_index, **kwargs)
 
         if self.model_return_type in ["probs", "logits"]:
             target = target.argmax()
 
-        if self.backend == "pyg":
-            raw_explanation = self._compute_explanation_pyg(
-                x, edge_index, target, **kwargs)
-        elif self.backend == "captum":
+        if isinstance(self.explanation_algorithm, CaptumExplainer):
             raw_explanation = self._compute_explanation_captum(
                 x, edge_index, target, **kwargs)
+        else:
+            raw_explanation = self._compute_explanation_pyg(
+                x, edge_index, target, **kwargs)
+
         return self._post_process_explanation(raw_explanation)
 
     def _compute_explanation_pyg(self, x: torch.Tensor,
@@ -134,7 +152,8 @@ class Explainer(torch.nn.Module):
                                     target: torch.Tensor,
                                     **kwargs) -> Explanation:
 
-        captum_model = to_captum(self.model, self.mask_type, 0)
+        captum_model = to_captum(self.model, self.explanation_config.mask_type,
+                                 target.item())
 
         return self.explanation_algorithm.explain(x=x, edge_index=edge_index,
                                                   target=target,
@@ -151,7 +170,7 @@ class Explainer(torch.nn.Module):
         function applied on the model output, otherwise it is the loss function
         applied on the true output.
         """
-        if self.explanation_type == "model":
+        if self.explanation_config.explanation_type == "model":
             return lambda x, y, z: self.loss(x, y)
         else:
             return lambda x, y, z: self.loss(x, z)
@@ -170,7 +189,7 @@ class Explainer(torch.nn.Module):
         raise NotImplementedError()
 
     def _threshold(self, explanation: Explanation) -> Explanation:
-        if self.threshold == "hard":
-            explanation.threshold(self.threshold_value)
-        if self.threshold == "connected":
+        if self.threshold.type == "hard":
+            explanation.threshold(self.threshold.threshold_value)
+        if self.threshold.type == "connected":
             raise NotImplementedError()
