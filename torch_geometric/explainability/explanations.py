@@ -14,8 +14,8 @@ class Explanation(Data):
     also hold the original graph if needed.
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
+        x (Tensor, optional): Node feature matrix with shape :obj:[num_nodes,
+            num_node_features]. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge feature matrix with shape

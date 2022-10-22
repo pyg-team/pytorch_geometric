@@ -12,7 +12,7 @@ from torch_geometric.explainability.utils import to_captum
 @dataclass
 class Threshold:
     type: str
-    threshold: float
+    value: float
     _valid_type = ["soft", "hard", "connected"]
 
     def __post_init__(self):
@@ -92,7 +92,7 @@ class Explainer(torch.nn.Module):
             mask_type=mask_type.lower())
 
         # details for post-processing the ouput of the explanation algorithm
-        self.threshold = Threshold(type=threshold, threshold=threshold_value)
+        self.threshold = Threshold(type=threshold, value=threshold_value)
 
         # details of the explanation algorithm
         self.explanation_algorithm = explanation_algorithm
@@ -195,10 +195,27 @@ class Explainer(torch.nn.Module):
         Returns:
             Explanation: the post-processed explanation mask.
         """
-        raise NotImplementedError()
+        explanation = self._threshold(explanation)
+        return explanation
 
     def _threshold(self, explanation: Explanation) -> Explanation:
+        """Threshold the explanation mask according to the thresholding method.
+
+        if the thresholding method is `hard`, the mask is thresholded at the
+        threshold value.
+        if the thresholding method is `soft`, the mask is returned as is.
+
+        Args:
+            explanation (Explanation): explanation to threshold.
+
+        Raises:
+            NotImplementedError: if the thresholding method is connected.
+
+        Returns:
+            Explanation: threhsolded explanation.
+        """
         if self.threshold.type == "hard":
-            explanation.threshold(self.threshold.threshold_value)
+            explanation.threshold(self.threshold.value)
         if self.threshold.type == "connected":
             raise NotImplementedError()
+        return explanation
