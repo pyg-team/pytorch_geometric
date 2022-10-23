@@ -2,13 +2,15 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable, Union
+from typing import Callable, Union, Tuple
 
 import numpy as np
 import torch
 from torch.nn import Embedding, Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
+from torch import Tensor
+from torch_geometric.typing import OptTensor
 
 from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
@@ -116,7 +118,12 @@ class SphericalBasisLayer(torch.nn.Module):
 
 
 class EmbeddingBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, act):
+    def __init__(
+        self,
+        num_radial: int,
+        hidden_channels: int,
+        act: Callable
+    ):
         super().__init__()
         self.act = act
 
@@ -454,7 +461,12 @@ class DimeNet(torch.nn.Module):
             interaction.reset_parameters()
 
     @classmethod
-    def from_qm9_pretrained(cls, root: str, dataset: Dataset, target: int):
+    def from_qm9_pretrained(
+        cls,
+        root: str,
+        dataset: Dataset,
+        target: int
+    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -548,7 +560,11 @@ class DimeNet(torch.nn.Module):
 
         return model, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def triplets(self, edge_index, num_nodes):
+    def triplets(
+        self,
+        edge_index: Tensor,
+        num_nodes: int
+    ) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         row, col = edge_index  # j->i
 
         value = torch.arange(row.size(0), device=row.device)
@@ -570,7 +586,11 @@ class DimeNet(torch.nn.Module):
 
         return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
 
-    def forward(self, z, pos, batch=None):
+    def forward(
+        self,
+        z: Tensor,
+        pos: Tensor,
+        batch: OptTensor = None) -> Tensor:
         """"""
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
@@ -687,7 +707,12 @@ class DimeNetPlusPlus(DimeNet):
         self.reset_parameters()
 
     @classmethod
-    def from_qm9_pretrained(cls, root: str, dataset: Dataset, target: int):
+    def from_qm9_pretrained(
+        cls,
+        root: str,
+        dataset: Dataset,
+        target: int
+    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
