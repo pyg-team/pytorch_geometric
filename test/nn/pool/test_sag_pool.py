@@ -1,5 +1,4 @@
 import torch
-from torch_geometric.testing import is_full_test
 
 from torch_geometric.nn import (
     GATConv,
@@ -8,6 +7,7 @@ from torch_geometric.nn import (
     SAGEConv,
     SAGPooling,
 )
+from torch_geometric.testing import is_full_test
 
 
 def test_sag_pooling():
