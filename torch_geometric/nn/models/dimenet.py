@@ -2,21 +2,21 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable, Union, Tuple
+from typing import Callable, Tuple, Union
 
 import numpy as np
 import torch
+from torch import Tensor
 from torch.nn import Embedding, Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-from torch import Tensor
-from torch_geometric.typing import OptTensor
 
 from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.typing import OptTensor
 
 qm9_target_dict = {
     0: 'mu',
@@ -118,12 +118,7 @@ class SphericalBasisLayer(torch.nn.Module):
 
 
 class EmbeddingBlock(torch.nn.Module):
-    def __init__(
-        self,
-        num_radial: int,
-        hidden_channels: int,
-        act: Callable
-    ):
+    def __init__(self, num_radial: int, hidden_channels: int, act: Callable):
         super().__init__()
         self.act = act
 
@@ -462,11 +457,8 @@ class DimeNet(torch.nn.Module):
 
     @classmethod
     def from_qm9_pretrained(
-        cls,
-        root: str,
-        dataset: Dataset,
-        target: int
-    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+            cls, root: str, dataset: Dataset,
+            target: int) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -561,9 +553,7 @@ class DimeNet(torch.nn.Module):
         return model, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def triplets(
-        self,
-        edge_index: Tensor,
-        num_nodes: int
+        self, edge_index: Tensor, num_nodes: int
     ) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         row, col = edge_index  # j->i
 
@@ -586,11 +576,8 @@ class DimeNet(torch.nn.Module):
 
         return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
 
-    def forward(
-        self,
-        z: Tensor,
-        pos: Tensor,
-        batch: OptTensor = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor,
+                batch: OptTensor = None) -> Tensor:
         """"""
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
@@ -708,10 +695,7 @@ class DimeNetPlusPlus(DimeNet):
 
     @classmethod
     def from_qm9_pretrained(
-        cls,
-        root: str,
-        dataset: Dataset,
-        target: int
+            cls, root: str, dataset: Dataset, target: int
     ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
