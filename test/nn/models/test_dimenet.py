@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.nn import DimeNetPlusPlus
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import onlyFullTest, is_full_test
 
 
 @onlyFullTest
@@ -31,6 +31,11 @@ def test_dimenet_plus_plus():
         out = model(data.z, data.pos)
         assert out.size() == (1, )
 
+        if is_full_test():
+            jit = torch.jit.export(model)
+            out = jit(data.z, data.pos)
+            assert out.size() == (1,)
+
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
     for i in range(100):
         optimizer.zero_grad()
@@ -39,3 +44,12 @@ def test_dimenet_plus_plus():
         loss.backward()
         optimizer.step()
     assert loss < 2
+
+    if is_full_test():
+        for i in range(100):
+            optimizer.zero_grad()
+            out = jit(data.z, data.pos)
+            loss = F.l1_loss(out, data.y)
+            loss.backward()
+            optimizer.step()
+            assert loss < 2
