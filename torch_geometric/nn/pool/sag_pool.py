@@ -1,6 +1,7 @@
 from typing import Callable, Optional, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.topk_pool import filter_adj, topk
@@ -84,7 +85,11 @@ class SAGPooling(torch.nn.Module):
     def reset_parameters(self):
         self.gnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None, attn=None):
+    def forward(
+        self, x: Tensor, edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None, batch: Optional[Tensor] = None,
+        attn: Optional[Tensor] = None
+    ) -> [Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
