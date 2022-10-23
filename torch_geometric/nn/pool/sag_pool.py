@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, Tuple
 
 import torch
 from torch import Tensor
@@ -89,7 +89,7 @@ class SAGPooling(torch.nn.Module):
         self, x: Tensor, edge_index: Tensor,
         edge_attr: Optional[Tensor] = None, batch: Optional[Tensor] = None,
         attn: Optional[Tensor] = None
-    ) -> [Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor, Tensor]:
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
