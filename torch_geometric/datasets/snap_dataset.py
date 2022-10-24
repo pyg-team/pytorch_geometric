@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -184,23 +185,29 @@ class SNAPDataset(InMemoryDataset):
         'wiki-vote': ['wiki-Vote.txt.gz'],
     }
 
-    def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return 'data.pt'
 
     def _download(self):
