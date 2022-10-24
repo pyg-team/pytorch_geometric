@@ -33,8 +33,7 @@ def test_dimenet_plus_plus():
 
         if is_full_test():
             jit = torch.jit.export(model)
-            out = jit(data.z, data.pos)
-            assert out.size() == (1, )
+            assert torch.allclose(jit(data.z, data.pos), out)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
     for i in range(100):
@@ -44,12 +43,3 @@ def test_dimenet_plus_plus():
         loss.backward()
         optimizer.step()
     assert loss < 2
-
-    if is_full_test():
-        for i in range(100):
-            optimizer.zero_grad()
-            out = jit(data.z, data.pos)
-            loss = F.l1_loss(out, data.y)
-            loss.backward()
-            optimizer.step()
-            assert loss < 2

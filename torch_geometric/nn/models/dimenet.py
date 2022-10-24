@@ -2,7 +2,7 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable, Tuple, Union
+from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -34,14 +34,14 @@ qm9_target_dict = {
 
 
 class Envelope(torch.nn.Module):
-    def __init__(self, exponent):
+    def __init__(self, exponent: int):
         super().__init__()
         self.p = exponent + 1
         self.a = -(self.p + 1) * (self.p + 2) / 2
         self.b = self.p * (self.p + 2)
         self.c = -self.p * (self.p + 1) / 2
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         p, a, b, c = self.p, self.a, self.b, self.c
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
@@ -51,7 +51,8 @@ class Envelope(torch.nn.Module):
 
 
 class BesselBasisLayer(torch.nn.Module):
-    def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5):
+    def __init__(self, num_radial: int, cutoff: float = 5.0,
+                 envelope_exponent: int = 5):
         super().__init__()
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
@@ -65,14 +66,14 @@ class BesselBasisLayer(torch.nn.Module):
             torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
         self.freq.requires_grad_()
 
-    def forward(self, dist):
+    def forward(self, dist: Tensor) -> Tensor:
         dist = (dist.unsqueeze(-1) / self.cutoff)
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
 class SphericalBasisLayer(torch.nn.Module):
-    def __init__(self, num_spherical, num_radial, cutoff=5.0,
-                 envelope_exponent=5):
+    def __init__(self, num_spherical: int, num_radial: int,
+                 cutoff: float = 5.0, envelope_exponent: int = 5):
         super().__init__()
         import sympy as sym
 
@@ -105,7 +106,7 @@ class SphericalBasisLayer(torch.nn.Module):
                 bessel = sym.lambdify([x], bessel_forms[i][j], modules)
                 self.bessel_funcs.append(bessel)
 
-    def forward(self, dist, angle, idx_kj):
+    def forward(self, dist: Tensor, angle: Tensor, idx_kj: Tensor) -> Tensor:
         dist = dist / self.cutoff
         rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)
         rbf = self.envelope(dist).unsqueeze(-1) * rbf
@@ -133,14 +134,14 @@ class EmbeddingBlock(torch.nn.Module):
         self.lin_rbf.reset_parameters()
         self.lin.reset_parameters()
 
-    def forward(self, x, rbf, i, j):
+    def forward(self, x: Tensor, rbf: Tensor, i: Tensor, j: Tensor) -> Tensor:
         x = self.emb(x)
         rbf = self.act(self.lin_rbf(rbf))
         return self.act(self.lin(torch.cat([x[i], x[j], rbf], dim=-1)))
 
 
 class ResidualLayer(torch.nn.Module):
-    def __init__(self, hidden_channels, act):
+    def __init__(self, hidden_channels: int, act: Callable):
         super().__init__()
         self.act = act
         self.lin1 = Linear(hidden_channels, hidden_channels)
@@ -154,13 +155,14 @@ class ResidualLayer(torch.nn.Module):
         glorot_orthogonal(self.lin2.weight, scale=2.0)
         self.lin2.bias.data.fill_(0)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         return x + self.act(self.lin2(self.act(self.lin1(x))))
 
 
 class InteractionBlock(torch.nn.Module):
-    def __init__(self, hidden_channels, num_bilinear, num_spherical,
-                 num_radial, num_before_skip, num_after_skip, act):
+    def __init__(self, hidden_channels: int, num_bilinear: int,
+                 num_spherical: int, num_radial: int, num_before_skip: int,
+                 num_after_skip: int, act: Callable):
         super().__init__()
         self.act = act
 
@@ -200,7 +202,8 @@ class InteractionBlock(torch.nn.Module):
         for res_layer in self.layers_after_skip:
             res_layer.reset_parameters()
 
-    def forward(self, x, rbf, sbf, idx_kj, idx_ji):
+    def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,
+                idx_ji: Tensor) -> Tensor:
         rbf = self.lin_rbf(rbf)
         sbf = self.lin_sbf(sbf)
 
@@ -221,9 +224,9 @@ class InteractionBlock(torch.nn.Module):
 
 
 class InteractionPPBlock(torch.nn.Module):
-    def __init__(self, hidden_channels, int_emb_size, basis_emb_size,
-                 num_spherical, num_radial, num_before_skip, num_after_skip,
-                 act):
+    def __init__(self, hidden_channels: int, int_emb_size: int,
+                 basis_emb_size: int, num_spherical: int, num_radial: int,
+                 num_before_skip: int, num_after_skip: int, act: Callable):
         super().__init__()
         self.act = act
 
@@ -275,7 +278,8 @@ class InteractionPPBlock(torch.nn.Module):
         for res_layer in self.layers_before_skip:
             res_layer.reset_parameters()
 
-    def forward(self, x, rbf, sbf, idx_kj, idx_ji):
+    def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,
+                idx_ji: Tensor) -> Tensor:
         # Initial transformation:
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
@@ -308,8 +312,8 @@ class InteractionPPBlock(torch.nn.Module):
 
 
 class OutputBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, out_channels, num_layers,
-                 act):
+    def __init__(self, num_radial: int, hidden_channels: int,
+                 out_channels: int, num_layers: int, act: Callable):
         super().__init__()
         self.act = act
 
@@ -328,7 +332,8 @@ class OutputBlock(torch.nn.Module):
             lin.bias.data.fill_(0)
         self.lin.weight.data.fill_(0)
 
-    def forward(self, x, rbf, i, num_nodes=None):
+    def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
+                num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
         x = scatter(x, i, dim=0, dim_size=num_nodes)
         for lin in self.lins:
@@ -337,8 +342,9 @@ class OutputBlock(torch.nn.Module):
 
 
 class OutputPPBlock(torch.nn.Module):
-    def __init__(self, num_radial, hidden_channels, out_emb_channels,
-                 out_channels, num_layers, act):
+    def __init__(self, num_radial: int, hidden_channels: int,
+                 out_emb_channels: int, out_channels: int, num_layers: int,
+                 act: Callable):
         super().__init__()
         self.act = act
 
@@ -361,7 +367,8 @@ class OutputPPBlock(torch.nn.Module):
             lin.bias.data.fill_(0)
         self.lin.weight.data.fill_(0)
 
-    def forward(self, x, rbf, i, num_nodes=None):
+    def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
+                num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
         x = scatter(x, i, dim=0, dim_size=num_nodes)
         x = self.lin_up(x)
@@ -411,12 +418,22 @@ class DimeNet(torch.nn.Module):
     url = ('https://github.com/klicperajo/dimenet/raw/master/pretrained/'
            'dimenet')
 
-    def __init__(self, hidden_channels: int, out_channels: int,
-                 num_blocks: int, num_bilinear: int, num_spherical: int,
-                 num_radial, cutoff: float = 5.0, max_num_neighbors: int = 32,
-                 envelope_exponent: int = 5, num_before_skip: int = 1,
-                 num_after_skip: int = 2, num_output_layers: int = 3,
-                 act: Union[str, Callable] = 'swish'):
+    def __init__(
+        self,
+        hidden_channels: int,
+        out_channels: int,
+        num_blocks: int,
+        num_bilinear: int,
+        num_spherical: int,
+        num_radial,
+        cutoff: float = 5.0,
+        max_num_neighbors: int = 32,
+        envelope_exponent: int = 5,
+        num_before_skip: int = 1,
+        num_after_skip: int = 2,
+        num_output_layers: int = 3,
+        act: Union[str, Callable] = 'swish',
+    ):
         super().__init__()
 
         if num_spherical < 2:
@@ -457,8 +474,11 @@ class DimeNet(torch.nn.Module):
 
     @classmethod
     def from_qm9_pretrained(
-            cls, root: str, dataset: Dataset,
-            target: int) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+        cls,
+        root: str,
+        dataset: Dataset,
+        target: int,
+    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -553,8 +573,10 @@ class DimeNet(torch.nn.Module):
         return model, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def triplets(
-        self, edge_index: Tensor, num_nodes: int
-    ) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        self,
+        edge_index: Tensor,
+        num_nodes: int,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         row, col = edge_index  # j->i
 
         value = torch.arange(row.size(0), device=row.device)
@@ -576,8 +598,12 @@ class DimeNet(torch.nn.Module):
 
         return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
 
-    def forward(self, z: Tensor, pos: Tensor,
-                batch: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        z: Tensor,
+        pos: Tensor,
+        batch: OptTensor = None,
+    ) -> Tensor:
         """"""
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
@@ -648,14 +674,24 @@ class DimeNetPlusPlus(DimeNet):
     url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
            'master/pretrained/dimenet_pp')
 
-    def __init__(self, hidden_channels: int, out_channels: int,
-                 num_blocks: int, int_emb_size: int, basis_emb_size: int,
-                 out_emb_channels: int, num_spherical: int, num_radial: int,
-                 cutoff: float = 5.0, max_num_neighbors: int = 32,
-                 envelope_exponent: int = 5, num_before_skip: int = 1,
-                 num_after_skip: int = 2, num_output_layers: int = 3,
-                 act: Union[str, Callable] = 'swish'):
-
+    def __init__(
+        self,
+        hidden_channels: int,
+        out_channels: int,
+        num_blocks: int,
+        int_emb_size: int,
+        basis_emb_size: int,
+        out_emb_channels: int,
+        num_spherical: int,
+        num_radial: int,
+        cutoff: float = 5.0,
+        max_num_neighbors: int = 32,
+        envelope_exponent: int = 5,
+        num_before_skip: int = 1,
+        num_after_skip: int = 2,
+        num_output_layers: int = 3,
+        act: Union[str, Callable] = 'swish',
+    ):
         act = activation_resolver(act)
 
         super().__init__(
@@ -695,7 +731,10 @@ class DimeNetPlusPlus(DimeNet):
 
     @classmethod
     def from_qm9_pretrained(
-            cls, root: str, dataset: Dataset, target: int
+        cls,
+        root: str,
+        dataset: Dataset,
+        target: int,
     ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
