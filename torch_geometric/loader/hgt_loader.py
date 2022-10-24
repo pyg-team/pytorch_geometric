@@ -104,7 +104,7 @@ class HGTLoader(NodeLoader):
         **kwargs,
     ):
         input_nodes = get_input_nodes(data, input_nodes)
-    
+
         hgt_sampler = HGTSampler(
             data,
             num_samples=num_samples,

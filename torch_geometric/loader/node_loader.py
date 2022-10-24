@@ -7,8 +7,8 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
-    SamplingInputNodes,
     InputData,
+    SamplingInputNodes,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
