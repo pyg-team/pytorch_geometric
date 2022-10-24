@@ -44,9 +44,14 @@ def test_meta_layer_example():
             super().__init__()
             self.edge_mlp = Seq(Lin(2 * 10 + 5 + 20, 5), ReLU(), Lin(5, 5))
 
-        def forward(self, src: Tensor, dest: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            src: Tensor,
+            dest: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert edge_attr is not None
             assert u is not None
             assert batch is not None
@@ -59,9 +64,14 @@ def test_meta_layer_example():
             self.node_mlp_1 = Seq(Lin(15, 10), ReLU(), Lin(10, 10))
             self.node_mlp_2 = Seq(Lin(2 * 10 + 20, 10), ReLU(), Lin(10, 10))
 
-        def forward(self, x: Tensor, edge_index: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            x: Tensor,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert edge_attr is not None
             assert u is not None
             assert batch is not None
@@ -78,9 +88,14 @@ def test_meta_layer_example():
             super().__init__()
             self.global_mlp = Seq(Lin(20 + 10, 20), ReLU(), Lin(20, 20))
 
-        def forward(self, x: Tensor, edge_index: Tensor,
-                    edge_attr: Optional[Tensor], u: Optional[Tensor],
-                    batch: Optional[Tensor]) -> Tensor:
+        def forward(
+            self,
+            x: Tensor,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor],
+            u: Optional[Tensor],
+            batch: Optional[Tensor],
+        ) -> Tensor:
             assert u is not None
             assert batch is not None
             out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
@@ -95,10 +110,15 @@ def test_meta_layer_example():
     edge_index = torch.randint(0, high=10, size=(2, 20), dtype=torch.long)
     edge_index = torch.cat([edge_index, 10 + edge_index], dim=1)
 
-    x, edge_attr, u, op(x, edge_index, edge_attr, u, batch)
-    assert x.size() == (20, 10)
-    assert edge_attr.size() == (40, 5)
-    assert u.size() == (2, 20)
+    x_out, edge_attr_out, u_out = op(x, edge_index, edge_attr, u, batch)
+    assert x_out.size() == (20, 10)
+    assert edge_attr_out.size() == (40, 5)
+    assert u_out.size() == (2, 20)
 
     if is_full_test():
-        torch.jit.script(op)
+        jit = torch.jit.script(op)
+
+        x_out, edge_attr_out, u_out = jit(x, edge_index, edge_attr, u, batch)
+        assert x_out.size() == (20, 10)
+        assert edge_attr_out.size() == (40, 5)
+        assert u_out.size() == (2, 20)

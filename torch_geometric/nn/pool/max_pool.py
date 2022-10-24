@@ -1,22 +1,29 @@
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 from torch import Tensor
 from torch_scatter import scatter
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from torch_geometric.utils import add_self_loops
 
 from .consecutive import consecutive_cluster
 from .pool import pool_batch, pool_edge, pool_pos
 
 
-def _max_pool_x(cluster: Tensor, x: Tensor,
-                size: Optional[int] = None) -> Tensor:
+def _max_pool_x(
+    cluster: Tensor,
+    x: Tensor,
+    size: Optional[int] = None,
+) -> Tensor:
     return scatter(x, cluster, dim=0, dim_size=size, reduce='max')
 
 
-def max_pool_x(cluster: Tensor, x: Tensor, batch: Tensor,
-               size: Optional[int] = None) -> Tuple[Tensor, Optional[Tensor]]:
+def max_pool_x(
+    cluster: Tensor,
+    x: Tensor,
+    batch: Tensor,
+    size: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Max-Pools node features according to the clustering defined in
     :attr:`cluster`.
 
@@ -47,7 +54,11 @@ def max_pool_x(cluster: Tensor, x: Tensor, batch: Tensor,
     return x, batch
 
 
-def max_pool(cluster, data, transform=None):
+def max_pool(
+    cluster: Tensor,
+    data: Data,
+    transform: Optional[Callable] = None,
+) -> Data:
     r"""Pools and coarsens a graph given by the
     :class:`torch_geometric.data.Data` object according to the clustering
     defined in :attr:`cluster`.
@@ -82,7 +93,10 @@ def max_pool(cluster, data, transform=None):
     return data
 
 
-def max_pool_neighbor_x(data, flow='source_to_target'):
+def max_pool_neighbor_x(
+    data: Data,
+    flow: Optional[str] = 'source_to_target',
+) -> Data:
     r"""Max pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the feature value with the maximum value from
     the central node and its neighbors.

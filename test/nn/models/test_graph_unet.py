@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GraphUNet
+from torch_geometric.testing import is_full_test
 
 
 def test_graph_unet():
@@ -13,3 +14,8 @@ def test_graph_unet():
 
     out = model(x, edge_index)
     assert out.size() == (3, 8)
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+        out = jit(x, edge_index)
+        assert out.size() == (3, 8)

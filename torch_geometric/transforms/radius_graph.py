@@ -1,4 +1,5 @@
 import torch_geometric
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -36,7 +37,7 @@ class RadiusGraph(BaseTransform):
         self.flow = flow
         self.num_workers = num_workers
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
 
