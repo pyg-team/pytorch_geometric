@@ -145,12 +145,16 @@ class Linear(torch.nn.Module):
         delattr(self, '_hook')
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
-        if is_uninitialized_parameter(self.weight):
+        if (is_uninitialized_parameter(self.weight)
+                or torch.onnx.is_in_onnx_export()):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            destination[prefix + 'bias'] = self.bias.detach()
+            if torch.onnx.is_in_onnx_export():
+                destination[prefix + 'bias'] = self.bias
+            else:
+                destination[prefix + 'bias'] = self.bias.detach()
 
     def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
                         missing_keys, unexpected_keys, error_msgs):
@@ -216,9 +220,10 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
+        self._WITH_PYG_LIB = _WITH_PYG_LIB
 
         if self._WITH_PYG_LIB:
+            self.lins = None
             self.weight = torch.nn.Parameter(
                 torch.Tensor(num_types, in_channels, out_channels))
             if kwargs.get('bias', True):
@@ -265,6 +270,7 @@ class HeteroLinear(torch.nn.Module):
             if self.bias is not None:
                 out += self.bias[type_vec]
         else:
+            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
                 mask = type_vec == i

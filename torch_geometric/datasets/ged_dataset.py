@@ -58,6 +58,42 @@ class GEDDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - AIDS700nef
+              - 700
+              - ~8.9
+              - ~17.6
+              - 29
+              - 0
+            * - LINUX
+              - 1,000
+              - ~7.6
+              - ~13.9
+              - 0
+              - 0
+            * - ALKANE
+              - 150
+              - ~8.9
+              - ~15.8
+              - 0
+              - 0
+            * - IMDBMulti
+              - 1,500
+              - ~13.0
+              - ~131.9
+              - 0
+              - 0
     """
 
     url = 'https://drive.google.com/uc?export=download&id={}'

@@ -3,8 +3,9 @@ import math
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -13,20 +14,48 @@ from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import InputEdges, InputNodes, NodeType, OptTensor
+from torch_geometric.typing import (
+    FeatureTensorType,
+    InputEdges,
+    InputNodes,
+    OptTensor,
+)
 
 
-def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
-    out: Optional[Tensor] = None
-    if torch.utils.data.get_worker_info() is not None:
-        # If we are in a background process, we write directly into a shared
-        # memory tensor to avoid an extra copy:
-        size = list(value.size())
-        size[dim] = index.numel()
-        numel = math.prod(size)
-        storage = value.storage()._new_shared(numel)
-        out = value.new(storage).view(size)
-    return torch.index_select(value, dim, index, out=out)
+class InputData:
+    def __init__(self, *args):
+        self.args = args
+
+    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        outs = [index]
+        for arg in self.args:
+            outs.append(arg[index] if arg is not None else None)
+        return tuple(outs)
+
+
+def index_select(value: FeatureTensorType, index: Tensor,
+                 dim: int = 0) -> Tensor:
+    if isinstance(value, Tensor):
+        out: Optional[Tensor] = None
+        if torch.utils.data.get_worker_info() is not None:
+            # If we are in a background process, we write directly into a
+            # shared memory tensor to avoid an extra copy:
+            size = list(value.shape)
+            size[dim] = index.numel()
+            numel = math.prod(size)
+            storage = value.storage()._new_shared(numel)
+            out = value.new(storage).view(size)
+
+        return torch.index_select(value, dim, index, out=out)
+
+    elif isinstance(value, np.ndarray):
+        return torch.from_numpy(np.take(value, index, axis=dim))
+
+    raise ValueError(f"Encountered invalid feature tensor type "
+                     f"(got '{type(value)}')")
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -37,7 +66,10 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            index = index.to(value.device)
+            if isinstance(value, Tensor):
+                index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
             dim = store._parent().__cat_dim__(key, value, store)
             out_store[key] = index_select(value, index, dim=dim)
 
@@ -71,12 +103,17 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
         elif store.is_edge_attr(key):
             dim = store._parent().__cat_dim__(key, value, store)
-            if perm is None:
+            if isinstance(value, Tensor):
                 index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
+            if perm is None:
                 out_store[key] = index_select(value, index, dim=dim)
             else:
-                perm = perm.to(value.device)
-                index = index.to(value.device)
+                if isinstance(value, Tensor):
+                    perm = perm.to(value.device)
+                elif isinstance(value, np.ndarray):
+                    perm = perm.cpu()
                 out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store
@@ -204,18 +241,20 @@ def get_input_nodes(
     def to_index(tensor):
         if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
             return tensor.nonzero(as_tuple=False).view(-1)
+        if not isinstance(tensor, Tensor):
+            return torch.tensor(tensor, dtype=torch.long)
         return tensor
 
     if isinstance(data, Data):
         if input_nodes is None:
-            return None, range(data.num_nodes)
+            return None, torch.arange(data.num_nodes)
         return SamplingInputNodes(input_nodes={None: to_index(input_nodes)})
 
     elif isinstance(data, HeteroData):
         assert input_nodes is not None
 
         if isinstance(input_nodes, str):
-            return input_nodes, range(data[input_nodes].num_nodes)
+            return input_nodes, torch.arange(data[input_nodes].num_nodes)
 
         assert isinstance(input_nodes, (list, tuple))
         assert len(input_nodes) == 2
@@ -223,7 +262,7 @@ def get_input_nodes(
 
         node_type, input_nodes = input_nodes
         if input_nodes is None:
-            return node_type, range(data[node_type].num_nodes)
+            return node_type, torch.arange(data[node_type].num_nodes)
         return node_type, to_index(input_nodes)
 
     else:  # Tuple[FeatureStore, GraphStore]

@@ -18,6 +18,7 @@ jobs:
         continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: true
 
       - uses: samspills/assign-pr-to-author@v1.0
         if: github.event_name == 'pull_request'

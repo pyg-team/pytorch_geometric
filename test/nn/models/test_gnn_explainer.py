@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.nn import Linear
 
 from torch_geometric.nn import GATConv, GCNConv, GNNExplainer, global_add_pool
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import is_full_test, withPackage
 
 
 class GCN(torch.nn.Module):
@@ -94,6 +94,21 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
         assert edge_mask[:8].tolist() == [1.] * 8
         assert edge_mask[8:].tolist() == [0.] * 6
 
+    if is_full_test():
+        jit = torch.jit.export(explainer)
+
+        node_feat_mask, edge_mask = jit.explain_node(2, x, edge_index)
+
+        if feat_mask_type == 'individual_feature':
+            assert node_feat_mask.size() == x.size()
+        elif feat_mask_type == 'scalar':
+            assert node_feat_mask.size() == (x.size(0), )
+        else:
+            assert node_feat_mask.size() == (x.size(1), )
+        assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
+        assert edge_mask.size() == (edge_index.size(1), )
+        assert edge_mask.min() >= 0 and edge_mask.max() <= 1
+
 
 @withPackage('matplotlib')
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
@@ -132,6 +147,21 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
     assert edge_mask.size() == (edge_index.size(1), )
     assert edge_mask.max() <= 1 and edge_mask.min() >= 0
 
+    if is_full_test():
+        jit = torch.jit.export(explainer)
+
+        node_feat_mask, edge_mask = jit.explain_graph(x, edge_index,
+                                                      edge_attr=edge_attr)
+        if feat_mask_type == 'individual_feature':
+            assert node_feat_mask.size() == x.size()
+        elif feat_mask_type == 'scalar':
+            assert node_feat_mask.size() == (x.size(0), )
+        else:
+            assert node_feat_mask.size() == (x.size(1), )
+        assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
+        assert edge_mask.size() == (edge_index.size(1), )
+        assert edge_mask.max() <= 1 and edge_mask.min() >= 0
+
 
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('model', [GAT()])
@@ -148,3 +178,13 @@ def test_gnn_explainer_with_existing_self_loops(model, return_type):
     assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
     assert edge_mask.size() == (edge_index.size(1), )
     assert edge_mask.max() <= 1 and edge_mask.min() >= 0
+
+    if is_full_test():
+        jit = torch.jit.export(explainer)
+
+        node_feat_mask, edge_mask = jit.explain_node(2, x, edge_index)
+
+        assert node_feat_mask.size() == (x.size(1), )
+        assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
+        assert edge_mask.size() == (edge_index.size(1), )
+        assert edge_mask.max() <= 1 and edge_mask.min() >= 0

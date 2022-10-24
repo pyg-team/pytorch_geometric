@@ -4,7 +4,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data.graph_store import EdgeLayout, GraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -15,7 +15,6 @@ from torch_geometric.sampler.base import (
 from torch_geometric.sampler.utils import (
     add_negative_samples,
     remap_keys,
-    set_node_time_dict,
     to_csc,
     to_hetero_csc,
 )
@@ -29,13 +28,16 @@ except ImportError:
 
 
 class NeighborSampler(BaseSampler):
-    r"""An implementation of an in-memory neighbor sampler."""
+    r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
+    by :class:`~torch_geometric.loader.NeighborLoader`."""
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
+        temporal_strategy: str = 'uniform',
         input_type: Optional[Any] = None,
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
@@ -46,13 +48,10 @@ class NeighborSampler(BaseSampler):
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
-        self.node_time = None
+        self._disjoint = disjoint
+        self.temporal_strategy = temporal_strategy
+        self.node_time = self.node_time_dict = None
         self.input_type = input_type
-
-        # TODO if self.edge_time is not None and
-        # `src` or `dst` nodes don't have time attribute
-        # i.e node_time_dict[input_type[0/-1]] doesn't exist
-        # set it to largest representable torch.long.
 
         # Set the number of source and destination nodes if we can, otherwise
         # ignore:
@@ -79,7 +78,7 @@ class NeighborSampler(BaseSampler):
 
             # Convert the graph data into a suitable format for sampling.
             out = to_csc(data, device='cpu', share_memory=share_memory,
-                         is_sorted=is_sorted)
+                         is_sorted=is_sorted, src_node_time=self.node_time)
             self.colptr, self.row, self.perm = out
             assert isinstance(num_neighbors, (list, tuple))
 
@@ -98,7 +97,8 @@ class NeighborSampler(BaseSampler):
 
             # Obtain CSC representations for in-memory sampling:
             out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
-                                is_sorted=is_sorted)
+                                is_sorted=is_sorted,
+                                node_time_dict=self.node_time_dict)
             colptr_dict, row_dict, perm_dict = out
 
             # Conversions to/from C++ string type:
@@ -124,16 +124,34 @@ class NeighborSampler(BaseSampler):
             # TODO support `FeatureStore` with no edge types (e.g. `Data`)
             feature_store, graph_store = data
 
+            # Obtain all node and edge metadata:
+            node_attrs = feature_store.get_all_tensor_attrs()
+            edge_attrs = graph_store.get_all_edge_attrs()
+
             # TODO support `collect` on `FeatureStore`:
             self.node_time_dict = None
             if time_attr is not None:
+                # If the `time_attr` is present, we expect that `GraphStore`
+                # holds all edges sorted by destination, and within local
+                # neighborhoods, node indices should be sorted by time.
+                # TODO (matthias, manan) Find an alternative way to ensure
+                for edge_attr in edge_attrs:
+                    if edge_attr.layout == EdgeLayout.CSR:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are stored "
+                            "in either COO or CSC layout")
+                    if not edge_attr.is_sorted:
+                        raise ValueError(
+                            "Temporal sampling requires that edges are "
+                            "sorted by destination, and by source time "
+                            "within local neighborhoods")
+
                 # We need to obtain all features with 'attr_name=time_attr'
                 # from the feature store and store them in node_time_dict. To
                 # do so, we make an explicit feature store GET call here with
                 # the relevant 'TensorAttr's
                 time_attrs = [
-                    attr for attr in feature_store.get_all_tensor_attrs()
-                    if attr.attr_name == time_attr
+                    attr for attr in node_attrs if attr.attr_name == time_attr
                 ]
                 for attr in time_attrs:
                     attr.index = None
@@ -142,10 +160,6 @@ class NeighborSampler(BaseSampler):
                     time_attr.group_name: time_tensor
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
-
-            # Obtain all node and edge metadata:
-            node_attrs = feature_store.get_all_tensor_attrs()
-            edge_attrs = graph_store.get_all_edge_attrs()
 
             self.node_types = list(
                 set(node_attr.group_name for node_attr in node_attrs))
@@ -189,6 +203,15 @@ class NeighborSampler(BaseSampler):
                 raise ValueError(f"Expected the edge type {key} to have "
                                  f"{self.num_hops} entries (got {len(value)})")
 
+    @property
+    def is_temporal(self) -> bool:
+        return (getattr(self, 'node_time') is not None
+                or getattr(self, 'node_time_dict') is not None)
+
+    @property
+    def disjoint(self) -> bool:
+        return self._disjoint or self.is_temporal
+
     def _sample(
         self,
         seed: Union[torch.Tensor, Dict[NodeType, torch.Tensor]],
@@ -201,61 +224,49 @@ class NeighborSampler(BaseSampler):
         Note that the 'metadata' field of the output is not filled; it is the
         job of the caller to appropriately fill out this field for downstream
         loaders."""
-
-        # TODO(manan): remote backends only support heterogeneous graphs for
-        # now:
+        # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
-                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
-                disjoint = self.node_time_dict is not None
-                out = torch.ops.pyg.hetero_neighbor_sample_cpu(
+                out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
                     seed,  # seed_dict
                     self.num_neighbors,
-                    kwargs.get('node_time_dict', self.node_time_dict),
+                    self.node_time_dict,
+                    kwargs.get('seed_time_dict', None),
                     True,  # csc
                     self.replace,
                     self.directed,
-                    disjoint,
+                    self.disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
-                if disjoint:
+                if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
                     node = {k: v[1] for k, v in node.items()}
 
             else:
-                if self.node_time_dict is None:
-                    out = torch.ops.torch_sparse.hetero_neighbor_sample(
-                        self.node_types,
-                        self.edge_types,
-                        self.colptr_dict,
-                        self.row_dict,
-                        seed,  # seed_dict
-                        self.num_neighbors,
-                        self.num_hops,
-                        self.replace,
-                        self.directed,
-                    )
-                else:
-                    fn = torch.ops.torch_sparse.hetero_temporal_neighbor_sample
-                    out = fn(
-                        self.node_types,
-                        self.edge_types,
-                        self.colptr_dict,
-                        self.row_dict,
-                        seed,  # seed_dict
-                        self.num_neighbors,
-                        kwargs.get('node_time_dict', self.node_time_dict),
-                        self.num_hops,
-                        self.replace,
-                        self.directed,
-                    )
+                if self.disjoint:
+                    raise ValueError("'disjoint' sampling not supported for "
+                                     "neighbor sampling via 'torch-sparse'. "
+                                     "Please install 'pyg-lib' for improved "
+                                     "and optimized sampling routines.")
+                out = torch.ops.torch_sparse.hetero_neighbor_sample(
+                    self.node_types,
+                    self.edge_types,
+                    self.colptr_dict,
+                    self.row_dict,
+                    seed,  # seed_dict
+                    self.num_neighbors,
+                    self.num_hops,
+                    self.replace,
+                    self.directed,
+                )
                 node, row, col, edge, batch = out + (None, )
 
             return HeteroSamplerOutput(
@@ -268,29 +279,31 @@ class NeighborSampler(BaseSampler):
 
         if issubclass(self.data_cls, Data):
             if _WITH_PYG_LIB:
-                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
-                disjoint = self.node_time is not None
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
                     self.row,
                     seed,  # seed
                     self.num_neighbors,
-                    kwargs.get('node_time', self.node_time),
+                    self.node_time,
+                    kwargs.get('seed_time', None),
                     True,  # csc
                     self.replace,
                     self.directed,
-                    disjoint,
+                    self.disjoint,
+                    self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
-                if disjoint:
+                if self.disjoint:
                     batch, node = node.t().contiguous()
 
             else:
-                if self.node_time is not None:
-                    raise ValueError("'time_attr' not supported for "
-                                     "neighbor sampling via 'torch-sparse'")
+                if self.disjoint:
+                    raise ValueError("'disjoint' sampling not supported for "
+                                     "neighbor sampling via 'torch-sparse'. "
+                                     "Please install 'pyg-lib' for improved "
+                                     "and optimized sampling routines.")
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,
@@ -319,20 +332,19 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the nodes specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
+        index, input_nodes, input_time = index
 
-        # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
-        # sampling:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            output = self._sample(seed={self.input_type: index})
-            output.metadata = index.numel()
+            seed_time_dict = None
+            if input_time is not None:
+                seed_time_dict = {self.input_type: input_time}
+            output = self._sample(seed={self.input_type: input_nodes},
+                                  seed_time_dict=seed_time_dict)
+            output.metadata = index
 
         elif issubclass(self.data_cls, Data):
-            output = self._sample(seed=index)
-            output.metadata = index.numel()
+            output = self._sample(seed=input_nodes, seed_time=input_time)
+            output.metadata = index
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -347,55 +359,97 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Samples from the edges specified in 'index', using pyg-lib or
-        torch-sparse sampling routines that store the graph in memory."""
+        index, row, col, edge_label, edge_label_time = index
+        edge_label_index = torch.stack([row, col], dim=0)
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
-        query = [torch.stack(s, dim=0) for s in zip(*index)]
-        edge_label_index = torch.stack(query[:2], dim=0)
-        edge_label = query[2]
-        edge_label_time = query[3] if len(query) == 4 else None
 
         out = add_negative_samples(edge_label_index, edge_label,
                                    edge_label_time, self.num_src_nodes,
                                    self.num_dst_nodes, negative_sampling_ratio)
         edge_label_index, edge_label, edge_label_time = out
-
-        orig_edge_label_index = edge_label_index
+        num_seed_edges = edge_label_index.size(1)
+        seed_time = seed_time_dict = None
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
-                query_src = edge_label_index[0]
-                query_src, reverse_src = query_src.unique(return_inverse=True)
-                query_dst = edge_label_index[1]
-                query_dst, reverse_dst = query_dst.unique(return_inverse=True)
-                edge_label_index = torch.stack([reverse_src, reverse_dst], 0)
-                query_node_dict = {
-                    self.input_type[0]: query_src,
-                    self.input_type[-1]: query_dst,
-                }
+                if self.disjoint:
+                    seed_src = edge_label_index[0]
+                    seed_dst = edge_label_index[1]
+                    edge_label_index = torch.arange(
+                        0, num_seed_edges).repeat(2).view(2, -1)
+                    seed_dict = {
+                        self.input_type[0]: seed_src,
+                        self.input_type[-1]: seed_dst,
+                    }
+                    if edge_label_time is not None:
+                        seed_time_dict = {
+                            self.input_type[0]: edge_label_time,
+                            self.input_type[-1]: edge_label_time
+                        }
+                else:
+                    seed_src = edge_label_index[0]
+                    seed_src, inverse_src = seed_src.unique(
+                        return_inverse=True)
+                    seed_dst = edge_label_index[1]
+                    seed_dst, inverse_dst = seed_dst.unique(
+                        return_inverse=True)
+                    edge_label_index = torch.stack([
+                        inverse_src,
+                        inverse_dst,
+                    ], dim=0)
+                    seed_dict = {
+                        self.input_type[0]: seed_src,
+                        self.input_type[-1]: seed_dst,
+                    }
+
             else:  # Merge both source and destination node indices:
-                query_nodes = edge_label_index.view(-1)
-                query_nodes, reverse = query_nodes.unique(return_inverse=True)
-                edge_label_index = reverse.view(2, -1)
-                query_node_dict = {self.input_type[0]: query_nodes}
+                if self.disjoint:
+                    seed_nodes = edge_label_index.view(-1)
+                    edge_label_index = torch.arange(0, 2 * num_seed_edges)
+                    edge_label_index = edge_label_index.view(2, -1)
+                    seed_dict = {self.input_type[0]: seed_nodes}
+                    if edge_label_time is not None:
+                        tmp = torch.cat([edge_label_time, edge_label_time])
+                        seed_time_dict = {self.input_type[0]: tmp}
+                else:
+                    seed_nodes = edge_label_index.view(-1)
+                    seed_nodes, inverse = seed_nodes.unique(
+                        return_inverse=True)
+                    edge_label_index = inverse.view(2, -1)
+                    seed_dict = {self.input_type[0]: seed_nodes}
 
-            node_time_dict = self.node_time_dict
-            if edge_label_time is not None:
-                node_time_dict = set_node_time_dict(
-                    node_time_dict, self.input_type, orig_edge_label_index,
-                    edge_label_time, self.num_src_nodes, self.num_dst_nodes)
+            output = self._sample(
+                seed=seed_dict,
+                seed_time_dict=seed_time_dict,
+            )
 
-            output = self._sample(seed=query_node_dict,
-                                  node_time_dict=node_time_dict)
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            if self.disjoint:
+                for key, batch in output.batch.items():
+                    output.batch[key] = batch % num_seed_edges
+
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         elif issubclass(self.data_cls, Data):
-            query_nodes = edge_label_index.view(-1)
-            query_nodes, reverse = query_nodes.unique(return_inverse=True)
-            edge_label_index = reverse.view(2, -1)
+            if self.disjoint:
+                seed_nodes = edge_label_index.view(-1)
+                edge_label_index = torch.arange(0, 2 * num_seed_edges)
+                edge_label_index = edge_label_index.view(2, -1)
+                if edge_label_time is not None:
+                    seed_time = torch.cat([edge_label_time, edge_label_time])
 
-            output = self._sample(seed=query_nodes)
-            output.metadata = (edge_label_index, edge_label)
+            else:
+                seed_nodes = edge_label_index.view(-1)
+                seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
+                edge_label_index = inverse.view(2, -1)
+
+            output = self._sample(seed=seed_nodes, seed_time=seed_time)
+
+            if self.disjoint:
+                output.batch = output.batch % num_seed_edges
+
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

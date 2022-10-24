@@ -2,6 +2,7 @@ import os
 import os.path as osp
 import shutil
 from itertools import chain
+from typing import Callable, List, Optional
 from xml.dom import minidom
 
 import numpy as np
@@ -70,8 +71,15 @@ class PascalVOCKeypoints(InMemoryDataset):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
-    def __init__(self, root, category, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.category = category.lower()
         assert self.category in self.categories
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -79,19 +87,19 @@ class PascalVOCKeypoints(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.category.capitalize(), 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['images', 'annotations', 'splits.npz']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
     def download(self):
