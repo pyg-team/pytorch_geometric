@@ -1,4 +1,5 @@
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
 
@@ -26,26 +27,33 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
 
     url = 'https://sparse.tamu.edu/mat/{}/{}.mat'
 
-    def __init__(self, root, group, name, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        group: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.group = group
         self.name = name
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.group, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.group, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return f'{self.name}.mat'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
