@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 import torch
 
@@ -49,11 +49,11 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
         return osp.join(self.root, self.group, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> List[str]:
+    def raw_file_names(self) -> str:
         return f'{self.name}.mat'
 
     @property
-    def processed_file_names(self) -> List[str]:
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

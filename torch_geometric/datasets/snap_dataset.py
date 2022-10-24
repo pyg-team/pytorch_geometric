@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 import numpy as np
 import torch
@@ -17,16 +17,15 @@ from torch_geometric.data.makedirs import makedirs
 
 
 class EgoData(Data):
-    def __inc__(self, key, value, *args, **kwargs):
+    def __inc__(self, key: str, value: Any, *args, **kwargs):
         if key == 'circle':
             return self.num_nodes
         elif key == 'circle_batch':
-            return value.max().item() + 1 if value.numel() > 0 else 0
-        else:
-            return super().__inc__(key, value, *args, **kwargs)
+            return int(value.max()) + 1 if value.numel() > 0 else 0
+        return super().__inc__(key, value, *args, **kwargs)
 
 
-def read_ego(files, name):
+def read_ego(files: List[str], name: str) -> List[EgoData]:
     import pandas as pd
 
     all_featnames = []
@@ -119,7 +118,7 @@ def read_ego(files, name):
     return data_list
 
 
-def read_soc(files, name):
+def read_soc(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
     skiprows = 4
@@ -135,7 +134,7 @@ def read_soc(files, name):
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
 
-def read_wiki(files, name):
+def read_wiki(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
     edge_index = pd.read_csv(files[0], sep='\t', header=None, skiprows=4,
@@ -212,7 +211,7 @@ class SNAPDataset(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def processed_file_names(self) -> List[str]:
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def _download(self):
