@@ -23,8 +23,14 @@ from torch_geometric.typing import (
 
 
 class InputData:
-    def __init__(self, *args):
-        self.args = args
+    def __init__(self, mapping: Dict[Optional[Any], List[Tensor]]):
+        self.mapping = mapping
+
+    def keys(self) -> List[Any]:
+        return list(self.mapping.keys())
+
+    def __len__(self) -> int:
+        return sum(values.size(0) for values in self.mapping.values())
 
     def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
         if not isinstance(index, Tensor):
