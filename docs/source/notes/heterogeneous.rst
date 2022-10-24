@@ -50,7 +50,7 @@ First, we can create a data object of type :class:`torch_geometric.data.HeteroDa
    data['paper', 'cites', 'paper'].edge_index = ... # [2, num_edges_cites]
    data['author', 'writes', 'paper'].edge_index = ... # [2, num_edges_writes]
    data['author', 'affiliated_with', 'institution'].edge_index = ... # [2, num_edges_affiliated]
-   data['author', 'has_topic', 'institution'].edge_index = ... # [2, num_edges_topic]
+   data['paper', 'has_topic', 'field_of_study'].edge_index = ... # [2, num_edges_topic]
 
    data['paper', 'cites', 'paper'].edge_attr = ... # [num_edges_cites, num_features_cites]
    data['author', 'writes', 'paper'].edge_attr = ... # [num_edges_writes, num_features_writes]
@@ -379,7 +379,7 @@ These operators can be directly used to build heterogeneous GNN models as can be
             for _ in range(num_layers):
                 conv = HGTConv(hidden_channels, hidden_channels, data.metadata(),
                                num_heads, group='sum')
-            self.convs.append(conv)
+                self.convs.append(conv)
 
             self.lin = Linear(hidden_channels, out_channels)
 

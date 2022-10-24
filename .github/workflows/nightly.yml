@@ -1,0 +1,40 @@
+name: Nightly Build
+
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+
+jobs:
+
+  sdist:
+    if: github.repository == 'pyg-team/pytorch_geometric'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Set version
+        run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
+
+      - name: Set time
+        run: echo "TODAY=$(date +'%Y%m%d')" >> ${GITHUB_ENV}
+
+      - name: Customize build version
+        run: |
+          sed -i "s/name='torch_geometric'/name='pyg-nightly'/" setup.py
+          sed -i "s/$VERSION/$VERSION.dev$TODAY/" setup.py
+          sed -i "s/$VERSION/$VERSION.dev$TODAY/" torch_geometric/__init__.py
+
+      - name: Build package
+        run: python setup.py sdist
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

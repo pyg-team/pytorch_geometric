@@ -6,8 +6,13 @@ import numpy as np
 import torch
 from torch_sparse import coalesce
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_gz, extract_tar)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_gz,
+    extract_tar,
+)
 from torch_geometric.data.makedirs import makedirs
 
 
@@ -67,7 +72,7 @@ def read_ego(files, name):
             x = x_all
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
-                          usecols=[0], squeeze=True)
+                          usecols=[0]).squeeze()
 
         idx_assoc = {}
         for i, j in enumerate(idx):
@@ -85,9 +90,9 @@ def read_ego(files, name):
 
         try:
             row = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[0], squeeze=True)
+                              usecols=[0]).squeeze()
             col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[1], squeeze=True)
+                              usecols=[1]).squeeze()
         except:  # noqa
             continue
 
@@ -106,8 +111,8 @@ def read_ego(files, name):
         edge_index = torch.stack([row, col], dim=0)
 
         edge_index, _ = coalesce(edge_index, None, N, N)
-        data = Data(x=x, edge_index=edge_index, circle=circle,
-                    circle_batch=circle_batch)
+        data = EgoData(x=x, edge_index=edge_index, circle=circle,
+                       circle_batch=circle_batch)
 
         data_list.append(data)
 

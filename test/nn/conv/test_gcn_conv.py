@@ -4,6 +4,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GCNConv
+from torch_geometric.testing import is_full_test
 
 
 def test_gcn_conv():
@@ -23,15 +24,16 @@ def test_gcn_conv():
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out1.tolist()
-    assert jit(x, edge_index, value).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert jit(x, edge_index, value).tolist() == out2.tolist()
 
-    t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
-    assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)
@@ -53,9 +55,10 @@ def test_gcn_conv_with_decomposed_layers():
     out2 = decomposed_conv(x, edge_index)
     assert torch.allclose(out1, out2)
 
-    t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(decomposed_conv.jittable(t))
-    assert jit(x, edge_index).tolist() == out1.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(decomposed_conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
 
 
 def test_gcn_conv_with_sparse_input_feature():
@@ -75,3 +78,15 @@ def test_static_gcn_conv():
     conv = GCNConv(16, 32)
     out = conv(x, edge_index)
     assert out.size() == (3, 4, 32)
+
+
+def test_gcn_conv_norm():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
+    row, col = edge_index
+
+    conv = GCNConv(16, 32, flow="source_to_target")
+    out1 = conv(x, edge_index)
+    conv.flow = "target_to_source"
+    out2 = conv(x, edge_index.flip(0))
+    assert torch.allclose(out1, out2, atol=1e-6)

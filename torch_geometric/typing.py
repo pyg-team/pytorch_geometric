@@ -1,6 +1,6 @@
-import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
 from torch import Tensor
 from torch_sparse import SparseTensor
 
@@ -21,6 +21,15 @@ QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 
 Metadata = Tuple[List[NodeType], List[EdgeType]]
 
+# A representation of a feature tensor
+FeatureTensorType = Union[Tensor, np.ndarray]
+
+# A representation of an edge index, following the possible formats:
+#   * COO: (row, col)
+#   * CSC: (row, colptr)
+#   * CSR: (rowptr, col)
+EdgeTensorType = Tuple[Tensor, Tensor]
+
 # Types for message passing ###################################################
 
 Adj = Union[Tensor, SparseTensor]
@@ -34,16 +43,5 @@ NoneType = Optional[Tensor]
 # Types for sampling ##########################################################
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
-
-# Helper functions ############################################################
-
-
-def map_annotation(annotation: Any, mapping: Dict[Any, Any]) -> Any:
-    if getattr(annotation, '__origin__', None) == Union:
-        args = getattr(annotation, '__args__', [])
-        out = copy.copy(annotation)
-        setattr(out, '__args__', [map_annotation(a, mapping) for a in args])
-        return out
-    elif annotation in mapping:
-        return mapping[annotation]
-    return annotation
+InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]

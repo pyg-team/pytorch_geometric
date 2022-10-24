@@ -1,10 +1,15 @@
 import os
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_txt_array
 
 
@@ -67,8 +72,15 @@ class PCPNetDataset(InMemoryDataset):
         'VarDensityGradient': 'testset_vardensity_gradient.txt'
     }
 
-    def __init__(self, root, category, split='train', transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
 
         assert split in ['train', 'val', 'test']
 
@@ -86,7 +98,7 @@ class PCPNetDataset(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         if self.split == 'train':
             return self.category_files_train[self.category]
         elif self.split == 'val':
@@ -95,7 +107,7 @@ class PCPNetDataset(InMemoryDataset):
             return self.category_files_test[self.category]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return self.split + '_' + self.category + '.pt'
 
     def download(self):

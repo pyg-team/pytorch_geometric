@@ -1,15 +1,19 @@
 import torch
+from torch import Tensor
 from torch_scatter import scatter_mean
 
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('to_slic')
 class ToSLIC(BaseTransform):
     r"""Converts an image to a superpixel representation using the
     :meth:`skimage.segmentation.slic` algorithm, resulting in a
     :obj:`torch_geometric.data.Data` object holding the centroids of
-    superpixels in :obj:`pos` and their mean color in :obj:`x`.
+    superpixels in :obj:`pos` and their mean color in :obj:`x`
+    (functional name: :obj:`to_slic`).
 
     This transform can be used with any :obj:`torchvision` dataset.
 
@@ -32,12 +36,12 @@ class ToSLIC(BaseTransform):
             <https://scikit-image.org/docs/dev/api/skimage.segmentation.html
             #skimage.segmentation.slic>`_ for an overview.
     """
-    def __init__(self, add_seg=False, add_img=False, **kwargs):
+    def __init__(self, add_seg: bool = False, add_img: bool = False, **kwargs):
         self.add_seg = add_seg
         self.add_img = add_img
         self.kwargs = kwargs
 
-    def __call__(self, img):
+    def __call__(self, img: Tensor) -> Data:
         from skimage.segmentation import slic
 
         img = img.permute(1, 2, 0)

@@ -1,76 +1,59 @@
 import copy
 import math
-from typing import Dict, Optional, Tuple, Union
+from collections.abc import Sequence
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data, HeteroData, remote_backend_utils
+from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import EdgeType, OptTensor
+from torch_geometric.typing import (
+    FeatureTensorType,
+    InputEdges,
+    InputNodes,
+    OptTensor,
+)
 
 
-def index_select(value: Tensor, index: Tensor, dim: int = 0) -> Tensor:
-    out: Optional[Tensor] = None
-    if torch.utils.data.get_worker_info() is not None:
-        # If we are in a background process, we write directly into a shared
-        # memory tensor to avoid an extra copy:
-        size = list(value.size())
-        size[dim] = index.numel()
-        numel = math.prod(size)
-        storage = value.storage()._new_shared(numel)
-        out = value.new(storage).view(size)
-    return torch.index_select(value, 0, index, out=out)
+class InputData:
+    def __init__(self, *args):
+        self.args = args
+
+    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        outs = [index]
+        for arg in self.args:
+            outs.append(arg[index] if arg is not None else None)
+        return tuple(outs)
 
 
-def edge_type_to_str(edge_type: Union[EdgeType, str]) -> str:
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets need to be converted into single strings.
-    return edge_type if isinstance(edge_type, str) else '__'.join(edge_type)
+def index_select(value: FeatureTensorType, index: Tensor,
+                 dim: int = 0) -> Tensor:
+    if isinstance(value, Tensor):
+        out: Optional[Tensor] = None
+        if torch.utils.data.get_worker_info() is not None:
+            # If we are in a background process, we write directly into a
+            # shared memory tensor to avoid an extra copy:
+            size = list(value.shape)
+            size[dim] = index.numel()
+            numel = math.prod(size)
+            storage = value.storage()._new_shared(numel)
+            out = value.new(storage).view(size)
 
+        return torch.index_select(value, dim, index, out=out)
 
-def to_csc(
-    data: Union[Data, EdgeStorage],
-    device: Optional[torch.device] = None,
-) -> Tuple[Tensor, Tensor, OptTensor]:
-    # Convert the graph data into a suitable format for sampling (CSC format).
-    # Returns the `colptr` and `row` indices of the graph, as well as an
-    # `perm` vector that denotes the permutation of edges.
-    # Since no permutation of edges is applied when using `SparseTensor`,
-    # `perm` can be of type `None`.
-    if hasattr(data, 'adj_t'):
-        colptr, row, _ = data.adj_t.csr()
-        return colptr.to(device), row.to(device), None
+    elif isinstance(value, np.ndarray):
+        return torch.from_numpy(np.take(value, index, axis=dim))
 
-    elif hasattr(data, 'edge_index'):
-        (row, col) = data.edge_index
-        size = data.size()
-        perm = (col * size[0]).add_(row).argsort()
-        colptr = torch.ops.torch_sparse.ind2ptr(col[perm], size[1])
-        return colptr.to(device), row[perm].to(device), perm.to(device)
-
-    raise AttributeError(
-        "Data object does not contain attributes 'adj_t' or 'edge_index'")
-
-
-def to_hetero_csc(
-    data: HeteroData,
-    device: Optional[torch.device] = None,
-) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
-    # Convert the heterogeneous graph data into a suitable format for sampling
-    # (CSC format).
-    # Returns dictionaries holding `colptr` and `row` indices as well as edge
-    # permutations for each edge type, respectively.
-    # Since C++ cannot take dictionaries with tuples as key as input, edge type
-    # triplets are converted into single strings.
-    colptr_dict, row_dict, perm_dict = {}, {}, {}
-
-    for store in data.edge_stores:
-        key = edge_type_to_str(store._key)
-        colptr_dict[key], row_dict[key], perm_dict[key] = to_csc(store, device)
-
-    return colptr_dict, row_dict, perm_dict
+    raise ValueError(f"Encountered invalid feature tensor type "
+                     f"(got '{type(value)}')")
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
@@ -81,8 +64,12 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             out_store.num_nodes = index.numel()
 
         elif store.is_node_attr(key):
-            index = index.to(value.device)
-            out_store[key] = index_select(value, index, dim=0)
+            if isinstance(value, Tensor):
+                index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
+            dim = store._parent().__cat_dim__(key, value, store)
+            out_store[key] = index_select(value, index, dim=dim)
 
     return store
 
@@ -105,19 +92,27 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             if edge_attr is not None:
                 index = index.to(edge_attr.device)
                 edge_attr = edge_attr[index]
-            sparse_sizes = store.size()[::-1]
+            sparse_sizes = out_store.size()[::-1]
+            # TODO Currently, we set `is_sorted=False`, see:
+            # https://github.com/pyg-team/pytorch_geometric/issues/4346
             out_store.adj_t = SparseTensor(row=col, col=row, value=edge_attr,
                                            sparse_sizes=sparse_sizes,
-                                           is_sorted=True)
+                                           is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
+            dim = store._parent().__cat_dim__(key, value, store)
+            if isinstance(value, Tensor):
+                index = index.to(value.device)
+            elif isinstance(value, np.ndarray):
+                index = index.cpu()
             if perm is None:
-                index = index.to(value.device)
-                out_store[key] = index_select(value, index, dim=0)
+                out_store[key] = index_select(value, index, dim=dim)
             else:
-                perm = perm.to(value.device)
-                index = index.to(value.device)
-                out_store[key] = index_select(value, perm[index], dim=0)
+                if isinstance(value, Tensor):
+                    perm = perm.to(value.device)
+                elif isinstance(value, np.ndarray):
+                    perm = perm.cpu()
+                out_store[key] = index_select(value, perm[index], dim=dim)
 
     return store
 
@@ -137,7 +132,7 @@ def filter_hetero_data(
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, Tensor],
-    perm_dict: Dict[str, OptTensor],
+    perm_dict: Optional[Dict[str, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
@@ -148,9 +143,165 @@ def filter_hetero_data(
                            node_dict[node_type])
 
     for edge_type in data.edge_types:
-        edge_type_str = edge_type_to_str(edge_type)
-        filter_edge_store_(data[edge_type], out[edge_type],
-                           row_dict[edge_type_str], col_dict[edge_type_str],
-                           edge_dict[edge_type_str], perm_dict[edge_type_str])
+        filter_edge_store_(
+            data[edge_type],
+            out[edge_type],
+            row_dict[edge_type],
+            col_dict[edge_type],
+            edge_dict[edge_type],
+            perm_dict[edge_type] if perm_dict else None,
+        )
 
     return out
+
+
+def filter_custom_store(
+    feature_store: FeatureStore,
+    graph_store: GraphStore,
+    node_dict: Dict[str, Tensor],
+    row_dict: Dict[str, Tensor],
+    col_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, Tensor],
+) -> HeteroData:
+    r"""Constructs a `HeteroData` object from a feature store that only holds
+    nodes in `node` end edges in `edge` for each node and edge type,
+    respectively."""
+
+    # Construct a new `HeteroData` object:
+    data = HeteroData()
+
+    # Filter edge storage:
+    # TODO support edge attributes
+    for attr in graph_store.get_all_edge_attrs():
+        key = attr.edge_type
+        if key in row_dict and key in col_dict:
+            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+            data[attr.edge_type].edge_index = edge_index
+
+    # Filter node storage:
+    required_attrs = []
+    for attr in feature_store.get_all_tensor_attrs():
+        if attr.group_name in node_dict:
+            attr.index = node_dict[attr.group_name]
+            required_attrs.append(attr)
+
+    # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
+    # full control over optimizing how it returns features (since the call is
+    # synchronous, this amounts to giving the feature store control over all
+    # iteration).
+    tensors = feature_store.multi_get_tensor(required_attrs)
+    for i, attr in enumerate(required_attrs):
+        data[attr.group_name][attr.attr_name] = tensors[i]
+
+    return data
+
+
+# Input Utilities #############################################################
+
+
+def get_input_nodes(
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+    input_nodes: Union[InputNodes, TensorAttr],
+) -> Tuple[Optional[str], Sequence]:
+    def to_index(tensor):
+        if isinstance(tensor, Tensor) and tensor.dtype == torch.bool:
+            return tensor.nonzero(as_tuple=False).view(-1)
+        if not isinstance(tensor, Tensor):
+            return torch.tensor(tensor, dtype=torch.long)
+        return tensor
+
+    if isinstance(data, Data):
+        if input_nodes is None:
+            return None, torch.arange(data.num_nodes)
+        return None, to_index(input_nodes)
+
+    elif isinstance(data, HeteroData):
+        assert input_nodes is not None
+
+        if isinstance(input_nodes, str):
+            return input_nodes, torch.arange(data[input_nodes].num_nodes)
+
+        assert isinstance(input_nodes, (list, tuple))
+        assert len(input_nodes) == 2
+        assert isinstance(input_nodes[0], str)
+
+        node_type, input_nodes = input_nodes
+        if input_nodes is None:
+            return node_type, torch.arange(data[node_type].num_nodes)
+        return node_type, to_index(input_nodes)
+
+    else:  # Tuple[FeatureStore, GraphStore]
+        feature_store, graph_store = data
+        assert input_nodes is not None
+
+        if isinstance(input_nodes, Tensor):
+            return None, to_index(input_nodes)
+
+        if isinstance(input_nodes, str):
+            return input_nodes, torch.arange(
+                remote_backend_utils.num_nodes(feature_store, graph_store,
+                                               input_nodes))
+
+        if isinstance(input_nodes, (list, tuple)):
+            assert len(input_nodes) == 2
+            assert isinstance(input_nodes[0], str)
+
+            node_type, input_nodes = input_nodes
+            if input_nodes is None:
+                return node_type, torch.arange(
+                    remote_backend_utils.num_nodes(feature_store, graph_store,
+                                                   input_nodes))
+            return node_type, to_index(input_nodes)
+
+
+def get_edge_label_index(
+    data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
+    edge_label_index: InputEdges,
+) -> Tuple[Optional[str], Tensor]:
+    edge_type = None
+    if isinstance(data, Data):
+        if edge_label_index is None:
+            return None, data.edge_index
+        return None, edge_label_index
+
+    assert edge_label_index is not None
+    assert isinstance(edge_label_index, (list, tuple))
+
+    if isinstance(data, HeteroData):
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            edge_type = data._to_canonical(*edge_type)
+            assert edge_type in data.edge_types
+            return edge_type, data[edge_type].edge_index
+
+        assert len(edge_label_index) == 2
+
+        edge_type, edge_label_index = edge_label_index
+        edge_type = data._to_canonical(*edge_type)
+
+        if edge_label_index is None:
+            return edge_type, data[edge_type].edge_index
+
+        return edge_type, edge_label_index
+
+    else:  # Tuple[FeatureStore, GraphStore]
+        _, graph_store = data
+
+        # Need the edge index in COO for LinkNeighborLoader:
+        def _get_edge_index(edge_type):
+            row_dict, col_dict, _ = graph_store.coo([edge_type])
+            row = list(row_dict.values())[0]
+            col = list(col_dict.values())[0]
+            return torch.stack((row, col), dim=0)
+
+        if isinstance(edge_label_index[0], str):
+            edge_type = edge_label_index
+            return edge_type, _get_edge_index(edge_type)
+
+        assert len(edge_label_index) == 2
+        edge_type, edge_label_index = edge_label_index
+
+        if edge_label_index is None:
+            return edge_type, _get_edge_index(edge_type)
+
+        return edge_type, edge_label_index

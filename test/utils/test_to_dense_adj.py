@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_dense_adj
 
 
@@ -14,6 +15,13 @@ def test_to_dense_adj():
     assert adj.size() == (2, 3, 3)
     assert adj[0].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
     assert adj[1].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]
+
+    if is_full_test():
+        jit = torch.jit.script(to_dense_adj)
+        adj = jit(edge_index, batch)
+        assert adj.size() == (2, 3, 3)
+        assert adj[0].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
+        assert adj[1].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]
 
     adj = to_dense_adj(edge_index, batch, max_num_nodes=5)
     assert adj.size() == (2, 5, 5)
@@ -46,6 +54,23 @@ def test_to_dense_adj():
     adj = to_dense_adj(edge_index, max_num_nodes=10)
     assert adj.size() == (1, 10, 10)
     assert adj[0].nonzero(as_tuple=False).t().tolist() == edge_index.tolist()
+
+
+def test_to_dense_adj_with_empty_edge_index():
+    edge_index = torch.tensor([[], []], dtype=torch.long)
+    batch = torch.tensor([0, 0, 1, 1, 1])
+
+    adj = to_dense_adj(edge_index)
+    assert adj.size() == (1, 0, 0)
+
+    adj = to_dense_adj(edge_index, max_num_nodes=10)
+    assert adj.size() == (1, 10, 10) and adj.sum() == 0
+
+    adj = to_dense_adj(edge_index, batch)
+    assert adj.size() == (2, 3, 3) and adj.sum() == 0
+
+    adj = to_dense_adj(edge_index, batch, max_num_nodes=10)
+    assert adj.size() == (2, 10, 10) and adj.sum() == 0
 
 
 def test_to_dense_adj_with_duplicate_entries():

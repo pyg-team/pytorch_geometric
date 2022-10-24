@@ -9,7 +9,9 @@ import torch_geometric as pyg
 import torch_geometric.graphgym.models.act
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.contrib.layer.generalconv import (
-    GeneralConvLayer, GeneralEdgeConvLayer)
+    GeneralConvLayer,
+    GeneralEdgeConvLayer,
+)
 from torch_geometric.graphgym.register import register_layer
 from torch_geometric.nn import Linear as Linear_pyg
 
@@ -94,7 +96,7 @@ class GeneralLayer(nn.Module):
                 nn.Dropout(p=layer_config.dropout,
                            inplace=layer_config.mem_inplace))
         if layer_config.has_act:
-            layer_wrapper.append(register.act_dict[layer_config.act])
+            layer_wrapper.append(register.act_dict[layer_config.act]())
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):

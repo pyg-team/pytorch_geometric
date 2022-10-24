@@ -25,7 +25,7 @@ class ClusterGCNConv(MessagePassing):
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        diag_lambda: (float, optional): Diagonal enhancement value
+        diag_lambda (float, optional): Diagonal enhancement value
             :math:`\lambda`. (default: :obj:`0.`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)

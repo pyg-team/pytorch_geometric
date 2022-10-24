@@ -27,4 +27,3 @@ class {{cls_name}}(torch.nn.Module):
     def __repr__(self) -> str:
         return 'Sequential(\n{}\n)'.format('\n'.join(
             [f'  ({idx}): ' + str(self[idx]) for idx in range(len(self))]))
-

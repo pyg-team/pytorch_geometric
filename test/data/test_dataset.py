@@ -1,6 +1,7 @@
 import torch
+from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -40,6 +41,23 @@ def test_in_memory_dataset():
     assert dataset[1].face.tolist() == face.tolist()
     assert dataset[1].test_int == 2
     assert dataset[1].test_str == '2'
+
+
+def test_in_memory_sparse_tensor_dataset():
+    x = torch.randn(11, 16)
+    adj = SparseTensor(
+        row=torch.tensor([4, 1, 3, 2, 2, 3]),
+        col=torch.tensor([1, 3, 2, 3, 3, 2]),
+        sparse_sizes=(11, 11),
+    )
+    data = Data(x=x, adj=adj)
+
+    dataset = MyTestDataset([data, data])
+    assert len(dataset) == 2
+    assert torch.allclose(dataset[0].x, x)
+    assert dataset[0].adj.sparse_sizes() == (11, 11)
+    assert torch.allclose(dataset[1].x, x)
+    assert dataset[1].adj.sparse_sizes() == (11, 11)
 
 
 def test_collate_with_new_dimension():
@@ -99,3 +117,131 @@ def test_hetero_in_memory_dataset():
     assert dataset[1]['paper'].x.tolist() == data2['paper'].x.tolist()
     assert (dataset[1]['paper', 'paper'].edge_index.tolist() == data2[
         'paper', 'paper'].edge_index.tolist())
+
+
+def test_override_behaviour():
+    class DS(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+        def download(self):
+            pass
+
+        def process(self):
+            pass
+
+    class DS2(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+        def process(self):
+            pass
+
+    class DS3(Dataset):
+        def __init__(self):
+            self.enter_download = False
+            self.enter_process = False
+            super().__init__()
+
+        def _download(self):
+            self.enter_download = True
+
+        def _process(self):
+            self.enter_process = True
+
+    ds = DS()
+    assert ds.enter_download
+    assert ds.enter_process
+
+    ds = DS2()
+    assert not ds.enter_download
+    assert ds.enter_process
+
+    ds = DS3()
+    assert not ds.enter_download
+    assert not ds.enter_process
+
+
+def test_lists_of_tensors_in_memory_dataset():
+    def tr(n, m):
+        return torch.rand((n, m))
+
+    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)])
+    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)])
+    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)])
+    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)])
+
+    data_list = [d1, d2, d3, d4]
+
+    dataset = MyTestDataset(data_list)
+    assert len(dataset) == 4
+    assert dataset[0].xs[1].size() == (11, 4)
+    assert dataset[0].xs[2].size() == (1, 2)
+    assert dataset[1].xs[0].size() == (5, 3)
+    assert dataset[2].xs[1].size() == (15, 4)
+    assert dataset[3].xs[1].size() == (16, 4)
+
+
+def test_lists_of_SparseTensors():
+    e1 = torch.tensor([[4, 1, 3, 2, 2, 3], [1, 3, 2, 3, 3, 2]])
+    e2 = torch.tensor([[0, 1, 4, 7, 2, 9], [7, 2, 2, 1, 4, 7]])
+    e3 = torch.tensor([[3, 5, 1, 2, 3, 3], [5, 0, 2, 1, 3, 7]])
+    e4 = torch.tensor([[0, 1, 9, 2, 0, 3], [1, 1, 2, 1, 3, 2]])
+    adj1 = SparseTensor.from_edge_index(e1, sparse_sizes=(11, 11))
+    adj2 = SparseTensor.from_edge_index(e2, sparse_sizes=(22, 22))
+    adj3 = SparseTensor.from_edge_index(e3, sparse_sizes=(12, 12))
+    adj4 = SparseTensor.from_edge_index(e4, sparse_sizes=(15, 15))
+
+    d1 = Data(adj_test=[adj1, adj2])
+    d2 = Data(adj_test=[adj3, adj4])
+
+    data_list = [d1, d2]
+    dataset = MyTestDataset(data_list)
+    assert len(dataset) == 2
+    assert dataset[0].adj_test[0].sparse_sizes() == (11, 11)
+    assert dataset[0].adj_test[1].sparse_sizes() == (22, 22)
+    assert dataset[1].adj_test[0].sparse_sizes() == (12, 12)
+    assert dataset[1].adj_test[1].sparse_sizes() == (15, 15)
+
+
+def test_file_names_as_property_and_method():
+    class MyTestDataset(InMemoryDataset):
+        def __init__(self):
+            super().__init__('/tmp/MyTestDataset')
+
+        @property
+        def raw_file_names(self):
+            return ['test_file']
+
+        def download(self):
+            pass
+
+    MyTestDataset()
+
+    class MyTestDataset(InMemoryDataset):
+        def __init__(self):
+            super().__init__('/tmp/MyTestDataset')
+
+        def raw_file_names(self):
+            return ['test_file']
+
+        def download(self):
+            pass
+
+    MyTestDataset()

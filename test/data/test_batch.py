@@ -52,8 +52,7 @@ def test_batch():
     assert str(batch) == ('DataBatch(x=[3], edge_index=[2, 4], y=[1], '
                           'x_sp=[3, 1, nnz=3], adj=[3, 3, nnz=4], s=[1], '
                           'array=[1], num_nodes=3, batch=[3], ptr=[2])')
-    assert batch.num_graphs == 1
-    assert len(batch) == 10
+    assert batch.num_graphs == len(batch) == 1
     assert batch.x.tolist() == [1, 2, 3]
     assert batch.y.tolist() == [1]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
@@ -70,10 +69,9 @@ def test_batch():
 
     assert str(batch) == ('DataBatch(x=[9], edge_index=[2, 12], y=[3], '
                           'x_sp=[9, 1, nnz=9], adj=[9, 9, nnz=12], s=[3], '
-                          's_batch=[3], array=[3], num_nodes=9, batch=[9], '
-                          'ptr=[4])')
-    assert batch.num_graphs == 3
-    assert len(batch) == 11
+                          's_batch=[3], s_ptr=[4], array=[3], num_nodes=9, '
+                          'batch=[9], ptr=[4])')
+    assert batch.num_graphs == len(batch) == 3
     assert batch.x.tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
     assert batch.y.tolist() == [1, 2, 3]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
@@ -83,6 +81,7 @@ def test_batch():
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1', '2', '3']
     assert batch.s_batch.tolist() == [0, 1, 2]
+    assert batch.s_ptr.tolist() == [0, 1, 2, 3]
     assert batch.array == [['1', '2'], ['3', '4', '5'], ['6', '7', '8', '9']]
     assert batch.num_nodes == 9
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
@@ -173,7 +172,7 @@ def test_batching_with_new_dimension():
 
     assert str(batch) == ('MyDataBatch(x=[5], y=[2], foo=[2, 4], batch=[5], '
                           'ptr=[3])')
-    assert len(batch) == 5
+    assert batch.num_graphs == len(batch) == 2
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.foo.size() == (2, 4)
     assert batch.foo[0].tolist() == foo1.tolist()
@@ -197,19 +196,19 @@ def test_pickling():
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    path = f'{random.randrange(sys.maxsize)}.pt'
-    torch.save(batch, path)
+    filename = f'{random.randrange(sys.maxsize)}.pt'
+    torch.save(batch, filename)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    batch = torch.load(path)
+    batch = torch.load(filename)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
     assert batch.__class__.__name__ == 'DataBatch'
-    assert len(batch) == 3
+    assert batch.num_graphs == len(batch) == 4
 
-    os.remove(path)
+    os.remove(filename)
 
 
 def test_recursive_batch():
@@ -229,8 +228,7 @@ def test_recursive_batch():
 
     batch = Batch.from_data_list([data1, data2])
 
-    assert len(batch) == 5
-    assert batch.num_graphs == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.num_nodes == 90
 
     assert torch.allclose(batch.x['1'],
@@ -266,7 +264,7 @@ def test_batching_of_batches():
     batch = Batch.from_data_list([data, data])
 
     batch = Batch.from_data_list([batch, batch])
-    assert len(batch) == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.x[0:2].tolist() == data.x.tolist()
     assert batch.x[2:4].tolist() == data.x.tolist()
     assert batch.x[4:6].tolist() == data.x.tolist()
@@ -295,8 +293,7 @@ def test_hetero_batch():
 
     batch = Batch.from_data_list([data1, data2])
 
-    assert len(batch) == 5
-    assert batch.num_graphs == 2
+    assert batch.num_graphs == len(batch) == 2
     assert batch.num_nodes == 450
 
     assert torch.allclose(batch['p'].x[:100], data1['p'].x)
@@ -375,3 +372,53 @@ def test_pair_data_batching():
     assert torch.allclose(batch.x_t, torch.cat([x_t, x_t], dim=0))
     assert batch.edge_index_t.tolist() == [[0, 0, 0, 4, 4, 4],
                                            [1, 2, 3, 5, 6, 7]]
+
+
+def test_batch_with_empty_list():
+    x = torch.randn(4, 1)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+    data = Data(x=x, edge_index=edge_index, nontensor=[])
+
+    batch = Batch.from_data_list([data, data])
+    assert batch.nontensor == [[], []]
+    assert batch[0].nontensor == []
+    assert batch[1].nontensor == []
+
+
+def test_nested_follow_batch():
+    def tr(n, m):
+        return torch.rand((n, m))
+
+    d1 = Data(xs=[tr(4, 3), tr(11, 4), tr(1, 2)], a={"aa": tr(11, 3)},
+              x=tr(10, 5))
+    d2 = Data(xs=[tr(5, 3), tr(14, 4), tr(3, 2)], a={"aa": tr(2, 3)},
+              x=tr(11, 5))
+    d3 = Data(xs=[tr(6, 3), tr(15, 4), tr(2, 2)], a={"aa": tr(4, 3)},
+              x=tr(9, 5))
+    d4 = Data(xs=[tr(4, 3), tr(16, 4), tr(1, 2)], a={"aa": tr(8, 3)},
+              x=tr(8, 5))
+
+    # Dataset
+    data_list = [d1, d2, d3, d4]
+
+    batch = Batch.from_data_list(data_list, follow_batch=['xs', 'a'])
+
+    # assert shapes
+    assert batch.xs[0].shape == (19, 3)
+    assert batch.xs[1].shape == (56, 4)
+    assert batch.xs[2].shape == (7, 2)
+    assert batch.a['aa'].shape == (25, 3)
+
+    assert len(batch.xs_batch) == 3
+    assert len(batch.a_batch) == 1
+
+    # assert _batch
+    assert batch.xs_batch[0].tolist() == \
+           [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
+    assert batch.xs_batch[1].tolist() == \
+           [0] * 11 + [1] * 14 + [2] * 15 + [3] * 16
+    assert batch.xs_batch[2].tolist() == \
+           [0] * 1 + [1] * 3 + [2] * 2 + [3] * 1
+
+    assert batch.a_batch['aa'].tolist() == \
+           [0] * 11 + [1] * 2 + [2] * 4 + [3] * 8

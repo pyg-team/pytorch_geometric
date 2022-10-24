@@ -2,6 +2,7 @@ torch_geometric.loader
 ======================
 
 .. currentmodule:: torch_geometric.loader
+
 .. autosummary::
    :nosignatures:
    {% for cls in torch_geometric.loader.classes %}
@@ -10,4 +11,3 @@ torch_geometric.loader
 
 .. automodule:: torch_geometric.loader
     :members:
-    :special-members:

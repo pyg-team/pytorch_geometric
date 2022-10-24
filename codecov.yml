@@ -1,0 +1,14 @@
+# see https://docs.codecov.io/docs/codecov-yaml
+coverage:
+  range: 80..100
+  round: down
+  precision: 2
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+        threshold: 1%

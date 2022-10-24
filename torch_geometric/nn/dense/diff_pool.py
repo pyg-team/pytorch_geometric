@@ -1,10 +1,17 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 
-EPS = 1e-15
 
-
-def dense_diff_pool(x, adj, s, mask=None):
-    r"""Differentiable pooling operator from the `"Hierarchical Graph
+def dense_diff_pool(
+    x: Tensor,
+    adj: Tensor,
+    s: Tensor,
+    mask: Optional[Tensor] = None,
+    normalize: bool = True,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+    r"""The differentiable pooling operator from the `"Hierarchical Graph
     Representation Learning with Differentiable Pooling"
     <https://arxiv.org/abs/1806.08804>`_ paper
 
@@ -17,15 +24,15 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns pooled node feature matrix, coarsened adjacency matrix and two
-    auxiliary objectives: (1) The link prediction loss
+    Returns the pooled node feature matrix, the coarsened adjacency matrix and
+    two auxiliary objectives: (1) The link prediction loss
 
     .. math::
         \mathcal{L}_{LP} = {\| \mathbf{A} -
         \mathrm{softmax}(\mathbf{S}) {\mathrm{softmax}(\mathbf{S})}^{\top}
         \|}_F,
 
-    and the entropy regularization
+    and (2) the entropy regularization
 
     .. math::
         \mathcal{L}_E = \frac{1}{N} \sum_{n=1}^N H(\mathbf{S}_n).
@@ -44,6 +51,9 @@ def dense_diff_pool(x, adj, s, mask=None):
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        normalize (bool, optional): If set to :obj:`False`, the link
+            prediction loss is not divided by :obj:`adj.numel()`.
+            (default: :obj:`True`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
@@ -66,8 +76,9 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     link_loss = adj - torch.matmul(s, s.transpose(1, 2))
     link_loss = torch.norm(link_loss, p=2)
-    link_loss = link_loss / adj.numel()
+    if normalize is True:
+        link_loss = link_loss / adj.numel()
 
-    ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
+    ent_loss = (-s * torch.log(s + 1e-15)).sum(dim=-1).mean()
 
     return out, out_adj, link_loss, ent_loss

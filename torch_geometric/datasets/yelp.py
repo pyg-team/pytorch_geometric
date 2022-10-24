@@ -1,11 +1,13 @@
 import json
+import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Yelp(InMemoryDataset):
@@ -38,38 +40,42 @@ class Yelp(InMemoryDataset):
               - 300
               - 100
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     adj_full_id = '1Juwx8HtDwSzmVIJ31ooVa1WljI4U5JnA'
     feats_id = '1Zy6BZH_zLEjKlEFSduKE5tV9qqA_8VtM'
     class_map_id = '1VUcBGr0T0-klqerjAjxRmAqFuld_SMWU'
     role_id = '1NI5pa5Chpd-52eSmLW60OnB3WS5ikxq_'
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['adj_full.npz', 'feats.npy', 'class_map.json', 'role.json']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
+        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
 
-        path = osp.join(self.raw_dir, 'adj_full.npz')
-        gdd.download_file_from_google_drive(self.adj_full_id, path)
+        path = download_url(self.url.format(self.feats_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
 
-        path = osp.join(self.raw_dir, 'feats.npy')
-        gdd.download_file_from_google_drive(self.feats_id, path)
+        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
 
-        path = osp.join(self.raw_dir, 'class_map.json')
-        gdd.download_file_from_google_drive(self.class_map_id, path)
-
-        path = osp.join(self.raw_dir, 'role.json')
-        gdd.download_file_from_google_drive(self.role_id, path)
+        path = download_url(self.url.format(self.role_id), self.raw_dir)
+        os.rename(path, osp.join(self.raw_dir, 'role.json'))
 
     def process(self):
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))

@@ -1,8 +1,7 @@
 import copy
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -43,12 +42,6 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def download(self):
-        raise NotImplementedError
-
-    def process(self):
-        raise NotImplementedError
-
     def __init__(self, root: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -60,16 +53,9 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_classes(self) -> int:
-        r"""Returns the number of classes in the dataset."""
-        y = self.data.y
-        if y is None:
-            return 0
-        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
-            return int(self.data.y.max()) + 1
-        elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
-        else:
-            return self.data.y.size(-1)
+        if self.transform is None:
+            return self._infer_num_classes(self.data.y)
+        return super().num_classes
 
     def len(self) -> int:
         if self.slices is None:
@@ -125,21 +111,24 @@ class InMemoryDataset(Dataset):
         :obj:`np.ndarray` of type long or bool.
         """
         if idx is None:
-            data_list = [self.get(i) for i in range(len(self))]
+            data_list = [self.get(i) for i in self.indices()]
         else:
             data_list = [self.get(i) for i in self.index_select(idx).indices()]
 
         dataset = copy.copy(self)
         dataset._indices = None
-        dataset._data_list = data_list
+        dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
 
 
-def nested_iter(mapping: Mapping) -> Iterable:
-    for key, value in mapping.items():
-        if isinstance(value, Mapping):
+def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+    if isinstance(node, Mapping):
+        for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-        else:
-            yield key, value
+    elif isinstance(node, Sequence):
+        for i, inner_value in enumerate(node):
+            yield i, inner_value
+    else:
+        yield None, node

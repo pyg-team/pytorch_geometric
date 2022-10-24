@@ -3,16 +3,28 @@ import warnings
 import weakref
 from collections import namedtuple
 from collections.abc import Mapping, MutableMapping, Sequence
-from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
-                    Tuple, Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, coalesce
 
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.utils import is_undirected
+from torch_geometric.utils import contains_isolated_nodes, is_undirected
+
+N_KEYS = {'x', 'feat', 'pos', 'batch'}
 
 
 class BaseStorage(MutableMapping):
@@ -43,6 +55,9 @@ class BaseStorage(MutableMapping):
         return len(self._mapping)
 
     def __getattr__(self, key: str) -> Any:
+        if key == '_mapping':
+            self._mapping = {}
+            return self._mapping
         try:
             return self[key]
         except KeyError:
@@ -147,6 +162,9 @@ class BaseStorage(MutableMapping):
 
     # Additional functionality ################################################
 
+    def get(self, key: str, value: Optional[Any] = None) -> Any:
+        return self._mapping.get(key, value)
+
     def to_dict(self) -> Dict[str, Any]:
         r"""Returns a dictionary of stored key/value pairs."""
         return copy.copy(self._mapping)
@@ -248,9 +266,10 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if (isinstance(value, Tensor)
-                    and (key in {'x', 'pos', 'batch'} or 'node' in key)):
-                return value.size(self._parent().__cat_dim__(key, value, self))
+            if (isinstance(value, (Tensor, np.ndarray))
+                    and (key in N_KEYS or 'node' in key)):
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
         if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
@@ -275,7 +294,9 @@ class NodeStorage(BaseStorage):
 
     @property
     def num_node_features(self) -> int:
-        if 'x' in self and isinstance(self.x, Tensor):
+        if 'x' in self and isinstance(self.x, (Tensor, np.ndarray)):
+            return 1 if self.x.ndim == 1 else self.x.shape[-1]
+        if 'x' in self and isinstance(self.x, SparseTensor):
             return 1 if self.x.dim() == 1 else self.x.size(-1)
         return 0
 
@@ -286,9 +307,9 @@ class NodeStorage(BaseStorage):
     def is_node_attr(self, key: str) -> bool:
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
-        if not isinstance(value, Tensor):
+        if not isinstance(value, (Tensor, np.ndarray)):
             return False
-        if value.size(cat_dim) != self.num_nodes:
+        if value.ndim == 0 or value.shape[cat_dim] != self.num_nodes:
             return False
         return True
 
@@ -334,8 +355,9 @@ class EdgeStorage(BaseStorage):
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
         for key, value in self.items():
-            if isinstance(value, Tensor) and 'edge' in key:
-                return value.size(self._parent().__cat_dim__(key, value, self))
+            if isinstance(value, (Tensor, np.ndarray)) and 'edge' in key:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):
                 return value.nnz()
@@ -343,8 +365,9 @@ class EdgeStorage(BaseStorage):
 
     @property
     def num_edge_features(self) -> int:
-        if 'edge_attr' in self and isinstance(self.edge_attr, Tensor):
-            return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
+        if ('edge_attr' in self and isinstance(self.edge_attr,
+                                               (Tensor, np.ndarray))):
+            return 1 if self.edge_attr.ndim == 1 else self.edge_attr.shape[-1]
         return 0
 
     @property
@@ -370,9 +393,9 @@ class EdgeStorage(BaseStorage):
     def is_edge_attr(self, key: str) -> bool:
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
-        if not isinstance(value, Tensor):
+        if not isinstance(value, (Tensor, np.ndarray)):
             return False
-        if value.size(cat_dim) != self.num_edges:
+        if value.ndim == 0 or value.shape[cat_dim] != self.num_edges:
             return False
         return True
 
@@ -402,7 +425,10 @@ class EdgeStorage(BaseStorage):
         edge_index, num_nodes = self.edge_index, self.size(1)
         if num_nodes is None:
             raise NameError("Unable to infer 'num_nodes'")
-        return torch.unique(edge_index[1]).numel() < num_nodes
+        if self.is_bipartite():
+            return torch.unique(edge_index[1]).numel() < num_nodes
+        else:
+            return contains_isolated_nodes(edge_index, num_nodes)
 
     def has_self_loops(self) -> bool:
         if self.is_bipartite():
@@ -411,7 +437,7 @@ class EdgeStorage(BaseStorage):
         return int((edge_index[0] == edge_index[1]).sum()) > 0
 
     def is_undirected(self) -> bool:
-        if self.is_bipartite():  # TODO check for inverse storage.
+        if self.is_bipartite():
             return False
 
         for value in self.values('adj', 'adj_t'):
@@ -448,9 +474,9 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
         num_nodes, num_edges = self.num_nodes, self.num_edges
-        if not isinstance(value, Tensor):
+        if not isinstance(value, (Tensor, np.ndarray)):
             return False
-        if value.size(cat_dim) != num_nodes:
+        if value.ndim == 0 or value.shape[cat_dim] != num_nodes:
             return False
         if num_nodes != num_edges:
             return True
@@ -460,11 +486,13 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
-        num_edges = self.num_edges
-        if not isinstance(value, Tensor):
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, (Tensor, np.ndarray)):
             return False
-        if value.size(cat_dim) != num_edges:
+        if value.ndim == 0 or value.shape[cat_dim] != num_edges:
             return False
+        if num_nodes != num_edges:
+            return True
         return 'edge' in key
 
 

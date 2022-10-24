@@ -6,6 +6,7 @@ defaults:
   - model: GCN
   - optimizer: Adam
   - lr_scheduler: ReduceLROnPlateau
+  - _self_
 
 model:
   in_channels: 34

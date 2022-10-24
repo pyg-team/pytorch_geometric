@@ -34,6 +34,15 @@ class MFConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **inputs:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
+          if bipartite,
+          edge indices :math:`(2, |\mathcal{E}|)`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, max_degree: int = 10, bias=True, **kwargs):
@@ -92,7 +101,7 @@ class MFConv(MessagePassing):
             r = lin_l(h.index_select(self.node_dim, idx))
 
             if x_r is not None:
-                r += lin_r(x_r.index_select(self.node_dim, idx))
+                r = r + lin_r(x_r.index_select(self.node_dim, idx))
 
             out.index_copy_(self.node_dim, idx, r)
 

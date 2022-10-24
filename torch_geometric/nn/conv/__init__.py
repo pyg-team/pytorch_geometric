@@ -17,6 +17,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointNetConv, PointConv
@@ -37,6 +38,7 @@ from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
 from .pan_conv import PANConv
 from .wl_conv import WLConv
+from .wl_conv_continuous import WLConvContinuous
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
@@ -48,6 +50,7 @@ from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
+from .ssg_conv import SSGConv
 
 __all__ = [
     'MessagePassing',
@@ -67,10 +70,12 @@ __all__ = [
     'GINEConv',
     'ARMAConv',
     'SGConv',
+    'SSGConv',
     'APPNP',
     'MFConv',
     'RGCNConv',
     'FastRGCNConv',
+    'RGATConv',
     'SignedConv',
     'DNAConv',
     'PointNetConv',
@@ -94,6 +99,7 @@ __all__ = [
     'GCN2Conv',
     'PANConv',
     'WLConv',
+    'WLConvContinuous',
     'FiLMConv',
     'SuperGATConv',
     'FAConv',

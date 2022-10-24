@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SignedConv
+from torch_geometric.testing import is_full_test
 
 
 def test_signed_conv():
@@ -24,17 +25,18 @@ def test_signed_conv():
     assert out2.size() == (4, 96)
     assert conv2(out1, adj.t(), adj.t()).tolist() == out2.tolist()
 
-    t = '(Tensor, Tensor, Tensor) -> Tensor'
-    jit1 = torch.jit.script(conv1.jittable(t))
-    jit2 = torch.jit.script(conv2.jittable(t))
-    assert jit1(x, edge_index, edge_index).tolist() == out1.tolist()
-    assert jit2(out1, edge_index, edge_index).tolist() == out2.tolist()
+    if is_full_test():
+        t = '(Tensor, Tensor, Tensor) -> Tensor'
+        jit1 = torch.jit.script(conv1.jittable(t))
+        jit2 = torch.jit.script(conv2.jittable(t))
+        assert jit1(x, edge_index, edge_index).tolist() == out1.tolist()
+        assert jit2(out1, edge_index, edge_index).tolist() == out2.tolist()
 
-    t = '(Tensor, SparseTensor, SparseTensor) -> Tensor'
-    jit1 = torch.jit.script(conv1.jittable(t))
-    jit2 = torch.jit.script(conv2.jittable(t))
-    assert jit1(x, adj.t(), adj.t()).tolist() == out1.tolist()
-    assert jit2(out1, adj.t(), adj.t()).tolist() == out2.tolist()
+        t = '(Tensor, SparseTensor, SparseTensor) -> Tensor'
+        jit1 = torch.jit.script(conv1.jittable(t))
+        jit2 = torch.jit.script(conv2.jittable(t))
+        assert jit1(x, adj.t(), adj.t()).tolist() == out1.tolist()
+        assert jit2(out1, adj.t(), adj.t()).tolist() == out2.tolist()
 
     adj = adj.sparse_resize((4, 2))
     assert torch.allclose(conv1((x, x[:2]), edge_index, edge_index), out1[:2],
@@ -46,18 +48,19 @@ def test_signed_conv():
     assert torch.allclose(conv2((out1, out1[:2]), adj.t(), adj.t()), out2[:2],
                           atol=1e-6)
 
-    t = '(PairTensor, Tensor, Tensor) -> Tensor'
-    jit1 = torch.jit.script(conv1.jittable(t))
-    jit2 = torch.jit.script(conv2.jittable(t))
-    assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index), out1[:2],
-                          atol=1e-6)
-    assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
-                          out2[:2], atol=1e-6)
+    if is_full_test():
+        t = '(PairTensor, Tensor, Tensor) -> Tensor'
+        jit1 = torch.jit.script(conv1.jittable(t))
+        jit2 = torch.jit.script(conv2.jittable(t))
+        assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index),
+                              out1[:2], atol=1e-6)
+        assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
+                              out2[:2], atol=1e-6)
 
-    t = '(PairTensor, SparseTensor, SparseTensor) -> Tensor'
-    jit1 = torch.jit.script(conv1.jittable(t))
-    jit2 = torch.jit.script(conv2.jittable(t))
-    assert torch.allclose(jit1((x, x[:2]), adj.t(), adj.t()), out1[:2],
-                          atol=1e-6)
-    assert torch.allclose(jit2((out1, out1[:2]), adj.t(), adj.t()), out2[:2],
-                          atol=1e-6)
+        t = '(PairTensor, SparseTensor, SparseTensor) -> Tensor'
+        jit1 = torch.jit.script(conv1.jittable(t))
+        jit2 = torch.jit.script(conv2.jittable(t))
+        assert torch.allclose(jit1((x, x[:2]), adj.t(), adj.t()), out1[:2],
+                              atol=1e-6)
+        assert torch.allclose(jit2((out1, out1[:2]), adj.t(), adj.t()),
+                              out2[:2], atol=1e-6)

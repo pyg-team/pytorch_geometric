@@ -4,15 +4,18 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.data.storage import NodeStorage
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('random_node_split')
 class RandomNodeSplit(BaseTransform):
     r"""Performs a node-level random split by adding :obj:`train_mask`,
     :obj:`val_mask` and :obj:`test_mask` attributes to the
     :class:`~torch_geometric.data.Data` or
-    :class:`~torch_geometric.data.HeteroData` object.
+    :class:`~torch_geometric.data.HeteroData` object
+    (functional name: :obj:`random_node_split`).
 
     Args:
         split (string): The type of dataset split (:obj:`"train_rest"`,
@@ -66,7 +69,10 @@ class RandomNodeSplit(BaseTransform):
         self.num_test = num_test
         self.key = key
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.node_stores:
             if self.key is not None and not hasattr(store, self.key):
                 continue

@@ -43,7 +43,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
       and size of each class:
 
       .. math::
-        \frac{1}{C} \sum_{k=1}^{C} \max \left(0, h_k - \frac{|\mathcal{C}_k|}
+        \frac{1}{C-1} \sum_{k=1}^{C} \max \left(0, h_k - \frac{|\mathcal{C}_k|}
         {|\mathcal{V}|} \right),
 
       where :math:`C` denotes the number of classes, :math:`|\mathcal{C}_k|`
@@ -63,6 +63,23 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             either :obj:`"edge"` (first formula), :obj:`"node"` (second
             formula) or :obj:`"edge_insensitive"` (third formula).
             (default: :obj:`"edge"`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 2, 3],
+        ...                            [1, 2, 0, 4]])
+        >>> y = torch.tensor([0, 0, 0, 0, 1])
+        >>> # Edge homophily ratio
+        >>> homophily(edge_index, y, method='edge')
+        0.75
+
+        >>> # Node homophily ratio
+        >>> homophily(edge_index, y, method='node')
+        0.6000000238418579
+
+        >>> # Class insensitive edge homophily ratio
+        >>> homophily(edge_index, y, method='edge_insensitive')
+        0.19999998807907104
     """
     assert method in {'edge', 'node', 'edge_insensitive'}
     y = y.squeeze(-1) if y.dim() > 1 else y
@@ -93,6 +110,7 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
     elif method == 'edge_insensitive':
         assert y.dim() == 1
         num_classes = int(y.max()) + 1
+        assert num_classes >= 2
         batch = torch.zeros_like(y) if batch is None else batch
         num_nodes = degree(batch, dtype=torch.int64)
         num_graphs = num_nodes.numel()
@@ -105,7 +123,8 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
         counts = counts.view(num_graphs, num_classes)
         proportions = counts / num_nodes.view(-1, 1)
 
-        out = (h - proportions).clamp_(min=0).mean(dim=-1)
+        out = (h - proportions).clamp_(min=0).sum(dim=-1)
+        out /= num_classes - 1
         return out if out.numel() > 1 else float(out)
 
     else:

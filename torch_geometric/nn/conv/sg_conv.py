@@ -41,6 +41,14 @@ class SGConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:**
+          node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
     _cached_x: Optional[Tensor]
@@ -75,11 +83,11 @@ class SGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim), False,
-                    self.add_self_loops, dtype=x.dtype)
+                    self.add_self_loops, self.flow, dtype=x.dtype)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim), False,
-                    self.add_self_loops, dtype=x.dtype)
+                    self.add_self_loops, self.flow, dtype=x.dtype)
 
             for k in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)

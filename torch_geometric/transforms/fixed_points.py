@@ -4,12 +4,15 @@ import re
 import numpy as np
 import torch
 
+from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('fixed_points')
 class FixedPoints(BaseTransform):
     r"""Samples a fixed number of :obj:`num` points and features from a point
-    cloud.
+    cloud (functional name: :obj:`fixed_points`).
 
     Args:
         num (int): The number of points to sample.
@@ -24,12 +27,17 @@ class FixedPoints(BaseTransform):
             In case :obj:`allow_duplicates` is :obj:`True`, the number of
             duplicated points are kept to a minimum. (default: :obj:`False`)
     """
-    def __init__(self, num, replace=True, allow_duplicates=False):
+    def __init__(
+        self,
+        num: int,
+        replace: bool = True,
+        allow_duplicates: bool = False,
+    ):
         self.num = num
         self.replace = replace
         self.allow_duplicates = allow_duplicates
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         num_nodes = data.num_nodes
 
         if self.replace:
@@ -44,10 +52,12 @@ class FixedPoints(BaseTransform):
             ], dim=0)[:self.num]
 
         for key, item in data:
-            if bool(re.search('edge', key)):
+            if key == 'num_nodes':
+                data.num_nodes = choice.size(0)
+            elif bool(re.search('edge', key)):
                 continue
-            if (torch.is_tensor(item) and item.size(0) == num_nodes
-                    and item.size(0) != 1):
+            elif (torch.is_tensor(item) and item.size(0) == num_nodes
+                  and item.size(0) != 1):
                 data[key] = item[choice]
 
         return data

@@ -1,11 +1,14 @@
 import torch_geometric
+from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('gcn_norm')
 class GCNNorm(BaseTransform):
     r"""Applies the GCN normalization from the `"Semi-supervised Classification
     with Graph Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_
-    paper.
+    paper (functional name: :obj:`gcn_norm`).
 
     .. math::
         \mathbf{\hat{A}} = \mathbf{\hat{D}}^{-1/2} (\mathbf{A} + \mathbf{I})
@@ -16,7 +19,7 @@ class GCNNorm(BaseTransform):
     def __init__(self, add_self_loops: bool = True):
         self.add_self_loops = add_self_loops
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
         assert 'edge_index' in data or 'adj_t' in data
 

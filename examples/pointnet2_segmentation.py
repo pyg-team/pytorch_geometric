@@ -3,17 +3,18 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from pointnet2_classification import GlobalSAModule, SAModule
+from torch_scatter import scatter
+from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
-from torch_geometric.utils import intersection_and_union as i_and_u
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
 transform = T.Compose([
-    T.RandomTranslate(0.01),
+    T.RandomJitter(0.01),
     T.RandomRotate(15, axis=0),
     T.RandomRotate(15, axis=1),
     T.RandomRotate(15, axis=2)
@@ -56,8 +57,7 @@ class Net(torch.nn.Module):
         self.fp2_module = FPModule(3, MLP([256 + 128, 256, 128]))
         self.fp1_module = FPModule(3, MLP([128 + 3, 128, 128, 128]))
 
-        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5,
-                       batch_norm=False)
+        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5, norm=None)
 
         self.lin1 = torch.nn.Linear(128, 128)
         self.lin2 = torch.nn.Linear(128, 128)
@@ -106,24 +106,32 @@ def train():
 def test(loader):
     model.eval()
 
-    y_mask = loader.dataset.y_mask
-    ious = [[] for _ in range(len(loader.dataset.categories))]
-
+    ious, categories = [], []
+    y_map = torch.empty(loader.dataset.num_classes, device=device).long()
     for data in loader:
         data = data.to(device)
-        pred = model(data).argmax(dim=1)
+        outs = model(data)
 
-        i, u = i_and_u(pred, data.y, loader.dataset.num_classes, data.batch)
-        iou = i.cpu().to(torch.float) / u.cpu().to(torch.float)
-        iou[torch.isnan(iou)] = 1
+        sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
+        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
+                                    data.category.tolist()):
+            category = list(ShapeNet.seg_classes.keys())[category]
+            part = ShapeNet.seg_classes[category]
+            part = torch.tensor(part, device=device)
 
-        # Find and filter the relevant classes for each category.
-        for iou, category in zip(iou.unbind(), data.category.unbind()):
-            ious[category.item()].append(iou[y_mask[category]])
+            y_map[part] = torch.arange(part.size(0), device=device)
 
-    # Compute mean IoU.
-    ious = [torch.stack(iou).mean(0).mean(0) for iou in ious]
-    return torch.tensor(ious).mean().item()
+            iou = jaccard_index(out[:, part].argmax(dim=-1), y_map[y],
+                                num_classes=part.size(0), absent_score=1.0)
+            ious.append(iou)
+
+        categories.append(data.category)
+
+    iou = torch.tensor(ious, device=device)
+    category = torch.cat(categories, dim=0)
+
+    mean_iou = scatter(iou, category, reduce='mean')  # Per-category IoU.
+    return float(mean_iou.mean())  # Global IoU.
 
 
 for epoch in range(1, 31):

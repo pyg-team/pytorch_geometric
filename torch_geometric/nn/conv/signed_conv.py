@@ -44,16 +44,24 @@ class SignedConv(MessagePassing):
     the negative node features :math:`\mathbf{X}^{(\textrm{neg})}`.
 
     Args:
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         first_aggr (bool): Denotes which aggregation formula to use.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`((|\mathcal{V_s}|, F_{in}), (|\mathcal{V_t}|, F_{in}))`
+          if bipartite,
+          positive edge indices :math:`(2, |\mathcal{E}^{(+)}|)`,
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)`
+        - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
+          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
     def __init__(self, in_channels: int, out_channels: int, first_aggr: bool,
                  bias: bool = True, **kwargs):
@@ -96,11 +104,11 @@ class SignedConv(MessagePassing):
 
             out_pos = self.propagate(pos_edge_index, x=x, size=None)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1])
+            out_pos = out_pos + self.lin_pos_r(x[1])
 
             out_neg = self.propagate(neg_edge_index, x=x, size=None)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1])
+            out_neg = out_neg + self.lin_neg_r(x[1])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 
@@ -113,7 +121,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
             out_pos = torch.cat([out_pos1, out_pos2], dim=-1)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1][..., :F_in])
+            out_pos = out_pos + self.lin_pos_r(x[1][..., :F_in])
 
             out_neg1 = self.propagate(pos_edge_index, size=None,
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
@@ -121,7 +129,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., :F_in], x[1][..., :F_in]))
             out_neg = torch.cat([out_neg1, out_neg2], dim=-1)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1][..., F_in:])
+            out_neg = out_neg + self.lin_neg_r(x[1][..., F_in:])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 
@@ -130,7 +138,7 @@ class SignedConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: PairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
+        adj_t = adj_t.set_value(None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:

@@ -9,10 +9,16 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import (add_self_loops, batched_negative_sampling,
-                                   dropout_adj, is_undirected,
-                                   negative_sampling, remove_self_loops,
-                                   softmax, to_undirected)
+from torch_geometric.utils import (
+    add_self_loops,
+    batched_negative_sampling,
+    dropout_edge,
+    is_undirected,
+    negative_sampling,
+    remove_self_loops,
+    softmax,
+    to_undirected,
+)
 
 from ..inits import glorot, zeros
 
@@ -109,6 +115,13 @@ class SuperGATConv(MessagePassing):
             when negative sampling is performed. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          negative edge indices :math:`(2, |\mathcal{E}^{(-)}|)` *(optional)*
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})`
     """
     att_x: OptTensor
     att_y: OptTensor
@@ -216,7 +229,7 @@ class SuperGATConv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -246,9 +259,9 @@ class SuperGATConv(MessagePassing):
         return neg_edge_index
 
     def positive_sampling(self, edge_index: Tensor) -> Tensor:
-        pos_edge_index, _ = dropout_adj(edge_index,
-                                        p=1. - self.edge_sample_ratio,
-                                        training=self.training)
+        pos_edge_index, _ = dropout_edge(edge_index,
+                                         p=1. - self.edge_sample_ratio,
+                                         training=self.training)
         return pos_edge_index
 
     def get_attention(self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor,

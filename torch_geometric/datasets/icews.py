@@ -1,3 +1,5 @@
+from typing import Callable, List, Optional
+
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
@@ -5,22 +7,27 @@ from torch_geometric.io import read_txt_array
 
 
 class EventDataset(InMemoryDataset):
-    def __init__(self, root, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform, pre_filter)
 
     @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
         raise NotImplementedError
 
     @property
-    def num_rels(self):
+    def num_rels(self) -> int:
         raise NotImplementedError
 
-    def process_events(self):
+    def process_events(self) -> int:
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> List[Data]:
         events = self.process_events()
         events = events - events.min(dim=0, keepdim=True)[0]
 
@@ -64,34 +71,40 @@ class ICEWS18(EventDataset):
     url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter)
         idx = self.processed_file_names.index(f'{split}.pt')
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
     @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
         return 23033
 
     @property
-    def num_rels(self):
+    def num_rels(self) -> int:
         return 256
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [f'{name}.txt' for name in ['train', 'valid', 'test']]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         for filename in self.raw_file_names:
             download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process_events(self):
+    def process_events(self) -> torch.Tensor:
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)

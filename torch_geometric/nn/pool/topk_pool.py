@@ -1,6 +1,7 @@
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
 
@@ -10,16 +11,23 @@ from ...utils.num_nodes import maybe_num_nodes
 from ..inits import uniform
 
 
-def topk(x, ratio, batch, min_score=None, tol=1e-7):
+def topk(
+    x: Tensor,
+    ratio: Optional[Union[float, int]],
+    batch: Tensor,
+    min_score: Optional[float] = None,
+    tol: float = 1e-7,
+) -> Tensor:
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
         scores_max = scatter_max(x, batch)[0].index_select(0, batch) - tol
         scores_min = scores_max.clamp(max=min_score)
 
-        perm = (x > scores_min).nonzero(as_tuple=False).view(-1)
-    else:
+        perm = (x > scores_min).nonzero().view(-1)
+
+    elif ratio is not None:
         num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
-        batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
+        batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
 
         cum_num_nodes = torch.cat(
             [num_nodes.new_zeros(1),
@@ -28,8 +36,7 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
         index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
 
-        dense_x = x.new_full((batch_size * max_num_nodes, ),
-                             torch.finfo(x.dtype).min)
+        dense_x = x.new_full((batch_size * max_num_nodes, ), -60000.0)
         dense_x[index] = x
         dense_x = dense_x.view(batch_size, max_num_nodes)
 
@@ -38,11 +45,11 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         perm = perm + cum_num_nodes.view(-1, 1)
         perm = perm.view(-1)
 
-        if isinstance(ratio, int):
-            k = num_nodes.new_full((num_nodes.size(0), ), ratio)
+        if ratio >= 1:
+            k = num_nodes.new_full((num_nodes.size(0), ), int(ratio))
             k = torch.min(k, num_nodes)
         else:
-            k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
+            k = (float(ratio) * num_nodes.to(x.dtype)).ceil().to(torch.long)
 
         mask = [
             torch.arange(k[i], dtype=torch.long, device=x.device) +
@@ -52,17 +59,26 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
 
         perm = perm[mask]
 
+    else:
+        raise ValueError("At least one of 'min_score' and 'ratio' parameters "
+                         "must be specified")
+
     return perm
 
 
-def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
+def filter_adj(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    perm: Tensor,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     mask = perm.new_full((num_nodes, ), -1)
     i = torch.arange(perm.size(0), dtype=torch.long, device=perm.device)
     mask[perm] = i
 
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
     row, col = mask[row], mask[col]
     mask = (row >= 0) & (col >= 0)
     row, col = row[mask], col[mask]
@@ -125,9 +141,14 @@ class TopKPooling(torch.nn.Module):
         nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.tanh`)
     """
-    def __init__(self, in_channels: int, ratio: Union[int, float] = 0.5,
-                 min_score: Optional[float] = None, multiplier: float = 1.,
-                 nonlinearity: Callable = torch.tanh):
+    def __init__(
+        self,
+        in_channels: int,
+        ratio: Union[int, float] = 0.5,
+        min_score: Optional[float] = None,
+        multiplier: float = 1.,
+        nonlinearity: Callable = torch.tanh,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -144,7 +165,14 @@ class TopKPooling(torch.nn.Module):
         size = self.in_channels
         uniform(size, self.weight)
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None, attn=None):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        batch: Optional[Tensor] = None,
+        attn: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor, Tensor]:
         """"""
 
         if batch is None:

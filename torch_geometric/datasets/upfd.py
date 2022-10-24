@@ -1,12 +1,18 @@
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
 import torch
 from torch_sparse import coalesce
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_txt_array
 
 
@@ -68,14 +74,23 @@ class UPFD(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
+    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
     ids = {
         'politifact': '1KOmSrlGcC50PjkvRVbyb_WoWHVql06J-',
         'gossipcop': '1VskhAQ92PrT4sWEKQ2v2-AJhEcpp4A81',
     }
 
-    def __init__(self, root, name, feature, split="train", transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        feature: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.root = root
         self.name = name
         self.feature = feature
@@ -86,15 +101,15 @@ class UPFD(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed', self.feature)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'node_graph_id.npy', 'graph_labels.npy', 'A.txt', 'train_idx.npy',
             'val_idx.npy', 'test_idx.npy', f'new_{self.feature}_feature.npz'
@@ -105,12 +120,9 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
-        from google_drive_downloader import GoogleDriveDownloader as gdd
-
-        gdd.download_file_from_google_drive(
-            self.ids[self.name], osp.join(self.raw_dir, f'{self.name}.zip'),
-            unzip=True)
-        os.remove(osp.join(self.raw_dir, f'{self.name}.zip'))
+        path = download_url(self.url.format(self.ids[self.name]), self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.remove(path)
 
     def process(self):
         x = sp.load_npz(
@@ -151,6 +163,6 @@ class UPFD(InMemoryDataset):
                 data_list = [self.pre_transform(d) for d in data_list]
             torch.save(self.collate(data_list), path)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, name={self.name}, '
                 f'feature={self.feature})')

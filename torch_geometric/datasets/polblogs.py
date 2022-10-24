@@ -3,8 +3,12 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_tar)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
 
 
 class PolBlogs(InMemoryDataset):
@@ -29,6 +33,20 @@ class PolBlogs(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10
+            :header-rows: 1
+
+            * - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 1,490
+              - 19,025
+              - 0
+              - 2
     """
 
     url = 'https://netset.telecom-paris.fr/datasets/polblogs.tar.gz'

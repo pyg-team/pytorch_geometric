@@ -7,7 +7,7 @@ from captum.attr import IntegratedGradients
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, GNNExplainer, to_captum
+from torch_geometric.nn import Explainer, GCNConv, to_captum
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -61,8 +61,8 @@ ig_attr_edge = ig.attribute(edge_mask.unsqueeze(0), target=target,
 ig_attr_edge = ig_attr_edge.squeeze(0).abs()
 ig_attr_edge /= ig_attr_edge.max()
 
-# Visualize absolute values of attributions with GNNExplainer visualizer
-explainer = GNNExplainer(model)  # TODO: Change to general Explainer visualizer
+# Visualize absolute values of attributions:
+explainer = Explainer(model)
 ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge)
 plt.show()
 
@@ -80,7 +80,7 @@ ig_attr_node = ig.attribute(data.x.unsqueeze(0), target=target,
 ig_attr_node = ig_attr_node.squeeze(0).abs().sum(dim=1)
 ig_attr_node /= ig_attr_node.max()
 
-# Visualize absolute values of attributions with GNNExplainer visualizer
+# Visualize absolute values of attributions:
 ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()
@@ -102,6 +102,7 @@ ig_attr_node /= ig_attr_node.max()
 ig_attr_edge = ig_attr_edge.squeeze(0).abs()
 ig_attr_edge /= ig_attr_edge.max()
 
+# Visualize absolute values of attributions:
 ax, G = explainer.visualize_subgraph(output_idx, data.edge_index, ig_attr_edge,
                                      node_alpha=ig_attr_node)
 plt.show()

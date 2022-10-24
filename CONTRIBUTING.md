@@ -80,20 +80,35 @@ Everytime you send a Pull Request, your commit will be built and checked against
 
    If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
-2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
+2. Ensure that the entire test suite passes and that code coverage roughly stays the same.
+   Please feel encouraged to provide a test with your submitted code.
+   To test, either run
 
    ```bash
    pytest --cov
    ```
+
+   or
+
+   ```bash
+   FULL_TEST=1 pytest --cov
+   ```
+
+   (which runs a set of additional but time-consuming tests) dependening on your needs.
+
+3. Add your feature/bugfix to the [`CHANGELOG.md`](https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md?plain=1).
+   If multiple PRs move towards integrating a single feature, it is advised to group them together into one bullet point.
 
 ## Building Documentation
 
 To build the documentation:
 
 1. [Build and install](#developing-pyg) PyG from source.
-2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
+2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) theme via
+   ```bash
+   pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
+   ```
 3. Generate the documentation via:
-
    ```bash
    cd docs
    make html

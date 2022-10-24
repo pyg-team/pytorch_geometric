@@ -3,16 +3,15 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 
+import torch_geometric.transforms as T
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HGTConv, Linear
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/DBLP')
-dataset = DBLP(path)
+# We initialize conference node features with a single one-vector as feature:
+dataset = DBLP(path, transform=T.Constant(node_types='conference'))
 data = dataset[0]
 print(data)
-
-# We initialize conference node features with a single feature.
-data['conference'].x = torch.ones(data['conference'].num_nodes, 1)
 
 
 class HGT(torch.nn.Module):
@@ -32,8 +31,10 @@ class HGT(torch.nn.Module):
         self.lin = Linear(hidden_channels, out_channels)
 
     def forward(self, x_dict, edge_index_dict):
-        for node_type, x in x_dict.items():
-            x_dict[node_type] = self.lin_dict[node_type](x).relu_()
+        x_dict = {
+            node_type: self.lin_dict[node_type](x).relu_()
+            for node_type, x in x_dict.items()
+        }
 
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
