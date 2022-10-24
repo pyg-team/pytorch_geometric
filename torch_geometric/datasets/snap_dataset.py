@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from typing import Any, Callable, List, Optional
 
 import numpy as np
 import torch
@@ -16,16 +17,15 @@ from torch_geometric.data.makedirs import makedirs
 
 
 class EgoData(Data):
-    def __inc__(self, key, value, *args, **kwargs):
+    def __inc__(self, key: str, value: Any, *args, **kwargs):
         if key == 'circle':
             return self.num_nodes
         elif key == 'circle_batch':
-            return value.max().item() + 1 if value.numel() > 0 else 0
-        else:
-            return super().__inc__(key, value, *args, **kwargs)
+            return int(value.max()) + 1 if value.numel() > 0 else 0
+        return super().__inc__(key, value, *args, **kwargs)
 
 
-def read_ego(files, name):
+def read_ego(files: List[str], name: str) -> List[EgoData]:
     import pandas as pd
 
     all_featnames = []
@@ -118,7 +118,7 @@ def read_ego(files, name):
     return data_list
 
 
-def read_soc(files, name):
+def read_soc(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
     skiprows = 4
@@ -134,7 +134,7 @@ def read_soc(files, name):
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
 
-def read_wiki(files, name):
+def read_wiki(files: List[str], name: str) -> List[Data]:
     import pandas as pd
 
     edge_index = pd.read_csv(files[0], sep='\t', header=None, skiprows=4,
@@ -189,23 +189,29 @@ class SNAPDataset(InMemoryDataset):
         'wiki-vote': ['wiki-Vote.txt.gz'],
     }
 
-    def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def _download(self):
