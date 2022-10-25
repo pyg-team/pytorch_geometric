@@ -12,8 +12,7 @@ from torch_geometric.data import (
     LightningNodeData,
 )
 from torch_geometric.nn import global_mean_pool
-from torch_geometric.sampler import BaseSampler
-from torch_geometric.sampler.neighbor_sampler import NeighborSampler
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
