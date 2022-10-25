@@ -12,12 +12,11 @@ from torch_geometric.sampler.base import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.utils import (
-    add_negative_samples,
-    remap_keys,
-    to_csc,
-    to_hetero_csc,
+from torch_geometric.sampler.neighbor_sampler_utils import (
+    edge_sample,
+    node_sample,
 )
+from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
 try:
@@ -332,25 +331,7 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        index, input_nodes, input_time = index
-
-        if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            seed_time_dict = None
-            if input_time is not None:
-                seed_time_dict = {self.input_type: input_time}
-            output = self._sample(seed={self.input_type: input_nodes},
-                                  seed_time_dict=seed_time_dict)
-            output.metadata = index
-
-        elif issubclass(self.data_cls, Data):
-            output = self._sample(seed=input_nodes, seed_time=input_time)
-            output.metadata = index
-
-        else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{self.data_cls}'")
-
-        return output
+        return node_sample(index, self._sample, self.input_type, **kwargs)
 
     # Edge-based sampling #####################################################
 
@@ -359,103 +340,9 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        index, row, col, edge_label, edge_label_time = index
-        edge_label_index = torch.stack([row, col], dim=0)
-        negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
-
-        out = add_negative_samples(edge_label_index, edge_label,
-                                   edge_label_time, self.num_src_nodes,
-                                   self.num_dst_nodes, negative_sampling_ratio)
-        edge_label_index, edge_label, edge_label_time = out
-        num_seed_edges = edge_label_index.size(1)
-        seed_time = seed_time_dict = None
-        if (self.data_cls == 'custom'
-                or issubclass(self.data_cls, HeteroData)):
-            if self.input_type[0] != self.input_type[-1]:
-                if self.disjoint:
-                    seed_src = edge_label_index[0]
-                    seed_dst = edge_label_index[1]
-                    edge_label_index = torch.arange(
-                        0, num_seed_edges).repeat(2).view(2, -1)
-                    seed_dict = {
-                        self.input_type[0]: seed_src,
-                        self.input_type[-1]: seed_dst,
-                    }
-                    if edge_label_time is not None:
-                        seed_time_dict = {
-                            self.input_type[0]: edge_label_time,
-                            self.input_type[-1]: edge_label_time
-                        }
-                else:
-                    seed_src = edge_label_index[0]
-                    seed_src, inverse_src = seed_src.unique(
-                        return_inverse=True)
-                    seed_dst = edge_label_index[1]
-                    seed_dst, inverse_dst = seed_dst.unique(
-                        return_inverse=True)
-                    edge_label_index = torch.stack([
-                        inverse_src,
-                        inverse_dst,
-                    ], dim=0)
-                    seed_dict = {
-                        self.input_type[0]: seed_src,
-                        self.input_type[-1]: seed_dst,
-                    }
-
-            else:  # Merge both source and destination node indices:
-                if self.disjoint:
-                    seed_nodes = edge_label_index.view(-1)
-                    edge_label_index = torch.arange(0, 2 * num_seed_edges)
-                    edge_label_index = edge_label_index.view(2, -1)
-                    seed_dict = {self.input_type[0]: seed_nodes}
-                    if edge_label_time is not None:
-                        tmp = torch.cat([edge_label_time, edge_label_time])
-                        seed_time_dict = {self.input_type[0]: tmp}
-                else:
-                    seed_nodes = edge_label_index.view(-1)
-                    seed_nodes, inverse = seed_nodes.unique(
-                        return_inverse=True)
-                    edge_label_index = inverse.view(2, -1)
-                    seed_dict = {self.input_type[0]: seed_nodes}
-
-            output = self._sample(
-                seed=seed_dict,
-                seed_time_dict=seed_time_dict,
-            )
-
-            if self.disjoint:
-                for key, batch in output.batch.items():
-                    output.batch[key] = batch % num_seed_edges
-
-            output.metadata = (index, edge_label_index, edge_label,
-                               edge_label_time)
-
-        elif issubclass(self.data_cls, Data):
-            if self.disjoint:
-                seed_nodes = edge_label_index.view(-1)
-                edge_label_index = torch.arange(0, 2 * num_seed_edges)
-                edge_label_index = edge_label_index.view(2, -1)
-                if edge_label_time is not None:
-                    seed_time = torch.cat([edge_label_time, edge_label_time])
-
-            else:
-                seed_nodes = edge_label_index.view(-1)
-                seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
-                edge_label_index = inverse.view(2, -1)
-
-            output = self._sample(seed=seed_nodes, seed_time=seed_time)
-
-            if self.disjoint:
-                output.batch = output.batch % num_seed_edges
-
-            output.metadata = (index, edge_label_index, edge_label,
-                               edge_label_time)
-
-        else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{self.data_cls}'")
-
-        return output
+        return edge_sample(index, self._sample, self.num_src_nodes,
+                           self.num_dst_nodes, self.disjoint, self.input_type,
+                           **kwargs)
 
     # Other Utilities #########################################################
 
