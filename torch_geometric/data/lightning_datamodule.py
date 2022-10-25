@@ -1,4 +1,5 @@
 import copy
+import inspect
 import warnings
 from typing import Optional, Tuple, Union
 
@@ -8,16 +9,10 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.link_neighbor_loader import (
-    LinkNeighborLoader,
-    get_edge_label_index,
-)
-from torch_geometric.loader.neighbor_loader import (
-    NeighborLoader,
-    NeighborSampler,
-    get_input_nodes,
-)
+from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
+from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -306,15 +301,20 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
+
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
@@ -520,18 +520,20 @@ class LightningLinkData(LightningDataModule):
         self.loader = loader
 
         if loader in ['neighbor', 'link_neighbor']:
-            input_type = get_edge_label_index(data, input_train_edges)[0]
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                input_type=input_type,
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
+                input_type=get_edge_label_index(data, input_train_edges)[0],
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
-            self.neg_sampling_ratio = kwargs.get('neg_sampling_ratio', 0.0)
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -587,7 +589,6 @@ class LightningLinkData(LightningDataModule):
                 edge_label=input_labels,
                 edge_label_time=input_time,
                 neighbor_sampler=self.neighbor_sampler,
-                neg_sampling_ratio=self.neg_sampling_ratio,
                 **kwargs,
             )
 

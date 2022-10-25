@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Callable, List, Optional
 
 import torch
 
@@ -34,12 +34,34 @@ class MNISTSuperpixels(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 70,000
+              - 75
+              - ~1,393.0
+              - 1
+              - 10
     """
 
     url = 'https://data.pyg.org/datasets/MNISTSuperpixels.zip'
 
-    def __init__(self, root, train=True, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)

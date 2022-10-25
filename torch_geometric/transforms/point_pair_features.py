@@ -1,6 +1,7 @@
 import torch
 
 import torch_geometric
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -24,10 +25,10 @@ class PointPairFeatures(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-    def __init__(self, cat=True):
+    def __init__(self, cat: bool = True):
         self.cat = cat
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         ppf_func = torch_geometric.nn.conv.ppf_conv.point_pair_features
 
         assert data.edge_index is not None
