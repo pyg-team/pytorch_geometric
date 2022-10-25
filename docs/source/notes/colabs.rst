@@ -11,7 +11,7 @@ We have prepared a list of colab notebooks that practically introduces you to th
 6. `Explaining GNN Model Predictions using Captum <https://colab.research.google.com/drive/1fLJbFPz0yMCQg81DdCP5I8jXw9LoggKO?usp=sharing>`__
 7. `Customizing Aggregations within Message Passing <https://colab.research.google.com/drive/1KKw-VUDQuHhMo7sCd7ZaRROza3leBjRR?usp=sharing>`__
 8. `Node Classification with Graph Neural Networks Instrumented with Weights and Biases Logging and Sweeps <https://colab.research.google.com/github/wandb/examples/blob/master/colabs/pyg/8_Node_Classification_(with_W&B).ipynb>`__
-9. `Link Prediction on IMDB <https://colab.research.google.com/drive/1xpzn1Nvai1ygd_P5Yambc_oe4VBPK_ZT?usp=sharing>`__
+9. `Link Prediction on MovieLens <https://colab.research.google.com/drive/1xpzn1Nvai1ygd_P5Yambc_oe4VBPK_ZT?usp=sharing>`__
 
 All colab notebooks are released under the MIT license.
 
