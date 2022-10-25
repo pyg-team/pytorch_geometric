@@ -12,7 +12,7 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
-from torch_geometric.sampler import NeighborSampler
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -233,6 +233,10 @@ class LightningNodeData(LightningDataModule):
             (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        neighbor_sampler(BaseSampler): The neighbor sampling object used by
+            loaders that don't load full dta, like :obj:`NeighborLoader`.
+            If not set and :obj:`loader` is not :obj:`"full"` then its
+            internally set to :obj:`NeighborSampler`. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -249,6 +253,7 @@ class LightningNodeData(LightningDataModule):
         input_test_nodes: InputNodes = None,
         input_pred_nodes: InputNodes = None,
         loader: str = "neighbor",
+        neighbor_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
@@ -300,7 +305,9 @@ class LightningNodeData(LightningDataModule):
         self.data = data
         self.loader = loader
 
-        if loader == 'neighbor':
+        if neighbor_sampler is not None and loader == 'neighbor':
+            self.neighbor_sampler = neighbor_sampler
+        elif loader == 'neighbor':
             sampler_args = dict(inspect.signature(NeighborSampler).parameters)
             sampler_args.pop('data')
             sampler_args.pop('input_type')
@@ -316,6 +323,11 @@ class LightningNodeData(LightningDataModule):
                 share_memory=num_workers > 0,
                 **sampler_kwargs,
             )
+        elif loader == 'full':
+            self.neighbor_sampler = None
+        else:
+            raise ValueError(f"Invlaid args for `loader`={loader} and "
+                             f"`neighbor_sampler`={neighbor_sampler}")
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
