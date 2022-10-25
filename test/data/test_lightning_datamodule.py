@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import (
+    Data,
     HeteroData,
     LightningDataset,
     LightningLinkData,
@@ -64,14 +65,6 @@ class LinearGraphModule(LightningModule):
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
-
-
-class DummySampler(BaseSampler):
-    def sample_from_edges():
-        pass
-
-    def sample_from_nodes():
-        pass
 
 
 @withCUDA
@@ -289,10 +282,25 @@ def test_lightning_hetero_node_data(get_dataset):
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
 
-    # Check if custom sampler is set
-    datamodule = LightningNodeData(data, loader='neighbor',
-                                   neighbor_sampler=DummySampler(),
-                                   num_neighbors=[5])
+
+@withPackage('pytorch_lightning')
+def test_lightning_data_custom_sampler():
+    class DummySampler(BaseSampler):
+        def sample_from_edges(self, *args, **kwargs):
+            pass
+
+        def sample_from_nodes(self, *args, **kwargs):
+            pass
+
+    data = Data(num_nodes=2, edge_index=torch.tensor([[0, 1], [1, 0]]))
+
+    datamodule = LightningNodeData(data, node_sampler=DummySampler(),
+                                   input_train_nodes=torch.arange(2))
+    assert isinstance(datamodule.neighbor_sampler, DummySampler)
+
+    datamodule = LightningLinkData(
+        data, link_sampler=DummySampler(),
+        input_train_edges=torch.tensor([[0, 1], [0, 1]]))
     assert isinstance(datamodule.neighbor_sampler, DummySampler)
 
 
@@ -346,13 +354,6 @@ def test_lightning_hetero_link_data():
         assert 'edge_label_index' in batch['author', 'paper']
         assert 'edge_label_time' in batch['author', 'paper']
         break
-
-    # Check if custom sampler is set
-    datamodule = LightningLinkData(
-        data, input_train_edges=('author', 'paper'),
-        input_train_time=torch.arange(data['author', 'paper'].num_edges),
-        loader='neighbor', neighbor_sampler=DummySampler())
-    assert isinstance(datamodule.neighbor_sampler, DummySampler)
 
 
 @withPackage('pytorch_lightning')

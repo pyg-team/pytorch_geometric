@@ -263,7 +263,7 @@ class LightningNodeData(LightningDataModule):
         **kwargs,
     ):
         if node_sampler is not None:
-            loader == 'custom'
+            loader = 'custom'
 
         assert loader in ['full', 'neighbor', 'custom']
 
@@ -510,7 +510,7 @@ class LightningLinkData(LightningDataModule):
         **kwargs,
     ):
         if link_sampler is not None:
-            loader == 'custom'
+            loader = 'custom'
 
         assert loader in ['full', 'neighbor', 'link_neighbor', 'custom']
 
