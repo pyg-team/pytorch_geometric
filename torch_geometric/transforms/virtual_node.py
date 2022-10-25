@@ -50,7 +50,7 @@ class VirtualNode(BaseTransform):
                 if key == 'edge_weight':
                     size[dim] = 2 * num_nodes
                     fill_value = 1.
-                if key == 'batch':
+                elif key == 'batch':
                     size[dim] = 1
                     fill_value = int(value[0])
                 elif old_data.is_edge_attr(key):
