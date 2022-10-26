@@ -2,6 +2,7 @@ import json
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 
@@ -113,9 +114,16 @@ class ShapeNet(InMemoryDataset):
         'Table': [47, 48, 49],
     }
 
-    def __init__(self, root, categories=None, include_normals=True,
-                 split='trainval', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        categories: Optional[List[str]] = None,
+        include_normals: bool = True,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -145,15 +153,15 @@ class ShapeNet(InMemoryDataset):
             self.y_mask[i, labels] = 1
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         return self.y_mask.size(-1)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return list(self.category_ids.values()) + ['train_test_split']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
             osp.join(f'{cats}_{split}.pt')
