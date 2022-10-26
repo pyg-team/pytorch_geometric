@@ -1,4 +1,5 @@
 from itertools import chain
+from typing import Callable, List, Optional
 
 import torch
 
@@ -37,16 +38,21 @@ class WordNet18(InMemoryDataset):
     url = ('https://raw.githubusercontent.com/villmow/'
            'datasets_knowledge_embedding/master/WN18/original')
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -92,9 +98,6 @@ class WordNet18(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}()'
-
 
 class WordNet18RR(InMemoryDataset):
     r"""The WordNet18RR dataset from the `"Convolutional 2D Knowledge Graph
@@ -130,16 +133,21 @@ class WordNet18RR(InMemoryDataset):
         '_verb_group': 10,
     }
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -199,6 +207,3 @@ class WordNet18RR(InMemoryDataset):
             data = self.pre_filter(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}()'

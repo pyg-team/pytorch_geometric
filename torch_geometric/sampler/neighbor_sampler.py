@@ -36,6 +36,7 @@ class NeighborSampler(BaseSampler):
         num_neighbors: NumNeighbors,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         input_type: Optional[Any] = None,
         time_attr: Optional[str] = None,
@@ -47,6 +48,7 @@ class NeighborSampler(BaseSampler):
         self.num_neighbors = num_neighbors
         self.replace = replace
         self.directed = directed
+        self._disjoint = disjoint
         self.temporal_strategy = temporal_strategy
         self.node_time = self.node_time_dict = None
         self.input_type = input_type
@@ -202,11 +204,13 @@ class NeighborSampler(BaseSampler):
                                  f"{self.num_hops} entries (got {len(value)})")
 
     @property
-    def disjoint_sampling(self) -> bool:
-        """Returns :obj:`True` if nodes have a time attribute. If :obj:`True`,
-        each seed node will create its own disjoint subgraph."""
+    def is_temporal(self) -> bool:
         return (getattr(self, 'node_time') is not None
                 or getattr(self, 'node_time_dict') is not None)
+
+    @property
+    def disjoint(self) -> bool:
+        return self._disjoint or self.is_temporal
 
     def _sample(
         self,
@@ -220,12 +224,9 @@ class NeighborSampler(BaseSampler):
         Note that the 'metadata' field of the output is not filled; it is the
         job of the caller to appropriately fill out this field for downstream
         loaders."""
-
-        # TODO(manan): remote backends only support heterogeneous graphs for
-        # now:
+        # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
-                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
@@ -239,20 +240,22 @@ class NeighborSampler(BaseSampler):
                     True,  # csc
                     self.replace,
                     self.directed,
-                    self.disjoint_sampling,
+                    self.disjoint,
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
-                if self.disjoint_sampling:
+                if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
                     node = {k: v[1] for k, v in node.items()}
 
             else:
-                if self.node_time_dict is not None:
-                    raise ValueError("'time_attr' not supported for "
-                                     "neighbor sampling via 'torch-sparse'")
+                if self.disjoint:
+                    raise ValueError("'disjoint' sampling not supported for "
+                                     "neighbor sampling via 'torch-sparse'. "
+                                     "Please install 'pyg-lib' for improved "
+                                     "and optimized sampling routines.")
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
@@ -276,7 +279,6 @@ class NeighborSampler(BaseSampler):
 
         if issubclass(self.data_cls, Data):
             if _WITH_PYG_LIB:
-                # TODO (matthias) Add `disjoint` option to `NeighborSampler`
                 # TODO (matthias) `return_edge_id` if edge features present
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
@@ -288,18 +290,20 @@ class NeighborSampler(BaseSampler):
                     True,  # csc
                     self.replace,
                     self.directed,
-                    self.disjoint_sampling,
+                    self.disjoint,
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
                 row, col, node, edge, batch = out + (None, )
-                if self.disjoint_sampling:
+                if self.disjoint:
                     batch, node = node.t().contiguous()
 
             else:
-                if self.node_time is not None:
-                    raise ValueError("'time_attr' not supported for "
-                                     "neighbor sampling via 'torch-sparse'")
+                if self.disjoint:
+                    raise ValueError("'disjoint' sampling not supported for "
+                                     "neighbor sampling via 'torch-sparse'. "
+                                     "Please install 'pyg-lib' for improved "
+                                     "and optimized sampling routines.")
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,
@@ -328,18 +332,19 @@ class NeighborSampler(BaseSampler):
         index: NodeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        if isinstance(index, (list, tuple)):
-            index = torch.tensor(index)
+        index, input_nodes, input_time = index
 
-        # Tuple[FeatureStore, GraphStore] currently only supports heterogeneous
-        # sampling:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            output = self._sample(seed={self.input_type: index})
-            output.metadata = index.numel()
+            seed_time_dict = None
+            if input_time is not None:
+                seed_time_dict = {self.input_type: input_time}
+            output = self._sample(seed={self.input_type: input_nodes},
+                                  seed_time_dict=seed_time_dict)
+            output.metadata = index
 
         elif issubclass(self.data_cls, Data):
-            output = self._sample(seed=index)
-            output.metadata = index.numel()
+            output = self._sample(seed=input_nodes, seed_time=input_time)
+            output.metadata = index
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -354,11 +359,9 @@ class NeighborSampler(BaseSampler):
         index: EdgeSamplerInput,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        index, row, col, edge_label, edge_label_time = index
+        edge_label_index = torch.stack([row, col], dim=0)
         negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
-        query = [torch.stack(s, dim=0) for s in zip(*index)]
-        edge_label_index = torch.stack(query[:2], dim=0)
-        edge_label = query[2]
-        edge_label_time = query[3] if len(query) == 4 else None
 
         out = add_negative_samples(edge_label_index, edge_label,
                                    edge_label_time, self.num_src_nodes,
@@ -369,7 +372,7 @@ class NeighborSampler(BaseSampler):
         if (self.data_cls == 'custom'
                 or issubclass(self.data_cls, HeteroData)):
             if self.input_type[0] != self.input_type[-1]:
-                if self.disjoint_sampling:
+                if self.disjoint:
                     seed_src = edge_label_index[0]
                     seed_dst = edge_label_index[1]
                     edge_label_index = torch.arange(
@@ -400,7 +403,7 @@ class NeighborSampler(BaseSampler):
                     }
 
             else:  # Merge both source and destination node indices:
-                if self.disjoint_sampling:
+                if self.disjoint:
                     seed_nodes = edge_label_index.view(-1)
                     edge_label_index = torch.arange(0, 2 * num_seed_edges)
                     edge_label_index = edge_label_index.view(2, -1)
@@ -420,14 +423,15 @@ class NeighborSampler(BaseSampler):
                 seed_time_dict=seed_time_dict,
             )
 
-            if self.disjoint_sampling:
+            if self.disjoint:
                 for key, batch in output.batch.items():
                     output.batch[key] = batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         elif issubclass(self.data_cls, Data):
-            if self.disjoint_sampling:
+            if self.disjoint:
                 seed_nodes = edge_label_index.view(-1)
                 edge_label_index = torch.arange(0, 2 * num_seed_edges)
                 edge_label_index = edge_label_index.view(2, -1)
@@ -441,10 +445,11 @@ class NeighborSampler(BaseSampler):
 
             output = self._sample(seed=seed_nodes, seed_time=seed_time)
 
-            if self.disjoint_sampling:
+            if self.disjoint:
                 output.batch = output.batch % num_seed_edges
 
-            output.metadata = (edge_label_index, edge_label, edge_label_time)
+            output.metadata = (index, edge_label_index, edge_label,
+                               edge_label_time)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

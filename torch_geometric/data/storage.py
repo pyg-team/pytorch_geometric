@@ -65,7 +65,10 @@ class BaseStorage(MutableMapping):
                 f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
-        if key == '_parent':
+        propobj = getattr(self.__class__, key, None)
+        if propobj is not None and getattr(propobj, 'fset', None) is not None:
+            propobj.fset(self, value)
+        elif key == '_parent':
             self.__dict__[key] = weakref.ref(value)
         elif key[:1] == '_':
             self.__dict__[key] = value
