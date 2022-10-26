@@ -19,6 +19,9 @@ def node_sample(
     input_type: Optional[str] = None,
     **kwargs,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    r"""Performs sampling from a node sampler input, leveraging a sampling
+    function that accepts a seed and (optionally) a seed time / seed time
+    dictionary as input. Returns the output of this sampling procedure."""
     index, input_nodes, input_time = index
 
     if input_type is not None:
@@ -50,6 +53,8 @@ def edge_sample(
     input_type: Optional[Tuple[str, str]] = None,
     **kwargs,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    r"""Performs sampling from an edge sampler input, leveraging a sampling
+    function of the same signature as `node_sample`."""
     index, row, col, edge_label, edge_label_time = index
     edge_label_index = torch.stack([row, col], dim=0)
     negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
