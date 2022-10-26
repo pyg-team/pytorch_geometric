@@ -117,9 +117,9 @@ class ShapeNet(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        categories: Optional[List[str]] = None,
+        categories: Optional[Union[str,List[str]]] = None,
         include_normals: bool = True,
-        split: str = 'train',
+        split: str = 'trainval',
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
