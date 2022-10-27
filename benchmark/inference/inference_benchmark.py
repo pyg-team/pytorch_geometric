@@ -1,8 +1,8 @@
 import argparse
 
 import torch
-from utils import get_dataset, get_model
 
+from benchmark.utils import get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile

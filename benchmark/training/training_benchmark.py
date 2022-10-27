@@ -4,8 +4,8 @@ import ast
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
-from utils import get_dataset, get_model
 
+from benchmark.utils import get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -17,23 +17,33 @@ supported_sets = {
 }
 
 
-def train(model, loader, optimizer, device, hetero_flow, progress_bar=True,
-          desc="") -> None:
+def train_homo(model, loader, optimizer, device, progress_bar=True,
+               desc="") -> None:
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if hetero_flow:
-            out = model(batch.x_dict, batch.edge_index_dict)
-            batch_size = batch['paper'].batch_size
-            out = out['paper'][:batch_size]
-            target = batch['paper'].y[:batch_size]
-        else:
-            out = model(batch.x, batch.edge_index)
-            batch_size = batch.batch_size
-            out = out[:batch_size]
-            target = batch.y[:batch_size]
+        out = model(batch.x, batch.edge_index)
+        batch_size = batch.batch_size
+        out = out[:batch_size]
+        target = batch.y[:batch_size]
+        loss = F.cross_entropy(out, target)
+        loss.backward()
+        optimizer.step()
+
+
+def train_hetero(model, loader, optimizer, device, progress_bar=True,
+                 desc="") -> None:
+    if progress_bar:
+        loader = tqdm(loader, desc=desc)
+    for batch in loader:
+        optimizer.zero_grad()
+        batch = batch.to(device)
+        out = model(batch.x_dict, batch.edge_index_dict)
+        batch_size = batch['paper'].batch_size
+        out = out['paper'][:batch_size]
+        target = batch['paper'].y[:batch_size]
         loss = F.cross_entropy(out, target)
         loss.backward()
         optimizer.step()
@@ -63,7 +73,6 @@ def run(args: argparse.ArgumentParser) -> None:
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
             else dataset.num_features
-        neighbors_sizes = args.num_neighbors
 
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:
@@ -74,12 +83,12 @@ def run(args: argparse.ArgumentParser) -> None:
 
             for batch_size in args.batch_sizes:
                 for layers in args.num_layers:
-                    num_neighbors = neighbors_sizes
-                    if type(neighbors_sizes) is list:
-                        if len(neighbors_sizes) == 1:
-                            num_neighbors = neighbors_sizes * layers
-                    elif type(neighbors_sizes) is int:
-                        num_neighbors = [neighbors_sizes] * layers
+                    num_neighbors = args.num_neighbors
+                    if type(num_neighbors) is list:
+                        if len(num_neighbors) == 1:
+                            num_neighbors = num_neighbors * layers
+                    elif type(num_neighbors) is int:
+                        num_neighbors = [num_neighbors] * layers
 
                     assert len(
                         num_neighbors) == layers, \
@@ -126,25 +135,23 @@ def run(args: argparse.ArgumentParser) -> None:
                                                      lr=0.001)
 
                         progress_bar = False if args.no_progress_bar else True
+                        train = train_hetero if hetero else train_homo
                         with amp:
                             for _ in range(args.warmup):
                                 train(model, subgraph_loader, optimizer,
-                                      device, hetero,
-                                      progress_bar=progress_bar, desc="Warmup")
-                            with timeit():
+                                      device, progress_bar=progress_bar,
+                                      desc="Warmup")
+                            with timeit(avg_time_divisor=args.num_epochs):
                                 for epoch in range(args.num_epochs):
                                     train(model, subgraph_loader, optimizer,
-                                          device, hetero,
-                                          progress_bar=progress_bar,
+                                          device, progress_bar=progress_bar,
                                           desc=f"Epoch={epoch}")
 
                             if args.profile:
                                 with torch_profile():
-                                    for epoch in range(args.num_epochs):
-                                        train(model, subgraph_loader,
-                                              optimizer, device, hetero,
-                                              progress_bar=progress_bar,
-                                              desc=f"Epoch={epoch}")
+                                    train(model, subgraph_loader, optimizer,
+                                          device, progress_bar=progress_bar,
+                                          desc="Profile training")
                                 rename_profile_file(model_name, dataset_name,
                                                     str(batch_size),
                                                     str(layers),
