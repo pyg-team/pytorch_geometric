@@ -112,7 +112,7 @@ def weighted_mse_loss(pred, target, weight=None):
     return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
 
 
-class HeteroGNN1(torch.nn.Module):
+class ItemGNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
 
@@ -138,7 +138,7 @@ class HeteroGNN1(torch.nn.Module):
         return h
 
 
-class HeteroGNN2(torch.nn.Module):
+class UserGNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
 
