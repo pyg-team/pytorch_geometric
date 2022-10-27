@@ -1,13 +1,15 @@
 import os.path as osp
 
 import torch
-from hetero_gat import HeteroGAT
-from hetero_sage import HeteroGraphSAGE
 from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
 from torch_geometric.nn import GAT, GCN, PNA, EdgeCNN, GraphSAGE
+from torch_geometric.utils import index_to_mask
+
+from .hetero_gat import HeteroGAT
+from .hetero_sage import HeteroGraphSAGE
 
 models_dict = {
     'edge_cnn': EdgeCNN,
@@ -38,6 +40,14 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
         dataset = Reddit(root=path, transform=transform)
 
     data = dataset[0]
+
+    if name == 'ogbn-products':
+        split_idx = dataset.get_idx_split()
+        data.train_mask = index_to_mask(split_idx['train'],
+                                        size=data.num_nodes)
+        data.val_mask = index_to_mask(split_idx['valid'], size=data.num_nodes)
+        data.test_mask = index_to_mask(split_idx['test'], size=data.num_nodes)
+        data.y = data.y.squeeze()
 
     if bf16:
         data.x = data.x.to(torch.bfloat16)
