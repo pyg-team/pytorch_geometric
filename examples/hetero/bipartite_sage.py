@@ -4,11 +4,11 @@ import os.path as osp
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
-from torch_geometric.nn import SAGEConv, Embedding
+from torch_geometric.nn import Embedding, SAGEConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_weighted_loss', action='store_true',
@@ -22,9 +22,8 @@ user_sim_dict_path = 'swing_user_sim_dict.json'
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 
-
-data['user'].x = torch.LongTensor(
-    torch.arange(0, data['user'].num_nodes)).to(device)
+data['user'].x = torch.LongTensor(torch.arange(
+    0, data['user'].num_nodes)).to(device)
 del data['user'].num_nodes
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
