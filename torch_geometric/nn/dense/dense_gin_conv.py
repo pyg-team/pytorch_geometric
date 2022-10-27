@@ -28,13 +28,8 @@ class DenseGINConv(torch.nn.Module):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(
-        self,
-        x:Tensor,
-        adj:Tensor,
-        mask:Optional[Tensor] = None,
-        add_loop:Optional[bool] =Trueho
-    ) -> Tensor:
+    def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
+                add_loop: Optional[bool] = Trueho) -> Tensor:
         r"""Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
                 \times N \times F}`, with batch-size :math:`B`, (maximum)
