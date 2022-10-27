@@ -2,8 +2,9 @@ import pytest
 import torch
 
 from torch_geometric.nn import DenseGraphConv, GraphConv
-from torch_geometric.utils import to_dense_adj
 from torch_geometric.testing import is_full_test
+from torch_geometric.utils import to_dense_adj
+
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
 def test_dense_graph_conv(aggr):
