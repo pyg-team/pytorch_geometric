@@ -86,11 +86,11 @@ def get_i2i_sim_graph(i2imat, i2isimmat):
     return torch.tensor(i2i), torch.stack(i2i_sim)
 
 
-u2imat = to_u2i_mat(train_data.edge_index_dict[('user', 'rates', 'movie')],
+u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', 'rates', 'movie')],
                     train_data['movie'].x.shape[0],
                     train_data['user'].x.shape[0])
-i2imat, i2i_sim_mat = get_coocur_mat(u2imat, 9)
-i2i, _ = get_i2i_sim_graph(i2imat, i2i_sim_mat)
+i2i_mat, i2i_sim_mat = get_coocur_mat(u2i_mat, 9)
+i2i, _ = get_i2i_sim_graph(i2i_mat, i2i_sim_mat)
 
 # Add the generated i2i graph for high-order information
 train_data[('movie', 'sims', 'movie')].edge_index = i2i.to(device)
