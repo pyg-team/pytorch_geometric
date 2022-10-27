@@ -24,14 +24,15 @@ def test_dense_graph_conv(aggr):
     sparse_out = sparse_conv(x, edge_index)
     assert sparse_out.size() == (5, channels)
 
-    if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
-
     adj = to_dense_adj(edge_index)
     mask = torch.ones(5, dtype=torch.bool)
 
     dense_out = dense_conv(x, adj, mask)[0]
+
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
+
     assert dense_out.size() == (5, channels)
     assert torch.allclose(sparse_out, dense_out, atol=1e-04)
 

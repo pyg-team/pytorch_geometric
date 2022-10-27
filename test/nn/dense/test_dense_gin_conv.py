@@ -42,12 +42,12 @@ def test_dense_gin_conv():
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
 
+    dense_out = dense_conv(x, adj, mask)
+    assert dense_out.size() == (2, 3, channels)
+
     if is_full_test():
         jit = torch.jit.script(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
-
-    dense_out = dense_conv(x, adj, mask)
-    assert dense_out.size() == (2, 3, channels)
 
     assert dense_out[1, 2].abs().sum().item() == 0
     dense_out = dense_out.view(6, channels)[:-1]
