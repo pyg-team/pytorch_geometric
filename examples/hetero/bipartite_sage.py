@@ -1,8 +1,8 @@
 import argparse
 import os.path as osp
 
-import torch
 import numpy as np
+import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
@@ -265,4 +265,3 @@ for run in range(10):
 
 print('=======================================')
 print(f'Final Test: {np.mean(test_final_rmse):.4f} ± {np.std(test_final_rmse):.4f}')
-
