@@ -176,7 +176,7 @@ class ShapeNet(InMemoryDataset):
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process_filenames(self, filenames: List[str]):
+    def process_filenames(self, filenames: List[str]) -> List[Data]:
         data_list = []
         categories_ids = [self.category_ids[cat] for cat in self.categories]
         cat_idx = {categories_ids[i]: i for i in range(len(categories_ids))}
