@@ -61,6 +61,7 @@ def test_vgae():
         jit.reparametrize(jit.__mu__, jit.__logstd__)
         assert float(jit.kl_loss()) > 0
 
+
 def test_arga():
     model = ARGA(encoder=lambda x: x, discriminator=lambda x: T([0.5]))
     model.reset_parameters()
