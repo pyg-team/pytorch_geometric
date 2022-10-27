@@ -41,6 +41,10 @@ def test_dense_sage_conv():
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
 
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
+
     dense_out = dense_conv(x, adj, mask)
     assert dense_out.size() == (2, 3, channels)
 

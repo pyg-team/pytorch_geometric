@@ -1,11 +1,19 @@
-import torch
-from torch.nn import Linear
+from typing import Callable, List, Optional
 
+import torch
+from torch import Tensor
+from torch.nn import Linear
 
 class DenseGraphConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GraphConv`.
     """
-    def __init__(self, in_channels, out_channels, aggr='add', bias=True):
+    def __init__(
+        self,
+        in_channels:Tensor,
+        out_channels:Tensor,
+        aggr: Optional[str]='add',
+        bias: Optional[bool] = True
+    ):
         assert aggr in ['add', 'mean', 'max']
         super().__init__()
 
@@ -22,7 +30,12 @@ class DenseGraphConv(torch.nn.Module):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, adj, mask=None):
+    def forward(
+        self,
+        x:Tensor,
+        adj:Tensor,
+        mask:Optional[Tensor]=None
+    ) -> Tensor: 
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
