@@ -383,9 +383,6 @@ def node_sample(
     return output
 
 
-# Edge-based sampling #########################################################
-
-
 def edge_sample(
     index: EdgeSamplerInput,
     sample_fn: Callable,
