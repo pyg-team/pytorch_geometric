@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, Union, Callable
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import torch
 
@@ -13,10 +13,10 @@ from torch_geometric.sampler.base import (
     SamplerOutput,
 )
 from torch_geometric.sampler.utils import (
+    add_negative_samples,
     remap_keys,
     to_csc,
     to_hetero_csc,
-    add_negative_samples,
 )
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
