@@ -197,8 +197,8 @@ class EdgeDecoder(torch.nn.Module):
 class Model(torch.nn.Module):
     def __init__(self, input_size, hidden_channels, out_channels):
         super().__init__()
-        self.item_encoder = HeteroGNN1(hidden_channels, out_channels)
-        self.user_encoder = HeteroGNN2(hidden_channels, out_channels)
+        self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
+        self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.decoder = EdgeDecoder(hidden_channels)
         self.user_emb = torch.nn.Embedding(input_size, hidden_channels, device=device)
 
