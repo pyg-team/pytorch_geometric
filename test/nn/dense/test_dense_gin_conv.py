@@ -4,9 +4,9 @@ from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
 from torch_geometric.nn import DenseGINConv, GINConv
+from torch_geometric.testing import is_full_test
 
-
-def test_dense_sage_conv():
+def test_dense_gin_conv():
     channels = 16
     nn = Seq(Lin(channels, channels), ReLU(), Lin(channels, channels))
     sparse_conv = GINConv(nn)

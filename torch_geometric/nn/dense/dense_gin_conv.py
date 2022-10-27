@@ -37,7 +37,7 @@ class DenseGINConv(torch.nn.Module):
         x:Tensor,
         adj:Tensor,
         mask:Optional[Tensor] = None,
-        add_loop:Optional[bool] =False
+        add_loop:Optional[bool] =Trueho
     ) -> Tensor:
         r"""Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
