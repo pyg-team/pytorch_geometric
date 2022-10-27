@@ -8,8 +8,7 @@ from torch.nn import Linear, Embedding
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
-from torch_geometric.nn import SAGEConv
-
+from torch_geometric.nn import SAGEConv, Embedding
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_weighted_loss', action='store_true',
@@ -88,8 +87,8 @@ def get_i2i_sim_graph(i2imat, i2isimmat):
 
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', 'rates', 'movie')],
-                    train_data['movie'].x.shape[0],
-                    train_data['user'].x.shape[0])
+                     train_data['movie'].x.shape[0],
+                     train_data['user'].x.shape[0])
 i2i_mat, i2i_sim_mat = get_coocur_mat(u2i_mat, 9)
 i2i, _ = get_i2i_sim_graph(i2i_mat, i2i_sim_mat)
 
@@ -97,7 +96,6 @@ i2i, _ = get_i2i_sim_graph(i2i_mat, i2i_sim_mat)
 train_data[('movie', 'sims', 'movie')].edge_index = i2i.to(device)
 val_data[('movie', 'sims', 'movie')].edge_index = i2i.to(device)
 test_data[('movie', 'sims', 'movie')].edge_index = i2i.to(device)
-
 
 # We have an unbalanced dataset with many labels for rating 3 and 4, and very
 # few for 0 and 1. Therefore we use a weighted MSE loss.
@@ -130,11 +128,9 @@ class ItemGNNEncoder(torch.nn.Module):
 
     def forward(self, x_dict, edge_index_dict):
         h = x_dict['movie']
-        h = self.conv1(
-            h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
+        h = self.conv1(h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
         h = self.lin1(h).relu()
-        h = self.conv2(
-            h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
+        h = self.conv2(h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
         h = self.lin2(h)
         return h
 
@@ -160,18 +156,17 @@ class UserGNNEncoder(torch.nn.Module):
 
     def forward(self, x_dict, edge_index_dict):
         h = x_dict['movie']
-        h = self.conv1(
-            h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
+        h = self.conv1(h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
         h = self.lin1(h).relu()
 
-        x_dict['user'] = self.conv2(
-            [x_dict['movie'], x_dict['user']],
-            edge_index_dict[('movie', 'rev_rates', 'user')]).relu()
+        x_dict['user'] = self.conv2([x_dict['movie'], x_dict['user']],
+                                    edge_index_dict[('movie', 'rev_rates',
+                                                     'user')]).relu()
         x_dict['user'] = self.lin2(x_dict['user']).relu()
 
-        x_dict['user'] = self.conv3(
-            [h, x_dict['user']],
-            edge_index_dict[('movie', 'rev_rates', 'user')]).relu()
+        x_dict['user'] = self.conv3([h, x_dict['user']],
+                                    edge_index_dict[('movie', 'rev_rates',
+                                                     'user')]).relu()
         x_dict['user'] = self.lin3(x_dict['user'])
         return x_dict['user']
 
@@ -218,8 +213,7 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict, edge_label_index)
 
 
-model = Model(input_size=data['user'].x.size(0),
-              hidden_channels=64,
+model = Model(input_size=data['user'].x.size(0), hidden_channels=64,
               out_channels=64).to(device)
 
 
@@ -260,7 +254,8 @@ for run in range(10):
         train_rmse = test(train_data)
         val_rmse = test(val_data)
         test_rmse = test(test_data)
-        print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
+        print(
+            f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
             f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
     test_rmses.append(test_rmse)
 
