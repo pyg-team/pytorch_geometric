@@ -39,7 +39,7 @@ class InnerProductDecoder(torch.nn.Module):
         value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
         return torch.sigmoid(value) if sigmoid else value
 
-    def forward_all(self, z:Tensor, sigmoid:Optional[bool] = True) -> Tensor:
+    def forward_all(self, z: Tensor, sigmoid: Optional[bool] = True) -> Tensor:
         r"""Decodes the latent variables :obj:`z` into a probabilistic dense
         adjacency matrix.
 
