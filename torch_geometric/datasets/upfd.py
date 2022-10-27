@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
@@ -80,8 +81,16 @@ class UPFD(InMemoryDataset):
         'gossipcop': '1VskhAQ92PrT4sWEKQ2v2-AJhEcpp4A81',
     }
 
-    def __init__(self, root, name, feature, split="train", transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        feature: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.root = root
         self.name = name
         self.feature = feature
@@ -92,15 +101,15 @@ class UPFD(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed', self.feature)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'node_graph_id.npy', 'graph_labels.npy', 'A.txt', 'train_idx.npy',
             'val_idx.npy', 'test_idx.npy', f'new_{self.feature}_feature.npz'
@@ -154,6 +163,6 @@ class UPFD(InMemoryDataset):
                 data_list = [self.pre_transform(d) for d in data_list]
             torch.save(self.collate(data_list), path)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, name={self.name}, '
                 f'feature={self.feature})')

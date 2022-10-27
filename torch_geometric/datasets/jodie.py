@@ -1,4 +1,5 @@
 import os.path as osp
+from typing import Callable, Optional
 
 import torch
 
@@ -9,7 +10,13 @@ class JODIEDataset(InMemoryDataset):
     url = 'http://snap.stanford.edu/jodie/{}.csv'
     names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in self.names
 
@@ -17,19 +24,19 @@ class JODIEDataset(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return f'{self.name}.csv'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -54,5 +61,5 @@ class JODIEDataset(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.name.capitalize()}()'
