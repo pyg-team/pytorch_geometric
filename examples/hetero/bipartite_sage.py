@@ -4,7 +4,7 @@ import os.path as osp
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear
+from torch.nn import Linear, Embedding
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
@@ -24,7 +24,8 @@ dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
 data = dataset[0].to(device)
 
 
-data['user'].x = torch.LongTensor(torch.arange(0, data['user'].num_nodes)).to(device)
+data['user'].x = torch.LongTensor(
+    torch.arange(0, data['user'].num_nodes)).to(device)
 del data['user'].num_nodes
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
@@ -200,7 +201,7 @@ class Model(torch.nn.Module):
         self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.decoder = EdgeDecoder(hidden_channels)
-        self.user_emb = torch.nn.Embedding(input_size, hidden_channels, device=device)
+        self.user_emb = Embedding(input_size, hidden_channels, device=device)
 
     def reset_parameters(self):
         self.item_encoder.reset_parameters()
@@ -245,7 +246,7 @@ def test(data):
     return float(rmse)
 
 
-test_final_rmse = []
+test_rmses = []
 for run in range(10):
     print('')
     print(f'Run {run:02d}:')
@@ -261,7 +262,7 @@ for run in range(10):
         test_rmse = test(test_data)
         print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
             f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
-    test_final_rmse.append(test_rmse)
+    test_rmses.append(test_rmse)
 
 print('=======================================')
-print(f'Final Test: {np.mean(test_final_rmse):.4f} ± {np.std(test_final_rmse):.4f}')
+print(f'Final Test: {np.mean(test_rmses):.4f} ± {np.std(test_rmses):.4f}')
