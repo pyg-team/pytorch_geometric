@@ -361,9 +361,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         or store.edge_index.size(0) != 2):
                     status = False
                     warn_or_raise(
-                        f"'edge_index' needs to be of shape [2, num_edges] in "
-                        f"'{cls_name}' (found {store.edge_index.size()})",
-                        raise_on_error)
+                        f"'edge_index' of edge type {edge_type} needs to be "
+                        f"of shape [2, num_edges] in '{cls_name}' (found "
+                        f"{store.edge_index.size()})", raise_on_error)
 
             if 'edge_index' in store and store.edge_index.numel() > 0:
                 if store.edge_index.min() < 0:
