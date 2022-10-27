@@ -30,7 +30,8 @@ class DenseGINConv(torch.nn.Module):
 
     def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
                 add_loop: Optional[bool] = True) -> Tensor:
-        r"""Args:
+        r"""
+        Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
                 \times N \times F}`, with batch-size :math:`B`, (maximum)
                 number of nodes :math:`N` for each graph, and feature
