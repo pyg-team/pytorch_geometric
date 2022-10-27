@@ -29,7 +29,8 @@ except (ImportError, ModuleNotFoundError):
 
 
 class LightningDataModule(PLLightningDataModule):
-    def __init__(self, has_val: bool, has_test: bool, **kwargs):
+    def __init__(self, has_val: bool, has_test: bool,
+                 shuffle_eval: bool = False, **kwargs):
         super().__init__()
 
         if no_pytorch_lightning:
@@ -55,6 +56,7 @@ class LightningDataModule(PLLightningDataModule):
         if 'persistent_workers' not in kwargs:
             kwargs['persistent_workers'] = kwargs.get('num_workers', 0) > 0
 
+        self.shuffle_eval = shuffle_eval
         self.kwargs = kwargs
 
     def prepare_data(self):
@@ -121,6 +123,8 @@ class LightningDataset(LightningDataModule):
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
+        shuffle_eval (bool, optional): If set to :obj:`True`, will shuffle
+            examples during evaluation. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.DataLoader`.
     """
@@ -131,11 +135,13 @@ class LightningDataset(LightningDataModule):
         test_dataset: Optional[Dataset] = None,
         batch_size: int = 1,
         num_workers: int = 0,
+        shuffle_eval: bool = False,
         **kwargs,
     ):
         super().__init__(
             has_val=val_dataset is not None,
             has_test=test_dataset is not None,
+            shuffle_eval=shuffle_eval,
             batch_size=batch_size,
             num_workers=num_workers,
             **kwargs,
@@ -164,7 +170,8 @@ class LightningDataset(LightningDataModule):
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
 
-        return self.dataloader(self.val_dataset, shuffle=False, **kwargs)
+        return self.dataloader(self.val_dataset, shuffle=self.shuffle_eval,
+                               **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
@@ -172,7 +179,8 @@ class LightningDataset(LightningDataModule):
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
 
-        return self.dataloader(self.test_dataset, shuffle=False, **kwargs)
+        return self.dataloader(self.test_dataset, shuffle=self.shuffle_eval,
+                               **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(train_dataset=self.train_dataset,
@@ -246,6 +254,8 @@ class LightningNodeData(LightningDataModule):
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
+        shuffle_eval (bool, optional): If set to :obj:`True`, will shuffle
+            examples during evaluation. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.NeighborLoader`.
     """
@@ -260,6 +270,7 @@ class LightningNodeData(LightningDataModule):
         node_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
+        shuffle_eval: bool = False,
         **kwargs,
     ):
         if node_sampler is not None:
@@ -296,6 +307,7 @@ class LightningNodeData(LightningDataModule):
         super().__init__(
             has_val=input_val_nodes is not None,
             has_test=input_test_nodes is not None,
+            shuffle_eval=shuffle_eval,
             batch_size=batch_size,
             num_workers=num_workers,
             **kwargs,
@@ -403,7 +415,8 @@ class LightningNodeData(LightningDataModule):
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
 
-        return self.dataloader(self.input_val_nodes, shuffle=False, **kwargs)
+        return self.dataloader(self.input_val_nodes, shuffle=self.shuffle_eval,
+                               **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
@@ -411,7 +424,8 @@ class LightningNodeData(LightningDataModule):
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
 
-        return self.dataloader(self.input_test_nodes, shuffle=False, **kwargs)
+        return self.dataloader(self.input_test_nodes,
+                               shuffle=self.shuffle_eval, **kwargs)
 
     def predict_dataloader(self) -> DataLoader:
         """"""
@@ -419,7 +433,8 @@ class LightningNodeData(LightningDataModule):
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
 
-        return self.dataloader(self.input_pred_nodes, shuffle=False, **kwargs)
+        return self.dataloader(self.input_pred_nodes,
+                               shuffle=self.shuffle_eval, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
@@ -488,6 +503,8 @@ class LightningLinkData(LightningDataModule):
         num_workers: How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
+        shuffle_eval (bool, optional): If set to :obj:`True`, will shuffle
+            examples during evaluation. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
@@ -507,6 +524,7 @@ class LightningLinkData(LightningDataModule):
         link_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
+        shuffle_eval: bool = False,
         **kwargs,
     ):
         if link_sampler is not None:
@@ -533,6 +551,7 @@ class LightningLinkData(LightningDataModule):
         super().__init__(
             has_val=input_val_edges is not None,
             has_test=input_test_edges is not None,
+            shuffle_eval=shuffle_eval,
             batch_size=batch_size,
             num_workers=num_workers,
             **kwargs,
@@ -652,7 +671,8 @@ class LightningLinkData(LightningDataModule):
         kwargs.pop('batch_sampler', None)
 
         return self.dataloader(self.input_val_edges, self.input_val_labels,
-                               self.input_val_time, shuffle=False, **kwargs)
+                               self.input_val_time, shuffle=self.shuffle_eval,
+                               **kwargs)
 
     def test_dataloader(self) -> DataLoader:
         """"""
@@ -661,7 +681,8 @@ class LightningLinkData(LightningDataModule):
         kwargs.pop('batch_sampler', None)
 
         return self.dataloader(self.input_test_edges, self.input_test_labels,
-                               self.input_test_time, shuffle=False, **kwargs)
+                               self.input_test_time, shuffle=self.shuffle_eval,
+                               **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
