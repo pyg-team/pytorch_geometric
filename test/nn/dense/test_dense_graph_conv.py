@@ -36,6 +36,7 @@ def test_dense_graph_conv(aggr):
         jit = torch.jit.script(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
 
+
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
 def test_dense_graph_conv_batch(aggr):
     channels = 16
