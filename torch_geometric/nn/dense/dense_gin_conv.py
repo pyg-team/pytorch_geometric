@@ -12,8 +12,12 @@ class DenseGINConv(torch.nn.Module):
 
     :rtype: :class:`Tensor`
     """
-    def __init__(self, nn: Module, eps: Optional[int] = 0,
-                 train_eps: bool = False):
+    def __init__(
+        self,
+        nn: Module,
+        eps: float = 0.0,
+        train_eps: bool = False,
+    ):
         super().__init__()
 
         self.nn = nn
