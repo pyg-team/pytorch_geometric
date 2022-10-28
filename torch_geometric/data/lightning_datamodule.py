@@ -9,10 +9,15 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader import LinkNeighborLoader, NeighborLoader
+from torch_geometric.loader import (
+    LinkLoader,
+    LinkNeighborLoader,
+    NeighborLoader,
+    NodeLoader,
+)
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
-from torch_geometric.sampler import NeighborSampler
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -233,6 +238,9 @@ class LightningNodeData(LightningDataModule):
             (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        node_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -249,12 +257,15 @@ class LightningNodeData(LightningDataModule):
         input_test_nodes: InputNodes = None,
         input_pred_nodes: InputNodes = None,
         loader: str = "neighbor",
+        node_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if node_sampler is not None:
+            loader = 'custom'
 
-        assert loader in ['full', 'neighbor']
+        assert loader in ['full', 'neighbor', 'custom']
 
         if input_train_nodes is None:
             input_train_nodes = infer_input_nodes(data, split='train')
@@ -316,6 +327,10 @@ class LightningNodeData(LightningDataModule):
                 share_memory=num_workers > 0,
                 **sampler_kwargs,
             )
+        elif node_sampler is not None:
+            # TODO Consider renaming to `self.node_sampler`
+            self.neighbor_sampler = node_sampler
+
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
@@ -359,8 +374,16 @@ class LightningNodeData(LightningDataModule):
         if self.loader == 'neighbor':
             return NeighborLoader(
                 self.data,
-                input_nodes=input_nodes,
                 neighbor_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
+                **kwargs,
+            )
+
+        if self.loader == 'custom':
+            return NodeLoader(
+                self.data,
+                node_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
                 **kwargs,
             )
 
@@ -457,6 +480,9 @@ class LightningLinkData(LightningDataModule):
             of test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        link_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -478,12 +504,15 @@ class LightningLinkData(LightningDataModule):
         input_test_labels: Tensor = None,
         input_test_time: Tensor = None,
         loader: str = "neighbor",
+        link_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if link_sampler is not None:
+            loader = 'custom'
 
-        assert loader in ['full', 'neighbor', 'link_neighbor']
+        assert loader in ['full', 'neighbor', 'link_neighbor', 'custom']
 
         if input_train_edges is None:
             raise NotImplementedError(f"'{self.__class__.__name__}' cannot "
@@ -534,6 +563,9 @@ class LightningLinkData(LightningDataModule):
                 share_memory=num_workers > 0,
                 **sampler_kwargs,
             )
+        elif link_sampler is not None:
+            # TODO Consider renaming to `self.link_sampler`
+            self.neighbor_sampler = link_sampler
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -585,10 +617,20 @@ class LightningLinkData(LightningDataModule):
         if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(
                 self.data,
+                neighbor_sampler=self.neighbor_sampler,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
-                neighbor_sampler=self.neighbor_sampler,
+                **kwargs,
+            )
+
+        if self.loader == 'custom':
+            return LinkLoader(
+                self.data,
+                link_sampler=self.neighbor_sampler,
+                edge_label_index=input_edges,
+                edge_label=input_labels,
+                edge_label_time=input_time,
                 **kwargs,
             )
 

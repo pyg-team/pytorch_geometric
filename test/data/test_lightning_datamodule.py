@@ -5,12 +5,14 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.data import (
+    Data,
     HeteroData,
     LightningDataset,
     LightningLinkData,
     LightningNodeData,
 )
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
@@ -269,6 +271,7 @@ def test_lightning_hetero_node_data(get_dataset):
                          max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
+    assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
     old_x = data['author'].x.clone()
     trainer.fit(model, datamodule)
     new_x = data['author'].x
@@ -277,6 +280,27 @@ def test_lightning_hetero_node_data(get_dataset):
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
+
+
+@withPackage('pytorch_lightning')
+def test_lightning_data_custom_sampler():
+    class DummySampler(BaseSampler):
+        def sample_from_edges(self, *args, **kwargs):
+            pass
+
+        def sample_from_nodes(self, *args, **kwargs):
+            pass
+
+    data = Data(num_nodes=2, edge_index=torch.tensor([[0, 1], [1, 0]]))
+
+    datamodule = LightningNodeData(data, node_sampler=DummySampler(),
+                                   input_train_nodes=torch.arange(2))
+    assert isinstance(datamodule.neighbor_sampler, DummySampler)
+
+    datamodule = LightningLinkData(
+        data, link_sampler=DummySampler(),
+        input_train_edges=torch.tensor([[0, 1], [0, 1]]))
+    assert isinstance(datamodule.neighbor_sampler, DummySampler)
 
 
 @withCUDA
@@ -303,7 +327,7 @@ def test_lightning_hetero_link_data():
         batch_size=32,
         num_workers=0,
     )
-
+    assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
     for batch in datamodule.train_dataloader():
         assert 'edge_label' in batch['author', 'paper']
         assert 'edge_label_index' in batch['author', 'paper']
