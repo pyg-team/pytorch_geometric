@@ -36,6 +36,8 @@ def _internal_num_nodes(
     edge_attrs = graph_store.get_all_edge_attrs()
     _num_nodes = [None] if node_query else [None, None]
     for edge_attr in edge_attrs:
+        if edge_attr.size is None:
+            continue
         if _matches_node_type(query, edge_attr.edge_type[0]):
             _num_nodes[0] = _num_nodes[0] or edge_attr.size[0]
         if _matches_node_type(query, edge_attr.edge_type[-1]):
