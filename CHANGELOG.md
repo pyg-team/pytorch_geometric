@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Add training_benchmark ([#5774](https://github.com/pyg-team/pytorch_geometric/pull/5774))
 - Added a "Link Prediction on MovieLens" Colab notebook ([#5823](https://github.com/pyg-team/pytorch_geometric/pull/5823))
 - Added custom `sampler` support in `LightningDataModule` ([#5820](https://github.com/pyg-team/pytorch_geometric/pull/5820))
 - Added a `return_semantic_attention_weights` argument `HANConv` ([#5787](https://github.com/pyg-team/pytorch_geometric/pull/5787))
