@@ -29,13 +29,12 @@ def test_dense_graph_conv(aggr):
 
     dense_out = dense_conv(x, adj, mask)[0]
 
-    if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
-
     assert dense_out.size() == (5, channels)
     assert torch.allclose(sparse_out, dense_out, atol=1e-04)
 
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
 def test_dense_graph_conv_batch(aggr):
@@ -74,12 +73,12 @@ def test_dense_graph_conv_batch(aggr):
     assert dense_out.size() == (2, 3, channels)
     dense_out = dense_out.view(-1, channels)
 
+    assert torch.allclose(sparse_out, dense_out[:5], atol=1e-04)
+    assert dense_out[-1].abs().sum() == 0
+
     if is_full_test():
         jit = torch.jit.script(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
-
-    assert torch.allclose(sparse_out, dense_out[:5], atol=1e-04)
-    assert dense_out[-1].abs().sum() == 0
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
