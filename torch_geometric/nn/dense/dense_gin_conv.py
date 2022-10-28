@@ -1,4 +1,8 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
+from torch.nn import Module
 
 from ..inits import reset
 
@@ -8,7 +12,8 @@ class DenseGINConv(torch.nn.Module):
 
     :rtype: :class:`Tensor`
     """
-    def __init__(self, nn, eps=0, train_eps=False):
+    def __init__(self, nn: Module, eps: Optional[int] = 0,
+                 train_eps: bool = False):
         super().__init__()
 
         self.nn = nn
@@ -23,7 +28,8 @@ class DenseGINConv(torch.nn.Module):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x, adj, mask=None, add_loop=True):
+    def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
+                add_loop: bool = True) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B

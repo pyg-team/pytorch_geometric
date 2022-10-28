@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import DenseGraphConv, GraphConv
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_dense_adj
 
 
@@ -27,8 +28,13 @@ def test_dense_graph_conv(aggr):
     mask = torch.ones(5, dtype=torch.bool)
 
     dense_out = dense_conv(x, adj, mask)[0]
+
     assert dense_out.size() == (5, channels)
     assert torch.allclose(sparse_out, dense_out, atol=1e-04)
+
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
@@ -70,6 +76,10 @@ def test_dense_graph_conv_batch(aggr):
 
     assert torch.allclose(sparse_out, dense_out[:5], atol=1e-04)
     assert dense_out[-1].abs().sum() == 0
+
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
