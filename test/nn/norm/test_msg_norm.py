@@ -4,7 +4,6 @@ from torch_geometric.nn import MessageNorm
 from torch_geometric.testing import is_full_test
 
 
-
 def test_message_norm():
     norm = MessageNorm(True)
     assert norm.__repr__() == ('MessageNorm(learn_scale=True)')
