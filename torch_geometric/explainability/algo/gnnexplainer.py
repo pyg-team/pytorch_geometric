@@ -128,15 +128,13 @@ class GNNExplainer(ExplainerAlgorithm):
                 target_index: Optional[int] = None,
                 batch: Optional[torch.Tensor] = None,
                 task_level: str = "graph", **kwargs) -> Explanation:
-        if task_level == "graph":
+        if task_level == "graph_level":
             attributions = self.explain_graph(g=g, model=model, target=target,
                                               target_index=target_index,
                                               batch=batch, **kwargs)
-        elif task_level == "node":
-            attributions = self.explain_node(g=g, model=model, target=target,
-                                             target_index=target_index,
-                                             batch=batch, **kwargs)
-
+        elif task_level == "node_level":
+            raise NotImplementedError
+        else:
             raise ValueError(f"Invalid task level: {task_level}")
         return self._create_explanation_from_masks(g, attributions,
                                                    self.feat_mask_type)
@@ -234,24 +232,3 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self._clear_masks(model)
         return node_feat_mask, edge_mask
-
-    def explain_node(
-        self,
-        model: torch.nn.Module,
-        g: Data,
-        node_idx: Tensor,
-        **kwargs,
-    ) -> Tuple[Tensor, Tensor]:
-        r"""Learns and returns a node feature mask and an edge mask that play a
-        crucial role to explain the prediction made by the GNN for node
-        :attr:`node_idx`.
-
-        Args:
-            node_idx (int): The node to explain.
-            x (Tensor): The node feature matrix.
-            edge_index (LongTensor): The edge indices.
-            **kwargs (optional): Additional arguments passed to the GNN module.
-
-        :rtype: (:class:`Tensor`, :class:`Tensor`)
-        """
-        raise NotImplementedError
