@@ -42,6 +42,8 @@ explanation_types = ExplainerConfig._valid_explanation_type
 mask_types = [x for x in ExplainerConfig._valid_mask_type if x != "layers"]
 thresholds = [x for x in Threshold._valid_type if x != "connected"]
 
+# test initialization
+
 
 @pytest.mark.parametrize("model", models)
 @pytest.mark.parametrize("model_return_type", model_return_type)
