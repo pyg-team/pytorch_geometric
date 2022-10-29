@@ -16,7 +16,8 @@ class ExplainerAlgorithm(torch.nn.Module):
             [torch.Tensor, torch.Tensor, torch.Tensor, int], torch.Tensor]
         r"""
         This method compute the loss to be used for the explanation algorithm.
-        Subclasses should override this method to define their own loss.
+
+        This will be set by the Explainer class.
 
         Args:
             exp_output (torch.Tensor): the output of the explanation algorithm.
@@ -25,6 +26,23 @@ class ExplainerAlgorithm(torch.nn.Module):
             target (torch.Tensor): the target of the GNN.
             target_index (int): the index of the target to explain.
         """
+
+    @abstractmethod
+    def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+        r"""
+        This method compute the loss to be used for the explanation algorithm.
+        Subclasses should override this method to define their own loss.
+
+        Args:
+            y_hat (torch.Tensor): the output of the explanation algorithm.
+                (e.g. the forward pass of the model with the mask applied).
+            y (torch.Tensor): the target output.
+        """
+
+    @property
+    def accept_new_loss(self) -> bool:
+        """Whether the algorithm can accept a new loss function."""
+        return True
 
     def set_objective(
         self,
@@ -37,6 +55,29 @@ class ExplainerAlgorithm(torch.nn.Module):
             objective (Callable): loss function.
         """
         self.objective = objective
+
+    @torch.no_grad()
+    def get_initial_prediction(
+        self,
+        model: torch.nn.Module,
+        g: Data,
+        batch: Optional[torch.Tensor] = None,
+        **kwargs,
+    ):
+        """Return the initial prediction of the model.
+
+        Args:
+            g (torch_geometric.data.Data): the input graph.
+            batch (torch.Tensor, optional): batch indicator. Defaults to None.
+
+        Returns:
+            torch.Tensor: output of the underlying model.
+        """
+        out = model(
+            g,
+            **dict(batch=batch, **kwargs),
+        )
+        return out
 
     @abstractmethod
     def explain(
@@ -93,3 +134,31 @@ class ExplainerAlgorithm(torch.nn.Module):
             mask_type (str): the type of mask to use.
                 Should be in ["node", "edge", "node_and_edge", "layers"]
         """
+
+    def _create_explanation_from_masks(self, g, attributions, mask_type):
+        """Create explanation from masks.
+
+        Args:
+            g (Data): input graph.
+            attributions (Tuple[torch.Tensor]): masks returned by captum.
+            kwargs (dict): additional information to store in the explanation.
+
+        Returns:
+            Explanation: explanation object.
+        """
+        node_features_mask = None
+        edge_mask = None
+        if mask_type == "node":
+            node_features_mask = attributions.squeeze(0)
+        elif mask_type == "edge":
+            edge_mask = attributions.squeeze(0)
+        elif mask_type == "node_and_edge":
+            node_features_mask = attributions[0].squeeze(0)
+            edge_mask = attributions[1].squeeze(0)
+
+        return Explanation(
+            x=g.x,
+            edge_index=g.edge_index,
+            node_features_mask=node_features_mask,
+            edge_mask=edge_mask,
+        )

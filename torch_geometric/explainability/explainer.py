@@ -43,11 +43,13 @@ class Threshold:
 class ExplainerConfig:
     explanation_type: str
     mask_type: str
+    task: str = "graph_level"
     _valid_explanation_type = ["model", "phenomenon"]
     _valid_mask_type = [
         "node", "edge", "node_and_edge", "layers", "node_feat", "edge_feat",
-        "node_and_edge_feat"
+        "node_and_edge_feat", "node_feat_and_edge", "edge_feat_and_node"
     ]
+    _valid_task = ["graph_level", "node_level"]
 
     def __post_init__(self):
         if self.explanation_type not in self._valid_explanation_type:
@@ -59,6 +61,9 @@ class ExplainerConfig:
                              f'Valid types are {self._valid_mask_type}.')
         if self.mask_type == "layers":
             raise NotImplementedError()
+        if self.task not in self._valid_task:
+            raise ValueError(f'Invalid task {self.task}. '
+                             f'Valid tasks are {self._valid_task}.')
 
 
 @dataclass
@@ -119,14 +124,16 @@ class Explainer(torch.nn.Module):
     def __init__(
         self,
         explanation_type: str,
-        # TODO:  provide a factory instead ?
-        explanation_algorithm: ExplainerAlgorithm,
+        explanation_algorithm: ExplainerAlgorithm,  # TODO: code factory so
+        # that user can pass a string and we create the right algorithm with
+        # the right parameters if possible
         mask_type: str,
         threshold: str,
-        loss: torch.nn.Module,
         model: torch.nn.Module,
         model_return_type: str,
+        loss: Optional[torch.nn.Module] = None,
         threshold_value: float = 0.5,
+        task_level: str = "graph_level",
     ) -> None:
 
         super().__init__()
@@ -136,7 +143,7 @@ class Explainer(torch.nn.Module):
 
         self.explanation_config = ExplainerConfig(
             explanation_type=explanation_type.lower(),
-            mask_type=mask_type.lower())
+            mask_type=mask_type.lower(), task=task_level.lower())
 
         # details for post-processing the ouput of the explanation algorithm
         self.threshold = Threshold(type=threshold.lower(),
@@ -155,7 +162,11 @@ class Explainer(torch.nn.Module):
             )
 
         # update the loss function of the explanation algorithm based on setup
-        self.loss = loss
+        if loss is not None and self.explanation_algorithm.accept_new_loss:
+            self.loss = loss
+        else:
+            self.loss = self.explanation_algorithm.loss
+
         self.explanation_algorithm.set_objective(self._create_objective())
 
     def get_prediction(self, g: Data, batch=None, **kwargs) -> torch.Tensor:

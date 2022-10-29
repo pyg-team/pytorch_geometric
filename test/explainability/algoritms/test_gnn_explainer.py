@@ -1,8 +1,12 @@
+import pytest
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
+from torch_geometric.data import Data
+from torch_geometric.explainability.algo import GNNExplainer
 from torch_geometric.nn import GATConv, GCNConv, global_add_pool
+from torch_geometric.testing import is_full_test
 
 
 class GCN(torch.nn.Module):
@@ -51,3 +55,49 @@ class GNN(torch.nn.Module):
 
 return_types = ['log_prob', 'regression']
 feat_mask_types = ['individual_feature', 'scalar', 'feature']
+
+
+@pytest.mark.parametrize('allow_edge_mask', [True, False])
+@pytest.mark.parametrize('return_type', return_types)
+@pytest.mark.parametrize('feat_mask_type', feat_mask_types)
+@pytest.mark.parametrize('model', [GNN()])
+def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
+                                     feat_mask_type):
+    explainer = GNNExplainer(log=False, return_type=return_type,
+                             allow_edge_mask=allow_edge_mask,
+                             feat_mask_type=feat_mask_type)
+    explainer.set_objective(lambda x, y, z, i: explainer.loss(x[i], y[i]))
+
+    x = torch.randn(8, 3)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7],
+                               [1, 0, 2, 1, 3, 2, 5, 4, 6, 5, 7, 6]])
+    edge_attr = torch.randn(edge_index.shape[1], 2)
+    y = torch.tensor([3])
+    g = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
+    node_feat_mask, edge_mask = explainer.explain_graph(model, g, target=y)
+
+    if feat_mask_type == 'individual_feature':
+        assert node_feat_mask.size() == x.size()
+    elif feat_mask_type == 'scalar':
+        assert node_feat_mask.size() == (x.size(0), )
+    else:
+        assert node_feat_mask.size() == (x.size(1), )
+    assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
+    assert edge_mask.size() == (edge_index.size(1), )
+    assert edge_mask.max() <= 1 and edge_mask.min() >= 0
+
+    if is_full_test():
+        jit = torch.jit.export(explainer)
+
+        node_feat_mask, edge_mask = jit.explain_graph(model, g)
+
+        if feat_mask_type == 'individual_feature':
+            assert node_feat_mask.size() == x.size()
+        elif feat_mask_type == 'scalar':
+            assert node_feat_mask.size() == (x.size(0), )
+        else:
+            assert node_feat_mask.size() == (x.size(1), )
+        assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
+        assert edge_mask.size() == (edge_index.size(1), )
+        assert edge_mask.max() <= 1 and edge_mask.min() >= 0

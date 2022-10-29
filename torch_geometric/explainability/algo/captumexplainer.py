@@ -49,7 +49,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         attributions = explainer.attribute(
             **self._arange_args(input, target_index, additional_forward_args))
 
-        return self._create_explanation_from_masks(g, attributions)
+        return self._create_explanation_from_masks(g, attributions, mask_type)
 
     def supports(
         self,
@@ -123,31 +123,3 @@ class CaptumExplainer(ExplainerAlgorithm):
             inputs["baselines"] = input
 
         return inputs
-
-    def _create_explanation_from_masks(self, g, attributions):
-        """Create explanation from masks.
-
-        Args:
-            g (Data): input graph.
-            attributions (Tuple[torch.Tensor]): masks returned by captum.
-            kwargs (dict): additional information to store in the explanation.
-
-        Returns:
-            Explanation: explanation object.
-        """
-        node_features_mask = None
-        edge_mask = None
-        if self.mask_type == "node":
-            node_features_mask = attributions.squeeze(0)
-        elif self.mask_type == "edge":
-            edge_mask = attributions.squeeze(0)
-        elif self.mask_type == "node_and_edge":
-            node_features_mask = attributions[0].squeeze(0)
-            edge_mask = attributions[1].squeeze(0)
-
-        return Explanation(
-            x=g.x,
-            edge_index=g.edge_index,
-            node_features_mask=node_features_mask,
-            edge_mask=edge_mask,
-        )
