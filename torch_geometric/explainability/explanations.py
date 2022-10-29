@@ -72,6 +72,17 @@ class Explanation(Data):
             self.edge_features_mask = (self.edge_features_mask >
                                        threshold).float()
 
+    def threhsold_topk(self, threshold: int) -> None:
+        r"""Thresholds the attributions of the graph.
+
+        Modify the explanation in place keeping only the top most important
+        attributions for each mask independently.
+
+        Args:
+            threshold (int): number of top most important attributions to keep.
+        """
+        raise NotImplementedError()
+
     def visualise_graph(self, threshold_node: Optional[float] = None,
                         threhsold_edge: Optional[float] = None, **kwargs):
         r"""Visualizes the node and edge attributions of the graph.

@@ -1,8 +1,9 @@
 from abc import abstractmethod
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional
 
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.explainability.explanations import Explanation
 
 
@@ -11,26 +12,24 @@ class ExplainerAlgorithm(torch.nn.Module):
     def __init__(self) -> None:
         super().__init__()
 
-        # TODO: check if this is good practice, took the idea from captum
         self.objective: Callable[
-            [Tuple[torch.Tensor,
-                   ...], torch.Tensor, torch.Tensor, int], torch.Tensor]
+            [torch.Tensor, torch.Tensor, torch.Tensor, int], torch.Tensor]
         r"""
         This method compute the loss to be used for the explanation algorithm.
         Subclasses should override this method to define their own loss.
 
         Args:
-            inputs (Tuple[torch.Tensor, ...]): the inputs of the GNN.
-            output (torch.Tensor): the output of the GNN.
+            exp_output (torch.Tensor): the output of the explanation algorithm.
+                (e.g. the forward pass of the model with the mask applied).
+            gnn_output (torch.Tensor): the original output of the GNN.
             target (torch.Tensor): the target of the GNN.
             target_index (int): the index of the target to explain.
         """
 
     def set_objective(
         self,
-        objective: Callable[
-            [Tuple[torch.Tensor,
-                   ...], torch.Tensor, torch.Tensor, int], torch.Tensor],
+        objective: Callable[[torch.Tensor, torch.Tensor, torch.Tensor, int],
+                            torch.Tensor],
     ) -> None:
         """Sets the loss function to be used for the explanation algorithm.
 
@@ -42,34 +41,38 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def explain(
         self,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
+        g: Data,
         model: torch.nn.Module,
+        target: torch.Tensor,
         target_index: Optional[int] = None,
+        batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Explanation:
-        r"""This method computes the explanation of the GNN.
+        """This method computes the explanation of the GNN.
 
         Args:
-            inputs (Tuple[torch.Tensor, ...]): the inputs of the GNN.
-            target (torch.Tensor): the target of the GNN.
-            model (torch.nn.Module): the GNN to explain.
-            name_inputs (List[str]): the name of the inputs of the GNN.
-                (used to create the explanation object)
+            g (Data): input graph.
+            model (torch.nn.Module): model to use in explanations.
+            target (torch.Tensor): target of the GNN.
+            target_index (int, optional): Index of the target to explain. Used
+                in case of multi-outputs. Defaults to None.
+            batch (torch.Tensor, optional): _description_. Defaults to None.
+
+        Returns:
+            Explanation: explanation of the GNN.
         """
 
     def forward(
         self,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
+        g: Data,
         model: torch.nn.Module,
+        target: torch.Tensor,
         target_index: Optional[int] = None,
+        batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Explanation:
-        return self.explain(x, edge_index, target, model, target_index,
-                            **kwargs)
+        return self.explain(g=g, model=model, target=target,
+                            target_index=target_index, batch=batch, **kwargs)
 
     @abstractmethod
     def supports(
@@ -86,6 +89,7 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             explanation_type (str): the type of explanation to compute.
+                Should be in ["model", "phenomenon"]
             mask_type (str): the type of mask to use.
+                Should be in ["node", "edge", "node_and_edge", "layers"]
         """
-        return True

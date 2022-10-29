@@ -1,8 +1,11 @@
+from typing import Optional
+
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.explainability.algo.base import ExplainerAlgorithm
+from torch_geometric.explainability.algo.utils import CaptumModel
 from torch_geometric.explainability.explanations import Explanation
-from torch_geometric.explainability.utils import CaptumModel
 
 
 class CaptumExplainer(ExplainerAlgorithm):
@@ -17,7 +20,7 @@ class CaptumExplainer(ExplainerAlgorithm):
 
     Args:
         method (str, optional): name of the captum explainer.
-        Defaults to "Saliency".
+            Defaults to "Saliency".
     """
     def __init__(self, method: str = "Saliency") -> None:
 
@@ -26,10 +29,11 @@ class CaptumExplainer(ExplainerAlgorithm):
 
     def explain(
         self,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
+        g: Data,
         model: CaptumModel,
+        target: torch.Tensor,
+        target_index: Optional[int] = None,
+        batch: Optional[torch.Tensor] = None,
         mask_type: str = "node",
         **kwargs,
     ) -> Explanation:
@@ -40,12 +44,12 @@ class CaptumExplainer(ExplainerAlgorithm):
         # the explanation algorithm
         explainer = getattr(attr, self.method)(model)
         input, additional_forward_args = self._arange_inputs(
-            x, edge_index, mask_type, **kwargs)
+            g, mask_type, **kwargs)
 
         attributions = explainer.attribute(
-            **self._arange_args(input, target, additional_forward_args))
+            **self._arange_args(input, target_index, additional_forward_args))
 
-        return self._create_explanation_from_masks(x, edge_index, attributions)
+        return self._create_explanation_from_masks(g, attributions)
 
     def supports(
         self,
@@ -54,36 +58,40 @@ class CaptumExplainer(ExplainerAlgorithm):
     ) -> bool:
         return mask_type != "layers"
 
-    def _arange_inputs(self, x, edge_index, mask_type, **kwargs):
+    def _arange_inputs(self, g, mask_type, **kwargs):
         """Arrange inputs for captum explainer.
 
         Create the main input and the additional forward arguments for the
         captum explainer based on the required type of explanations.
 
         Args:
-            x (torch.Tensor): node features.
-            edge_index (torch.Tensor): edge indices.
+            g (Data): input graph.
             mask_type (str): type of explanation to be computed.
 
         Returns:
             Tuple[torch.Tensor,Tuple[torch.Tensor]]: main input and additional
-                forward arguments.
+                forward arguments for the captum explainer.
         """
-        input_mask = torch.ones((1, edge_index.shape[1]), dtype=torch.float,
+        input_mask = torch.ones((1, g.edge_index.shape[1]), dtype=torch.float,
                                 requires_grad=True)
 
+        additional_forward_args = None
         if mask_type == "node":
-            input = x.clone().unsqueeze(0)
-            additional_forward_args = (edge_index, )
+            input = g.x.clone().unsqueeze(0)
+            additional_forward_args = (g.edge_index, )
         elif mask_type == "edge":
             input = input_mask
-            additional_forward_args = (x, edge_index)
+            additional_forward_args = (g.x, g.edge_index)
         elif mask_type == "node_and_edge":
-            input = (x.clone().unsqueeze(0), input_mask)
-            additional_forward_args = (edge_index, )
-        # append additional kwargs given by user
-        for _, value in kwargs.items():
-            additional_forward_args += (value, )
+            input = (g.x.clone().unsqueeze(0), input_mask)
+            additional_forward_args = (g.edge_index, )
+
+        if kwargs:
+            if additional_forward_args is None:
+                additional_forward_args = tuple(kwargs.values())
+            else:
+                additional_forward_args += tuple(kwargs.values())
+
         return input, additional_forward_args
 
     def _arange_args(self, input, target, additional_forward_args) -> dict:
@@ -116,13 +124,11 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         return inputs
 
-    def _create_explanation_from_masks(self, x, edge_index, attributions):
+    def _create_explanation_from_masks(self, g, attributions):
         """Create explanation from masks.
 
         Args:
-            x (torch.Tensor): node features.
-            edge_index (torch.Tensor): edge indices
-            kwargs (_type_): _description_
+            g (Data): input graph.
             attributions (Tuple[torch.Tensor]): masks returned by captum.
             kwargs (dict): additional information to store in the explanation.
 
@@ -140,8 +146,8 @@ class CaptumExplainer(ExplainerAlgorithm):
             edge_mask = attributions[1].squeeze(0)
 
         return Explanation(
-            x=x,
-            edge_index=edge_index,
+            x=g.x,
+            edge_index=g.edge_index,
             node_features_mask=node_features_mask,
             edge_mask=edge_mask,
         )

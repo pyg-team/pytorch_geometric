@@ -1,27 +1,33 @@
 from dataclasses import dataclass
-from typing import Callable, Tuple
+from typing import Callable, Optional
 
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.explainability.algo.base import ExplainerAlgorithm
 from torch_geometric.explainability.algo.captumexplainer import CaptumExplainer
+from torch_geometric.explainability.algo.utils import to_captum
 from torch_geometric.explainability.explanations import Explanation
-from torch_geometric.explainability.utils import to_captum
 
 
 @dataclass
 class Threshold:
     type: str
     value: float
-    _valid_type = ["soft", "hard", "connected"]
+    _valid_type = ["none", "hard", "topk", "connected"]
 
     def __post_init__(self):
         if self.type not in self._valid_type:
             raise ValueError(f'Invalid threshold type {self.type}. '
                              f'Valid types are {self._valid_type}.')
-        if self.value < 0 or self.value > 1:
-            raise ValueError(f'Invalid threshold value {self.value}. '
-                             f'Valid values are in [0, 1].')
+        if self.type == "hard":
+            if self.value < 0 or self.value > 1:
+                raise ValueError(f'Invalid threshold value {self.value}. '
+                                 f'Valid values are in [0, 1].')
+        if self.type == "topk":
+            if self.value < 0:
+                raise ValueError(f'Invalid threshold value {self.value}. '
+                                 f'Valid values are positive.')
 
 
 @dataclass
@@ -29,7 +35,7 @@ class ExplainerConfig:
     explanation_type: str
     mask_type: str
     _valid_explanation_type = ["model", "phenomenon"]
-    _valid_mask_type = ["node", "edge", "node_and_edge"]
+    _valid_mask_type = ["node", "edge", "node_and_edge", "layers"]
 
     def __post_init__(self):
         if self.explanation_type not in self._valid_explanation_type:
@@ -39,6 +45,8 @@ class ExplainerConfig:
         if self.mask_type not in self._valid_mask_type:
             raise ValueError(f'Invalid mask type {self.mask_type}. '
                              f'Valid types are {self._valid_mask_type}.')
+        if self.mask_type == "layers":
+            raise NotImplementedError()
 
 
 class Explainer(torch.nn.Module):
@@ -54,7 +62,7 @@ class Explainer(torch.nn.Module):
             `node`, `edge`, `global`. `global` returns masks for both nodes
             and edges.
         threshold (str): post-processing thresholding method on the mask.
-            Supported methods are `soft`, `hard`, `connected`.
+            Supported methods are `none`, `soft`, `topk`, `connected`.
         loss (torch.nn.Module): the loss function to be used for the
             explanation algorithm.
         model (torch.nn.Module): the GNN module to explain.
@@ -92,7 +100,8 @@ class Explainer(torch.nn.Module):
             mask_type=mask_type.lower())
 
         # details for post-processing the ouput of the explanation algorithm
-        self.threshold = Threshold(type=threshold, value=threshold_value)
+        self.threshold = Threshold(type=threshold.lower(),
+                                   value=threshold_value)
 
         # details of the explanation algorithm
         self.explanation_algorithm = explanation_algorithm
@@ -110,18 +119,18 @@ class Explainer(torch.nn.Module):
         self.loss = loss
         self.explanation_algorithm.set_objective(self._create_objective())
 
-    def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
-                y: torch.Tensor, target_index: int = 0,
+    def forward(self, g: Data, y: torch.Tensor,
+                target_index: Optional[int] = None, batch: torch.Tensor = None,
                 **kwargs) -> Explanation:
         """Compute the explanation of the GNN  for the given inputs and target.
 
         Args:
-            x (torch.Tensor): the node features.
-            edge_index (torch.Tensor): the edge indices.
+            g (Data): the input graph.
             y (torch.Tensor): the target of the GNN.
             target_index (int, optional): the  index of the target to explain.
-                If not provided, the explanation is computed for all the first
-                index of the target. (default: 0)
+                If not provided, the explanation is computed for the first
+                index of the target. (default: :obj:`None`)
+            batch (torch.Tensor, optional): the batch vector. (default: None)
             **kwargs: additional arguments to pass to the GNN.
 
         Returns:
@@ -130,47 +139,35 @@ class Explainer(torch.nn.Module):
         target = y
 
         if self.explanation_config.explanation_type == "model":
-            target = self.model(x=x, edge_index=edge_index, **kwargs)
+            target = self.model(g, batch, **kwargs)
 
             if self.model_return_type in ["probs", "logits"]:
                 target_index = target.argmax()
 
-        if isinstance(self.explanation_algorithm, CaptumExplainer):
-            raw_explanation = self._compute_explanation_captum(
-                x, edge_index, target, target_index, **kwargs)
-        else:
-            raw_explanation = self._compute_explanation_pyg(
-                x, edge_index, target, target_index, **kwargs)
-
+        raw_explanation = self._compute_explanation(g, target, target_index,
+                                                    batch, **kwargs)
         return self._post_process_explanation(raw_explanation)
 
-    def _compute_explanation_pyg(self, x: torch.Tensor,
-                                 edge_index: torch.Tensor,
-                                 target: torch.Tensor, target_index: int,
-                                 **kwargs) -> Explanation:
-        return self.explanation_algorithm.explain(x=x, edge_index=edge_index,
+    def _compute_explanation(self, g: Data, target: torch.Tensor,
+                             target_index: int, batch: torch.Tensor,
+                             **kwargs) -> Explanation:
+
+        if isinstance(self.explanation_algorithm, CaptumExplainer):
+            captum_model = to_captum(self.model,
+                                     self.explanation_config.mask_type,
+                                     target_index)
+            return self.explanation_algorithm.explain(
+                g=g, model=captum_model, target=target,
+                target_index=target_index, batch=batch, **kwargs)
+
+        return self.explanation_algorithm.explain(g=g, model=self.model,
                                                   target=target,
-                                                  model=self.model,
                                                   target_index=target_index,
-                                                  **kwargs)
-
-    def _compute_explanation_captum(self, x: torch.Tensor,
-                                    edge_index: torch.Tensor,
-                                    target: torch.Tensor, target_index: int,
-                                    **kwargs) -> Explanation:
-
-        captum_model = to_captum(self.model, self.explanation_config.mask_type,
-                                 target_index)
-
-        return self.explanation_algorithm.explain(x=x, edge_index=edge_index,
-                                                  target=target,
-                                                  model=captum_model,
-                                                  target_index=target_index,
-                                                  **kwargs)
+                                                  batch=batch, **kwargs)
 
     def _create_objective(
         self,
-    ) -> Callable[[Tuple[torch.Tensor, ...], torch.Tensor, torch.Tensor, int],
+    ) -> Callable[[torch.Tensor, torch.Tensor, torch.Tensor, int],
                   torch.Tensor]:
         """Creates the objective function for the explanation module depending
         on the loss function and the explanation type.
@@ -178,6 +175,11 @@ class Explainer(torch.nn.Module):
         If the explanation type is `model`, the objective function is the loss
         function applied on the model output, otherwise it is the loss function
         applied on the true output.
+
+        The returned function takes as input the explanation_output, the model
+        output, the target and the target index and returns the loss value.
+        The explanation output can be, for example, the output of the model
+        after applying a mask on some of its inputs.
         """
         if self.explanation_config.explanation_type == "model":
             return lambda x, y, z, i: self.loss(x[i], y[i])
@@ -201,7 +203,7 @@ class Explainer(torch.nn.Module):
     def _threshold(self, explanation: Explanation) -> Explanation:
         """Threshold the explanation mask according to the thresholding method.
 
-        if the thresholding method is `hard`, the mask is thresholded at the
+        if the thresholding method is `topk`, the mask is thresholded at the
         threshold value.
         if the thresholding method is `soft`, the mask is returned as is.
 
@@ -216,6 +218,8 @@ class Explainer(torch.nn.Module):
         """
         if self.threshold.type == "hard":
             explanation.threshold(self.threshold.value)
+        if self.threshold.type == "topk":
+            explanation.threshold_topk(self.threshold.value)
         if self.threshold.type == "connected":
             raise NotImplementedError()
         return explanation
