@@ -8,6 +8,7 @@ from torch_geometric.explainability.algo.base import ExplainerAlgorithm
 from torch_geometric.explainability.algo.captumexplainer import CaptumExplainer
 from torch_geometric.explainability.algo.utils import to_captum
 from torch_geometric.explainability.explanations import Explanation
+from torch_geometric.explainability.utils import Interface
 
 # TODO: add constraints as arguments of the dataclasses
 
@@ -26,7 +27,7 @@ class Threshold:
             raise ValueError(f'Invalid threshold value {self.value}. '
                              f'Valid values are float or int.')
 
-        if self.type == "hard" or self.type == "soft":
+        if self.type == "hard":
             if self.value < 0 or self.value > 1:
                 raise ValueError(f'Invalid threshold value {self.value}. '
                                  f'Valid values are in [0, 1].')
@@ -64,6 +65,7 @@ class ExplainerConfig:
 class ModelConfig:
     model: torch.nn.Module
     return_type: str
+    interface: Interface = Interface()
     _valid_model_return_type = ["logits", "probs", "regression"]
 
     def __post_init__(self):
@@ -99,6 +101,20 @@ class Explainer(torch.nn.Module):
     .. note::
         If the model you are trying to explain does not take a `Data` object as
         input, you can use the `Interface` class to help you create a wrapper.
+
+    .. code-block:: python
+        class GCNCcompatible(GCN):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.interface = Interface(graph_to_inputs=lambda x: {
+                    "x": x.x,
+                    "edge_index": x.edge_index
+                })
+
+            def forward(self, g, **kwargs):
+                return super().forward(
+                    **self.interface.graph_to_inputs(g, **kwargs)
+                )
     """
     def __init__(
         self,
@@ -142,6 +158,20 @@ class Explainer(torch.nn.Module):
         self.loss = loss
         self.explanation_algorithm.set_objective(self._create_objective())
 
+    def get_prediction(self, g: Data, batch=None, **kwargs) -> torch.Tensor:
+        r"""Returns the prediction of the model on the input graph.
+
+        Args:
+            g (torch_geometric.data.Data): the input graph.
+            batch (torch.Tensor, optional): the batch vector.
+                (default: :obj:`None`)
+        """
+        with torch.no_grad():
+            return self.model_config.model(g, **dict({
+                "batch": batch,
+                **kwargs
+            }))
+
     def forward(self, g: Data, y: torch.Tensor,
                 target_index: Optional[int] = None, batch: torch.Tensor = None,
                 **kwargs) -> Explanation:
@@ -162,11 +192,7 @@ class Explainer(torch.nn.Module):
         target = y
 
         if self.explanation_config.explanation_type == "model":
-            target = self.model_config.model(
-                g, **dict({
-                    "batch": batch,
-                    **kwargs
-                }))
+            target = self.get_prediction(g, batch, **kwargs)
 
             if self.model_config.return_type in ["probs", "logits"]:
                 target_index = target.argmax()

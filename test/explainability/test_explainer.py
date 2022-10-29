@@ -9,6 +9,8 @@ from torch_geometric.explainability.explainer import (
     ModelConfig,
     Threshold,
 )
+from torch_geometric.explainability.utils import Interface
+from torch_geometric.nn import GAT, GCN
 
 
 class DummyModel(torch.nn.Module):
@@ -22,8 +24,11 @@ class DummyModel(torch.nn.Module):
 
 @pytest.fixture
 def dummyInput():
-    return Data(x=torch.randn(10, 5), edge_index=torch.randint(0, 10, (2, 20)),
-                edge_attr=torch.randn(20, 3), target=torch.randn(10, 1))
+    return Data(
+        x=torch.randn(8, 3, requires_grad=True),
+        edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+                                 [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
+        edge_attr=torch.randn(14, 3), target=torch.randn(14, 1))
 
 
 @pytest.fixture
@@ -36,15 +41,38 @@ def loss():
     return torch.nn.MSELoss()
 
 
+class GCNCcompatible(GCN):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.interface = Interface(graph_to_inputs=lambda x: {
+            "x": x.x,
+            "edge_index": x.edge_index
+        })
+
+    def forward(self, g, **kwargs):
+        return super().forward(**self.interface.graph_to_inputs(g))
+
+
+class GATCcompatible(GAT):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.interface = Interface(graph_to_inputs=lambda x: {
+            "x": x.x,
+            "edge_index": x.edge_index
+        })
+
+    def forward(self, g, **kwargs):
+        return super().forward(**self.interface.graph_to_inputs(g))
+
+
 models = [DummyModel(), DummyModel(2)]
 model_return_type = ModelConfig._valid_model_return_type
 explanation_types = ExplainerConfig._valid_explanation_type
 mask_types = [x for x in ExplainerConfig._valid_mask_type if x != "layers"]
 thresholds = [x for x in Threshold._valid_type if x != "connected"]
 
+
 # test initialization
-
-
 @pytest.mark.parametrize("model", models)
 @pytest.mark.parametrize("model_return_type", model_return_type)
 @pytest.mark.parametrize("explanation_type", [explanation_types[0]])
@@ -214,3 +242,28 @@ def test_hard_tresholding_values(explanation_type, explanation_algorithm,
         assert torch.all(explanations_raw[exp] <= 1)
         assert torch.any((explanations_processed[exp] == 0)
                          | (explanations_processed[exp] == 1))
+
+
+@pytest.mark.parametrize("model", [
+    GCNCcompatible(3, 16, 2, 7, dropout=0),
+    GATCcompatible(3, 16, 2, 7, heads=2, concat=False)
+])
+@pytest.mark.parametrize("model_return_type", model_return_type)
+@pytest.mark.parametrize("explanation_type", [explanation_types[0]])
+@pytest.mark.parametrize("mask_type", mask_types)
+@pytest.mark.parametrize("threshold", ["hard"])
+@pytest.mark.parametrize("threshold_value", [0.5])
+def test_explainer_model_interface(explanation_type, explanation_algorithm,
+                                   mask_type, threshold, loss, model,
+                                   model_return_type, dummyInput,
+                                   threshold_value):
+
+    out = model(dummyInput)
+    explainer = Explainer(explanation_type=explanation_type,
+                          explanation_algorithm=explanation_algorithm,
+                          mask_type=mask_type, threshold=threshold, loss=loss,
+                          model=model, model_return_type=model_return_type,
+                          threshold_value=threshold_value)
+
+    out_explainer = explainer.get_prediction(dummyInput)
+    assert torch.allclose(out, out_explainer)

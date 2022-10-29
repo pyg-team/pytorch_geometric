@@ -35,8 +35,18 @@ def test_interface_simple_graph(x, edge_index, edge_attr, graph):
 @pytest.mark.parametrize("edge_attr", [edge_attr])
 @pytest.mark.parametrize("graph", [graph])
 @pytest.mark.parametrize("model", [GCN, GAT])
-def test_model_with_interface(x, edge_index, edge_attr, graph, model):
+@pytest.mark.parametrize("kwargs", [{}, {
+    "output_idx": None
+}, {
+    "output_idx": 1
+}])
+def test_model_with_interface(x, edge_index, edge_attr, graph, model, kwargs):
     interface = Interface()
+
     out = model(x=x, edge_index=edge_index)
-    out_tilde = model(**interface.graph_to_inputs(graph))
-    assert torch.all(out == out_tilde), out - out_tilde
+    if kwargs:
+        with pytest.raises(TypeError):
+            out_tilde = model(**interface.graph_to_inputs(graph, **kwargs))
+    else:
+        out_tilde = model(**interface.graph_to_inputs(graph, **kwargs))
+        assert torch.all(out == out_tilde)

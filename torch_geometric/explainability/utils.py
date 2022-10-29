@@ -59,9 +59,11 @@ class Interface:
         self.graph_to_inputs_func = graph_to_inputs
         self.inputs_to_graph_func = inputs_to_graph
 
-    def graph_to_inputs(self, graph: Data) -> dict[str, Tensor]:
-        """Convert graph to inputs that can be passed to the model."""
-        return self.graph_to_inputs_func(graph)
+    def graph_to_inputs(self, graph: Data, **kwargs) -> dict[str, Tensor]:
+        """Convert graph to inputs that can be passed to the model.
+
+        The kwargs are just added to the dict output."""
+        return dict({**self.graph_to_inputs_func(graph), **kwargs})
 
     def inputs_to_graph(self, x: Optional[Tensor] = None,
                         edge_index: Optional[Tensor] = None,
