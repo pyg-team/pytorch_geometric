@@ -21,12 +21,9 @@ from typing_extensions import get_args
 from torch_geometric.data import Batch, Data
 from torch_geometric.data.batch import DynamicInheritance
 
-try:
-    from typing import GenericMeta  # Python 3.6
-except ImportError:  # Python 3.7
 
-    class GenericMeta(type):
-        pass
+class GenericMeta(type):
+    pass
 
 
 def _check(hint, argument_name, value):
