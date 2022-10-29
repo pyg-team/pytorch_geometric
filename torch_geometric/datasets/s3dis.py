@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 
@@ -42,8 +43,15 @@ class S3DIS(InMemoryDataset):
     url = ('https://shapenet.cs.stanford.edu/media/'
            'indoor3d_sem_seg_hdf5_data.zip')
 
-    def __init__(self, root, test_area=6, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        test_area: int = 6,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -51,11 +59,11 @@ class S3DIS(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['all_files.txt', 'room_filelist.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
     def download(self):

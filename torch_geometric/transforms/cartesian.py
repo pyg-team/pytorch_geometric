@@ -1,5 +1,8 @@
+from typing import Optional
+
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -19,12 +22,17 @@ class Cartesian(BaseTransform):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-    def __init__(self, norm=True, max_value=None, cat=True):
+    def __init__(
+        self,
+        norm: bool = True,
+        max_value: Optional[float] = None,
+        cat: bool = True,
+    ):
         self.norm = norm
         self.max = max_value
         self.cat = cat
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         cart = pos[row] - pos[col]

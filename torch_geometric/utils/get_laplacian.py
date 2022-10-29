@@ -1,17 +1,22 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import add_self_loops, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
 
-def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
-                  normalization: Optional[str] = None,
-                  dtype: Optional[int] = None,
-                  num_nodes: Optional[int] = None):
+def get_laplacian(
+    edge_index: Tensor,
+    edge_weight: OptTensor = None,
+    normalization: Optional[str] = None,
+    dtype: Optional[torch.dtype] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 

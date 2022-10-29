@@ -42,6 +42,11 @@ jobs:
         run: |
           pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
 
+      - name: Install pyg-lib
+        if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
+        run: |
+          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
+
       - name: Install main package
         run: |
           pip install -e .[full,test]

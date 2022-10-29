@@ -9,7 +9,7 @@ from torch_geometric.nn import FastRGCNConv, RGCNConv
 from torch_geometric.utils import k_hop_subgraph
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str,
+parser.add_argument('--dataset', type=str, default='AIFB',
                     choices=['AIFB', 'MUTAG', 'BGS', 'AM'])
 args = parser.parse_args()
 
