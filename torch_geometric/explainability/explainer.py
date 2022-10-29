@@ -71,11 +71,15 @@ class Explainer(torch.nn.Module):
         threshold_value (float, optional): the threshold value to be used
             for the `hard` thresholding method. Should be between 0 and 1.
             (default: :obj:`0.5`)
+
+    .. note::
+        If the model you are trying to explain does not take a `Data` object as
+        input, you can use the `Interface` class to help you create a wrapper.
     """
     def __init__(
         self,
         explanation_type: str,
-        # provide a factory instead ?
+        # TODO:  provide a factory instead ?
         explanation_algorithm: ExplainerAlgorithm,
         mask_type: str,
         threshold: str,
