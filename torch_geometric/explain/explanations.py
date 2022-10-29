@@ -1,5 +1,5 @@
 """Class representing explanations."""
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from torch import Tensor
 
@@ -51,6 +51,11 @@ class Explanation(Data):
                          node_features_mask=node_features_mask,
                          edge_features_mask=edge_features_mask, **kwargs)
         # how to update number of nodes of super() based only on masks ?
+        # Could be useful if x is None
+        self.basic_masks = [
+            "node_mask", "edge_mask", "node_features_mask",
+            "edge_features_mask"
+        ]
 
     @property
     def available_explanations(self) -> Tuple[str, ...]:
@@ -58,36 +63,49 @@ class Explanation(Data):
         return tuple(key for key in self.keys
                      if key.endswith('_mask') and self[key] is not None)
 
-    def threshold(self, threshold: float) -> None:
-        r"""Thresholds the attributions of the graph.
-
-        Modify the explanation in place by setting to zero the attributions
-        below the threshold.
-
-        Args:
-            threshold (float): Sets a threshold for important nodes and edges.
-        """
-        if self.node_mask is not None:
-            self.node_mask = (self.node_mask > threshold).float()
-        if self.edge_mask is not None:
-            self.edge_mask = (self.edge_mask > threshold).float()
-        if self.node_features_mask is not None:
-            self.node_features_mask = (self.node_features_mask >
-                                       threshold).float()
-        if self.edge_features_mask is not None:
-            self.edge_features_mask = (self.edge_features_mask >
-                                       threshold).float()
-
-    def threhsold_topk(self, threshold: int) -> None:
-        r"""Thresholds the attributions of the graph.
-
-        Modify the explanation in place keeping only the top most important
-        attributions for each mask independently.
+    @staticmethod
+    def from_masks(edge_index: Tensor, masks: Union[Tensor, Tuple[Tensor,
+                                                                  ...]],
+                   mask_keys: Union[str, Tuple[str, ...]],
+                   auto_correct_names: bool = False,
+                   **kwargs) -> 'Explanation':
+        """Create an explanation from a mask or a tuple of masks.
 
         Args:
-            threshold (int): number of top most important attributions to keep.
+            edge_index (Tensor): The edge index of the graph.
+            masks (Union[torch.Tensor, Tuple[torch.Tensor]]): the mask or a
+                tuple of masks.
+            mask_keys (Union[str, Tuple[str]]): the key or a tuple of keys for
+                the masks. The names should end with "_mask".
+            auto_correct_names (bool, optional): If set to :obj:`True`, the
+                mask keys will be corrected if they do not end with "_mask".
+                (default: :obj:`False`)
+            **kwargs (optional): Additional attributes.
+
+        Raises:
+            ValueError: if mask_keys and masks do not have the same length.
+
+        :rtype: :class:`torch_geometric.explain.Explanation`
         """
-        raise NotImplementedError()
+        # sanitize input
+        if isinstance(masks, Tensor):
+            masks = (masks, )
+        if isinstance(mask_keys, str):
+            mask_keys = (mask_keys, )
+        if len(masks) != len(mask_keys):
+            raise ValueError(
+                "The number of masks and of mask keys should be equal.")
+        if auto_correct_names:
+            mask_keys = tuple(key if key.endswith("_mask") else key + "_mask"
+                              for key in mask_keys)
+        # validate mask_keys
+        for key in mask_keys:
+            if not key.endswith("_mask"):
+                raise ValueError(
+                    f"The mask keys should end with '_mask', got {key}.")
+        masks_dict = dict(zip(mask_keys, masks))
+        masks_dict.update(kwargs)
+        return Explanation(edge_index=edge_index, **masks_dict)
 
     def visualise_graph(self, threshold_node: Optional[float] = None,
                         threhsold_edge: Optional[float] = None, **kwargs):

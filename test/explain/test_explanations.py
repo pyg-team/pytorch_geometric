@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explainability.explanations import Explanation
+from torch_geometric.explain.explanations import Explanation
 
 
 def create_random_explanation(data, node_features_mask=True, node_mask=True,
@@ -53,13 +53,3 @@ def test_available_explanations(
                                             edge_features_mask)
 
     assert set(explanation.available_explanations) == set(theoretically_there)
-
-
-@pytest.mark.parametrize("threshold", [0, 0.2, 1])
-def test_tresholding(data, threshold):
-    explanation = create_random_explanation(data)
-    explanation_original = explanation.clone()
-    explanation.threshold(threshold=threshold)
-    for key in explanation.available_explanations:
-        assert torch.all(
-            explanation_original[key][explanation[key].bool()] >= threshold)

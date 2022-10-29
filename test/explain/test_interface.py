@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explainability.utils import Interface
+from torch_geometric.explain.utils import Interface
 from torch_geometric.nn import GAT, GCN
 
 x = torch.randn(8, 3)
