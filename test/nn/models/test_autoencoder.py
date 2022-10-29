@@ -21,7 +21,12 @@ def test_gae():
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
     value = model.decode(z, edge_index)
-    assert value.tolist() == torch.sigmoid(torch.Tensor([-1, 4])).tolist()
+    assert torch.allclose(value, torch.sigmoid(torch.Tensor([-1, 4])))
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+        assert torch.allclose(jit.encode(x), z)
+        assert torch.allclose(jit.decode(z, edge_index), value)
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
@@ -33,12 +38,6 @@ def test_gae():
     z = torch.randn(11, 16)
     loss = model.recon_loss(z, train_data.pos_edge_label_index)
     assert float(loss) > 0
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        jit.encode(x)
-        jit.reparametrize(jit.__mu__, jit.__logstd__)
-        assert float(jit.recon_loss()) > 0
 
     auc, ap = model.test(z, val_data.pos_edge_label_index,
                          val_data.neg_edge_label_index)
@@ -58,7 +57,6 @@ def test_vgae():
     if is_full_test():
         jit = torch.jit.export(model)
         jit.encode(x)
-        jit.reparametrize(jit.__mu__, jit.__logstd__)
         assert float(jit.kl_loss()) > 0
 
 

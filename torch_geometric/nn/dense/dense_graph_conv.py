@@ -51,16 +51,19 @@ class DenseGraphConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, C = x.size()
 
-        if self.aggr in ['add', 'mean']:
+        if self.aggr == 'add':
             out = torch.matmul(adj, x)
-            if self.aggr == 'mean':
-                out = out / adj.sum(dim=-1, keepdim=True).clamp_(min=1)
+        elif self.aggr == 'mean':
+            out = torch.matmul(adj, x)
+            out = out / adj.sum(dim=-1, keepdim=True).clamp_(min=1)
         elif self.aggr == 'max':
             out = x.unsqueeze(-2).repeat(1, 1, N, 1)
             adj = adj.unsqueeze(-1).expand(B, N, N, C)
             out[adj == 0] = float('-inf')
             out = out.max(dim=-3)[0]
             out[out == float('-inf')] = 0.
+        else:
+            raise NotImplementedError
 
         out = self.lin_rel(out)
         out = out + self.lin_root(x)
