@@ -42,11 +42,7 @@ benchmark_requires = [
     'wandb',
 ]
 
-test_requires = [
-    'pytest',
-    'pytest-cov',
-    'torchtyping'
-]
+test_requires = ['pytest', 'pytest-cov', 'torchtyping']
 
 dev_requires = test_requires + [
     'pre-commit',
