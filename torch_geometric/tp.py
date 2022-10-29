@@ -19,7 +19,7 @@ from torchtyping.typechecker import _check_tensor
 from typing_extensions import get_args
 
 from torch_geometric.data import Batch, Data
-
+from torch_geometric.data.batch import DynamicInheritance
 try:
     from typing import GenericMeta  # Python 3.6
 except ImportError:  # Python 3.7
@@ -40,7 +40,7 @@ def typecheck(f: Callable) -> Callable:
             hint = hints[argument_name]
             if argument_name in hints and (isinstance(hint,
                                                       (DataMeta, BatchMeta))):
-                if not isinstance(value, Data) or not isinstance(value, Batch):
+                if not isinstance(value, Data) and not isinstance(value, Batch):
                     raise TypeError(f"{value} is not a pyg Data object")
                 attributes = value._store
                 if (hint.check_only_specified
@@ -124,7 +124,7 @@ class DataMeta(GenericMeta):
         return meta
 
 
-class BatchMeta(GenericMeta):
+class BatchMeta(GenericMeta, DynamicInheritance):
     """Metaclass for Batch (internal)."""
     def __new__(metacls, name, bases, namespace, **kargs):
         return super().__new__(metacls, name, bases, namespace)
@@ -180,24 +180,20 @@ def _get_attribute_dtypes(
     return attributes, dtypes
 
 
-class DataT(Data):
+class DataT(Data, extra=Generic, metaclass=DataMeta):
     """Defines type DataT to serve as annotation for PyG Data."""
 
     __slots__ = ()
-    __extra__ = Generic
-    __metaclass__ = DataMeta
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is DataT:
             raise TypeError("Type GraphT cannot be instantiated.")
 
 
-class BatchT(Batch):
+class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
     """Defines type BatchT to serve as annotation for PyG Data."""
 
     __slots__ = ()
-    __extra__ = Generic
-    __metaclass__ = BatchMeta
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is BatchT:
