@@ -54,7 +54,7 @@ class Explanation(Data):
 
     @property
     def available_explanations(self) -> Tuple[str, ...]:
-        """Returns the available explanations."""
+        """Returns the available explanation masks."""
         return tuple(key for key in self.keys
                      if key.endswith('_mask') and self[key] is not None)
 

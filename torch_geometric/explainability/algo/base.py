@@ -17,7 +17,9 @@ class ExplainerAlgorithm(torch.nn.Module):
         r"""
         This method compute the loss to be used for the explanation algorithm.
 
-        This will be set by the Explainer class.
+        This will be set by the Explainer class. It takes the
+        python:function:`loss` and evaluate it at the against the correct
+        reference depending on the explainer mode (model vs phenomenon).
 
         Args:
             exp_output (torch.Tensor): the output of the explanation algorithm.
@@ -135,13 +137,15 @@ class ExplainerAlgorithm(torch.nn.Module):
                 Should be in ["node", "edge", "node_and_edge", "layers"]
         """
 
+    # TODO :this creates coupling between the explainer and the explanation,
+    #  which is not ideal. We should find a way to remove this.
     def _create_explanation_from_masks(self, g, attributions, mask_type):
         """Create explanation from masks.
 
         Args:
             g (Data): input graph.
             attributions (Tuple[torch.Tensor]): masks returned by captum.
-            kwargs (dict): additional information to store in the explanation.
+            mask_type (str): the type of mask used.
 
         Returns:
             Explanation: explanation object.

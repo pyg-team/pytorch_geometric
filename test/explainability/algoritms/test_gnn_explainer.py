@@ -61,7 +61,7 @@ feat_mask_types = ['individual_feature', 'scalar', 'feature']
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
 @pytest.mark.parametrize('model', [GNN()])
-@pytest.mark.parametrize('task_level', ["graph_level", "node_level"])
+@pytest.mark.parametrize('task_level', ["graph_level"])
 def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
                                      feat_mask_type, task_level):
     explainer = GNNExplainer(log=False, return_type=return_type,

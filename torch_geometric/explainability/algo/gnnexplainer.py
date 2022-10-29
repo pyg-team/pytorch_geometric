@@ -12,6 +12,8 @@ from torch_geometric.explainability.explanations import Explanation
 
 EPS = 1e-15
 
+# TODO: rewrite more properly, just POC for now.
+
 
 class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
@@ -51,8 +53,6 @@ class GNNExplainer(ExplainerAlgorithm):
             (scalar mask for each each node). (default: :obj:`"feature"`)
         allow_edge_mask (boolean, optional): If set to :obj:`False`, the edge
             mask will not be optimized. (default: :obj:`True`)
-        log (bool, optional): If set to :obj:`False`, will not log any learning
-            progress. (default: :obj:`True`)
         **kwargs (optional): Additional hyper-parameters to override default
             settings in :attr:`~torch_geometric.nn.models.GNNExplainer.coeffs`.
     """
@@ -213,7 +213,7 @@ class GNNExplainer(ExplainerAlgorithm):
         for _ in range(1, self.epochs + 1):
             optimizer.zero_grad()
             g_copy.x = g.x * self.node_feat_mask.sigmoid()
-            out = model(g_copy, **kwargs)
+            out = model(g_copy, batch=batch, **kwargs)
 
             loss = self.objective(
                 out,

@@ -90,12 +90,12 @@ class Explainer(torch.nn.Module):
         explanation_algorithm (ExplainerAlgorithm): the explanation
             algorithm to be used.
         mask_type (str): the type of mask to be used. Supported types are
-            `node`, `edge`, `global`. `global` returns masks for both nodes
-            and edges.
+            "node", "edge", "node_and_edge", "layers", "node_feat", "edge_feat"
+            "node_and_edge_feat", "node_feat_and_edge", "edge_feat_and_node".
         threshold (str): post-processing thresholding method on the mask.
-            Supported methods are `none`, `soft`, `topk`, `connected`.
+            Supported methods are `none`, `hard`, `topk`, `connected`.
         loss (torch.nn.Module): the loss function to be used for the
-            explanation algorithm.
+            explanation algorithm if possible. (default: :obj:`None`)
         model (torch.nn.Module): the GNN module to explain.
         model_return_type (str): the output type of the model.
             Supported outputs are `logits`, `probs`, and `regression`.
