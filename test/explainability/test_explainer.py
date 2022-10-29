@@ -209,7 +209,7 @@ def test_hard_tresholding_values(explanation_type, explanation_algorithm,
         target_index=0, batch=None)
     explanations_processed = explainer._threshold(explanations_raw)
     # check correct range of values before and after thresholding
-    for exp in explanations_raw.get_available_explanations():
+    for exp in explanations_raw.available_explanations:
         assert torch.all(explanations_raw[exp] >= 0)
         assert torch.all(explanations_raw[exp] <= 1)
         assert torch.any((explanations_processed[exp] == 0)
