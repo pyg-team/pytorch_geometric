@@ -52,7 +52,8 @@ class Explanation(Data):
                          edge_features_mask=edge_features_mask, **kwargs)
         # how to update number of nodes of super() based only on masks ?
 
-    def get_available_explanations(self) -> Tuple[str, ...]:
+    @property
+    def available_explanations(self) -> Tuple[str, ...]:
         """Returns the available explanations."""
         return tuple(key for key in self.keys
                      if key.endswith('_mask') and self[key] is not None)
