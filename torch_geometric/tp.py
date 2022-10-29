@@ -33,26 +33,18 @@ def _check(hint, argument_name, value):
     """Checks a value is consistent with its type hint."""
     if not isinstance(value, Data) and not isinstance(value, Batch):
         raise TypeError(
-            f"{value} ({type(value)})is not a pyg Data or Batch object"
-        )
+            f"{value} ({type(value)})is not a pyg Data or Batch object")
     attributes = value._store
-    if (
-        hint.check_only_specified
-        and set(attributes.keys()) != hint.attributes
-    ):
-        raise TypeError(
-            f"{argument_name} Data attributes \
+    if (hint.check_only_specified
+            and set(attributes.keys()) != hint.attributes):
+        raise TypeError(f"{argument_name} Data attributes \
             {set(attributes.keys())} do not match \
-                required set {hint.attributes}"
-        )
+                required set {hint.attributes}")
 
     if not hint.check_only_specified and not hint.attributes.issubset(
-        attributes
-    ):
-        raise TypeError(
-            f"{argument_name} is missing some \
-            attributes from {hint.attributes}"
-        )
+            attributes):
+        raise TypeError(f"{argument_name} is missing some \
+            attributes from {hint.attributes}")
     # If dtype annotations are provided, check them
     if hint.dtypes:
         dtypes = {k: type(v) for k, v in value._store.items()}
@@ -62,22 +54,17 @@ def _check(hint, argument_name, value):
             if isinstance(dt, _AnnotatedType):
                 base_cls, *all_metadata = get_args(dt)
                 for metadata in all_metadata:
-                    if (
-                        isinstance(metadata, dict)
-                        and "__torchtyping__" in metadata
-                    ):
+                    if (isinstance(metadata, dict)
+                            and "__torchtyping__" in metadata):
                         break
-                _check_tensor(
-                    colname, value._store[colname], base_cls, metadata
-                )
+                _check_tensor(colname, value._store[colname], base_cls,
+                              metadata)
             # Otherwise just check type
             else:
                 if not np.issubdtype(dtypes[colname], np.dtype(dt)):
-                    raise TypeError(
-                        f"{dtypes[colname]} is not a \
+                    raise TypeError(f"{dtypes[colname]} is not a \
                         subtype of {dt} for data/batch \
-                        attribute {colname}"
-                    )
+                        attribute {colname}")
 
 
 def typecheck(f: Callable) -> Callable:
@@ -91,7 +78,8 @@ def typecheck(f: Callable) -> Callable:
         bound = signature.bind(*args, **kwargs)
         for argument_name, value in bound.arguments.items():
             hint = hints[argument_name]
-            if argument_name in hints and (isinstance(hint, (DataMeta, BatchMeta))):
+            if argument_name in hints and (isinstance(hint,
+                                                      (DataMeta, BatchMeta))):
                 _check(hint, argument_name, value)
         # Check return values
         if "return" in hints.keys():
@@ -101,7 +89,9 @@ def typecheck(f: Callable) -> Callable:
                 _check(out_hint, "return", out)
                 return out
         return f(*args, **kwargs)
+
     return wrapper
+
 
 def _resolve_type(t: Any) -> Any:
     """Adapted from dataenforce contib by @martijnentink:
