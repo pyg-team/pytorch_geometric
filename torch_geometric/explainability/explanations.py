@@ -1,5 +1,5 @@
 """Class representing explanations."""
-from typing import Optional
+from typing import Optional, Tuple
 
 from torch import Tensor
 
@@ -51,6 +51,11 @@ class Explanation(Data):
                          node_features_mask=node_features_mask,
                          edge_features_mask=edge_features_mask, **kwargs)
         # how to update number of nodes of super() based only on masks ?
+
+    def get_available_explanations(self) -> Tuple[str, ...]:
+        """Returns the available explanations."""
+        return tuple(key for key in self.keys
+                     if key.endswith('_mask') and self[key] is not None)
 
     def threshold(self, threshold: float) -> None:
         r"""Thresholds the attributions of the graph.

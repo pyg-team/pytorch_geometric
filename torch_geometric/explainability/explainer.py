@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 
 import torch
 
@@ -9,25 +9,33 @@ from torch_geometric.explainability.algo.captumexplainer import CaptumExplainer
 from torch_geometric.explainability.algo.utils import to_captum
 from torch_geometric.explainability.explanations import Explanation
 
+# TODO: add constraints as arguments of the dataclasses
+
 
 @dataclass
 class Threshold:
     type: str
-    value: float
+    value: Union[float, int]
     _valid_type = ["none", "hard", "topk", "connected"]
 
     def __post_init__(self):
         if self.type not in self._valid_type:
             raise ValueError(f'Invalid threshold type {self.type}. '
                              f'Valid types are {self._valid_type}.')
-        if self.type == "hard":
+        if not isinstance(self.value, (float, int)):
+            raise ValueError(f'Invalid threshold value {self.value}. '
+                             f'Valid values are float or int.')
+
+        if self.type == "hard" or self.type == "soft":
             if self.value < 0 or self.value > 1:
                 raise ValueError(f'Invalid threshold value {self.value}. '
                                  f'Valid values are in [0, 1].')
-        if self.type == "topk":
-            if self.value < 0:
+        if self.type == "topk" or self.type == "connected":
+            if self.value < 0 or not isinstance(self.value, int):
                 raise ValueError(f'Invalid threshold value {self.value}. '
-                                 f'Valid values are positive.')
+                                 f'Valid values are positif integers.')
+        if self.type == "connected":
+            raise NotImplementedError()
 
 
 @dataclass
@@ -35,7 +43,10 @@ class ExplainerConfig:
     explanation_type: str
     mask_type: str
     _valid_explanation_type = ["model", "phenomenon"]
-    _valid_mask_type = ["node", "edge", "node_and_edge", "layers"]
+    _valid_mask_type = [
+        "node", "edge", "node_and_edge", "layers", "node_feat", "edge_feat",
+        "node_and_edge_feat"
+    ]
 
     def __post_init__(self):
         if self.explanation_type not in self._valid_explanation_type:
@@ -47,6 +58,19 @@ class ExplainerConfig:
                              f'Valid types are {self._valid_mask_type}.')
         if self.mask_type == "layers":
             raise NotImplementedError()
+
+
+@dataclass
+class ModelConfig:
+    model: torch.nn.Module
+    return_type: str
+    _valid_model_return_type = ["logits", "probs", "regression"]
+
+    def __post_init__(self):
+        if self.return_type not in self._valid_model_return_type:
+            raise ValueError(
+                f'Invalid model return type {self.return_type}. '
+                f'Valid types are {self._valid_model_return_type}.')
 
 
 class Explainer(torch.nn.Module):
@@ -91,13 +115,8 @@ class Explainer(torch.nn.Module):
 
         super().__init__()
 
-        self.model = model
-        # details of the model
-        if model_return_type.lower() not in ["logits", "probs", "regression"]:
-            raise ValueError(
-                "The model return type must be either 'logits', 'probs' or"
-                "'regression'.")
-        self.model_return_type = model_return_type
+        self.model_config = ModelConfig(model=model,
+                                        return_type=model_return_type.lower())
 
         self.explanation_config = ExplainerConfig(
             explanation_type=explanation_type.lower(),
@@ -143,9 +162,13 @@ class Explainer(torch.nn.Module):
         target = y
 
         if self.explanation_config.explanation_type == "model":
-            target = self.model(g, batch, **kwargs)
+            target = self.model_config.model(
+                g, **dict({
+                    "batch": batch,
+                    **kwargs
+                }))
 
-            if self.model_return_type in ["probs", "logits"]:
+            if self.model_config.return_type in ["probs", "logits"]:
                 target_index = target.argmax()
 
         raw_explanation = self._compute_explanation(g, target, target_index,
@@ -157,17 +180,16 @@ class Explainer(torch.nn.Module):
                              **kwargs) -> Explanation:
 
         if isinstance(self.explanation_algorithm, CaptumExplainer):
-            captum_model = to_captum(self.model,
+            captum_model = to_captum(self.model_config.model,
                                      self.explanation_config.mask_type,
                                      target_index)
             return self.explanation_algorithm.explain(
                 g=g, model=captum_model, target=target,
                 target_index=target_index, batch=batch, **kwargs)
 
-        return self.explanation_algorithm.explain(g=g, model=self.model,
-                                                  target=target,
-                                                  target_index=target_index,
-                                                  batch=batch, **kwargs)
+        return self.explanation_algorithm.explain(
+            g=g, model=self.model_config.model, target=target,
+            target_index=target_index, batch=batch, **kwargs)
 
     def _create_objective(
         self,

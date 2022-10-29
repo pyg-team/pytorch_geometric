@@ -1,5 +1,8 @@
+from typing import Optional
+
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.explainability.explanations import Explanation
 
 from .base import ExplainerAlgorithm
@@ -9,21 +12,22 @@ class RandomExplainer(ExplainerAlgorithm):
     """Dummy explainer."""
     def explain(
         self,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
+        g: Data,
         model: torch.nn.Module,
+        target: torch.Tensor,
+        target_index: Optional[int] = None,
+        batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Explanation:
 
-        node_features_mask = torch.rand(x.shape)
-        node_mask = torch.rand(x.shape[0])
-        edge_mask = torch.rand(edge_index.shape[1])
-        if "edge_attr" in kwargs:
-            edge_features_mask = torch.rand(kwargs["edge_attr"].shape)
+        node_features_mask = torch.rand(g.x.shape)
+        node_mask = torch.rand(g.x.shape[0])
+        edge_mask = torch.rand(g.edge_index.shape[1])
+        if "edge_attr" in g.keys:
+            edge_features_mask = torch.rand(g.edge_attr.shape)
         return Explanation(
-            x=x,
-            edge_index=edge_index,
+            x=g.x,
+            edge_index=g.edge_index,
             node_features_mask=node_features_mask,
             node_mask=node_mask,
             edge_mask=edge_mask,
