@@ -1,6 +1,6 @@
 import pytest
 import torch
-
+from typing import Dict
 try:
     from torchtyping import TensorType
 
@@ -28,6 +28,12 @@ def get_sample_mixed_data() -> Data:
     d = Data()
     d.x = torch.randn((1, 2, 3))
     d.y = "not a tensor"
+    return d
+
+def get_sample_dictionary_data() -> Data:
+    d = Data()
+    d.x = torch.randn((1,2,3))
+    d.dictionary = {"key": "value"}
     return d
 
 
@@ -118,3 +124,41 @@ def test_return_types():
 
     with pytest.raises(TypeError):
         forward(d)
+
+
+def test_simple_typehint():
+    d = get_sample_tensor_data()
+
+    @typecheck
+    def forward(x: DataT) -> DataT:
+        return d
+
+    out = forward(d)
+    assert out == d, "Return value is not the same as input."
+
+    @typecheck
+    def forward(d: BatchT) -> BatchT:
+        return d
+
+    out = forward(Batch.from_data_list([d]))
+
+
+def test_data_type_cannot_be_instantiated():
+    with pytest.raises(TypeError):
+        x = DataT()
+
+
+def test_batch_type_cannot_be_instantiated():
+    with pytest.raises(TypeError):
+        x = BatchT()
+
+
+def test_non_torch_type():
+    d = get_sample_dictionary_data()
+
+    @typecheck
+    def forward(
+        x: DataT["x": torch.Tensor, "dictionary": Dict]) -> DataT["x": torch.Tensor, "dictionary": Dict]:
+        return x
+
+    forward(d)

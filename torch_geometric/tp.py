@@ -197,6 +197,9 @@ class DataT(Data, extra=Generic, metaclass=DataMeta):
     """Defines type DataT to serve as annotation for PyG Data."""
 
     __slots__ = ()
+    check_only_specified = None
+    attributes = set()
+    dtypes = {}
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is DataT:
@@ -207,6 +210,9 @@ class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
     """Defines type BatchT to serve as annotation for PyG Data."""
 
     __slots__ = ()
+    check_only_specified = None
+    attributes = set()
+    dtypes = {}
 
     def __new__(cls, *args, **kwds):
         if not hasattr(cls, "_gorg") or cls._gorg is BatchT:
