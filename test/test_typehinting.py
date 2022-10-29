@@ -38,8 +38,7 @@ def test_typecheck_attribute():
     def forward(d: DataT["x":torch.Tensor]):
         return d
 
-    assert d == forward(
-        get_sample_tensor_data()), "Return value is not the same as input"
+    assert d == forward(d), "Return value is not the same as input"
 
     with pytest.raises(TypeError):
         forward(get_sample_string_data())
