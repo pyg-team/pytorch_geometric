@@ -1,6 +1,8 @@
+from typing import Dict
+
 import pytest
 import torch
-from typing import Dict
+
 try:
     from torchtyping import TensorType
 
@@ -30,9 +32,10 @@ def get_sample_mixed_data() -> Data:
     d.y = "not a tensor"
     return d
 
+
 def get_sample_dictionary_data() -> Data:
     d = Data()
-    d.x = torch.randn((1,2,3))
+    d.x = torch.randn((1, 2, 3))
     d.dictionary = {"key": "value"}
     return d
 
@@ -158,7 +161,8 @@ def test_non_torch_type():
 
     @typecheck
     def forward(
-        x: DataT["x": torch.Tensor, "dictionary": Dict]) -> DataT["x": torch.Tensor, "dictionary": Dict]:
+        x: DataT["x":torch.Tensor, "dictionary":Dict]
+    ) -> DataT["x":torch.Tensor, "dictionary":Dict]:
         return x
 
     forward(d)
