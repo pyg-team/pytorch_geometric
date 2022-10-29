@@ -45,6 +45,7 @@ benchmark_requires = [
 test_requires = [
     'pytest',
     'pytest-cov',
+    'torchtyping'
 ]
 
 dev_requires = test_requires + [
