@@ -43,7 +43,7 @@ def geodesic_distance(
             :obj:`-1` means that the available amount of CPU cores is used.
             (default: :obj:`0`)
 
-    :rtype: Tensor
+    :rtype: :class:`Tensor`
 
     Example:
 
