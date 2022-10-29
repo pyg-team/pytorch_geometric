@@ -20,6 +20,7 @@ from typing_extensions import get_args
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.data.batch import DynamicInheritance
+
 try:
     from typing import GenericMeta  # Python 3.6
 except ImportError:  # Python 3.7
@@ -40,7 +41,8 @@ def typecheck(f: Callable) -> Callable:
             hint = hints[argument_name]
             if argument_name in hints and (isinstance(hint,
                                                       (DataMeta, BatchMeta))):
-                if not isinstance(value, Data) and not isinstance(value, Batch):
+                if not isinstance(value, Data) and not isinstance(
+                        value, Batch):
                     raise TypeError(f"{value} is not a pyg Data object")
                 attributes = value._store
                 if (hint.check_only_specified
