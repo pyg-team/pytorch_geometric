@@ -44,18 +44,14 @@ def typecheck(f: Callable) -> Callable:
                 attributes = value._store
                 if (hint.check_only_specified
                         and set(attributes.keys()) != hint.attributes):
-                    raise TypeError(
-                        f"{argument_name} Data attributes \
+                    raise TypeError(f"{argument_name} Data attributes \
                         {set(attributes.keys())} do not match \
-                         required set {hint.attributes}"
-                    )
+                         required set {hint.attributes}")
 
                 if (not hint.check_only_specified
                         and not hint.attributes.issubset(attributes)):
-                    raise TypeError(
-                        f"{argument_name} is missing some \
-                        attributes from {hint.attributes}"
-                    )
+                    raise TypeError(f"{argument_name} is missing some \
+                        attributes from {hint.attributes}")
                 # If dtype annotations are provided, check them
                 if hint.dtypes:
                     dtypes = {k: type(v) for k, v in value._store.items()}
@@ -75,11 +71,9 @@ def typecheck(f: Callable) -> Callable:
                         else:
                             if not np.issubdtype(dtypes[colname],
                                                  np.dtype(dt)):
-                                raise TypeError(
-                                    f"{dtypes[colname]} is not a \
+                                raise TypeError(f"{dtypes[colname]} is not a \
                                     subtype of {dt} for graph \
-                                    attribute {colname}"
-                                )
+                                    attribute {colname}")
 
         return f(*args, **kwargs)
 
