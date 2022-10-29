@@ -95,3 +95,24 @@ def test_batch_shape_specification():
         return d
 
     assert b == forward(b)
+
+
+@pytest.mark.skipif(not TORCHTYPING_AVAILABLE,
+                    reason="torchtyping not available")
+def test_return_types():
+    d = get_sample_tensor_data()
+
+    @typecheck
+    def forward(x: DataT["x": torch.Tensor]) -> DataT["x": TensorType[-1, -1, 3]]:
+        return x
+
+    forward(d)
+
+    assert d == forward(d), "Return value is not the same as input."
+
+    @typecheck
+    def forward(x: DataT["x": torch.Tensor]) -> DataT["x": TensorType[-1, -1, 30]]:
+        return x
+
+    with pytest.raises(TypeError):
+        forward(d)
