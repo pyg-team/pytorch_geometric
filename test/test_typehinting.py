@@ -32,7 +32,7 @@ def get_sample_mixed_data() -> Data:
 
 
 def test_typecheck_attribute():
-    d = get_sample_data()
+    d = get_sample_tensor_data()
 
     @typecheck
     def forward(d: DataT["x":torch.Tensor]):
