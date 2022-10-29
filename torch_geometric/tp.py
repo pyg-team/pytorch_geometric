@@ -187,10 +187,8 @@ def _get_attribute_dtypes(
         attributes |= _get_attribute_dtypes(p)[0]
         dtypes.update(_get_attribute_dtypes(p)[1])
     else:
-        raise TypeError(
-            "DataT[attr1, attr2, ...]: each attribute must be \
-            a string, list or set."
-        )
+        raise TypeError("DataT[attr1, attr2, ...]: each attribute must be \
+            a string, list or set.")
     return attributes, dtypes
 
 
