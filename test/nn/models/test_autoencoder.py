@@ -34,6 +34,12 @@ def test_gae():
     loss = model.recon_loss(z, train_data.pos_edge_label_index)
     assert float(loss) > 0
 
+    if is_full_test():
+        jit = torch.jit.export(model)
+        jit.encode(x)
+        jit.reparametrize(jit.__mu__, jit.__logstd__)
+        assert float(jit.recon_loss()) > 0
+
     auc, ap = model.test(z, val_data.pos_edge_label_index,
                          val_data.neg_edge_label_index)
     assert auc >= 0 and auc <= 1 and ap >= 0 and ap <= 1
@@ -48,6 +54,12 @@ def test_vgae():
 
     model.eval()
     model.encode(x)
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+        jit.encode(x)
+        jit.reparametrize(jit.__mu__, jit.__logstd__)
+        assert float(jit.kl_loss()) > 0
 
 
 def test_arga():
