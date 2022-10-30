@@ -34,10 +34,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         Args:
             model (torch.nn.Module): the model to explain.
             g (torch_geometric.data.Data): the input graph.
-            batch (torch.Tensor, optional): batch indicator. Defaults to None.
-
-        Returns:
-            torch.Tensor: output of the underlying model.
+            batch (torch.Tensor, optional): batch indicator.
         """
         out = model(
             g,
@@ -68,11 +65,8 @@ class ExplainerAlgorithm(torch.nn.Module):
             target (torch.Tensor): the target of the model.
             target_index (int): the index of the target to explain.
                 By default suppose the target is a single value.
-            batch (torch.Tensor, optional): batch indicator. Defaults to None.
+            batch (torch.Tensor, optional): batch indicator.
             **kwargs: additional arguments to pass to the GNN.
-
-        Returns:
-            Explanation: the explanation.
         """
 
     @abstractmethod
@@ -97,14 +91,11 @@ class ExplainerAlgorithm(torch.nn.Module):
             model (torch.nn.Module): model to use in explanations.
             target (torch.Tensor): target of the GNN.
             target_index (int): Index of the target to explain. Used
-                in case of multi-outputs. Defaults to 0.
-            batch (torch.Tensor, optional): batch tensor. Defaults to None.
+                in case of multi-outputs.
+            batch (torch.Tensor, optional): batch tensor.
             **kwargs: additional arguments to pass to the GNN.
 
-        Returns:
-            Explanation: explanation of the GNN.
-
-        .. note: internally  should call the forward method by properly
+        .. note:: internally  should call the forward method by properly
                 splitting the `Data` object into the arguments.
         """
 
@@ -114,7 +105,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         explanation_type: str,
         mask_type: str,
     ) -> bool:
-        r"""Check if the explainer supports the user-defined settings.
+        """Check if the explainer supports the user-defined settings.
 
         Returns true if the explainer supports the settings.
 
@@ -123,7 +114,8 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             explanation_type (str): the type of explanation to compute.
-                Should be in ["model", "phenomenon"]
+                Should be in :obj:`"model"`, or :obj:`"phenomenon"`
             mask_type (str): the type of mask to use.
-                Should be in ["node", "edge", "node_and_edge", "layers"]
+                Should be in :obj:`"node"`, :obj:`"edge"`,
+                :obj:`"node_and_edge"`, or :obj:`"layers"`.
         """

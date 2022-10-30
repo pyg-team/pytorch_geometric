@@ -106,8 +106,8 @@ class Explainer(torch.nn.Module):
             raw scores) and :obj:`"regression"` (the model returns scalars)
             (default: :obj:`"log_prob"`)
         task_level (str, optional): type of task the :obj:`model` solves.
-            Can be in :obj:"graph" (e.g. graph classification/ regression),
-            :obj:"node" or :obj:"edge" (e.g. node/edge classificaiton).
+            Can be in :obj:`"graph"` (e.g. graph classification/ regression),
+            :obj:`"node"` or :obj:`"edge"` (e.g. node/edge classificaiton).
             (default: :obj:`"graph"`)
         explanation_type (str, optional): :obj:`"phenomenon"` (explanation
             of underlying phenomon) or :obj:`"model"` (explanation of model
@@ -134,25 +134,24 @@ class Explainer(torch.nn.Module):
             1. :obj:`"none"`: no thresholding is applied.
 
             2. :obj:`"hard"`: the mask is thresholded to binary values:
-            values above the threshold are set to 1, and values below the
-            threshold are set to 0.
+                values above the threshold are set to 1, and values below the
+                threshold are set to :obj:`0`.
 
             3. :obj:`"topk_hard"`: the mask is thresholded to binary
                 values: the :obj:`threshold_value` largest values are set
-                to 1, and the rest are set to 0.
+                to :obj:`1`, and the rest are set to :obj:`0`.
 
-            4. :obj:`"topk"`: the mask is thresholded to values between 0
-                and 1: the :obj:`threshold_value` largest values are left
-                unchanged, and the rest are set to 0.
+            4. :obj:`"topk"`: the mask is thresholded to values between
+                :obj:`0` and :obj:`1`: the :obj:`threshold_value` largest
+                values are left unchanged, and the rest are set to :obj:`0`.
 
             5. :obj:`"connected"`: the mask is thresholded to binary values
                 such that a connected component of size at least
-                :obj:`threshold_value` is kept. The rest is set to 0.
-                NotImplemnted for now.
+                :obj:`threshold_value` is kept. The rest is set to :obj:`0`.
 
         threshold_value (Union[float,int]): Value to use for thresholding.
             If :obj:`threshold` is :obj:`"hard"`, the value should be in
-            [0,1]. If :obj:`threshold` is :obj:`"topk"` or
+            :obj:`[0,1]`. If :obj:`threshold` is :obj:`"topk"` or
             :obj:`"connected"`, the value should be a positive integer.
             (default: :obj:`1`)
 
@@ -219,7 +218,8 @@ class Explainer(torch.nn.Module):
                 "The explanation algorithm does not support the configuration."
             )
 
-    def get_prediction(self, g: Data, batch=None, **kwargs) -> torch.Tensor:
+    def get_prediction(self, g: Data, batch: torch.Tensor = None,
+                       **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         Args:
@@ -253,9 +253,6 @@ class Explainer(torch.nn.Module):
             batch (torch.Tensor, optional): the batch vector. (default:
                 :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
-
-        Returns:
-            Explanation: explanations for the inputs and target.
 
         Raises:
             ValueError: if the explanation type is :obj:`"phenomenon"` and the
@@ -295,9 +292,6 @@ class Explainer(torch.nn.Module):
 
         Args:
             explanation (Explanation): the explanation mask to post-process.
-
-        Returns:
-            Explanation: the post-processed explanation mask.
         """
         explanation = self._threshold(explanation)
         return explanation
@@ -310,9 +304,6 @@ class Explainer(torch.nn.Module):
 
             Raises:
                 NotImplementedError: if the thresholding method is connected.
-
-            Returns:
-                Explanation: thresholded explanation.
         """
 
         # avoid modification of the original explanation
