@@ -10,8 +10,47 @@ from torch_geometric.explain.explainer import (
     ModelConfig,
     Threshold,
 )
-from torch_geometric.explain.utils import Interface
-from torch_geometric.nn import GAT, GCN
+from torch_geometric.explain.explanations import Explanation
+
+g = Data(
+    x=torch.randn(8, 3, requires_grad=True),
+    edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+                             [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
+    edge_attr=torch.randn(14, 3), target=torch.randn(14, 1))
+
+
+def dummyExplanation(g) -> Explanation:
+    n_nodes = g.x.shape[0]
+    n_edges = g.edge_index.shape[1]
+    f_nodes = g.x.shape[1]
+    f_edges = g.edge_attr.shape[1]
+    big_max = torch.tensor([n_nodes * f_nodes, n_edges * f_edges]).max() + 1
+    return Explanation.from_masks(
+        edge_index=g.edge_index,
+        masks=(torch.arange(1., 1. + n_nodes, dtype=torch.float) / big_max,
+               torch.arange(1., 1. + n_edges, dtype=torch.float) / big_max,
+               torch.arange(1., 1. + f_nodes * n_nodes,
+                            dtype=torch.float).reshape(n_nodes, f_nodes) /
+               big_max,
+               torch.arange(1., 1. + f_edges * n_edges,
+                            dtype=torch.float).reshape(n_edges, f_edges) /
+               big_max),
+        mask_keys=("node_mask", "edge_mask", "node_features_mask",
+                   "edge_features_mask"), x=g.x, edge_attr=g.edge_attr)
+
+
+def constantExplanation(g) -> Explanation:
+    n_nodes = g.x.shape[0]
+    n_edges = g.edge_index.shape[1]
+    f_nodes = g.x.shape[1]
+    f_edges = g.edge_attr.shape[1]
+    return Explanation.from_masks(
+        edge_index=g.edge_index,
+        masks=(torch.ones(n_nodes), torch.ones(n_edges),
+               torch.ones(f_nodes * n_nodes).reshape(n_nodes, f_nodes),
+               torch.ones(f_edges * n_edges).reshape(n_edges, f_edges)),
+        mask_keys=("node_mask", "edge_mask", "node_features_mask",
+                   "edge_features_mask"), x=g.x, edge_attr=g.edge_attr)
 
 
 class DummyModel(torch.nn.Module):
@@ -61,40 +100,12 @@ def dummyexplainer():
 
 @pytest.fixture(scope="module")
 def dummyInput() -> Data:
-    return Data(
-        x=torch.randn(8, 3, requires_grad=True),
-        edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                                 [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
-        edge_attr=torch.randn(14, 3), target=torch.randn(14, 1))
+    return g
 
 
 @pytest.fixture(scope="module")
 def explanation_algorithm() -> ExplainerAlgorithm:
     return RandomExplainer()
-
-
-class GCNCcompatible(GCN):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.interface = Interface(graph_to_inputs=lambda x: {
-            "x": x.x,
-            "edge_index": x.edge_index
-        })
-
-    def forward(self, g, **kwargs):
-        return super().forward(**self.interface.graph_to_inputs(g))
-
-
-class GATCcompatible(GAT):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.interface = Interface(graph_to_inputs=lambda x: {
-            "x": x.x,
-            "edge_index": x.edge_index
-        })
-
-    def forward(self, g, **kwargs):
-        return super().forward(**self.interface.graph_to_inputs(g))
 
 
 models = [DummyModel(), DummyModel(2)]
@@ -222,3 +233,48 @@ def test_hard_threshold(dummyInput, threshold_value):
         assert torch.all(
             torch.masked_select(explanation_processed[exp], (
                 explanation_processed[exp] == 0)) <= threshold_value)
+
+
+@pytest.mark.parametrize("threshold_value", list(range(1, 10)))
+@pytest.mark.parametrize(
+    "explanation",
+    [constantExplanation(g), dummyExplanation(g)])
+def test_topk_threshold(explanation, threshold_value):
+    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+                          model=DummyModel(), model_return_type="regression",
+                          task_level="graph", explanation_type="phenomenon",
+                          mask_type="node_feat", threshold="topk",
+                          threshold_value=threshold_value)
+
+    exp_processed = explainer._threshold(explanation)
+    for exp in explanation.available_explanations:
+
+        if threshold_value < exp_processed[exp].numel():
+            assert torch.sum(exp_processed[exp] > 0) == threshold_value
+            assert torch.all(
+                torch.masked_select(explanation[exp], exp_processed[exp] > 0).
+                min() >= torch.masked_select(explanation[exp],
+                                             (exp_processed[exp] == 0)).max())
+        else:
+            assert torch.all(exp_processed[exp] == explanation[exp])
+
+
+@pytest.mark.parametrize("threshold_value", list(range(1, 10)))
+@pytest.mark.parametrize(
+    "explanation",
+    [constantExplanation(g), dummyExplanation(g)])
+def test_topk_hard_threshold(explanation, threshold_value):
+    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+                          model=DummyModel(), model_return_type="regression",
+                          task_level="graph", explanation_type="phenomenon",
+                          mask_type="node_feat", threshold="topk_hard",
+                          threshold_value=threshold_value)
+
+    exp_processed = explainer._threshold(explanation)
+    for exp in explanation.available_explanations:
+
+        if threshold_value < exp_processed[exp].numel():
+            assert torch.sum(exp_processed[exp] > 0) == threshold_value
+        else:
+            assert torch.sum(
+                exp_processed[exp] > 0) == exp_processed[exp].numel()

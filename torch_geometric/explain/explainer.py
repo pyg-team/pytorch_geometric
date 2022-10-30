@@ -14,7 +14,7 @@ class Threshold:
     """Class to store and validate threshold parameters."""
     type: str
     value: Union[float, int]
-    _valid_type = ["none", "hard", "topk", "connected"]
+    _valid_type = ["none", "hard", "topk", "connected", "topk_hard"]
 
     def __post_init__(self):
         if self.type not in self._valid_type:
@@ -28,7 +28,7 @@ class Threshold:
             if self.value < 0 or self.value > 1:
                 raise ValueError(f'Invalid threshold value {self.value}. '
                                  f'Valid values are in [0, 1].')
-        if self.type in ["topk", "connected"]:
+        if self.type in ["topk", "connected", "topk_hard"]:
             if self.value <= 0 or not isinstance(self.value, int):
                 raise ValueError(f'Invalid threshold value {self.value}. '
                                  f'Valid values are positif integers.')
@@ -126,7 +126,10 @@ class Explainer(torch.nn.Module):
             threshold (str, optional): type of threshold to apply after the
                 explanation algorithm. Valid inputs are :obj:`"nonde"`,
                 :obj:`"hard"`, :obj:`"topk"` and :obj:`"connected"`.
-                The thresholding is applied to each mask idependently.
+                The thresholding is applied to each mask idependently. For the
+                thresholding requirring a count, if the :obj:`threshold_value`
+                is bigger than the number of element in the mask, it will just
+                return the mask. (default: :obj:`"none"`)
 
                 1. :obj:`"none"`: no thresholding is applied.
 
@@ -134,11 +137,15 @@ class Explainer(torch.nn.Module):
                 values above the threshold are set to 1, and values below the
                 threshold are set to 0.
 
-                3. :obj:`"topk"`: the mask is thresholded to binary values:
-                    the :obj:`threshold_value` largest values are set to 1,
-                    and the rest are set to 0.
+                3. :obj:`"topk_hard"`: the mask is thresholded to binary
+                    values: the :obj:`threshold_value` largest values are set
+                    to 1, and the rest are set to 0.
 
-                4. :obj:`"connected"`: the mask is thresholded to binary values
+                4. :obj:`"topk"`: the mask is thresholded to values between 0
+                    and 1: the :obj:`threshold_value` largest values are left
+                    unchanged, and the rest are set to 0.
+
+                5. :obj:`"connected"`: the mask is thresholded to binary values
                     such that a connected component of size at least
                     :obj:`threshold_value` is kept. The rest is set to 0.
                     NotImplemnted for now.
@@ -306,15 +313,34 @@ class Explainer(torch.nn.Module):
             Returns:
                 Explanation: thresholded explanation.
         """
-        # retrieve masks that are not None
+
+        # avoid modification of the original explanation
+        explanation = explanation.clone()
+
+        # get the available mask
         available_mask_keys = explanation.available_explanations
         available_mask = [explanation[key] for key in available_mask_keys]
 
         if self.threshold.type == "hard":
             available_mask = [(mask > self.threshold.value).float()
                               for mask in available_mask]
-        if self.threshold.type == "topk":
-            raise NotImplementedError()
+
+        if self.threshold.type in ["topk", "topk_hard"]:
+            updated_masks = []
+            for mask in available_mask:
+                if self.threshold.value >= mask.numel():
+                    updated_mask = mask
+                else:
+                    topk_values, indices = torch.topk(input=mask.flatten(),
+                                                      k=self.threshold.value)
+                    updated_mask = torch.zeros_like(mask.flatten()).scatter_(
+                        0, indices, topk_values)
+
+                if self.threshold.type == "topk_hard":
+                    updated_mask = (updated_mask > 0).float()
+                updated_masks.append(updated_mask.reshape(mask.shape))
+            available_mask = updated_masks
+
         if self.threshold.type == "connected":
             raise NotImplementedError()
 
