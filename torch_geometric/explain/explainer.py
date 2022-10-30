@@ -93,78 +93,79 @@ class ModelConfig:
 
 
 class Explainer(torch.nn.Module):
-    r"""A user configuration class for the instance-level explanation of GNNS.
+    """A user configuration class for the instance-level explanation of GNNS.
 
-        Args:
-            explanation_algorithm (ExplainerAlgorithm): explanation algorithm
-                to be used. Should accept a `Data` object as input.
-                (see py:class:Interface for wrapping a model if needed).
-            model_return_type (str): denotes the type of output from
-                :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
-                returns the logarithm of probabilities), :obj:`"prob"` (the
-                model returns probabilities), :obj:`"raw"` (the model returns
-                raw scores) and :obj:`"regression"` (the model returns scalars)
-                (default: :obj:`"log_prob"`)
-            task_level (str, optional): type of task the :obj:`model` solves.
-                Can be in :obj:"graph" (e.g. graph classification/ regression),
-                :obj:"node" or :obj:"edge" (e.g. node/edge classificaiton).
-                (default: :obj:`"graph"`)
-            explanation_type (str, optional): :obj:`"phenomenon"` (explanation
-                of underlying phenomon) or :obj:`"model"` (explanation of model
-                prediction behaviour). See  "GraphFramEx: Towards Systematic
-                Evaluation of Explainability Methods for Graph Neural Networks"
-                <https://arxiv.org/abs/2206.09677> for more details.
-                (default: :obj:`"model"`)
-            mask_type (str, optional): Type of mask wanted. The masks are
-                between 0 and 1, and can be on the features of the nodes/edges,
-                or on the nodes/edges themselves. Valid inputs are
-                :obj:`"node"`, :obj:`"edge"`, :obj:`"node_and_edge"`,
-                :obj:`"layers"`, :obj:`"node_feat"`, :obj:`"edge_feat"`,
-                :obj:`"node_feat_and_edge_feat"`, :obj:`"node_feat_and_edge"`,
-                :obj:`"node_and_edge_feat"`.
+    Args:
+        explanation_algorithm (ExplainerAlgorithm): explanation algorithm
+            to be used. Should accept a `Data` object as input.
+            (see py:class:Interface for wrapping a model if needed).
+        model_return_type (str): denotes the type of output from
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
+            returns the logarithm of probabilities), :obj:`"prob"` (the
+            model returns probabilities), :obj:`"raw"` (the model returns
+            raw scores) and :obj:`"regression"` (the model returns scalars)
+            (default: :obj:`"log_prob"`)
+        task_level (str, optional): type of task the :obj:`model` solves.
+            Can be in :obj:"graph" (e.g. graph classification/ regression),
+            :obj:"node" or :obj:"edge" (e.g. node/edge classificaiton).
+            (default: :obj:`"graph"`)
+        explanation_type (str, optional): :obj:`"phenomenon"` (explanation
+            of underlying phenomon) or :obj:`"model"` (explanation of model
+            prediction behaviour). See  "GraphFramEx: Towards Systematic
+            Evaluation of Explainability Methods for Graph Neural Networks"
+            <https://arxiv.org/abs/2206.09677> for more details.
+            (default: :obj:`"model"`)
+        mask_type (str, optional): Type of mask wanted. The masks are
+            between 0 and 1, and can be on the features of the nodes/edges,
+            or on the nodes/edges themselves. Valid inputs are
+            :obj:`"node"`, :obj:`"edge"`, :obj:`"node_and_edge"`,
+            :obj:`"layers"`, :obj:`"node_feat"`, :obj:`"edge_feat"`,
+            :obj:`"node_feat_and_edge_feat"`, :obj:`"node_feat_and_edge"`,
+            :obj:`"node_and_edge_feat"`.
 
-            threshold (str, optional): type of threshold to apply after the
-                explanation algorithm. Valid inputs are :obj:`"nonde"`,
-                :obj:`"hard"`, :obj:`"topk"` and :obj:`"connected"`.
-                The thresholding is applied to each mask idependently. For the
-                thresholding requirring a count, if the :obj:`threshold_value`
-                is bigger than the number of element in the mask, it will just
-                return the mask. (default: :obj:`"none"`)
+        threshold (str, optional): type of threshold to apply after the
+            explanation algorithm. Valid inputs are :obj:`"nonde"`,
+            :obj:`"hard"`, :obj:`"topk"` and :obj:`"connected"`.
+            The thresholding is applied to each mask idependently. For the
+            thresholding requirring a count, if the :obj:`threshold_value`
+            is bigger than the number of element in the mask, it will just
+            return the mask. (default: :obj:`"none"`)
 
-                1. :obj:`"none"`: no thresholding is applied.
+            1. :obj:`"none"`: no thresholding is applied.
 
-                2. :obj:`"hard"`: the mask is thresholded to binary values:
-                values above the threshold are set to 1, and values below the
-                threshold are set to 0.
+            2. :obj:`"hard"`: the mask is thresholded to binary values:
+            values above the threshold are set to 1, and values below the
+            threshold are set to 0.
 
-                3. :obj:`"topk_hard"`: the mask is thresholded to binary
-                    values: the :obj:`threshold_value` largest values are set
-                    to 1, and the rest are set to 0.
+            3. :obj:`"topk_hard"`: the mask is thresholded to binary
+                values: the :obj:`threshold_value` largest values are set
+                to 1, and the rest are set to 0.
 
-                4. :obj:`"topk"`: the mask is thresholded to values between 0
-                    and 1: the :obj:`threshold_value` largest values are left
-                    unchanged, and the rest are set to 0.
+            4. :obj:`"topk"`: the mask is thresholded to values between 0
+                and 1: the :obj:`threshold_value` largest values are left
+                unchanged, and the rest are set to 0.
 
-                5. :obj:`"connected"`: the mask is thresholded to binary values
-                    such that a connected component of size at least
-                    :obj:`threshold_value` is kept. The rest is set to 0.
-                    NotImplemnted for now.
+            5. :obj:`"connected"`: the mask is thresholded to binary values
+                such that a connected component of size at least
+                :obj:`threshold_value` is kept. The rest is set to 0.
+                NotImplemnted for now.
 
-            threshold_value (Union[float,int]): Value to use for thresholding.
-                If :obj:`threshold` is :obj:`"hard"`, the value should be in
-                [0,1]. If :obj:`threshold` is :obj:`"topk"` or
-                :obj:`"connected"`, the value should be a positive integer.
-                (default: :obj:`1`)
+        threshold_value (Union[float,int]): Value to use for thresholding.
+            If :obj:`threshold` is :obj:`"hard"`, the value should be in
+            [0,1]. If :obj:`threshold` is :obj:`"topk"` or
+            :obj:`"connected"`, the value should be a positive integer.
+            (default: :obj:`1`)
 
-        Raises:
-            ValueError: for invalid inputs or if the explainer algorithm does
-                not support the given explanation settings
+    Raises:
+        ValueError: for invalid inputs or if the explainer algorithm does
+            not support the given explanation settings
 
-        . note::
+    .. note::
         If the model you are trying to explain does not take a `Data` object as
         input, you can use the `Interface` class to help you create a wrapper.
 
     .. code-block:: python
+
         class GCNCcompatible(GCN):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)

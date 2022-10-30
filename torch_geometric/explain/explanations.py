@@ -30,7 +30,7 @@ class Explanation(Data):
             (default: :obj:`None`)
         edge_features_mask (Tensor, optional): dim (n_edges, n_edge_features).
             (default: :obj:`None`)
-         **kwargs (optional): Additional attributes.
+        **kwargs (optional): Additional attributes.
     """
     def __init__(self, x: Optional[Tensor] = None,
                  edge_index: Optional[Tensor] = None,

@@ -1,1 +1,4 @@
-from .dummyexplainer import RandomExplainer  # noqa: F401
+from ..base import ExplainerAlgorithm
+from .dummyexplainer import RandomExplainer
+
+__all__ = ["ExplainerAlgorithm", "RandomExplainer"]
