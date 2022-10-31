@@ -44,7 +44,7 @@ def test_typecheck_attribute():
     d = get_sample_tensor_data()
 
     @typecheck
-    def forward(d: DataT["x":torch.Tensor]):
+    def forward(d: DataT["x":torch.Tensor]):  # noqa
         return d
 
     assert d == forward(d), "Return value is not the same as input"
@@ -57,7 +57,7 @@ def test_fully_specified():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x":torch.Tensor]):
+    def forward(d: DataT["x":torch.Tensor]):  # noqa
         return d
 
     with pytest.raises(TypeError):
@@ -68,7 +68,7 @@ def test_fuzzy_specification():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x":torch.Tensor, ...]):
+    def forward(d: DataT["x":torch.Tensor, ...]):  # noqa
         return d
 
     assert d == forward(d)
@@ -80,13 +80,13 @@ def test_tensor_shape_specification():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x":TensorType[-1, -1, 3], ...]):
+    def forward(d: DataT["x":TensorType[-1, -1, 3], ...]):  # noqa
         return d
 
     assert d == forward(d)
 
     @typecheck
-    def forward(d: DataT["x":TensorType[-1, 20, 3], ...]):
+    def forward(d: DataT["x":TensorType[-1, 20, 3], ...]):  # noqa
         return d
 
     with pytest.raises(TypeError):
@@ -100,7 +100,7 @@ def test_batch_shape_specification():
     b = Batch.from_data_list([d])
 
     @typecheck
-    def forward(d: BatchT["x":TensorType[-1, -1, 3], ...]):
+    def forward(d: BatchT["x":TensorType[-1, -1, 3], ...]):  # noqa
         return d
 
     assert b == forward(b)
@@ -113,7 +113,7 @@ def test_return_types():
 
     @typecheck
     def forward(
-            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 3]]:
+            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 3]]:  # noqa
         return x
 
     forward(d)
@@ -122,7 +122,7 @@ def test_return_types():
 
     @typecheck
     def forward(
-            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 30]]:
+            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 30]]:  # noqa
         return x
 
     with pytest.raises(TypeError):
@@ -148,12 +148,12 @@ def test_simple_typehint():
 
 def test_data_type_cannot_be_instantiated():
     with pytest.raises(TypeError):
-        x = DataT()
+        x = DataT()  # noqa
 
 
 def test_batch_type_cannot_be_instantiated():
     with pytest.raises(TypeError):
-        x = BatchT()
+        x = BatchT()  # noqa
 
 
 def test_non_torch_type():
@@ -161,8 +161,8 @@ def test_non_torch_type():
 
     @typecheck
     def forward(
-        x: DataT["x":torch.Tensor, "dictionary":Dict]
-    ) -> DataT["x":torch.Tensor, "dictionary":Dict]:
+        x: DataT["x":torch.Tensor, "dictionary":Dict]  # noqa
+    ) -> DataT["x":torch.Tensor, "dictionary":Dict]:  # noqa
         return x
 
     forward(d)
