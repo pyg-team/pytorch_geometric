@@ -11,7 +11,7 @@ def test_dense_graph_conv(aggr):
     channels = 16
     sparse_conv = GraphConv(channels, channels, aggr=aggr)
     dense_conv = DenseGraphConv(channels, channels, aggr=aggr)
-    assert dense_conv.__repr__() == 'DenseGraphConv(16, 16)'
+    assert str(dense_conv) == 'DenseGraphConv(16, 16)'
 
     # Ensure same weights and bias.
     dense_conv.lin_rel = sparse_conv.lin_rel
@@ -42,7 +42,6 @@ def test_dense_graph_conv_batch(aggr):
     channels = 16
     sparse_conv = GraphConv(channels, channels, aggr=aggr)
     dense_conv = DenseGraphConv(channels, channels, aggr=aggr)
-    assert dense_conv.__repr__() == 'DenseGraphConv(16, 16)'
 
     # Ensure same weights and bias.
     dense_conv.lin_rel = sparse_conv.lin_rel
@@ -76,10 +75,6 @@ def test_dense_graph_conv_batch(aggr):
 
     assert torch.allclose(sparse_out, dense_out[:5], atol=1e-04)
     assert dense_out[-1].abs().sum() == 0
-
-    if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])
