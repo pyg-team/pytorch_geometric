@@ -113,7 +113,7 @@ def test_return_types():
 
     @typecheck
     def forward(
-        x: DataT["x":torch.Tensor]
+        x: DataT["x":torch.Tensor]  # noqa
     ) -> DataT["x":TensorType[-1, -1, 3]]:  # noqa
         return x
 
@@ -123,7 +123,7 @@ def test_return_types():
 
     @typecheck
     def forward(
-        x: DataT["x":torch.Tensor]
+        x: DataT["x":torch.Tensor]  # noqa
     ) -> DataT["x":TensorType[-1, -1, 30]]:  # noqa
         return x
 
