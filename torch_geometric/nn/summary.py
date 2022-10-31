@@ -50,8 +50,7 @@ def summary(
         var_name, module, depth = stack.pop()
         module_id = id(module)
         if module_id in hooks:
-            for hook in hooks[module_id]:
-                hook.remove()
+            hooks[module_id].remove()
 
         info = {}
         info['name'] = var_name
