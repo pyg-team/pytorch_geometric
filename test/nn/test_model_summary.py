@@ -94,3 +94,12 @@ def test_moduledict_model():
     model = ModuleDictModel()
     x = torch.randn(100, 32)
     print(summary(model, x, 'prelu'))
+
+
+@withPackage('tabulate')
+def test_jit_model():
+    model = nn.Sequential(nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8))
+    model = torch.jit.script(model)
+
+    x = torch.randn(100, 32)
+    print(summary(model, x))

@@ -3,6 +3,7 @@ from typing import Any, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
+from torch.jit import ScriptModule
 
 
 def summary(
@@ -61,7 +62,9 @@ def summary(
         para = sum(p.numel() for p in module.parameters())
         info['#param'] = f"{para:,}" if para > 0 else "--"
         info_list.append(info)
-        hooks[module_id] = module.register_forward_hook(register_hook(info))
+        if not isinstance(module, ScriptModule):
+            hooks[module_id] = module.register_forward_hook(
+                register_hook(info))
         module_items = reversed(module._modules.items())
         stack += [(f"({name}){get_name(mod)}", mod, depth + 1)
                   for name, mod in module_items if mod is not None]
