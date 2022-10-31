@@ -116,7 +116,7 @@ class GNNExplainer(Explainer):
         self,
         log_logits: Tensor,
         prediction: Tensor,
-        node_idx: Optional[Tensor] = None,
+        node_idx: Optional[int] = None,
     ) -> Tensor:
         if self.return_type == 'regression':
             if node_idx is not None and node_idx >= 0:
@@ -210,7 +210,7 @@ class GNNExplainer(Explainer):
 
     def explain_node(
         self,
-        node_idx: Tensor,
+        node_idx: int,
         x: Tensor,
         edge_index: Tensor,
         **kwargs,
