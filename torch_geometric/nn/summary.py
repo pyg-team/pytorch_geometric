@@ -14,6 +14,7 @@ def summary(
     max_depth: int = 3,
     leaf_module: Union[nn.Module, Tuple[nn.Module],
                        Optional[nn.Module]] = MessagePassing,
+    **kwargs,
 ) -> str:
     r"""Summarizes the given PyTorch model. Summarized information includes
     (1) Layer names, (2) Input/output shapes, and (3) # of parameters.
@@ -37,8 +38,10 @@ def summary(
             Nested layers below this depth will not be displayed
             in the summary. (default: :obj:`"3"`)
         leaf_module (Union[nn.Module, Tuple[nn.Module], Optional[nn.Module]]):
-        Modules to be treated as leaf ones, whose submodules are excluded from
-        the the summarized information. (default: :obj:`"MessagePassing"`)
+            Modules to be treated as leaf ones, whose submodules are excluded
+            from the the summarized information.
+            (default: :obj:`"MessagePassing"`)
+        **kwargs: Other arguments used in `model.forward` function.
     """
     def register_hook(info):
         def hook(module, input, output):
@@ -83,7 +86,7 @@ def summary(
     model.eval()
     # make a forward pass
     with torch.no_grad():
-        model(*inputs)
+        model(*inputs, **kwargs)
     model.train(training)
 
     # remove hooks
