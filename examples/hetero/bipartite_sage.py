@@ -1,14 +1,15 @@
 import argparse
 import os.path as osp
 
-import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.nn import Embedding, Linear
+from torch.nn import Linear, Embedding
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
-from torch_geometric.nn import Embedding, SAGEConv
+from torch_geometric.nn import SAGEConv
+from torch_geometric.utils import to_dense_adj
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_weighted_loss', action='store_true',
@@ -20,10 +21,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 user_sim_dict_path = 'swing_user_sim_dict.json'
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
-data = dataset[0].to(device)
-
-data['user'].x = torch.LongTensor(torch.arange(
-    0, data['user'].num_nodes)).to(device)
+data = dataset[0]
+data['user'].x = torch.arange(data['user'].num_nodes)
+data = data.to(device)
 del data['user'].num_nodes
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
@@ -42,11 +42,9 @@ train_data, val_data, test_data = T.RandomLinkSplit(
 
 def to_u2i_mat(edge_index, i_num, u_num):
     # Convert bipartite edge_index format to matrix format
-    u2imat = torch.zeros((u_num, i_num))
-    for i in range(edge_index.shape[1]):
-        u2imat[edge_index[0][i], edge_index[1][i]] = 1
+    u2imat = to_dense_adj(edge_index)[0]
 
-    return u2imat
+    return u2imat[:u_num, :i_num]
 
 
 def get_coocur_mat(train_mat, num_neighbors):
@@ -62,34 +60,30 @@ def get_coocur_mat(train_mat, num_neighbors):
     beta_iD = (1 / torch.sqrt(items_D + 1)).reshape(1, -1)
     all_ii_constraint_mat = beta_uD @ beta_iD
 
-    for i in range(n_items):
-        row = all_ii_constraint_mat[i] * A[i]
-        row_sims, row_idxs = torch.topk(row, num_neighbors)
-        res_mat[i] = row_idxs
-        res_sim_mat[i] = row_sims
+    norm_A = all_ii_constraint_mat * A
+    res_sim_mat, res_mat = torch.topk(norm_A, num_neighbors, dim=1)
 
     return res_mat.long(), res_sim_mat.float()
 
 
 def get_i2i_sim_graph(i2imat, i2isimmat):
-    # Generate the i2i graph from the co-occurrence matrix
-    i2i, i2i_sim = [[], []], []
-    for i in range(len(i2imat)):
-        # Filter nodes with no neighbors in co-occurrence matrix
-        if i2imat[i][0] == i and i2isimmat[i][0] > 1e-5:
-            i2i_sim.append(i2isimmat[i][1:])
-            for j in i2imat[i]:
-                i2i[0].append(i)
-                i2i[1].append(j)
+    # Generate the i2i graph from the co-occurrence matrix with filters
+    mask, len = i2isimmat > 1e-5, i2imat[0].size(0)
+    mask = torch.tensor([torch.zeros(len, dtype=torch.bool).tolist()
+                         if v[0] != i else mask[i].tolist()
+                         for i, v in enumerate(i2imat)])
+    i2imat[~mask] = -1
+    i2i_edge_idx = [[i, j] for i, v in enumerate(i2imat[:, 1:])
+                    for j in v if j >= 0]
 
-    return torch.tensor(i2i), torch.stack(i2i_sim)
+    return torch.tensor(i2i_edge_idx).T
 
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', 'rates', 'movie')],
                      train_data['movie'].x.shape[0],
                      train_data['user'].x.shape[0])
 i2i_mat, i2i_sim_mat = get_coocur_mat(u2i_mat, 9)
-i2i, _ = get_i2i_sim_graph(i2i_mat, i2i_sim_mat)
+i2i = get_i2i_sim_graph(i2i_mat, i2i_sim_mat)
 
 # Add the generated i2i graph for high-order information
 train_data[('movie', 'sims', 'movie')].edge_index = i2i.to(device)
@@ -119,17 +113,10 @@ class ItemGNNEncoder(torch.nn.Module):
         self.lin1 = Linear(hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, out_channels)
 
-    def reset_parameters(self):
-        self.conv1.reset_parameters()
-        self.conv2.reset_parameters()
-        self.lin1.reset_parameters()
-        self.lin2.reset_parameters()
-
-    def forward(self, x_dict, edge_index_dict):
-        h = x_dict['movie']
-        h = self.conv1(h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
+    def forward(self, h, edge_index):
+        h = self.conv1(h, edge_index).relu()
         h = self.lin1(h).relu()
-        h = self.conv2(h, edge_index_dict[('movie', 'sims', 'movie')]).relu()
+        h = self.conv2(h, edge_index).relu()
         h = self.lin2(h)
         return h
 
@@ -145,13 +132,6 @@ class UserGNNEncoder(torch.nn.Module):
         self.lin2 = Linear(hidden_channels, hidden_channels)
         self.lin3 = Linear(hidden_channels, out_channels)
 
-    def reset_parameters(self):
-        self.conv1.reset_parameters()
-        self.conv2.reset_parameters()
-        self.conv3.reset_parameters()
-        self.lin1.reset_parameters()
-        self.lin2.reset_parameters()
-        self.lin3.reset_parameters()
 
     def forward(self, x_dict, edge_index_dict):
         h = x_dict['movie']
@@ -176,10 +156,6 @@ class EdgeDecoder(torch.nn.Module):
         self.lin1 = Linear(2 * hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, 1)
 
-    def reset_parameters(self):
-        self.lin1.reset_parameters()
-        self.lin2.reset_parameters()
-
     def forward(self, z_dict, edge_label_index):
         row, col = edge_label_index
         z = torch.cat([z_dict['user'][row], z_dict['movie'][col]], dim=-1)
@@ -192,21 +168,16 @@ class EdgeDecoder(torch.nn.Module):
 class Model(torch.nn.Module):
     def __init__(self, input_size, hidden_channels, out_channels):
         super().__init__()
+        self.user_emb = Embedding(input_size, hidden_channels, device=device)
         self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.decoder = EdgeDecoder(hidden_channels)
-        self.user_emb = Embedding(input_size, hidden_channels, device=device)
-
-    def reset_parameters(self):
-        self.item_encoder.reset_parameters()
-        self.user_encoder.reset_parameters()
-        self.decoder.reset_parameters()
-        self.user_emb.reset_parameters()
 
     def forward(self, x_dict, edge_index_dict, edge_label_index):
         z_dict = {}
         x_dict['user'] = self.user_emb(x_dict['user'])
-        z_dict['movie'] = self.item_encoder(x_dict, edge_index_dict)
+        z_dict['movie'] = self.item_encoder(
+            x_dict['movie'], edge_index_dict[('movie', 'sims', 'movie')])
         z_dict['user'] = self.user_encoder(x_dict, edge_index_dict)
 
         return self.decoder(z_dict, edge_label_index)
@@ -214,6 +185,8 @@ class Model(torch.nn.Module):
 
 model = Model(input_size=data['user'].x.size(0), hidden_channels=64,
               out_channels=64).to(device)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
 
 
 def train():
@@ -239,24 +212,11 @@ def test(data):
     return float(rmse)
 
 
-test_rmses = []
-for run in range(10):
-    print('')
-    print(f'Run {run:02d}:')
-    print('')
-
-    model.reset_parameters()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
-
-    for epoch in range(1, 701):
-        loss = train()
-        train_rmse = test(train_data)
-        val_rmse = test(val_data)
-        test_rmse = test(test_data)
-        print(
-            f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
-            f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
-    test_rmses.append(test_rmse)
-
-print('=======================================')
-print(f'Final Test: {np.mean(test_rmses):.4f} ± {np.std(test_rmses):.4f}')
+for epoch in range(1, 701):
+    loss = train()
+    train_rmse = test(train_data)
+    val_rmse = test(val_data)
+    test_rmse = test(test_data)
+    print(
+        f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
+        f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
