@@ -43,6 +43,8 @@ def test_basic_summary() -> None:
 
     print(summary(model, x, edge_index, max_depth=1))
 
+    print(summary(model, x, edge_index, leaf_module=None))
+
     # test deep models
     model = GCN(32, 16, num_layers=20, out_channels=32)
     print(summary(model, x, edge_index))

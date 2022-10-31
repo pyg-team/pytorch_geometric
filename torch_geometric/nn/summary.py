@@ -1,15 +1,19 @@
 from collections import defaultdict
-from typing import Any, Sequence, Tuple, Union
+from typing import Any, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
 from torch.jit import ScriptModule
+
+from torch_geometric.nn.conv import MessagePassing
 
 
 def summary(
     model: nn.Module,
     *inputs: Sequence[Any],
     max_depth: int = 3,
+    leaf_module: Union[nn.Module, Tuple[nn.Module],
+                       Optional[nn.Module]] = MessagePassing,
 ) -> str:
     r"""Summarizes the given PyTorch model. Summarized information includes
     (1) Layer names, (2) Input/output shapes, and (3) # of parameters.
@@ -32,6 +36,9 @@ def summary(
         max_depth (int): Depth of nested layers to display.
             Nested layers below this depth will not be displayed
             in the summary. (default: :obj:`"3"`)
+        leaf_module (Union[nn.Module, Tuple[nn.Module], Optional[nn.Module]]):
+        Modules to be treated as leaf ones, whose submodules are excluded from
+        the the summarized information. (default: :obj:`"MessagePassing"`)
     """
     def register_hook(info):
         def hook(module, input, output):
@@ -49,6 +56,7 @@ def summary(
     output_shape = defaultdict(list)
     while stack:
         var_name, module, depth = stack.pop()
+
         module_id = id(module)
         if module_id in hooks:
             hooks[module_id].remove()
@@ -65,6 +73,8 @@ def summary(
         if not isinstance(module, ScriptModule):
             hooks[module_id] = module.register_forward_hook(
                 register_hook(info))
+        if (leaf_module is not None and isinstance(module, leaf_module)):
+            continue
         module_items = reversed(module._modules.items())
         stack += [(f"({name}){get_name(mod)}", mod, depth + 1)
                   for name, mod in module_items if mod is not None]
