@@ -113,7 +113,8 @@ def test_return_types():
 
     @typecheck
     def forward(
-            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 3]]:  # noqa
+        x: DataT["x":torch.Tensor]
+    ) -> DataT["x":TensorType[-1, -1, 3]]:  # noqa
         return x
 
     forward(d)
@@ -122,7 +123,8 @@ def test_return_types():
 
     @typecheck
     def forward(
-            x: DataT["x":torch.Tensor]) -> DataT["x":TensorType[-1, -1, 30]]:  # noqa
+        x: DataT["x":torch.Tensor]
+    ) -> DataT["x":TensorType[-1, -1, 30]]:  # noqa
         return x
 
     with pytest.raises(TypeError):
