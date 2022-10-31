@@ -3,9 +3,10 @@ from torch import Tensor, nn
 
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
+from torch_geometric.testing import withPackage
 
 
-class HeteroGNN(torch.nn.Module):
+class SAGE(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(16, 16)
@@ -20,7 +21,6 @@ class HeteroGNN(torch.nn.Module):
 
 
 class ModuleDictModel(nn.Module):
-    """Model that uses a ModuleDict."""
     def __init__(self):
         super().__init__()
         self.activations = nn.ModuleDict({
@@ -33,6 +33,7 @@ class ModuleDictModel(nn.Module):
         return x
 
 
+@withPackage('tabulate')
 def test_basic_summary() -> None:
 
     model = GCN(32, 16, num_layers=2, out_channels=32)
@@ -47,6 +48,7 @@ def test_basic_summary() -> None:
     print(summary(model, x, edge_index))
 
 
+@withPackage('tabulate')
 def test_reusing_activation_layers():
     act = nn.ReLU(inplace=True)
     model1 = nn.Sequential(act, nn.Identity(), act, nn.Identity(), act)
@@ -65,7 +67,8 @@ def test_reusing_activation_layers():
     assert len(result_1) == len(result_2)
 
 
-def test_hetero() -> None:
+@withPackage('tabulate')
+def test_hetero():
 
     x_dict = {
         'paper': torch.randn(100, 16),
@@ -80,11 +83,12 @@ def test_hetero() -> None:
         torch.randint(100, (2, 200), dtype=torch.long),
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
-    model = HeteroGNN()
+    model = SAGE()
     model = to_hetero(model, metadata, debug=False)
     print(summary(model, x_dict, edge_index_dict))
 
 
+@withPackage('tabulate')
 def test_moduledict_model():
 
     model = ModuleDictModel()
