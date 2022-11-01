@@ -202,7 +202,7 @@ def test_new_type():
     with pytest.raises(TypeError):
         forward("string")
 
-    @typecheck
+    @typecheck(strict=True)
     def forward(x: DataT["x":example_type]):
         return x
 

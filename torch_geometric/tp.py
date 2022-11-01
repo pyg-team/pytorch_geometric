@@ -64,7 +64,7 @@ def _check(hint, argument_name, value):
                         attribute {colname}")
 
 
-def typecheck(f: Callable) -> Callable:
+def typecheck(f: Callable, strict: bool = False) -> Callable:
     """Typechecking decorator."""
     signature = inspect.signature(f)
     hints = get_type_hints(f)
@@ -78,6 +78,9 @@ def typecheck(f: Callable) -> Callable:
             if argument_name in hints and (isinstance(hint,
                                                       (DataMeta, BatchMeta))):
                 _check(hint, argument_name, value)
+            elif argument name in hints and not (isinstance(hint, (DataMeta, BatchMeta))) and strict:
+                if not isinstance(value, hint):
+                    raise TypeError(f"{argument_name} is not {hint} {type(value)}")
         # Check return values
         if "return" in hints.keys():
             out_hint = hints["return"]
