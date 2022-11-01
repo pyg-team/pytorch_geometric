@@ -219,5 +219,3 @@ def test_nested_data():
 
     with pytest.raises(TypeError):
         forward(torch.randn((1, 2, 3)))
-
-
