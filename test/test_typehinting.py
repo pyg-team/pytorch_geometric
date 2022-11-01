@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, NewType
 
 import pytest
 import torch
@@ -41,6 +41,21 @@ def get_sample_dictionary_data() -> Data:
 
 
 def test_typecheck_attribute():
+    d = get_sample_tensor_data()
+
+    @typecheck
+    def forward(d: DataT["x"]):
+        return x
+
+    assert d == forward(d), "return value does not match."
+
+    non_compliant = Data()
+    non_compliant.y = torch.randn((1,2,3))
+
+    with pytest.raises(TypeError):
+        forward(non_compliant)
+
+def test_typecheck_attribute_type():
     d = get_sample_tensor_data()
 
     @typecheck
@@ -168,3 +183,41 @@ def test_non_torch_type():
         return x
 
     forward(d)
+
+
+def test_new_type():
+    example_type = NewType("example_type", torch.Tensor)
+
+    @typecheck
+    def forward(
+        x: example_type
+    )
+        return x
+
+    x = torch.randn((1, 2, 3))
+    assert x == forward(x), "Input does not match."
+
+    with pytest.raises(TypeError):
+        forward("string")
+
+
+@pytest.mark.skipif(not TORCHTYPING_AVAILABLE,
+                    reason="torchtyping not available")
+def test_nested_data():
+    inner = Data()
+    inner.x = torch.randn((1, 2, 3))
+    outer = Data()
+    outer.data = inner
+
+    @typecheck
+    def forward(x: DataT["data": DataT[TensorType[-1, -1, 3]]]
+    )
+        return x
+
+    assert outer == forward(outer), "Return value does not match"
+
+
+    with pytest.raises(TypeError):
+        forward(torch.randn((1, 2, 3)))
+
+
