@@ -3,13 +3,12 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Linear, Embedding
+from torch.nn import Embedding, Linear
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
 from torch_geometric.nn import SAGEConv
 from torch_geometric.utils import to_dense_adj
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_weighted_loss', action='store_true',
@@ -69,12 +68,13 @@ def get_coocur_mat(train_mat, num_neighbors):
 def get_i2i_sim_graph(i2imat, i2isimmat):
     # Generate the i2i graph from the co-occurrence matrix with filters
     mask, len = i2isimmat > 1e-5, i2imat[0].size(0)
-    mask = torch.tensor([torch.zeros(len, dtype=torch.bool).tolist()
-                         if v[0] != i else mask[i].tolist()
-                         for i, v in enumerate(i2imat)])
+    mask = torch.tensor([
+        torch.zeros(len, dtype=torch.bool).tolist()
+        if v[0] != i else mask[i].tolist() for i, v in enumerate(i2imat)
+    ])
     i2imat[~mask] = -1
-    i2i_edge_idx = [[i, j] for i, v in enumerate(i2imat[:, 1:])
-                    for j in v if j >= 0]
+    i2i_edge_idx = [[i, j] for i, v in enumerate(i2imat[:, 1:]) for j in v
+                    if j >= 0]
 
     return torch.tensor(i2i_edge_idx).T
 
@@ -131,7 +131,6 @@ class UserGNNEncoder(torch.nn.Module):
         self.lin1 = Linear(hidden_channels, hidden_channels)
         self.lin2 = Linear(hidden_channels, hidden_channels)
         self.lin3 = Linear(hidden_channels, out_channels)
-
 
     def forward(self, x_dict, edge_index_dict):
         h = x_dict['movie']
@@ -217,6 +216,5 @@ for epoch in range(1, 701):
     train_rmse = test(train_data)
     val_rmse = test(val_data)
     test_rmse = test(test_data)
-    print(
-        f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
-        f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
+    print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
+          f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
