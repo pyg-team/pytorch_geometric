@@ -23,7 +23,6 @@ def to_csr_csc(edge_index):
         >>> dgnn_adj
         ([0,2,3],[0, 1, 0],[0, 2, 3],[0, 1, 0],[2, 1, 0])
     """
-    # print(edge_index.device)
     numlist = torch.arange(edge_index.size(1), dtype=torch.int32,
                            device=edge_index.device)
     coo = torch.sparse_coo_tensor(edge_index, numlist).coalesce()
