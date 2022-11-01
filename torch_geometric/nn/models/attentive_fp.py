@@ -79,17 +79,10 @@ class AttentiveFP(torch.nn.Module):
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
 
     """
-    def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        out_channels: int,
-        edge_dim: int,
-        num_layers: int,
-        num_timesteps: int,
-        dropout: float = 0.0,
-        jittable: bool = False
-    ):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, edge_dim: int, num_layers: int,
+                 num_timesteps: int, dropout: float = 0.0,
+                 jittable: bool = False):
         super().__init__()
 
         self.num_layers = num_layers
@@ -99,19 +92,18 @@ class AttentiveFP(torch.nn.Module):
         self.lin1 = Linear(in_channels, hidden_channels)
 
         conv = GATEConv(hidden_channels, hidden_channels, edge_dim, dropout)
-        if(jittable):
+        if (jittable):
             conv = conv.jittable()
         gru = GRUCell(hidden_channels, hidden_channels)
         self.gate_conv = conv
         self.gru = gru
-        
 
         self.atom_convs = torch.nn.ModuleList()
         self.atom_grus = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
             conv = GATConv(hidden_channels, hidden_channels, dropout=dropout,
                            add_self_loops=False, negative_slope=0.01)
-            if(jittable):
+            if (jittable):
                 conv = conv.jittable()
             self.atom_convs.append(conv)
             self.atom_grus.append(GRUCell(hidden_channels, hidden_channels))
@@ -119,7 +111,7 @@ class AttentiveFP(torch.nn.Module):
         self.mol_conv = GATConv(hidden_channels, hidden_channels,
                                 dropout=dropout, add_self_loops=False,
                                 negative_slope=0.01)
-        if(jittable):
+        if (jittable):
             self.mol_conv = self.mol_conv.jittable()
         self.mol_gru = GRUCell(hidden_channels, hidden_channels)
 
