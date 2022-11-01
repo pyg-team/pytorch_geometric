@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Dict, NewType
 
 import pytest
@@ -13,6 +14,8 @@ except ImportError:
 from torch_geometric.data import Batch, Data
 from torch_geometric.tp import BatchT, DataT, typecheck
 
+
+assert_equal = partial(torch.testing.assert_close, rtol=0, atol=0)
 
 def get_sample_tensor_data() -> Data:
     d = Data()
@@ -45,7 +48,7 @@ def test_typecheck_attribute():
 
     @typecheck
     def forward(d: DataT["x"]):
-        return x
+        return d
 
     assert d == forward(d), "return value does not match."
 
@@ -194,10 +197,21 @@ def test_new_type():
         return x
 
     x = torch.randn((1, 2, 3))
-    assert x == forward(x), "Input does not match."
+    assert_equal(x, forward(x))
 
     with pytest.raises(TypeError):
         forward("string")
+
+    @typecheck
+    def forward(x: DataT["x":example_type]):
+        return x
+
+    x = get_sample_tensor_data()
+    assert x == forward(x), "Return value does not match"
+
+    with pytest.raises(TypeError):
+        x = get_sample_string_data()
+        forward(x)
 
 
 @pytest.mark.skipif(not TORCHTYPING_AVAILABLE,
