@@ -42,7 +42,8 @@ class GATEConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj, edge_attr: Tensor) -> Tensor:
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
+        # propagate_type: (x: Tensor, edge_attr: Tensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
         out = out + self.bias
         return out
 
@@ -87,6 +88,7 @@ class AttentiveFP(torch.nn.Module):
         num_layers: int,
         num_timesteps: int,
         dropout: float = 0.0,
+        jittable: bool = False
     ):
         super().__init__()
 
@@ -97,18 +99,28 @@ class AttentiveFP(torch.nn.Module):
         self.lin1 = Linear(in_channels, hidden_channels)
 
         conv = GATEConv(hidden_channels, hidden_channels, edge_dim, dropout)
+        if(jittable):
+            conv = conv.jittable()
         gru = GRUCell(hidden_channels, hidden_channels)
-        self.atom_convs = torch.nn.ModuleList([conv])
-        self.atom_grus = torch.nn.ModuleList([gru])
+        self.gate_conv = conv
+        self.gru = gru
+        
+
+        self.atom_convs = torch.nn.ModuleList()
+        self.atom_grus = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
             conv = GATConv(hidden_channels, hidden_channels, dropout=dropout,
                            add_self_loops=False, negative_slope=0.01)
+            if(jittable):
+                conv = conv.jittable()
             self.atom_convs.append(conv)
             self.atom_grus.append(GRUCell(hidden_channels, hidden_channels))
 
         self.mol_conv = GATConv(hidden_channels, hidden_channels,
                                 dropout=dropout, add_self_loops=False,
                                 negative_slope=0.01)
+        if(jittable):
+            self.mol_conv = self.mol_conv.jittable()
         self.mol_gru = GRUCell(hidden_channels, hidden_channels)
 
         self.lin2 = Linear(hidden_channels, out_channels)
@@ -117,6 +129,8 @@ class AttentiveFP(torch.nn.Module):
 
     def reset_parameters(self) -> None:
         self.lin1.reset_parameters()
+        self.gate_conv.reset_parameters()
+        self.gru.reset_parameters()
         for conv, gru in zip(self.atom_convs, self.atom_grus):
             conv.reset_parameters()
             gru.reset_parameters()
@@ -130,11 +144,11 @@ class AttentiveFP(torch.nn.Module):
         # Atom Embedding:
         x = F.leaky_relu_(self.lin1(x))
 
-        h = F.elu_(self.atom_convs[0](x, edge_index, edge_attr))
+        h = F.elu_(self.gate_conv(x, edge_index, edge_attr))
         h = F.dropout(h, p=self.dropout, training=self.training)
-        x = self.atom_grus[0](h, x).relu_()
+        x = self.gru(h, x).relu_()
 
-        for conv, gru in zip(self.atom_convs[1:], self.atom_grus[1:]):
+        for conv, gru in zip(self.atom_convs, self.atom_grus):
             h = F.elu_(conv(x, edge_index))
             h = F.dropout(h, p=self.dropout, training=self.training)
             x = gru(h, x).relu_()
