@@ -14,8 +14,8 @@ except ImportError:
 from torch_geometric.data import Batch, Data
 from torch_geometric.tp import BatchT, DataT, typecheck
 
-
 assert_equal = partial(torch.testing.assert_close, rtol=0, atol=0)
+
 
 def get_sample_tensor_data() -> Data:
     d = Data()
