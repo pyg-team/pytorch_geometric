@@ -210,7 +210,7 @@ def test_nested_data():
     outer.data = inner
 
     @typecheck
-    def forward(x: DataT["data": DataT[TensorType[-1, -1, 3]]]
+    def forward(x: DataT["data": DataT["x": TensorType[-1, -1, 3]]]
     )
         return x
 
