@@ -110,13 +110,14 @@ for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model],
     max_usage = 0.0
     start_time.record()
     for epoch in range(1, args.epochs + 1):
-        max_usage = max(max_usage,torch.cuda.max_memory_allocated(device)/1024/1024/1024)
+        max_usage = max(
+            max_usage,
+            torch.cuda.max_memory_allocated(device) / 1024 / 1024 / 1024)
         loss = train(model, optimizer, data)
     end_time.record()
     torch.cuda.synchronize()
     benchmark_info[name]['memory_usage/GB'] = max_usage
-    benchmark_info[name]['train_time/ms'] =  start_time.elapsed_time(end_time)
+    benchmark_info[name]['train_time/ms'] = start_time.elapsed_time(end_time)
 
 print('Benchmark info:')
 print(benchmark_info)
-
