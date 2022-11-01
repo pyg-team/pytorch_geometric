@@ -2,22 +2,22 @@ import torch
 
 
 def to_csr_csc(edge_index):
-    """Generate csr and csc tensor based on the coordinates:
-    obj: `edge_index` of the non-zero numbers of the sparse matrix.
+    """Generate csr and csc tensor based on the coordinates:obj: `edge_index`
+    of the non-zero numbers of the sparse matrix.
 
     The method returns the csr and csc tensor : obj: `csr_csc` (tuple).
+    
     The data at each position of the tuple is represented as follows.
         (1) row_ptr: crow_indices in csr
         (2) col_idx: col_indices in csr
         (3) col_ptr: crow_indices in csc
         (4) row_idx: col_indices in csc
         (5) premute: sort order
-        Arg:
+    Arg:
         edge_index(list or : obj:`torch.tensor`):
         The coordinates of the non-zero numbers of the sparse matrix
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
         >>> # (0,1),(1,0) (0,0) are the non-zero numbers
         >>> dgnn_adj = to_csr_csc(edge_index)
