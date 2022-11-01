@@ -13,18 +13,6 @@ def to_csr_csc(edge_index):
         (4) row_idx: col_indices in csc
         (5) premute: sort order
 
-    Arg:
-        edge_index(list or : obj:`torch.tensor`):
-        The coordinates of the non-zero numbers of the sparse matrix
-
-    Examples:
-
-        >>> edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
-        >>> # (0,1),(1,0) (0,0) are the non-zero numbers
-        >>> dgnn_adj = to_csr_csc(edge_index)
-        >>> dgnn_adj
-        ([0,2,3],[0, 1, 0],[0, 2, 3],[0, 1, 0],[2, 1, 0])
-
     """
     numlist = torch.arange(edge_index.size(1), dtype=torch.int32,
                            device=edge_index.device)
