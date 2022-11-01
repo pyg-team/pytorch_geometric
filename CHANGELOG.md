@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
-- Added bipartite `GraphSage` example ([#5834](https://github.com/pyg-team/pytorch_geometric/pull/5834))
+- Adde bipartite `GraphSAGE` example ([#5834](https://github.com/pyg-team/pytorch_geometric/pull/5834))
 - Enable VTune ITT in inference benchmarks ([#5830](https://github.com/pyg-team/pytorch_geometric/pull/5830))
 - Add training benchmark ([#5774](https://github.com/pyg-team/pytorch_geometric/pull/5774))
 - Added a "Link Prediction on MovieLens" Colab notebook ([#5823](https://github.com/pyg-team/pytorch_geometric/pull/5823))
