@@ -55,6 +55,7 @@ def test_typecheck_attribute():
     with pytest.raises(TypeError):
         forward(non_compliant)
 
+
 def test_typecheck_attribute_type():
     d = get_sample_tensor_data()
 
@@ -191,7 +192,7 @@ def test_new_type():
     @typecheck
     def forward(
         x: example_type
-    )
+    ):
         return x
 
     x = torch.randn((1, 2, 3))
@@ -211,7 +212,7 @@ def test_nested_data():
 
     @typecheck
     def forward(x: DataT["data": DataT["x": TensorType[-1, -1, 3]]]
-    )
+    ):
         return x
 
     assert outer == forward(outer), "Return value does not match"
