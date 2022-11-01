@@ -78,9 +78,11 @@ def typecheck(f: Callable, strict: bool = False) -> Callable:
             if argument_name in hints and (isinstance(hint,
                                                       (DataMeta, BatchMeta))):
                 _check(hint, argument_name, value)
-            elif argument_name in hints and not (isinstance(hint, (DataMeta, BatchMeta))) and strict:
+            elif argument_name in hints and not (isinstance(
+                    hint, (DataMeta, BatchMeta))) and strict:
                 if not isinstance(value, hint):
-                    raise TypeError(f"{argument_name} is not {hint} {type(value)}")
+                    raise TypeError(
+                        f"{argument_name} is not {hint} {type(value)}")
         # Check return values
         if "return" in hints.keys():
             out_hint = hints["return"]
