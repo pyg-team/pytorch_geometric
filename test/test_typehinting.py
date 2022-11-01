@@ -50,7 +50,7 @@ def test_typecheck_attribute():
     assert d == forward(d), "return value does not match."
 
     non_compliant = Data()
-    non_compliant.y = torch.randn((1,2,3))
+    non_compliant.y = torch.randn((1, 2, 3))
 
     with pytest.raises(TypeError):
         forward(non_compliant)
@@ -190,9 +190,7 @@ def test_new_type():
     example_type = NewType("example_type", torch.Tensor)
 
     @typecheck
-    def forward(
-        x: example_type
-    ):
+    def forward(x: example_type):
         return x
 
     x = torch.randn((1, 2, 3))
@@ -211,12 +209,10 @@ def test_nested_data():
     outer.data = inner
 
     @typecheck
-    def forward(x: DataT["data": DataT["x": TensorType[-1, -1, 3]]]
-    ):
+    def forward(x: DataT["data":DataT["x":TensorType[-1, -1, 3]]]):
         return x
 
     assert outer == forward(outer), "Return value does not match"
-
 
     with pytest.raises(TypeError):
         forward(torch.randn((1, 2, 3)))
