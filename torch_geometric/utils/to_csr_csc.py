@@ -6,7 +6,7 @@ def to_csr_csc(edge_index):
     of the non-zero numbers of the sparse matrix.
 
     The method returns the csr and csc tensor : obj: `csr_csc` (tuple).
-    
+
     The data at each position of the tuple is represented as follows.
         (1) row_ptr: crow_indices in csr
         (2) col_idx: col_indices in csr
