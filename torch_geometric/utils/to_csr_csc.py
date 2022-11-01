@@ -2,6 +2,19 @@ import torch
 
 
 def to_csr_csc(edge_index):
+    '''
+    Generate csr and csc tensor based on the coordinates of 
+    the non-zero numbers of the sparse matrix
+
+    input: edge_index,the coordinates of the non-zero numbers of the sparse matrix
+    return: (row_ptr, col_idx, col_ptr, row_idx, permute)
+    row_ptr: crow_indices in csr
+    col_idx: col_indices in csr
+    col_ptr: crow_indices in csc
+    row_idx: col_indices in csc
+    premute: sort order / permute matrix
+    '''
+    # print(edge_index.device)
     numlist = torch.arange(edge_index.size(1), dtype=torch.int32,
                            device=edge_index.device)
     coo = torch.sparse_coo_tensor(edge_index, numlist).coalesce()

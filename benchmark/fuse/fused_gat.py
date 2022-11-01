@@ -100,20 +100,25 @@ start_time = torch.cuda.Event(enable_timing=True)
 end_time = torch.cuda.Event(enable_timing=True)
 
 # train and test model
+
 for data, model, name in zip([pyg_data, dgNN_data], [pyg_model, dgNN_model],
                              ['pyg', 'dgNN']):
     print('{} train on dataset: {}'.format(name, dataset.name))
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005,
                                  weight_decay=5e-4)
-    best_val_acc = final_test_acc = 0
     # record training time
+    torch.cuda.reset_peak_memory_stats()
+    max_usage = 0.0
     start_time.record()
     for epoch in range(1, args.epochs + 1):
+        max_usage = max(max_usage,torch.cuda.max_memory_allocated(device)/1024/1024/1024)
         loss = train(model, optimizer, data)
     end_time.record()
     torch.cuda.synchronize()
+    benchmark_info[name]['memory usage'] = max_usage
+    benchmark_info[name]['train_time'] =  start_time.elapsed_time(end_time)
 
-    benchmark_info[name]['train_time'] = start_time.elapsed_time(end_time)
-
+# benchmark_info['memory maximum allocated'] = torch.cuda.max_memory_allocated(device)/1024/1024/1024
 print('Benchmark info:')
 print(benchmark_info)
+

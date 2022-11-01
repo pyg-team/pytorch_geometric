@@ -302,4 +302,4 @@ def test_to_dgnn():
     assert dgnn_adj[1].tolist() == [0, 1, 0]
     assert dgnn_adj[2].tolist() == [0, 2, 3]
     assert dgnn_adj[3].tolist() == [0, 1, 0]
-    assert dgnn_adj[4].tolist() == [2, 1, 0]
+    assert dgnn_adj[4].tolist() == [2, 1, 0] # [0, 2, 1]
