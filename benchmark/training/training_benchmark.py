@@ -24,7 +24,11 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)
+        if hasattr(batch, 'adj_t'):
+            edge_index = batch.adj_t
+        else:
+            edge_index = batch.edge_index
+        out = model(batch.x, edge_index)
         batch_size = batch.batch_size
         out = out[:batch_size]
         target = batch.y[:batch_size]
@@ -40,7 +44,11 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        out = model(batch.x_dict, batch.edge_index_dict)
+        if len(batch.adj_t_dict) > 0:
+            edge_index_dict = batch.adj_t_dict
+        else:
+            edge_index_dict = batch.edge_index_dict
+        out = model(batch.x_dict, edge_index_dict)
         batch_size = batch['paper'].batch_size
         out = out['paper'][:batch_size]
         target = batch['paper'].y[:batch_size]
