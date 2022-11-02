@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -142,10 +142,13 @@ def run(args: argparse.ArgumentParser) -> None:
                                       device, progress_bar=progress_bar,
                                       desc="Warmup")
                             with timeit(avg_time_divisor=args.num_epochs):
-                                for epoch in range(args.num_epochs):
-                                    train(model, subgraph_loader, optimizer,
-                                          device, progress_bar=progress_bar,
-                                          desc=f"Epoch={epoch}")
+                                # becomes a no-op if vtune_profile == False
+                                with emit_itt(args.vtune_profile):
+                                    for epoch in range(args.num_epochs):
+                                        train(model, subgraph_loader,
+                                              optimizer, device,
+                                              progress_bar=progress_bar,
+                                              desc=f"Epoch={epoch}")
 
                             if args.profile:
                                 with torch_profile():
@@ -186,6 +189,7 @@ if __name__ == '__main__':
     argparser.add_argument('--num-workers', default=2, type=int)
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
+    argparser.add_argument('--vtune-profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
     argparser.add_argument('--no-progress-bar', action='store_true',
                            default=False, help='turn off using progress bar')

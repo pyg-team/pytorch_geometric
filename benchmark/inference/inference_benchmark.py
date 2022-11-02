@@ -2,20 +2,10 @@ import argparse
 
 import torch
 
-from benchmark.utils import get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
-
-try:
-    from torch.autograd.profiler import emit_itt
-except ImportError:
-    from contextlib import contextmanager
-
-    @contextmanager
-    def emit_itt(*args, **kwargs):
-        yield
-
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
