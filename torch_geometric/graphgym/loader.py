@@ -4,9 +4,12 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
+from torch_geometric.loader import RandomNodeSampler, GraphSAINTRandomWalkSampler, \
+    GraphSAINTNodeSampler, ClusterLoader
 from torch_geometric.data.lightning_datamodule import (
     LightningLinkData,
     LightningNodeData,
+    LightningDataset,
 )
 from torch_geometric.datasets import (
     PPI,
@@ -19,10 +22,7 @@ from torch_geometric.datasets import (
     TUDataset,
 )
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.transform import (
-    create_link_label,
-    neg_sampling_transform,
-)
+from torch_geometric.graphgym.models.transform import create_link_label
 from torch_geometric.utils import (
     index_to_mask,
     negative_sampling,
@@ -125,7 +125,7 @@ def load_ogb(name, dataset_dir):
     elif name[:4] == 'ogbg':
         dataset = PygGraphPropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_idx_split()
-        split_names = ['train_index', 'val_index', 'test_index']
+        split_names = ['train_graph_index', 'val_graph_index', 'test_graph_index']
         for i, key in enumerate(splits.keys()):
             id = splits[key]
             set_dataset_attr(dataset, split_names[i], id, len(id))
@@ -135,8 +135,7 @@ def load_ogb(name, dataset_dir):
         splits = dataset.get_edge_split()
         id = splits['train']['edge'].T
         if cfg.dataset.resample_negative:
-            set_dataset_attr(dataset, 'train_pos_edge_index', id, id.shape[1])
-            dataset.transform = neg_sampling_transform
+            set_dataset_attr(dataset, 'train_edge_index', id, id.shape[1])
         else:
             id_neg = negative_sampling(edge_index=id,
                                        num_nodes=dataset.data.num_nodes,
@@ -250,36 +249,50 @@ def create_loader():
         cfg.train.sampler = "full"
 
     dataset = create_dataset()
-    data = dataset.data
 
-    if cfg.train.sampler not in ["full", "neighbor", "link_neighbor"]:
-        raise NotImplementedError()
+    if cfg.dataset.task == 'graph':
+        train_id = dataset.data['train_graph_index']
+        val_id = dataset.data['val_graph_index']
+        test_id = dataset.data['test_graph_index']
+        return LightningDataset(train_dataset=dataset[train_id],
+                                val_dataset=dataset[val_id],
+                                test_dataset=dataset[test_id],
+                                batch_size=cfg.train.batch_size,
+                                num_workers=cfg.num_workers)
+
+    if len(dataset) > 1:
+        LightningDataset(dataset, batch_size=cfg.train.batch_size, num_workers=cfg.num_workers)
+    data = dataset[0]
 
     if cfg.dataset.task in ['link_pred', 'edge']:
+        if cfg.train.sampler in ["full", "neighbor", 'link_neighbor']:
+            return LightningLinkData(data=data, loader=cfg.train.sampler,
+                                     batch_size=cfg.train.batch_size,
+                                     num_workers=cfg.num_workers,
+                                     num_neighbors=cfg.train.neighbor_sizes,
+                                     neg_sampling_ratio=1.0 if cfg.dataset.resample_negative else 0.0)
 
-        train_edges = data.get("train_edge_index", None)
-        train_labels = data.get("train_edge_label", None)
-        val_edges = data.get("val_edge_index", None)
-        val_labels = data.get("val_edge_label", None)
-        test_edges = data.get("test_edge_index", None)
-        test_labels = data.get("test_edge_label", None)
-
-        del data["train_edge_index"]
-        del data["train_edge_label"]
-        del data["val_edge_index"]
-        del data["val_edge_label"]
-        del data["test_edge_index"]
-        del data["test_edge_label"]
-
-        return LightningLinkData(
-            data=data, loader=cfg.train.sampler, input_train_edges=train_edges,
-            input_train_labels=train_labels, input_val_edges=val_edges,
-            input_val_labels=val_labels, input_test_edges=test_edges,
-            input_test_labels=test_labels, batch_size=cfg.train.batch_size,
-            num_workers=cfg.num_workers,
-            num_neighbors=cfg.train.neighbor_sizes)
     else:
-        return LightningNodeData(data=data, loader=cfg.train.sampler,
-                                 batch_size=cfg.train.batch_size,
-                                 num_workers=cfg.num_workers,
-                                 num_neighbors=cfg.train.neighbor_sizes)
+        if cfg.train.sampler in ["full", "neighbor"]:
+            return LightningNodeData(data=data, loader=cfg.train.sampler,
+                                     batch_size=cfg.train.batch_size,
+                                     num_workers=cfg.num_workers,
+                                     num_neighbors=cfg.train.neighbor_sizes)
+        elif cfg.train.sampler == "random_node":
+            return LightningNodeData(data=data, loader=RandomNodeSampler,
+                                     num_parts=data.num_nodes//cfg.train.batch_size,
+                                     num_workers=cfg.num_workers)
+        elif cfg.train.sampler == "saint_rw":
+            return LightningNodeData(data=data, loader=GraphSAINTRandomWalkSampler,
+                                     batch_size=cfg.train.batch_size,
+                                     walk_length=cfg.train.walk_length,
+                                     num_steps=cfg.train.iter_per_epoch,
+                                     sample_coverage=0,
+                                     num_workers=cfg.num_workers)
+        elif cfg.train.sampler == "saint_node":
+            return LightningNodeData(data=data, loader=GraphSAINTNodeSampler,
+                                     batch_size=cfg.train.batch_size,
+                                     num_steps=cfg.train.iter_per_epoch,
+                                     sample_coverage=0,
+                                     num_workers=cfg.num_workers)
+    raise NotImplementedError("%s sampler is not implemented!" % cfg.train.sampler)
