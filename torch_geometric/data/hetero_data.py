@@ -356,6 +356,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     f"'num_nodes' is undefined in node type '{dst}' of "
                     f"'{cls_name}'", raise_on_error)
 
+            if 'edge_index' in store:
+                if (store.edge_index.dim() != 2
+                        or store.edge_index.size(0) != 2):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} needs to be "
+                        f"of shape [2, num_edges] in '{cls_name}' (found "
+                        f"{store.edge_index.size()})", raise_on_error)
+
             if 'edge_index' in store and store.edge_index.numel() > 0:
                 if store.edge_index.min() < 0:
                     status = False
@@ -369,8 +378,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         and store.edge_index[0].max() >= num_src_nodes):
                     status = False
                     warn_or_raise(
-                        f"'edge_index' of edge type {edge_type} contains"
-                        f"larger source indices than the number of nodes"
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"larger source indices than the number of nodes "
                         f"({num_src_nodes}) of this node type in '{cls_name}' "
                         f"(found {int(store.edge_index[0].max())})",
                         raise_on_error)
@@ -379,8 +388,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         and store.edge_index[1].max() >= num_dst_nodes):
                     status = False
                     warn_or_raise(
-                        f"'edge_index' of edge type {edge_type} contains"
-                        f"larger destination indices than the number of nodes"
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"larger destination indices than the number of nodes "
                         f"({num_dst_nodes}) of this node type in '{cls_name}' "
                         f"(found {int(store.edge_index[1].max())})",
                         raise_on_error)

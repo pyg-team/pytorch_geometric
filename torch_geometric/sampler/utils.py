@@ -142,7 +142,7 @@ def add_negative_samples(
         neg_edge_label_index,
     ], dim=1)
 
-    pos_edge_label = edge_label + 1
+    pos_edge_label = edge_label + 1 if edge_label.min() == 0 else edge_label
     neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
                                           edge_label.size()[1:])
 
