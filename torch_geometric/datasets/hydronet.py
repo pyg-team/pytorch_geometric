@@ -1,15 +1,16 @@
 import copy
 import os
 import os.path as osp
+from dataclasses import dataclass
 from functools import cached_property
 from glob import glob
+from pathlib import Path
 from typing import Callable, List, Optional, Union
 from warnings import warn
 
 import numpy as np
 import torch
-from torch.utils.data import ConcatDataset
-from tqdm import tqdm
+from torch.utils.data import ConcatDataset, Subset
 
 from torch_geometric.data import (
     Data,
@@ -29,6 +30,11 @@ class HydroNet(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
+        name (string, optional): Name of the subset of the full dataset to use.
+            * 'small': 500k graphs sampled from the 'medium' dataset.
+            * 'medium': 2.7m graphs with maximum size of 75 nodes.
+            Mutually exclusive option with the clusters argument.
+            (default :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -45,24 +51,19 @@ class HydroNet(InMemoryDataset):
             pre-processing the dataset. (default :obj:`8`)
         clusters (int or List[int], optional): Select a subset of clusters
             from the full dataset. (default :obj:`None` to select all)
+        use_processed (bool): Option to use a pre-processed version of the
+            original xyz dataset. (default: :obj:`True`)
     """
-    # url currently fails with unauthorized
-    raw_url = ('https://g-83fdd0.1beed.03c0.data.globus.org/static_datasets/'
-               'W3-W30_all_geoms_TTM2.1-F.zip')
-
-    raw_url2 = ('https://drive.google.com/u/0/uc?confirm=t&'
-                'id=18Y7OiZXSCTsHrQ83GCc4fyE_abbL6E_n')
-
-    filename = 'W3-W30_all_geoms_TTM2.1-F.zip'
-
-    def __init__(self, root: str, transform: Optional[Callable] = None,
+    def __init__(self, root: str, name: Optional[str] = None,
+                 transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None,
                  max_num_workers: int = 8,
-                 clusters: Optional[Union[int, List[int]]] = None):
-        # the base Dataset class is responsible for checking if the on-disk
-        # cached data is available or needs to be processed
+                 clusters: Optional[Union[int, List[int]]] = None,
+                 use_processed: bool = True):
+        self.name = name
         self.max_num_workers = max_num_workers
+        self.use_processed = use_processed
         if pre_filter is not None:
             warn("Ignoring the `pre_filter` argument as it is not supported "
                  "by the HydroNet dataset")
@@ -76,16 +77,25 @@ class HydroNet(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        names = [osp.basename(f) for f in self.raw_file_names]
-        names = [osp.splitext(f)[0] for f in names]
-        return [f + ".npz" for f in names]
+        return [f'W{c}_geoms_all.npz' for c in range(3, 31)]
 
     def download(self):
-        file_path = download_url(self.raw_url2, self.raw_dir,
-                                 filename=self.filename)
-        extract_zip(file_path, self.raw_dir)
-        os.unlink(file_path)
-        folder_name, _ = osp.splitext(self.filename)
+        token_file = Path(osp.join(self.raw_dir, 'use_processed'))
+        if self.use_processed and token_file.exists():
+            return
+
+        file = RemoteFile.hydronet_splits()
+        file.unpack_to(self.raw_dir)
+
+        if self.use_processed:
+            file = RemoteFile.processed_dataset()
+            file.unpack_to(self.raw_dir)
+            token_file.touch()
+            return
+
+        file = RemoteFile.raw_dataset()
+        file.unpack_to(self.raw_dir)
+        folder_name, _ = osp.splitext(file.name)
         files = glob(osp.join(self.raw_dir, folder_name, '*.zip'))
 
         for f in files:
@@ -95,18 +105,30 @@ class HydroNet(InMemoryDataset):
         os.rmdir(osp.join(self.raw_dir, folder_name))
 
     def process(self):
+        if self.use_processed:
+            return self._unpack_processed()
+
         from tqdm.contrib.concurrent import process_map
 
         self._partitions = process_map(self._create_partitions, self.raw_paths,
                                        max_workers=self.max_num_workers,
                                        position=0, leave=True)
 
+    def _unpack_processed(self):
+        files = glob(osp.join(self.raw_dir, '*.npz'))
+        for f in files:
+            dst = osp.join(self.processed_dir, osp.basename(f))
+            os.rename(f, dst)
+
     def _create_partitions(self, file):
         name = osp.basename(file)
         name, _ = osp.splitext(name)
         return Partition(self.root, name, self.transform, self.pre_transform)
 
-    def select_clusters(self, clusters: Union[int, List[int]]):
+    def select_clusters(self, clusters: Optional[Union[int, List[int]]]):
+        if self.name is not None:
+            clusters = self._validate_name(clusters)
+
         self._partitions = [self._create_partitions(f) for f in self.raw_paths]
 
         if clusters is None:
@@ -122,22 +144,38 @@ class HydroNet(InMemoryDataset):
                 "Selected clusters must be an integer in the range [3, 30]")
 
         self._partitions = [self._partitions[c - 3] for c in clusters]
-        return self
 
-    def pre_load(self):
-        [p.load() for p in tqdm(self._partitions)]
+    def _validate_name(self, clusters):
+        if clusters is not None:
+            raise ValueError('"name" and "clusters" are mutually exclusive')
+
+        if self.name not in ['small', 'medium']:
+            raise ValueError(f'Invalid subset name={self.name}. " \
+                    "Must be either "small" or "medium"')
+
+        return range(3, 26)
 
     @cached_property
     def _dataset(self):
-        return ConcatDataset(self._partitions)
+        dataset = ConcatDataset(self._partitions)
 
-    @cached_property
-    def _len(self) -> int:
-        return sum(len(p) for p in self._partitions)
+        if self.name == "small":
+            dataset = self._load_small_split(dataset)
+
+        return dataset
+
+    def _load_small_split(self, dataset):
+        split_file = osp.join(self.processed_dir, 'split_00_small.npz')
+        with np.load(split_file) as split:
+            train_idx = split['train_idx']
+            val_idx = split['val_idx']
+            all_idx = np.concatenate([train_idx, val_idx])
+            dataset = Subset(dataset, all_idx)
+        return dataset
 
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
-        return self._len
+        return len(self._dataset)
 
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
@@ -191,6 +229,35 @@ def read_atoms(file, chunk_size):
     z.shape = (num_graphs, num_nodes)
     pos.shape = (num_graphs, num_nodes, 3)
     return (z, pos)
+
+
+@dataclass
+class RemoteFile:
+    url: str
+    name: str
+
+    def unpack_to(self, dest_folder: str):
+        file = download_url(self.url, dest_folder, filename=self.name)
+        extract_zip(file, dest_folder)
+        os.unlink(file)
+
+    @staticmethod
+    def raw_dataset():
+        return RemoteFile(
+            url='https://figshare.com/ndownloader/files/38063847',
+            name='W3-W30_all_geoms_TTM2.1-F.zip')
+
+    @staticmethod
+    def processed_dataset():
+        return RemoteFile(
+            url='https://figshare.com/ndownloader/files/38075781',
+            name='W3-W30_pyg_processed.zip')
+
+    @staticmethod
+    def hydronet_splits():
+        return RemoteFile(
+            url="https://figshare.com/ndownloader/files/38075904",
+            name="hydronet_splits.zip")
 
 
 class Partition(InMemoryDataset):
