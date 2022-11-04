@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 
 from torch_geometric.explain.base import ExplainerAlgorithm
+from torch_geometric.explain.configuration import ExplainerConfig
 from torch_geometric.explain.explanations import Explanation
 
 
@@ -40,10 +41,17 @@ class RandomExplainer(ExplainerAlgorithm):
 
     def supports(
         self,
-        explanation_type: str,
-        mask_type: str,
+        explanation_config: ExplainerConfig,
     ) -> bool:
-        return mask_type != "layers"
+        """Check if the explainer supports the user-defined settings.
+
+        Returns true if the explainer supports the settings.
+
+
+        Args:
+            explanation_config (ExplainerConfig): the user-defined settings.
+        """
+        return True
 
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         return torch.nn.functional.mse_loss(y_hat, y)

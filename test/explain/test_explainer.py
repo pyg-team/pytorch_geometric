@@ -4,12 +4,13 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.explain.algorithm import RandomExplainer
 from torch_geometric.explain.base import ExplainerAlgorithm
-from torch_geometric.explain.explainer import (
-    Explainer,
-    ExplainerConfig,
-    ModelConfig,
-    Threshold,
+from torch_geometric.explain.configuration import (
+    ExplanationType,
+    ModelReturnType,
+    ModelTaskLevel,
+    ThresholdType,
 )
+from torch_geometric.explain.explainer import Explainer
 from torch_geometric.explain.explanations import Explanation
 
 g = Data(
@@ -81,8 +82,7 @@ class DummyExplainer(ExplainerAlgorithm):
 
     def supports(
         self,
-        explanation_type: str,
-        mask_type: str,
+        *args,
     ) -> bool:
         return True
 
@@ -106,79 +106,18 @@ def explanation_algorithm() -> ExplainerAlgorithm:
 
 
 models = [DummyModel(), DummyModel(2)]
-model_return_types = ModelConfig._valid_model_return_type
-explanation_types = ExplainerConfig._valid_explanation_type
-mask_types = ExplainerConfig._valid_mask_type
-thresholds = Threshold._valid_type
-task_levels = ModelConfig._valid_task
-
-
-@pytest.mark.parametrize("model", models[:1])
-@pytest.mark.parametrize("model_return_type", model_return_types[:1])
-@pytest.mark.parametrize("task_level", task_levels[:1])
-@pytest.mark.parametrize("explanation_type", explanation_types[:1])
-@pytest.mark.parametrize("mask_type", mask_types[:1])
-@pytest.mark.parametrize("threshold_pairs", [("none", 0, True),
-                                             ("hard", 0.5, True),
-                                             ("hard", 1.1, False),
-                                             ("hard", -1, False),
-                                             ("topk", 1, True),
-                                             ("topk", 0, False),
-                                             ("topk", -1, False),
-                                             ("topk", 0.5, False),
-                                             ("connected", 1, True),
-                                             ("connected", 0, False),
-                                             ("connected", -1, False),
-                                             ("connected", 0.5, False),
-                                             ("invalid", None, False)])
-def test_classification_threshold_init(dummyexplainer, model,
-                                       model_return_type, task_level,
-                                       explanation_type, mask_type,
-                                       threshold_pairs):
-    if threshold_pairs[2]:
-        Explainer(explanation_algorithm=dummyexplainer, model=model,
-                  model_return_type=model_return_type, task_level=task_level,
-                  explanation_type=explanation_type, mask_type=mask_type,
-                  threshold=threshold_pairs[0],
-                  threshold_value=threshold_pairs[1])
-
-    else:
-        with pytest.raises(ValueError):
-            Explainer(explanation_algorithm=dummyexplainer, model=model,
-                      model_return_type=model_return_type,
-                      task_level=task_level, explanation_type=explanation_type,
-                      mask_type=mask_type, threshold=threshold_pairs[0],
-                      threshold_value=threshold_pairs[1])
-
-
-@pytest.mark.parametrize("model", models[:1])
-@pytest.mark.parametrize("model_return_type", model_return_types[:1])
-@pytest.mark.parametrize("task_level", task_levels[:1])
-@pytest.mark.parametrize("explanation_type", explanation_types + ["invalid"])
-@pytest.mark.parametrize("mask_type", mask_types + ["invalid"])
-@pytest.mark.parametrize("threshold", thresholds)
-def test_classification_explainer_init(dummyexplainer, model,
-                                       model_return_type, task_level,
-                                       explanation_type, mask_type, threshold):
-    if explanation_type == "invalid" or mask_type == "invalid":
-        with pytest.raises(ValueError):
-            Explainer(explanation_algorithm=dummyexplainer, model=model,
-                      model_return_type=model_return_type,
-                      task_level=task_level, explanation_type=explanation_type,
-                      mask_type=mask_type, threshold=threshold)
-    else:
-        Explainer(explanation_algorithm=dummyexplainer, model=model,
-                  model_return_type=model_return_type, task_level=task_level,
-                  explanation_type=explanation_type, mask_type=mask_type,
-                  threshold=threshold)
+thresholds = [x.name for x in list(ThresholdType)]
+model_return_types = [x.name for x in list(ModelReturnType)]
+explanation_types = [x.name for x in list(ExplanationType)]
+task_levels = [x.name for x in list(ModelTaskLevel)]
 
 
 @pytest.mark.parametrize("model", models)
 def test_get_prediction(dummyexplainer, dummyInput, model):
     explainer = Explainer(explanation_algorithm=dummyexplainer, model=model,
                           model_return_type="regression", task_level="node",
-                          explanation_type="phenomenon", mask_type="node",
-                          threshold="none")
+                          explanation_type="phenomenon",
+                          node_mask_type="object", threshold="none")
     assert explainer.get_prediction(
         x=dummyInput.x, edge_index=dummyInput.edge_index,
         edge_attr=dummyInput.edge_attr).shape == (model.out_dim, )
@@ -190,7 +129,7 @@ def test_forward_target_switch(dummyInput, target, explanation_type):
     explainer = Explainer(explanation_algorithm=RandomExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="node", explanation_type=explanation_type,
-                          mask_type="node_feat", threshold="none")
+                          node_mask_type="attributes", threshold="none")
     if target is None and explanation_type == "phenomenon":
         with pytest.raises(ValueError):
             explainer(x=dummyInput.x, edge_index=dummyInput.edge_index,
@@ -207,7 +146,8 @@ def test_hard_threshold(dummyInput, threshold_value):
     explainer = Explainer(explanation_algorithm=RandomExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
-                          mask_type="node_feat", threshold="hard",
+                          node_mask_type="both", threshold="hard",
+                          edge_mask_type="both",
                           threshold_value=threshold_value)
     explanations_raw = explainer.explanation_algorithm(dummyInput.x,
                                                        dummyInput.edge_index,
@@ -239,7 +179,8 @@ def test_topk_threshold(explanation, threshold_value):
     explainer = Explainer(explanation_algorithm=RandomExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
-                          mask_type="node_feat", threshold="topk",
+                          threshold="topk", node_mask_type="both",
+                          edge_mask_type="both",
                           threshold_value=threshold_value)
 
     exp_processed = explainer._threshold(explanation)
@@ -263,7 +204,7 @@ def test_topk_hard_threshold(explanation, threshold_value):
     explainer = Explainer(explanation_algorithm=RandomExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
-                          mask_type="node_feat", threshold="topk_hard",
+                          node_mask_type="attributes", threshold="topk_hard",
                           threshold_value=threshold_value)
 
     exp_processed = explainer._threshold(explanation)

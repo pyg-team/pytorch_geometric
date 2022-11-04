@@ -1,102 +1,37 @@
-from dataclasses import dataclass
 from typing import List, Optional, Tuple, Union
 
 import torch
 
 from torch_geometric.explain.base import ExplainerAlgorithm
+from torch_geometric.explain.configuration import (
+    ExplainerConfig,
+    ExplanationType,
+    MaskType,
+    ModelConfig,
+    ModelReturnType,
+    ModelTaskLevel,
+    Threshold,
+    ThresholdType,
+)
 from torch_geometric.explain.explanations import Explanation
 
 
-@dataclass
-class Threshold:
-    """Class to store and validate threshold parameters."""
-    type: str
-    value: Union[float, int]
-    _valid_type = ["none", "hard", "topk", "connected", "topk_hard"]
-
-    def __post_init__(self):
-        if self.type not in self._valid_type:
-            raise ValueError(f'Invalid threshold type {self.type}. '
-                             f'Valid types are {self._valid_type}.')
-        if not isinstance(self.value, (float, int)):
-            raise ValueError(f'Invalid threshold value {self.value}. '
-                             f'Valid values are float or int.')
-
-        if self.type == "hard":
-            if self.value < 0 or self.value > 1:
-                raise ValueError(f'Invalid threshold value {self.value}. '
-                                 f'Valid values are in [0, 1].')
-        if self.type in ["topk", "connected", "topk_hard"]:
-            if self.value <= 0 or not isinstance(self.value, int):
-                raise ValueError(f'Invalid threshold value {self.value}. '
-                                 f'Valid values are positif integers.')
-
-
-@dataclass
-class ExplainerConfig:
-    """Class to store and validate high level explanation parameters."""
-    explanation_type: str
-    mask_type: str
-    _valid_explanation_type = ["model", "phenomenon"]
-    _valid_mask_type = [
-        "node", "edge", "node_and_edge", "layers", "node_feat", "edge_feat",
-        "node_feat_and_edge_feat", "node_feat_and_edge", "node_and_edge_feat"
-    ]
-
-    def __post_init__(self):
-        if self.explanation_type not in self._valid_explanation_type:
-            raise ValueError(
-                f'Invalid explanation type {self.explanation_type}. '
-                f'Valid types are {self._valid_explanation_type}.')
-        if self.mask_type not in self._valid_mask_type:
-            raise ValueError(f'Invalid mask type {self.mask_type}. '
-                             f'Valid types are {self._valid_mask_type}.')
-
-
-@dataclass
-class ModelConfig:
-    return_type: str
-    task_level: str = "graph"
-    mode: str = "classification"
-    _valid_model_return_type = ["logits", "probs", "raw", "regression"]
-    _valid_model_mode = ["classification", "regression"]
-    _valid_task = ["graph", "node", "edge"]
-
-    def __post_init__(self):
-
-        if self.return_type not in self._valid_model_return_type:
-            raise ValueError(
-                f'Invalid model return type {self.return_type}. '
-                f'Valid types are {self._valid_model_return_type}.')
-        if self.mode not in self._valid_model_mode:
-            raise ValueError(f'Invalid model mode {self.mode}. '
-                             f'Valid modes are {self._valid_model_mode}.')
-
-        if self.task_level not in self._valid_task:
-            raise ValueError(f'Invalid task {self.task_level}. '
-                             f'Valid tasks are {self._valid_task}.')
-
-        # update model mode based on return type
-        if self.return_type == "regression":
-            self.mode = "regression"
-
-
 class Explainer:
-    r"""A user configuration class for the instance-level explanation of GNNS.
+    """A user configuration class for the instance-level explanation of GNNS.
 
     Args:
         explanation_algorithm (ExplainerAlgorithm): explanation algorithm
-            to be used. Should accept a `Data` object as input.
-            (see py:class:Interface for wrapping a model if needed).
+            to be used.
+        model (torch.nn.Module): the model to be explained.
         model_return_type (str): denotes the type of output from
             :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
             returns the logarithm of probabilities), :obj:`"prob"` (the
             model returns probabilities), :obj:`"raw"` (the model returns
-            raw scores) and :obj:`"regression"` (the model returns scalars)
-            (default: :obj:`"log_prob"`)
+            raw scores) and :obj:`"regression"` (the model returns scalar
+            values).(default: :obj:`"log_prob"`)
         task_level (str, optional): type of task the :obj:`model` solves.
             Can be in :obj:`"graph"` (e.g. graph classification/ regression),
-            :obj:`"node"` or :obj:`"edge"` (e.g. node/edge classificaiton).
+            :obj:`"node"` or :obj:`"edge"` (e.g. node/edge classification).
             (default: :obj:`"graph"`)
         explanation_type (str, optional): :obj:`"phenomenon"` (explanation
             of underlying phenomon) or :obj:`"model"` (explanation of model
@@ -104,39 +39,37 @@ class Explainer:
             Evaluation of Explainability Methods for Graph Neural Networks"
             <https://arxiv.org/abs/2206.09677> for more details.
             (default: :obj:`"model"`)
-        mask_type (str, optional): Type of mask wanted. The masks are
-            between 0 and 1, and can be on the features of the nodes/edges,
-            or on the nodes/edges themselves. Valid inputs are
-            :obj:`"node"`, :obj:`"edge"`, :obj:`"node_and_edge"`,
-            :obj:`"layers"`, :obj:`"node_feat"`, :obj:`"edge_feat"`,
-            :obj:`"node_feat_and_edge_feat"`, :obj:`"node_feat_and_edge"`,
-            :obj:`"node_and_edge_feat"`.
-
+        node_mask_type (str, optional): type of node mask to be used.
+            Can be in :obj:`"object"` (masking nodes), :obj:`"attributes"`
+            (masking the node features), :obj:`"both"` (object and attributes),
+            or :obj:`"none"` (no node masking).
+        edge_mask_type (str, optional): type of edge mask to be used.
+            Same options as :obj:`node_mask_type`.
         threshold (str, optional): type of threshold to apply after the
-            explanation algorithm. Valid inputs are :obj:`"nonde"`,
-            :obj:`"hard"`, :obj:`"topk"` and :obj:`"connected"`.
-            The thresholding is applied to each mask idependently. For the
-            thresholding requirring a count, if the :obj:`threshold_value`
-            is bigger than the number of element in the mask, it will just
-            return the mask. (default: :obj:`"none"`)
+            explanation algorithm. Valid inputs are :obj:`"none"`,
+            :obj:`"hard"`, :obj:`"topk"`, :obj:`"topk_hard"`, and
+            :obj:`"connected"`. The thresholding is applied to each mask
+            idependently. For the thresholding requirring a count, if the
+            :obj:`threshold_value` is bigger than the number of element in the
+            mask, it will just return the mask. (default: :obj:`"none"`)
 
             1. :obj:`"none"`: no thresholding is applied.
 
             2. :obj:`"hard"`: the mask is thresholded to binary values:
-                values above the threshold are set to 1, and values below the
-                threshold are set to :obj:`0`.
+               values above the threshold are set to 1, and values below the
+               threshold are set to :obj:`0`.
 
             3. :obj:`"topk_hard"`: the mask is thresholded to binary
-                values: the :obj:`threshold_value` largest values are set
-                to :obj:`1`, and the rest are set to :obj:`0`.
+               values: the :obj:`threshold_value` largest values are set
+               to :obj:`1`, and the rest are set to :obj:`0`.
 
             4. :obj:`"topk"`: the mask is thresholded to values between
-                :obj:`0` and :obj:`1`: the :obj:`threshold_value` largest
-                values are left unchanged, and the rest are set to :obj:`0`.
+               :obj:`0` and :obj:`1`: the :obj:`threshold_value` largest
+               values are left unchanged, and the rest are set to :obj:`0`.
 
             5. :obj:`"connected"`: the mask is thresholded to binary values
-                such that a connected component of size at least
-                :obj:`threshold_value` is kept. The rest is set to :obj:`0`.
+               such that a connected component of size at least
+               :obj:`threshold_value` is kept. The rest is set to :obj:`0`.
 
         threshold_value (Union[float,int]): Value to use for thresholding.
             If :obj:`threshold` is :obj:`"hard"`, the value should be in
@@ -147,25 +80,6 @@ class Explainer:
     Raises:
         ValueError: for invalid inputs or if the explainer algorithm does
             not support the given explanation settings
-
-    .. note::
-        If the model you are trying to explain does not take a `Data` object as
-        input, you can use the `Interface` class to help you create a wrapper.
-
-    .. code-block:: python
-
-        class GCNCcompatible(GCN):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                self.interface = Interface(graph_to_inputs=lambda x: {
-                    "x": x.x,
-                    "edge_index": x.edge_index
-                })
-
-            def forward(self, g, **kwargs):
-                return super().forward(
-                    **self.interface.graph_to_inputs(g, **kwargs)
-                )
     """
     def __init__(
         self,
@@ -173,34 +87,32 @@ class Explainer:
         # that user can pass a string and we create the right algorithm with
         # the right parameters if possible
         model: torch.nn.Module,
-        model_return_type: str,
-        task_level: str = "graph",
-        explanation_type: str = "model",
-        mask_type: str = "node",
-        threshold: str = "none",
+        model_return_type: Union[str, ModelReturnType],
+        task_level: Union[str, ModelTaskLevel] = ModelTaskLevel.graph,
+        explanation_type: Union[str, ExplanationType] = ExplanationType.model,
+        node_mask_type: Union[str, MaskType] = MaskType.object,
+        edge_mask_type: Union[str, MaskType] = MaskType.none,
+        threshold: Union[str, ThresholdType] = ThresholdType.none,
         threshold_value: float = 1,
     ) -> None:
 
         self.model = model
-        self.model_config = ModelConfig(return_type=model_return_type.lower(),
-                                        task_level=task_level.lower())
+        self.model_config = ModelConfig(return_type=model_return_type,
+                                        task_level=task_level)
 
         self.explanation_config = ExplainerConfig(
-            explanation_type=explanation_type.lower(),
-            mask_type=mask_type.lower())
+            explanation_type=explanation_type, node_mask_type=node_mask_type,
+            edge_mask_type=edge_mask_type)
 
         # details for post-processing the output of the explanation algorithm
-        self.threshold = Threshold(type=threshold.lower(),
-                                   value=threshold_value)
+        self.threshold = Threshold(type=threshold, value=threshold_value)
 
         # details of the explanation algorithm
         self.explanation_algorithm: ExplainerAlgorithm = explanation_algorithm
 
         # check that the explanation algorithm supports the
         # desired setup
-        if not self.explanation_algorithm.supports(
-                self.explanation_config.explanation_type,
-                self.explanation_config.mask_type):
+        if not self.explanation_algorithm.supports(self.explanation_config):
             raise ValueError(
                 "The explanation algorithm does not support the configuration."
             )
@@ -211,9 +123,10 @@ class Explainer:
         r"""Returns the prediction of the model on the input graph.
 
         Args:
-            g (torch_geometric.data.Data): the input graph.
+            x (torch.Tensor): Node features.
+            edge_index (torch.Tensor): Edge indices.
             batch (torch.Tensor, optional): the batch vector.
-                (default: :obj:`None`)
+            **kwargs: Additional arguments to be passed to the model.
         """
         with torch.no_grad():
             return self.model(x=x, edge_index=edge_index, batch=batch,
@@ -235,31 +148,31 @@ class Explainer:
                 provided. If the explanation type is :obj:`"model"`, the target
                 will be replaced by the model output and can be :obj:`None`.
                 (default: :obj:`None`)
-            target_index: TargetIndex
-                Output indices to explain. If not provided, the explanation is
-                computed for the first index of the target. (default: :obj:`0`)
+            target_index (TargetIndex): Output indices to explain.
+                If not provided, the explanation is computed for the first
+                index of the target. (default: :obj:`0`)
 
                 For general 1D outputs, targets can be either:
 
-                    . a single integer or a tensor containing a single
-                        integer, which is applied to all input examples
+                - a single integer or a tensor containing a single
+                  integer, which is applied to all input examples
 
-                    . a list of integers or a 1D tensor, with length matching
-                        the number of examples (i.e number of unique values in
-                        the batch vector). Each integer is applied as the
-                        target for the corresponding element of the batch.
+                - a list of integers or a 1D tensor, with length matching
+                  the number of examples (i.e number of unique values in
+                  the batch vector). Each integer is applied as the
+                  target for the corresponding element of the batch.
 
                 For outputs with > 1 dimension, targets can be either:
 
-                    . a single tuple, which contains (:obj:`target.dim()`)
-                        elements. This target index is applied for all
-                        elements of the batch.
+                - a single tuple, which contains (:obj:`target.dim()`)
+                  elements. This target index is applied for all
+                  elements of the batch.
 
-                    . a list of tuples with length equal to the number of
-                        examples in inputs, and each tuple containing
-                        (:obj:`target.dim()`) elements. Each tuple is applied
-                        as the target for the corresponding element of the
-                        batch.
+                - a list of tuples with length equal to the number of
+                  examples in inputs, and each tuple containing
+                  (:obj:`target.dim()`) elements. Each tuple is applied
+                  as the target for the corresponding element of the
+                  batch.
 
             batch (torch.Tensor, optional): the batch vector.  If not provided,
                 suppose only one input.(default::obj:`None`)
@@ -272,7 +185,7 @@ class Explainer:
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 
-        if self.explanation_config.explanation_type == "phenomenon":
+        if self.explanation_config.explanation_type.value == "phenomenon":
             if target is None:
                 raise ValueError(
                     "The target has to be provided for the explanation type "
@@ -319,11 +232,11 @@ class Explainer:
         available_mask_keys = explanation.available_explanations
         available_mask = [explanation[key] for key in available_mask_keys]
 
-        if self.threshold.type == "hard":
+        if self.threshold.type.value == "hard":
             available_mask = [(mask > self.threshold.value).float()
                               for mask in available_mask]
 
-        if self.threshold.type in ["topk", "topk_hard"]:
+        if self.threshold.type.value in ["topk", "topk_hard"]:
             updated_masks = []
             for mask in available_mask:
                 if self.threshold.value >= mask.numel():
@@ -334,12 +247,12 @@ class Explainer:
                     updated_mask = torch.zeros_like(mask.flatten()).scatter_(
                         0, indices, topk_values)
 
-                if self.threshold.type == "topk_hard":
+                if self.threshold.type.value == "topk_hard":
                     updated_mask = (updated_mask > 0).float()
                 updated_masks.append(updated_mask.reshape(mask.shape))
             available_mask = updated_masks
 
-        if self.threshold.type == "connected":
+        if self.threshold.type.value == "connected":
             raise NotImplementedError()
 
         # update the explanation with the thresholded masks

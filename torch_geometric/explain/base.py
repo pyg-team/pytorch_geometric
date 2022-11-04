@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
+from torch_geometric.explain.configuration import ExplainerConfig
 from torch_geometric.explain.explanations import Explanation
 
 
@@ -60,31 +61,31 @@ class ExplainerAlgorithm(torch.nn.Module):
             edge_index (torch.Tensor): edge indices.
             model (torch.nn.Module): the model to explain.
             target (torch.Tensor): the target of the model.
-            target_index: TargetIndex
-                Output indices to explain. If not provided, the explanation is
-                computed for the first index of the target. (default: :obj:`0`)
+            target_index (TargetIndex): Output indices to explain.
+                If not provided, the explanation is computed for the first
+                index of the target. (default: :obj:`0`)
 
                 For general 1D outputs, targets can be either:
 
-                    . a single integer or a tensor containing a single
-                        integer, which is applied to all input examples
+                - a single integer or a tensor containing a single
+                  integer, which is applied to all input examples
 
-                    . a list of integers or a 1D tensor, with length matching
-                        the number of examples (i.e number of unique values in
-                        the batch vector). Each integer is applied as the
-                        target for the corresponding element of the batch.
+                - a list of integers or a 1D tensor, with length matching
+                  the number of examples (i.e number of unique values in
+                  the batch vector). Each integer is applied as the
+                  target for the corresponding element of the batch.
 
                 For outputs with > 1 dimension, targets can be either:
 
-                    . a single tuple, which contains (:obj:`target.dim()`)
-                        elements. This target index is applied for all
-                        elements of the batch.
+                - a single tuple, which contains (:obj:`target.dim()`)
+                  elements. This target index is applied for all
+                  elements of the batch.
 
-                    . a list of tuples with length equal to the number of
-                        examples in inputs, and each tuple containing
-                        (:obj:`target.dim()`) elements. Each tuple is applied
-                        as the target for the corresponding element of the
-                        batch.
+                - a list of tuples with length equal to the number of
+                  examples in inputs, and each tuple containing
+                  (:obj:`target.dim()`) elements. Each tuple is applied
+                  as the target for the corresponding element of the
+                  batch.
 
             batch (torch.Tensor, optional): batch indicator.
             **kwargs: additional arguments to pass to the GNN.
@@ -93,8 +94,7 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(
         self,
-        explanation_type: str,
-        mask_type: str,
+        explanation_config: ExplainerConfig,
     ) -> bool:
         """Check if the explainer supports the user-defined settings.
 
@@ -102,9 +102,5 @@ class ExplainerAlgorithm(torch.nn.Module):
 
 
         Args:
-            explanation_type (str): the type of explanation to compute.
-                Should be in :obj:`"model"`, or :obj:`"phenomenon"`
-            mask_type (str): the type of mask to use.
-                Should be in :obj:`"node"`, :obj:`"edge"`,
-                :obj:`"node_and_edge"`, or :obj:`"layers"`.
+            explanation_config (ExplainerConfig): the user-defined settings.
         """
