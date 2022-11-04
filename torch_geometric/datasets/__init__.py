@@ -76,7 +76,7 @@ from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
-from .hydronet import HydroNet
+from .hydro_net import HydroNet
 
 import torch_geometric.datasets.utils  # noqa
 

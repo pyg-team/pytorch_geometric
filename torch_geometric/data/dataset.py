@@ -36,6 +36,8 @@ class Dataset(torch.utils.data.Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -65,10 +67,14 @@ class Dataset(torch.utils.data.Dataset):
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None, log: bool = True):
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
         super().__init__()
 
         if isinstance(root, str):
