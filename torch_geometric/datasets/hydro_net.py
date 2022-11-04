@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from glob import glob
 from pathlib import Path
-from typing import Callable, List, Optional, Union
-from warnings import warn
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -30,9 +29,10 @@ class HydroNet(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string, optional): Name of the subset of the full dataset to use.
-            * 'small': 500k graphs sampled from the 'medium' dataset.
-            * 'medium': 2.7m graphs with maximum size of 75 nodes.
+        name (string, optional): Name of the subset of the full dataset to use:
+            :obj:`"small"` uses 500k graphs sampled from the :obj:`"medium"`
+            dataset, :obj:`"medium"` uses 2.7m graphs with maximum size of 75
+            nodes.
             Mutually exclusive option with the clusters argument.
             (default :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
@@ -43,32 +43,29 @@ class HydroNet(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
-        max_num_workers (int): Number of multiprocessing workers to use for
+        num_workers (int): Number of multiprocessing workers to use for
             pre-processing the dataset. (default :obj:`8`)
         clusters (int or List[int], optional): Select a subset of clusters
-            from the full dataset. (default :obj:`None` to select all)
+            from the full dataset. If set to :obj:`None`, will select all.
+            (default :obj:`None`)
         use_processed (bool): Option to use a pre-processed version of the
-            original xyz dataset. (default: :obj:`True`)
+            original :obj:`xyz` dataset. (default: :obj:`True`)
     """
-    def __init__(self, root: str, name: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 max_num_workers: int = 8,
-                 clusters: Optional[Union[int, List[int]]] = None,
-                 use_processed: bool = True):
+    def __init__(
+        self,
+        root: str,
+        name: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        num_workers: int = 8,
+        clusters: Optional[Union[int, List[int]]] = None,
+        use_processed: bool = True,
+    ):
         self.name = name
-        self.max_num_workers = max_num_workers
+        self.num_workers = num_workers
         self.use_processed = use_processed
-        if pre_filter is not None:
-            warn("Ignoring the `pre_filter` argument as it is not supported "
-                 "by the HydroNet dataset")
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform)
         self.select_clusters(clusters)
 
     @property
@@ -110,9 +107,13 @@ class HydroNet(InMemoryDataset):
 
         from tqdm.contrib.concurrent import process_map
 
-        self._partitions = process_map(self._create_partitions, self.raw_paths,
-                                       max_workers=self.max_num_workers,
-                                       position=0, leave=True)
+        self._partitions = process_map(
+            self._create_partitions,
+            self.raw_paths,
+            max_workers=self.num_workers,
+            position=0,
+            leave=True,
+        )
 
     def _unpack_processed(self):
         files = glob(osp.join(self.raw_dir, '*.npz'))
@@ -120,12 +121,15 @@ class HydroNet(InMemoryDataset):
             dst = osp.join(self.processed_dir, osp.basename(f))
             os.rename(f, dst)
 
-    def _create_partitions(self, file):
+    def _create_partitions(self, file) -> 'Partition':
         name = osp.basename(file)
         name, _ = osp.splitext(name)
         return Partition(self.root, name, self.transform, self.pre_transform)
 
-    def select_clusters(self, clusters: Optional[Union[int, List[int]]]):
+    def select_clusters(
+        self,
+        clusters: Optional[Union[int, List[int]]],
+    ) -> 'Optional[List[Partition]]':
         if self.name is not None:
             clusters = self._validate_name(clusters)
 
@@ -145,18 +149,18 @@ class HydroNet(InMemoryDataset):
 
         self._partitions = [self._partitions[c - 3] for c in clusters]
 
-    def _validate_name(self, clusters):
+    def _validate_name(self, clusters) -> List[int]:
         if clusters is not None:
-            raise ValueError('"name" and "clusters" are mutually exclusive')
+            raise ValueError("'name' and 'clusters' are mutually exclusive")
 
         if self.name not in ['small', 'medium']:
-            raise ValueError(f'Invalid subset name={self.name}. " \
-                    "Must be either "small" or "medium"')
+            raise ValueError(f"Invalid subset name '{self.name}'. "
+                             f"Must be either 'small' or 'medium'")
 
         return range(3, 26)
 
     @cached_property
-    def _dataset(self):
+    def _dataset(self) -> ConcatDataset:
         dataset = ConcatDataset(self._partitions)
 
         if self.name == "small":
@@ -164,7 +168,7 @@ class HydroNet(InMemoryDataset):
 
         return dataset
 
-    def _load_small_split(self, dataset):
+    def _load_small_split(self, dataset: ConcatDataset) -> Subset:
         split_file = osp.join(self.processed_dir, 'split_00_small.npz')
         with np.load(split_file) as split:
             train_idx = split['train_idx']
@@ -174,20 +178,18 @@ class HydroNet(InMemoryDataset):
         return dataset
 
     def len(self) -> int:
-        r"""Returns the number of graphs stored in the dataset."""
         return len(self._dataset)
 
     def get(self, idx: int) -> Data:
-        r"""Gets the data object at index :obj:`idx`."""
         return self._dataset[idx]
 
 
-def get_num_clusters(filepath):
+def get_num_clusters(filepath) -> int:
     name = osp.basename(filepath)
     return int(name[1:name.find('_')])
 
 
-def read_energy(file, chunk_size):
+def read_energy(file: str, chunk_size: int) -> np.ndarray:
     import pandas as pd
 
     def skipatoms(i: int):
@@ -206,7 +208,7 @@ def read_energy(file, chunk_size):
     return df.to_numpy().squeeze()
 
 
-def read_atoms(file, chunk_size):
+def read_atoms(file: str, chunk_size: int) -> Tuple[np.ndarray, np.ndarray]:
     import pandas as pd
 
     def skipheaders(i: int):
@@ -242,28 +244,32 @@ class RemoteFile:
         os.unlink(file)
 
     @staticmethod
-    def raw_dataset():
+    def raw_dataset() -> 'RemoteFile':
         return RemoteFile(
             url='https://figshare.com/ndownloader/files/38063847',
             name='W3-W30_all_geoms_TTM2.1-F.zip')
 
     @staticmethod
-    def processed_dataset():
+    def processed_dataset() -> 'RemoteFile':
         return RemoteFile(
             url='https://figshare.com/ndownloader/files/38075781',
             name='W3-W30_pyg_processed.zip')
 
     @staticmethod
-    def hydronet_splits():
+    def hydronet_splits() -> 'RemoteFile':
         return RemoteFile(
             url="https://figshare.com/ndownloader/files/38075904",
             name="hydronet_splits.zip")
 
 
 class Partition(InMemoryDataset):
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name
         self.num_clusters = get_num_clusters(name)
         super().__init__(root, transform, pre_transform, pre_filter=None,
@@ -305,18 +311,18 @@ class Partition(InMemoryDataset):
             return int(npzfile['num_graphs'])
 
     def len(self) -> int:
-        r"""Returns the number of graphs stored in the dataset."""
         return self.num_graphs
 
     def get(self, idx: int) -> Data:
-        r"""Gets the data object at index :obj:`idx`."""
         self.load()
         if self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
 
-        data = Data(z=torch.from_numpy(self.z[idx, :]),
-                    pos=torch.from_numpy(self.pos[idx, :, :]),
-                    y=torch.tensor(self.y[idx]))
+        data = Data(
+            z=torch.from_numpy(self.z[idx, :]),
+            pos=torch.from_numpy(self.pos[idx, :, :]),
+            y=torch.tensor(self.y[idx]),
+        )
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
