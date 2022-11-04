@@ -189,7 +189,7 @@ class Explainer:
             explanation_type=explanation_type.lower(),
             mask_type=mask_type.lower())
 
-        # details for post-processing the ouput of the explanation algorithm
+        # details for post-processing the output of the explanation algorithm
         self.threshold = Threshold(type=threshold.lower(),
                                    value=threshold_value)
 

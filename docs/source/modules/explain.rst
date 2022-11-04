@@ -18,9 +18,9 @@ phenomenon of a dataset (see `"GraphFramEx: Towards Systematic Evaluation of Exp
 
 We represent explanations using the :class:`Explanation` class, which is a `Data` object containing masks for the nodes, edges, features and any attributes of the data.
 
-The :class:`~torch_geometric.explain.Explainer` class is designed to habdle all the explainability parameters:
+The :class:`~torch_geometric.explain.Explainer` class is designed to handle all the explainability parameters:
 
--  which algorithm from the :class:`~torch_geometric.explain.algorithm` module to use (e.g. :class:`~torch_geometric.explain.algorithm.GNNExplainer` or :class:`~torch_geometric.explain.algorithm.RandomExplainer`).
+-  which algorithm from the :class:`~torch_geometric.explain.algorithm` module to use (e.g. :class:`~torch_geometric.explain.algorithm.GNNExplainer`).
 -  the :obj:`mask` type (e.g. :obj:`mask="node"` or :obj:`mask="edge"`).
 -  any postprocessing of the masks (e.g. :obj:`threshold = "topk"` or :obj:`threshold = "hard"`).
 

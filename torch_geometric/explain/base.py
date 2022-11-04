@@ -11,7 +11,7 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         r"""
-        This method compute the loss to be used for the explanation algorithm.
+        This method computes the loss to be used for the explanation algorithm.
 
         Args:
             y_hat (torch.Tensor): the output of the explanation algorithm.
