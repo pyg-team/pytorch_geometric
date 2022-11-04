@@ -11,6 +11,16 @@ from torch_geometric.utils import index_to_mask
 from .hetero_gat import HeteroGAT
 from .hetero_sage import HeteroGraphSAGE
 
+try:
+    from torch.autograd.profiler import emit_itt
+except ImportError:
+    from contextlib import contextmanager
+
+    @contextmanager
+    def emit_itt(*args, **kwargs):
+        yield
+
+
 models_dict = {
     'edge_cnn': EdgeCNN,
     'gat': GAT,
