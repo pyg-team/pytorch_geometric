@@ -2,7 +2,6 @@ import copy
 import os
 import os.path as osp
 from dataclasses import dataclass
-from functools import cached_property
 from glob import glob
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple, Union
@@ -17,6 +16,13 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+
+try:
+    from functools import cached_property
+except ImportError:  # Python 3.7 support.
+
+    def cached_property(func):
+        return func
 
 
 class HydroNet(InMemoryDataset):
