@@ -19,7 +19,7 @@ from torch_geometric.data import (
 
 try:
     from functools import cached_property
-except ImportError:  # Python 3.8 support.
+except ImportError:  # Python 3.7 support.
     cached_property = None
 from functools import lru_cache
 
