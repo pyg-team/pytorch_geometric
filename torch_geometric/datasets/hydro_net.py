@@ -19,10 +19,9 @@ from torch_geometric.data import (
 
 try:
     from functools import cached_property
-except ImportError:  # Python 3.7 support.
-
-    def cached_property(func):
-        return func
+except ImportError:  # Python 3.8 support.
+    cached_property = None
+from functools import lru_cache
 
 
 class HydroNet(InMemoryDataset):
@@ -165,7 +164,6 @@ class HydroNet(InMemoryDataset):
 
         return range(3, 26)
 
-    @cached_property
     def _dataset(self) -> ConcatDataset:
         dataset = ConcatDataset(self._partitions)
 
@@ -173,6 +171,11 @@ class HydroNet(InMemoryDataset):
             dataset = self._load_small_split(dataset)
 
         return dataset
+
+    if cached_property is not None:
+        _dataset = cached_property(_dataset)
+    else:
+        _dataset = property(fget=lru_cache(maxsize=1)(_dataset))
 
     def _load_small_split(self, dataset: ConcatDataset) -> Subset:
         split_file = osp.join(self.processed_dir, 'split_00_small.npz')
@@ -311,10 +314,14 @@ class Partition(InMemoryDataset):
         self._data_list = num_graphs * [None]
         self.is_loaded = True
 
-    @cached_property
     def num_graphs(self) -> int:
         with np.load(self.processed_paths[0]) as npzfile:
             return int(npzfile['num_graphs'])
+
+    if cached_property is not None:
+        num_graphs = cached_property(num_graphs)
+    else:
+        num_graphs = property(fget=lru_cache(maxsize=1)(num_graphs))
 
     def len(self) -> int:
         return self.num_graphs
