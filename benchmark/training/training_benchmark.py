@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 from benchmark.utils import emit_itt, get_dataset, get_model
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader import NeighborLoader, StepsLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
@@ -20,7 +20,7 @@ supported_sets = {
 def train_homo(model, loader, optimizer, device, progress_bar=True,
                desc="") -> None:
     if progress_bar:
-        loader = tqdm(loader, desc=desc)
+        loader = tqdm(loader, desc=desc, total=len(loader))
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
@@ -40,7 +40,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
 def train_hetero(model, loader, optimizer, device, progress_bar=True,
                  desc="") -> None:
     if progress_bar:
-        loader = tqdm(loader, desc=desc)
+        loader = tqdm(loader, desc=desc, total=len(loader))
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
@@ -134,6 +134,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
+                        if args.num_steps != -1:
+                            subgraph_loader = StepsLoader(
+                                subgraph_loader, args.num_steps)
+
                         model = get_model(
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
@@ -202,6 +206,9 @@ if __name__ == '__main__':
     argparser.add_argument('--no-progress-bar', action='store_true',
                            default=False, help='turn off using progress bar')
     argparser.add_argument('--num-epochs', default=1, type=int)
+    argparser.add_argument(
+        '--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
 
     args = argparser.parse_args()
 

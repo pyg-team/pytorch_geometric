@@ -3,7 +3,7 @@ import argparse
 import torch
 
 from benchmark.utils import emit_itt, get_dataset, get_model
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader import NeighborLoader, StepsLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
@@ -29,6 +29,12 @@ def run(args: argparse.ArgumentParser) -> None:
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
+
+        assert args.num_steps == -1 or args.num_layers == [
+            1
+        ] or hetero, 'In case of the custom number of steps \
+        and layer-wise inference, the number of layers must be equal to 1.'
+
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
         else:
@@ -91,6 +97,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
+                        if args.num_steps != -1:
+                            subgraph_loader = StepsLoader(
+                                subgraph_loader, args.num_steps)
+
                         model = get_model(
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
@@ -143,6 +153,9 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=0, type=int)
+    argparser.add_argument(
+        '--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--vtune-profile', action='store_true')

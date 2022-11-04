@@ -7,7 +7,7 @@ from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
 
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader import NeighborLoader, StepsLoader
 from torch_geometric.nn.conv import (
     EdgeConv,
     GATConv,
@@ -206,7 +206,7 @@ class BasicGNN(torch.nn.Module):
         Only applicable in case :obj:`jk=None` or `jk='last'`.
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
-        assert isinstance(loader, NeighborLoader)
+        assert isinstance(loader, (NeighborLoader, StepsLoader))
         assert len(loader.dataset) == loader.data.num_nodes
         assert len(loader.node_sampler.num_neighbors) == 1
         assert not self.training
