@@ -20,10 +20,10 @@ from torch_geometric.data import (
 
 
 class HydroNet(InMemoryDataset):
-    r"""The HydroNet dataest from the `"HydroNet: Benchmark Tasks for
-    Preserving Intermolecular Interactions and Structural Motifs in Predictive
-    and Generative Models for Molecular Data"
-    <https://arxiv.org/abs/2012.00131>` _ paper, consisting of 5 million water
+    r"""The HydroNet dataest from the
+    `"HydroNet: Benchmark Tasks for Preserving Intermolecular Interactions and
+    Structural Motifs in Predictive and Generative Models for Molecular Data"
+    <https://arxiv.org/abs/2012.00131>`_ paper, consisting of 5 million water
     clusters held together by hydrogen bonding networks.  This dataset
     provides atomic coordinates and total energy in kcal/mol for the cluster.
 
