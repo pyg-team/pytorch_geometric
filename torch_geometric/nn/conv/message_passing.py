@@ -707,7 +707,7 @@ class MessagePassing(torch.nn.Module):
         return handle
 
     @torch.jit.unused
-    def jittable(self, typing: Optional[str] = None):
+    def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module.
 
