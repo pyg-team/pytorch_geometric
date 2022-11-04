@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add dgNN support([#5140](https://github.com/pyg-team/pytorch_geometric/pull/5140))
 - Enable VTune ITT in inference benchmarks ([#5830](https://github.com/pyg-team/pytorch_geometric/pull/5830))
+- Added `HydroNet` water cluster dataset ([5537](https://github.com/pyg-team/pytorch_geometric/pull/5537))
+- Added explainability support for heterogeneous GNNs ([#5886](https://github.com/pyg-team/pytorch_geometric/pull/5886))
+- Added `SparseTensor` support to `SuperGATConv` ([#5888](https://github.com/pyg-team/pytorch_geometric/pull/5888))
+- Added TorchScript support for `AttentiveFP `([#5868](https://github.com/pyg-team/pytorch_geometric/pull/5868))
+- Added `torch.onnx.export` support ([#5877](https://github.com/pyg-team/pytorch_geometric/pull/5877))
+- Enable VTune ITT in inference and training benchmarks ([#5830](https://github.com/pyg-team/pytorch_geometric/pull/5830), [#5878](https://github.com/pyg-team/pytorch_geometric/pull/5878))
 - Add training benchmark ([#5774](https://github.com/pyg-team/pytorch_geometric/pull/5774))
 - Added a "Link Prediction on MovieLens" Colab notebook ([#5823](https://github.com/pyg-team/pytorch_geometric/pull/5823))
 - Added custom `sampler` support in `LightningDataModule` ([#5820](https://github.com/pyg-team/pytorch_geometric/pull/5820))
