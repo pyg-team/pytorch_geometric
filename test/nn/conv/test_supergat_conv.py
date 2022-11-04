@@ -18,8 +18,7 @@ def test_supergat_conv(att_type):
     assert out.size() == (4, 64)
 
     adj_t = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4)).t()
-    out2 = conv(x, adj_t)
-    assert out2.size() == (4, 64)
+    assert torch.allclose(conv(x, adj_t), out)
 
     # Negative samples are given.
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0))
