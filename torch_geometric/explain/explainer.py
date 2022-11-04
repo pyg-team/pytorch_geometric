@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from inspect import getfullargspec
-from typing import Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.data import Data
 from torch_geometric.explain.base import ExplainerAlgorithm
 from torch_geometric.explain.explanations import Explanation
 
@@ -57,7 +55,6 @@ class ExplainerConfig:
 
 @dataclass
 class ModelConfig:
-    model: torch.nn.Module
     return_type: str
     task_level: str = "graph"
     mode: str = "classification"
@@ -79,21 +76,13 @@ class ModelConfig:
             raise ValueError(f'Invalid task {self.task_level}. '
                              f'Valid tasks are {self._valid_task}.')
 
-        if Data not in getfullargspec(self.model.forward).annotations.values():
-            message = "The model does not accept a `Data` object as input."
-            message += "Consider using `explain.utils.Interface` to wrap the"
-            message += "forward function of your model."
-            message += "Check the documentation for more details."
-
-            raise ValueError(message)
-
         # update model mode based on return type
         if self.return_type == "regression":
             self.mode = "regression"
 
 
-class Explainer(torch.nn.Module):
-    """A user configuration class for the instance-level explanation of GNNS.
+class Explainer:
+    r"""A user configuration class for the instance-level explanation of GNNS.
 
     Args:
         explanation_algorithm (ExplainerAlgorithm): explanation algorithm
@@ -192,10 +181,8 @@ class Explainer(torch.nn.Module):
         threshold_value: float = 1,
     ) -> None:
 
-        super().__init__()
-
-        self.model_config = ModelConfig(model=model,
-                                        return_type=model_return_type.lower(),
+        self.model = model
+        self.model_config = ModelConfig(return_type=model_return_type.lower(),
                                         task_level=task_level.lower())
 
         self.explanation_config = ExplainerConfig(
@@ -207,7 +194,7 @@ class Explainer(torch.nn.Module):
                                    value=threshold_value)
 
         # details of the explanation algorithm
-        self.explanation_algorithm = explanation_algorithm
+        self.explanation_algorithm: ExplainerAlgorithm = explanation_algorithm
 
         # check that the explanation algorithm supports the
         # desired setup
@@ -218,7 +205,8 @@ class Explainer(torch.nn.Module):
                 "The explanation algorithm does not support the configuration."
             )
 
-    def get_prediction(self, g: Data, batch: torch.Tensor = None,
+    def get_prediction(self, x: torch.Tensor, edge_index: torch.Tensor,
+                       batch: Optional[torch.Tensor] = None,
                        **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
@@ -228,62 +216,80 @@ class Explainer(torch.nn.Module):
                 (default: :obj:`None`)
         """
         with torch.no_grad():
-            return self.model_config.model(g, **dict({
-                "batch": batch,
-                **kwargs
-            }))
+            return self.model(x=x, edge_index=edge_index, batch=batch,
+                              **kwargs)
 
-    def forward(self, g: Data, target: Optional[torch.Tensor] = None,
-                target_index: int = 0, batch: Optional[torch.Tensor] = None,
-                **kwargs) -> Explanation:
+    def __call__(self, x: torch.Tensor, edge_index: torch.Tensor,
+                 target: Optional[torch.Tensor] = None,
+                 target_index: Union[int, Tuple[int, ...], torch.Tensor,
+                                     List[Tuple[int, ...]], List[int]] = 0,
+                 batch: Optional[torch.Tensor] = None,
+                 **kwargs) -> Explanation:
         """Compute the explanation of the GNN  for the given inputs and target.
 
-
-
         Args:
-            g (Data): the input graph.
+            x (torch.Tensor): the node features.
+            edge_index (torch.Tensor): the edge indices.
             target (torch.Tensor, optional): the target of the GNN. If the
                 explanation type is :obj:`"phenomenon"`, the target has to be
                 provided. If the explanation type is :obj:`"model"`, the target
                 will be replaced by the model output and can be :obj:`None`.
                 (default: :obj:`None`)
-            target_index (int): the  index of the target to explain. If not
-                provided, the explanation is computed for the first index of
-                the target. (default: :obj:`0`)
-            batch (torch.Tensor, optional): the batch vector. (default:
-                :obj:`None`)
+            target_index: TargetIndex
+                Output indices to explain. If not provided, the explanation is
+                computed for the first index of the target. (default: :obj:`0`)
+
+                For general 1D outputs, targets can be either:
+
+                    . a single integer or a tensor containing a single
+                        integer, which is applied to all input examples
+
+                    . a list of integers or a 1D tensor, with length matching
+                        the number of examples (i.e number of unique values in
+                        the batch vector). Each integer is applied as the
+                        target for the corresponding element of the batch.
+
+                For outputs with > 1 dimension, targets can be either:
+
+                    . a single tuple, which contains (:obj:`target.dim()`)
+                        elements. This target index is applied for all
+                        elements of the batch.
+
+                    . a list of tuples with length equal to the number of
+                        examples in inputs, and each tuple containing
+                        (:obj:`target.dim()`) elements. Each tuple is applied
+                        as the target for the corresponding element of the
+                        batch.
+
+            batch (torch.Tensor, optional): the batch vector.  If not provided,
+                suppose only one input.(default::obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
 
         Raises:
             ValueError: if the explanation type is :obj:`"phenomenon"` and the
                 target is not provided.
         """
+        if batch is None:
+            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
+
         if self.explanation_config.explanation_type == "phenomenon":
             if target is None:
                 raise ValueError(
                     "The target has to be provided for the explanation type "
                     f"'{self.explanation_config.explanation_type}'")
         else:
-            target = self.get_prediction(g, batch, **kwargs)
+            target = self.get_prediction(x=x, edge_index=edge_index,
+                                         batch=batch, **kwargs)
 
-        raw_explanation = self._compute_explanation(
-            g,
-            target,  # type: ignore
-            target_index,
-            batch,
-            **kwargs)
-        return self._post_process_explanation(raw_explanation)
+        # TODO: add check that target_index is valid based on value of batch
 
-    def _compute_explanation(self, g: Data, target: torch.Tensor,
-                             target_index: int,
-                             batch: Optional[torch.Tensor] = None,
-                             **kwargs) -> Explanation:
-
-        return self.explanation_algorithm.explain(
-            g=g, model=self.model_config.model, target=target,
+        raw_explanation = self.explanation_algorithm.forward(
+            x=x, edge_index=edge_index, model=self.model, target=target,
             target_index=target_index, batch=batch,
             task_level=self.model_config.task_level,
             return_type=self.model_config.return_type, **kwargs)
+
+        return self._post_process_explanation(raw_explanation)
 
     def _post_process_explanation(self,
                                   explanation: Explanation) -> Explanation:

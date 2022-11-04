@@ -1,9 +1,8 @@
 from abc import abstractmethod
-from typing import Optional
+from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.data import Data
 from torch_geometric.explain.explanations import Explanation
 
 
@@ -13,7 +12,6 @@ class ExplainerAlgorithm(torch.nn.Module):
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         r"""
         This method compute the loss to be used for the explanation algorithm.
-        Subclasses should override this method to define their own loss.
 
         Args:
             y_hat (torch.Tensor): the output of the explanation algorithm.
@@ -24,33 +22,32 @@ class ExplainerAlgorithm(torch.nn.Module):
     @torch.no_grad()
     def get_initial_prediction(
         self,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
         model: torch.nn.Module,
-        g: Data,
         batch: Optional[torch.Tensor] = None,
         **kwargs,
     ):
         """Return the initial prediction of the model.
 
         Args:
+            x (torch.Tensor): node features.
+            edge_index (torch.Tensor): edge indices.
             model (torch.nn.Module): the model to explain.
-            g (torch_geometric.data.Data): the input graph.
             batch (torch.Tensor, optional): batch indicator.
+            **kwargs: additional arguments to pass to the model.
         """
-        out = model(
-            g,
-            **dict(batch=batch, **kwargs),
-        )
-        return out
+        return model(x=x, edge_index=edge_index, batch=batch, **kwargs)
 
     @abstractmethod
     def forward(
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        *,
         model: torch.nn.Module,
         target: torch.Tensor,
-        target_index: int = 0,
+        target_index: Union[int, Tuple[int, ...], torch.Tensor,
+                            List[Tuple[int, ...]], List[int]] = 0,
         batch: Optional[torch.Tensor] = None,
         task_level: str = "graph",
         return_type: str = "regression",
@@ -63,40 +60,34 @@ class ExplainerAlgorithm(torch.nn.Module):
             edge_index (torch.Tensor): edge indices.
             model (torch.nn.Module): the model to explain.
             target (torch.Tensor): the target of the model.
-            target_index (int): the index of the target to explain.
-                By default suppose the target is a single value.
+            target_index: TargetIndex
+                Output indices to explain. If not provided, the explanation is
+                computed for the first index of the target. (default: :obj:`0`)
+
+                For general 1D outputs, targets can be either:
+
+                    . a single integer or a tensor containing a single
+                        integer, which is applied to all input examples
+
+                    . a list of integers or a 1D tensor, with length matching
+                        the number of examples (i.e number of unique values in
+                        the batch vector). Each integer is applied as the
+                        target for the corresponding element of the batch.
+
+                For outputs with > 1 dimension, targets can be either:
+
+                    . a single tuple, which contains (:obj:`target.dim()`)
+                        elements. This target index is applied for all
+                        elements of the batch.
+
+                    . a list of tuples with length equal to the number of
+                        examples in inputs, and each tuple containing
+                        (:obj:`target.dim()`) elements. Each tuple is applied
+                        as the target for the corresponding element of the
+                        batch.
+
             batch (torch.Tensor, optional): batch indicator.
             **kwargs: additional arguments to pass to the GNN.
-        """
-
-    @abstractmethod
-    def explain(
-        self,
-        g: Data,
-        model: torch.nn.Module,
-        target: torch.Tensor,
-        target_index: int = 0,
-        batch: Optional[torch.Tensor] = None,
-        task_level: str = "graph",
-        return_type: str = "regression",
-        **kwargs,
-    ) -> Explanation:
-        """This method computes the explanation of the GNN.
-
-        This serves as a wrapper around the forward method, so that we can pass
-        it a `Data` object.
-
-        Args:
-            g (Data): input graph.
-            model (torch.nn.Module): model to use in explanations.
-            target (torch.Tensor): target of the GNN.
-            target_index (int): Index of the target to explain. Used
-                in case of multi-outputs.
-            batch (torch.Tensor, optional): batch tensor.
-            **kwargs: additional arguments to pass to the GNN.
-
-        .. note:: internally  should call the forward method by properly
-                splitting the `Data` object into the arguments.
         """
 
     @abstractmethod
@@ -109,8 +100,6 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Returns true if the explainer supports the settings.
 
-        Responsability of the children to exclude the settings that are not
-        supported.
 
         Args:
             explanation_type (str): the type of explanation to compute.

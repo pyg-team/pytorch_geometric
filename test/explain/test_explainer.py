@@ -25,18 +25,20 @@ def dummyExplanation(g) -> Explanation:
     f_nodes = g.x.shape[1]
     f_edges = g.edge_attr.shape[1]
     big_max = torch.tensor([n_nodes * f_nodes, n_edges * f_edges]).max() + 1
-    return Explanation.from_masks(
-        edge_index=g.edge_index,
-        masks=(torch.arange(1., 1. + n_nodes, dtype=torch.float) / big_max,
-               torch.arange(1., 1. + n_edges, dtype=torch.float) / big_max,
-               torch.arange(1., 1. + f_nodes * n_nodes,
-                            dtype=torch.float).reshape(n_nodes, f_nodes) /
-               big_max,
-               torch.arange(1., 1. + f_edges * n_edges,
-                            dtype=torch.float).reshape(n_edges, f_edges) /
-               big_max),
-        mask_keys=("node_mask", "edge_mask", "node_features_mask",
-                   "edge_features_mask"), x=g.x, edge_attr=g.edge_attr)
+    masks = {
+        "node_mask":
+        torch.arange(1., 1. + n_nodes, dtype=torch.float) / big_max,
+        "edge_mask":
+        torch.arange(1., 1. + n_edges, dtype=torch.float) / big_max,
+        "node_features_mask":
+        torch.arange(1., 1. + f_nodes * n_nodes, dtype=torch.float).reshape(
+            n_nodes, f_nodes) / big_max,
+        "edge_features_mask":
+        torch.arange(1., 1. + f_edges * n_edges, dtype=torch.float).reshape(
+            n_edges, f_edges) / big_max
+    }
+    return Explanation(edge_index=g.edge_index, x=g.x, edge_attr=g.edge_attr,
+                       **masks)
 
 
 def constantExplanation(g) -> Explanation:
@@ -44,13 +46,18 @@ def constantExplanation(g) -> Explanation:
     n_edges = g.edge_index.shape[1]
     f_nodes = g.x.shape[1]
     f_edges = g.edge_attr.shape[1]
-    return Explanation.from_masks(
-        edge_index=g.edge_index,
-        masks=(torch.ones(n_nodes), torch.ones(n_edges),
-               torch.ones(f_nodes * n_nodes).reshape(n_nodes, f_nodes),
-               torch.ones(f_edges * n_edges).reshape(n_edges, f_edges)),
-        mask_keys=("node_mask", "edge_mask", "node_features_mask",
-                   "edge_features_mask"), x=g.x, edge_attr=g.edge_attr)
+    masks = {
+        "node_mask":
+        torch.ones(n_nodes),
+        "edge_mask":
+        torch.ones(n_edges),
+        "node_features_mask":
+        torch.ones(f_nodes * n_nodes).reshape(n_nodes, f_nodes),
+        "edge_features_mask":
+        torch.ones(f_edges * n_edges).reshape(n_edges, f_edges)
+    }
+    return Explanation(edge_index=g.edge_index, x=g.x, edge_attr=g.edge_attr,
+                       **masks)
 
 
 class DummyModel(torch.nn.Module):
@@ -58,29 +65,19 @@ class DummyModel(torch.nn.Module):
         super().__init__()
         self.out_dim = out_dim
 
-    def forward(self, g: Data, **kwargs):
-        return g.x.mean().repeat(self.out_dim)
-
-
-class DummyModelNotCompatible(torch.nn.Module):
-    def forward(self, x: torch.Tensor, **kwargs) -> torch.Tensor:
-        return x
+    def forward(self, x, **kwargs):
+        return x.mean().repeat(self.out_dim)
 
 
 class DummyExplainer(ExplainerAlgorithm):
     def forward(
         self,
-        g: Data,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        edge_attr: torch.Tensor,
         **kwargs,
     ) -> Data:
-        return g
-
-    def explain(
-        self,
-        g: Data,
-        **kwargs,
-    ) -> Data:
-        return g
+        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
     def supports(
         self,
@@ -176,22 +173,15 @@ def test_classification_explainer_init(dummyexplainer, model,
                   threshold=threshold)
 
 
-def test_init_model_not_compatible(dummyexplainer):
-    with pytest.raises(ValueError):
-        Explainer(explanation_algorithm=dummyexplainer,
-                  model=DummyModelNotCompatible(),
-                  model_return_type="regression", task_level="node",
-                  explanation_type="phenomenon", mask_type="node",
-                  threshold="none")
-
-
 @pytest.mark.parametrize("model", models)
 def test_get_prediction(dummyexplainer, dummyInput, model):
     explainer = Explainer(explanation_algorithm=dummyexplainer, model=model,
                           model_return_type="regression", task_level="node",
                           explanation_type="phenomenon", mask_type="node",
                           threshold="none")
-    assert explainer.get_prediction(dummyInput).shape == (model.out_dim, )
+    assert explainer.get_prediction(
+        x=dummyInput.x, edge_index=dummyInput.edge_index,
+        edge_attr=dummyInput.edge_attr).shape == (model.out_dim, )
 
 
 @pytest.mark.parametrize("target", [None, torch.randn(2)])
@@ -203,10 +193,13 @@ def test_forward_target_switch(dummyInput, target, explanation_type):
                           mask_type="node_feat", threshold="none")
     if target is None and explanation_type == "phenomenon":
         with pytest.raises(ValueError):
-            explainer.forward(dummyInput, target=target)
+            explainer(x=dummyInput.x, edge_index=dummyInput.edge_index,
+                      edge_attr=dummyInput.edge_attr, target=target)
     else:
-        assert explainer.forward(
-            dummyInput, target).node_features_mask.shape == dummyInput.x.shape
+        assert explainer(
+            x=dummyInput.x, edge_index=dummyInput.edge_index,
+            edge_attr=dummyInput.edge_attr,
+            target=target).node_features_mask.shape == dummyInput.x.shape
 
 
 @pytest.mark.parametrize("threshold_value", [0.2, 0.5, 0.8])
@@ -216,8 +209,11 @@ def test_hard_threshold(dummyInput, threshold_value):
                           task_level="graph", explanation_type="phenomenon",
                           mask_type="node_feat", threshold="hard",
                           threshold_value=threshold_value)
-    explanations_raw = explainer._compute_explanation(dummyInput, target=None,
-                                                      target_index=0)
+    explanations_raw = explainer.explanation_algorithm(dummyInput.x,
+                                                       dummyInput.edge_index,
+                                                       dummyInput.edge_attr,
+                                                       target=None,
+                                                       target_index=0)
     explanation_processed = explainer._threshold(explanations_raw)
     assert explanation_processed.node_features_mask.shape == \
         dummyInput.x.shape

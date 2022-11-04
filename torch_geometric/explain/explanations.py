@@ -1,5 +1,5 @@
 """Class representing explanations."""
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 from torch import Tensor
 
@@ -62,50 +62,6 @@ class Explanation(Data):
         """Returns the available explanation masks."""
         return tuple(key for key in self.keys
                      if key.endswith('_mask') and self[key] is not None)
-
-    @staticmethod
-    def from_masks(edge_index: Tensor, masks: Union[Tensor, Tuple[Tensor,
-                                                                  ...]],
-                   mask_keys: Union[str, Tuple[str, ...]],
-                   auto_correct_names: bool = False,
-                   **kwargs) -> 'Explanation':
-        """Create an explanation from a mask or a tuple of masks.
-
-        Args:
-            edge_index (Tensor): The edge index of the graph.
-            masks (Union[torch.Tensor, Tuple[torch.Tensor]]): the mask or a
-                tuple of masks.
-            mask_keys (Union[str, Tuple[str]]): the key or a tuple of keys for
-                the masks. The names should end with "_mask".
-            auto_correct_names (bool, optional): If set to :obj:`True`, the
-                mask keys will be corrected if they do not end with "_mask".
-                (default: :obj:`False`)
-            **kwargs (optional): Additional attributes.
-
-        Raises:
-            ValueError: if mask_keys and masks do not have the same length.
-
-        :rtype: :class:`torch_geometric.explain.Explanation`
-        """
-        # sanitize input
-        if isinstance(masks, Tensor):
-            masks = (masks, )
-        if isinstance(mask_keys, str):
-            mask_keys = (mask_keys, )
-        if len(masks) != len(mask_keys):
-            raise ValueError(
-                "The number of masks and of mask keys should be equal.")
-        if auto_correct_names:
-            mask_keys = tuple(key if key.endswith("_mask") else key + "_mask"
-                              for key in mask_keys)
-        # validate mask_keys
-        for key in mask_keys:
-            if not key.endswith("_mask"):
-                raise ValueError(
-                    f"The mask keys should end with '_mask', got {key}.")
-        masks_dict = dict(zip(mask_keys, masks))
-        masks_dict.update(kwargs)
-        return Explanation(edge_index=edge_index, **masks_dict)
 
     def visualise_graph(self, threshold_node: Optional[float] = None,
                         threhsold_edge: Optional[float] = None, **kwargs):
