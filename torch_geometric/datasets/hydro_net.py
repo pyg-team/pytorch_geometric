@@ -2,6 +2,7 @@ import copy
 import os
 import os.path as osp
 from dataclasses import dataclass
+from functools import lru_cache
 from glob import glob
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple, Union
@@ -22,7 +23,7 @@ try:
 except ImportError:  # Python 3.7 support.
 
     def cached_property(func):
-        return func
+        return property(fget=lru_cache(maxsize=1)(func))
 
 
 class HydroNet(InMemoryDataset):
