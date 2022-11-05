@@ -45,7 +45,9 @@ class Explainer:
             (masking the node features), :obj:`"both"` (object and attributes),
             or :obj:`"none"` (no node masking).
         edge_mask_type (str, optional): type of edge mask to be used.
-            Same options as :obj:`node_mask_type`.
+            Same options as :obj:`node_mask_type`. At least one of
+            :obj:`node_mask_type` and :obj:`edge_mask_type` must be
+            different from :obj:`"none"`.
         threshold (str, optional): type of threshold to apply after the
             explanation algorithm. Valid inputs are :obj:`"none"`,
             :obj:`"hard"`, :obj:`"topk"`, :obj:`"topk_hard"`, and
@@ -97,6 +99,10 @@ class Explainer:
         threshold_value: float = 1,
     ) -> None:
 
+        if node_mask_type == MaskType.none and edge_mask_type == MaskType.none:
+            raise ValueError(
+                "At least one of node_mask_type and edge_mask_type must be "
+                "different from 'none'.")
         self.model = model
         self.model_config = ModelConfig(return_type=model_return_type,
                                         task_level=task_level)
@@ -113,11 +119,13 @@ class Explainer:
 
         # check that the explanation algorithm supports the
         # desired setup
-        if not self.explanation_algorithm.supports(self.explanation_config,
-                                                   self.model_config):
-            raise ValueError(
-                "The explanation algorithm does not support the configuration."
-            )
+        check, message = self.explanation_algorithm.supports(
+            self.explanation_config, self.model_config)
+        if not check:
+            message = f"Explanation algorithm {self.explanation_algorithm} \
+                does not support the given explanation settings: {message}"
+
+            raise ValueError(message)
 
     def get_prediction(self, x: torch.Tensor, edge_index: torch.Tensor,
                        batch: Optional[torch.Tensor] = None,

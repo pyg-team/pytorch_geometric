@@ -83,8 +83,8 @@ class DummyExplainer(ExplainerAlgorithm):
     def supports(
         self,
         *args,
-    ) -> bool:
-        return True
+    ):
+        return True, None
 
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         return torch.nn.functional.mse_loss(y_hat, y)

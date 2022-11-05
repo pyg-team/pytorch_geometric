@@ -116,11 +116,12 @@ class ExplainerAlgorithm(torch.nn.Module):
         self,
         explanation_config: ExplainerConfig,
         model_config: ModelConfig,
-    ) -> bool:
+    ) -> Tuple[bool, Optional[str]]:
         """Check if the explainer supports the user-defined settings.
 
         Returns true if the explainer supports the settings (mainly the mask
-        types), false otherwise.
+        types), false otherwise. If the explainer does not support the
+        settings, an error message explaining the reason is returned.
 
         Args:
             explanation_config (ExplainerConfig): the user-defined settings.
