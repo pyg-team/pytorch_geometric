@@ -199,7 +199,7 @@ class Explainer:
                 target is not provided.
         """
         if batch is None:
-            batch = torch.zeros(x.size(0), dtype=torch.int, device=x.device)
+            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 
         # choose the target depending on the explanation type
         if self.explanation_config.explanation_type.value == "phenomenon":
