@@ -52,6 +52,8 @@ def dense_mincut_pool(
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        temp (float or int, optional): Temperature parameter for softmax
+            function
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
