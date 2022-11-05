@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.explain.configuration import ExplainerConfig
+from torch_geometric.explain.configuration import ExplainerConfig, MaskType
 from torch_geometric.explain.explanations import Explanation
 
 
@@ -52,6 +52,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         batch: Optional[torch.Tensor] = None,
         task_level: str = "graph",
         return_type: str = "regression",
+        node_mask_type: Union[str, MaskType] = MaskType.object,
+        edge_mask_type: Union[str, MaskType] = MaskType.none,
         **kwargs,
     ) -> Explanation:
         """Compute the explanation.
@@ -88,7 +90,9 @@ class ExplainerAlgorithm(torch.nn.Module):
                   batch.
 
             batch (torch.Tensor, optional): batch indicator.
-            **kwargs: additional arguments to pass to the GNN.
+            node_mask_type (MaskType): the type of node mask to use.
+            edge_mask_type (MaskType): the type of edge mask to use.
+            **kwargs: additional arguments to pass to the model.
         """
 
     @abstractmethod
