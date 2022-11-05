@@ -1,14 +1,12 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 
 def dense_mincut_pool(
-    x: Tensor,
-    adj: Tensor,
-    s: Tensor,
-    mask: Optional[Tensor] = None,
+    x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None,
+    temp: Optional[Union[float, int]] = 1.0
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
@@ -65,7 +63,7 @@ def dense_mincut_pool(
 
     (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-    s = torch.softmax(s, dim=-1)
+    s = torch.softmax(s / temp, dim=-1)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
