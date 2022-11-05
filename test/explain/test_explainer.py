@@ -128,7 +128,8 @@ def test_get_prediction(dummyexplainer, dummyInput, model):
 def test_forward_target_switch(dummyInput, target, explanation_type):
     explainer = Explainer(explanation_algorithm=RandomExplainer(),
                           model=DummyModel(), model_return_type="regression",
-                          task_level="node", explanation_type=explanation_type,
+                          task_level="graph",
+                          explanation_type=explanation_type,
                           node_mask_type="attributes", threshold="none")
     if target is None and explanation_type == "phenomenon":
         with pytest.raises(ValueError):

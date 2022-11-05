@@ -8,6 +8,7 @@ from torch_geometric.explain.configuration import (
     ExplanationType,
     MaskType,
     ModelConfig,
+    ModelMode,
     ModelReturnType,
     ModelTaskLevel,
     Threshold,
@@ -112,7 +113,8 @@ class Explainer:
 
         # check that the explanation algorithm supports the
         # desired setup
-        if not self.explanation_algorithm.supports(self.explanation_config):
+        if not self.explanation_algorithm.supports(self.explanation_config,
+                                                   self.model_config):
             raise ValueError(
                 "The explanation algorithm does not support the configuration."
             )
@@ -122,6 +124,10 @@ class Explainer:
                        **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
+        If the model mode is :obj:`"regression"`, the prediction is
+        returned as a scalar value. If the model mode  :obj:`"classification"`,
+        the prediction is returned as a the predicted class label.
+
         Args:
             x (torch.Tensor): Node features.
             edge_index (torch.Tensor): Edge indices.
@@ -129,14 +135,17 @@ class Explainer:
             **kwargs: Additional arguments to be passed to the model.
         """
         with torch.no_grad():
-            return self.model(x=x, edge_index=edge_index, batch=batch,
-                              **kwargs)
+            out = self.model(x=x, edge_index=edge_index, batch=batch, **kwargs)
+            if self.model_config.mode == ModelMode.classification:
+                out = out.argmax(dim=-1)
+            return out
 
     def __call__(self, x: torch.Tensor, edge_index: torch.Tensor,
                  target: Optional[torch.Tensor] = None,
                  target_index: Union[int, Tuple[int, ...], torch.Tensor,
                                      List[Tuple[int, ...]], List[int]] = 0,
                  batch: Optional[torch.Tensor] = None,
+                 index: Optional[Union[int, Tuple[int, ...]]] = None,
                  **kwargs) -> Explanation:
         """Compute the explanation of the GNN  for the given inputs and target.
 
@@ -148,7 +157,9 @@ class Explainer:
                 provided. If the explanation type is :obj:`"model"`, the target
                 will be replaced by the model output and can be :obj:`None`.
                 (default: :obj:`None`)
-            target_index (TargetIndex): Output indices to explain.
+            target_index (TargetIndex): Output indices to explain (not the same
+                as :obj:`index`). If the model is a multi-output model, the
+                target index can be used to specify which output to explain.
                 If not provided, the explanation is computed for the first
                 index of the target. (default: :obj:`0`)
 
@@ -176,6 +187,11 @@ class Explainer:
 
             batch (torch.Tensor, optional): the batch vector.  If not provided,
                 suppose only one input.(default::obj:`None`)
+            index (Union[int, Tuple[int, ...]], optional): the node/edge index
+                to explain. Can be a single index if no batch is provided, or a
+                tuple of indices if a batch is provided. only used if the model
+                task level is :obj:`"node"` or :obj:`"edge"`.
+                (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
 
         Raises:
@@ -183,8 +199,9 @@ class Explainer:
                 target is not provided.
         """
         if batch is None:
-            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
+            batch = torch.zeros(x.size(0), dtype=torch.int, device=x.device)
 
+        # choose the target depending on the explanation type
         if self.explanation_config.explanation_type.value == "phenomenon":
             if target is None:
                 raise ValueError(
@@ -194,7 +211,19 @@ class Explainer:
             target = self.get_prediction(x=x, edge_index=edge_index,
                                          batch=batch, **kwargs)
 
+        if self.model_config.task_level == ModelTaskLevel.graph:
+            # cannot specify index for graph-level explanations
+            if index is not None:
+                raise ValueError("The index has to be None for the task level "
+                                 f"'{self.model_config.task_level}'")
+        else:
+            # check that the index is there for a node or edge explanation
+            if index is None:
+                raise ValueError("The index has to be provided for the task "
+                                 f"level '{self.model_config.task_level}'")
+
         # TODO: add check that target_index is valid based on value of batch
+        # same for index
 
         raw_explanation = self.explanation_algorithm.forward(
             x=x, edge_index=edge_index, model=self.model, target=target,
@@ -202,7 +231,8 @@ class Explainer:
             task_level=self.model_config.task_level,
             return_type=self.model_config.return_type,
             node_mask_type=self.explanation_config.node_mask_type,
-            edge_mask_type=self.explanation_config.edge_mask_type, **kwargs)
+            edge_mask_type=self.explanation_config.edge_mask_type, index=index,
+            **kwargs)
 
         return self._post_process_explanation(raw_explanation)
 
@@ -233,28 +263,30 @@ class Explainer:
         # get the available mask
         available_mask_keys = explanation.available_explanations
         available_mask = [explanation[key] for key in available_mask_keys]
-
-        if self.threshold.type.value == "hard":
+        if self.threshold.type == ThresholdType.hard:
             available_mask = [(mask > self.threshold.value).float()
                               for mask in available_mask]
 
-        if self.threshold.type.value in ["topk", "topk_hard"]:
+        if self.threshold.type in [
+                ThresholdType.topk, ThresholdType.topk_hard
+        ]:
             updated_masks = []
             for mask in available_mask:
                 if self.threshold.value >= mask.numel():
                     updated_mask = mask
                 else:
-                    topk_values, indices = torch.topk(input=mask.flatten(),
-                                                      k=self.threshold.value)
+                    topk_values, indices = torch.topk(
+                        input=mask.flatten(),
+                        k=self.threshold.value)  # type: ignore
                     updated_mask = torch.zeros_like(mask.flatten()).scatter_(
                         0, indices, topk_values)
 
-                if self.threshold.type.value == "topk_hard":
+                if self.threshold.type == ThresholdType.topk_hard:
                     updated_mask = (updated_mask > 0).float()
                 updated_masks.append(updated_mask.reshape(mask.shape))
             available_mask = updated_masks
 
-        if self.threshold.type.value == "connected":
+        if self.threshold.type == ThresholdType.connected:
             raise NotImplementedError()
 
         # update the explanation with the thresholded masks

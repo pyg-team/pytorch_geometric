@@ -43,7 +43,7 @@ class ModelMode(Enum):
 
 class ModelReturnType(Enum):
     """Enum class for model return type."""
-    logits = "logits"
+    log_probs = "log_probs"
     probs = "probs"
     raw = "raw"
     regression = "regression"
@@ -165,5 +165,10 @@ class ModelConfig:
         self.__post_init__()
 
     def __post_init__(self):
-        if self.task_level == ModelReturnType.regression:
-            self.return_type = ModelReturnType.regression
+        if self.return_type == ModelReturnType.regression:
+            self.mode = ModelMode.regression
+        elif self.return_type in [
+                ModelReturnType.log_probs, ModelReturnType.probs,
+                ModelReturnType.raw
+        ]:
+            self.mode = ModelMode.classification

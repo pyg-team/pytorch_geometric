@@ -78,3 +78,35 @@ class Explanation(Data):
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
         raise NotImplementedError()
+
+    def visualize_subgraph(self, node_idx: Optional[int], edge_index: Tensor,
+                           edge_mask: Tensor, y: Optional[Tensor] = None,
+                           threshold: Optional[int] = None,
+                           edge_y: Optional[Tensor] = None,
+                           node_alpha: Optional[Tensor] = None, seed: int = 10,
+                           **kwargs):
+        r"""Visualizes the subgraph given an edge mask :attr:`edge_mask`.
+
+        Args:
+            node_idx (int): The node id to explain.
+                Set to :obj:`None` to explain a graph.
+            edge_index (LongTensor): The edge indices.
+            edge_mask (Tensor): The edge mask.
+            y (Tensor, optional): The ground-truth node-prediction labels used
+                as node colorings. All nodes will have the same color
+                if :attr:`node_idx` is :obj:`-1`.(default: :obj:`None`).
+            threshold (float, optional): Sets a threshold for visualizing
+                important edges. If set to :obj:`None`, will visualize all
+                edges with transparancy indicating the importance of edges.
+                (default: :obj:`None`)
+            edge_y (Tensor, optional): The edge labels used as edge colorings.
+            node_alpha (Tensor, optional): Tensor of floats (0 - 1) indicating
+                transparency of each node.
+            seed (int, optional): Random seed of the :obj:`networkx` node
+                placement algorithm. (default: :obj:`10`)
+            **kwargs (optional): Additional arguments passed to
+                :func:`nx.draw`.
+
+        :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
+        """
+        raise NotImplementedError()

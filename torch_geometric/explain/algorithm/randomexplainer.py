@@ -3,7 +3,7 @@ from typing import Optional
 import torch
 
 from torch_geometric.explain.base import ExplainerAlgorithm
-from torch_geometric.explain.configuration import ExplainerConfig
+from torch_geometric.explain.configuration import ExplainerConfig, ModelConfig
 from torch_geometric.explain.explanations import Explanation
 
 
@@ -42,6 +42,7 @@ class RandomExplainer(ExplainerAlgorithm):
     def supports(
         self,
         explanation_config: ExplainerConfig,
+        model_config: ModelConfig,
     ) -> bool:
         """Check if the explainer supports the user-defined settings.
 
