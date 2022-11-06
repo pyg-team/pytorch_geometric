@@ -1,5 +1,6 @@
 import torch
 from torch import Tensor, nn
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
@@ -39,7 +40,11 @@ def test_basic_summary() -> None:
     model = GCN(32, 16, num_layers=2, out_channels=32)
     x = torch.randn(100, 32)
     edge_index = torch.randint(100, size=(2, 20))
+    adj_t = SparseTensor.from_edge_index(edge_index,
+                                         sparse_sizes=(100, 100)).t()
     print(summary(model, x, edge_index))
+
+    print(summary(model, x, adj_t))
 
     print(summary(model, x, edge_index, max_depth=1))
 

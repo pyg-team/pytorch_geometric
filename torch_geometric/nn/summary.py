@@ -4,6 +4,7 @@ from typing import Any, Optional, Sequence, Tuple, Union
 import torch
 import torch.nn as nn
 from torch.jit import ScriptModule
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 
@@ -133,7 +134,9 @@ def get_shape(input: Union[Any, Tuple[Any]]) -> str:
         input = (input, )
     out = []
     for x in input:
-        if hasattr(x, 'size'):
+        if isinstance(x, SparseTensor):
+            out.append(str(list(x.sparse_sizes())))
+        elif hasattr(x, 'size'):
             out.append(str(list(x.size())))
     out = ', '.join(out)
     return out
