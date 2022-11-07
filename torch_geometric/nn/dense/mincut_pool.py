@@ -64,7 +64,7 @@ def dense_mincut_pool(
 
     (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-    s = torch.softmax(s / temp, dim=-1)
+    s = torch.softmax(s / temp if temp != 1.0 else s, dim=-1)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
