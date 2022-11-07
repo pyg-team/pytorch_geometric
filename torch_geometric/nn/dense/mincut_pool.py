@@ -5,8 +5,12 @@ from torch import Tensor
 
 
 def dense_mincut_pool(
-        x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None,
-        temp: float = 1.0, ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+    x: Tensor,
+    adj: Tensor,
+    s: Tensor,
+    mask: Optional[Tensor] = None,
+    temp: float = 1.0,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
     paper
