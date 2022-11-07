@@ -62,8 +62,9 @@ class SchNet(torch.nn.Module):
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
         interaction_graph (Callable, optional): The function used to compute
-            the pairwise interaction graph. If provided will override the
-            default radius graph method. (default :obj:`None`)
+            the pairwise interaction graph and interatomic distances. If
+            provided will override the default radius graph method defined
+            in :obj:`RadiusInteractionGraph`. (default :obj:`None`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
@@ -310,12 +311,31 @@ class SchNet(torch.nn.Module):
 
 
 class RadiusInteractionGraph(torch.nn.Module):
+    r"""Creates edges based on atom positions :obj:`pos` to all points within
+    the cutoff distance.
+
+    Args:
+        cutoff (float, optional): Cutoff distance for interatomic interactions.
+            (default: :obj:`10.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance with the
+            default interaction graph method.
+            (default: :obj:`32`)
+    """
     def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
         super().__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
 
     def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
+        r"""
+        Args:
+            pos (Tensor): Coordinates of each atom.
+            batch (LongTensor, optional): Batch indices assigning each atom to
+                a separate molecule.
+
+        :rtype: (:class:`LongTensor`, :class:`Tensor`)
+        """
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
         row, col = edge_index
