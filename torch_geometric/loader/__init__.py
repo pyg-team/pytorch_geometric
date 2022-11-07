@@ -15,7 +15,6 @@ from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
 from .node_loader import NodeLoader
 from .link_loader import LinkLoader
-from .steps_loader import StepsLoader
 
 __all__ = classes = [
     'DataLoader',
@@ -38,5 +37,4 @@ __all__ = classes = [
     'NeighborSampler',
     'ImbalancedSampler',
     'DynamicBatchSampler',
-    'StepsLoader',
 ]

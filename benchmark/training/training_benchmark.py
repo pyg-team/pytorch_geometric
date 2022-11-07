@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 from benchmark.utils import emit_itt, get_dataset, get_model
-from torch_geometric.loader import NeighborLoader, StepsLoader
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
@@ -20,7 +20,7 @@ supported_sets = {
 def train_homo(model, loader, optimizer, device, progress_bar=True,
                desc="") -> None:
     if progress_bar:
-        loader = tqdm(loader, desc=desc, total=len(loader))
+        loader = tqdm(loader, desc=desc)
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
@@ -40,7 +40,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
 def train_hetero(model, loader, optimizer, device, progress_bar=True,
                  desc="") -> None:
     if progress_bar:
-        loader = tqdm(loader, desc=desc, total=len(loader))
+        loader = tqdm(loader, desc=desc)
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
@@ -60,6 +60,9 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
 def run(args: argparse.ArgumentParser) -> None:
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # If we use a custom number of steps, then we need to use RandomSampler,
+    # which already does shuffle.
+    shuffle = False if args.num_steps != -1 else True
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
@@ -90,6 +93,10 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Training bench for {model_name}:')
 
             for batch_size in args.batch_sizes:
+                sampler = torch.utils.data.RandomSampler(
+                    range(len(data)), num_samples=args.num_steps *
+                    batch_size) if args.num_steps != -1 else None
+
                 for layers in args.num_layers:
                     num_neighbors = args.num_neighbors
                     if type(num_neighbors) is list:
@@ -104,13 +111,9 @@ def run(args: argparse.ArgumentParser) -> None:
                         != num of layers={layers}'''
 
                     subgraph_loader = NeighborLoader(
-                        data,
-                        num_neighbors=num_neighbors,
-                        input_nodes=mask,
-                        batch_size=batch_size,
-                        shuffle=True,
-                        num_workers=args.num_workers,
-                    )
+                        data, num_neighbors=num_neighbors, input_nodes=mask,
+                        batch_size=batch_size, shuffle=shuffle,
+                        num_workers=args.num_workers, sampler=sampler)
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
@@ -133,10 +136,6 @@ def run(args: argparse.ArgumentParser) -> None:
                                     subgraph_loader)
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
-
-                        if args.num_steps != -1:
-                            subgraph_loader = StepsLoader(
-                                subgraph_loader, args.num_steps)
 
                         model = get_model(
                             model_name, params,

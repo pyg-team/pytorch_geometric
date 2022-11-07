@@ -3,7 +3,7 @@ import argparse
 import torch
 
 from benchmark.utils import emit_itt, get_dataset, get_model
-from torch_geometric.loader import NeighborLoader, StepsLoader
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
@@ -52,6 +52,10 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Evaluation bench for {model_name}:')
 
             for batch_size in args.eval_batch_sizes:
+                sampler = torch.utils.data.RandomSampler(
+                    range(len(data)), num_samples=args.num_steps *
+                    batch_size) if args.num_steps != -1 else None
+
                 if not hetero:
                     subgraph_loader = NeighborLoader(
                         data,
@@ -60,6 +64,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=args.num_workers,
+                        sampler=sampler,
                     )
 
                 for layers in args.num_layers:
@@ -73,6 +78,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             batch_size=batch_size,
                             shuffle=False,
                             num_workers=args.num_workers,
+                            sampler=sampler,
                         )
 
                     for hidden_channels in args.num_hidden_channels:
@@ -96,10 +102,6 @@ def run(args: argparse.ArgumentParser) -> None:
                                     subgraph_loader)
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
-
-                        if args.num_steps != -1:
-                            subgraph_loader = StepsLoader(
-                                subgraph_loader, args.num_steps)
 
                         model = get_model(
                             model_name, params,
