@@ -325,7 +325,7 @@ class RadiusInteractionGraph(torch.nn.Module):
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
 
-    def forward(self, pos, batch):
+    def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
         row, col = edge_index
