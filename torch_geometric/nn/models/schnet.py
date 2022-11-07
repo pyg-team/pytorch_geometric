@@ -101,7 +101,7 @@ class SchNet(torch.nn.Module):
         dipole: bool = False,
         mean: Optional[float] = None,
         std: Optional[float] = None,
-        atomref: Optional[torch.Tensor] = None,
+        atomref: OptTensor = None,
     ):
         super().__init__()
 
