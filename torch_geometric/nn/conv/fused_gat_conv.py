@@ -15,14 +15,14 @@ from torch_geometric.typing import Adj, OptPairTensor
 
 
 class FusedGATConv(GATConv):
-    r"""The fused graph attention operator from the 
-    `"UNDERSTANDING GNN COMPUTATIONAL GRAPH: A COORDINATED COMPUTATION, 
+    r"""The fused graph attention operator from the
+    `"UNDERSTANDING GNN COMPUTATIONAL GRAPH: A COORDINATED COMPUTATION,
     IO, AND MEMORY PERSPECTIVE"
     <https://proceedings.mlsys.org/paper/2022/file/9a1158154dfa42caddbd0694a4e9bdc8-Paper.pdf>`
     _ paper
-    
-    Based on the graph attention operator, the fused graph attention operator 
-    optimizes the GNN computational graph from a novel coordinated computation, 
+
+    Based on the graph attention operator, the fused graph attention operator
+    optimizes the GNN computational graph from a novel coordinated computation,
     IO, and memory perspective and finally achieves faster speed and lower memory usage.
 
     The graph attentional operator from the `"Graph Attention Networks"
