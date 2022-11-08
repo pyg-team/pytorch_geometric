@@ -25,3 +25,14 @@ __all__ = [
     'to_hetero_with_bases',
     'PositionalEncoding',
 ]
+
+from torch_geometric.deprecation import deprecated
+from .models.explainer import Explainer, to_captum
+from .models.gnn_explainer import GNNExplainer
+
+Explainer = deprecated("Will move to torch_geometric.explain")(
+    Explainer)  # noqa
+to_captum = deprecated("Will move to torch_geometric.explain")(
+    to_captum)  # noqa
+GNNExplainer = deprecated("Will move to torch_geometric.explain")(
+    GNNExplainer)  # noqa
