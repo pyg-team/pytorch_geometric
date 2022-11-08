@@ -21,6 +21,7 @@ graphgym_requires = [
 ]
 
 full_requires = graphgym_requires + [
+    'ase',
     'h5py',
     'numba',
     'sympy',
@@ -44,6 +45,8 @@ benchmark_requires = [
 test_requires = [
     'pytest',
     'pytest-cov',
+    'onnx',
+    'onnxruntime',
 ]
 
 dev_requires = test_requires + [

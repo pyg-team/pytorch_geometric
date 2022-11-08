@@ -19,6 +19,12 @@ def degree(index: Tensor, num_nodes: Optional[int] = None,
             returned tensor.
 
     :rtype: :class:`Tensor`
+
+    Example:
+
+        >>> row = torch.tensor([0, 1, 0, 2, 0])
+        >>> degree(row, dtype=torch.long)
+        tensor([3, 1, 1])
     """
     N = maybe_num_nodes(index, num_nodes)
     out = torch.zeros((N, ), dtype=dtype, device=index.device)

@@ -1,6 +1,7 @@
 from .degree import degree
 from .softmax import softmax
-from .dropout import dropout_adj
+from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
+from .augmentation import shuffle_node, mask_feature, add_random_edge
 from .sort_edge_index import sort_edge_index
 from .coalesce import coalesce
 from .undirected import is_undirected, to_undirected
@@ -11,6 +12,7 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
 from .homophily import homophily
+from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import index_to_mask, mask_to_index
@@ -38,7 +40,13 @@ from .scatter import scatter
 __all__ = [
     'degree',
     'softmax',
+    'dropout_node',
+    'dropout_edge',
+    'dropout_path',
     'dropout_adj',
+    'shuffle_node',
+    'mask_feature',
+    'add_random_edge',
     'sort_edge_index',
     'coalesce',
     'is_undirected',
@@ -56,6 +64,7 @@ __all__ = [
     'bipartite_subgraph',
     'k_hop_subgraph',
     'homophily',
+    'assortativity',
     'get_laplacian',
     'get_mesh_laplacian',
     'index_to_mask',

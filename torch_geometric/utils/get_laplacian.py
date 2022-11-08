@@ -1,17 +1,22 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import add_self_loops, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
 
-def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
-                  normalization: Optional[str] = None,
-                  dtype: Optional[int] = None,
-                  num_nodes: Optional[int] = None):
+def get_laplacian(
+    edge_index: Tensor,
+    edge_weight: OptTensor = None,
+    normalization: Optional[str] = None,
+    dtype: Optional[torch.dtype] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 
@@ -35,6 +40,22 @@ def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
             in case :obj:`edge_weight=None`. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2],
+        ...                            [1, 0, 2, 1]])
+        >>> edge_weight = torch.tensor([1., 2., 2., 4.])
+
+        >>> # No normalization
+        >>> lap = get_laplacian(edge_index, edge_weight)
+
+        >>> # Symmetric normalization
+        >>> lap_sym = get_laplacian(edge_index, edge_weight,
+                                    normalization='sym')
+
+        >>> # Random-walk normalization
+        >>> lap_rw = get_laplacian(edge_index, edge_weight, normalization='rw')
     """
 
     if normalization is not None:

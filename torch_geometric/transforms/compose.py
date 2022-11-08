@@ -13,7 +13,10 @@ class Compose(BaseTransform):
     def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for transform in self.transforms:
             if isinstance(data, (list, tuple)):
                 data = [transform(d) for d in data]

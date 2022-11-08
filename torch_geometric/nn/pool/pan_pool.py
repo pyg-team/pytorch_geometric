@@ -1,3 +1,5 @@
+from typing import Callable, Optional, Tuple
+
 import torch
 from torch import Tensor
 from torch.nn import Parameter
@@ -38,8 +40,14 @@ class PANPooling(torch.nn.Module):
         nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.tanh`)
     """
-    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1.0,
-                 nonlinearity=torch.tanh):
+    def __init__(
+        self,
+        in_channels: int,
+        ratio: float = 0.5,
+        min_score: Optional[float] = None,
+        multiplier: float = 1.0,
+        nonlinearity: Callable = torch.tanh,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -57,12 +65,18 @@ class PANPooling(torch.nn.Module):
         self.p.data.fill_(1)
         self.beta.data.fill_(0.5)
 
-    def forward(self, x: Tensor, M: SparseTensor, batch: OptTensor = None):
+    def forward(
+        self,
+        x: Tensor,
+        M: SparseTensor,
+        batch: OptTensor = None,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         """"""
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
         row, col, edge_weight = M.coo()
+        assert edge_weight is not None
 
         score1 = (x * self.p).sum(dim=-1)
         score2 = scatter_add(edge_weight, col, dim=0, dim_size=x.size(0))
@@ -78,10 +92,11 @@ class PANPooling(torch.nn.Module):
         x = self.multiplier * x if self.multiplier != 1 else x
 
         edge_index = torch.stack([col, row], dim=0)
-        edge_index, edge_attr = filter_adj(edge_index, edge_weight, perm,
-                                           num_nodes=score.size(0))
+        edge_index, edge_weight = filter_adj(edge_index, edge_weight, perm,
+                                             num_nodes=score.size(0))
+        assert edge_weight is not None
 
-        return x, edge_index, edge_attr, batch[perm], perm, score[perm]
+        return x, edge_index, edge_weight, batch[perm], perm, score[perm]
 
     def __repr__(self) -> str:
         if self.min_score is None:
