@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Optional, Sequence, Tuple, Union
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -67,7 +67,6 @@ def summary(
 
         info = {}
         info['name'] = var_name
-        info['layer'] = module
         info['input_shape'] = input_shape[module_id]
         info['output_shape'] = output_shape[module_id]
         info['depth'] = depth
@@ -94,38 +93,8 @@ def summary(
     for h in hooks.values():
         h.remove()
 
-    for info in info_list:
-        depth = info['depth']
-        if info['layer'] is not model:
-            if depth == 1:
-                prefix = "├─"
-            else:
-                prefix = f"{'│    '*(depth-1)}└─"
-            info['name'] = prefix + info['name']
-
-        if info['input_shape']:
-            info['input_shape'] = info['input_shape'].pop(0)
-            info['output_shape'] = info['output_shape'].pop(0)
-        else:
-            info['input_shape'] = "--"
-            info['output_shape'] = "--"
-
-    from tabulate import tabulate
-    content = [['Layer', 'Input Shape', 'Output Shape', '#Param']]
-    for info in info_list:
-        depth = info['depth']
-        if depth > max_depth:
-            continue
-        row = [
-            info['name'],
-            info['input_shape'],
-            info['output_shape'],
-            info['#param'],
-        ]
-        content.append(row)
-
-    body = tabulate(content, headers='firstrow', tablefmt='psql')
-
+    info_list = postprocess(info_list)
+    body = make_table(info_list, max_depth=max_depth)
     return body
 
 
@@ -144,3 +113,40 @@ def get_shape(input: Union[Any, Tuple[Any]]) -> str:
 
 def get_name(module: nn.Module) -> str:
     return str(module.__class__).split(".")[-1].split("'")[0]
+
+
+def postprocess(info_list: List[dict]) -> List[dict]:
+    for idx, info in enumerate(info_list):
+        depth = info['depth']
+        if idx > 0:  # root module (0) is exclued
+            if depth == 1:
+                prefix = "├─"
+            else:
+                prefix = f"{'│    '*(depth-1)}└─"
+            info['name'] = prefix + info['name']
+
+        if info['input_shape']:
+            info['input_shape'] = info['input_shape'].pop(0)
+            info['output_shape'] = info['output_shape'].pop(0)
+        else:
+            info['input_shape'] = "--"
+            info['output_shape'] = "--"
+    return info_list
+
+
+def make_table(info_list: List[dict], max_depth: int) -> str:
+    from tabulate import tabulate
+    content = [['Layer', 'Input Shape', 'Output Shape', '#Param']]
+    for info in info_list:
+        depth = info['depth']
+        if depth > max_depth:
+            continue
+        row = [
+            info['name'],
+            info['input_shape'],
+            info['output_shape'],
+            info['#param'],
+        ]
+        content.append(row)
+
+    return tabulate(content, headers='firstrow', tablefmt='psql')
