@@ -37,6 +37,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .train_test_split_edges import train_test_split_edges
 from .scatter import scatter
 from .torch_sparse_tensor import is_torch_sparse_tensor
+from .spmm import spmm
 
 __all__ = [
     'degree',
@@ -97,6 +98,7 @@ __all__ = [
     'train_test_split_edges',
     'scatter',
     'is_torch_sparse_tensor',
+    'spmm',
 ]
 
 classes = __all__

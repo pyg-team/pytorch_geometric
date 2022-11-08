@@ -1,5 +1,7 @@
 from typing import Any
 
+from torch import Tensor
+
 
 def is_torch_sparse_tensor(x: Any) -> bool:
     """Returns :obj:`True` if the input :obj:`x` is
