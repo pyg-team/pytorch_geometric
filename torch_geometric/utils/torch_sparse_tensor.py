@@ -8,4 +8,4 @@ def is_torch_sparse_tensor(x: Any) -> bool:
     Args:
         x (Any): The input object to be checked.
     """
-    return getattr(x, 'is_sparse', False)
+    return isinstance(x, Tensor) and x.is_sparse
