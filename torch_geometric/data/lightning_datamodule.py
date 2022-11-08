@@ -9,12 +9,12 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader import RandomNodeSampler
 from torch_geometric.loader import (
     LinkLoader,
     LinkNeighborLoader,
     NeighborLoader,
     NodeLoader,
+    RandomNodeSampler,
 )
 from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
@@ -626,8 +626,7 @@ class LightningLinkData(LightningDataModule):
             num_workers=num_workers,
             train_dataset=(input_train_edges, input_train_labels,
                            input_train_time),
-            val_dataset=(input_val_edges, input_val_labels,
-                         input_val_time),
+            val_dataset=(input_val_edges, input_val_labels, input_val_time),
             test_dataset=(input_test_edges, input_test_labels,
                           input_test_time),
             pred_dataset=(input_pred_edges, input_pred_labels,

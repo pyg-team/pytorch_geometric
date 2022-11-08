@@ -4,12 +4,10 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
-from torch_geometric.loader import RandomNodeSampler, GraphSAINTRandomWalkSampler, \
-    GraphSAINTNodeSampler, ClusterLoader
 from torch_geometric.data.lightning_datamodule import (
+    LightningDataset,
     LightningLinkData,
     LightningNodeData,
-    LightningDataset,
 )
 from torch_geometric.datasets import (
     PPI,
@@ -23,6 +21,12 @@ from torch_geometric.datasets import (
 )
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.transform import create_link_label
+from torch_geometric.loader import (
+    ClusterLoader,
+    GraphSAINTNodeSampler,
+    GraphSAINTRandomWalkSampler,
+    RandomNodeSampler,
+)
 from torch_geometric.utils import (
     index_to_mask,
     negative_sampling,
