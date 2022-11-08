@@ -69,7 +69,10 @@ class RandomNodeSplit(BaseTransform):
         self.num_test = num_test
         self.key = key
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.node_stores:
             if self.key is not None and not hasattr(store, self.key):
                 continue

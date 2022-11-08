@@ -1,3 +1,4 @@
+import warnings
 from copy import copy
 from typing import List, Optional, Union
 
@@ -80,7 +81,7 @@ class RandomLinkSplit(BaseTransform):
             The reverse edge types of :obj:`edge_types` in case of operating
             on :class:`~torch_geometric.data.HeteroData` objects.
             This will ensure that edges of the reverse direction will be
-            splitted accordingly to prevent any data leakage.
+            split accordingly to prevent any data leakage.
             Can be :obj:`None` in case no reverse connection exists.
             (default: :obj:`None`)
     """
@@ -115,7 +116,10 @@ class RandomLinkSplit(BaseTransform):
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         edge_types = self.edge_types
         rev_edge_types = self.rev_edge_types
 
@@ -168,6 +172,7 @@ class RandomLinkSplit(BaseTransform):
                 num_test = int(num_test * perm.numel())
 
             num_train = perm.numel() - num_val - num_test
+
             if num_train <= 0:
                 raise ValueError("Insufficient number of edges for training")
 
@@ -208,6 +213,18 @@ class RandomLinkSplit(BaseTransform):
                                                num_neg_samples=num_neg,
                                                method='sparse')
 
+            # Adjust ratio if not enough negative edges exist
+            if neg_edge_index.size(1) < num_neg:
+                num_neg_found = neg_edge_index.size(1)
+                ratio = num_neg_found / num_neg
+                warnings.warn(
+                    f"There are not enough negative edges to satisfy "
+                    "the provided sampling ratio. The ratio will be "
+                    f"adjusted to {ratio:.2f}.")
+                num_neg_train = int((num_neg_train / num_neg) * num_neg_found)
+                num_neg_val = int((num_neg_val / num_neg) * num_neg_found)
+                num_neg_test = num_neg_found - num_neg_train - num_neg_val
+
             # Create labels:
             if num_disjoint > 0:
                 train_edges = train_edges[:num_disjoint]
@@ -232,8 +249,13 @@ class RandomLinkSplit(BaseTransform):
 
         return train_data, val_data, test_data
 
-    def _split(self, store: EdgeStorage, index: Tensor, is_undirected: bool,
-               rev_edge_type: EdgeType):
+    def _split(
+        self,
+        store: EdgeStorage,
+        index: Tensor,
+        is_undirected: bool,
+        rev_edge_type: EdgeType,
+    ) -> EdgeStorage:
 
         for key, value in store.items():
             if key == 'edge_index':
@@ -262,8 +284,13 @@ class RandomLinkSplit(BaseTransform):
 
         return store
 
-    def _create_label(self, store: EdgeStorage, index: Tensor,
-                      neg_edge_index: Tensor, out: EdgeStorage):
+    def _create_label(
+        self,
+        store: EdgeStorage,
+        index: Tensor,
+        neg_edge_index: Tensor,
+        out: EdgeStorage,
+    ) -> EdgeStorage:
 
         edge_index = store.edge_index[:, index]
 

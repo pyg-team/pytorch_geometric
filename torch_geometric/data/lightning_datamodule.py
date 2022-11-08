@@ -1,4 +1,5 @@
 import copy
+import inspect
 import warnings
 from typing import Optional, Tuple, Union
 
@@ -9,16 +10,15 @@ from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader import RandomNodeSampler
-from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.link_neighbor_loader import (
+from torch_geometric.loader import (
+    LinkLoader,
     LinkNeighborLoader,
-    get_edge_label_index,
-)
-from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
-    NeighborSampler,
-    get_input_nodes,
+    NodeLoader,
 )
+from torch_geometric.loader.dataloader import DataLoader
+from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -217,6 +217,7 @@ class LightningDataset(LightningDataModule):
 
 
 # TODO explicitly support Tuple[FeatureStore, GraphStore]
+# TODO unify loaders and samplers
 class LightningNodeData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
@@ -272,7 +273,13 @@ class LightningNodeData(LightningDataModule):
             :obj:`pred_idx`, or :obj:`pred_index` attributes.
             (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"neighbor"`) or a custom :obj:`"torch.utils.data.DataLoader"`. (default: :obj:`"neighbor"`)
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        custom_loader (DataLoader, optional): A custom loader object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
+        node_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -288,13 +295,22 @@ class LightningNodeData(LightningDataModule):
         input_val_nodes: InputNodes = None,
         input_test_nodes: InputNodes = None,
         input_pred_nodes: InputNodes = None,
-        loader: Union[str, torch.utils.data.DataLoader] = "neighbor",
+        loader: str = "neighbor",
+        custom_loader: Optional[DataLoader] = None,
+        node_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if node_sampler is not None and custom_loader is not None:
+            raise ValueError("Sampler and loader object given. Please choose either a loader or a sampler.")
+        elif node_sampler is not None:
+            loader = 'custom_sampler'
+        elif custom_loader is not None:
+            loader = "custom_loader"
+            self.custom_loader = custom_loader
 
-        assert loader in ['full', 'neighbor'] or issubclass(loader, torch.utils.data.DataLoader)
+        assert loader in ['full', 'neighbor', 'custom_sampler', 'custom_loader']
 
         if input_train_nodes is None:
             input_train_nodes = infer_input(data, split='train')
@@ -345,16 +361,24 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
+
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
+        elif node_sampler is not None:
+            # TODO Consider renaming to `self.node_sampler`
+            self.neighbor_sampler = node_sampler
 
     def prepare_data(self):
         """"""
@@ -391,18 +415,26 @@ class LightningNodeData(LightningDataModule):
                 **kwargs,
             )
 
-        if self.loader == 'neighbor':
+        elif self.loader == 'neighbor':
             return NeighborLoader(
                 self.data,
-                input_nodes=input_nodes,
                 neighbor_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
                 **kwargs,
             )
 
-        if issubclass(self.loader, torch.utils.data.DataLoader):
-            if issubclass(self.loader, RandomNodeSampler):
+        elif self.loader == 'custom_sampler':
+            return NodeLoader(
+                self.data,
+                node_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
+                **kwargs,
+            )
+
+        elif self.loader == 'custom_loader':
+            if issubclass(self.custom_loader, RandomNodeSampler):
                 kwargs.pop("batch_size", None)
-            return self.loader(self.data, **kwargs)
+            return self.custom_loader(self.data, **kwargs)
 
         raise NotImplementedError
 
@@ -411,6 +443,7 @@ class LightningNodeData(LightningDataModule):
         return f'{self.__class__.__name__}({kwargs})'
 
 
+# TODO unify loaders and samplers
 class LightningLinkData(LightningDataModule):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
@@ -469,7 +502,13 @@ class LightningLinkData(LightningDataModule):
         input_pred_time (Tensor, optional): The timestamp
             of prediction edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
-            :obj:`"neighbor"`)  or a custom :obj:`"torch.utils.data.DataLoader"`. (default: :obj:`"neighbor"`)
+            :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        custom_loader (DataLoader, optional): A custom loader object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
+        link_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -493,13 +532,22 @@ class LightningLinkData(LightningDataModule):
         input_pred_edges: InputEdges = None,
         input_pred_labels: Tensor = None,
         input_pred_time: Tensor = None,
-        loader: Union[str, torch.utils.data.DataLoader] = "neighbor",
+        loader: str = "neighbor",
+        custom_loader: Optional[DataLoader] = None,
+        link_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if link_sampler is not None and custom_loader is not None:
+            raise ValueError("Sampler and loader object given. Please choose either a loader or a sampler.")
+        elif link_sampler is not None:
+            loader = 'custom_sampler'
+        elif custom_loader is not None:
+            loader = "custom_loader"
+            self.custom_loader = custom_loader
 
-        assert loader in ['full', 'neighbor', 'link_neighbor'] or issubclass(loader, torch.utils.data.DataLoader)
+        assert loader in ['full', 'neighbor', 'link_neighbor', 'custom_sampler', 'custom_loader']
 
         if input_train_edges is None:
             input_train_edges = infer_input(data, split='train', input_type="edge_index")
@@ -573,17 +621,23 @@ class LightningLinkData(LightningDataModule):
         self.loader = loader
 
         if loader in ['neighbor', 'link_neighbor']:
-            input_type = get_edge_label_index(data, input_train_edges)[0]
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                input_type=input_type,
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
+                input_type=get_edge_label_index(data, input_train_edges)[0],
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
+        elif link_sampler is not None:
+            # TODO Consider renaming to `self.link_sampler`
+            self.neighbor_sampler = link_sampler
 
     def prepare_data(self):
         """"""
@@ -630,19 +684,28 @@ class LightningLinkData(LightningDataModule):
                 **kwargs,
             )
 
-        if self.loader in ['neighbor', 'link_neighbor']:
+        elif self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(
                 self.data,
+                neighbor_sampler=self.neighbor_sampler,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
-                neighbor_sampler=self.neighbor_sampler,
                 neg_sampling_ratio=neg_sampling_ratio,
                 **kwargs,
             )
 
-        if issubclass(self.loader, torch.utils.data.DataLoader):
-            return self.loader(self.data, **kwargs)
+        elif self.loader == 'custom_sampler':
+            return LinkLoader(
+                self.data,
+                link_sampler=self.neighbor_sampler,
+                edge_label_index=input_edges,
+                edge_label=input_labels,
+                edge_label_time=input_time,
+                **kwargs,
+            )
+        elif self.loader == 'custom_loader':
+            return self.custom_loader(self.data, **kwargs)
 
         raise NotImplementedError
 

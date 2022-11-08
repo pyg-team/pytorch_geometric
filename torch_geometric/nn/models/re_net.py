@@ -1,9 +1,13 @@
 import math
+from typing import Callable, List, Tuple
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import GRU, Linear, Parameter
 from torch_scatter import scatter_mean
+
+from torch_geometric.data.data import Data
 
 
 class RENet(torch.nn.Module):
@@ -40,8 +44,16 @@ class RENet(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-    def __init__(self, num_nodes, num_rels, hidden_channels, seq_len,
-                 num_layers=1, dropout=0., bias=True):
+    def __init__(
+        self,
+        num_nodes: int,
+        num_rels: int,
+        hidden_channels: int,
+        seq_len: int,
+        num_layers: int = 1,
+        dropout: float = 0.,
+        bias: bool = True,
+    ):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -73,7 +85,7 @@ class RENet(torch.nn.Module):
         self.obj_lin.reset_parameters()
 
     @staticmethod
-    def pre_transform(seq_len):
+    def pre_transform(seq_len: int) -> Callable:
         r"""Precomputes history objects
 
         .. math::
@@ -83,18 +95,23 @@ class RENet(torch.nn.Module):
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
         class PreTransform(object):
-            def __init__(self, seq_len):
+            def __init__(self, seq_len: int):
                 self.seq_len = seq_len
                 self.inc = 5000
                 self.t_last = 0
                 self.sub_hist = self.increase_hist_node_size([])
                 self.obj_hist = self.increase_hist_node_size([])
 
-            def increase_hist_node_size(self, hist):
+            def increase_hist_node_size(self, hist: List[int]) -> List[int]:
                 hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
                 return hist + hist_inc.tolist()
 
-            def get_history(self, hist, node, rel):
+            def get_history(
+                self,
+                hist: List[int],
+                node: int,
+                rel: int,
+            ) -> Tuple[Tensor, Tensor]:
                 hists, ts = [], []
                 for s in range(seq_len):
                     h = hist[node][s]
@@ -106,13 +123,13 @@ class RENet(torch.nn.Module):
                 t = torch.cat(ts, dim=0)[r == rel]
                 return node, t
 
-            def step(self, hist):
+            def step(self, hist: List[int]) -> List[int]:
                 for i in range(len(hist)):
                     hist[i] = hist[i][1:]
                     hist[i].append([])
                 return hist
 
-            def __call__(self, data):
+            def __call__(self, data: Data) -> Data:
                 sub, rel, obj, t = data.sub, data.rel, data.obj, data.t
 
                 if max(sub, obj) + 1 > len(self.sub_hist):  # pragma: no cover
@@ -142,7 +159,7 @@ class RENet(torch.nn.Module):
 
         return PreTransform(seq_len)
 
-    def forward(self, data):
+    def forward(self, data: Data) -> Tuple[Tensor, Tensor]:
         """Given a :obj:`data` batch, computes the forward pass.
 
         Args:
@@ -191,7 +208,7 @@ class RENet(torch.nn.Module):
 
         return log_prob_obj, log_prob_sub
 
-    def test(self, logits, y):
+    def test(self, logits: Tensor, y: Tensor) -> Tensor:
         """Given ground-truth :obj:`y`, computes Mean Reciprocal Rank (MRR)
         and Hits at 1/3/10."""
 

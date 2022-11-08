@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -37,7 +37,11 @@ def contains_isolated_nodes(
     return torch.unique(edge_index.view(-1)).numel() < num_nodes
 
 
-def remove_isolated_nodes(edge_index, edge_attr=None, num_nodes=None):
+def remove_isolated_nodes(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor], Tensor]:
     r"""Removes the isolated nodes from the graph given by :attr:`edge_index`
     with optional edge attributes :attr:`edge_attr`.
     In addition, returns a mask of shape :obj:`[num_nodes]` to manually filter
@@ -90,6 +94,7 @@ def remove_isolated_nodes(edge_index, edge_attr=None, num_nodes=None):
     edge_index = torch.cat([edge_index, loop_edge_index], dim=1)
 
     if edge_attr is not None:
+        assert loop_edge_attr is not None
         loop_edge_attr = loop_edge_attr[loop_idx]
         edge_attr = torch.cat([edge_attr, loop_edge_attr], dim=0)
 

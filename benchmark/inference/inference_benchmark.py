@@ -1,8 +1,8 @@
 import argparse
 
 import torch
-from utils import get_dataset, get_model
 
+from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -102,8 +102,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                 model.inference(subgraph_loader, device,
                                                 progress_bar=True)
                             with timeit():
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
+                                # becomes a no-op if vtune_profile == False
+                                with emit_itt(args.vtune_profile):
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True)
 
                             if args.profile:
                                 with torch_profile():
@@ -143,6 +145,7 @@ if __name__ == '__main__':
     argparser.add_argument('--num-workers', default=0, type=int)
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
+    argparser.add_argument('--vtune-profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
 
     args = argparser.parse_args()

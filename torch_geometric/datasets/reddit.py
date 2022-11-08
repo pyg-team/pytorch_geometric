@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
@@ -47,16 +48,21 @@ class Reddit(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/reddit.zip'
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['reddit_data.npz', 'reddit_graph.npz']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

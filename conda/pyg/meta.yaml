@@ -3,7 +3,7 @@ package:
   version: 2.1.0
 
 source:
-  path: ../..
+  url: https://files.pythonhosted.org/packages/bd/e3/3913bc65cb23db1dcc5a69a87f53206ebcdfebc28973535a4a64a0cb97cd/torch_geometric-2.1.0.post1.tar.gz
 
 requirements:
   host:
@@ -34,7 +34,6 @@ test:
     - torch_scatter
     - torch_sparse
     - torch_cluster
-    - torch_spline_conv
     - torch_geometric
     - torch_geometric.nn
     - torch_geometric.data
