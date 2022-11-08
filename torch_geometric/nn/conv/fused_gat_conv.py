@@ -23,7 +23,8 @@ class FusedGATConv(GATConv):
     
     Based on the graph attention operator, the fused graph attention operator 
     optimizes the GNN computational graph from a novel coordinated computation, 
-    IO, and memory perspective and finally achieves faster speed and lower memory usage.
+    IO, and memory perspective and finally achieves faster speed and 
+    lower memory usage.
 
     The graph attentional operator from the `"Graph Attention Networks"
     <https://arxiv.org/abs/1710.10903>`_ paper
