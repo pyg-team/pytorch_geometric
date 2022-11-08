@@ -68,7 +68,12 @@ def to_csc(
         row, col = data.edge_index
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time)
-        colptr = torch.ops.torch_sparse.ind2ptr(col, data.size(1))
+        # TODO Replace with `_convert_coo_to_csr` in PyTorch >= 1.13:
+        # colptr = torch._convert_coo_to_csr(col, data.size(1))
+        arange = torch.arange(
+            data.size(1) + 1, dtype=col.dtype, device=col.device)
+        colptr = torch.bucketize(arange, col,
+                                 out_int32=col.dtype == torch.int32)
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)

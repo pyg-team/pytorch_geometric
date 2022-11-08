@@ -16,9 +16,9 @@ from torch_geometric.testing.graph_store import MyGraphStore
 from torch_geometric.utils import k_hop_subgraph
 
 
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges, dtype=torch.int64):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype)
     return torch.stack([row, col], dim=0)
 
 
@@ -31,14 +31,18 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homogeneous_neighbor_loader(directed):
+@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
+def test_homogeneous_neighbor_loader(directed, dtype):
     torch.manual_seed(12345)
 
     data = Data()
 
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 500)
-    data.edge_attr = torch.arange(500)
+    data.edge_index = get_edge_index(100, 100, 500, dtype=dtype)
+    data.edge_attr = torch.arange(500, dtype=dtype)
+    print(data)
+    print(data.edge_index.dtype)
+    print(data.edge_attr.dtype)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
                             directed=directed)

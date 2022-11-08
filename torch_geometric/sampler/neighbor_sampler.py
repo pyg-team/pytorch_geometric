@@ -283,7 +283,7 @@ class NeighborSampler(BaseSampler):
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
                     self.row,
-                    seed,  # seed
+                    seed.to(self.colptr.dtype),  # seed
                     self.num_neighbors,
                     self.node_time,
                     kwargs.get('seed_time', None),
