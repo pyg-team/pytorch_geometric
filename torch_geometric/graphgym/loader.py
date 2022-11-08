@@ -125,7 +125,9 @@ def load_ogb(name, dataset_dir):
     elif name[:4] == 'ogbg':
         dataset = PygGraphPropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_idx_split()
-        split_names = ['train_graph_index', 'val_graph_index', 'test_graph_index']
+        split_names = [
+            'train_graph_index', 'val_graph_index', 'test_graph_index'
+        ]
         for i, key in enumerate(splits.keys()):
             id = splits[key]
             set_dataset_attr(dataset, split_names[i], id, len(id))
@@ -261,16 +263,17 @@ def create_loader():
                                 num_workers=cfg.num_workers)
 
     if len(dataset) > 1:
-        LightningDataset(dataset, batch_size=cfg.train.batch_size, num_workers=cfg.num_workers)
+        LightningDataset(dataset, batch_size=cfg.train.batch_size,
+                         num_workers=cfg.num_workers)
     data = dataset[0]
 
     if cfg.dataset.task in ['link_pred', 'edge']:
         if cfg.train.sampler in ["full", "neighbor", 'link_neighbor']:
-            return LightningLinkData(data=data, loader=cfg.train.sampler,
-                                     batch_size=cfg.train.batch_size,
-                                     num_workers=cfg.num_workers,
-                                     num_neighbors=cfg.train.neighbor_sizes,
-                                     neg_sampling_ratio=1.0 if cfg.dataset.resample_negative else 0.0)
+            return LightningLinkData(
+                data=data, loader=cfg.train.sampler,
+                batch_size=cfg.train.batch_size, num_workers=cfg.num_workers,
+                num_neighbors=cfg.train.neighbor_sizes, neg_sampling_ratio=1.0
+                if cfg.dataset.resample_negative else 0.0)
 
     else:
         if cfg.train.sampler in ["full", "neighbor"]:
@@ -279,11 +282,13 @@ def create_loader():
                                      num_workers=cfg.num_workers,
                                      num_neighbors=cfg.train.neighbor_sizes)
         elif cfg.train.sampler == "random_node":
-            return LightningNodeData(data=data, loader=RandomNodeSampler,
-                                     num_parts=data.num_nodes//cfg.train.batch_size,
-                                     num_workers=cfg.num_workers)
+            return LightningNodeData(
+                data=data, loader=RandomNodeSampler,
+                num_parts=data.num_nodes // cfg.train.batch_size,
+                num_workers=cfg.num_workers)
         elif cfg.train.sampler == "saint_rw":
-            return LightningNodeData(data=data, loader=GraphSAINTRandomWalkSampler,
+            return LightningNodeData(data=data,
+                                     loader=GraphSAINTRandomWalkSampler,
                                      batch_size=cfg.train.batch_size,
                                      walk_length=cfg.train.walk_length,
                                      num_steps=cfg.train.iter_per_epoch,
@@ -295,4 +300,5 @@ def create_loader():
                                      num_steps=cfg.train.iter_per_epoch,
                                      sample_coverage=0,
                                      num_workers=cfg.num_workers)
-    raise NotImplementedError("%s sampler is not implemented!" % cfg.train.sampler)
+    raise NotImplementedError("%s sampler is not implemented!" %
+                              cfg.train.sampler)

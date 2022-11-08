@@ -30,14 +30,10 @@ except (ImportError, ModuleNotFoundError):
 
 
 class LightningDataModule(PLLightningDataModule):
-    def __init__(self,
-                 has_val: bool,
-                 has_test: bool,
-                 train_dataset: Dataset,
+    def __init__(self, has_val: bool, has_test: bool, train_dataset: Dataset,
                  val_dataset: Optional[Dataset] = None,
                  test_dataset: Optional[Dataset] = None,
-                 pred_dataset: Optional[Dataset] = None,
-                 **kwargs):
+                 pred_dataset: Optional[Dataset] = None, **kwargs):
         super().__init__()
 
         if no_pytorch_lightning:
@@ -95,7 +91,9 @@ class LightningDataModule(PLLightningDataModule):
 
     def dataloader(self, dataset, **kwargs) -> DataLoader:
         """"""
-        raise NotImplementedError("This is an abstract method which is overridden by its child classes.")
+        raise NotImplementedError(
+            "This is an abstract method which is overridden by its child classes."
+        )
 
     def train_dataloader(self) -> DataLoader:
         """"""
@@ -303,14 +301,18 @@ class LightningNodeData(LightningDataModule):
         **kwargs,
     ):
         if node_sampler is not None and custom_loader is not None:
-            raise ValueError("Sampler and loader object given. Please choose either a loader or a sampler.")
+            raise ValueError(
+                "Sampler and loader object given. Please choose either a loader or a sampler."
+            )
         elif node_sampler is not None:
             loader = 'custom_sampler'
         elif custom_loader is not None:
             loader = "custom_loader"
             self.custom_loader = custom_loader
 
-        assert loader in ['full', 'neighbor', 'custom_sampler', 'custom_loader']
+        assert loader in [
+            'full', 'neighbor', 'custom_sampler', 'custom_loader'
+        ]
 
         if input_train_nodes is None:
             input_train_nodes = infer_input(data, split='train')
@@ -540,48 +542,67 @@ class LightningLinkData(LightningDataModule):
         **kwargs,
     ):
         if link_sampler is not None and custom_loader is not None:
-            raise ValueError("Sampler and loader object given. Please choose either a loader or a sampler.")
+            raise ValueError(
+                "Sampler and loader object given. Please choose either a loader or a sampler."
+            )
         elif link_sampler is not None:
             loader = 'custom_sampler'
         elif custom_loader is not None:
             loader = "custom_loader"
             self.custom_loader = custom_loader
 
-        assert loader in ['full', 'neighbor', 'link_neighbor', 'custom_sampler', 'custom_loader']
+        assert loader in [
+            'full', 'neighbor', 'link_neighbor', 'custom_sampler',
+            'custom_loader'
+        ]
 
         if input_train_edges is None:
-            input_train_edges = infer_input(data, split='train', input_type="edge_index")
+            input_train_edges = infer_input(data, split='train',
+                                            input_type="edge_index")
         if input_train_labels is None:
-            input_train_labels = infer_input(data, split="train", input_type="label")
+            input_train_labels = infer_input(data, split="train",
+                                             input_type="label")
         if input_train_time is None:
-            input_train_time = infer_input(data, split="train", input_type="time")
+            input_train_time = infer_input(data, split="train",
+                                           input_type="time")
 
         if input_val_edges is None:
-            input_val_edges = infer_input(data, split='val', input_type="edge_index")
+            input_val_edges = infer_input(data, split='val',
+                                          input_type="edge_index")
             if input_val_edges is None:
-                input_val_edges = infer_input(data, split='valid', input_type="edge_index")
+                input_val_edges = infer_input(data, split='valid',
+                                              input_type="edge_index")
         if input_val_labels is None:
-            input_val_labels = infer_input(data, split='val', input_type="label")
+            input_val_labels = infer_input(data, split='val',
+                                           input_type="label")
             if input_val_labels is None:
-                input_val_labels = infer_input(data, split='valid', input_type="label")
+                input_val_labels = infer_input(data, split='valid',
+                                               input_type="label")
         if input_val_time is None:
             input_val_time = infer_input(data, split='val', input_type="time")
             if input_val_time is None:
-                input_val_time = infer_input(data, split='valid', input_type="time")
+                input_val_time = infer_input(data, split='valid',
+                                             input_type="time")
 
         if input_test_edges is None:
-            input_test_edges = infer_input(data, split='test', input_type="edge_index")
+            input_test_edges = infer_input(data, split='test',
+                                           input_type="edge_index")
         if input_test_labels is None:
-            input_test_labels = infer_input(data, split="test", input_type="label")
+            input_test_labels = infer_input(data, split="test",
+                                            input_type="label")
         if input_test_time is None:
-            input_test_time = infer_input(data, split="test", input_type="time")
+            input_test_time = infer_input(data, split="test",
+                                          input_type="time")
 
         if input_pred_edges is None:
-            input_pred_edges = infer_input(data, split='pred', input_type="edge_index")
+            input_pred_edges = infer_input(data, split='pred',
+                                           input_type="edge_index")
         if input_pred_labels is None:
-            input_pred_labels = infer_input(data, split="pred", input_type="label")
+            input_pred_labels = infer_input(data, split="pred",
+                                            input_type="label")
         if input_pred_time is None:
-            input_pred_time = infer_input(data, split="pred", input_type="time")
+            input_pred_time = infer_input(data, split="pred",
+                                          input_type="time")
 
         if input_train_edges is None:
             raise ValueError(f"No input edges found")
@@ -603,10 +624,14 @@ class LightningLinkData(LightningDataModule):
             has_test=input_test_edges is not None,
             batch_size=batch_size,
             num_workers=num_workers,
-            train_dataset=(input_train_edges, input_train_labels, input_train_time),
-            val_dataset=(input_val_edges, input_val_labels, input_val_time),
-            test_dataset=(input_test_edges, input_test_labels, input_test_time),
-            pred_dataset=(input_pred_edges, input_pred_labels, input_pred_time),
+            train_dataset=(input_train_edges, input_train_labels,
+                           input_train_time),
+            val_dataset=(input_val_edges, input_val_labels,
+                         input_val_time),
+            test_dataset=(input_test_edges, input_test_labels,
+                          input_test_time),
+            pred_dataset=(input_pred_edges, input_pred_labels,
+                          input_pred_time),
             **kwargs,
         )
 
@@ -718,7 +743,8 @@ class LightningLinkData(LightningDataModule):
 
 
 # TODO support Tuple[FeatureStore, GraphStore]
-def infer_input(data: Union[Data, HeteroData], split: str, input_type: str = "node") -> Union[InputNodes, InputEdges]:
+def infer_input(data: Union[Data, HeteroData], split: str,
+                input_type: str = "node") -> Union[InputNodes, InputEdges]:
     if isinstance(data, tuple):
         return None
 
