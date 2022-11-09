@@ -2,10 +2,11 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain import Explainer, Explanation
-from torch_geometric.explain.algorithm import (
+from torch_geometric.explain import (
     DummyExplainer,
+    Explainer,
     ExplainerAlgorithm,
+    Explanation,
 )
 from torch_geometric.explain.config import (
     ExplanationType,

@@ -2,8 +2,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.explain import Explanation
-from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.explain import ExplainerAlgorithm, Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
