@@ -268,7 +268,7 @@ class SchNet(torch.nn.Module):
                 a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
-        assert z.dim() == 1 and not z.dtype.is_floating_point
+        assert z.dim() == 1 and not z.dtype.is_floating_point()
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
