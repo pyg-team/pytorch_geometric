@@ -14,6 +14,7 @@ from torch_scatter import scatter
 from torch_geometric.data import Dataset, download_url, extract_zip
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import MessagePassing, radius_graph
+from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
 
 qm9_target_dict = {
@@ -112,9 +113,8 @@ class SchNet(torch.nn.Module):
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
-        self.readout = readout
+        self.aggr = aggr_resolver(readout)
         self.dipole = dipole
-        self.readout = 'add' if self.dipole else self.readout
         self.mean = mean
         self.std = std
         self.scale = None
@@ -268,7 +268,6 @@ class SchNet(torch.nn.Module):
                 a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
-        assert z.dim() == 1 and not torch.is_floating_point(z)
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
@@ -294,7 +293,7 @@ class SchNet(torch.nn.Module):
         if not self.dipole and self.atomref is not None:
             h = h + self.atomref(z)
 
-        out = scatter(h, batch, dim=0, reduce=self.readout)
+        out = self.aggr(h, batch, dim=0)
 
         if self.dipole:
             out = torch.norm(out, dim=-1, keepdim=True)
