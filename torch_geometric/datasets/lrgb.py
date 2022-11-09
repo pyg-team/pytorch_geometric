@@ -184,7 +184,7 @@ class LRGBDataset(InMemoryDataset):
                         PascalVOC-SP and COCO-SP
                         Each `graph` is a tuple (x, edge_attr, edge_index, y)
                             Shape of x : [num_nodes, 14]
-                            Shape of edge_attr : [num_edges, 2] 
+                            Shape of edge_attr : [num_edges, 2]
                             Shape of edge_index : [2, num_edges]
                             Shape of y : [num_nodes]
                         """
