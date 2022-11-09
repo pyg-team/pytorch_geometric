@@ -1,7 +1,6 @@
 torch_geometric.explain
 ========================
 
-
 .. warning::
 
     This module is in active development and may not be stable.
