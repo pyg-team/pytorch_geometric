@@ -18,9 +18,10 @@ from torch_geometric.data import (
 class LRGBDataset(InMemoryDataset):
     r"""The `"Long Range Graph Benchmark (LRGB)"
     <https://arxiv.org/abs/2206.08164>`_
-    datasets which is a collection of 5 graph learning datasets with tasks that
-    are based on long-range dependencies in graphs. See the original
-    `source code<https://github.com/vijaydwivedi75/lrgb>`_ for more details.
+    datasets which is a collection of 5 graph learning datasets with tasks 
+    that are based on long-range dependencies in graphs. See the original
+    `source code <https://github.com/vijaydwivedi75/lrgb>`_ for more details
+    on the individual datasets.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -47,7 +48,7 @@ class LRGBDataset(InMemoryDataset):
 
     Stats:
         .. list-table::
-            :widths: 20 10 10 10 10
+            :widths: 15 15 10 10 10
             :header-rows: 1
 
             * - Name
