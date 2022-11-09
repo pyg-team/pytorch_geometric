@@ -5,8 +5,8 @@ import shutil
 from typing import Callable, List, Optional
 
 import torch
-from tqdm import tqdm
 from sklearn.preprocessing import LabelEncoder
+from tqdm import tqdm
 
 from torch_geometric.data import (
     Data,
@@ -14,6 +14,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+
 
 class LRGBDataset(InMemoryDataset):
     r"""The `"Long Range Graph Benchmark (LRGB)"
@@ -160,13 +161,15 @@ class LRGBDataset(InMemoryDataset):
             for split in ['train', 'val', 'test']:
                 if self.name.split('-')[1] == 'sp':
                     # PascalVOC-SP and COCO-SP
-                    with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
-                        graphs = pickle.load(f)    
+                    with open(osp.join(self.raw_dir, f'{split}.pickle'),
+                              'rb') as f:
+                        graphs = pickle.load(f)
                 elif self.name.split('-')[0] == 'peptides':
                     # Peptides-func and Peptides-struct
-                    with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
+                    with open(osp.join(self.raw_dir, f'{split}.pt'),
+                              'rb') as f:
                         graphs = torch.load(f)
-                
+
                 indices = range(len(graphs))
 
                 pbar = tqdm(total=len(indices))
@@ -175,7 +178,7 @@ class LRGBDataset(InMemoryDataset):
                 data_list = []
                 for idx in indices:
                     graph = graphs[idx]
-                    
+
                     if self.name.split('-')[1] == 'sp':
                         """
                         PascalVOC-SP and COCO-SP
@@ -208,10 +211,11 @@ class LRGBDataset(InMemoryDataset):
                         edge_index = graph[2]
                         y = graph[3]
 
-                    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                                y=y)
+                    data = Data(x=x, edge_index=edge_index,
+                                edge_attr=edge_attr, y=y)
 
-                    if self.pre_filter is not None and not self.pre_filter(data):
+                    if self.pre_filter is not None and not self.pre_filter(
+                            data):
                         continue
 
                     if self.pre_transform is not None:
@@ -223,8 +227,8 @@ class LRGBDataset(InMemoryDataset):
                 pbar.close()
 
                 torch.save(self.collate(data_list),
-                        osp.join(self.processed_dir, f'{split}.pt'))
-        
+                           osp.join(self.processed_dir, f'{split}.pt'))
+
     def original_label_idxs(self):
         # List of original labels for COCO-SP
         original_label_ix = [
