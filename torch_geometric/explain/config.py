@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Union
 
+from torch_geometric.utils.mixin import CastMixin
+
 
 class ThresholdType(Enum):
     """Enum class for the threshold type."""
@@ -47,7 +49,7 @@ class ModelTaskLevel(Enum):
 
 
 @dataclass
-class ThresholdConfig:
+class ThresholdConfig(CastMixin):
     r"""Class to store and validate threshold parameters.
 
     Args:
@@ -103,7 +105,7 @@ class ThresholdConfig:
 
 
 @dataclass
-class ExplainerConfig:
+class ExplainerConfig(CastMixin):
     r"""Class to store and validate high level explanation parameters.
 
     Attributes:
@@ -154,7 +156,7 @@ class ExplainerConfig:
 
 
 @dataclass
-class ModelConfig:
+class ModelConfig(CastMixin):
     # TODO Add doc-string.
     mode: ModelMode
     task_level: ModelTaskLevel
