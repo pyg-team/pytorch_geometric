@@ -9,11 +9,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
-from torch_scatter import scatter
 
 from torch_geometric.data import Dataset, download_url, extract_zip
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.nn import MessagePassing, radius_graph
+from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
 
@@ -114,6 +113,7 @@ class SchNet(torch.nn.Module):
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
         self.aggr = aggr_resolver(readout)
+        self.sum_aggr = SumAggregation()
         self.dipole = dipole
         self.mean = mean
         self.std = std
@@ -284,7 +284,8 @@ class SchNet(torch.nn.Module):
         if self.dipole:
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
-            c = scatter(mass * pos, batch, dim=0) / scatter(mass, batch, dim=0)
+            M = self.sum_aggr(mass, batch, dim=0)
+            c = self.sum_aggr(mass * pos, batch, dim=0) / M
             h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
