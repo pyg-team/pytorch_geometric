@@ -112,7 +112,7 @@ def get_shape(input: Union[Any, Tuple[Any]]) -> str:
 
 
 def get_name(module: nn.Module) -> str:
-    return str(module.__class__).split(".")[-1].split("'")[0]
+    return module.__class__.__name__
 
 
 def postprocess(info_list: List[dict]) -> List[dict]:
