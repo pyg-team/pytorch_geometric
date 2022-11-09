@@ -48,7 +48,7 @@ class LRGBDataset(InMemoryDataset):
 
     Stats:
         .. list-table::
-            :widths: 15 15 10 10 10
+            :widths: 15 15 10 10 10 10 10
             :header-rows: 1
 
             * - Name
@@ -56,31 +56,37 @@ class LRGBDataset(InMemoryDataset):
               - #graphs
               - #nodes
               - #edges
+              - #classes
             * - PascalVOC-SP
               - Node Prediction
               - 11,355
               - ~479.40
               - ~2,710.48
+              - 21
             * - COCO-SP
               - Node Prediction
               - 123,286
               - ~476.88
               - ~2,693.67
+              - 81
             * - PCQM-Contact
               - Link Prediction
               - 529,434
               - ~30.14
               - ~61.09
+              - 1
             * - Peptides-func
               - Graph Classification
               - 15,535
               - ~150.94
               - ~307.30
+              - 10
             * - Peptides-struct
               - Graph Regression
               - 15,535
               - ~150.94
               - ~307.30
+              - 11
 
     """
 
@@ -91,9 +97,9 @@ class LRGBDataset(InMemoryDataset):
 
     urls = {
         'pascalvoc-sp':
-        'https://www.dropbox.com/s/8x722ai272wqwl4/voc_superpixels_edge_wt_region_boundary.zip?dl=1',
+        'https://www.dropbox.com/s/8x722ai272wqwl4/pascalvocsp.zip?dl=1',
         'coco-sp':
-        'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/coco_superpixels_edge_wt_region_boundary.zip?dl=1',
+        'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/cocosp.zip?dl=1',
         'pcqm-contact':
         'https://www.dropbox.com/s/qdag867u6h6i60y/pcqmcontact.zip?dl=1',
         'peptides-func':
@@ -187,7 +193,8 @@ class LRGBDataset(InMemoryDataset):
                 y = torch.LongTensor(graph[3])
 
                 if self.name == 'coco-sp':
-                    # Label remapping for coco. See self.label_remap_coco() func
+                    # Label remapping for coco-sp.
+                    # See self.label_remap_coco() func
                     label_map = self.label_remap_coco()
                     for i, label in enumerate(y):
                         y[i] = label_map[label.item()]
