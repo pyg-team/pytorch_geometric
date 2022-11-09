@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -24,7 +24,11 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        out = model(batch.x, batch.edge_index)
+        if hasattr(batch, 'adj_t'):
+            edge_index = batch.adj_t
+        else:
+            edge_index = batch.edge_index
+        out = model(batch.x, edge_index)
         batch_size = batch.batch_size
         out = out[:batch_size]
         target = batch.y[:batch_size]
@@ -40,7 +44,11 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        out = model(batch.x_dict, batch.edge_index_dict)
+        if len(batch.adj_t_dict) > 0:
+            edge_index_dict = batch.adj_t_dict
+        else:
+            edge_index_dict = batch.edge_index_dict
+        out = model(batch.x_dict, edge_index_dict)
         batch_size = batch['paper'].batch_size
         out = out['paper'][:batch_size]
         target = batch['paper'].y[:batch_size]
@@ -142,10 +150,13 @@ def run(args: argparse.ArgumentParser) -> None:
                                       device, progress_bar=progress_bar,
                                       desc="Warmup")
                             with timeit(avg_time_divisor=args.num_epochs):
-                                for epoch in range(args.num_epochs):
-                                    train(model, subgraph_loader, optimizer,
-                                          device, progress_bar=progress_bar,
-                                          desc=f"Epoch={epoch}")
+                                # becomes a no-op if vtune_profile == False
+                                with emit_itt(args.vtune_profile):
+                                    for epoch in range(args.num_epochs):
+                                        train(model, subgraph_loader,
+                                              optimizer, device,
+                                              progress_bar=progress_bar,
+                                              desc=f"Epoch={epoch}")
 
                             if args.profile:
                                 with torch_profile():
@@ -186,6 +197,7 @@ if __name__ == '__main__':
     argparser.add_argument('--num-workers', default=2, type=int)
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
+    argparser.add_argument('--vtune-profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
     argparser.add_argument('--no-progress-bar', action='store_true',
                            default=False, help='turn off using progress bar')
