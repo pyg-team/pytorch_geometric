@@ -103,7 +103,11 @@ def masked_cross_entropy(log_logits: Tensor, labels: Tensor,
         labels = labels[idx_mask]
 
     not_flipped = log_logits.argmax(-1) == labels
-    loss = F.cross_entropy(log_logits[not_flipped], labels[not_flipped])
+    if not_flipped.any():
+        log_logits = log_logits[not_flipped]
+        labels = labels[not_flipped]
+
+    loss = F.cross_entropy(log_logits, labels)
     return loss
 
 

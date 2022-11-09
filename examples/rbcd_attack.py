@@ -24,11 +24,11 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(dataset.num_features, hidden_dim)
         self.conv2 = GCNConv(hidden_dim, dataset.num_classes)
 
-    def forward(self, x, edge_index, edge_weight):
+    def forward(self, x, edge_index, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
-        return F.log_softmax(x, dim=1)
+        return x
 
 
 class WeightedGATConv(GATConv):
@@ -43,7 +43,7 @@ class WeightedGATConv(GATConv):
         if edge_attr is not None:
             assert edge_attr.dim() == 1, 'Only scalar edge weights supported'
             edge_attr = edge_attr.view(-1, 1)
-            # Alpha remains unchanged if edge_attr == 1 and is
+            # `alpha`` remains unchanged if edge_attr == 1 and is
             # -Inf if edge_attr == 0
             alpha = alpha + (1 - 1 / edge_attr)
 
@@ -61,11 +61,11 @@ class GAT(torch.nn.Module):
         self.conv2 = WeightedGATConv(
             hidden_dim, dataset.num_classes, fill_value=1.)
 
-    def forward(self, x, edge_index, edge_weight):
+    def forward(self, x, edge_index, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
-        return F.log_softmax(x, dim=1)
+        return x
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -73,16 +73,16 @@ gcn = GCN().to(device)
 gat = GAT().to(device)
 data = data.to(device)
 
+x, edge_index, y = data.x, data.edge_index, data.y
+
 
 def train(model: torch.nn.Module):
     optimizer = torch.optim.Adam(
         model.parameters(), lr=0.01, weight_decay=5e-4)
-    x, edge_index, edge_weight = data.x, data.edge_index, data.edge_weight
-
     for _ in range(1, 201):
         model.train()
         optimizer.zero_grad()
-        log_logits = model(x, edge_index, edge_weight)
+        log_logits = model(x, edge_index)
         loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
         loss.backward()
         optimizer.step()
@@ -91,11 +91,47 @@ def train(model: torch.nn.Module):
 train(gcn)
 train(gat)
 
-explainer = GNNExplainer(gcn, epochs=200, return_type='log_prob')
-node_idx = 10
-node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index,
-                                                   edge_weight=edge_weight)
+
+def accuracy(pred, lab, mask):
+    return (pred.argmax(-1)[mask] == lab[mask]).float().mean().item()
 
 
+# To avoid excessive computation, we choose arbitrarily to analyze
+# `GCN`` with `PRBCDAttack` and `GAT`` with `GRBCDAttack`
+prbcd = PRBCDAttack(gcn)
+grbcd = GRBCDAttack(gat, eps=5e-2)
 
+# GRBCD: attack test set
+pert_edge_index, perturbations = grbcd.attack(
+    x, edge_index, y, budget=25, idx_attack=data.test_mask)
 
+clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask)
+pert_accuracy = accuracy(gat(x, pert_edge_index), y, data.test_mask)
+print(f'Accuracy dropped from {clean_accuracy:.3f} to {pert_accuracy:.3f}')
+print(f'Flipped edges {"".join(str(u, v) for u, v in perturbations.T)}')
+
+# GRBCD: attack single node
+node_idx = 42
+pert_edge_index, perturbations = grbcd.attack(
+    x, edge_index, y, budget=5, idx_attack=[node_idx])
+clean_confidence = F.softmax(gat(x, edge_index)[node_idx], dim=-1)[y[node_idx]]
+pert_confidence = F.softmax(
+    gat(x, pert_edge_index)[node_idx], dim=-1)[y[node_idx]]
+print(f'Confidenc dropped from {clean_accuracy:.3f} to {pert_accuracy:.3f}')
+print(f'Flipped edges {"".join(str(u, v) for u, v in perturbations.T)}')
+
+# PRBCD: attack test set
+pert_edge_index, perturbations = prbcd.attack(
+    x, edge_index, y, budget=25, idx_attack=data.test_mask)
+
+fig, ax1 = plt.subplots()
+color = 'tab:red'
+ax1.plot(prbcd.attack_statistics.loss, color=color)
+ax1.set_ylabel('Loss')
+
+# It is best practice choosing the learning rate s.t. the budget is exhausted
+ax2 = ax1.twinx()
+color = 'tab:blue'
+ax2.plot(prbcd.attack_statistics.pmass_update, color=color, linestyle='--')
+ax2.plot(prbcd.attack_statistics.pmass_projected, color=color)
+ax2.set_ylabel('Used budget')
