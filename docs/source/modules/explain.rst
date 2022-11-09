@@ -3,33 +3,27 @@ torch_geometric.explain
 
 
 .. warning::
+
     This module is in active development and may not be stable.
+    Access requires installing PyTorch Geometric from master.
 
 .. contents:: Contents
     :local:
 
-
-
 Philoshopy
 ----------
 
-This module provides a set of tools to explain the
-predictions of a :class:`torch_geometric.nn.model`  or to explain the underlying
-phenomenon of a dataset (see `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks"
-<https://arxiv.org/abs/2206.09677>`_  for more details).
+This module provides a set of tools to explain the predictions of a :class:`torch_geometric.nn.model`  or to explain the underlying phenomenon of a dataset (see the `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper for more details).
 
-We represent explanations using the :class:`Explanation` class, which is a `Data` object containing masks for the nodes, edges, features and any attributes of the data.
+We represent explanations using the :class:`Explanation` class, which is a :class:`~torch_geometric.data.Data` object containing masks for the nodes, edges, features and any attributes of the data.
 
-The :class:`~torch_geometric.explain.Explainer` class is designed to handle all the explainability parameters:
+The :class:`~torch_geometric.explain.Explainer` class is designed to handle all explainability parameters:
 
--  which algorithm from the :class:`~torch_geometric.explain.algorithm` module to use (e.g. :class:`~torch_geometric.explain.algorithm.GNNExplainer`).
--  the different type of masks for node and edges :obj:`mask` (e.g. :obj:`mask="none"` or :obj:`mask="attributes"`).
--  any postprocessing of the masks (e.g. :obj:`threshold = "topk"` or :obj:`threshold = "hard"`).
+- which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (*e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`)
+- the different type of masks for node and edges :obj:`mask` (e.g. :obj:`mask="none"` or :obj:`mask="attributes"`)
+- any postprocessing of the masks (e.g. :obj:`threshold = "topk"` or :obj:`threshold = "hard"`)
 
-This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the
-high level framework stays the same.
-
-
+This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the high-level framework stays the same.
 
 Explainer
 ---------
@@ -41,7 +35,6 @@ Explainer
 
    .. automethod:: __call__
 
-
 Explanations
 ------------
 
@@ -49,7 +42,6 @@ Explanations
 
 .. autoclass:: torch_geometric.explain.explanations.Explanation
    :members:
-
 
 Explanations algorithms
 -----------------------
