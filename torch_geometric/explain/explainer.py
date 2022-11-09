@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import torch
 from torch import Tensor
@@ -8,11 +8,8 @@ from torch_geometric.explain import ExplainerAlgorithm, Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
-    MaskType,
     ModelConfig,
     ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
     ThresholdConfig,
     ThresholdType,
 )
