@@ -9,6 +9,7 @@ def dense_mincut_pool(
     adj: Tensor,
     s: Tensor,
     mask: Optional[Tensor] = None,
+    temp: float = 1.0,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
@@ -54,6 +55,8 @@ def dense_mincut_pool(
         mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        temp (float): Temperature parameter for softmax
+            function. (default: :obj:`1.0`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`)
@@ -65,7 +68,7 @@ def dense_mincut_pool(
 
     (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-    s = torch.softmax(s, dim=-1)
+    s = torch.softmax(s / temp if temp != 1.0 else s, dim=-1)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
