@@ -112,9 +112,8 @@ class SchNet(torch.nn.Module):
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
-        self.aggr = aggr_resolver(readout)
         self.dipole = dipole
-        self.sum_aggr = SumAggregation() if self.dipole else None
+        self.aggr = SumAggregation() if self.dipole else aggr_resolver(readout)
         self.mean = mean
         self.std = std
         self.scale = None
@@ -284,8 +283,8 @@ class SchNet(torch.nn.Module):
         if self.dipole:
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
-            M = self.sum_aggr(mass, batch, dim=0)
-            c = self.sum_aggr(mass * pos, batch, dim=0) / M
+            M = self.aggr(mass, batch, dim=0)
+            c = self.aggr(mass * pos, batch, dim=0) / M
             h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
