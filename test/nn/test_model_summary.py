@@ -35,24 +35,69 @@ class ModuleDictModel(nn.Module):
 
 
 @withPackage('tabulate')
-def test_basic_summary() -> None:
+def test_basic_summary():
 
     model = GCN(32, 16, num_layers=2, out_channels=32)
     x = torch.randn(100, 32)
     edge_index = torch.randint(100, size=(2, 20))
     adj_t = SparseTensor.from_edge_index(edge_index,
                                          sparse_sizes=(100, 100)).t()
-    print(summary(model, x, edge_index))
+    expected = '\n'.join([
+        '+---------------------+--------------------+----------------+----------+',  # noqa
+        '| Layer               | Input Shape        | Output Shape   | #Param   |',  # noqa
+        '|---------------------+--------------------+----------------+----------|',  # noqa
+        '| GCN                 | [100, 32], [2, 20] | [100, 32]      | 1,072    |',  # noqa
+        '| ├─(act)ReLU         | [100, 16]          | [100, 16]      | --       |',  # noqa
+        '| ├─(convs)ModuleList | --                 | --             | 1,072    |',  # noqa
+        '| │    └─(0)GCNConv   | [100, 32], [2, 20] | [100, 16]      | 528      |',  # noqa
+        '| │    └─(1)GCNConv   | [100, 16], [2, 20] | [100, 32]      | 544      |',  # noqa
+        '+---------------------+--------------------+----------------+----------+',  # noqa
+    ])
+    assert summary(model, x, edge_index) == expected
 
-    print(summary(model, x, adj_t))
+    expected = '\n'.join([
+        '+---------------------+-----------------------+----------------+----------+',  # noqa
+        '| Layer               | Input Shape           | Output Shape   | #Param   |',  # noqa
+        '|---------------------+-----------------------+----------------+----------|',  # noqa
+        '| GCN                 | [100, 32], [100, 100] | [100, 32]      | 1,072    |',  # noqa
+        '| ├─(act)ReLU         | [100, 16]             | [100, 16]      | --       |',  # noqa
+        '| ├─(convs)ModuleList | --                    | --             | 1,072    |',  # noqa
+        '| │    └─(0)GCNConv   | [100, 32], [100, 100] | [100, 16]      | 528      |',  # noqa
+        '| │    └─(1)GCNConv   | [100, 16], [100, 100] | [100, 32]      | 544      |',  # noqa
+        '+---------------------+-----------------------+----------------+----------+',  # noqa
+    ])
 
-    print(summary(model, x, edge_index, max_depth=1))
+    assert summary(model, x, adj_t) == expected
 
-    print(summary(model, x, edge_index, leaf_module=None))
+    expected = '\n'.join([
+        '+---------------------+--------------------+----------------+----------+',  # noqa
+        '| Layer               | Input Shape        | Output Shape   | #Param   |',  # noqa
+        '|---------------------+--------------------+----------------+----------|',  # noqa
+        '| GCN                 | [100, 32], [2, 20] | [100, 32]      | 1,072    |',  # noqa
+        '| ├─(act)ReLU         | [100, 16]          | [100, 16]      | --       |',  # noqa
+        '| ├─(convs)ModuleList | --                 | --             | 1,072    |',  # noqa
+        '+---------------------+--------------------+----------------+----------+',  # noqa
+    ])
 
-    # test deep models
-    model = GCN(32, 16, num_layers=20, out_channels=32)
-    print(summary(model, x, edge_index))
+    assert summary(model, x, edge_index, max_depth=1) == expected
+
+    expected = '\n'.join([
+        '+-----------------------------------------+--------------------+----------------+----------+',  # noqa
+        '| Layer                                   | Input Shape        | Output Shape   | #Param   |',  # noqa
+        '|-----------------------------------------+--------------------+----------------+----------|',  # noqa
+        '| GCN                                     | [100, 32], [2, 20] | [100, 32]      | 1,072    |',  # noqa
+        '| ├─(act)ReLU                             | [100, 16]          | [100, 16]      | --       |',  # noqa
+        '| ├─(convs)ModuleList                     | --                 | --             | 1,072    |',  # noqa
+        '| │    └─(0)GCNConv                       | [100, 32], [2, 20] | [100, 16]      | 528      |',  # noqa
+        '| │    │    └─(aggr_module)SumAggregation | [120, 16], [120]   | [100, 16]      | --       |',  # noqa
+        '| │    │    └─(lin)Linear                 | [100, 32]          | [100, 16]      | 512      |',  # noqa
+        '| │    └─(1)GCNConv                       | [100, 16], [2, 20] | [100, 32]      | 544      |',  # noqa
+        '| │    │    └─(aggr_module)SumAggregation | [120, 32], [120]   | [100, 32]      | --       |',  # noqa
+        '| │    │    └─(lin)Linear                 | [100, 16]          | [100, 32]      | 512      |',  # noqa
+        '+-----------------------------------------+--------------------+----------------+----------+',  # noqa
+    ])
+
+    assert summary(model, x, edge_index, leaf_module=None) == expected
 
 
 @withPackage('tabulate')
@@ -92,7 +137,26 @@ def test_hetero():
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = SAGE()
     model = to_hetero(model, metadata, debug=False)
-    print(summary(model, x_dict, edge_index_dict))
+
+    expected = '\n'.join([
+        '+--------------------------------------------+---------------------+----------------+----------+',  # noqa
+        '| Layer                                      | Input Shape         | Output Shape   | #Param   |',  # noqa
+        '|--------------------------------------------+---------------------+----------------+----------|',  # noqa
+        '| GraphModule                                |                     |                | 5,824    |',  # noqa
+        '| ├─(lin1)ModuleDict                         | --                  | --             | 544      |',  # noqa
+        '| │    └─(paper)Linear                       | [100, 16]           | [100, 16]      | 272      |',  # noqa
+        '| │    └─(author)Linear                      | [100, 16]           | [100, 16]      | 272      |',  # noqa
+        '| ├─(conv1)ModuleDict                        | --                  | --             | 3,168    |',  # noqa
+        '| │    └─(paper__cites__paper)SAGEConv       | [100, 16], [2, 200] | [100, 32]      | 1,056    |',  # noqa
+        '| │    └─(paper__written_by__author)SAGEConv | [2, 200]            | [100, 32]      | 1,056    |',  # noqa
+        '| │    └─(author__writes__paper)SAGEConv     | [2, 200]            | [100, 32]      | 1,056    |',  # noqa
+        '| ├─(lin2)ModuleDict                         | --                  | --             | 2,112    |',  # noqa
+        '| │    └─(paper)Linear                       | [100, 32]           | [100, 32]      | 1,056    |',  # noqa
+        '| │    └─(author)Linear                      | [100, 32]           | [100, 32]      | 1,056    |',  # noqa
+        '+--------------------------------------------+---------------------+----------------+----------+',  # noqa
+    ])
+
+    assert summary(model, x_dict, edge_index_dict) == expected
 
 
 @withPackage('tabulate')
@@ -100,7 +164,17 @@ def test_moduledict_model():
 
     model = ModuleDictModel()
     x = torch.randn(100, 32)
-    print(summary(model, x, 'prelu'))
+    expected = '\n'.join([
+        '+---------------------------+---------------+----------------+----------+',  # noqa
+        '| Layer                     | Input Shape   | Output Shape   | #Param   |',  # noqa
+        '|---------------------------+---------------+----------------+----------|',  # noqa
+        '| ModuleDictModel           | [100, 32]     | [100, 32]      | 1        |',  # noqa
+        '| ├─(activations)ModuleDict | --            | --             | 1        |',  # noqa
+        '| │    └─(lrelu)LeakyReLU   | --            | --             | --       |',  # noqa
+        '| │    └─(prelu)PReLU       | [100, 32]     | [100, 32]      | 1        |',  # noqa
+        '+---------------------------+---------------+----------------+----------+',  # noqa
+    ])
+    summary(model, x, 'prelu') == expected
 
 
 @withPackage('tabulate')
@@ -109,4 +183,14 @@ def test_jit_model():
     model = torch.jit.script(model)
 
     x = torch.randn(100, 32)
-    print(summary(model, x))
+    expected = '\n'.join([
+        '+----------------------------+---------------+----------------+----------+',  # noqa
+        '| Layer                      | Input Shape   | Output Shape   | #Param   |',  # noqa
+        '|----------------------------+---------------+----------------+----------|',  # noqa
+        '| RecursiveScriptModule      | --            | --             | 664      |',  # noqa
+        '| ├─(0)RecursiveScriptModule | --            | --             | 528      |',  # noqa
+        '| ├─(1)RecursiveScriptModule | --            | --             | --       |',  # noqa
+        '| ├─(2)RecursiveScriptModule | --            | --             | 136      |',  # noqa
+        '+----------------------------+---------------+----------------+----------+',  # noqa
+    ])
+    assert summary(model, x) == expected
