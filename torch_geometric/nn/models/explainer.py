@@ -114,12 +114,14 @@ class CaptumModel(torch.nn.Module):
         return x
 
 
+# TODO(jinu) can captum work with list of tensors
+# probably need to convert to Tuple
 def hetero_data_to_captum_data(data: HeteroData,
                                mask_type: str) -> List[Tensor]:
     """Takes data.x_dict and data.edge_index_dict and converts
     it ot a list of tensors for use by captum."""
-    edge_types = data.metadata[0]
-    node_types = data.metadata[1]
+    node_types = data.metadata[0]
+    edge_types = data.metadata[1]
     if mask_type == "node":
         explain_types = node_types
     elif mask_type == "edge":
@@ -134,6 +136,28 @@ def hetero_data_to_captum_data(data: HeteroData,
     return out_tensors
 
 
+def captum_output_to_dicts(
+    captum_attrs: Tuple[Tensor], mask_type, metadata: Metadata
+) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
+    """Convert the output of Captum.attribute to `x_attr_dict` and
+    `edge_attr_dict`"""
+    node_types = metadata[0]
+    edge_types = metadata[1]
+    x_attr_dict, edge_attr_dict = None, None
+    if mask_type == "node":
+        assert len(node_types) == len(captum_attrs)
+        x_attr_dict = dict(zip(node_types, captum_attrs))
+    elif mask_type == "edge":
+        assert len(edge_types) == len(captum_attrs)
+        edge_attr_dict = dict(zip(edge_types, captum_attrs))
+    elif mask_type == "node_and_edge":
+        assert len(edge_types) + len(node_types) == len(captum_attrs)
+        x_attr_dict = dict(zip(node_types, captum_attrs[0:len(node_types)]))
+        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
+    return x_attr_dict, edge_attr_dict
+
+
+# TODO(jinu) Is there any point of inheriting from `CaptumModel`
 class CaptumHeteroModel(CaptumModel):
     def __init__(self, model: torch.nn.Module, mask_type: str, output_id: int,
                  metadata: Metadata):
