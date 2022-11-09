@@ -1,13 +1,18 @@
 import os
 import os.path as osp
-import shutil
 import pickle
+import shutil
 from typing import Callable, List, Optional
 
 import torch
 from tqdm import tqdm
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class LRGBDataset(InMemoryDataset):
@@ -15,7 +20,7 @@ class LRGBDataset(InMemoryDataset):
     <https://arxiv.org/abs/2206.08164>`_
     datasets which is a collection of 5 graph learning datasets with tasks that
     are based on long-range dependencies in graphs. See the original 
-    `source code <https://github.com/vijaydwivedi75/lrgb> `_ for more details.
+    `source code<https://github.com/vijaydwivedi75/lrgb>`_ for more details.
     
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -39,7 +44,7 @@ class LRGBDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-    
+
     Stats:
         .. list-table::
             :widths: 20 10 10 10 10
@@ -75,21 +80,25 @@ class LRGBDataset(InMemoryDataset):
               - 15,535
               - ~150.94
               - ~307.30
-    
+
     """
-    
-    names = ['pascalvoc-sp', 
-             'coco-sp',
-             'pcqm-contact',
-             'peptides-func',
-             'peptides-struct']
-    
+
+    names = [
+        'pascalvoc-sp', 'coco-sp', 'pcqm-contact', 'peptides-func',
+        'peptides-struct'
+    ]
+
     urls = {
-        'pascalvoc-sp': 'https://www.dropbox.com/s/8x722ai272wqwl4/voc_superpixels_edge_wt_region_boundary.zip?dl=1',
-        'coco-sp': 'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/coco_superpixels_edge_wt_region_boundary.zip?dl=1',
-        'pcqm-contact': 'https://www.dropbox.com/s/qdag867u6h6i60y/pcqmcontact.zip?dl=1',
-        'peptides-func': 'https://www.dropbox.com/s/ycsq37q8sxs1ou8/peptidesfunc.zip?dl=1',
-        'peptides-struct': 'https://www.dropbox.com/s/zgv4z8fcpmknhs8/peptidesstruct.zip?dl=1'
+        'pascalvoc-sp':
+        'https://www.dropbox.com/s/8x722ai272wqwl4/voc_superpixels_edge_wt_region_boundary.zip?dl=1',
+        'coco-sp':
+        'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/coco_superpixels_edge_wt_region_boundary.zip?dl=1',
+        'pcqm-contact':
+        'https://www.dropbox.com/s/qdag867u6h6i60y/pcqmcontact.zip?dl=1',
+        'peptides-func':
+        'https://www.dropbox.com/s/ycsq37q8sxs1ou8/peptidesfunc.zip?dl=1',
+        'peptides-struct':
+        'https://www.dropbox.com/s/zgv4z8fcpmknhs8/peptidesstruct.zip?dl=1'
     }
 
     dwnld_file_name = {
@@ -99,7 +108,7 @@ class LRGBDataset(InMemoryDataset):
         'peptides-func': 'peptidesfunc',
         'peptides-struct': 'peptidesstruct'
     }
-   
+
     def __init__(self, root: str, name: str, split: str = "train",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -107,26 +116,26 @@ class LRGBDataset(InMemoryDataset):
         self.name = name.lower()
         assert self.name in self.names
         assert split in ['train', 'val', 'test']
-        
+
         super().__init__(root, transform, pre_transform, pre_filter)
         path = osp.join(self.processed_dir, f'{split}.pt')
         self.data, self.slices = torch.load(path)
-        
+
     @property
     def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
-    
+
     @property
     def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
-    
+
     @property
     def raw_file_names(self) -> List[str]:
         if self.name.split('-')[1] == 'sp':
             return ['train.pickle', 'val.pickle', 'test.pickle']
         else:
             return ['train.pt', 'val.pt', 'test.pt']
-    
+
     @property
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
@@ -149,12 +158,12 @@ class LRGBDataset(InMemoryDataset):
         else:
             # PCQM-Contact
             self.process_pcqm_contact()
-        
+
     def process_sp(self):
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
                 graphs = pickle.load(f)
-            
+
             indices = range(len(graphs))
 
             pbar = tqdm(total=len(indices))
@@ -162,8 +171,7 @@ class LRGBDataset(InMemoryDataset):
 
             data_list = []
             for idx in indices:
-                graph = graphs[idx] 
-                
+                graph = graphs[idx]
                 """
                 Each `graph` is a tuple (x, edge_attr, edge_index, y)
                     Shape of x : [num_nodes, 14]
@@ -171,12 +179,12 @@ class LRGBDataset(InMemoryDataset):
                     Shape of edge_index : [2, num_edges]
                     Shape of y : [num_nodes]
                 """
-                
+
                 x = graph[0].to(torch.float)
                 edge_attr = graph[1].to(torch.float)
                 edge_index = graph[2]
                 y = torch.LongTensor(graph[3])
-                
+
                 if self.name == 'coco-sp':
                     # Label remapping for coco. See self.label_remap_coco() func
                     label_map = self.label_remap_coco()
@@ -199,30 +207,29 @@ class LRGBDataset(InMemoryDataset):
 
             torch.save(self.collate(data_list),
                        osp.join(self.processed_dir, f'{split}.pt'))
-            
+
     def label_remap_coco(self):
         # Util function for name 'COCO-SP'
         # to remap the labels as the original label idxs are not contiguous
-        
-        original_label_ix = [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 
-                             11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-                             23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36,
-                             37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48,
-                             49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 
-                             60, 61, 62, 63, 64, 65, 67, 70, 72, 73, 74,
-                             75, 76, 77, 78, 79, 80, 81, 82, 84, 85, 86,
-                             87, 88, 89, 90]
+
+        original_label_ix = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+            40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+            58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78,
+            79, 80, 81, 82, 84, 85, 86, 87, 88, 89, 90
+        ]
         label_map = {}
         for i, key in enumerate(original_label_ix):
             label_map[key] = i
-        
+
         return label_map
-    
+
     def process_peptides(self):
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
                 graphs = torch.load(f)
-            
+
             indices = range(len(graphs))
 
             pbar = tqdm(total=len(indices))
@@ -230,8 +237,7 @@ class LRGBDataset(InMemoryDataset):
 
             data_list = []
             for idx in indices:
-                graph = graphs[idx] 
-                
+                graph = graphs[idx]
                 """
                 Each `graph` is a tuple (x, edge_attr, edge_index, y)
                     Shape of x : [num_nodes, 9]
@@ -240,12 +246,12 @@ class LRGBDataset(InMemoryDataset):
                     Shape of y : [1, 10] for Peptides-func,  or
                                  [1, 11] for Peptides-struct
                 """
-                
+
                 x = graph[0]
                 edge_attr = graph[1]
                 edge_index = graph[2]
                 y = graph[3]
-                
+
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                             y=y)
 
@@ -262,12 +268,12 @@ class LRGBDataset(InMemoryDataset):
 
             torch.save(self.collate(data_list),
                        osp.join(self.processed_dir, f'{split}.pt'))
-            
+
     def process_pcqm_contact(self):
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
                 graphs = torch.load(f)
-            
+
             indices = range(len(graphs))
 
             pbar = tqdm(total=len(indices))
@@ -275,8 +281,7 @@ class LRGBDataset(InMemoryDataset):
 
             data_list = []
             for idx in indices:
-                graph = graphs[idx] 
-                
+                graph = graphs[idx]
                 """
                 Each `graph` is a tuple (x, edge_attr, edge_index,
                                         edge_index_labeled, edge_label)
@@ -285,19 +290,19 @@ class LRGBDataset(InMemoryDataset):
                     Shape of edge_index : [2, num_edges]
                     Shape of edge_index_labeled: [2, num_labeled_edges]
                     Shape of edge_label : [num_labeled_edges]
-                    
-                    where, 
+
+                    where,
                     num_labeled_edges are negative edges and link pred labels,
                     https://github.com/vijaydwivedi75/lrgb/blob/main/graphgps/loader/dataset/pcqm4mv2_contact.py#L192
                 """
-                
+
                 x = graph[0]
                 edge_attr = graph[1]
                 edge_index = graph[2]
                 edge_index_labeled = graph[3]
                 edge_label = graph[4]
                 y = None
-                
+
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                             edge_index_labeled=edge_index_labeled,
                             edge_label=edge_label, y=y)
