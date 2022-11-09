@@ -111,9 +111,14 @@ def run(args: argparse.ArgumentParser) -> None:
                         != num of layers={layers}'''
 
                     subgraph_loader = NeighborLoader(
-                        data, num_neighbors=num_neighbors, input_nodes=mask,
-                        batch_size=batch_size, shuffle=shuffle,
-                        num_workers=args.num_workers, sampler=sampler, )
+                        data,
+                        num_neighbors=num_neighbors,
+                        input_nodes=mask,
+                        batch_size=batch_size,
+                        shuffle=shuffle,
+                        num_workers=args.num_workers,
+                        sampler=sampler,
+                    )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
