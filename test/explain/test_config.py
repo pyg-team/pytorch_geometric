@@ -1,6 +1,6 @@
 import pytest
 
-from torch_geometric.explain.config import ExplainerConfig, Threshold
+from torch_geometric.explain.config import ExplainerConfig, ThresholdConfig
 
 
 @pytest.mark.parametrize('threshold_pairs', [
@@ -18,12 +18,12 @@ from torch_geometric.explain.config import ExplainerConfig, Threshold
 def test_threshold_config(threshold_pairs):
     threshold_type, threshold_value, valid = threshold_pairs
     if valid:
-        threshold = Threshold(threshold_type, threshold_value)
+        threshold = ThresholdConfig(threshold_type, threshold_value)
         assert threshold.type.value == threshold_type
         assert threshold.value == threshold_value
     else:
         with pytest.raises(ValueError):
-            Threshold(threshold_type, threshold_value)
+            ThresholdConfig(threshold_type, threshold_value)
 
 
 @pytest.mark.parametrize('explanation_type', [

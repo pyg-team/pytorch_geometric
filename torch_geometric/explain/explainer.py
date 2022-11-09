@@ -11,7 +11,7 @@ from torch_geometric.explain.config import (
     ModelMode,
     ModelReturnType,
     ModelTaskLevel,
-    Threshold,
+    ThresholdConfig,
     ThresholdType,
 )
 
@@ -111,7 +111,7 @@ class Explainer:
             edge_mask_type=edge_mask_type)
 
         # details for post-processing the output of the explanation algorithm
-        self.threshold = Threshold(type=threshold, value=threshold_value)
+        self.threshold = ThresholdConfig(type=threshold, value=threshold_value)
 
         # details of the explanation algorithm
         self.explanation_algorithm: ExplainerAlgorithm = explanation_algorithm

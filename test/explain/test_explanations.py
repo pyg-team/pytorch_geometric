@@ -5,51 +5,58 @@ from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
 
 
-def create_random_explanation(data, node_features_mask=True, node_mask=True,
-                              edge_mask=True, edge_features_mask=True):
-    node_mask = torch.rand(data.x.shape[0]) if node_mask else None
-    edge_mask = torch.rand(data.edge_index.shape[1]) if edge_mask else None
-    node_features_mask = torch.rand(
-        data.x.shape) if node_features_mask else None
-    edge_features_mask = torch.rand(
-        data.edge_attr.shape) if edge_features_mask else None
-
-    # Create explanation
-    return Explanation(x=data.x, edge_index=data.edge_index,
-                       node_features_mask=node_features_mask,
-                       node_mask=node_mask, edge_mask=edge_mask,
-                       edge_features_mask=edge_features_mask)
-
-
 @pytest.fixture
 def data():
-    return Data(x=torch.randn(10, 5), edge_index=torch.randint(0, 10, (2, 20)),
-                edge_attr=torch.randn(20, 3), target=torch.randn(10, 1))
+    return Data(
+        x=torch.randn(10, 5),
+        edge_index=torch.randint(0, 10, (2, 20)),
+        edge_attr=torch.randn(20, 3),
+    )
 
 
-@pytest.mark.parametrize("node_mask", [True, False])
-@pytest.mark.parametrize("edge_mask", [True, False])
-@pytest.mark.parametrize("node_features_mask", [True, False])
-@pytest.mark.parametrize("edge_features_mask", [True, False])
-def test_available_explanations(
-    data,
-    node_mask,
-    edge_mask,
-    node_features_mask,
-    edge_features_mask,
+def create_random_explanation(
+    data: Data,
+    node_mask: bool = True,
+    edge_mask: bool = True,
+    node_feat_mask: bool = True,
+    edge_feat_mask: bool = True,
 ):
-    theoretically_there = []
+    node_mask = torch.rand(data.x.size(0)) if node_mask else None
+    edge_mask = torch.rand(data.edge_index.size(1)) if edge_mask else None
+    node_feat_mask = torch.rand_like(data.x) if node_feat_mask else None
+    edge_feat_mask = (torch.rand_like(data.edge_attr)
+                      if edge_feat_mask else None)
+
+    return Explanation(  # Create explanation.
+        node_mask=node_mask,
+        edge_mask=edge_mask,
+        node_feat_mask=node_feat_mask,
+        edge_feat_mask=edge_feat_mask,
+    )
+
+
+@pytest.mark.parametrize('node_mask', [True, False])
+@pytest.mark.parametrize('edge_mask', [True, False])
+@pytest.mark.parametrize('node_feat_mask', [True, False])
+@pytest.mark.parametrize('edge_feat_mask', [True, False])
+def test_available_explanations(data, node_mask, edge_mask, node_feat_mask,
+                                edge_feat_mask):
+    expected = []
     if node_mask:
-        theoretically_there.append("node_mask")
+        expected.append('node_mask')
     if edge_mask:
-        theoretically_there.append("edge_mask")
-    if node_features_mask:
-        theoretically_there.append("node_features_mask")
-    if edge_features_mask:
-        theoretically_there.append("edge_features_mask")
+        expected.append('edge_mask')
+    if node_feat_mask:
+        expected.append('node_feat_mask')
+    if edge_feat_mask:
+        expected.append('edge_feat_mask')
 
-    explanation = create_random_explanation(data, node_features_mask,
-                                            node_mask, edge_mask,
-                                            edge_features_mask)
+    explanation = create_random_explanation(
+        data,
+        node_mask=node_mask,
+        edge_mask=edge_mask,
+        node_feat_mask=node_feat_mask,
+        edge_feat_mask=edge_feat_mask,
+    )
 
-    assert set(explanation.available_explanations) == set(theoretically_there)
+    assert set(explanation.available_explanations) == set(expected)
