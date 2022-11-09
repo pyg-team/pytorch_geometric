@@ -12,10 +12,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--cutoff', type=float, default=10.0,
                     help='Cutoff distance for interatomic interactions')
 args = parser.parse_args()
-pwd = osp.dirname(osp.realpath(__file__))
 
-path = osp.join(pwd, '..', 'data', 'QM9')
-dataset = QM9(path)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
+dataset = QM9(osp.join())
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

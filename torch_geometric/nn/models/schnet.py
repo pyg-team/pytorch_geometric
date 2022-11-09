@@ -62,14 +62,16 @@ class SchNet(torch.nn.Module):
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
         interaction_graph (Callable, optional): The function used to compute
-            the pairwise interaction graph and interatomic distances. If
-            provided will override the default radius graph method defined
-            in :obj:`RadiusInteractionGraph`. (default :obj:`None`)
+            the pairwise interaction graph and interatomic distances. If set to
+            :obj:`None`, will construct a graph based on :obj:`cutoff` and
+            :obj:`max_num_neighbors` properties.
+            If provided, this method takes in :obj:`pos` and :obj:`batch`
+            tensors and should return :obj:`(edge_index, edge_weight)` tensors.
+            (default :obj:`None`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
-            collect for each node within the :attr:`cutoff` distance with the
-            default interaction graph method.
+            collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
         readout (string, optional): Whether to apply :obj:`"add"` or
             :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
@@ -126,6 +128,7 @@ class SchNet(torch.nn.Module):
         # Support z == 0 for padding atoms so that their embedding vectors
         # are zeroed and do not receive any gradients.
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
+
         if interaction_graph is not None:
             self.interaction_graph = interaction_graph
         else:
