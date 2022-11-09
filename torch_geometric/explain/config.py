@@ -147,6 +147,11 @@ class ExplainerConfig:
         self.node_mask_type = MaskType(node_mask_type)
         self.edge_mask_type = MaskType(edge_mask_type)
 
+        if (self.node_mask_type == MaskType.none
+                and self.edge_mask_type == MaskType.none):
+            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
+                             "needs to be provided.")
+
 
 @dataclass
 class ModelConfig:
