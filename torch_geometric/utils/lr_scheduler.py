@@ -40,7 +40,7 @@ def lr_scheduler_resolver(
         num_training_steps (int, optional): The total `num_training_steps` to
             used for the lr scheduler. This is not required by all
             schedulers. (default: :obj:`None`)
-         **kwargs (optional): Additional arguments of the lr scheduler.
+        **kwargs (optional): Additional arguments of the lr scheduler.
     """
     args = (*args, optimizer)
     if isinstance(warmup_ratio_or_steps, float):
