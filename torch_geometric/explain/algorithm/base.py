@@ -3,21 +3,21 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.explain.configuration import (
+from torch_geometric.explain import Explanation
+from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
     ModelConfig,
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.explain.explanations import Explanation
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.utils.subgraph import get_num_hops
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    """Abstract class for explanation algorithms."""
+    r"""Abstract class for explanation algorithms."""
     @abstractmethod
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor,
              **kwargs) -> torch.Tensor:
@@ -116,7 +116,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         self,
         explanation_config: ExplainerConfig,
         model_config: ModelConfig,
-    ) -> Tuple[bool, Optional[str]]:
+    ) -> bool:
         """Check if the explainer supports the user-defined settings.
 
         Returns true if the explainer supports the settings (mainly the mask
@@ -127,6 +127,7 @@ class ExplainerAlgorithm(torch.nn.Module):
             explanation_config (ExplainerConfig): the user-defined settings.
             model_config (ModelConfig): the model configuration.
         """
+        pass
 
     def _flow(self, model: torch.nn.Module) -> str:
         for module in model.modules():

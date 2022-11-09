@@ -2,16 +2,17 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain.algorithm import DummyExplainer
-from torch_geometric.explain.base import ExplainerAlgorithm
-from torch_geometric.explain.configuration import (
+from torch_geometric.explain import Explainer, Explanation
+from torch_geometric.explain.algorithm import (
+    DummyExplainer,
+    ExplainerAlgorithm,
+)
+from torch_geometric.explain.config import (
     ExplanationType,
     ModelReturnType,
     ModelTaskLevel,
     ThresholdType,
 )
-from torch_geometric.explain.explainer import Explainer
-from torch_geometric.explain.explanations import Explanation
 
 g = Data(
     x=torch.randn(8, 3, requires_grad=True),

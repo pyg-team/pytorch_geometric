@@ -2,8 +2,9 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.explain.base import ExplainerAlgorithm
-from torch_geometric.explain.configuration import (
+from torch_geometric.explain import Explanation
+from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
     MaskType,
@@ -14,7 +15,6 @@ from torch_geometric.explain.configuration import (
     Threshold,
     ThresholdType,
 )
-from torch_geometric.explain.explanations import Explanation
 
 
 class Explainer:
@@ -117,15 +117,14 @@ class Explainer:
         # details of the explanation algorithm
         self.explanation_algorithm: ExplainerAlgorithm = explanation_algorithm
 
-        # check that the explanation algorithm supports the
-        # desired setup
-        check, message = self.explanation_algorithm.supports(
-            self.explanation_config, self.model_config)
-        if not check:
-            message = f"Explanation algorithm {self.explanation_algorithm} \
-                does not support the given explanation settings: {message}"
-
-            raise ValueError(message)
+        if not self.explanation_algorithm.supports(
+                self.explanation_config,
+                self.model_config,
+        ):
+            raise ValueError(
+                f"The explanation algorithm "
+                f"'{self.explanation_algorithm.__class__.__name__}' does not "
+                f"support the given explanation settings.")
 
     def get_prediction(self, x: torch.Tensor, edge_index: torch.Tensor,
                        batch: Optional[torch.Tensor] = None,

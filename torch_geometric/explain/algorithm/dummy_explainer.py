@@ -1,18 +1,19 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
+import torch.nn.functional as F
+from torch import Tensor
 
-from torch_geometric.explain.base import ExplainerAlgorithm
-from torch_geometric.explain.configuration import ExplainerConfig, ModelConfig
-from torch_geometric.explain.explanations import Explanation
+from torch_geometric.explain import Explanation
+from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 
 
 class DummyExplainer(ExplainerAlgorithm):
     r"""A dummy explainer for testing purposes."""
-    def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
-                edge_attr: Optional[torch.Tensor] = None,
-                **kwargs) -> Explanation:
-        r"""Returns a random explanation based on the shape of the inputs.
+    def forward(self, x: Tensor, edge_index: Tensor,
+                edge_attr: Optional[Tensor] = None, **kwargs) -> Explanation:
+        r"""Returns random explanations based on the shape of the inputs.
 
         Args:
             x (torch.Tensor): node features.
@@ -23,28 +24,30 @@ class DummyExplainer(ExplainerAlgorithm):
         Returns:
             Explanation: random explanation based on the shape of the inputs.
         """
-        node_features_mask = torch.rand(x.shape, device=x.device)
-        node_mask = torch.rand(x.shape[0], device=x.device)
-        edge_mask = torch.rand(edge_index.shape[1], device=x.device)
-        mask_dict = {
-            "node_mask": node_mask,
-            "edge_mask": edge_mask,
-            "node_features_mask": node_features_mask,
-        }
+        mask_dict = {}
+
+        num_nodes, num_edges = x.size(0), edge_index.size(1)
+
+        mask_dict['node_feat_mask'] = torch.rand_like(x)
+        mask_dict['node_mask'] = torch.rand(num_nodes, device=x.device)
+        mask_dict['edge_mask'] = torch.rand(num_edges, device=x.device)
 
         if edge_attr is not None:
-            mask_dict["edge_features_mask"] = torch.rand(
-                edge_attr.shape, device=edge_attr.device)
+            mask_dict["edge_features_mask"] = torch.rand_like(edge_attr)
 
-        return Explanation(edge_index=edge_index, x=x, edge_attr=edge_attr,
-                           **mask_dict)
+        return Explanation(
+            edge_index=edge_index,
+            x=x,
+            edge_attr=edge_attr,
+            **mask_dict,
+        )
 
     def supports(
         self,
         explanation_config: ExplainerConfig,
         model_config: ModelConfig,
-    ) -> Tuple[bool, Optional[str]]:
-        return True, None
+    ) -> bool:
+        return True
 
-    def loss(self, y_hat: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return torch.nn.functional.mse_loss(y_hat, y)
+    def loss(self, y_hat: Tensor, y: Tensor) -> torch.Tensor:
+        return F.mse_loss(y_hat, y)

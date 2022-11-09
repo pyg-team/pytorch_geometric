@@ -1,6 +1,6 @@
 import pytest
 
-from torch_geometric.explain.configuration import ExplainerConfig, Threshold
+from torch_geometric.explain.config import ExplainerConfig, Threshold
 
 
 @pytest.mark.parametrize("threshold_pairs", [("none", 0, True),

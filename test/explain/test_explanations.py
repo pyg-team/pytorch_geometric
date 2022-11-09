@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain.explanations import Explanation
+from torch_geometric.explain import Explanation
 
 
 def create_random_explanation(data, node_features_mask=True, node_mask=True,

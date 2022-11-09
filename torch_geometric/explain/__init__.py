@@ -1,10 +1,8 @@
-from .base import ExplainerAlgorithm
 from .explanations import Explanation
-from .explainer import Explainer
 from .algorithm import *  # noqa
+from .explainer import Explainer
 
 __all__ = [
-    'ExplainerAlgorithm',
     'Explanation',
     'Explainer',
 ]
