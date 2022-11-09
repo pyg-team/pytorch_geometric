@@ -1,7 +1,7 @@
 """
 This file is modified from HuggingFace `transformers/optimization.py`.
 Copyright (c) the Google AI Language team authors, the HuggingFace Inc. team,
-and PyG Team. Licensed under the Apache License, Version 2.0.
+and the PyG Team. Licensed under the Apache License, Version 2.0.
 """
 import functools
 import math
@@ -278,7 +278,7 @@ def get_lr_scheduler(
     num_training_steps: Optional[int] = None,
     **kwargs,
 ) -> Union[_LRScheduler, ReduceLROnPlateau]:
-    r""" A helper to get any learning rate scheduler implemented in pyg or
+    r""" A helper to get any learning rate scheduler implemented in pyg and
     pytorch from its name or type.
 
     Args:
