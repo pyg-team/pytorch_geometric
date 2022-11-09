@@ -6,6 +6,7 @@ from typing import Callable, List, Optional
 
 import torch
 from tqdm import tqdm
+from sklearn.preprocessing import LabelEncoder
 
 from torch_geometric.data import (
     Data,
@@ -13,7 +14,6 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-
 
 class LRGBDataset(InMemoryDataset):
     r"""The `"Long Range Graph Benchmark (LRGB)"
@@ -48,41 +48,35 @@ class LRGBDataset(InMemoryDataset):
 
     Stats:
         .. list-table::
-            :widths: 15 15 10 10 10 10
+            :widths: 15 10 10 10 10
             :header-rows: 1
 
             * - Name
-              - Task
               - #graphs
               - #nodes
               - #edges
               - #classes
             * - PascalVOC-SP
-              - Node Prediction
               - 11,355
               - ~479.40
               - ~2,710.48
               - 21
             * - COCO-SP
-              - Node Prediction
               - 123,286
               - ~476.88
               - ~2,693.67
               - 81
             * - PCQM-Contact
-              - Link Prediction
               - 529,434
               - ~30.14
               - ~61.09
               - 1
             * - Peptides-func
-              - Graph Classification
               - 15,535
               - ~150.94
               - ~307.30
               - 10
             * - Peptides-struct
-              - Graph Regression
               - 15,535
               - ~150.94
               - ~307.30
@@ -156,70 +150,83 @@ class LRGBDataset(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        if self.name.split('-')[1] == 'sp':
-            # PascalVOC-SP and COCO-SP
-            self.process_sp()
-        elif self.name.split('-')[0] == 'peptides':
-            # Peptides-func and Peptides-struct
-            self.process_peptides()
-        else:
+        if self.name == 'pcqm-contact':
             # PCQM-Contact
             self.process_pcqm_contact()
+        else:
+            # For COCO-SP to remap the labels as the
+            # original label idxs are not contiguous
+            label_map_coco = LabelEncoder().fit(self.original_label_idxs())
+            for split in ['train', 'val', 'test']:
+                if self.name.split('-')[1] == 'sp':
+                    # PascalVOC-SP and COCO-SP
+                    with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
+                        graphs = pickle.load(f)    
+                elif self.name.split('-')[0] == 'peptides':
+                    # Peptides-func and Peptides-struct
+                    with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
+                        graphs = torch.load(f)
+                
+                indices = range(len(graphs))
 
-    def process_sp(self):
-        for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
-                graphs = pickle.load(f)
+                pbar = tqdm(total=len(indices))
+                pbar.set_description(f'Processing {split} dataset')
 
-            indices = range(len(graphs))
+                data_list = []
+                for idx in indices:
+                    graph = graphs[idx]
+                    
+                    if self.name.split('-')[1] == 'sp':
+                        """
+                        PascalVOC-SP and COCO-SP
+                        Each `graph` is a tuple (x, edge_attr, edge_index, y)
+                            Shape of x : [num_nodes, 14]
+                            Shape of edge_attr : [num_edges, 1] or [num_edges, 2]
+                            Shape of edge_index : [2, num_edges]
+                            Shape of y : [num_nodes]
+                        """
+                        x = graph[0].to(torch.float)
+                        edge_attr = graph[1].to(torch.float)
+                        edge_index = graph[2]
+                        if self.name == 'coco-sp':
+                            y = label_map_coco.transform(graph[3])
+                        else:
+                            y = graph[3]
+                        y = torch.LongTensor(y)
+                    elif self.name.split('-')[0] == 'peptides':
+                        """
+                        Peptides-func and Peptides-struct
+                        Each `graph` is a tuple (x, edge_attr, edge_index, y)
+                            Shape of x : [num_nodes, 9]
+                            Shape of edge_attr : [num_edges, 3]
+                            Shape of edge_index : [2, num_edges]
+                            Shape of y : [1, 10] for Peptides-func,  or
+                                         [1, 11] for Peptides-struct
+                        """
+                        x = graph[0]
+                        edge_attr = graph[1]
+                        edge_index = graph[2]
+                        y = graph[3]
 
-            pbar = tqdm(total=len(indices))
-            pbar.set_description(f'Processing {split} dataset')
+                    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                                y=y)
 
-            data_list = []
-            for idx in indices:
-                graph = graphs[idx]
-                """
-                Each `graph` is a tuple (x, edge_attr, edge_index, y)
-                    Shape of x : [num_nodes, 14]
-                    Shape of edge_attr : [num_edges, 1] or [num_edges, 2]
-                    Shape of edge_index : [2, num_edges]
-                    Shape of y : [num_nodes]
-                """
+                    if self.pre_filter is not None and not self.pre_filter(data):
+                        continue
 
-                x = graph[0].to(torch.float)
-                edge_attr = graph[1].to(torch.float)
-                edge_index = graph[2]
-                y = torch.LongTensor(graph[3])
+                    if self.pre_transform is not None:
+                        data = self.pre_transform(data)
 
-                if self.name == 'coco-sp':
-                    # Label remapping for coco-sp.
-                    # See self.label_remap_coco() func
-                    label_map = self.label_remap_coco()
-                    for i, label in enumerate(y):
-                        y[i] = label_map[label.item()]
+                    data_list.append(data)
+                    pbar.update(1)
 
-                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                            y=y)
+                pbar.close()
 
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
-
-                if self.pre_transform is not None:
-                    data = self.pre_transform(data)
-
-                data_list.append(data)
-                pbar.update(1)
-
-            pbar.close()
-
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
-
-    def label_remap_coco(self):
-        # Util function for name 'COCO-SP'
-        # to remap the labels as the original label idxs are not contiguous
-
+                torch.save(self.collate(data_list),
+                        osp.join(self.processed_dir, f'{split}.pt'))
+        
+    def original_label_idxs(self):
+        # List of original labels for COCO-SP
         original_label_ix = [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39,
@@ -227,55 +234,7 @@ class LRGBDataset(InMemoryDataset):
             58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78,
             79, 80, 81, 82, 84, 85, 86, 87, 88, 89, 90
         ]
-        label_map = {}
-        for i, key in enumerate(original_label_ix):
-            label_map[key] = i
-
-        return label_map
-
-    def process_peptides(self):
-        for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
-                graphs = torch.load(f)
-
-            indices = range(len(graphs))
-
-            pbar = tqdm(total=len(indices))
-            pbar.set_description(f'Processing {split} dataset')
-
-            data_list = []
-            for idx in indices:
-                graph = graphs[idx]
-                """
-                Each `graph` is a tuple (x, edge_attr, edge_index, y)
-                    Shape of x : [num_nodes, 9]
-                    Shape of edge_attr : [num_edges, 3]
-                    Shape of edge_index : [2, num_edges]
-                    Shape of y : [1, 10] for Peptides-func,  or
-                                 [1, 11] for Peptides-struct
-                """
-
-                x = graph[0]
-                edge_attr = graph[1]
-                edge_index = graph[2]
-                y = graph[3]
-
-                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                            y=y)
-
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
-
-                if self.pre_transform is not None:
-                    data = self.pre_transform(data)
-
-                data_list.append(data)
-                pbar.update(1)
-
-            pbar.close()
-
-            torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+        return original_label_ix
 
     def process_pcqm_contact(self):
         for split in ['train', 'val', 'test']:
@@ -291,6 +250,7 @@ class LRGBDataset(InMemoryDataset):
             for idx in indices:
                 graph = graphs[idx]
                 """
+                PCQM-Contact
                 Each `graph` is a tuple (x, edge_attr, edge_index,
                                         edge_index_labeled, edge_label)
                     Shape of x : [num_nodes, 9]
@@ -303,7 +263,6 @@ class LRGBDataset(InMemoryDataset):
                     num_labeled_edges are negative edges and link pred labels,
                     https://github.com/vijaydwivedi75/lrgb/blob/main/graphgps/loader/dataset/pcqm4mv2_contact.py#L192
                 """
-
                 x = graph[0]
                 edge_attr = graph[1]
                 edge_index = graph[2]
