@@ -2,7 +2,7 @@ import pytest
 import torch
 from torch.optim.lr_scheduler import ConstantLR, LambdaLR, ReduceLROnPlateau
 
-from torch_geometric.utils import get_lr_scheduler
+from torch_geometric.utils import lr_scheduler_resolver
 
 
 @pytest.mark.parametrize('scheduler_args', [
@@ -14,15 +14,14 @@ from torch_geometric.utils import get_lr_scheduler
     ("constant", ConstantLR),
     ('ReduceLROnPlateau', ReduceLROnPlateau),
 ])
-def test_get_scheduler(scheduler_args):
+def test_lr_scheduler_resolver(scheduler_args):
     scheduler_name, scheduler_cls = scheduler_args
     model = torch.nn.Linear(10, 5)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    scheduler = get_lr_scheduler(
+    lr_scheduler = lr_scheduler_resolver(
         scheduler_name,
         optimizer,
         num_training_steps=100,
     )
-
-    assert isinstance(scheduler, scheduler_cls)
+    assert isinstance(lr_scheduler, scheduler_cls)
