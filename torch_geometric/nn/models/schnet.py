@@ -113,8 +113,8 @@ class SchNet(torch.nn.Module):
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
         self.aggr = aggr_resolver(readout)
-        self.sum_aggr = SumAggregation()
         self.dipole = dipole
+        self.sum_aggr = SumAggregation() if self.dipole else None
         self.mean = mean
         self.std = std
         self.scale = None
