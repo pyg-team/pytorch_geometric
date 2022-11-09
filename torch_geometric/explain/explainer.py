@@ -232,13 +232,19 @@ class Explainer:
         # same for index
 
         raw_explanation = self.explanation_algorithm.forward(
-            x=x, edge_index=edge_index, model=self.model, target=target,
-            target_index=target_index, batch=batch,
+            x=x,
+            edge_index=edge_index,
+            model=self.model,
+            target=target,
+            target_index=target_index,
+            batch=batch,
             task_level=self.model_config.task_level,
             return_type=self.model_config.return_type,
             node_mask_type=self.explanation_config.node_mask_type,
-            edge_mask_type=self.explanation_config.edge_mask_type, index=index,
-            **kwargs)
+            edge_mask_type=self.explanation_config.edge_mask_type,
+            index=index,
+            **kwargs,
+        )
 
         return self._post_process_explanation(raw_explanation)
 

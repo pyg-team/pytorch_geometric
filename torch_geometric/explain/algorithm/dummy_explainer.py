@@ -22,12 +22,11 @@ class DummyExplainer(ExplainerAlgorithm):
                 Defaults to None.
 
         Returns:
-            Explanation: random explanation based on the shape of the inputs.
+            Explanation: A random explanation based on the shape of the inputs.
         """
-        mask_dict = {}
-
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
+        mask_dict = {}
         mask_dict['node_feat_mask'] = torch.rand_like(x)
         mask_dict['node_mask'] = torch.rand(num_nodes, device=x.device)
         mask_dict['edge_mask'] = torch.rand(num_edges, device=x.device)
@@ -42,12 +41,12 @@ class DummyExplainer(ExplainerAlgorithm):
             **mask_dict,
         )
 
+    def loss(self, y_hat: Tensor, y: Tensor) -> torch.Tensor:
+        return F.mse_loss(y_hat, y)
+
     def supports(
         self,
         explanation_config: ExplainerConfig,
         model_config: ModelConfig,
     ) -> bool:
         return True
-
-    def loss(self, y_hat: Tensor, y: Tensor) -> torch.Tensor:
-        return F.mse_loss(y_hat, y)

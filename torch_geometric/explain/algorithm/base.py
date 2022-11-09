@@ -1,17 +1,11 @@
 from abc import abstractmethod
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import (
-    ExplainerConfig,
-    MaskType,
-    ModelConfig,
-    ModelReturnType,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.utils.subgraph import get_num_hops
@@ -19,6 +13,34 @@ from torch_geometric.utils.subgraph import get_num_hops
 
 class ExplainerAlgorithm(torch.nn.Module):
     r"""Abstract class for explanation algorithms."""
+    @abstractmethod
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        explainer_config: ExplainerConfig,
+        model_config: ModelConfig,
+        target: Tensor,
+        target_index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> Explanation:
+        r"""Computes the explanation.
+
+        Args:
+            model (torch.nn.Module): The model to explain.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The input edge indices.
+            explainer_config (ExplainerConfig): The explainer configuration.
+            model_config (ModelConfig): the model configuration.
+            target (torch.Tensor): the target of the model.
+            target_index (int or torch.Tensor, optional): The target indices to
+                explain. (default: :obj:`None`)
+            **kwargs (optional): Additional keyword arguments passed to
+                :obj:`model`.
+        """
+
     @abstractmethod
     def loss(self, y_hat: Tensor, y: Tensor, **kwargs) -> Tensor:
         r"""Computes the loss to be used for the explanation algorithm.
@@ -29,6 +51,22 @@ class ExplainerAlgorithm(torch.nn.Module):
             y (torch.Tensor): the reference output.
         """
 
+    @abstractmethod
+    def supports(
+        self,
+        explainer_config: ExplainerConfig,
+        model_config: ModelConfig,
+    ) -> bool:
+        r"""Checks if the explainer supports the user-defined settings.
+
+        Args:
+            explainer_config (ExplainerConfig): The explainer configuration.
+            model_config (ModelConfig): the model configuration.
+        """
+        pass
+
+    ###########################################################################
+
     @torch.no_grad()
     def get_initial_prediction(self, model: torch.nn.Module, *args,
                                **kwargs) -> Tensor:
@@ -37,118 +75,55 @@ class ExplainerAlgorithm(torch.nn.Module):
         Args:
             model (torch.nn.Module): The model to explain.
             *args: Arguments passed to :obj:`model`.
-            **kwargs: Keyword arguments passed to :obj:`model`.
+            **kwargs (optional): Additional keyword arguments passed to
+                :obj:`model`.
         """
         return model(*args, **kwargs)
 
-    @abstractmethod
-    def forward(
+    def subgraph(
         self,
+        model: torch.nn.Module,
+        node_idx: Union[int, Tensor],
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        model: torch.nn.Module,
-        target: torch.Tensor,
-        target_index: Union[int, Tuple[int, ...], torch.Tensor,
-                            List[Tuple[int, ...]], List[int]] = 0,
-        batch: Optional[torch.Tensor] = None,
-        task_level: ModelTaskLevel = ModelTaskLevel.graph,
-        return_type: ModelReturnType = ModelReturnType.raw,
-        node_mask_type: MaskType = MaskType.object,
-        edge_mask_type: MaskType = MaskType.none,
-        index: Optional[Union[int, Tuple[int, ...]]] = None,
         **kwargs,
-    ) -> Explanation:
-        """Compute the explanation.
+    ):
+        r"""Returns the subgraph for the given node(s).
 
         Args:
-            x (torch.Tensor): node features.
-            edge_index (torch.Tensor): edge indices.
-            model (torch.nn.Module): the model to explain.
-            target (torch.Tensor): the target of the model.
-            target_index (TargetIndex): Output indices to explain.
-                If not provided, the explanation is computed for the first
-                index of the target. (default: :obj:`0`)
+            model (torch.nn.Module): The model to explain.
+            node_idx (int or torch.Tensor): The node(s) to explain.
+            x (torch.Tensor): The input node feature matrix.
+            edge_index (torch.LongTensor): The input edge indices.
+            **kwargs (optional): Additional keyword arguments passed to
+                :obj:`model`.
 
-                For general 1D outputs, targets can be either:
-
-                - a single integer or a tensor containing a single
-                  integer, which is applied to all input examples
-
-                - a list of integers or a 1D tensor, with length matching
-                  the number of examples (i.e number of unique values in
-                  the batch vector). Each integer is applied as the
-                  target for the corresponding element of the batch.
-
-                For outputs with > 1 dimension, targets can be either:
-
-                - a single tuple, which contains (:obj:`target.dim()`)
-                  elements. This target index is applied for all
-                  elements of the batch.
-
-                - a list of tuples with length equal to the number of
-                  examples in inputs, and each tuple containing
-                  (:obj:`target.dim()`) elements. Each tuple is applied
-                  as the target for the corresponding element of the
-                  batch.
-
-            batch (torch.Tensor, optional): batch indicator.
-            node_mask_type (MaskType): the type of node mask to use.
-            edge_mask_type (MaskType): the type of edge mask to use.
-            index (Union[int, Tuple[int, ...]], optional): the node/edge index
-                to explain. Can be a single index if no batch is provided, or a
-                tuple of indices if a batch is provided. only used if the model
-                task level is :obj:`"node"` or :obj:`"edge"`.
-                (default: :obj:`None`)
-            **kwargs: additional arguments to pass to the model.
+        :rtype: (Tensor, LongTensor, LongTensor, LongTensor, BoolTensor, dict)
         """
+        num_nodes, num_edges = x.size(0), edge_index.size(1)
 
-    @abstractmethod
-    def supports(
-        self,
-        explanation_config: ExplainerConfig,
-        model_config: ModelConfig,
-    ) -> bool:
-        """Check if the explainer supports the user-defined settings.
+        node_idx, edge_index, mapping, edge_mask = k_hop_subgraph(
+            node_idx=node_idx,
+            num_hops=get_num_hops(model),
+            edge_index=edge_index,
+            relabel_nodes=True,
+            num_nodes=num_nodes,
+            flow=self._flow(model),
+        )
 
-        Returns true if the explainer supports the settings (mainly the mask
-        types), false otherwise. If the explainer does not support the
-        settings, an error message explaining the reason is returned.
+        x = x[node_idx]
+        for key, value in kwargs.items():
+            if torch.is_tensor(value) and value.size(0) == num_nodes:
+                kwargs[key] = value[node_idx]
+            elif torch.is_tensor(value) and value.size(0) == num_edges:
+                kwargs[key] = value[edge_mask]
 
-        Args:
-            explanation_config (ExplainerConfig): the user-defined settings.
-            model_config (ModelConfig): the model configuration.
-        """
-        pass
+        return x, edge_index, mapping, node_idx, edge_mask, kwargs
+
+    # Helper functions ########################################################
 
     def _flow(self, model: torch.nn.Module) -> str:
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
-
-    def subgraph(self, model: torch.nn.Module, node_idx: int, x: torch.Tensor,
-                 edge_index: torch.Tensor, **kwargs):
-        r"""Returns the subgraph of the given node.
-        Args:
-            node_idx (int): The node to explain.
-            x (Tensor): The node feature matrix.
-            edge_index (LongTensor): The edge indices.
-            **kwargs (optional): Additional arguments passed to the GNN module.
-        :rtype: (Tensor, Tensor, LongTensor, LongTensor, LongTensor, dict)
-        """
-        num_nodes, num_edges = x.size(0), edge_index.size(1)
-        num_hops = get_num_hops(model)
-        subset, edge_index, mapping, edge_mask = k_hop_subgraph(
-            node_idx, num_hops, edge_index, relabel_nodes=True,
-            num_nodes=num_nodes, flow=self._flow(model))
-
-        x = x[subset]
-        kwargs_new = {}
-        for key, value in kwargs.items():
-            if torch.is_tensor(value) and value.size(0) == num_nodes:
-                kwargs_new[key] = value[subset]
-            elif torch.is_tensor(value) and value.size(0) == num_edges:
-                kwargs_new[key] = value[edge_mask]
-            else:
-                kwargs_new[key] = value
-        return x, edge_index, mapping, edge_mask, subset, kwargs_new

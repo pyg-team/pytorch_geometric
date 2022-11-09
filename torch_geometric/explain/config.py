@@ -47,7 +47,7 @@ class ModelTaskLevel(Enum):
 
 
 @dataclass
-class Threshold:
+class ThresholdConfig:
     r"""Class to store and validate threshold parameters.
 
     Args:
