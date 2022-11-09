@@ -3,11 +3,11 @@ from typing import Any
 from torch import Tensor
 
 
-def is_torch_sparse_tensor(x: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`x` is
-    PyTorch SparseTensor (COO or CSR format).
+def is_torch_sparse_tensor(src: Any) -> bool:
+    """Returns :obj:`True` if the input :obj:`x` is a PyTorch
+    :obj:`SparseTensor` (in any sparse format).
 
     Args:
-        x (Any): The input object to be checked.
+        src (Any): The input object to be checked.
     """
-    return isinstance(x, Tensor) and x.is_sparse
+    return isinstance(src, Tensor) and src.is_sparse
