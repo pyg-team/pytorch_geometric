@@ -7,12 +7,12 @@ from torch_geometric.explain.configuration import ExplainerConfig, ModelConfig
 from torch_geometric.explain.explanations import Explanation
 
 
-class RandomExplainer(ExplainerAlgorithm):
-    """Dummy explainer."""
+class DummyExplainer(ExplainerAlgorithm):
+    r"""A dummy explainer for testing purposes."""
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
                 edge_attr: Optional[torch.Tensor] = None,
                 **kwargs) -> Explanation:
-        """Returns a random explanation based on the shape of the inputs.
+        r"""Returns a random explanation based on the shape of the inputs.
 
         Args:
             x (torch.Tensor): node features.

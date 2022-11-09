@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain.algorithm import RandomExplainer
+from torch_geometric.explain.algorithm import DummyExplainer
 from torch_geometric.explain.base import ExplainerAlgorithm
 from torch_geometric.explain.configuration import (
     ExplanationType,
@@ -102,7 +102,7 @@ def dummyInput() -> Data:
 
 @pytest.fixture(scope="module")
 def explanation_algorithm() -> ExplainerAlgorithm:
-    return RandomExplainer()
+    return DummyExplainer()
 
 
 models = [DummyModel(), DummyModel(2)]
@@ -126,7 +126,7 @@ def test_get_prediction(dummyexplainer, dummyInput, model):
 @pytest.mark.parametrize("target", [None, torch.randn(2)])
 @pytest.mark.parametrize("explanation_type", explanation_types)
 def test_forward_target_switch(dummyInput, target, explanation_type):
-    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+    explainer = Explainer(explanation_algorithm=DummyExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph",
                           explanation_type=explanation_type,
@@ -144,7 +144,7 @@ def test_forward_target_switch(dummyInput, target, explanation_type):
 
 @pytest.mark.parametrize("threshold_value", [0.2, 0.5, 0.8])
 def test_hard_threshold(dummyInput, threshold_value):
-    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+    explainer = Explainer(explanation_algorithm=DummyExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
                           node_mask_type="both", threshold="hard",
@@ -177,7 +177,7 @@ def test_hard_threshold(dummyInput, threshold_value):
     "explanation",
     [constantExplanation(g), dummyExplanation(g)])
 def test_topk_threshold(explanation, threshold_value):
-    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+    explainer = Explainer(explanation_algorithm=DummyExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
                           threshold="topk", node_mask_type="both",
@@ -202,7 +202,7 @@ def test_topk_threshold(explanation, threshold_value):
     "explanation",
     [constantExplanation(g), dummyExplanation(g)])
 def test_topk_hard_threshold(explanation, threshold_value):
-    explainer = Explainer(explanation_algorithm=RandomExplainer(),
+    explainer = Explainer(explanation_algorithm=DummyExplainer(),
                           model=DummyModel(), model_return_type="regression",
                           task_level="graph", explanation_type="phenomenon",
                           node_mask_type="attributes", threshold="topk_hard",

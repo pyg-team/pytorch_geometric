@@ -1,5 +1,5 @@
-from .random_explainer import RandomExplainer
+from .dummy_explainer import RandomExplainer
 
 __all__ = [
-    "RandomExplainer",
+    "DummyExplainer",
 ]
