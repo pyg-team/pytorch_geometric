@@ -1,13 +1,13 @@
 from inspect import signature
 from math import sqrt
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.nn import MessagePassing
-from torch_geometric.typing import EdgeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
 
 
@@ -114,8 +114,103 @@ class CaptumModel(torch.nn.Module):
         return x
 
 
+def hetero_data_to_captum_data(data: HeteroData,
+                               mask_type: str) -> List[Tensor]:
+    """Takes data.x_dict and data.edge_index_dict and converts
+    it ot a list of tensors for use by captum."""
+    edge_types = data.metadata[0]
+    node_types = data.metadata[1]
+    if mask_type == "node":
+        explain_types = node_types
+    elif mask_type == "edge":
+        explain_types = edge_types
+    elif mask_type == "node_and_edge":
+        explain_types = node_types + edge_types
+    else:
+        raise ValueError(f"Invalid mask_type (got {mask_type})")
+    out_tensors = []
+    for key in explain_types:
+        out_tensors.append(data[key])
+    return out_tensors
+
+
+class CaptumHeteroModel(CaptumModel):
+    def __init__(self, model: torch.nn.Module, mask_type: str, output_id: int,
+                 metadata: Metadata):
+        super().__init__(model, mask_type, output_id)
+        self.edge_types = metadata[0]
+        self.node_types = metadata[1]
+
+    def _captum_data_to_hetero_data(
+        self, *args
+    ) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[
+            EdgeType, Tensor]]]:
+        """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
+        `edge_mask_dict`."""
+        num_edge_types = len(self.edge_types)
+        num_node_types = len(self.node_types)
+
+        if self.mask_type == 'node':
+            node_tensors = args[0:num_node_types]
+            edge_tensors = args[num_node_types:num_node_types + num_edge_types]
+        elif self.mask_type == 'edge':
+            edge_mask_tensors = args[0:num_edge_types]
+            node_tensors = args[num_node_types:num_node_types + num_node_types]
+            edge_tensors = args[num_edge_types +
+                                num_node_types:num_node_types +
+                                2 * num_edge_types]
+        else:
+            node_tensors = args[0:len(self.node_types)]
+            edge_mask_tensors = args[len(node_tensors):len(edge_tensors)]
+            edge_tensors = args[len(self.edge_types) +
+                                len(self.node_types):len(self.edge_types)]
+
+        x_dict = dict(zip(self.node_types, node_tensors))
+        edge_index_dict = dict(zip(self.edge_types, edge_tensors))
+        if 'edge' in self.mask_type:
+            edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
+        else:
+            edge_mask_dict = None
+        return x_dict, edge_index_dict, edge_mask_dict
+
+    def forward(self, *args):
+        # Validate args:
+        num_nodes = len(self.node_types)
+        num_edges = len(self.edge_types)
+        if self.mask_type == "node":
+            assert len(args) > num_nodes + num_edges
+        elif self.mask_type == "edge":
+            assert len(args) > num_nodes + 2 * num_edges
+        else:
+            assert len(args) > num_nodes + 2 * num_edges
+
+        # Get main args:
+        (x_dict, edge_index_dict,
+         edge_mask_dict) = self._captum_data_to_hetero_data(*args)
+
+        # Get remaining args"
+        len_main_args = (len(x_dict) + len(edge_index_dict) +
+                         0 if edge_mask_dict is None else len(edge_mask_dict))
+        remaining_args = args[len_main_args:]
+
+        # TODO(jinu) squeeze tensors:
+        if 'edge' in self.mask_type:
+            set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
+
+        x = self.model(x_dict, edge_index_dict, *remaining_args)
+
+        if 'edge' in self.mask_type:
+            clear_masks(self.model)
+
+        if self.output_idx is not None:
+            x = x[self.output_idx].unsqueeze(0)
+
+        return x
+
+
 def to_captum(model: torch.nn.Module, mask_type: str = "edge",
-              output_idx: Optional[int] = None) -> torch.nn.Module:
+              output_idx: Optional[int] = None,
+              metadata: Optional[Metadata] = None) -> torch.nn.Module:
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
 
@@ -173,8 +268,13 @@ def to_captum(model: torch.nn.Module, mask_type: str = "edge",
             index) to be explained. With :obj:`output_idx` set, the forward
             function will return the output of the model for the element at
             the index specified. (default: :obj:`None`)
+        metadata(Metadata, optional): Pass this if explanation is over a
+            `HeteroData` object. (default: :obj: `None`)
     """
-    return CaptumModel(model, mask_type, output_idx)
+    if metadata is None:
+        return CaptumModel(model, mask_type, output_idx)
+    else:
+        return CaptumHeteroModel(model, mask_type, output_idx, metadata)
 
 
 class Explainer(torch.nn.Module):
