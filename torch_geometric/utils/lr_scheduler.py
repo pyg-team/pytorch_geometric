@@ -42,7 +42,7 @@ def lr_scheduler_resolver(
             schedulers. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the lr scheduler.
     """
-    args = (*args, optimizer)
+    args = (optimizer, *args)
     if isinstance(warmup_ratio_or_steps, float):
         if warmup_ratio_or_steps < 0.0 or warmup_ratio_or_steps > 1.0:
             raise ValueError(
