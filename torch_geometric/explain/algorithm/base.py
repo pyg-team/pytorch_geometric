@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.config import (
@@ -19,36 +20,26 @@ from torch_geometric.utils.subgraph import get_num_hops
 class ExplainerAlgorithm(torch.nn.Module):
     r"""Abstract class for explanation algorithms."""
     @abstractmethod
-    def loss(self, y_hat: torch.Tensor, y: torch.Tensor,
-             **kwargs) -> torch.Tensor:
-        r"""
-        This method computes the loss to be used for the explanation algorithm.
+    def loss(self, y_hat: Tensor, y: Tensor, **kwargs) -> Tensor:
+        r"""Computes the loss to be used for the explanation algorithm.
 
         Args:
             y_hat (torch.Tensor): the output of the explanation algorithm.
-                (e.g. the forward pass of the model with the mask applied).
+                (*e.g.*, the forward pass of the model with the mask applied).
             y (torch.Tensor): the reference output.
         """
 
     @torch.no_grad()
-    def get_initial_prediction(
-        self,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        model: torch.nn.Module,
-        batch: Optional[torch.Tensor] = None,
-        **kwargs,
-    ) -> torch.Tensor:
-        """Return the initial prediction of the model.
+    def get_initial_prediction(self, model: torch.nn.Module, *args,
+                               **kwargs) -> Tensor:
+        r"""Returns the initial prediction of the model.
 
         Args:
-            x (torch.Tensor): node features.
-            edge_index (torch.Tensor): edge indices.
-            model (torch.nn.Module): the model to explain.
-            batch (torch.Tensor, optional): batch indicator.
-            **kwargs: additional arguments to pass to the model.
+            model (torch.nn.Module): The model to explain.
+            *args: Arguments passed to :obj:`model`.
+            **kwargs: Keyword arguments passed to :obj:`model`.
         """
-        return model(x=x, edge_index=edge_index, batch=batch, **kwargs)
+        return model(*args, **kwargs)
 
     @abstractmethod
     def forward(
@@ -61,7 +52,7 @@ class ExplainerAlgorithm(torch.nn.Module):
                             List[Tuple[int, ...]], List[int]] = 0,
         batch: Optional[torch.Tensor] = None,
         task_level: ModelTaskLevel = ModelTaskLevel.graph,
-        return_type: ModelReturnType = ModelReturnType.regression,
+        return_type: ModelReturnType = ModelReturnType.raw,
         node_mask_type: MaskType = MaskType.object,
         edge_mask_type: MaskType = MaskType.none,
         index: Optional[Union[int, Tuple[int, ...]]] = None,
