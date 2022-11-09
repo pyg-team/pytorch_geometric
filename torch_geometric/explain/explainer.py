@@ -16,7 +16,7 @@ from torch_geometric.explain.config import (
 
 
 class Explainer:
-    r"""An explainer class for instance-level explanation of Graph Neural
+    r"""An explainer class for instance-level explanations of Graph Neural
     Networks.
 
     Args:
@@ -24,7 +24,8 @@ class Explainer:
         algorithm (ExplainerAlgorithm): The explanation algorithm.
         explainer_config (ExplainerConfig): The explainer configuration.
         model_config (ModelConfig): The model configuration.
-        threshold_config (ThresholdConfig): The threshold configuration.
+        threshold_config (ThresholdConfig, optional): The threshold
+            configuration. (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -32,14 +33,16 @@ class Explainer:
         algorithm: ExplainerAlgorithm,
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
-        threshold_config: ThresholdConfig,
+        threshold_config: Optional[ThresholdConfig] = None,
     ):
+        if threshold_config is not None:
+            threshold_config = ThresholdConfig.cast(threshold_config)
+
         self.model = model
         self.algorithm = algorithm
-
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
-        self.threshold_config = ThresholdConfig.cast(threshold_config)
+        self.threshold_config = threshold_config
 
         if not self.explanation_algorithm.supports(
                 self.explanation_config,
@@ -132,40 +135,50 @@ class Explainer:
         Args:
             explanation (Explanation): The explanation to threshold.
         """
+        if self.threshold_config is None:
+            return explanation
+
         # Avoid modification of the original explanation:
         explanation = copy.copy(explanation)
 
-        # Get the available masks:
-        available_mask_keys = explanation.available_explanations
-        available_mask = [explanation[key] for key in available_mask_keys]
+        mask_dict = {  # Get the available masks:
+            key: explanation[key]
+            for key in explanation.available_explanations
+        }
 
-        if self.threshold.type == ThresholdType.hard:
-            available_mask = [(mask > self.threshold.value).float()
-                              for mask in available_mask]
+        if self.threshold_config.type == ThresholdType.hard:
+            mask_dict = {
+                key: (mask > self.threshold_config.value).float()
+                for key, mask in mask_dict.items()
+            }
 
-        elif self.threshold.type in [
-                ThresholdType.topk, ThresholdType.topk_hard
+        elif self.threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
         ]:
-            updated_masks = []
-            for mask in available_mask:
-                if self.threshold.value >= mask.numel():
-                    updated_mask = mask
-                else:
-                    topk_values, indices = torch.topk(
-                        input=mask.flatten(),
-                        k=self.threshold.value)  # type: ignore
-                    updated_mask = torch.zeros_like(mask.flatten()).scatter_(
-                        0, indices, topk_values)
+            for key, mask in mask_dict.items():
+                if self.threshold_config.value >= mask.numel():
+                    if self.threshold_config.type != ThresholdType.topk:
+                        mask_dict[key] = torch.ones_like(mask)
+                    continue
 
-                if self.threshold.type == ThresholdType.topk_hard:
-                    updated_mask = (updated_mask > 0).float()
-                updated_masks.append(updated_mask.reshape(mask.shape))
-            available_mask = updated_masks
+                value, index = torch.topk(
+                    mask.flatten(),
+                    k=self.threshold_config.value,
+                )
+
+                out = torch.zeros_like(mask.flatten())
+                if self.threshold_config.type == ThresholdType.topk:
+                    out[index] = value
+                else:
+                    out[index] = 1.0
+                mask_dict[key] = out.reshape(mask.size())
+
         else:
             raise NotImplementedError
 
         # Update the explanation with the thresholded masks:
-        for key, mask in zip(available_mask_keys, available_mask):
+        for key, mask in mask_dict.items():
             explanation[key] = mask
 
         return explanation

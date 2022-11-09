@@ -7,7 +7,6 @@ from torch_geometric.utils.mixin import CastMixin
 
 class ThresholdType(Enum):
     """Enum class for the threshold type."""
-    none = 'none'
     hard = 'hard'
     topk = 'topk'
     topk_hard = 'topk_hard'
@@ -24,7 +23,6 @@ class MaskType(Enum):
     """Enum class for the mask type."""
     object = 'object'
     attributes = 'attributes'
-    none = 'none'
     both = 'both'
 
 
@@ -78,13 +76,10 @@ class ThresholdConfig(CastMixin):
     def __init__(
         self,
         threshold_type: Union[ThresholdType, str],
-        value: Optional[Union[float, int]] = None,
+        value: Union[float, int],
     ):
         self.type = ThresholdType(threshold_type)
         self.value = value
-
-        if self.type == ThresholdType.none:
-            self.value = 0
 
         if not isinstance(self.value, (int, float)):
             raise ValueError(f"Threshold value must be a float or int "
@@ -131,8 +126,8 @@ class ExplainerConfig(CastMixin):
             Same types as :obj:`node_mask_type`.
     """
     explanation_type: ExplanationType
-    node_mask_type: MaskType
-    edge_mask_type: MaskType
+    node_mask_type: Optional[MaskType]
+    edge_mask_type: Optional[MaskType]
 
     def __init__(
         self,
@@ -140,19 +135,18 @@ class ExplainerConfig(CastMixin):
         node_mask_type: Optional[Union[MaskType, str]] = None,
         edge_mask_type: Optional[Union[MaskType, str]] = None,
     ):
-        if node_mask_type is None:
-            node_mask_type = MaskType.none
-        if edge_mask_type is None:
-            edge_mask_type = MaskType.none
+        if node_mask_type is not None:
+            node_mask_type = MaskType(node_mask_type)
+        if edge_mask_type is not None:
+            edge_mask_type = MaskType(edge_mask_type)
 
         self.explanation_type = ExplanationType(explanation_type)
-        self.node_mask_type = MaskType(node_mask_type)
-        self.edge_mask_type = MaskType(edge_mask_type)
+        self.node_mask_type = node_mask_type
+        self.edge_mask_type = edge_mask_type
 
-        if (self.node_mask_type == MaskType.none
-                and self.edge_mask_type == MaskType.none):
+        if self.node_mask_type is None and self.edge_mask_type is None:
             raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
-                             "needs to be provided.")
+                             "must be provided.")
 
 
 @dataclass

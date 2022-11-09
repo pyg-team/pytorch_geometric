@@ -4,7 +4,6 @@ from torch_geometric.explain.config import ExplainerConfig, ThresholdConfig
 
 
 @pytest.mark.parametrize('threshold_pairs', [
-    ('none', 0, True),
     ('hard', 0.5, True),
     ('hard', 1.1, False),
     ('hard', -1, False),
@@ -38,10 +37,12 @@ def test_threshold_config(threshold_pairs):
     'invalid',
 ])
 def test_configuration_config(explanation_type, mask_type):
-    if explanation_type != 'invalid' and mask_type != 'invalid':
+    if (explanation_type != 'invalid' and mask_type is not None
+            and mask_type != 'invalid'):
         config = ExplainerConfig(explanation_type, mask_type, mask_type)
         assert config.explanation_type.value == explanation_type
-        assert config.node_mask_type.value == mask_type or "none"
+        assert config.node_mask_type.value == mask_type
+        assert config.edge_mask_type.value == mask_type
     else:
         with pytest.raises(ValueError):
             ExplainerConfig(explanation_type, mask_type, mask_type)
