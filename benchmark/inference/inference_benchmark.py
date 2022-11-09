@@ -30,10 +30,8 @@ def run(args: argparse.ArgumentParser) -> None:
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
 
-        assert args.num_steps == -1 or args.num_layers == [
-            1
-        ] or hetero, 'In case of the custom number of steps \
-        and layer-wise inference, the number of layers must be equal to 1.'
+        if args.num_layers != [1] and not hetero:
+            assert args.num_steps == -1, 'Layer-wise inference requires full `steps=-1`'
 
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
