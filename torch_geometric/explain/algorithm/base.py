@@ -12,7 +12,7 @@ from torch_geometric.utils.subgraph import get_num_hops
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    r"""Abstract class for explanation algorithms."""
+    r"""Abstract base class for explainer algorithms."""
     @abstractmethod
     def forward(
         self,

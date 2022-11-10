@@ -79,7 +79,8 @@ class Explainer:
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        r"""Computes the explanation of the GNN  for the given inputs and target.
+        r"""Computes the explanation of the GNN  for the given inputs and
+        target.
 
         Args:
             x (torch.Tensor): The input node features.

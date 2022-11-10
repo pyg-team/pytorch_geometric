@@ -6,19 +6,21 @@ from torch_geometric.data import Data
 
 
 class Explanation(Data):
-    r"""Graph level explanation for a homogenous graph.
+    r"""Holds the graph level explanation for a homogenous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
     can hold node-attribution, edge-attribution, feature-attribution. It can
     also hold the original graph if needed.
 
     Args:
-        node_mask (Tensor, optional): dim (n_nodes,). (default: :obj:`None`)
-        edge_mask (Tensor, optional): dim (n_edges,). (default: :obj:`None`)
-        node_feat_mask (Tensor, optional):dim (n_nodes, n_node_features).
-            (default: :obj:`None`)
-        edge_feat_mask (Tensor, optional): dim (n_edges, n_edge_features).
-            (default: :obj:`None`)
+        node_mask (Tensor, optional): dim (n_nodes,). Node-level mask with
+            shape :obj:`[num_nodes]`. (default: :obj:`None`)
+        edge_mask (Tensor, optional): Edge-level mask with shape
+            :obj:`[num_edges]`. (default: :obj:`None`)
+        node_feat_mask (Tensor, optional): Node-level feature mask with shape
+            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
+        edge_feat_mask (Tensor, optional): Edge-level feature mask with shape
+            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def __init__(
