@@ -18,7 +18,6 @@ from .register import (register_base, register_act, register_node_encoder,
                        register_config, register_dataset, register_loader,
                        register_optimizer, register_scheduler, register_loss,
                        register_train, register_metric)
-from .lr_scheduler import lr_scheduler_resolver
 
 __all__ = classes = [
     'load_ckpt',
@@ -59,5 +58,4 @@ __all__ = classes = [
     'register_loss',
     'register_train',
     'register_metric',
-    'lr_scheduler_resolver',
 ]

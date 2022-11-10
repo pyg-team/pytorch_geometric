@@ -1,108 +1,15 @@
-"""
-This file is modified from HuggingFace `transformers/optimization.py`.
-Copyright (c) the Google AI Language team authors, the HuggingFace Inc. team,
-and the PyG Team. Licensed under the Apache License, Version 2.0.
-"""
+# See HuggingFace `transformers/optimization.py`.
 import functools
-import inspect
 import math
-from typing import Any, Optional, Union
 
-import torch.optim.lr_scheduler
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import LambdaLR, ReduceLROnPlateau, _LRScheduler
-
-
-def normalize_string(s: str) -> str:
-    return s.lower().replace('-', '').replace('_', '').replace(' ', '')
-
-
-def lr_scheduler_resolver(
-    query: Union[Any, str],
-    optimizer: Optimizer,
-    *args,
-    warmup_ratio_or_steps: Optional[Union[float, int]] = 0.1,
-    num_training_steps: Optional[int] = None,
-    **kwargs,
-) -> Union[_LRScheduler, ReduceLROnPlateau]:
-    r""" A helper to get any learning rate scheduler implemented in pyg and
-    pytorch from its name or type.
-
-    Args:
-        query (Any or str): The query name of the learning rate scheduler.
-        optimizer (Optimizer): The optimizer to be scheduled.
-        warmup_ratio_or_steps (float or int, optional): The hyperparameter to
-            determine the `num_warmup_steps`. If a `float` type is set, it will
-            act as a ratio to be multiplied with the `num_training_steps` to
-            get the `num_warmup_steps`. If a `int` type is set, it will act as
-            the `num_warmup_steps`. It is only required for warmup-based lr
-            schedulers. (default: :obj:`0.1`)
-        num_training_steps (int, optional): The total `num_training_steps` to
-            used for the lr scheduler. This is not required by all
-            schedulers. (default: :obj:`None`)
-        **kwargs (optional): Additional arguments of the lr scheduler.
-    """
-    args = (optimizer, *args)
-    if isinstance(warmup_ratio_or_steps, float):
-        if warmup_ratio_or_steps < 0.0 or warmup_ratio_or_steps > 1.0:
-            raise ValueError(
-                f"Got `warmup_ratio_or_steps`={warmup_ratio_or_steps}."
-                "`warmup_ratio_or_steps` is using as ratio which should be "
-                "a floating number between 0.0 and 1.0.")
-        num_warmup_steps = round(warmup_ratio_or_steps * num_training_steps)
-    if isinstance(warmup_ratio_or_steps, int):
-        if warmup_ratio_or_steps < 0:
-            raise ValueError(
-                f"Got `warmup_ratio_or_steps`={warmup_ratio_or_steps}."
-                "`warmup_ratio_or_steps` is using as the num of steps which "
-                "should be an integer number larger than 0.")
-        num_warmup_steps = warmup_ratio_or_steps
-
-    base_cls = _LRScheduler
-    base_cls_repr = 'LR'
-    classes = [
-        scheduler for scheduler in vars(torch.optim.lr_scheduler).values()
-        if isinstance(scheduler, type) and issubclass(scheduler, base_cls)
-    ]
-    customized_lr_schedulers = [
-        ConstantWithWarmupLR,
-        LinearWithWarmupLR,
-        CosineWithWarmupLR,
-        CosineWithWarmupRestartsLR,
-        PolynomialWithWarmupLR,
-    ]
-    classes += [ReduceLROnPlateau] + customized_lr_schedulers
-
-    if not isinstance(query, str):
-        return query
-
-    query_repr = normalize_string(query)
-    if base_cls_repr is None:
-        base_cls_repr = base_cls.__name__ if base_cls else ''
-    base_cls_repr = normalize_string(base_cls_repr)
-
-    for cls in classes:
-        cls_repr = normalize_string(cls.__name__)
-        if query_repr in [cls_repr, cls_repr.replace(base_cls_repr, '')]:
-            if inspect.isclass(cls):
-                if cls in customized_lr_schedulers:
-                    cls_keys = inspect.signature(cls).parameters.keys()
-                    if 'num_warmup_steps' in cls_keys:
-                        kwargs['num_warmup_steps'] = num_warmup_steps
-                    if 'num_training_steps' in cls_keys:
-                        kwargs['num_training_steps'] = num_training_steps
-                obj = cls(*args, **kwargs)
-                return obj
-            return cls
-
-    choices = set(cls.__name__ for cls in classes)
-    raise ValueError(f"Could not resolve '{query}' among choices {choices}")
+from torch.optim.lr_scheduler import LambdaLR
 
 
 class ConstantWithWarmupLR(LambdaLR):
-    r""" Create a lr scheduler with a constant learning rate preceded by a
-    warmup period during which the learning rate increases linearly between 0
-    and the initial lr set in the optimizer.
+    r"""Creates a LR scheduler with a constant learning rate preceded by a
+    warmup period during which the learning rate increases linearly between
+    :obj:`0` and the initial LR set in the optimizer.
 
     Args:
         optimizer (Optimizer): The optimizer to be scheduled.
@@ -133,9 +40,10 @@ class ConstantWithWarmupLR(LambdaLR):
 
 
 class LinearWithWarmupLR(LambdaLR):
-    r""" Create a lr scheduler with a learning rate that decreases linearly
-    from the initial lr set in the optimizer to 0, after a warmup period during
-    which it increases linearly from 0 to the initial lr set in the optimizer.
+    r"""Creates a LR scheduler with a learning rate that decreases linearly
+    from the initial LR set in the optimizer to :obj:`0`, after a warmup period
+    during which it increases linearly from :obj:`0` to the initial LR set in
+    the optimizer.
 
     Args:
         optimizer (Optimizer): The optimizer to be scheduled.
@@ -174,17 +82,17 @@ class LinearWithWarmupLR(LambdaLR):
 
 
 class CosineWithWarmupLR(LambdaLR):
-    r""" Create a lr scheduler with a learning rate that decreases following
-    the values of the cosine function between the initial lr set in the
-    optimizer to 0, after a warmup period during which it increases linearly
-    between 0 and the initial lr set in the optimizer.
+    r"""Creates a LR scheduler with a learning rate that decreases following
+    the values of the cosine function between the initial LR set in the
+    optimizer to :obj:`0`, after a warmup period during which it increases
+    linearly between :obj:`0` and the initial LR set in the optimizer.
 
     Args:
         optimizer (Optimizer): The optimizer to be scheduled.
         num_warmup_steps (int): The number of steps for the warmup phase.
         num_training_steps (int): The total number of training steps.
         num_cycles (float, optional): The number of waves in the cosine
-            schedule. (the defaults is to decrease from the max value to 0
+            schedule (the default decreases LR from the max value to :obj:`0`
             following a half-cosine). (default: :obj:`0.5`)
         last_epoch (int, optional): The index of the last epoch when resuming
             training. (default: :obj:`-1`)
@@ -224,11 +132,11 @@ class CosineWithWarmupLR(LambdaLR):
 
 
 class CosineWithWarmupRestartsLR(LambdaLR):
-    r""" Create a lr scheduler with a learning rate that decreases following
-    the values of the cosine function between the initial lr set in the
-    optimizer to 0, with several hard restarts, after a warmup period during
-    which it increases linearly between 0 and the initial lr set in the
-    optimizer.
+    r"""Creates a LR scheduler with a learning rate that decreases following
+    the values of the cosine function between the initial LR set in the
+    optimizer to :obj:`0`, with several hard restarts, after a warmup period
+    during which it increases linearly between :obj:`0` and the initial LR set
+    in the optimizer.
 
     Args:
         optimizer (Optimizer): The optimizer to be scheduled.
@@ -276,10 +184,10 @@ class CosineWithWarmupRestartsLR(LambdaLR):
 
 
 class PolynomialWithWarmupLR(LambdaLR):
-    r""" Create a lr scheduler with a learning rate that decreases as a
-    polynomial decay from the initial lr set in the optimizer to end lr defined
+    r"""Creates a LR scheduler with a learning rate that decreases as a
+    polynomial decay from the initial LR set in the optimizer to end LR defined
     by `lr_end`, after a warmup period during which it increases linearly from
-    0 to the initial lr set in the optimizer.
+    :obj:`0` to the initial LR set in the optimizer.
 
     Args:
         optimizer (Optimizer): The optimizer to be scheduled.
@@ -327,10 +235,10 @@ class PolynomialWithWarmupLR(LambdaLR):
         if current_step < num_warmup_steps:
             return float(current_step) / float(max(1, num_warmup_steps))
         elif current_step > num_training_steps:
-            return lr_end / lr_init  # as LambdaLR multiplies by lr_init
+            return lr_end / lr_init  # As `LambdaLR` multiplies by `lr_init`.
         else:
             lr_range = lr_init - lr_end
             decay_steps = num_training_steps - num_warmup_steps
             pct_remaining = 1 - (current_step - num_warmup_steps) / decay_steps
             decay = lr_range * pct_remaining**power + lr_end
-            return decay / lr_init  # as LambdaLR multiplies by lr_init
+            return decay / lr_init  # As `LambdaLR` multiplies by `lr_init`.
