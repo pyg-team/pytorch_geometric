@@ -66,14 +66,12 @@ def test_captum_attribution_methods(mask_type, method):
     captum_model = to_captum(GCN, mask_type, 0)
     explainer = getattr(attr, method)(captum_model)
     data = Data(x, edge_index)
+    input, additional_forward_args = to_captum_input(data, mask_type)
     if mask_type == 'node':
-        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = (3, 3)
     elif mask_type == 'edge':
-        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = (5, )
     elif mask_type == 'node_and_edge':
-        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = ((3, 3), (5, ))
 
     if method == 'IntegratedGradients':
@@ -143,15 +141,15 @@ def test_custom_explain_message():
     assert torch.allclose(conv.x_j, x[edge_index[0]])
 
 
+@withPackage('captum')
 @pytest.mark.parametrize('mask_type', ['node', 'edge', 'node_and_edge'])
 def test_to_captum_input(mask_type):
-    x = torch.randn(4, 8)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
-    data = Data(x, edge_index)
-    num_nodes = data.num_nodes
-    num_edges = data.num_edges
-    num_node_feats = data.num_node_features
+    num_nodes = x.shape[0]
+    num_node_feats = x.shape[1]
+    num_edges = edge_index.shape[1]
 
+    # Check for Data:
+    data = Data(x, edge_index)
     inputs, additional_forward_args = to_captum_input(data, mask_type)
     if mask_type == 'node':
         assert len(inputs) == 1
@@ -173,8 +171,9 @@ def test_to_captum_input(mask_type):
         assert len(additional_forward_args) == 1
         assert torch.allclose(additional_forward_args[0], edge_index)
 
+    # Check for HeteroData:
     data = HeteroData()
-    x2 = torch.rand(4, 8)
+    x2 = torch.rand(8, 3)
     data['paper'].x = x
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
