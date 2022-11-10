@@ -35,7 +35,6 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
-from .to_csr_csc import to_csr_csc
 from .scatter import scatter
 
 __all__ = [
@@ -95,7 +94,6 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
-    'to_csr_csc',
     'scatter',
 ]
 
