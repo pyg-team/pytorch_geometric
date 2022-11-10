@@ -6,7 +6,7 @@ from torch_geometric.data import Data
 
 
 class Explanation(Data):
-    r"""Holds the graph level explanation for a homogenous graph.
+    r"""Holds all the obtained explanations of a homogenous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
     can hold node-attribution, edge-attribution, feature-attribution. It can
