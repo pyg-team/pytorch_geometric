@@ -61,7 +61,12 @@ def test_homogeneous_neighbor_loader(directed, dtype):
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
-        assert is_subset(batch.edge_index, data.edge_index, batch.x, batch.x)
+        assert is_subset(
+            batch.edge_index.to(torch.int64),
+            data.edge_index.to(torch.int64),
+            batch.x,
+            batch.x,
+        )
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
