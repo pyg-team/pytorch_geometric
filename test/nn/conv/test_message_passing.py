@@ -62,10 +62,10 @@ def test_my_conv():
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert conv(x1, torch_adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, torch_adj.t()), out)
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert conv(x1, torch_adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, torch_adj.t()), out)
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -77,14 +77,14 @@ def test_my_conv():
     assert out2.size() == (2, 32)
     assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, x2), torch_adj.t()).tolist() == out1.tolist()
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    assert conv((x1, None), torch_adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
     conv.fuse = False
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, x2), torch_adj.t()).tolist() == out1.tolist()
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    assert conv((x1, None), torch_adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
     conv.fuse = True
 
 
