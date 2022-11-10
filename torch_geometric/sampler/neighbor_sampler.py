@@ -237,7 +237,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr_dict,
                     self.row_dict,
                     {k: v.to(dtype)
-                     for k, v in seed.items()},
+                     for k, v in seed.items()},  # seed_dict
                     self.num_neighbors,
                     self.node_time_dict,
                     kwargs.get('seed_time_dict', None),
@@ -265,7 +265,7 @@ class NeighborSampler(BaseSampler):
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    seed,  # seed_dict,
+                    seed,  # seed_dict
                     self.num_neighbors,
                     self.num_hops,
                     self.replace,
