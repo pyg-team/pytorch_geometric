@@ -1,6 +1,6 @@
 from inspect import signature
 from math import sqrt
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -125,7 +125,7 @@ def _raise_on_invalid_mask_type(mask_type: str):
 
 
 def to_captum_input(data: Union[HeteroData, Data],
-                    mask_type: str) -> Tuple[List[Tensor], List[Tensor]]:
+                    mask_type: str) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
     """Given `data` and `mask_type`, converts it to a format to use
     in `Captum` explainability. Returns `inputs` and
     `additional_forward_args` required for `Captum`s `attribute` function.
@@ -168,7 +168,7 @@ def to_captum_input(data: Union[HeteroData, Data],
             for key in edge_types:
                 inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
             additional_forward_args.append(data.edge_index_dict)
-    return inputs, additional_forward_args
+    return tuple(inputs), tuple(additional_forward_args)
 
 
 def captum_output_to_dicts(

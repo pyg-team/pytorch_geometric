@@ -64,21 +64,16 @@ def test_captum_attribution_methods(mask_type, method):
     from captum import attr  # noqa
 
     captum_model = to_captum(GCN, mask_type, 0)
-    input_mask = torch.ones((1, edge_index.shape[1]), dtype=torch.float,
-                            requires_grad=True)
     explainer = getattr(attr, method)(captum_model)
-
+    data = Data(x, edge_index)
     if mask_type == 'node':
-        input = x.clone().unsqueeze(0)
-        additional_forward_args = (edge_index, )
+        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = (3, 3)
     elif mask_type == 'edge':
-        input = input_mask
-        additional_forward_args = (x, edge_index)
+        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = (5, )
     elif mask_type == 'node_and_edge':
-        input = (x.clone().unsqueeze(0), input_mask)
-        additional_forward_args = (edge_index, )
+        input, additional_forward_args = to_captum_input(data, mask_type)
         sliding_window_shapes = ((3, 3), (5, ))
 
     if method == 'IntegratedGradients':
@@ -102,9 +97,9 @@ def test_captum_attribution_methods(mask_type, method):
         attributions = explainer.attribute(
             input, target=0, additional_forward_args=additional_forward_args)
     if mask_type == 'node':
-        assert attributions.shape == (1, 8, 3)
+        assert attributions[0].shape == (1, 8, 3)
     elif mask_type == 'edge':
-        assert attributions.shape == (1, 14)
+        assert attributions[0].shape == (1, 14)
     else:
         assert attributions[0].shape == (1, 8, 3)
         assert attributions[1].shape == (1, 14)
@@ -159,7 +154,6 @@ def test_to_captum_input(mask_type):
 
     inputs, additional_forward_args = to_captum_input(data, mask_type)
     if mask_type == 'node':
-        print(inputs[0].shape)
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
         assert len(additional_forward_args) == 1
