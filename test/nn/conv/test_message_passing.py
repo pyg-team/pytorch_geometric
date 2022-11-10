@@ -7,10 +7,10 @@ from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-from torch_sparse.matmul import spmm
 
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.utils import spmm
 
 
 class MyConv(MessagePassing):
@@ -61,8 +61,12 @@ def test_my_conv():
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert conv(x1,
+                adj.t().to_torch_sparse_coo_tensor()).tolist() == out.tolist()
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert conv(x1,
+                adj.t().to_torch_sparse_coo_tensor()).tolist() == out.tolist()
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -73,10 +77,22 @@ def test_my_conv():
     assert out2.size() == (2, 32)
     assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv(
+        (x1, x2),
+        adj.t().to_torch_sparse_coo_tensor()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert conv(
+        (x1, None),
+        adj.t().to_torch_sparse_coo_tensor()).tolist() == out2.tolist()
     conv.fuse = False
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv(
+        (x1, x2),
+        adj.t().to_torch_sparse_coo_tensor()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert conv(
+        (x1, None),
+        adj.t().to_torch_sparse_coo_tensor()).tolist() == out2.tolist()
     conv.fuse = True
 
 
@@ -202,6 +218,7 @@ def test_my_multiple_aggr_conv(multi_aggr_tuple):
     out = conv(x, edge_index)
     assert out.size() == (4, 16 * expand)
     assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t().to_torch_sparse_coo_tensor()), out)
 
 
 def test_my_multiple_aggr_conv_jittable():
@@ -272,6 +289,7 @@ def test_my_edge_conv():
     assert out.size() == (4, 16)
     assert torch.allclose(out, expected)
     assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t().to_torch_sparse_coo_tensor()), out)
 
 
 def test_my_edge_conv_jittable():
@@ -429,6 +447,8 @@ def test_my_default_arg_conv():
     conv = MyDefaultArgConv()
     assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
     assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
+    assert conv(x, adj.t().to_torch_sparse_coo_tensor()
+                ).view(-1).tolist() == [0, 0, 0, 0]  # yapf: disable
 
 
 def test_my_default_arg_conv_jittable():

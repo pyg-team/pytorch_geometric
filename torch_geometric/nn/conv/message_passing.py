@@ -241,7 +241,8 @@ class MessagePassing(torch.nn.Module):
     def __lift__(self, src, edge_index, dim):
         if is_torch_sparse_tensor(edge_index):
             # TODO: should we use `rowptr` when `dim=1`` as like SparseTensor?
-            index = edge_index._indices()[dim]
+            assert dim == 0 or dim == 1
+            index = edge_index._indices()[1 - dim]
             return src.index_select(self.node_dim, index)
         elif isinstance(edge_index, Tensor):
             try:
