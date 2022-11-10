@@ -5,6 +5,7 @@ import torch_geometric.data
 import torch_geometric.loader
 import torch_geometric.transforms
 import torch_geometric.utils
+import torch_geometric.explain
 import torch_geometric.profile
 
 from .seed import seed_everything

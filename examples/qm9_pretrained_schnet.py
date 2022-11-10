@@ -7,23 +7,14 @@ from tqdm import tqdm
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SchNet
-from torch_geometric.transforms import RadiusGraph
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cutoff', type=float, default=10.0,
                     help='Cutoff distance for interatomic interactions')
-parser.add_argument(
-    '--use_precomputed_edges', action='store_true',
-    help='Compute graph edges and weights as a dataset pre_transform')
 args = parser.parse_args()
-pwd = osp.dirname(osp.realpath(__file__))
 
-if not args.use_precomputed_edges:
-    path = osp.join(pwd, '..', 'data', 'QM9')
-    dataset = QM9(path)
-else:
-    path = osp.join(pwd, '..', 'data', f'QM9_{args.cutoff}')
-    dataset = QM9(path, pre_transform=RadiusGraph(args.cutoff))
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
+dataset = QM9(osp.join())
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -38,10 +29,7 @@ for target in range(12):
     for data in tqdm(loader):
         data = data.to(device)
         with torch.no_grad():
-            if not args.use_precomputed_edges:
-                pred = model(data.z, data.pos, data.batch)
-            else:
-                pred = model(data.z, data.pos, data.batch, data.edge_index)
+            pred = model(data.z, data.pos, data.batch)
         mae = (pred.view(-1) - data.y[:, target]).abs()
         maes.append(mae)
 
