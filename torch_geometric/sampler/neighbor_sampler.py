@@ -230,7 +230,8 @@ class NeighborSampler(BaseSampler):
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` should inherit the type of
                 # `colptr_dict` and `row_dict`.
-                dtype = list(self.colptr_dict.values())[0].dtype
+                colptrs = list(self.colptr_dict.values())
+                dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
