@@ -585,8 +585,10 @@ class MessagePassing(torch.nn.Module):
         return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
                                 dim=self.node_dim)
 
-    def message_and_aggregate(self, adj_t: Union[SparseTensor,
-                                                 Tensor]) -> Tensor:
+    def message_and_aggregate(
+        self,
+        adj_t: Union[SparseTensor, Tensor],
+    ) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not

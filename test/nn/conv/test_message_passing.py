@@ -55,21 +55,21 @@ def test_my_conv():
     row, col = edge_index
     value = torch.randn(row.size(0))
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    torch_adj = adj.to_torch_sparse_coo_tensor()
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert conv(x1,
-                adj.t().to_torch_sparse_coo_tensor()).tolist() == out.tolist()
+    assert conv(x1, torch_adj.t()).tolist() == out.tolist()
     conv.fuse = False
     assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert conv(x1,
-                adj.t().to_torch_sparse_coo_tensor()).tolist() == out.tolist()
+    assert conv(x1, torch_adj.t()).tolist() == out.tolist()
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
+    torch_adj = adj.to_torch_sparse_coo_tensor()
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
@@ -77,22 +77,14 @@ def test_my_conv():
     assert out2.size() == (2, 32)
     assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv(
-        (x1, x2),
-        adj.t().to_torch_sparse_coo_tensor()).tolist() == out1.tolist()
+    assert conv((x1, x2), torch_adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    assert conv(
-        (x1, None),
-        adj.t().to_torch_sparse_coo_tensor()).tolist() == out2.tolist()
+    assert conv((x1, None), torch_adj.t()).tolist() == out2.tolist()
     conv.fuse = False
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv(
-        (x1, x2),
-        adj.t().to_torch_sparse_coo_tensor()).tolist() == out1.tolist()
+    assert conv((x1, x2), torch_adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    assert conv(
-        (x1, None),
-        adj.t().to_torch_sparse_coo_tensor()).tolist() == out2.tolist()
+    assert conv((x1, None), torch_adj.t()).tolist() == out2.tolist()
     conv.fuse = True
 
 
@@ -443,12 +435,12 @@ def test_my_default_arg_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    torch_adj = adj.to_torch_sparse_coo_tensor()
 
     conv = MyDefaultArgConv()
     assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
     assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
-    assert conv(x, adj.t().to_torch_sparse_coo_tensor()
-                ).view(-1).tolist() == [0, 0, 0, 0]  # yapf: disable
+    assert conv(x, torch_adj.t()).view(-1).tolist() == [0, 0, 0, 0]
 
 
 def test_my_default_arg_conv_jittable():
