@@ -148,7 +148,7 @@ def test_custom_explain_message():
     assert torch.allclose(conv.x_j, x[edge_index[0]])
 
 
-@pytest.mark.parametrize('mask_type', ['node'])
+@pytest.mark.parametrize('mask_type', ['node', 'edge', 'node_and_edge'])
 def test_to_captum_input(mask_type):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
@@ -157,27 +157,27 @@ def test_to_captum_input(mask_type):
     num_edges = data.num_edges
     num_node_feats = data.num_node_features
 
-    inputs, additonal_forward_args = to_captum_input(data, mask_type)
+    inputs, additional_forward_args = to_captum_input(data, mask_type)
     if mask_type == 'node':
         print(inputs[0].shape)
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
-        assert len(additonal_forward_args) == 1
-        assert torch.allclose(additonal_forward_args[0], edge_index)
+        assert len(additional_forward_args) == 1
+        assert torch.allclose(additional_forward_args[0], edge_index)
     elif mask_type == 'edge':
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_edges)
         assert inputs[0].sum() == num_edges
-        assert len(additonal_forward_args) == 2
-        assert torch.allclose(additonal_forward_args[0], x)
-        assert torch.allclose(additonal_forward_args[1], edge_index)
+        assert len(additional_forward_args) == 2
+        assert torch.allclose(additional_forward_args[0], x)
+        assert torch.allclose(additional_forward_args[1], edge_index)
     else:
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
         assert inputs[1].shape == (1, num_edges)
         assert inputs[1].sum() == num_edges
-        assert len(additonal_forward_args) == 1
-        assert torch.allclose(additonal_forward_args[0], edge_index)
+        assert len(additional_forward_args) == 1
+        assert torch.allclose(additional_forward_args[0], edge_index)
 
     data = HeteroData()
     x2 = torch.rand(4, 8)
@@ -185,25 +185,26 @@ def test_to_captum_input(mask_type):
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
     data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
-    inputs, additonal_forward_args == to_captum_input(data, mask_type)
+    inputs, additional_forward_args = to_captum_input(data, mask_type)
     if mask_type == 'node':
-        print(inputs)
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
         assert inputs[1].shape == (1, num_nodes, num_node_feats)
-        assert len(additonal_forward_args) == 2
-        assert torch.allclose(additonal_forward_args[0], edge_index)
-        assert torch.allclose(additonal_forward_args[1], edge_index.flip([0]))
+        assert len(additional_forward_args) == 1
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[0][key],
+                           data[key].edge_index)
     elif mask_type == 'edge':
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_edges)
         assert inputs[1].shape == (1, num_edges)
         assert inputs[1].sum() == inputs[0].sum() == num_edges
-        assert len(additonal_forward_args) == 4
-        assert torch.allclose(additonal_forward_args[0], x)
-        assert torch.allclose(additonal_forward_args[1], x2)
-        assert torch.allclose(additonal_forward_args[2], edge_index)
-        assert torch.allclose(additonal_forward_args[3], edge_index.flip([0]))
+        assert len(additional_forward_args) == 2
+        for key in data.node_types:
+            torch.allclose(additional_forward_args[0][key], data[key].x)
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[1][key],
+                           data[key].edge_index)
     else:
         assert len(inputs) == 4
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
@@ -211,6 +212,7 @@ def test_to_captum_input(mask_type):
         assert inputs[2].shape == (1, num_edges)
         assert inputs[3].shape == (1, num_edges)
         assert inputs[3].sum() == inputs[2].sum() == num_edges
-        assert len(additonal_forward_args) == 2
-        assert torch.allclose(additonal_forward_args[0], edge_index)
-        assert torch.allclose(additonal_forward_args[1], edge_index.flip([0]))
+        assert len(additional_forward_args) == 1
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[0][key],
+                           data[key].edge_index)
