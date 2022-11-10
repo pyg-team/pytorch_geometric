@@ -148,8 +148,9 @@ def to_captum_input(data: Union[HeteroData, Data],
             ]
             additional_forward_args = [data.edge_index]
     else:
-        node_types = data.metadata[0]
-        edge_types = data.metadata[1]
+        metadata = data.metadata()
+        node_types = metadata[0]
+        edge_types = metadata[1]
         inputs = []
         additional_forward_args = []
         if mask_type == "node":
@@ -171,10 +172,11 @@ def to_captum_input(data: Union[HeteroData, Data],
 
 
 def captum_output_to_dicts(
-    captum_attrs: Tuple[Tensor], mask_type, metadata: Metadata
+    captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
     """Convert the output of Captum.attribute to `x_attr_dict` and
     `edge_attr_dict`"""
+    _raise_on_invalid_mask_type(mask_type)
     node_types = metadata[0]
     edge_types = metadata[1]
     x_attr_dict, edge_attr_dict = None, None
@@ -265,9 +267,10 @@ class CaptumHeteroModel(CaptumModel):
         return x
 
 
-def to_captum(model: torch.nn.Module, mask_type: str = "edge",
-              output_idx: Optional[int] = None,
-              metadata: Optional[Metadata] = None) -> torch.nn.Module:
+def to_captum(
+    model: torch.nn.Module, mask_type: str = "edge",
+    output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
+) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
 
