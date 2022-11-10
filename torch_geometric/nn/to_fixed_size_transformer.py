@@ -12,7 +12,9 @@ except (ImportError, ModuleNotFoundError, AttributeError):
 
 def to_fixed_size(module: Module, batch_size: int,
                   debug: bool = False) -> GraphModule:
-    r"""
+    r"""Converts a model and injects a pre-computed and fixed batch size to all
+    global pooling operators.
+
     Args:
         module (torch.nn.Module): The model to transform.
         batch_size (int): The fixed batch size used in global pooling modules.

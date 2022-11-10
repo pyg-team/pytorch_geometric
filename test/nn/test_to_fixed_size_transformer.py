@@ -5,7 +5,7 @@ from torch_geometric.nn.to_fixed_size_transformer import to_fixed_size
 
 
 class Model(torch.nn.Module):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         self.aggr = SumAggregation()
 
@@ -14,8 +14,11 @@ class Model(torch.nn.Module):
 
 
 def test_to_fixed_size():
-    graph_module = to_fixed_size(Model(), batch_size=10)
-    x = torch.randn(10)
-    batch = torch.zeros_like(x).long()
-    r = graph_module(x, batch)
-    assert r.shape[0] == 10
+    x = torch.randn(10, 16)
+    batch = torch.zeros(10, dtype=torch.long)
+
+    model = Model()
+    assert model(x, batch).size() == (1, 16)
+
+    model = to_fixed_size(model, batch_size=10)
+    assert model(x, batch).size() == (10, 16)
