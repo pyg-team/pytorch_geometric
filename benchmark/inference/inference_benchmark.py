@@ -34,6 +34,9 @@ def run(args: argparse.ArgumentParser) -> None:
         else:
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
+        if args.num_layers != [1] and not hetero and args.num_stesp != -1:
+            raise ValueError("Layer-wise inference requires `steps=-1`")
+
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
             else dataset.num_features

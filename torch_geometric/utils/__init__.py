@@ -38,7 +38,6 @@ from .train_test_split_edges import train_test_split_edges
 from .scatter import scatter
 from .torch_sparse_tensor import is_torch_sparse_tensor
 from .spmm import spmm
-from .lr_scheduler import lr_scheduler_resolver
 
 __all__ = [
     'degree',
@@ -100,7 +99,6 @@ __all__ = [
     'scatter',
     'is_torch_sparse_tensor',
     'spmm',
-    'lr_scheduler_resolver',
 ]
 
 classes = __all__
