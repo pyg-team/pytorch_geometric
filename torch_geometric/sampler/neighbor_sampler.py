@@ -228,12 +228,14 @@ class NeighborSampler(BaseSampler):
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
+                dtype = list(self.colptr_dict.values())[0].dtype
                 out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    seed,  # seed_dict
+                    {k: v.to(dtype)
+                     for k, v in seed.items()},
                     self.num_neighbors,
                     self.node_time_dict,
                     kwargs.get('seed_time_dict', None),
@@ -261,7 +263,7 @@ class NeighborSampler(BaseSampler):
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    seed,  # seed_dict
+                    seed,  # seed_dict,
                     self.num_neighbors,
                     self.num_hops,
                     self.replace,
