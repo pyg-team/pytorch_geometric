@@ -16,7 +16,7 @@ LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
 
 def margin(score: Tensor, labels: Tensor,
            idx_mask: Optional[Tensor] = None) -> Tensor:
-    r"""Calculate margin between true score and highest non-target score:
+    r"""Calculate margin loss between true score and highest non-target score:
 
     .. math::
         $m = - s_{y} + max_{y' \ne y} s_{y'}$
@@ -102,10 +102,10 @@ def masked_cross_entropy(log_logits: Tensor, labels: Tensor,
         log_logits = log_logits[idx_mask]
         labels = labels[idx_mask]
 
-    not_flipped = log_logits.argmax(-1) == labels
-    if not_flipped.any():
-        log_logits = log_logits[not_flipped]
-        labels = labels[not_flipped]
+    is_correct = log_logits.argmax(-1) == labels
+    if is_correct.any():
+        log_logits = log_logits[is_correct]
+        labels = labels[is_correct]
 
     loss = F.cross_entropy(log_logits, labels)
     return loss
@@ -129,7 +129,8 @@ class Attack(torch.nn.Module):
         resulting perturbed  :attr:`edge_index` as well as the perturbations.
 
         Args:
-            x (Tensor): The node feature matrix.
+            x (Tensor): The node feature matrix. We assume `x` to be located
+                on target device.
             edge_index (LongTensor): The edge indices.
             labels (Tensor): The labels.
             budget (int): The number of allowed perturbations (i.e. 
@@ -218,7 +219,8 @@ class RBCDAttack(Attack):
         resulting perturbed  :attr:`edge_index` as well as the perturbations.
 
         Args:
-            x (Tensor): The node feature matrix.
+            x (Tensor): The node feature matrix. We assume `x` to be located
+                on target device.
             edge_index (LongTensor): The edge indices.
             labels (Tensor): The labels.
             budget (int): The number of allowed perturbations (i.e. 
@@ -295,10 +297,7 @@ class RBCDAttack(Attack):
     def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
                 **kwargs) -> Tensor:
         """Forward model."""
-        # return self.model(x, (edge_index, edge_weight), **kwargs)
-        adj = torch_sparse.SparseTensor.from_edge_index(
-            edge_index, edge_weight, (self.n, self.n), is_sorted=True)
-        return self.model(x, adj, **kwargs)
+        return self.model(x, edge_index, edge_weight, **kwargs)
 
     def _sample_random_block(self, budget: int = 0) -> None:
         for _ in range(self.coeffs['max_trials_sampling']):
@@ -326,8 +325,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int) -> None:
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight <=
-                      self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight
+                      <= self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -411,8 +410,8 @@ class RBCDAttack(Attack):
         row_idx = (
             n
             - 2
-            - torch.floor(torch.sqrt(-8 * lin_idx.double() +
-                                     4 * n * (n - 1) - 7) / 2.0 - 0.5)
+            - torch.floor(torch.sqrt(-8 * lin_idx.double()
+                                     + 4 * n * (n - 1) - 7) / 2.0 - 0.5)
         ).long()
         col_idx = (
             lin_idx
@@ -547,7 +546,7 @@ class PRBCDAttack(RBCDAttack):
                  # Target class has lowest score
                  loss: LOSS_TYPE = probability_margin_loss,
                  metric: LOSS_TYPE = probability_margin_loss,
-                 lr: float = 100,
+                 lr: float = 2,
                  is_undirected_graph: bool = True,
                  log: bool = True,
                  **kwargs) -> None:

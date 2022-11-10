@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
+from torch_geometric.utils import to_undirected
 from torch_geometric.nn import (
     GCNConv, PRBCDAttack, GRBCDAttack, global_add_pool)
 from torch_geometric.testing import is_full_test, withPackage
@@ -57,36 +58,15 @@ def test_attack(attack, model, budget, is_undirected_graph):
 
     x = torch.randn(8, 3)
     y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
+    edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6],
+                               [1, 2, 3, 4, 5, 6, 7]])
+    if is_undirected_graph:
+        edge_index = to_undirected(edge_index)
 
     pert_edge_index, perturbations = attack(x, edge_index, y, budget)
 
     m = edge_index.size(1)
-    if isinstance(attack, PRBCDAttack):
-        assert perturbations.shape in [(2, 0), (2, 1)]
-
-        if perturbations.size(1):
-            if is_undirected_graph:
-                possible_m = [m - 2, m + 2]
-            else:
-                possible_m = [m - 1, m + 1]
-        else:
-            possible_m = [m]
-        assert pert_edge_index.size(1) in possible_m
-    else:
-        assert perturbations.shape == (2, 1)
-
-        if is_undirected_graph:
-            possible_m = [m - 2, m + 2]
-        else:
-            possible_m = [m - 1, m + 1]
-        assert pert_edge_index.size(1) in possible_m
-
-    if is_full_test():
-        jit = torch.jit.export(attack)
-
-        pert_edge_index, perturbations = jit.attack(x, edge_index, y, budget)
+    if budget == 1:
         if isinstance(attack, PRBCDAttack):
             assert perturbations.shape in [(2, 0), (2, 1)]
 
@@ -106,3 +86,29 @@ def test_attack(attack, model, budget, is_undirected_graph):
             else:
                 possible_m = [m - 1, m + 1]
             assert pert_edge_index.size(1) in possible_m
+
+    if is_full_test():
+        jit = torch.jit.export(attack)
+
+        pert_edge_index, perturbations = jit.attack(x, edge_index, y, budget)
+        
+        if budget == 1:
+            if isinstance(attack, PRBCDAttack):
+                assert perturbations.shape in [(2, 0), (2, 1)]
+
+                if perturbations.size(1):
+                    if is_undirected_graph:
+                        possible_m = [m - 2, m + 2]
+                    else:
+                        possible_m = [m - 1, m + 1]
+                else:
+                    possible_m = [m]
+                assert pert_edge_index.size(1) in possible_m
+            else:
+                assert perturbations.shape == (2, 1)
+
+                if is_undirected_graph:
+                    possible_m = [m - 2, m + 2]
+                else:
+                    possible_m = [m - 1, m + 1]
+                assert pert_edge_index.size(1) in possible_m
