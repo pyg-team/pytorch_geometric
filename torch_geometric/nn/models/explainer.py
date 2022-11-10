@@ -1,6 +1,6 @@
 from inspect import signature
 from math import sqrt
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -114,26 +114,60 @@ class CaptumModel(torch.nn.Module):
         return x
 
 
-# TODO(jinu) can captum work with list of tensors
-# probably need to convert to Tuple
-def hetero_data_to_captum_data(data: HeteroData,
-                               mask_type: str) -> List[Tensor]:
-    """Takes data.x_dict and data.edge_index_dict and converts
-    it ot a list of tensors for use by captum."""
-    node_types = data.metadata[0]
-    edge_types = data.metadata[1]
-    if mask_type == "node":
-        explain_types = node_types
-    elif mask_type == "edge":
-        explain_types = edge_types
-    elif mask_type == "node_and_edge":
-        explain_types = node_types + edge_types
+def _to_edge_mask(edge_index: Tensor) -> Tensor:
+    num_edges = edge_index.shape[1]
+    return torch.ones(num_edges, requires_grad=True, device=edge_index.device)
+
+
+def _raise_on_invalid_mask_type(mask_type: str):
+    if mask_type not in ['node', 'edge', 'node_and_edge']:
+        raise ValueError(f"Invalid mask type (got {mask_type})")
+
+
+def to_captum_input(data: Union[HeteroData, Data],
+                    mask_type: str) -> Tuple[List[Tensor], List[Tensor]]:
+    """Given `data` and `mask_type`, converts it to a format to use
+    in `Captum` explainability. Returns `inputs` and
+    `additional_forward_args` required for `Captum`s `attribute` function.
+    `additonal_forward_args` will contain edges and features(if `mask_type` is
+    `edge`), please add other args that the model requires before passing it
+    to `attribute`.
+    """
+    _raise_on_invalid_mask_type(mask_type)
+    if isinstance(data, Data):
+        if mask_type == "node":
+            inputs = [data.x.unsqueeze(0)]
+            additional_forward_args = [data.edge_index]
+        elif mask_type == "edge":
+            inputs = [_to_edge_mask(data.edge_index).unsqueeze(0)]
+            additional_forward_args = [data.x, data.edge_index]
+        else:
+            inputs = [
+                data.x.unsqueeze(0),
+                _to_edge_mask(data.edge_index).unsqueeze(0)
+            ]
+            additional_forward_args = [data.edge_index]
     else:
-        raise ValueError(f"Invalid mask_type (got {mask_type})")
-    out_tensors = []
-    for key in explain_types:
-        out_tensors.append(data[key])
-    return out_tensors
+        node_types = data.metadata[0]
+        edge_types = data.metadata[1]
+        inputs = []
+        additional_forward_args = []
+        if mask_type == "node":
+            for key in node_types:
+                inputs.append(data[key].x.unsqueeze(0))
+            additional_forward_args.append(data.edge_index_dict)
+        elif mask_type == "edge":
+            for key in edge_types:
+                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
+            additional_forward_args.append(data.x_dict)
+            additional_forward_args.append(data.edge_index_dict)
+        else:
+            for key in node_types:
+                inputs.append(data[key].x.unsqueeze(0))
+            for key in edge_types:
+                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
+            additional_forward_args.append(data.edge_index_dict)
+    return inputs, additional_forward_args
 
 
 def captum_output_to_dicts(
@@ -176,21 +210,21 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.mask_type == 'node':
             node_tensors = args[0:num_node_types]
-            edge_tensors = args[num_node_types:num_node_types + num_edge_types]
+            x_dict = dict(zip(self.node_types, node_tensors))
+            edge_index_dict = args[num_node_types:num_node_types + 1]
         elif self.mask_type == 'edge':
             edge_mask_tensors = args[0:num_edge_types]
-            node_tensors = args[num_node_types:num_node_types + num_node_types]
-            edge_tensors = args[num_edge_types +
-                                num_node_types:num_node_types +
-                                2 * num_edge_types]
+            x_dict = args[num_edge_types:num_edge_types + 1]
+            edge_index_dict = args[num_edge_types + 1:num_edge_types + 2]
         else:
-            node_tensors = args[0:len(self.node_types)]
-            edge_mask_tensors = args[len(node_tensors):len(edge_tensors)]
-            edge_tensors = args[len(self.edge_types) +
-                                len(self.node_types):len(self.edge_types)]
+            node_tensors = args[0:num_node_types]
+            x_dict = dict(zip(self.node_types, node_tensors))
+            edge_mask_tensors = args[num_node_types:num_node_types +
+                                     num_edge_types]
+            edge_index_dict = args[num_node_types +
+                                   num_edge_types:num_node_types +
+                                   num_edge_types + 1]
 
-        x_dict = dict(zip(self.node_types, node_tensors))
-        edge_index_dict = dict(zip(self.edge_types, edge_tensors))
         if 'edge' in self.mask_type:
             edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
         else:
@@ -212,12 +246,11 @@ class CaptumHeteroModel(CaptumModel):
         (x_dict, edge_index_dict,
          edge_mask_dict) = self._captum_data_to_hetero_data(*args)
 
-        # Get remaining args"
+        # Get remaining args if any"
         len_main_args = (len(x_dict) + len(edge_index_dict) +
                          0 if edge_mask_dict is None else len(edge_mask_dict))
         remaining_args = args[len_main_args:]
 
-        # TODO(jinu) squeeze tensors:
         if 'edge' in self.mask_type:
             set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
 
