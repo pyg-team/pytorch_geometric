@@ -29,25 +29,31 @@ This class allows the user to easily compare different explainability methods an
 Explainer
 ---------
 
-.. currentmodule:: torch_geometric.explain
-
-.. autoclass:: torch_geometric.explain.explainer.Explainer
+.. autoclass:: torch_geometric.explain.Explainer
    :members:
 
    .. automethod:: __call__
 
+.. autoclass:: torch_geometric.explain.config.ExplainerConfig
+   :members:
+
+.. autoclass:: torch_geometric.explain.config.ModelConfig
+   :members:
+
+.. autoclass:: torch_geometric.explain.config.ThresholdConfig
+   :members:
+
 Explanations
 ------------
 
-.. currentmodule:: torch_geometric.explain
-
-.. autoclass:: torch_geometric.explain.explanations.Explanation
+.. autoclass:: torch_geometric.explain.Explanation
    :members:
 
 Explainer Algorithms
 --------------------
 
 .. currentmodule:: torch_geometric.explain.algorithm
+
 .. autosummary::
    :nosignatures:
    {% for cls in torch_geometric.explain.algorithm.classes %}

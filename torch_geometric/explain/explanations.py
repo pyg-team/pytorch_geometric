@@ -13,8 +13,8 @@ class Explanation(Data):
     also hold the original graph if needed.
 
     Args:
-        node_mask (Tensor, optional): dim (n_nodes,). Node-level mask with
-            shape :obj:`[num_nodes]`. (default: :obj:`None`)
+        node_mask (Tensor, optional): Node-level mask with shape
+            :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape
             :obj:`[num_edges]`. (default: :obj:`None`)
         node_feat_mask (Tensor, optional): Node-level feature mask with shape
