@@ -40,9 +40,6 @@ def test_homogeneous_neighbor_loader(directed, dtype):
     data.x = torch.arange(100)
     data.edge_index = get_edge_index(100, 100, 500, dtype=dtype)
     data.edge_attr = torch.arange(500, dtype=dtype)
-    print(data)
-    print(data.edge_index.dtype)
-    print(data.edge_attr.dtype)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
                             directed=directed)
