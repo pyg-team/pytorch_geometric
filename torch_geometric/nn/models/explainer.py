@@ -198,8 +198,8 @@ class CaptumHeteroModel(CaptumModel):
     def __init__(self, model: torch.nn.Module, mask_type: str, output_id: int,
                  metadata: Metadata):
         super().__init__(model, mask_type, output_id)
-        self.edge_types = metadata[0]
-        self.node_types = metadata[1]
+        self.node_types = metadata[0]
+        self.edge_types = metadata[1]
 
     def _captum_data_to_hetero_data(
         self, *args
@@ -212,22 +212,23 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.mask_type == 'node':
             node_tensors = args[0:num_node_types]
+            node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
-            edge_index_dict = args[num_node_types:num_node_types + 1]
+            edge_index_dict = args[num_node_types]
         elif self.mask_type == 'edge':
             edge_mask_tensors = args[0:num_edge_types]
-            x_dict = args[num_edge_types:num_edge_types + 1]
-            edge_index_dict = args[num_edge_types + 1:num_edge_types + 2]
+            x_dict = args[num_edge_types]
+            edge_index_dict = args[num_edge_types + 1]
         else:
             node_tensors = args[0:num_node_types]
+            node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
             edge_mask_tensors = args[num_node_types:num_node_types +
                                      num_edge_types]
-            edge_index_dict = args[num_node_types +
-                                   num_edge_types:num_node_types +
-                                   num_edge_types + 1]
+            edge_index_dict = args[num_node_types + num_edge_types]
 
         if 'edge' in self.mask_type:
+            edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
             edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
         else:
             edge_mask_dict = None
@@ -238,32 +239,33 @@ class CaptumHeteroModel(CaptumModel):
         num_nodes = len(self.node_types)
         num_edges = len(self.edge_types)
         if self.mask_type == "node":
-            assert len(args) > num_nodes + num_edges
+            assert len(args) >= num_nodes + 1
+            len_remaining_args = len(args) - (num_nodes + 1)
         elif self.mask_type == "edge":
-            assert len(args) > num_nodes + 2 * num_edges
+            assert len(args) >= num_edges + 2
+            len_remaining_args = len(args) - (num_edges + 2)
         else:
-            assert len(args) > num_nodes + 2 * num_edges
+            assert len(args) >= num_nodes + num_edges + 1
+            len_remaining_args = len(args) - (num_edges + num_edges + 1)
 
         # Get main args:
         (x_dict, edge_index_dict,
          edge_mask_dict) = self._captum_data_to_hetero_data(*args)
 
-        # Get remaining args if any"
-        len_main_args = (len(x_dict) + len(edge_index_dict) +
-                         0 if edge_mask_dict is None else len(edge_mask_dict))
-        remaining_args = args[len_main_args:]
-
         if 'edge' in self.mask_type:
             set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
 
-        x = self.model(x_dict, edge_index_dict, *remaining_args)
+        if len_remaining_args > 0:
+            # If there are args other than `x_dict` and `edge_index_dict`
+            x = self.model(x_dict, edge_index_dict, *args[-len_remaining_args])
+        else:
+            x = self.model(x_dict, edge_index_dict)
 
         if 'edge' in self.mask_type:
             clear_masks(self.model)
 
         if self.output_idx is not None:
             x = x[self.output_idx].unsqueeze(0)
-
         return x
 
 
