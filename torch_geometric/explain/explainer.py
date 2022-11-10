@@ -35,23 +35,21 @@ class Explainer:
         model_config: ModelConfig,
         threshold_config: Optional[ThresholdConfig] = None,
     ):
-        if threshold_config is not None:
-            threshold_config = ThresholdConfig.cast(threshold_config)
-
         self.model = model
         self.algorithm = algorithm
+
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
-        self.threshold_config = threshold_config
+        self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        if not self.explanation_algorithm.supports(
-                self.explanation_config,
+        if not self.algorithm.supports(
+                self.explainer_config,
                 self.model_config,
         ):
             raise ValueError(
                 f"The explanation algorithm "
-                f"'{self.explanation_algorithm.__class__.__name__}' does not "
-                f"support the given explanation settings.")
+                f"'{self.algorithm.__class__.__name__}' does not support the "
+                f"given explanation settings.")
 
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
@@ -102,11 +100,11 @@ class Explainer:
             if target is None:
                 raise ValueError(
                     f"The target has to be provided for the explanation type "
-                    f"'{self.explanation_config.explanation_type.value}'")
+                    f"'{self.explainer_config.explanation_type.value}'")
         else:
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
-        explanation = self.explanation_algorithm(
+        explanation = self.algorithm(
             model=self.model,
             x=x,
             edge_index=edge_index,

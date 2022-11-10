@@ -160,10 +160,14 @@ class ModelConfig(CastMixin):
         self,
         mode: Union[ModelMode, str],
         task_level: Union[ModelTaskLevel, str],
-        return_type: Union[ModelReturnType, str],
+        return_type: Optional[Union[ModelReturnType, str]] = None,
     ):
         self.mode = ModelMode(mode)
         self.task_level = ModelTaskLevel(task_level)
+
+        if return_type is None and self.mode == ModelMode.regression:
+            return_type = ModelReturnType.raw
+
         self.return_type = ModelReturnType(return_type)
 
         if (self.mode == ModelMode.regression
