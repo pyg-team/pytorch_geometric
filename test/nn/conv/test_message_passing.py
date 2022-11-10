@@ -87,6 +87,12 @@ def test_my_conv():
     assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
     conv.fuse = True
 
+    # Test backward compatibility for PyTorch SparseTensor
+    conv.fuse = True
+    torch_adj = torch_adj.requires_grad_()
+    conv((x1, x2), torch_adj.t()).sum().backward()
+    assert torch_adj.grad is not None
+
 
 def test_my_conv_out_of_bounds():
     x = torch.randn(3, 8)

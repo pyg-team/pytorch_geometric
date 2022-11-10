@@ -314,20 +314,24 @@ class MessagePassing(torch.nn.Module):
                 out[arg] = data
 
         if is_torch_sparse_tensor(edge_index):
-            # TODO: Since `._values()`` returns a detached tensor,
-            # should we use a coalesced matrix instead?
-            # This may lead to more overheads though.
+            if edge_index.requires_grad:
+                edge_index = edge_index.coalesce()
+                indices = edge_index.indices()
+                values = edge_index.values()
+            else:
+                indices = edge_index._indices()
+                values = edge_index._values()
             out['adj_t'] = edge_index
             out['edge_index'] = None
-            out['edge_index_i'] = edge_index._indices()[0]
-            out['edge_index_j'] = edge_index._indices()[1]
+            out['edge_index_i'] = indices[0]
+            out['edge_index_j'] = indices[1]
             out['ptr'] = None  # TODO: should we handle this?
             if out.get('edge_weight', None) is None:
-                out['edge_weight'] = edge_index._values()
+                out['edge_weight'] = values
             if out.get('edge_attr', None) is None:
-                out['edge_attr'] = edge_index._values()
+                out['edge_attr'] = values
             if out.get('edge_type', None) is None:
-                out['edge_type'] = edge_index._values()
+                out['edge_type'] = values
         elif isinstance(edge_index, Tensor):
             out['adj_t'] = None
             out['edge_index'] = edge_index
