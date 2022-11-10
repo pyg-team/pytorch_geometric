@@ -43,6 +43,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/transforms
    modules/utils
    modules/graphgym
+   modules/explain
    modules/profile
 
 Indices and Tables

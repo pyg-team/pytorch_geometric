@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 import torch
@@ -61,6 +61,13 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
+        interaction_graph (Callable, optional): The function used to compute
+            the pairwise interaction graph and interatomic distances. If set to
+            :obj:`None`, will construct a graph based on :obj:`cutoff` and
+            :obj:`max_num_neighbors` properties.
+            If provided, this method takes in :obj:`pos` and :obj:`batch`
+            tensors and should return :obj:`(edge_index, edge_weight)` tensors.
+            (default :obj:`None`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
@@ -90,6 +97,7 @@ class SchNet(torch.nn.Module):
         num_interactions: int = 6,
         num_gaussians: int = 50,
         cutoff: float = 10.0,
+        interaction_graph: Optional[Callable] = None,
         max_num_neighbors: int = 32,
         readout: str = 'add',
         dipole: bool = False,
@@ -104,7 +112,6 @@ class SchNet(torch.nn.Module):
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
-        self.max_num_neighbors = max_num_neighbors
         self.readout = readout
         self.dipole = dipole
         self.readout = 'add' if self.dipole else self.readout
@@ -121,6 +128,13 @@ class SchNet(torch.nn.Module):
         # Support z == 0 for padding atoms so that their embedding vectors
         # are zeroed and do not receive any gradients.
         self.embedding = Embedding(100, hidden_channels, padding_idx=0)
+
+        if interaction_graph is not None:
+            self.interaction_graph = interaction_graph
+        else:
+            self.interaction_graph = RadiusInteractionGraph(
+                cutoff, max_num_neighbors)
+
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
@@ -242,8 +256,8 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z: Tensor, pos: Tensor, batch: OptTensor = None,
-                edge_index: OptTensor = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor,
+                batch: OptTensor = None) -> Tensor:
         r"""
         Args:
             z (LongTensor): Atomic number of each atom with shape
@@ -253,21 +267,12 @@ class SchNet(torch.nn.Module):
             batch (LongTensor, optional): Batch indices assigning each atom to
                 a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
-            edge_index (LongTensor, optional): Indices of interacting pairs of
-                atoms with shape :obj:`[2, num_edges]`. Will be computed in
-                every forward pass if not provided. (default: :obj:`None`)
         """
-        assert z.dim() == 1 and z.dtype == torch.long
+        assert z.dim() == 1 and not torch.is_floating_point(z)
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
-
-        if edge_index is None:
-            edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                      max_num_neighbors=self.max_num_neighbors)
-
-        row, col = edge_index
-        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        edge_index, edge_weight = self.interaction_graph(pos, batch)
         edge_attr = self.distance_expansion(edge_weight)
 
         for interaction in self.interactions:
@@ -306,6 +311,39 @@ class SchNet(torch.nn.Module):
                 f'num_interactions={self.num_interactions}, '
                 f'num_gaussians={self.num_gaussians}, '
                 f'cutoff={self.cutoff})')
+
+
+class RadiusInteractionGraph(torch.nn.Module):
+    r"""Creates edges based on atom positions :obj:`pos` to all points within
+    the cutoff distance.
+
+    Args:
+        cutoff (float, optional): Cutoff distance for interatomic interactions.
+            (default: :obj:`10.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance with the
+            default interaction graph method.
+            (default: :obj:`32`)
+    """
+    def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
+        super().__init__()
+        self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
+
+    def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
+        r"""
+        Args:
+            pos (Tensor): Coordinates of each atom.
+            batch (LongTensor, optional): Batch indices assigning each atom to
+                a separate molecule.
+
+        :rtype: (:class:`LongTensor`, :class:`Tensor`)
+        """
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
+        row, col = edge_index
+        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        return edge_index, edge_weight
 
 
 class InteractionBlock(torch.nn.Module):
