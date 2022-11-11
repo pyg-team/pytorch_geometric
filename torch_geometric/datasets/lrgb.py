@@ -180,8 +180,7 @@ class LRGBDataset(InMemoryDataset):
                         x = graph[0].to(torch.float)
                         edge_attr = graph[1].to(torch.float)
                         edge_index = graph[2]
-                        y = graph[3]
-                        y = torch.LongTensor(y)
+                        y = torch.LongTensor(graph[3])
                     elif self.name.split('-')[0] == 'peptides':
                         """
                         Peptides-func and Peptides-struct
