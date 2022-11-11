@@ -368,7 +368,8 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        assert len(batch1) == len(batch2)
+        # loader2 excplicitly adds `num_nodes` to the batch
+        assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
         # Mapped indices of neighbors may be differently sorted:

@@ -184,6 +184,7 @@ def filter_custom_store(
         if attr.group_name in node_dict:
             attr.index = node_dict[attr.group_name]
             required_attrs.append(attr)
+            data[attr.group_name].num_nodes = attr.index.size(0)
 
     # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
     # full control over optimizing how it returns features (since the call is
