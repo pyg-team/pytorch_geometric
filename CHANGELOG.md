@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
-- Added `LRGBDataset` to include 5 datasets from the [Long Range Graph Benchmark](https://openreview.net/pdf?id=in7XC5RcjEn), [#5935](https://github.com/pyg-team/pytorch_geometric/pull/5935)
 - Add `dgNN` support and `FusedGATConv` implementation ([#5140](https://github.com/pyg-team/pytorch_geometric/pull/5140))
 - Added `lr_scheduler_solver` and customized `lr_scheduler` classes ([#5942](https://github.com/pyg-team/pytorch_geometric/pull/5942))
 - Add `to_fixed_size` graph transformer ([#5939](https://github.com/pyg-team/pytorch_geometric/pull/5939))
