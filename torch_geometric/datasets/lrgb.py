@@ -5,7 +5,6 @@ import shutil
 from typing import Callable, List, Optional
 
 import torch
-from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -155,9 +154,6 @@ class LRGBDataset(InMemoryDataset):
             # PCQM-Contact
             self.process_pcqm_contact()
         else:
-            # For COCO-SP to remap the labels as the
-            # original label idxs are not contiguous
-            label_map_coco = LabelEncoder().fit(self.original_label_idxs())
             for split in ['train', 'val', 'test']:
                 if self.name.split('-')[1] == 'sp':
                     # PascalVOC-SP and COCO-SP
@@ -169,16 +165,9 @@ class LRGBDataset(InMemoryDataset):
                     with open(osp.join(self.raw_dir, f'{split}.pt'),
                               'rb') as f:
                         graphs = torch.load(f)
-
-                indices = range(len(graphs))
-
-                pbar = tqdm(total=len(indices))
-                pbar.set_description(f'Processing {split} dataset')
-
+                        
                 data_list = []
-                for idx in indices:
-                    graph = graphs[idx]
-
+                for graph in tqdm(graphs, desc=f'Processing {split} dataset'):
                     if self.name.split('-')[1] == 'sp':
                         """
                         PascalVOC-SP and COCO-SP
@@ -191,10 +180,7 @@ class LRGBDataset(InMemoryDataset):
                         x = graph[0].to(torch.float)
                         edge_attr = graph[1].to(torch.float)
                         edge_index = graph[2]
-                        if self.name == 'coco-sp':
-                            y = label_map_coco.transform(graph[3])
-                        else:
-                            y = graph[3]
+                        y = graph[3]
                         y = torch.LongTensor(y)
                     elif self.name.split('-')[0] == 'peptides':
                         """
@@ -211,6 +197,13 @@ class LRGBDataset(InMemoryDataset):
                         edge_index = graph[2]
                         y = graph[3]
 
+                    if self.name == 'coco-sp':
+                        # Label remapping for coco-sp.
+                        # See self.label_remap_coco() func
+                        label_map = self.label_remap_coco()
+                        for i, label in enumerate(y):
+                            y[i] = label_map[label.item()]
+                    
                     data = Data(x=x, edge_index=edge_index,
                                 edge_attr=edge_attr, y=y)
 
@@ -222,37 +215,34 @@ class LRGBDataset(InMemoryDataset):
                         data = self.pre_transform(data)
 
                     data_list.append(data)
-                    pbar.update(1)
-
-                pbar.close()
-
+                    
                 torch.save(self.collate(data_list),
                            osp.join(self.processed_dir, f'{split}.pt'))
 
-    def original_label_idxs(self):
-        # List of original labels for COCO-SP
-        original_label_ix = [
+    def label_remap_coco(self):
+        # Util function for name 'COCO-SP'
+        # to remap the labels as the original label idxs are not contiguous
+        original_label_idx = [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39,
             40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
             58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78,
             79, 80, 81, 82, 84, 85, 86, 87, 88, 89, 90
         ]
-        return original_label_ix
+        
+        label_map = {}
+        for i, key in enumerate(original_label_idx):
+            label_map[key] = i
+
+        return label_map
 
     def process_pcqm_contact(self):
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
                 graphs = torch.load(f)
 
-            indices = range(len(graphs))
-
-            pbar = tqdm(total=len(indices))
-            pbar.set_description(f'Processing {split} dataset')
-
             data_list = []
-            for idx in indices:
-                graph = graphs[idx]
+            for graph in tqdm(graphs, desc=f'Processing {split} dataset'):
                 """
                 PCQM-Contact
                 Each `graph` is a tuple (x, edge_attr, edge_index,
@@ -272,11 +262,10 @@ class LRGBDataset(InMemoryDataset):
                 edge_index = graph[2]
                 edge_index_labeled = graph[3]
                 edge_label = graph[4]
-                y = None
 
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                             edge_index_labeled=edge_index_labeled,
-                            edge_label=edge_label, y=y)
+                            edge_label=edge_label)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
@@ -285,9 +274,6 @@ class LRGBDataset(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
-                pbar.update(1)
-
-            pbar.close()
 
             torch.save(self.collate(data_list),
                        osp.join(self.processed_dir, f'{split}.pt'))
