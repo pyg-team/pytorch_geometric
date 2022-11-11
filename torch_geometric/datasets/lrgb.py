@@ -165,7 +165,7 @@ class LRGBDataset(InMemoryDataset):
                     with open(osp.join(self.raw_dir, f'{split}.pt'),
                               'rb') as f:
                         graphs = torch.load(f)
-                        
+
                 data_list = []
                 for graph in tqdm(graphs, desc=f'Processing {split} dataset'):
                     if self.name.split('-')[1] == 'sp':
@@ -202,7 +202,7 @@ class LRGBDataset(InMemoryDataset):
                         label_map = self.label_remap_coco()
                         for i, label in enumerate(y):
                             y[i] = label_map[label.item()]
-                    
+
                     data = Data(x=x, edge_index=edge_index,
                                 edge_attr=edge_attr, y=y)
 
@@ -214,7 +214,7 @@ class LRGBDataset(InMemoryDataset):
                         data = self.pre_transform(data)
 
                     data_list.append(data)
-                    
+
                 torch.save(self.collate(data_list),
                            osp.join(self.processed_dir, f'{split}.pt'))
 
@@ -228,7 +228,7 @@ class LRGBDataset(InMemoryDataset):
             58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78,
             79, 80, 81, 82, 84, 85, 86, 87, 88, 89, 90
         ]
-        
+
         label_map = {}
         for i, key in enumerate(original_label_idx):
             label_map[key] = i
