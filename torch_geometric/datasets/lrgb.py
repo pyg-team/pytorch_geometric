@@ -247,11 +247,11 @@ class LRGBDataset(InMemoryDataset):
                 """
                 PCQM-Contact
                 Each `graph` is a tuple (x, edge_attr, edge_index,
-                                        edge_index_labeled, edge_label)
+                                        edge_label_index, edge_label)
                     Shape of x : [num_nodes, 9]
                     Shape of edge_attr : [num_edges, 3]
                     Shape of edge_index : [2, num_edges]
-                    Shape of edge_index_labeled: [2, num_labeled_edges]
+                    Shape of edge_label_index: [2, num_labeled_edges]
                     Shape of edge_label : [num_labeled_edges]
 
                     where,
@@ -261,11 +261,11 @@ class LRGBDataset(InMemoryDataset):
                 x = graph[0]
                 edge_attr = graph[1]
                 edge_index = graph[2]
-                edge_index_labeled = graph[3]
+                edge_label_index = graph[3]
                 edge_label = graph[4]
 
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                            edge_index_labeled=edge_index_labeled,
+                            edge_label_index=edge_label_index,
                             edge_label=edge_label)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
