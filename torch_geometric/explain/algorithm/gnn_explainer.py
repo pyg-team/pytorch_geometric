@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -10,6 +10,7 @@ from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
     ModelConfig,
+    ModelMode,
     ModelReturnType,
     ModelTaskLevel,
 )
@@ -42,18 +43,14 @@ class GNNExplainer(ExplainerAlgorithm):
         self.lr = lr
         self.coeffs.update(kwargs)
 
-    def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
-                model: torch.nn.Module, target: torch.Tensor,
-                target_index: Union[int, Tuple[int, ...], torch.Tensor,
-                                    List[Tuple[int, ...]], List[int]] = 0,
-                batch: Optional[torch.Tensor] = None,
-                task_level: ModelTaskLevel = ModelTaskLevel.graph,
-                return_type: ModelReturnType = ModelReturnType.raw,
-                node_mask_type: MaskType = MaskType.attributes,
-                edge_mask_type: MaskType = None, index: Optional[int] = None,
-                **kwargs) -> Explanation:
+    def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
+                explainer_config: ExplainerConfig, model_config: ModelConfig,
+                target: Tensor, target_index: Optional[Union[int,
+                                                             Tensor]] = None,
+                index: Optional[Union[int, Tensor]] = None,
+                batch: Optional[Tensor] = None, **kwargs) -> Explanation:
 
-        if not isinstance(target_index, int):
+        if isinstance(target_index, Tensor):
             raise ValueError(
                 'GNNExplainer only supports single target index for now')
 
@@ -66,46 +63,51 @@ class GNNExplainer(ExplainerAlgorithm):
 
         # if we are dealing with a node level task, we can restrict the
         # computation to the node of interest and its computation graph
-        if task_level == ModelTaskLevel.node:
+        if model_config.task_level == ModelTaskLevel.node:
             num_nodes = x.size(0)
             num_edges = edge_index.size(1)
-            x, edge_index, new_index, hard_edge_mask, subset, kwargs =\
-                self.subgraph(model, target_index, x, edge_index, **kwargs)
+            x, edge_index, new_index, subset, hard_edge_mask, kwargs =\
+                self.subgraph(model, index, x, edge_index, **kwargs)
+            target = target[subset]
 
         node_mask, edge_mask = self._initialize_masks(x, edge_index)
         self.to(x.device)
 
-        if edge_mask_type == MaskType.object:
+        if explainer_config.edge_mask_type == MaskType.object:
             set_masks(model, edge_mask, edge_index, apply_sigmoid=True)
             parameters = [node_mask, edge_mask]
         else:
             parameters = [node_mask]
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
-        if task_level == ModelTaskLevel.node:
+        if model_config.task_level in [
+                ModelTaskLevel.node, ModelTaskLevel.edge
+        ]:
             node_index = new_index
         else:
-            node_index = index
+            node_index = None
 
         for _ in range(1, self.epochs + 1):
             optimizer.zero_grad()
             h = x * node_mask.sigmoid()
             out = model(x=h, edge_index=edge_index, batch=None, **kwargs)
             loss = self.loss(out, target, node_mask, edge_mask,
-                             return_type=return_type, target_idx=target_index,
-                             batch=batch, node_index=node_index,
-                             edge_mask_type=edge_mask_type)
+                             return_type=model_config.return_type,
+                             target_idx=target_index, batch=batch,
+                             node_index=node_index,
+                             edge_mask_type=explainer_config.edge_mask_type,
+                             model_mode=model_config.mode)
             loss.backward(retain_graph=True)
             optimizer.step()
 
         node_mask = node_mask.detach().sigmoid()
-        if task_level == ModelTaskLevel.node:
+        if model_config.task_level == ModelTaskLevel.node:
 
             new_mask = x.new_zeros(num_nodes, x.size(-1))
             new_mask[subset] = node_mask
             node_mask = new_mask.squeeze()
 
-            if edge_mask_type == MaskType.object:
+            if explainer_config.edge_mask_type == MaskType.object:
                 new_edge_mask = edge_mask.new_zeros(num_edges)
                 new_edge_mask[hard_edge_mask] = edge_mask.detach().sigmoid()
                 edge_mask = new_edge_mask
@@ -114,7 +116,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 edge_mask[hard_edge_mask] = 1
         else:
             node_mask = node_mask.squeeze()
-            if edge_mask_type == MaskType.object:
+            if explainer_config.edge_mask_type == MaskType.object:
                 edge_mask = edge_mask.detach().sigmoid()
             else:
                 edge_mask = torch.ones(edge_index.size(1))
@@ -129,9 +131,14 @@ class GNNExplainer(ExplainerAlgorithm):
              node_mask: torch.Tensor, edge_mask: torch.Tensor,
              return_type: ModelReturnType, target_idx: int,
              batch: torch.Tensor, node_index: Optional[int] = None,
-             edge_mask_type: MaskType = None) -> torch.Tensor:
+             edge_mask_type: MaskType = None,
+             model_mode: ModelMode = ModelMode.regression) -> torch.Tensor:
 
-        if return_type == ModelReturnType.raw:
+        if target_idx != 0:
+            y_hat = y_hat[..., target_idx].unsqueeze(0)
+            y = y[..., target_idx].unsqueeze(0)
+
+        if model_mode == ModelMode.regression:
             if node_index is not None and node_index >= 0:
                 loss = torch.cdist(y_hat[node_index], y[node_index])
             else:
@@ -146,7 +153,7 @@ class GNNExplainer(ExplainerAlgorithm):
             else:
                 loss = -y_hat[0, y[0]]
 
-        if edge_mask_type != MaskType.none:
+        if edge_mask_type is not None:
             m = edge_mask.sigmoid()
             edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
             loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
