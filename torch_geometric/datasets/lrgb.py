@@ -158,7 +158,7 @@ class LRGBDataset(InMemoryDataset):
                 # Label remapping for coco-sp.
                 # See self.label_remap_coco() func
                 label_map = self.label_remap_coco()
-            
+
             for split in ['train', 'val', 'test']:
                 if self.name.split('-')[1] == 'sp':
                     # PascalVOC-SP and COCO-SP
