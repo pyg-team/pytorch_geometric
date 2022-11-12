@@ -154,6 +154,11 @@ class LRGBDataset(InMemoryDataset):
             # PCQM-Contact
             self.process_pcqm_contact()
         else:
+            if self.name == 'coco-sp':
+                # Label remapping for coco-sp.
+                # See self.label_remap_coco() func
+                label_map = self.label_remap_coco()
+            
             for split in ['train', 'val', 'test']:
                 if self.name.split('-')[1] == 'sp':
                     # PascalVOC-SP and COCO-SP
@@ -197,9 +202,6 @@ class LRGBDataset(InMemoryDataset):
                         y = graph[3]
 
                     if self.name == 'coco-sp':
-                        # Label remapping for coco-sp.
-                        # See self.label_remap_coco() func
-                        label_map = self.label_remap_coco()
                         for i, label in enumerate(y):
                             y[i] = label_map[label.item()]
 
