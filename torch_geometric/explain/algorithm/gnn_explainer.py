@@ -48,7 +48,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 target: Tensor, target_index: Optional[Union[int,
                                                              Tensor]] = None,
                 index: Optional[Union[int, Tensor]] = None,
-                batch: Optional[Tensor] = None, **kwargs) -> Explanation:
+                **kwargs) -> Explanation:
 
         if isinstance(target_index, Tensor):
             raise ValueError(
@@ -57,9 +57,52 @@ class GNNExplainer(ExplainerAlgorithm):
         # can it be an issue for some models ?
         clear_masks(model)
 
-        # all nodes belong to same graph if no batch is given
-        batch = torch.zeros(x.shape[0], dtype=torch.int,
-                            device=x.device) if batch is None else batch
+        if model_config.task_level == ModelTaskLevel.node:
+            node_mask, edge_mask = self.explain_node(model, x, edge_index,
+                                                     explainer_config,
+                                                     model_config, target,
+                                                     target_index, index,
+                                                     **kwargs)
+        elif model_config.task_level == ModelTaskLevel.graph:
+            node_mask, edge_mask = self.explain_graph(model, x, edge_index,
+                                                      explainer_config,
+                                                      model_config, target,
+                                                      target_index, index,
+                                                      **kwargs)
+        else:
+            raise ValueError(
+                'GNNExplainer does not support task level {}'.format(
+                    model_config.task_level))
+
+        model = clear_masks(model)
+
+        # build explanation
+        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
+                           node_features_mask=node_mask)
+
+    def explain_graph(self, model: torch.nn.Module, x: Tensor,
+                      edge_index: Tensor, explainer_config: ExplainerConfig,
+                      model_config: ModelConfig, target: Tensor,
+                      target_index: Optional[Union[int, Tensor]] = None,
+                      index: Optional[Union[int, Tensor]] = None,
+                      **kwargs) -> Tuple[Tensor, Tensor]:
+        node_mask, edge_mask = self.train_node_edge_mask(
+            model, x, edge_index, explainer_config, model_config, target,
+            target_index, index, kwargs)
+
+        node_mask = node_mask.squeeze()
+        if explainer_config.edge_mask_type == MaskType.object:
+            edge_mask = edge_mask.detach().sigmoid()
+        else:
+            edge_mask = torch.ones(edge_index.size(1))
+        return node_mask, edge_mask
+
+    def explain_node(self, model: torch.nn.Module, x: Tensor,
+                     edge_index: Tensor, explainer_config: ExplainerConfig,
+                     model_config: ModelConfig, target: Tensor,
+                     target_index: Optional[Union[int, Tensor]] = None,
+                     index: Optional[Union[int, Tensor]] = None,
+                     **kwargs) -> Tuple[Tensor, Tensor]:
 
         # if we are dealing with a node level task, we can restrict the
         # computation to the node of interest and its computation graph
@@ -68,12 +111,39 @@ class GNNExplainer(ExplainerAlgorithm):
             num_edges = edge_index.size(1)
             x, edge_index, new_index, subset, hard_edge_mask, kwargs =\
                 self.subgraph(model, index, x, edge_index, **kwargs)
-            index_selection = 0 if target_index is None else 1
-            if model_config.mode == ModelMode.classification:
-                index_selection = 1
-            target = torch.index_select(target, index_selection, subset)
+            if target_index is not None and model_config.mode ==\
+                    ModelMode.classification:
+                target = torch.index_select(target, 1, subset)
+            else:
+                target = target[subset]
+        if model_config.task_level in [ModelTaskLevel.node]:
             index = new_index
+        else:
+            index = None
 
+        node_mask, edge_mask = self.train_node_edge_mask(
+            model, x, edge_index, explainer_config, model_config, target,
+            target_index, index, kwargs)
+
+        new_mask = x.new_zeros(num_nodes, x.size(-1))
+        new_mask[subset] = node_mask
+        node_mask = new_mask.squeeze()
+
+        if explainer_config.edge_mask_type == MaskType.object:
+            new_edge_mask = edge_mask.new_zeros(num_edges)
+            new_edge_mask[hard_edge_mask] = edge_mask.detach().sigmoid()
+            edge_mask = new_edge_mask
+        else:
+            edge_mask = torch.zeros(num_edges)
+            edge_mask[hard_edge_mask] = 1
+
+        model = clear_masks(model)
+
+        return node_mask, edge_mask
+
+    def train_node_edge_mask(self, model, x, edge_index, explainer_config,
+                             model_config, target, target_index, index,
+                             kwargs):
         node_mask, edge_mask = self._initialize_masks(x, edge_index)
         self.to(x.device)
 
@@ -84,52 +154,30 @@ class GNNExplainer(ExplainerAlgorithm):
             parameters = [node_mask]
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
-        if model_config.task_level in [
-                ModelTaskLevel.node, ModelTaskLevel.edge
-        ]:
-            node_index = new_index
-        else:
-            node_index = None
-
         for _ in range(1, self.epochs + 1):
             optimizer.zero_grad()
             h = x * node_mask.sigmoid()
-            out = model(x=h, edge_index=edge_index, batch=None, **kwargs)
+            out = model(x=h, edge_index=edge_index, **kwargs)
             loss = self.loss(out, target, node_mask, edge_mask,
                              return_type=model_config.return_type,
-                             target_idx=target_index, batch=batch,
-                             node_index=node_index,
+                             target_idx=target_index, node_index=index,
                              edge_mask_type=explainer_config.edge_mask_type,
                              model_mode=model_config.mode)
             loss.backward(retain_graph=True)
             optimizer.step()
 
         node_mask = node_mask.detach().sigmoid()
-        if model_config.task_level == ModelTaskLevel.node:
+        return node_mask, edge_mask
 
-            new_mask = x.new_zeros(num_nodes, x.size(-1))
-            new_mask[subset] = node_mask
-            node_mask = new_mask.squeeze()
-
-            if explainer_config.edge_mask_type == MaskType.object:
-                new_edge_mask = edge_mask.new_zeros(num_edges)
-                new_edge_mask[hard_edge_mask] = edge_mask.detach().sigmoid()
-                edge_mask = new_edge_mask
-            else:
-                edge_mask = torch.zeros(num_edges)
-                edge_mask[hard_edge_mask] = 1
-        else:
-            node_mask = node_mask.squeeze()
-            if explainer_config.edge_mask_type == MaskType.object:
-                edge_mask = edge_mask.detach().sigmoid()
-            else:
-                edge_mask = torch.ones(edge_index.size(1))
-
-        model = clear_masks(model)
-
-        # build explanation
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_features_mask=node_mask)
+    def _initialize_masks(
+            self, x: Tensor,
+            edge_index: Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        (N, F), E = x.size(), edge_index.size(1)
+        std = 0.1
+        node_feat_mask = Parameter(torch.randn(N, F) * std)
+        std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
+        edge_mask = Parameter(torch.randn(E) * std)
+        return node_feat_mask, edge_mask
 
     def loss_regression(
         self,
@@ -173,9 +221,9 @@ class GNNExplainer(ExplainerAlgorithm):
 
     def loss(self, y_hat: torch.Tensor, y: torch.Tensor,
              node_mask: torch.Tensor, edge_mask: torch.Tensor,
-             return_type: ModelReturnType, batch: torch.Tensor,
+             edge_mask_type: MaskType, return_type: ModelReturnType,
              node_index: Optional[int] = None,
-             target_idx: Optional[int] = None, edge_mask_type: MaskType = None,
+             target_idx: Optional[int] = None,
              model_mode: ModelMode = ModelMode.regression) -> torch.Tensor:
 
         if model_mode == ModelMode.regression:
@@ -199,28 +247,21 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return loss
 
-    def _initialize_masks(
-            self, x: Tensor,
-            edge_index: Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        (N, F), E = x.size(), edge_index.size(1)
-        std = 0.1
-        node_feat_mask = Parameter(torch.randn(N, F) * std)
-        std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
-        edge_mask = Parameter(torch.randn(E) * std)
-        return node_feat_mask, edge_mask
-
-    def supports(self, explanation_config: ExplainerConfig,
-                 model_config: ModelConfig) -> Tuple[bool, Optional[str]]:
+    def supports(self, explainer_config: ExplainerConfig,
+                 model_config: ModelConfig) -> bool:
         if model_config.task_level not in [
                 ModelTaskLevel.node, ModelTaskLevel.graph
         ]:
-            return False, 'Only node and graph level tasks are supported.'
-        if explanation_config.edge_mask_type == MaskType.attributes:
-            return False, "GNNExplainer does not support edge mask of type \
-                'attributes'."
+            return False
+        if explainer_config.edge_mask_type == MaskType.attributes:
+            return False
 
-        if explanation_config.node_mask_type != MaskType.attributes:
-            return False, "GNNExplainer only supports node mask of type \
-                'attributes'."
+        if explainer_config.node_mask_type != MaskType.attributes:
+            return False
 
-        return True, None
+        if model_config.task_level not in [
+                ModelTaskLevel.node, ModelTaskLevel.graph
+        ]:
+            return False
+
+        return True
