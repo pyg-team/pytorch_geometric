@@ -68,7 +68,11 @@ class GNNExplainer(ExplainerAlgorithm):
             num_edges = edge_index.size(1)
             x, edge_index, new_index, subset, hard_edge_mask, kwargs =\
                 self.subgraph(model, index, x, edge_index, **kwargs)
-            target = target[subset]
+            index_selection = 0 if target_index is None else 1
+            if model_config.mode == ModelMode.classification:
+                index_selection = 1
+            target = torch.index_select(target, index_selection, subset)
+            index = new_index
 
         node_mask, edge_mask = self._initialize_masks(x, edge_index)
         self.to(x.device)
@@ -127,31 +131,58 @@ class GNNExplainer(ExplainerAlgorithm):
         return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
                            node_features_mask=node_mask)
 
-    def loss(self, y_hat: torch.Tensor, y: torch.Tensor,
-             node_mask: torch.Tensor, edge_mask: torch.Tensor,
-             return_type: ModelReturnType, target_idx: int,
-             batch: torch.Tensor, node_index: Optional[int] = None,
-             edge_mask_type: MaskType = None,
-             model_mode: ModelMode = ModelMode.regression) -> torch.Tensor:
-
-        if target_idx != 0:
+    def loss_regression(
+        self,
+        y_hat: torch.Tensor,
+        y: torch.Tensor,
+        target_idx: Optional[int] = None,
+        node_index: Optional[int] = None,
+    ):
+        if target_idx is not None:
             y_hat = y_hat[..., target_idx].unsqueeze(0)
             y = y[..., target_idx].unsqueeze(0)
 
-        if model_mode == ModelMode.regression:
-            if node_index is not None and node_index >= 0:
-                loss = torch.cdist(y_hat[node_index], y[node_index])
-            else:
-                loss = torch.cdist(y_hat, y)
+        if node_index is not None and node_index >= 0:
+            loss = torch.cdist(y_hat[node_index], y[node_index])
         else:
-            if return_type == ModelReturnType.probs:
-                y_hat = y_hat.log()
-            if return_type == ModelReturnType.raw:
-                y_hat = y_hat.softmax(dim=-1)
-            if node_index is not None and node_index >= 0:
-                loss = -y_hat[node_index, y[node_index]]
-            else:
-                loss = -y_hat[0, y[0]]
+            loss = torch.cdist(y_hat, y)
+
+        return loss
+
+    def loss_classification(
+        self,
+        y_hat: torch.Tensor,
+        y: torch.Tensor,
+        return_type: ModelReturnType,
+        target_idx: Optional[int] = None,
+        node_index: Optional[int] = None,
+    ):
+        if target_idx is not None:
+            y_hat = y_hat[target_idx]
+            y = y[target_idx]
+
+        if return_type == ModelReturnType.probs:
+            y_hat = y_hat.log()
+        if return_type == ModelReturnType.raw:
+            y_hat = y_hat.softmax(dim=-1)
+        if node_index is not None and node_index >= 0:
+            loss = -y_hat[node_index, y[node_index]]
+        else:
+            loss = -y_hat[0, y[0]]
+        return loss
+
+    def loss(self, y_hat: torch.Tensor, y: torch.Tensor,
+             node_mask: torch.Tensor, edge_mask: torch.Tensor,
+             return_type: ModelReturnType, batch: torch.Tensor,
+             node_index: Optional[int] = None,
+             target_idx: Optional[int] = None, edge_mask_type: MaskType = None,
+             model_mode: ModelMode = ModelMode.regression) -> torch.Tensor:
+
+        if model_mode == ModelMode.regression:
+            loss = self.loss_regression(y_hat, y, target_idx, node_index)
+        else:
+            loss = self.loss_classification(y_hat, y, return_type, target_idx,
+                                            node_index)
 
         if edge_mask_type is not None:
             m = edge_mask.sigmoid()
