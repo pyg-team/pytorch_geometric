@@ -6,7 +6,9 @@ from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import BAShapes
-from torch_geometric.nn import GCN, GNNExplainer
+from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig
+from torch_geometric.explain.algorithm import GNNExplainer
+from torch_geometric.nn import GCN
 from torch_geometric.utils import k_hop_subgraph
 
 dataset = BAShapes(transform=T.GCNNorm())
@@ -57,15 +59,23 @@ for epoch in range(1, 2001):
 
 model.eval()
 targets, preds = [], []
-expl = GNNExplainer(model, epochs=300, return_type='raw', log=False)
+explainer = Explainer(
+    model=model, algorithm=GNNExplainer(epochs=300),
+    explainer_config=ExplainerConfig(explanation_type="model",
+                                     node_mask_type="attributes",
+                                     edge_mask_type="object"),
+    model_config=ModelConfig(mode="classification", task_level="node",
+                             return_type="raw"))
 
 # Explanation ROC AUC over all test nodes:
 loop_mask = data.edge_index[0] != data.edge_index[1]
 for node_idx in tqdm(data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()):
-    _, expl_edge_mask = expl.explain_node(node_idx, data.x, data.edge_index,
-                                          edge_weight=data.edge_weight)
+    explanation = explainer(x=data.x, edge_index=data.edge_index,
+                            target_index=None, index=node_idx,
+                            edge_weight=data.edge_weight)
+
     subgraph = k_hop_subgraph(node_idx, num_hops=3, edge_index=data.edge_index)
-    expl_edge_mask = expl_edge_mask[loop_mask]
+    expl_edge_mask = explanation.edge_mask[loop_mask]
     subgraph_edge_mask = subgraph[3][loop_mask]
     targets.append(data.edge_label[subgraph_edge_mask].cpu())
     preds.append(expl_edge_mask[subgraph_edge_mask].cpu())

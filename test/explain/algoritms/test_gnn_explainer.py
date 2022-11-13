@@ -161,10 +161,16 @@ class GNN_classification_multioutput(torch.nn.Module):
 # --------------------------------------------------------------------
 # check explanations
 # --------------------------------------------------------------------
-def check_explanation(edge_mask_type, x, edge_index, explanation):
-    assert explanation.node_features_mask.shape == x.shape
-    assert explanation.node_features_mask.min() >= 0
-    assert explanation.node_features_mask.max() <= 1
+def check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation):
+    if node_mask_type == MaskType.attributes:
+        assert explanation.node_features_mask.shape == x.shape
+        assert explanation.node_features_mask.min() >= 0
+        assert explanation.node_features_mask.max() <= 1
+    elif node_mask_type == MaskType.object:
+        assert explanation.node_mask.shape == x.shape[0]
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
 
     if edge_mask_type == MaskType.object:
         assert explanation.edge_mask.shape == (edge_index.shape[1], )
@@ -173,7 +179,7 @@ def check_explanation(edge_mask_type, x, edge_index, explanation):
 
 
 # type of masks allowed for GNNExplainer
-node_mask_types = ["attributes"]
+node_mask_types = ["attributes", "object"]
 edge_mask_types = ["object", None]
 return_types_classification = ["log_probs", "raw", "probs"]
 return_types_regression = ["raw"]
@@ -211,7 +217,8 @@ def test_gnn_explainer_node_regression_single_output(edge_mask_type,
                             explainer_config=explainer_config,
                             model_config=model_config, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -246,7 +253,8 @@ def test_gnn_explainer_node_regression_multioutput(edge_mask_type,
                             explainer_config=explainer_config,
                             model_config=model_config, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -280,7 +288,8 @@ def test_gnn_explainer_node_classification_single_output(
                             explainer_config=explainer_config,
                             model_config=model_config, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -315,7 +324,8 @@ def test_gnn_explainer_node_classification_multioutput(edge_mask_type,
                             explainer_config=explainer_config,
                             model_config=model_config, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -356,7 +366,8 @@ def test_gnn_explainer_graph_classification(edge_mask_type, node_mask_type,
                             model_config=model_config, edge_attr=None,
                             batch=None)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -397,7 +408,8 @@ def test_gnn_explainer_graph_regression(edge_mask_type, node_mask_type, model,
                             model_config=model_config, edge_attr=None,
                             batch=None)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -440,7 +452,8 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
                             target_index=target_index, edge_attr=None,
                             batch=None)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -483,7 +496,8 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
                             target_index=target_index, edge_attr=None,
                             batch=None)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -526,7 +540,8 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     explanation = explainer(x=x, edge_index=edge_index, target=out,
                             target_index=target_index, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -568,4 +583,5 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     explanation = explainer(x=x, edge_index=edge_index, target=out,
                             target_index=target_index, index=0)
 
-    check_explanation(edge_mask_type, x, edge_index, explanation)
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)

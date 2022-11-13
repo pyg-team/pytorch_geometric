@@ -1,12 +1,13 @@
 import os.path as osp
 
-import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, GNNExplainer
+from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig
+from torch_geometric.explain.algorithm import GNNExplainer
+from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -42,9 +43,15 @@ for epoch in range(1, 201):
     loss.backward()
     optimizer.step()
 
-explainer = GNNExplainer(model, epochs=200, return_type='log_prob')
+explainer = Explainer(
+    model=model, algorithm=GNNExplainer(epochs=200, shared_mask=False),
+    explainer_config=ExplainerConfig(explanation_type="model",
+                                     node_mask_type="attributes",
+                                     edge_mask_type="object"),
+    model_config=ModelConfig(mode="classification", task_level="node",
+                             return_type="log_probs"))
 node_idx = 10
-node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index,
-                                                   edge_weight=edge_weight)
-ax, G = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
-plt.show()
+explanation = explainer(x=data.x, edge_index=data.edge_index,
+                        target_index=None, index=node_idx,
+                        edge_weight=data.edge_weight)
+print(explanation.available_explanations)
