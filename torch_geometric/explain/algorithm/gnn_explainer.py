@@ -30,8 +30,9 @@ class GNNExplainer(ExplainerAlgorithm):
 
     .. note::
 
-        For an example of using :obj:`GNNExplainer`, see
-        `examples/explain_gnn.py`.
+        For an example of using GNN-Explainer, see `examples/gnn_explainer.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        gnn_explainer.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
