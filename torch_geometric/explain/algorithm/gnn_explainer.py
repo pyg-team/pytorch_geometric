@@ -22,6 +22,22 @@ EPS = 1e-15
 
 
 class GNNExplainer(ExplainerAlgorithm):
+    r"""The GNN-Explainer model from the `"GNNExplainer: Generating
+    Explanations for Graph Neural Networks"
+    <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
+    structures and small subsets node features that play a crucial role in a
+    GNN's node-predictions.
+
+
+    Args:
+        epochs (int, optional): The number of epochs to train.
+            (default: :obj:`100`)
+        lr (float, optional): The learning rate to apply.
+            (default: :obj:`0.01`)
+        **kwargs (optional): Additional hyper-parameters to override default
+            settings in
+            :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
+    """
 
     coeffs = {
         'edge_size': 0.005,

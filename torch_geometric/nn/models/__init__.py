@@ -10,7 +10,6 @@ from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
 from .explainer import Explainer, to_captum
-from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -47,7 +46,6 @@ __all__ = [
     'DimeNetPlusPlus',
     'Explainer',
     'to_captum',
-    'GNNExplainer',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
