@@ -55,19 +55,20 @@ class GNNExplainer(ExplainerAlgorithm):
                 'GNNExplainer only supports single target index for now')
 
         # can it be an issue for some models ?
+        model.eval()
         clear_masks(model)
 
         if model_config.task_level == ModelTaskLevel.node:
             node_mask, edge_mask = self.explain_node(model, x, edge_index,
                                                      explainer_config,
                                                      model_config, target,
-                                                     target_index, index,
+                                                     index, target_index,
                                                      **kwargs)
         elif model_config.task_level == ModelTaskLevel.graph:
             node_mask, edge_mask = self.explain_graph(model, x, edge_index,
                                                       explainer_config,
                                                       model_config, target,
-                                                      target_index, index,
+                                                      target_index, index=None,
                                                       **kwargs)
         else:
             raise ValueError(
@@ -100,8 +101,8 @@ class GNNExplainer(ExplainerAlgorithm):
     def explain_node(self, model: torch.nn.Module, x: Tensor,
                      edge_index: Tensor, explainer_config: ExplainerConfig,
                      model_config: ModelConfig, target: Tensor,
+                     index: Optional[Union[int, Tensor]],
                      target_index: Optional[Union[int, Tensor]] = None,
-                     index: Optional[Union[int, Tensor]] = None,
                      **kwargs) -> Tuple[Tensor, Tensor]:
 
         # if we are dealing with a node level task, we can restrict the
