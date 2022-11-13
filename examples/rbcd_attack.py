@@ -11,7 +11,7 @@ import torch.nn.functional as F
 import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, GATConv, GRBCDAttack, PRBCDAttack
+from torch_geometric.nn import GCNConv, GATConv, RBCDAttack
 from torch_geometric.utils import softmax
 
 dataset = 'Cora'
@@ -143,44 +143,46 @@ node_idx = 42
 metric = lambda *args, ** kwargs: -accuracy(*args, **kwargs)
 
 
-print(f'\n------------- Local Evasion GCN -------------\n')
+print(f'\n------------- GAT: Local Evasion -------------\n')
 # Note: GRBCD is faster than PRBCD for small budgets but is not as consistent
 
-grbcd = GRBCDAttack(gcn)
+grbcd = RBCDAttack(gat, mode='greedy')
 # The learning rate is one of the most important parameters for PRBCD and a
 # good heuristic is to choose it s.t. the budget is exhausted within a few
 # steps. Moreover, a high learning rate mitigates the impact of the relaxation
 # gap ({0, 1} -> [0, 1]) of the edge weights
-prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
+prbcd = RBCDAttack(gat, metric=metric, lr=2_000)
 
-clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
+clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 # GRBCD: attack single node
 pert_edge_index, perts = grbcd.attack(
     x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_conf = F.softmax(gcn(x, edge_index)[node_idx], dim=-1)[y[node_idx]]
-pert_conf = F.softmax(gcn(x, pert_edge_index)[
-    node_idx], dim=-1)[y[node_idx]]
-print(f'GRBCD: Confidence of target dropped from {clean_conf:.3f} '
-      f'to {pert_conf:.3f}')
+clean_margin = -RBCDAttack.probability_margin_loss(
+    gat(x, edge_index), y, [node_idx])
+pert_margin = -RBCDAttack.probability_margin_loss(
+    gat(x, pert_edge_index), y, [node_idx])
+print(f'GRBCD: Confidence margin of target to best non-target dropped from '
+      f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
 # PRBCD: attack single node
 pert_edge_index, perts = prbcd.attack(
     x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_conf = F.softmax(gcn(x, edge_index)[node_idx], dim=-1)[y[node_idx]]
-pert_conf = F.softmax(gcn(x, pert_edge_index)[
-    node_idx], dim=-1)[y[node_idx]]
-print(f'PRBCD: Confidence of target dropped from {clean_conf:.3f} '
-      f'to {pert_conf:.3f}')
+clean_margin = -RBCDAttack.probability_margin_loss(
+    gat(x, edge_index), y, [node_idx])
+pert_margin = -RBCDAttack.probability_margin_loss(
+    gat(x, pert_edge_index), y, [node_idx])
+print(f'PRBCD: Confidence margin of target to best non-target dropped from '
+      f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
 
-print(f'\n------------- Global Evasion GCN -------------\n')
+print(f'\n------------- GCN: Global Evasion -------------\n')
 
-grbcd = GRBCDAttack(gcn)
-prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
+grbcd = RBCDAttack(gcn, mode='greedy')
+prbcd = RBCDAttack(gcn, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
@@ -220,8 +222,6 @@ ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylabel('Used budget')
 plt.legend()
 fig.show()
-# # TODO: delete
-# fig.savefig(f'plot_GCN_{i}.pdf')
 
 
 try:
@@ -231,13 +231,13 @@ except ImportError as e:
         'Install `higher` (e.g. `pip install higher`) for poisoning example')
 
 
-print(f'\n------------- Global Poisoning GCN -------------\n')
+print(f'\n------------- GCN: Global Poisoning -------------\n')
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 
-class PoisoningPRBCDAttack(PRBCDAttack):
+class PoisoningRBCDAttack(RBCDAttack):
 
     def forward(self, x: Tensor, edge_index: Tensor,
                 edge_weight: Tensor, **kwargs) -> Tensor:
@@ -300,7 +300,7 @@ class PoisoningPRBCDAttack(PRBCDAttack):
 
 
 # for i in range(10):
-prbcd = PoisoningPRBCDAttack(
+prbcd = PoisoningRBCDAttack(
     gcn, metric=metric, lr=100)
 
 # PRBCD: attack test set
@@ -334,5 +334,3 @@ ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylabel('Used budget')
 plt.legend()
 fig.show()
-# TODO: delete
-# fig.savefig(f'plot_pois_GCN_{i}.pdf')

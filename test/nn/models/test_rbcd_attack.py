@@ -6,8 +6,7 @@ import torch.nn.functional as F
 from torch.nn import Linear
 
 from torch_geometric.utils import to_undirected
-from torch_geometric.nn import (
-    GCNConv, PRBCDAttack, GRBCDAttack, global_add_pool)
+from torch_geometric.nn import GCNConv, RBCDAttack, global_add_pool
 from torch_geometric.testing import is_full_test, withPackage
 
 
@@ -42,20 +41,15 @@ class GNN(torch.nn.Module):
         return x
 
 
-attacks = [
-    partial(PRBCDAttack, epochs_resampling=2,
-            epochs_finetuning=2, max_final_samples=2),
-    GRBCDAttack
-]
-
-
-@pytest.mark.parametrize('attack', attacks)
+@pytest.mark.parametrize('mode', ['projected', 'greedy'])
 @pytest.mark.parametrize('model', [GCN(), GNN()])
 @pytest.mark.parametrize('budget', [1])
 @pytest.mark.parametrize('is_undirected_graph', [False, True])
-def test_attack(attack, model, budget, is_undirected_graph):
-    attack = attack(model, log=False, is_undirected_graph=is_undirected_graph)
-    assert attack.__repr__() in ['PRBCDAttack()', 'GRBCDAttack()']
+def test_attack(mode, model, budget, is_undirected_graph):
+    attack = RBCDAttack(
+        model, mode=mode, epochs=4, epochs_resampling=2, max_final_samples=2,
+        log=False, is_undirected_graph=is_undirected_graph)
+    assert attack.__repr__() == 'RBCDAttack()'
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6],
@@ -76,7 +70,7 @@ def test_attack(attack, model, budget, is_undirected_graph):
 
     m = edge_index.size(1)
     if budget == 1:
-        if isinstance(attack, PRBCDAttack):
+        if mode == 'projected':
             assert perturbations.shape in [(2, 0), (2, 1)]
 
             if perturbations.size(1):
@@ -96,13 +90,13 @@ def test_attack(attack, model, budget, is_undirected_graph):
                 possible_m = [m - 1, m + 1]
             assert pert_edge_index.size(1) in possible_m
 
-    if True:  # is_full_test():  # TODO
+    if is_full_test():
         jit = torch.jit.export(attack)
 
         pert_edge_index, perturbations = jit.attack(x, edge_index, y, budget)
 
         if budget == 1:
-            if isinstance(attack, PRBCDAttack):
+            if mode == 'projected':
                 assert perturbations.shape in [(2, 0), (2, 1)]
 
                 if perturbations.size(1):
