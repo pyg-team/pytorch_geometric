@@ -1,11 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.explain.algorithm.captum_explainer import (
-    CaptumAlgorithm,
-    to_captum,
+from torch_geometric.explain.algorithm import CaptumAlgorithm
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    MaskType,
+    ModelConfig,
 )
-from torch_geometric.explain.config import MaskType
 from torch_geometric.nn import GAT, GCN
 from torch_geometric.testing import withPackage
 
@@ -32,37 +33,6 @@ methods = [
 ]
 
 
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('model', [GCN, GAT])
-@pytest.mark.parametrize('output_idx', [None, 1])
-def test_to_captum(model, node_mask_type, edge_mask_type, output_idx):
-    captum_model = to_captum(model, node_mask_type=node_mask_type,
-                             edge_mask_type=edge_mask_type,
-                             output_idx=output_idx)
-    pre_out = model(x, edge_index)
-    if edge_mask_type is None:
-        mask = x * 0.0
-        out = captum_model(mask.unsqueeze(0), edge_index)
-    elif edge_mask_type == MaskType.object and node_mask_type is None:
-        mask = torch.ones(edge_index.shape[1], dtype=torch.float,
-                          requires_grad=True) * 0.5
-        out = captum_model(mask.unsqueeze(0), x, edge_index)
-    else:
-        node_mask = x * 0.0
-        edge_mask = torch.ones(edge_index.shape[1], dtype=torch.float,
-                               requires_grad=True) * 0.5
-        out = captum_model(node_mask.unsqueeze(0), edge_mask.unsqueeze(0),
-                           edge_index)
-
-    if output_idx is not None:
-        assert out.shape == (1, 7)
-        assert torch.any(out != pre_out[[output_idx]])
-    else:
-        assert out.shape == (8, 7)
-        assert torch.any(out != pre_out)
-
-
 @withPackage('captum')
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -81,20 +51,17 @@ def test_captum_attribution_methods(node_mask_type, edge_mask_type, method):
     else:
         explainer = CaptumAlgorithm(method)
 
+    explainer_config = ExplainerConfig(explanation_type="model",
+                                       node_mask_type=node_mask_type,
+                                       edge_mask_type=edge_mask_type)
+    model_config = ModelConfig(mode="classification", return_type="raw",
+                               task_level="graph")
+    target = GCN(x, edge_index).max(dim=-1)
     explanation = explainer(model=GCN, x=x, edge_index=edge_index,
-                            target_index=0, node_mask_type=node_mask_type,
-                            edge_mask_type=edge_mask_type)
+                            target_index=0, explainer_config=explainer_config,
+                            model_config=model_config, target=target)
 
     if node_mask_type is not None:
         assert explanation.node_features_mask.shape == (8, 3)
     if edge_mask_type is not None:
         assert explanation.edge_mask.shape == (1, 14)
-
-
-def test_integration_captum_alg_explainer():
-    explainer = CaptumAlgorithm('IntegratedGradients')
-    explanation = explainer(model=GCN, x=x, edge_index=edge_index,
-                            target_index=0, node_mask_type=None,
-                            edge_mask_type=MaskType.object)
-
-    assert explanation.edge_mask.shape == (1, 14)
