@@ -18,7 +18,7 @@ LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
 class Attack(torch.nn.Module):
     """Abstract class for an adversarial attack that perturbs edges:
 
-    aims to answer the question what (small) perturbation changes the model's 
+    aims to answer the question what (small) perturbation changes the model's
     prediction the most."""
 
     @abc.abstractmethod
@@ -27,7 +27,7 @@ class Attack(torch.nn.Module):
                **kwargs) -> Tuple[Tensor, Tensor]:
         """Attack the predictions for the provided model and graph.
 
-        A subset of predictions may be specified with :attr:`idx_attack`. The 
+        A subset of predictions may be specified with :attr:`idx_attack`. The
         attack is allowed to flip (i.e. add or delete) :attr:`budget` edges and
         will return the strongest perturbation it can find. It returns both the
         resulting perturbed  :attr:`edge_index` as well as the perturbations.
@@ -37,9 +37,9 @@ class Attack(torch.nn.Module):
                 on target device.
             edge_index (LongTensor): The edge indices.
             labels (Tensor): The labels.
-            budget (int): The number of allowed perturbations (i.e. 
+            budget (int): The number of allowed perturbations (i.e.
                 number of edges that are flipped at most).
-            idx_attack (Tensor, optional): Filter for predictions/labels. 
+            idx_attack (Tensor, optional): Filter for predictions/labels.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
         :rtype: (:class:`Tensor`, :class:`Tensor`)
@@ -52,47 +52,74 @@ class Attack(torch.nn.Module):
 
 
 class RBCDAttack(Attack):
-    """Abstract class for an adversarial attack for the sparse greedy/projected
-    gradient attack based on Randomized Block Coordinate Descent (RBCD) from
-    the `Robustness of Graph Neural Networks at Scale 
+    """Sparse randomized gradient-based adversarial attack for structure pert.
+
+    Implements both, the projected and greedy, Randomized Block Coordinate
+    Descent (RBCD) attack from the `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale/>` paper. Both
     attacks use an efficient gradient based approach that (during the attack)
     relaxed the discrete entries in the adjacency matrix :math:`\{0, 1\}`
-    to :math:`[0, 1]`. Thus, they support all models that can handle weighted
-    graphs are are differentiabile w.r.t. these edge weights. The memory
-    overhead is driven by the additional edges (at most :attr:`block_size`).
+    to :math:`[0, 1]` and solely perturb the adjacency matrix (no feature
+    perturbations).
+
+    Thus, they support all models that can handle weighted
+    graphs are are differentiabile w.r.t. these edge weights. For
+    non-differentiable models you might be able to e.g. use the gumble softmax
+    trick. 
+    
+    The memory overhead of both attacks is driven by the additional
+    edges (at most :attr:`block_size`). For scalability reasons, the block is
+    drawn with replacement and then the index is made unique. Thus, the actual
+    block size is typically slightly smaller than specified.
+
+    The attacks can be used for both global and local attacks as well as
+    test-time attacks (evasion) and train-time attacks (poisoning). Please see
+    the provided examples.
+
+    The attacks are designed with a focus on node- or graph-classification,
+    however, to adapt to other tasks you most likely only need to provide an
+    appropriate loss and model. However, we currently do not support batching
+    out of the box.
 
     .. note::
-        For examples of using GNN-Explainer, see `examples/gnn_explainer.py
+        For examples of using the (P/G)RBCD Attack, see `examples/rbcd_attack.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack.py>`.
+        rbcd_attack.py>` for a test time attack (evasion) or
+        `examples/rbcd_attack_poisoning.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        rbcd_attack_poisoning.py>` for a training time (poisoning) attack.
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
+        mode (str, optional): Either 'projected' for Projected-RBCD or 'greedy'
+            for Greedy-RBCD. (default: :obj:`projected`).
         block_size (int, optional): Number of randomly selected elements in the
             adjacency matrix to consider. (default: :obj:`250_000`)
-        loss (LOSS_TYPE, optional): A loss to measure the "strength" of an
-            attack.  Note that this function must match the output format of 
+        epochs (int, optional): Number of epochs (aborts early if mode='greedy'
+            and budget is satisfied) (default: :obj:`125`)
+        epochs_resampling (int, optional): Number of epochs to resample the
+            random block. Only relevant if mode='projected'. Defaults to 100.
+        loss (str or Callable, optional): A loss to quantify the "strength" of
+            an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
             classification, that the model returns raw predictions (i.e. no
-            output activation) or uses :obj:`logsoftmax`, and that the number 
-            of predictions matches the number labels passed to :attr:`attack`. 
-            (default: :obj:`probability_margin_loss`)
-        is_undirected_graph (bool, optional): If :obj:`True` the graph is 
+            output activation) or uses :obj:`logsoftmax`, and that the number
+            of predictions matches the number labels passed to :attr:`attack`.
+            Either pass Callable or one of: :obj:`masked`, :obj:`margin`, 
+            :obj:`prob_margin`, :obj:`tanh_margin` 
+            (default: :obj:`probability_margin_loss`).
+        metric (Callable, optional): Second (potentially
+            non-differentiable) loss for monitoring or early stopping (if
+            mode='greedy'). Only relevant if mode='projected'. (default: 
+            same as :attr:`loss`)
+        lr (float, optional): Learning rate that is being used if
+            mode='projected'. Additionally, it is heuristically corrected for
+            :attr:`block_size`, budget (see :attr:`attack`) and graph size.
+            (default: :obj:`1_000`)
+        is_undirected_graph (bool, optional): If :obj:`True` the graph is
             assumed to be undirected. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
-
-    Projected Randomized Block Coordinate Descent (PRBCD) from the
-    `Robustness of Graph Neural Networks at Scale
-    <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale/>` paper.
-
-    TODO: Arg description etc.
-    - Emphasize how the block size works
-    - Maybe small noise
-    - Maybe add gumble tick like
-    - How to batch?
-    - graph/node level (edge level a bit more tricky)
     """
 
     coeffs = {
@@ -171,17 +198,17 @@ class RBCDAttack(Attack):
                **kwargs) -> Tuple[Tensor, Tensor]:
         """Attack the predictions for the provided model and graph.
 
-        A subset of predictions may be specified with :attr:`idx_attack`. The 
+        A subset of predictions may be specified with :attr:`idx_attack`. The
         attack is allowed to flip (i.e. add or delete) :attr:`budget` edges and
         will return the strongest perturbation it can find. It returns both the
-        resulting perturbed  :attr:`edge_index` as well as the perturbations.
+        resulting perturbed :attr:`edge_index` as well as the perturbations.
 
         Args:
             x (Tensor): The node feature matrix. We assume `x` to be located
                 on target device.
             edge_index (LongTensor): The edge indices.
             labels (Tensor): The labels.
-            budget (int): The number of allowed perturbations (i.e. 
+            budget (int): The number of allowed perturbations (i.e.
                 number of edges that are flipped at most).
             idx_attack (Tensor, optional): Filter for predictions/labels.
                 Shape and type must match that it can index :attr:`labels`
@@ -668,7 +695,7 @@ class RBCDAttack(Attack):
         where :math:`m` is the margin `s` the score and `y` the labels.
 
         Args:
-            score (Tensor): Some score (e.g. logits) of shape 
+            score (Tensor): Some score (e.g. logits) of shape
                 :obj:`[n_elem, dim]`.
             labels (LongTensor): The labels of shape :obj:`[n_elem]`.
             idx_mask (Tensor, optional): To select subset of `score` and
@@ -693,7 +720,7 @@ class RBCDAttack(Attack):
     @staticmethod
     def tanh_margin_loss(prediction: Tensor, labels: Tensor,
                          idx_mask: Optional[Tensor] = None) -> Tensor:
-        """Calculate tanh margin loss, a node-classification loss that focuses 
+        """Calculate tanh margin loss, a node-classification loss that focuses
         on nodes next to decision boundary.
 
         Args:
@@ -712,10 +739,10 @@ class RBCDAttack(Attack):
     @staticmethod
     def probability_margin_loss(prediction: Tensor, labels: Tensor,
                                 idx_mask: Optional[Tensor] = None) -> Tensor:
-        """Calculate probability margin loss, a node-classification loss that 
+        """Calculate probability margin loss, a node-classification loss that
         focuses  on nodes next to decision boundary. See `Are Defenses for Graph
-        Neural  Networks Robust? 
-        <https://www.cs.cit.tum.de/daml/are-gnn-defenses-robust/>` for details.
+        Neural  Networks Robust?
+        <https://www.cs.cit.tum.de/daml/are-gnn-defenses-robust>` for details.
 
         Args:
             prediction (Tensor): Prediction of shape :obj:`[n_elem, dim]`.
@@ -737,7 +764,7 @@ class RBCDAttack(Attack):
         Args:
             log_logits (Tensor): Log logits of shape :obj:`[n_elem, dim]`.
             labels (LongTensor): The labels of shape :obj:`[n_elem]`.
-            idx_mask (Tensor, optional): To select subset of `score` and 
+            idx_mask (Tensor, optional): To select subset of `score` and
                 `labels` of shape :obj:`[n_select]`. Defaults to None.
 
         :rtype: (Tensor)
