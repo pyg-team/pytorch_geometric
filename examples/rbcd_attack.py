@@ -38,11 +38,12 @@ class GCN(torch.nn.Module):
         self.conv2 = gcn_conv(hidden_dim, dataset.num_classes)
         self.gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index, edge_weight=None, skip_norm=False):
         # Normalizing once lowers memory footprint and caching is not possible
         # during attack (for training it would be possible)
-        edge_index, edge_weight = self.gcn_norm(
-            edge_index, edge_weight, x.size(0), add_self_loops=True)
+        if not skip_norm:
+            edge_index, edge_weight = self.gcn_norm(
+                edge_index, edge_weight, x.size(0), add_self_loops=True)
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
@@ -89,7 +90,7 @@ class GAT(torch.nn.Module):
         self.conv1 = gat_conv(dataset.num_features, hidden_dim)
         self.conv2 = gat_conv(hidden_dim, dataset.num_classes)
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index, edge_weight=None, **kwargs):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
@@ -108,13 +109,13 @@ data = data.to(device)
 x, edge_index, y = data.x, data.edge_index, data.y
 
 
-def train(model: torch.nn.Module, x, edge_index, epochs=200,
-          lr=0.01, weight_decay=5e-4):
+def train(model, x, edge_index, edge_weight=None,
+          epochs=200, lr=0.01, weight_decay=5e-4):
     optimizer = torch.optim.Adam(
         model.parameters(), lr=lr, weight_decay=weight_decay)
     for _ in range(epochs):
         optimizer.zero_grad()
-        prediction = model(x, edge_index)
+        prediction = model(x, edge_index, edge_weight)
         loss = F.cross_entropy(
             prediction[data.train_mask], data.y[data.train_mask])
         loss.backward()
@@ -137,12 +138,6 @@ gat.eval()
 local_budget = 2  # Degree of (training) node 42 is also 2
 global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
 node_idx = 42
-# The learning rate is one of the most important parameters for PRBCD and a
-# good heuristic is to choose it s.t. the budget is exhausted within a few
-# steps. Moreover, choose it high enough to lower the impact of the relaxation
-# gap ({0, 1} -> [0, 1]) of the edge weights
-lr_gcn = 1_000
-lr_gat = 2_000
 
 # The metric in PRBCD is assumed to be best if lower (i.e. like a loss)
 metric = lambda *args, ** kwargs: -accuracy(*args, **kwargs)
@@ -152,7 +147,11 @@ print(f'\n------------- Local Evasion GCN -------------\n')
 # Note: GRBCD is faster than PRBCD for small budgets but is not as consistent
 
 grbcd = GRBCDAttack(gcn)
-prbcd = PRBCDAttack(gcn, metric=metric, lr=lr_gcn)
+# The learning rate is one of the most important parameters for PRBCD and a
+# good heuristic is to choose it s.t. the budget is exhausted within a few
+# steps. Moreover, a high learning rate mitigates the impact of the relaxation
+# gap ({0, 1} -> [0, 1]) of the edge weights
+prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
@@ -181,7 +180,7 @@ print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 print(f'\n------------- Global Evasion GCN -------------\n')
 
 grbcd = GRBCDAttack(gcn)
-prbcd = PRBCDAttack(gcn, metric=metric, lr=lr_gcn)
+prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
@@ -193,6 +192,7 @@ pert_edge_index, perts = grbcd.attack(
 pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
 print(f'GRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
       f'{pert_accuracy:.3f}')
+
 
 # PRBCD: attack test set
 pert_edge_index, perts = prbcd.attack(
@@ -220,8 +220,8 @@ ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylabel('Used budget')
 plt.legend()
 fig.show()
-# TODO: delete
-fig.savefig(f'plot_GCN.pdf')
+# # TODO: delete
+# fig.savefig(f'plot_GCN_{i}.pdf')
 
 
 try:
@@ -246,7 +246,8 @@ class PoisoningPRBCDAttack(PRBCDAttack):
         self.model.train()
 
         with torch.enable_grad():
-            train(self.model, x, edge_index, epochs=50, lr=0.04)
+            train(self.model, x, edge_index, edge_weight=edge_weight,
+                  epochs=50, lr=0.04)
 
         self.model.eval()
         prediction = self.model(x, edge_index, edge_weight)
@@ -260,20 +261,24 @@ class PoisoningPRBCDAttack(PRBCDAttack):
         self.block_edge_weight.requires_grad = True
 
         self.model.reset_parameters()
-        # self.model.train()
+        # We purposely do not call `self.model.train()` to avoid dropout
+        self.model.train()
         opt = torch.optim.Adam(
             self.model.parameters(), lr=0.04, weight_decay=5e-4)
 
         with higher.innerloop_ctx(self.model, opt) as (fmodel, diffopt):
-            # Retrieve sparse perturbed adjacency matrix `A \oplus p_{t-1}`
-            # (Algorithm 1, line 6 / Algorithm 2, line 7)
-            edge_index, edge_weight = self._get_modified_adj()
+            edge_index, edge_weight = self.get_modified_adj(
+                self.edge_index, self.edge_weight,
+                self.block_edge_index, self.block_edge_weight)
 
-            # Calculate loss combining all each node
-            # (Algorithm 1, line 7 / Algorithm 2, line 8)
-            # Includes in poisoning also the training.
+            # Normalize only once (only relevant if model normalizes adj.)
+            if hasattr(fmodel, 'gcn_norm'):
+                edge_index, edge_weight = fmodel.gcn_norm(
+                    edge_index, edge_weight, x.size(0), add_self_loops=True)
+
             for _ in range(50):
-                prediction = fmodel(x, edge_index, edge_weight)
+                prediction = fmodel.forward(
+                    x, edge_index, edge_weight, skip_norm=True)
                 loss = F.cross_entropy(
                     prediction[data.train_mask], data.y[data.train_mask])
                 diffopt.step(loss)
@@ -281,9 +286,6 @@ class PoisoningPRBCDAttack(PRBCDAttack):
             prediction = fmodel(x, edge_index, edge_weight)
             loss = self.loss(prediction, labels, idx_attack)
 
-            print(accuracy(prediction, labels, idx_attack))
-            # Retrieve gradient towards the current block
-            # (Algorithm 1, line 7 / Algorithm 2, line 8)
             gradient = torch.autograd.grad(loss, self.block_edge_weight)[0]
 
         # Clip gradient for stability
@@ -292,13 +294,14 @@ class PoisoningPRBCDAttack(PRBCDAttack):
         if grad_len_sq > clip_norm:
             gradient *= clip_norm / grad_len_sq.sqrt()
 
-        # self.model.eval()
+        self.model.eval()
 
         return loss, gradient
 
 
+# for i in range(10):
 prbcd = PoisoningPRBCDAttack(
-    gcn, metric=metric, block_size=250_000, lr=40)
+    gcn, metric=metric, lr=100)
 
 # PRBCD: attack test set
 pert_edge_index, perts = prbcd.attack(
@@ -332,4 +335,4 @@ ax2.set_ylabel('Used budget')
 plt.legend()
 fig.show()
 # TODO: delete
-fig.savefig(f'plot_pois_GCN.pdf')
+# fig.savefig(f'plot_pois_GCN_{i}.pdf')

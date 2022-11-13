@@ -31,7 +31,7 @@ class GNN(torch.nn.Module):
         self.conv2 = GCNConv(16, 16)
         self.lin = Linear(16, 7)
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, x, edge_index, edge_attr, batch=None):
         # edge_attr is for checking if explain can
         # pass arguments in the right oder
         x = self.conv1(x, edge_index, edge_attr)
@@ -43,7 +43,8 @@ class GNN(torch.nn.Module):
 
 
 attacks = [
-    partial(PRBCDAttack, epochs_resampling=2, epochs_finetuning=2),
+    partial(PRBCDAttack, epochs_resampling=2,
+            epochs_finetuning=2, max_final_samples=2),
     GRBCDAttack
 ]
 
@@ -57,13 +58,21 @@ def test_attack(attack, model, budget, is_undirected_graph):
     assert attack.__repr__() in ['PRBCDAttack()', 'GRBCDAttack()']
 
     x = torch.randn(8, 3)
-    y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6],
                                [1, 2, 3, 4, 5, 6, 7]])
     if is_undirected_graph:
         edge_index = to_undirected(edge_index)
 
-    pert_edge_index, perturbations = attack(x, edge_index, y, budget)
+    if isinstance(model, GNN):
+        y = torch.tensor([0])
+        # all nodes belong to same graph
+        kwargs = dict(batch=torch.zeros(
+            x.shape[0], dtype=int, device=x.device))
+    else:
+        y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
+        kwargs = {}
+
+    pert_edge_index, perturbations = attack(x, edge_index, y, budget, **kwargs)
 
     m = edge_index.size(1)
     if budget == 1:
@@ -87,11 +96,11 @@ def test_attack(attack, model, budget, is_undirected_graph):
                 possible_m = [m - 1, m + 1]
             assert pert_edge_index.size(1) in possible_m
 
-    if is_full_test():
+    if True:  # is_full_test():  # TODO
         jit = torch.jit.export(attack)
 
         pert_edge_index, perturbations = jit.attack(x, edge_index, y, budget)
-        
+
         if budget == 1:
             if isinstance(attack, PRBCDAttack):
                 assert perturbations.shape in [(2, 0), (2, 1)]
