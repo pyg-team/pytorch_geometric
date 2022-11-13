@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch import Tensor, nn
 from torch_sparse import SparseTensor
@@ -34,14 +35,19 @@ class ModuleDictModel(nn.Module):
         return x
 
 
-@withPackage('tabulate')
-def test_basic_summary():
-
+@pytest.fixture
+def gcn():
     model = GCN(32, 16, num_layers=2, out_channels=32)
     x = torch.randn(100, 32)
     edge_index = torch.randint(100, size=(2, 20))
     adj_t = SparseTensor.from_edge_index(edge_index,
                                          sparse_sizes=(100, 100)).t()
+    return {'model': model, 'x': x, 'edge_index': edge_index, 'adj_t': adj_t}
+
+
+@withPackage('tabulate')
+def test_basic_summary(gcn):
+
     expected = '\n'.join([
         '+---------------------+--------------------+----------------+----------+',  # noqa
         '| Layer               | Input Shape        | Output Shape   | #Param   |',  # noqa
@@ -53,7 +59,12 @@ def test_basic_summary():
         '| │    └─(1)GCNConv   | [100, 16], [2, 20] | [100, 32]      | 544      |',  # noqa
         '+---------------------+--------------------+----------------+----------+',  # noqa
     ])
-    assert summary(model, x, edge_index) == expected
+
+    assert summary(gcn['model'], gcn['x'], gcn['edge_index']) == expected
+
+
+@withPackage('tabulate')
+def test_summary_with_sparse_tensor(gcn):
 
     expected = '\n'.join([
         '+---------------------+-----------------------+----------------+----------+',  # noqa
@@ -67,8 +78,11 @@ def test_basic_summary():
         '+---------------------+-----------------------+----------------+----------+',  # noqa
     ])
 
-    assert summary(model, x, adj_t) == expected
+    assert summary(gcn['model'], gcn['x'], gcn['adj_t']) == expected
 
+
+@withPackage('tabulate')
+def test_summary_with_max_depth(gcn):
     expected = '\n'.join([
         '+---------------------+--------------------+----------------+----------+',  # noqa
         '| Layer               | Input Shape        | Output Shape   | #Param   |',  # noqa
@@ -79,7 +93,12 @@ def test_basic_summary():
         '+---------------------+--------------------+----------------+----------+',  # noqa
     ])
 
-    assert summary(model, x, edge_index, max_depth=1) == expected
+    assert summary(gcn['model'], gcn['x'], gcn['edge_index'],
+                   max_depth=1) == expected
+
+
+@withPackage('tabulate')
+def test_summary_with_leaf_module(gcn):
 
     expected = '\n'.join([
         '+-----------------------------------------+--------------------+----------------+----------+',  # noqa
@@ -96,8 +115,8 @@ def test_basic_summary():
         '| │    │    └─(lin)Linear                 | [100, 16]          | [100, 32]      | 512      |',  # noqa
         '+-----------------------------------------+--------------------+----------------+----------+',  # noqa
     ])
-
-    assert summary(model, x, edge_index, leaf_module=None) == expected
+    assert summary(gcn['model'], gcn['x'], gcn['edge_index'],
+                   leaf_module=None) == expected
 
 
 @withPackage('tabulate')
@@ -135,8 +154,7 @@ def test_hetero():
         torch.randint(100, (2, 200), dtype=torch.long),
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
-    model = SAGE()
-    model = to_hetero(model, metadata, debug=False)
+    model = to_hetero(SAGE(), metadata, debug=False)
 
     expected = '\n'.join([
         '+--------------------------------------------+---------------------+----------------+----------+',  # noqa
@@ -164,6 +182,7 @@ def test_moduledict_model():
 
     model = ModuleDictModel()
     x = torch.randn(100, 32)
+
     expected = '\n'.join([
         '+---------------------------+---------------+----------------+----------+',  # noqa
         '| Layer                     | Input Shape   | Output Shape   | #Param   |',  # noqa
@@ -174,6 +193,7 @@ def test_moduledict_model():
         '| │    └─(prelu)PReLU       | [100, 32]     | [100, 32]      | 1        |',  # noqa
         '+---------------------------+---------------+----------------+----------+',  # noqa
     ])
+
     summary(model, x, 'prelu') == expected
 
 
@@ -181,8 +201,8 @@ def test_moduledict_model():
 def test_jit_model():
     model = nn.Sequential(nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8))
     model = torch.jit.script(model)
-
     x = torch.randn(100, 32)
+
     expected = '\n'.join([
         '+----------------------------+---------------+----------------+----------+',  # noqa
         '| Layer                      | Input Shape   | Output Shape   | #Param   |',  # noqa
@@ -193,4 +213,5 @@ def test_jit_model():
         '| ├─(2)RecursiveScriptModule | --            | --             | 136      |',  # noqa
         '+----------------------------+---------------+----------------+----------+',  # noqa
     ])
+
     assert summary(model, x) == expected
