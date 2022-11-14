@@ -13,27 +13,42 @@ Once you finish implementing a feature or bug-fix, please send a Pull Request to
 
 To develop PyG on your machine, here are some tips:
 
-1. Uninstall all existing PyG installations:
+1. Ensure that you are running on one of the two latest PyTorch releases (*e.g.*, `1.12.0`):
+
+   ```python
+   import torch
+   print(torch.__version__)
+   ```
+
+2. Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `torch-scatter` and `torch-sparse`:
+
+   ```bash
+   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-{$TORCH}+${CUDA}.html
+   ```
+
+   where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `1.12.0`), and `${CUDA}` should be replaced by its CUDA version (*e.g.*, `cpu` or `cu116`).
+
+3. Uninstall all existing PyG installations:
 
    ```bash
    pip uninstall torch-geometric
    pip uninstall torch-geometric  # run this command twice
    ```
 
-2. Clone a copy of PyG from source:
+4. Clone a copy of PyG from source:
 
    ```bash
    git clone https://github.com/pyg-team/pytorch_geometric
    cd pytorch_geometric
    ```
 
-3. If you already cloned PyG from source, update it:
+5. If you already cloned PyG from source, update it:
 
    ```bash
    git pull
    ```
 
-4. Install PyG in editable mode:
+6. Install PyG in editable mode:
 
    ```bash
    pip install -e ".[dev,full]"
@@ -41,7 +56,7 @@ To develop PyG on your machine, here are some tips:
 
    This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
 
-5. Ensure that you have a working PyG installation by running the entire test suite with
+7. Ensure that you have a working PyG installation by running the entire test suite with
 
    ```bash
    pytest
@@ -49,7 +64,7 @@ To develop PyG on your machine, here are some tips:
 
    In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
 
-6. Install pre-commit hooks:
+8. Install pre-commit hooks:
 
    ```bash
     pre-commit install
