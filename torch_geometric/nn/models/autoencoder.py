@@ -186,7 +186,6 @@ class ARGA(GAE):
     r"""The Adversarially Regularized Graph Auto-Encoder model from the
     `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
     <https://arxiv.org/abs/1802.04407>`_ paper.
-    paper.
 
     Args:
         encoder (Module): The encoder module.
@@ -237,7 +236,6 @@ class ARGVA(ARGA):
     r"""The Adversarially Regularized Variational Graph Auto-Encoder model from
     the `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
     <https://arxiv.org/abs/1802.04407>`_ paper.
-    paper.
 
     Args:
         encoder (Module): The encoder module to compute :math:`\mu` and
