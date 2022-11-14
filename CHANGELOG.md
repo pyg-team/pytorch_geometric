@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added PyTorch 1.13 support ([#5975](https://github.com/pyg-team/pytorch_geometric/pull/5975))
 - Added `int32` support in `NeighborLoader` ([#5948](https://github.com/pyg-team/pytorch_geometric/pull/5948))
 - Add `dgNN` support and `FusedGATConv` implementation ([#5140](https://github.com/pyg-team/pytorch_geometric/pull/5140))
 - Added `lr_scheduler_solver` and customized `lr_scheduler` classes ([#5942](https://github.com/pyg-team/pytorch_geometric/pull/5942))
