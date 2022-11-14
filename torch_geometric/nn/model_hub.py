@@ -24,6 +24,11 @@ class PyGModelHubMixin(ModelHubMixin):
     Mixin for saving and loading models to Huggingface Model Hub
 
     Example of using this with Node2Vec and the Cora dataset from Planetoid:
+
+    from torch_geometric.datasets import Planetoid
+    from torch_geometric.nn import Node2Vec
+    from torch_geometric.nn.model_hub import PyGModelHubMixin
+
     1. Define your class with the mixin:
     class N2V(Node2Vec, PyGModelHubMixin):
         def __init__(self,model_name, dataset_name, model_kwargs ):
