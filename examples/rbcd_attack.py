@@ -1,15 +1,15 @@
-import os.path as osp
 import functools
+import os.path as osp
 from typing import Optional
 
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 
 import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, GATConv, RBCDAttack
+from torch_geometric.nn import GATConv, GCNConv, RBCDAttack
 from torch_geometric.utils import softmax
 
 dataset = 'Cora'
@@ -23,7 +23,6 @@ data = dataset[0]
 
 class GCN(torch.nn.Module):
     """GCN that normalizes adjacency matrix once for all layers (no cache)."""
-
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
@@ -39,8 +38,8 @@ class GCN(torch.nn.Module):
     def forward(self, x, edge_index, edge_weight=None):
         # Normalizing once lowers memory footprint and caching is not possible
         # during attack (for training it would be possible)
-        edge_index, edge_weight = self.gcn_norm(
-            edge_index, edge_weight, x.size(0), add_self_loops=True)
+        edge_index, edge_weight = self.gcn_norm(edge_index, edge_weight,
+                                                x.size(0), add_self_loops=True)
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
@@ -49,7 +48,6 @@ class GCN(torch.nn.Module):
 
 class WeightedGATConv(GATConv):
     """Extended GAT to allow for weighted edges (disabling edge features)."""
-
     def edge_update(self, alpha_j: Tensor, alpha_i: Optional[Tensor],
                     edge_attr: Optional[Tensor], index: Tensor,
                     ptr: Optional[Tensor], size_i: Optional[int]) -> Tensor:
@@ -72,7 +70,6 @@ class WeightedGATConv(GATConv):
 
 class GAT(torch.nn.Module):
     """GAT that supports weights edges."""
-
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gat_conv = functools.partial(
@@ -98,15 +95,15 @@ data = data.to(device)
 x, edge_index, y = data.x, data.edge_index, data.y
 
 
-def train(model, x, edge_index, edge_weight=None,
-          epochs=200, lr=0.01, weight_decay=5e-4):
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=lr, weight_decay=weight_decay)
+def train(model, x, edge_index, edge_weight=None, epochs=200, lr=0.01,
+          weight_decay=5e-4):
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr,
+                                 weight_decay=weight_decay)
     for _ in range(epochs):
         optimizer.zero_grad()
         prediction = model(x, edge_index, edge_weight)
-        loss = F.cross_entropy(
-            prediction[data.train_mask], data.y[data.train_mask])
+        loss = F.cross_entropy(prediction[data.train_mask],
+                               data.y[data.train_mask])
         loss.backward()
         optimizer.step()
 
@@ -122,7 +119,6 @@ gcn.eval()
 gat.train()
 train(gat, x, edge_index)
 gat.eval()
-
 
 local_budget = 2  # Degree of (training) node 42 is also 2
 global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
@@ -148,27 +144,26 @@ clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 # GRBCD: attack single node
-pert_edge_index, perts = grbcd.attack(
-    x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_margin = -RBCDAttack._probability_margin_loss(
-    gat(x, edge_index), y, [node_idx])
-pert_margin = -RBCDAttack._probability_margin_loss(
-    gat(x, pert_edge_index), y, [node_idx])
+pert_edge_index, perts = grbcd.attack(x, edge_index, y, budget=local_budget,
+                                      idx_attack=[node_idx])
+clean_margin = -RBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+                                                    [node_idx])
+pert_margin = -RBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
+                                                   [node_idx])
 print(f'GRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
 # PRBCD: attack single node
-pert_edge_index, perts = prbcd.attack(
-    x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_margin = -RBCDAttack._probability_margin_loss(
-    gat(x, edge_index), y, [node_idx])
-pert_margin = -RBCDAttack._probability_margin_loss(
-    gat(x, pert_edge_index), y, [node_idx])
+pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=local_budget,
+                                      idx_attack=[node_idx])
+clean_margin = -RBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+                                                    [node_idx])
+pert_margin = -RBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
+                                                   [node_idx])
 print(f'PRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
-
 
 print(f'\n------------- GCN: Global Evasion -------------\n')
 
@@ -179,17 +174,16 @@ clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 # GRBCD: attack test set
-pert_edge_index, perts = grbcd.attack(
-    x, edge_index, y, budget=global_budget, idx_attack=data.test_mask)
+pert_edge_index, perts = grbcd.attack(x, edge_index, y, budget=global_budget,
+                                      idx_attack=data.test_mask)
 
 pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
 print(f'GRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
       f'{pert_accuracy:.3f}')
 
-
 # PRBCD: attack test set
-pert_edge_index, perts = prbcd.attack(
-    x, edge_index, y, budget=global_budget, idx_attack=data.test_mask)
+pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=global_budget,
+                                      idx_attack=data.test_mask)
 pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
 print(f'PRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
       f'{pert_accuracy:.3f}')

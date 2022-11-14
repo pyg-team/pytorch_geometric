@@ -5,11 +5,11 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch import Tensor
-from torch_geometric.utils import to_undirected
 import torch_sparse
+from torch import Tensor
 from tqdm import tqdm
 
+from torch_geometric.utils import to_undirected
 
 # (predictions, labels, ids/mask) -> Tensor with one element
 LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
@@ -20,7 +20,6 @@ class Attack(torch.nn.Module):
 
     aims to answer the question what (small) perturbation changes the model's
     prediction the most."""
-
     @abc.abstractmethod
     def attack(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                budget: int, idx_attack: Optional[Tensor] = None,
@@ -130,18 +129,13 @@ class RBCDAttack(Attack):
         'eps': 1e-7
     }
 
-    def __init__(self,
-                 model: torch.nn.Module,
-                 mode: str = 'projected',
-                 block_size: int = 250_000,
-                 epochs: int = 125,
+    def __init__(self, model: torch.nn.Module, mode: str = 'projected',
+                 block_size: int = 250_000, epochs: int = 125,
                  epochs_resampling: int = 100,
                  loss: Optional[Union[str, LOSS_TYPE]] = None,
                  metric: Optional[Union[str, LOSS_TYPE]] = None,
-                 lr: float = 1_000,
-                 is_undirected_graph: bool = True,
-                 log: bool = True,
-                 **kwargs) -> None:
+                 lr: float = 1_000, is_undirected_graph: bool = True,
+                 log: bool = True, **kwargs) -> None:
         super().__init__()
 
         self.model = model
@@ -247,8 +241,8 @@ class RBCDAttack(Attack):
             loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
-            scalars = self._update(step, gradient, x, edge_index,
-                                   labels, budget, idx_attack, **kwargs)
+            scalars = self._update(step, gradient, x, edge_index, labels,
+                                   budget, idx_attack, **kwargs)
 
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
@@ -276,8 +270,8 @@ class RBCDAttack(Attack):
                         budget: int, idx_attack: Optional[Tensor] = None,
                         **kwargs) -> None:
         """Prepare attack."""
-        self.flipped_edges = torch.empty(
-            (2, 0), dtype=edge_index.dtype, device=self.device)
+        self.flipped_edges = torch.empty((2, 0), dtype=edge_index.dtype,
+                                         device=self.device)
 
         # Determine the number of edges to be flipped in each attach step/epoch
         step_size = budget // self.epochs
@@ -319,11 +313,11 @@ class RBCDAttack(Attack):
         _, topk_edge_index = torch.topk(gradient, step_size)
 
         add_edge_index = self.block_edge_index[:, topk_edge_index]
-        add_edge_weight = torch.ones_like(
-            add_edge_index[0], dtype=torch.float32)
+        add_edge_weight = torch.ones_like(add_edge_index[0],
+                                          dtype=torch.float32)
 
-        self.flipped_edges = torch.cat(
-            (self.flipped_edges, add_edge_index), axis=-1)
+        self.flipped_edges = torch.cat((self.flipped_edges, add_edge_index),
+                                       axis=-1)
 
         if self.is_undirected_graph:
             add_edge_index, add_edge_weight = to_undirected(
@@ -334,8 +328,7 @@ class RBCDAttack(Attack):
         edge_weight = torch.cat((self.edge_weight.to(self.device),
                                  add_edge_weight.to(self.device)))
         edge_index, edge_weight = torch_sparse.coalesce(
-            edge_index, edge_weight, m=self.n, n=self.n, op='sum'
-        )
+            edge_index, edge_weight, m=self.n, n=self.n, op='sum')
 
         is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
         self.edge_index = edge_index[:, is_one_mask]
@@ -360,8 +353,9 @@ class RBCDAttack(Attack):
         pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
         # Projection to stay within relaxed `L_0` budget
         # (Algorithm 1, line 8)
-        self.block_edge_weight = RBCDAttack._project(
-            budget, self.block_edge_weight, self.coeffs['eps'])
+        self.block_edge_weight = RBCDAttack._project(budget,
+                                                     self.block_edge_weight,
+                                                     self.coeffs['eps'])
 
         # For monitoring
         scalars = dict(
@@ -369,8 +363,7 @@ class RBCDAttack(Attack):
             prob_mass_after_update_max=pmass_update.max().item(),
             prob_mass_after_projection=self.block_edge_weight.sum().item(),
             prob_mass_after_projection_nonzero_weights=(
-                self.block_edge_weight > self.coeffs['eps']
-            ).sum().item(),
+                self.block_edge_weight > self.coeffs['eps']).sum().item(),
             prob_mass_after_projection_max=self.block_edge_weight.max().item())
         if not self.coeffs['with_early_stopping']:
             return scalars
@@ -378,11 +371,11 @@ class RBCDAttack(Attack):
         # Calculate metric after the current epoch (overhead
         # for monitoring and early stopping)
         topk_block_edge_weight = torch.zeros_like(self.block_edge_weight)
-        topk_block_edge_weight[torch.topk(
-            self.block_edge_weight, budget).indices] = 1
+        topk_block_edge_weight[torch.topk(self.block_edge_weight,
+                                          budget).indices] = 1
         edge_index, edge_weight = self._get_modified_adj(
-            self.edge_index, self.edge_weight,
-            self.block_edge_index, topk_block_edge_weight)
+            self.edge_index, self.edge_weight, self.block_edge_index,
+            topk_block_edge_weight)
         prediction = self._forward(x, edge_index, edge_weight, **kwargs)
         metric = self.metric(prediction, labels, idx_attack)
 
@@ -449,8 +442,8 @@ class RBCDAttack(Attack):
         # Retrieve sparse perturbed adjacency matrix `A \oplus p_{t-1}`
         # (Algorithm 1, line 6 / Algorithm 2, line 7)
         edge_index, edge_weight = self._get_modified_adj(
-            self.edge_index, self.edge_weight,
-            self.block_edge_index, self.block_edge_weight)
+            self.edge_index, self.edge_weight, self.block_edge_index,
+            self.block_edge_weight)
 
         # Get prediction (Algorithm 1, line 6 / Algorithm 2, line 7)
         prediction = self._forward(x, edge_index, edge_weight, **kwargs)
@@ -463,10 +456,9 @@ class RBCDAttack(Attack):
 
         return loss, gradient
 
-    def _get_modified_adj(
-            self, edge_index: Tensor, edge_weight: Tensor,
-            block_edge_index: Tensor, block_edge_weight: Tensor
-    ) -> Tuple[Tensor, Tensor]:
+    def _get_modified_adj(self, edge_index: Tensor, edge_weight: Tensor,
+                          block_edge_index: Tensor,
+                          block_edge_weight: Tensor) -> Tuple[Tensor, Tensor]:
         """Merges adjacency matrix with current block (incl. weights)"""
         if self.is_undirected_graph:
             block_edge_index, block_edge_weight = to_undirected(
@@ -494,9 +486,9 @@ class RBCDAttack(Attack):
     def _sample_random_block(self, budget: int = 0) -> None:
         for _ in range(self.coeffs['max_trials_sampling']):
             self.current_block = torch.randint(
-                RBCDAttack._num_possible_edges(
-                    self.n, self.is_undirected_graph),
-                (self.block_size,), device=self.device)
+                RBCDAttack._num_possible_edges(self.n,
+                                               self.is_undirected_graph),
+                (self.block_size, ), device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
             if self.is_undirected_graph:
                 self.block_edge_index = RBCDAttack._linear_to_triu_idx(
@@ -506,19 +498,19 @@ class RBCDAttack(Attack):
                     self.n, self.current_block)
                 self._filter_self_loops(with_weight=False)
 
-            self.block_edge_weight = torch.full_like(
-                self.current_block, self.coeffs['eps'], dtype=torch.float32)
+            self.block_edge_weight = torch.full_like(self.current_block,
+                                                     self.coeffs['eps'],
+                                                     dtype=torch.float32)
             if self.current_block.size(0) >= budget:
                 return
-        raise RuntimeError(
-            'Sampling random block was not successful. '
-            'Please decrease `budget`.')
+        raise RuntimeError('Sampling random block was not successful. '
+                           'Please decrease `budget`.')
 
     def _resample_random_block(self, budget: int) -> None:
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight
-                      <= self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight <=
+                      self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -529,9 +521,9 @@ class RBCDAttack(Attack):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             lin_index = torch.randint(
-                RBCDAttack._num_possible_edges(
-                    self.n, self.is_undirected_graph),
-                (n_edges_resample,), device=self.device)
+                RBCDAttack._num_possible_edges(self.n,
+                                               self.is_undirected_graph),
+                (n_edges_resample, ), device=self.device)
 
             current_block = torch.cat((self.current_block, lin_index))
             self.current_block, unique_idx = torch.unique(
@@ -546,9 +538,9 @@ class RBCDAttack(Attack):
 
             # Merge existing weights with new edge weights
             block_edge_weight_prev = self.block_edge_weight[sorted_idx]
-            self.block_edge_weight = torch.full(
-                self.current_block.shape, self.coeffs['eps'],
-                device=self.device)
+            self.block_edge_weight = torch.full(self.current_block.shape,
+                                                self.coeffs['eps'],
+                                                device=self.device)
             self.block_edge_weight[
                 unique_idx[:sorted_idx.size(0)]] = block_edge_weight_prev
 
@@ -557,9 +549,8 @@ class RBCDAttack(Attack):
 
             if self.current_block.size(0) > budget:
                 return
-        raise RuntimeError(
-            'Sampling random block was not successful.'
-            'Please decrease `budget`.')
+        raise RuntimeError('Sampling random block was not successful.'
+                           'Please decrease `budget`.')
 
     def _append_statistics(self, mapping: Dict[str, Any]):
         for key, value in mapping.items():
@@ -577,8 +568,8 @@ class RBCDAttack(Attack):
             if i == 0:
                 # In first iteration employ top k heuristic instead of sampling
                 sampled_edges = torch.zeros_like(block_edge_weight)
-                sampled_edges[torch.topk(
-                    block_edge_weight, budget).indices] = 1
+                sampled_edges[torch.topk(block_edge_weight,
+                                         budget).indices] = 1
             else:
                 sampled_edges = torch.bernoulli(block_edge_weight).float()
 
@@ -588,8 +579,8 @@ class RBCDAttack(Attack):
             self.block_edge_weight = sampled_edges
 
             edge_index, edge_weight = self._get_modified_adj(
-                self.edge_index, self.edge_weight,
-                self.block_edge_index, self.block_edge_weight)
+                self.edge_index, self.edge_weight, self.block_edge_index,
+                self.block_edge_weight)
             prediction = self._forward(x, edge_index, edge_weight, **kwargs)
             metric = self.metric(prediction, labels, idx_attack)
 
@@ -600,26 +591,26 @@ class RBCDAttack(Attack):
 
         # Recover best sample
         self.block_edge_weight = best_edge_weight.to(self.device)
-        self.flipped_edges = self.block_edge_index[
-            :, torch.where(best_edge_weight)[0]]
+        self.flipped_edges = self.block_edge_index[:,
+                                                   torch.where(best_edge_weight
+                                                               )[0]]
 
         edge_index, edge_weight = self._get_modified_adj(
-            self.edge_index, self.edge_weight,
-            self.block_edge_index, self.block_edge_weight)
+            self.edge_index, self.edge_weight, self.block_edge_index,
+            self.block_edge_weight)
         edge_mask = edge_weight == 1
         self.edge_index = edge_index[:, edge_mask]
         self.edge_weight = edge_weight[edge_mask]
 
         return self.edge_index, self.flipped_edges
 
-    def _update_edge_weights(self, budget: int, epoch: int,
-                             gradient: Tensor):
+    def _update_edge_weights(self, budget: int, epoch: int, gradient: Tensor):
         # The learning rate is refined heuristically, s.t. (1) it is
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr
-              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr /
+              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -628,24 +619,16 @@ class RBCDAttack(Attack):
         if is_undirected_graph:
             return n * (n - 1) // 2
         else:
-            return int(n ** 2)  # We filter self-loops later
+            return int(n**2)  # We filter self-loops later
 
     @staticmethod
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Convert a linear index to index of upper triangular matrix."""
-        row_idx = (
-            n
-            - 2
-            - torch.floor(torch.sqrt(-8 * lin_idx.double()
-                                     + 4 * n * (n - 1) - 7) / 2.0 - 0.5)
-        ).long()
-        col_idx = (
-            lin_idx
-            + row_idx
-            + 1 - n * (n - 1) // 2
-            + torch.div((n - row_idx) * ((n - row_idx) - 1),
-                        2, rounding_mode='floor')
-        )
+        row_idx = (n - 2 - torch.floor(
+            torch.sqrt(-8 * lin_idx.double() + 4 * n *
+                       (n - 1) - 7) / 2.0 - 0.5)).long()
+        col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
+            (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
