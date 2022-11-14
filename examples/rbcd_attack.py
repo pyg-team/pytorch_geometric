@@ -130,7 +130,7 @@ def metric(*args, **kwargs):
     return -accuracy(*args, **kwargs)
 
 
-print(f'\n------------- GAT: Local Evasion -------------\n')
+print('\n------------- GAT: Local Evasion -------------\n')
 # Note: GRBCD is faster than PRBCD for small budgets but is not as consistent
 
 grbcd = RBCDAttack(gat, mode='greedy')
@@ -165,7 +165,7 @@ print(f'PRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
-print(f'\n------------- GCN: Global Evasion -------------\n')
+print('\n------------- GCN: Global Evasion -------------\n')
 
 grbcd = RBCDAttack(gcn, mode='greedy')
 prbcd = RBCDAttack(gcn, metric=metric, lr=2_000)

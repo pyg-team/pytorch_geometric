@@ -87,7 +87,7 @@ gcn.train()
 train(gcn, x, edge_index)
 gcn.eval()
 
-print(f'\n------------- GCN: Global Poisoning -------------\n')
+print('\n------------- GCN: Global Poisoning -------------\n')
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
