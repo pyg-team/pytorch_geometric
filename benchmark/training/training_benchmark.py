@@ -93,8 +93,9 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Training bench for {model_name}:')
 
             for batch_size in args.batch_sizes:
+                num_nodes = int(mask[-1].sum()) if hetero else int(mask.sum())
                 sampler = torch.utils.data.RandomSampler(
-                    range(len(data)), num_samples=args.num_steps *
+                    range(num_nodes), num_samples=args.num_steps *
                     batch_size) if args.num_steps != -1 else None
 
                 for layers in args.num_layers:
