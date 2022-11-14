@@ -5,6 +5,7 @@ from .data_parallel import DataParallel
 from .to_hetero_transformer import to_hetero
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
 from .encoding import PositionalEncoding
+from .model_hub import PyGModelHubMixin
 
 from .aggr import *  # noqa
 from .conv import *  # noqa
@@ -24,4 +25,5 @@ __all__ = [
     'to_hetero',
     'to_hetero_with_bases',
     'PositionalEncoding',
+    'PyGModelHubMixin',
 ]
