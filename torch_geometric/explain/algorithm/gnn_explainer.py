@@ -76,8 +76,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 explainer_config: ExplainerConfig, model_config: ModelConfig,
                 target: Tensor, target_index: Optional[Union[int,
                                                              Tensor]] = None,
-                index: Optional[int] = None,
-                **kwargs) -> Explanation:
+                index: Optional[int] = None, **kwargs) -> Explanation:
 
         if isinstance(target_index, Tensor):
             raise ValueError(
