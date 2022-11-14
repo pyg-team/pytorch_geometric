@@ -139,7 +139,7 @@ grbcd = RBCDAttack(gat, mode='greedy')
 # The learning rate is one of the most important parameters for PRBCD and a
 # good heuristic is to choose it s.t. the budget is exhausted within a few
 # steps. Moreover, a high learning rate mitigates the impact of the relaxation
-# gap ({0, 1} -> [0, 1]) of the edge weights
+# gap ({0, 1} -> [0, 1]) of the edge weights. See poisoning example for a plot.
 prbcd = RBCDAttack(gat, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask).item()
