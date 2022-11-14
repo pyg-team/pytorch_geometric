@@ -50,7 +50,8 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Evaluation bench for {model_name}:')
 
             for batch_size in args.eval_batch_sizes:
-                num_nodes = data['paper'].num_nodes if hetero else data.num_nodes
+                num_nodes = data[
+                    'paper'].num_nodes if hetero else data.num_nodes
                 sampler = torch.utils.data.RandomSampler(
                     range(num_nodes), num_samples=args.num_steps *
                     batch_size) if args.num_steps != -1 else None
