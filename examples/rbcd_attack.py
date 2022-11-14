@@ -22,13 +22,13 @@ data = dataset[0]
 
 
 class GCN(torch.nn.Module):
-    """GCN that normalizes adjacency matrix once for all layers and no caching."""
+    """GCN that normalizes adjacency matrix once for all layers (no cache)."""
 
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
             GCNConv,
-            cached=False,  # Important since we backpropagate to the adj. matrix
+            cached=False,  # Important to backpropagate to the adj. matrix
             add_self_loops=False,  # We add them in `self.gcn_norm`
             normalize=False  # It is better to normalize once
         )
@@ -128,8 +128,10 @@ local_budget = 2  # Degree of (training) node 42 is also 2
 global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
 node_idx = 42
 
-# The metric in PRBCD is assumed to be best if lower (i.e. like a loss)
-metric = lambda *args, ** kwargs: -accuracy(*args, **kwargs)
+
+# The metric in PRBCD is assumed to be best if lower (like a loss).
+def metric(*args, **kwargs):
+    return -accuracy(*args, **kwargs)
 
 
 print(f'\n------------- GAT: Local Evasion -------------\n')
@@ -148,9 +150,9 @@ print(f'Clean accuracy: {clean_accuracy:.3f}')
 # GRBCD: attack single node
 pert_edge_index, perts = grbcd.attack(
     x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_margin = -RBCDAttack.probability_margin_loss(
+clean_margin = -RBCDAttack._probability_margin_loss(
     gat(x, edge_index), y, [node_idx])
-pert_margin = -RBCDAttack.probability_margin_loss(
+pert_margin = -RBCDAttack._probability_margin_loss(
     gat(x, pert_edge_index), y, [node_idx])
 print(f'GRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
@@ -159,9 +161,9 @@ print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 # PRBCD: attack single node
 pert_edge_index, perts = prbcd.attack(
     x, edge_index, y, budget=local_budget, idx_attack=[node_idx])
-clean_margin = -RBCDAttack.probability_margin_loss(
+clean_margin = -RBCDAttack._probability_margin_loss(
     gat(x, edge_index), y, [node_idx])
-pert_margin = -RBCDAttack.probability_margin_loss(
+pert_margin = -RBCDAttack._probability_margin_loss(
     gat(x, pert_edge_index), y, [node_idx])
 print(f'PRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')

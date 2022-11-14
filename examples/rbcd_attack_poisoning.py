@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 try:
     import higher
-except ImportError as e:
+except ImportError:
     sys.exit(
         'Install `higher` (e.g. `pip install higher`) for poisoning example')
 
@@ -30,13 +30,13 @@ data = dataset[0]
 
 
 class GCN(torch.nn.Module):
-    """GCN that normalizes adjacency matrix once for all layers and no caching."""
+    """GCN that normalizes adjacency matrix once for all layers (no cache)."""
 
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
             GCNConv,
-            cached=False,  # Important since we backpropagate to the adj. matrix
+            cached=False,  # Important to backpropagate to the adj. matrix
             add_self_loops=False,  # We add them in `self.gcn_norm`
             normalize=False  # It is better to normalize once
         )
@@ -97,8 +97,8 @@ print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 class PoisoningRBCDAttack(RBCDAttack):
 
-    def forward(self, x: Tensor, edge_index: Tensor,
-                edge_weight: Tensor, **kwargs) -> Tensor:
+    def _forward(self, x: Tensor, edge_index: Tensor,
+                 edge_weight: Tensor, **kwargs) -> Tensor:
         """Forward model."""
         self.model.reset_parameters()
         self.model.train()
@@ -112,9 +112,9 @@ class PoisoningRBCDAttack(RBCDAttack):
 
         return prediction
 
-    def forward_and_gradient(self, x: Tensor, labels: Tensor,
-                             idx_attack: Optional[Tensor] = None,
-                             **kwargs) -> Tuple[Tensor, Tensor]:
+    def _forward_and_gradient(self, x: Tensor, labels: Tensor,
+                              idx_attack: Optional[Tensor] = None,
+                              **kwargs) -> Tuple[Tensor, Tensor]:
         """Forward and update edge weights."""
         self.block_edge_weight.requires_grad = True
 
@@ -125,7 +125,7 @@ class PoisoningRBCDAttack(RBCDAttack):
             self.model.parameters(), lr=0.04, weight_decay=5e-4)
 
         with higher.innerloop_ctx(self.model, opt) as (fmodel, diffopt):
-            edge_index, edge_weight = self.get_modified_adj(
+            edge_index, edge_weight = self._get_modified_adj(
                 self.edge_index, self.edge_weight,
                 self.block_edge_index, self.block_edge_weight)
 
@@ -158,7 +158,9 @@ class PoisoningRBCDAttack(RBCDAttack):
 
 
 # The metric in PRBCD is assumed to be best if lower (i.e. like a loss)
-metric = lambda *args, ** kwargs: -accuracy(*args, **kwargs)
+def metric(*args, **kwargs):
+    return -accuracy(*args, **kwargs)
+
 
 # for i in range(10):
 prbcd = PoisoningRBCDAttack(
@@ -174,6 +176,7 @@ gcn.train()
 train(gcn, x, pert_edge_index)
 gcn.eval()
 pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
+# Note that the values here a bit more noisy than in the evasion case
 print(f'PRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
       f'{pert_accuracy:.3f}')
 

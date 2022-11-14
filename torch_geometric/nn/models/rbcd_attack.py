@@ -52,21 +52,20 @@ class Attack(torch.nn.Module):
 
 
 class RBCDAttack(Attack):
-    """Sparse randomized gradient-based adversarial attack for structure pert.
+    r"""Projected and Greedy Randomized Block Coordinate
+    Descent (PRBCD and GRBCD, respectively) adversarial attack from the
+    `Robustness of Graph Neural Networks at Scale
+    <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_
+    paper.
 
-    Implements both, the projected and greedy, Randomized Block Coordinate
-    Descent (RBCD) attack from the `Robustness of Graph Neural Networks at Scale
-    <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale/>` paper. Both
-    attacks use an efficient gradient based approach that (during the attack)
-    relaxed the discrete entries in the adjacency matrix :math:`\{0, 1\}`
-    to :math:`[0, 1]` and solely perturb the adjacency matrix (no feature
-    perturbations).
-
-    Thus, they support all models that can handle weighted
-    graphs are are differentiabile w.r.t. these edge weights. For
+    Both attacks use an efficient gradient based approach that (during the
+    attack) relaxed the discrete entries in the adjacency matrix
+    :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturb the adjacency matrix
+    (no feature perturbations). Thus, they support all models that can handle
+    weighted graphs are are differentiabile w.r.t. these edge weights. For
     non-differentiable models you might be able to e.g. use the gumble softmax
-    trick. 
-    
+    trick.
+
     The memory overhead of both attacks is driven by the additional
     edges (at most :attr:`block_size`). For scalability reasons, the block is
     drawn with replacement and then the index is made unique. Thus, the actual
@@ -82,12 +81,14 @@ class RBCDAttack(Attack):
     out of the box.
 
     .. note::
-        For examples of using the (P/G)RBCD Attack, see `examples/rbcd_attack.py
+        For examples of using the (P/G)RBCD Attack, see
+        `examples/rbcd_attack.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack.py>` for a test time attack (evasion) or
-        `examples/rbcd_attack_poisoning.py
+        rbcd_attack.py>`_
+        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack_poisoning.py>` for a training time (poisoning) attack.
+        rbcd_attack_poisoning.py>`_
+        for a training time (poisoning) attack.
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
@@ -105,12 +106,12 @@ class RBCDAttack(Attack):
             classification, that the model returns raw predictions (i.e. no
             output activation) or uses :obj:`logsoftmax`, and that the number
             of predictions matches the number labels passed to :attr:`attack`.
-            Either pass Callable or one of: :obj:`masked`, :obj:`margin`, 
-            :obj:`prob_margin`, :obj:`tanh_margin` 
+            Either pass Callable or one of: :obj:`masked`, :obj:`margin`,
+            :obj:`prob_margin`, :obj:`tanh_margin`
             (default: :obj:`probability_margin_loss`).
         metric (Callable, optional): Second (potentially
             non-differentiable) loss for monitoring or early stopping (if
-            mode='greedy'). Only relevant if mode='projected'. (default: 
+            mode='greedy'). Only relevant if mode='projected'. (default:
             same as :attr:`loss`)
         lr (float, optional): Learning rate that is being used if
             mode='projected'. Additionally, it is heuristically corrected for
@@ -151,18 +152,18 @@ class RBCDAttack(Attack):
 
         if loss is None:
             if self.model == 'projected':
-                self.loss = RBCDAttack.probability_margin_loss
+                self.loss = RBCDAttack._probability_margin_loss
             else:
-                self.loss = RBCDAttack.masked_cross_entropy
+                self.loss = RBCDAttack._masked_cross_entropy
         elif isinstance(loss, str):
             if loss == 'masked':
-                self.loss = RBCDAttack.masked_cross_entropy
+                self.loss = RBCDAttack._masked_cross_entropy
             elif loss == 'margin':
-                self.loss = RBCDAttack.margin
+                self.loss = RBCDAttack._margin
             elif loss == 'prob_margin':
-                self.loss = RBCDAttack.probability_margin_loss
+                self.loss = RBCDAttack._probability_margin_loss
             elif loss == 'tanh_margin':
-                self.loss = RBCDAttack.tanh_margin_loss
+                self.loss = RBCDAttack._tanh_margin_loss
             else:
                 raise ValueError(f'Unknown loss `{loss}`')
         else:
@@ -185,13 +186,13 @@ class RBCDAttack(Attack):
         self.step_sequence = tuple()
 
         if self.mode == 'projected':
-            self.prepare = self.prepare_projected
-            self.update = self.update_projected
-            self.close = self.close_projected
+            self._prepare = self._prepare_projected
+            self._update = self._update_projected
+            self._close = self._close_projected
         else:
-            self.prepare = self.prepare_greedy
-            self.update = self.update_greedy
-            self.close = self.close_greedy
+            self._prepare = self._prepare_greedy
+            self._update = self._update_greedy
+            self._close = self._close_greedy
 
     def attack(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                budget: int, idx_attack: Optional[Tensor] = None,
@@ -235,7 +236,7 @@ class RBCDAttack(Attack):
         self.attack_statistics = defaultdict(list)
 
         # Prepare attack and define `self.iterable` to iterate over
-        self.prepare(x, edge_index, labels, budget, idx_attack, **kwargs)
+        self._prepare(x, edge_index, labels, budget, idx_attack, **kwargs)
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=len(self.step_sequence))
@@ -243,11 +244,11 @@ class RBCDAttack(Attack):
 
         # Loop over the epochs (Algorithm 1, line 5)
         for step in self.step_sequence:
-            loss, gradient = self.forward_and_gradient(
+            loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
-            scalars = self.update(step, gradient, x, edge_index,
-                                  labels, budget, idx_attack, **kwargs)
+            scalars = self._update(step, gradient, x, edge_index,
+                                   labels, budget, idx_attack, **kwargs)
 
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
@@ -258,7 +259,7 @@ class RBCDAttack(Attack):
         if self.log:  # pragma: no cover
             pbar.close()
 
-        ret = self.close(x, edge_index, labels, budget, idx_attack, **kwargs)
+        ret = self._close(x, edge_index, labels, budget, idx_attack, **kwargs)
 
         assert self.flipped_edges.shape[1] <= budget, (
             f'# perturbed edges {self.flipped_edges.shape[1]} '
@@ -266,19 +267,19 @@ class RBCDAttack(Attack):
 
         return ret
 
-    def prepare(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                budget: int, idx_attack: Optional[Tensor] = None, **kwargs):
+    def _prepare(self, x: Tensor, edge_index: Tensor, labels: Tensor,
+                 budget: int, idx_attack: Optional[Tensor] = None, **kwargs):
         """Prepare attack."""
         pass
 
-    def prepare_greedy(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                       budget: int, idx_attack: Optional[Tensor] = None,
-                       **kwargs) -> None:
+    def _prepare_greedy(self, x: Tensor, edge_index: Tensor, labels: Tensor,
+                        budget: int, idx_attack: Optional[Tensor] = None,
+                        **kwargs) -> None:
         """Prepare attack."""
         self.flipped_edges = torch.empty(
             (2, 0), dtype=edge_index.dtype, device=self.device)
 
-        # Determine the number of edges to be flipped in each attach step / epoch
+        # Determine the number of edges to be flipped in each attach step/epoch
         step_size = budget // self.epochs
         if step_size > 0:
             steps = self.epochs * [step_size]
@@ -292,9 +293,9 @@ class RBCDAttack(Attack):
         # Sample initial search space (Algorithm 2, line 3-4)
         self._sample_random_block(step_size)
 
-    def prepare_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                          budget: int, idx_attack: Optional[Tensor] = None,
-                          **kwargs):
+    def _prepare_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
+                           budget: int, idx_attack: Optional[Tensor] = None,
+                           **kwargs):
         """Prepare attack."""
         self.step_sequence = list(range(self.epochs))
 
@@ -304,16 +305,16 @@ class RBCDAttack(Attack):
         # Sample initial search space (Algorithm 1, line 3-4)
         self._sample_random_block(budget)
 
-    def update(self, step: Any, gradient: torch.Tensor, x: Tensor,
-               edge_index: Tensor, labels: Tensor, budget: int,
-               idx_attack: Optional[Tensor] = None,
-               **kwargs) -> Dict[str, float]:
+    def _update(self, step: Any, gradient: torch.Tensor, x: Tensor,
+                edge_index: Tensor, labels: Tensor, budget: int,
+                idx_attack: Optional[Tensor] = None,
+                **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
         pass
 
     @torch.no_grad()
-    def update_greedy(self, step_size: int, gradient: torch.Tensor, x: Tensor,
-                      edge_index: Tensor, *args, **kwargs) -> Dict[str, Any]:
+    def _update_greedy(self, step_size: int, gradient: torch.Tensor, x: Tensor,
+                       edge_index: Tensor, *args, **kwargs) -> Dict[str, Any]:
         """Update edge weights given gradient."""
         _, topk_edge_index = torch.topk(gradient, step_size)
 
@@ -330,8 +331,8 @@ class RBCDAttack(Attack):
         edge_index = torch.cat(
             (self.edge_index.to(self.device), add_edge_index.to(self.device)),
             dim=-1)
-        edge_weight = torch.cat(
-            (self.edge_weight.to(self.device), add_edge_weight.to(self.device)))
+        edge_weight = torch.cat((self.edge_weight.to(self.device),
+                                 add_edge_weight.to(self.device)))
         edge_index, edge_weight = torch_sparse.coalesce(
             edge_index, edge_weight, m=self.n, n=self.n, op='sum'
         )
@@ -348,10 +349,10 @@ class RBCDAttack(Attack):
         return {}
 
     @torch.no_grad()
-    def update_projected(self, epoch: int, gradient: torch.Tensor, x: Tensor,
-                         edge_index: Tensor, labels: Tensor, budget: int,
-                         idx_attack: Optional[Tensor] = None,
-                         **kwargs) -> Dict[str, float]:
+    def _update_projected(self, epoch: int, gradient: torch.Tensor, x: Tensor,
+                          edge_index: Tensor, labels: Tensor, budget: int,
+                          idx_attack: Optional[Tensor] = None,
+                          **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
         # Gradient update step (Algorithm 1, line 7)
         self._update_edge_weights(budget, epoch, gradient)
@@ -359,7 +360,7 @@ class RBCDAttack(Attack):
         pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
         # Projection to stay within relaxed `L_0` budget
         # (Algorithm 1, line 8)
-        self.block_edge_weight = RBCDAttack.project(
+        self.block_edge_weight = RBCDAttack._project(
             budget, self.block_edge_weight, self.coeffs['eps'])
 
         # For monitoring
@@ -379,10 +380,10 @@ class RBCDAttack(Attack):
         topk_block_edge_weight = torch.zeros_like(self.block_edge_weight)
         topk_block_edge_weight[torch.topk(
             self.block_edge_weight, budget).indices] = 1
-        edge_index, edge_weight = self.get_modified_adj(
+        edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight,
             self.block_edge_index, topk_block_edge_weight)
-        prediction = self.forward(x, edge_index, edge_weight, **kwargs)
+        prediction = self._forward(x, edge_index, edge_weight, **kwargs)
         metric = self.metric(prediction, labels, idx_attack)
 
         # Save best epoch for early stopping
@@ -407,19 +408,19 @@ class RBCDAttack(Attack):
         scalars['metric'] = metric.item()
         return scalars
 
-    def close(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-              budget: int, idx_attack: Optional[Tensor] = None,
-              **kwargs) -> Tuple[Tensor, Tensor]:
+    def _close(self, x: Tensor, edge_index: Tensor, labels: Tensor,
+               budget: int, idx_attack: Optional[Tensor] = None,
+               **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         pass
 
-    def close_greedy(self, *args, **kwargs) -> Any:
+    def _close_greedy(self, *args, **kwargs) -> Any:
         """Clean up and prepare return argument."""
         return self.edge_index, self.flipped_edges
 
-    def close_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                        budget: int, idx_attack: Optional[Tensor] = None,
-                        **kwargs) -> Any:
+    def _close_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
+                         budget: int, idx_attack: Optional[Tensor] = None,
+                         **kwargs) -> Any:
         """Clean up and prepare return argument."""
         # Retrieve best epoch if early stopping is active
         # (not explicitly covered by pseudo code)
@@ -434,25 +435,25 @@ class RBCDAttack(Attack):
 
         return edge_index, flipped_edges
 
-    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
-                **kwargs) -> Tensor:
+    def _forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                 **kwargs) -> Tensor:
         """Forward model."""
         return self.model(x, edge_index, edge_weight, **kwargs)
 
-    def forward_and_gradient(self, x: Tensor, labels: Tensor,
-                             idx_attack: Optional[Tensor] = None,
-                             **kwargs) -> Tuple[Tensor, Tensor]:
+    def _forward_and_gradient(self, x: Tensor, labels: Tensor,
+                              idx_attack: Optional[Tensor] = None,
+                              **kwargs) -> Tuple[Tensor, Tensor]:
         """Forward and update edge weights."""
         self.block_edge_weight.requires_grad = True
 
         # Retrieve sparse perturbed adjacency matrix `A \oplus p_{t-1}`
         # (Algorithm 1, line 6 / Algorithm 2, line 7)
-        edge_index, edge_weight = self.get_modified_adj(
+        edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight,
             self.block_edge_index, self.block_edge_weight)
 
         # Get prediction (Algorithm 1, line 6 / Algorithm 2, line 7)
-        prediction = self.forward(x, edge_index, edge_weight, **kwargs)
+        prediction = self._forward(x, edge_index, edge_weight, **kwargs)
         # Calculate loss combining all each node
         # (Algorithm 1, line 7 / Algorithm 2, line 8)
         loss = self.loss(prediction, labels, idx_attack)
@@ -462,9 +463,10 @@ class RBCDAttack(Attack):
 
         return loss, gradient
 
-    def get_modified_adj(
-            self, edge_index: Tensor, edge_weight: Tensor, block_edge_index: Tensor,
-            block_edge_weight: Tensor) -> Tuple[Tensor, Tensor]:
+    def _get_modified_adj(
+            self, edge_index: Tensor, edge_weight: Tensor,
+            block_edge_index: Tensor, block_edge_weight: Tensor
+    ) -> Tuple[Tensor, Tensor]:
         """Merges adjacency matrix with current block (incl. weights)"""
         if self.is_undirected_graph:
             block_edge_index, block_edge_weight = to_undirected(
@@ -492,15 +494,15 @@ class RBCDAttack(Attack):
     def _sample_random_block(self, budget: int = 0) -> None:
         for _ in range(self.coeffs['max_trials_sampling']):
             self.current_block = torch.randint(
-                RBCDAttack.num_possible_edges(
+                RBCDAttack._num_possible_edges(
                     self.n, self.is_undirected_graph),
                 (self.block_size,), device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
             if self.is_undirected_graph:
-                self.block_edge_index = RBCDAttack.linear_to_triu_idx(
+                self.block_edge_index = RBCDAttack._linear_to_triu_idx(
                     self.n, self.current_block)
             else:
-                self.block_edge_index = RBCDAttack.linear_to_full_idx(
+                self.block_edge_index = RBCDAttack._linear_to_full_idx(
                     self.n, self.current_block)
                 self._filter_self_loops(with_weight=False)
 
@@ -527,7 +529,7 @@ class RBCDAttack(Attack):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             lin_index = torch.randint(
-                RBCDAttack.num_possible_edges(
+                RBCDAttack._num_possible_edges(
                     self.n, self.is_undirected_graph),
                 (n_edges_resample,), device=self.device)
 
@@ -536,10 +538,10 @@ class RBCDAttack(Attack):
                 current_block, sorted=True, return_inverse=True)
 
             if self.is_undirected_graph:
-                self.block_edge_index = RBCDAttack.linear_to_triu_idx(
+                self.block_edge_index = RBCDAttack._linear_to_triu_idx(
                     self.n, self.current_block)
             else:
-                self.block_edge_index = RBCDAttack.linear_to_full_idx(
+                self.block_edge_index = RBCDAttack._linear_to_full_idx(
                     self.n, self.current_block)
 
             # Merge existing weights with new edge weights
@@ -585,10 +587,10 @@ class RBCDAttack(Attack):
                 continue
             self.block_edge_weight = sampled_edges
 
-            edge_index, edge_weight = self.get_modified_adj(
+            edge_index, edge_weight = self._get_modified_adj(
                 self.edge_index, self.edge_weight,
                 self.block_edge_index, self.block_edge_weight)
-            prediction = self.forward(x, edge_index, edge_weight, **kwargs)
+            prediction = self._forward(x, edge_index, edge_weight, **kwargs)
             metric = self.metric(prediction, labels, idx_attack)
 
             # Save best sample
@@ -601,7 +603,7 @@ class RBCDAttack(Attack):
         self.flipped_edges = self.block_edge_index[
             :, torch.where(best_edge_weight)[0]]
 
-        edge_index, edge_weight = self.get_modified_adj(
+        edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight,
             self.block_edge_index, self.block_edge_weight)
         edge_mask = edge_weight == 1
@@ -621,7 +623,7 @@ class RBCDAttack(Attack):
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
-    def num_possible_edges(n: int, is_undirected_graph: bool) -> int:
+    def _num_possible_edges(n: int, is_undirected_graph: bool) -> int:
         """Determine number of possible edges for graph."""
         if is_undirected_graph:
             return n * (n - 1) // 2
@@ -629,7 +631,7 @@ class RBCDAttack(Attack):
             return int(n ** 2)  # We filter self-loops later
 
     @staticmethod
-    def linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
+    def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Convert a linear index to index of upper triangular matrix."""
         row_idx = (
             n
@@ -647,24 +649,24 @@ class RBCDAttack(Attack):
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
-    def linear_to_full_idx(n: int, lin_idx: Tensor) -> Tensor:
+    def _linear_to_full_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Convert a linear index to index of matrix."""
         row_idx = torch.div(lin_idx, n, rounding_mode='floor')
         col_idx = lin_idx % n
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
-    def project(budget: int, values: Tensor, eps: float = 1e-7):
-        r"""Projects `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
+    def _project(budget: int, values: Tensor, eps: float = 1e-7):
+        r"""Project `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
         if torch.clamp(values, 0, 1).sum() > budget:
             left = (values - 1).min()
             right = values.max()
-            miu = RBCDAttack.bisection(values, left, right, budget)
+            miu = RBCDAttack._bisection(values, left, right, budget)
             values = values - miu
         return torch.clamp(values, min=eps, max=1 - eps)
 
     @staticmethod
-    def bisection(edge_weights, a, b, n_pert, eps=1e-5, max_iter=1e3):
+    def _bisection(edge_weights, a, b, n_pert, eps=1e-5, max_iter=1e3):
         """Bisection search for projection."""
         def shift(offset):
             return (torch.clamp(edge_weights - offset, 0, 1).sum() - n_pert)
@@ -685,8 +687,8 @@ class RBCDAttack(Attack):
         return miu
 
     @staticmethod
-    def margin(score: Tensor, labels: Tensor,
-               idx_mask: Optional[Tensor] = None) -> Tensor:
+    def _margin(score: Tensor, labels: Tensor,
+                idx_mask: Optional[Tensor] = None) -> Tensor:
         r"""Margin loss between true score and highest non-target score:
 
         .. math::
@@ -718,8 +720,8 @@ class RBCDAttack(Attack):
         return margin_
 
     @staticmethod
-    def tanh_margin_loss(prediction: Tensor, labels: Tensor,
-                         idx_mask: Optional[Tensor] = None) -> Tensor:
+    def _tanh_margin_loss(prediction: Tensor, labels: Tensor,
+                          idx_mask: Optional[Tensor] = None) -> Tensor:
         """Calculate tanh margin loss, a node-classification loss that focuses
         on nodes next to decision boundary.
 
@@ -732,17 +734,17 @@ class RBCDAttack(Attack):
         :rtype: (Tensor)
         """
         log_logits = F.log_softmax(prediction, dim=-1)
-        margin_ = RBCDAttack.margin(log_logits, labels, idx_mask)
+        margin_ = RBCDAttack._margin(log_logits, labels, idx_mask)
         loss = torch.tanh(margin_).mean()
         return loss
 
     @staticmethod
-    def probability_margin_loss(prediction: Tensor, labels: Tensor,
-                                idx_mask: Optional[Tensor] = None) -> Tensor:
+    def _probability_margin_loss(prediction: Tensor, labels: Tensor,
+                                 idx_mask: Optional[Tensor] = None) -> Tensor:
         """Calculate probability margin loss, a node-classification loss that
-        focuses  on nodes next to decision boundary. See `Are Defenses for Graph
-        Neural  Networks Robust?
-        <https://www.cs.cit.tum.de/daml/are-gnn-defenses-robust>` for details.
+        focuses  on nodes next to decision boundary. See `Are Defenses for
+        Graph Neural Networks Robust?
+        <https://www.cs.cit.tum.de/daml/are-gnn-defenses-robust>`_ for details.
 
         Args:
             prediction (Tensor): Prediction of shape :obj:`[n_elem, dim]`.
@@ -753,11 +755,11 @@ class RBCDAttack(Attack):
         :rtype: (Tensor)
         """
         logits = F.softmax(prediction, dim=-1)
-        margin_ = RBCDAttack.margin(logits, labels, idx_mask)
+        margin_ = RBCDAttack._margin(logits, labels, idx_mask)
         return margin_.mean()
 
-    def masked_cross_entropy(log_logits: Tensor, labels: Tensor,
-                             idx_mask: Optional[Tensor] = None) -> Tensor:
+    def _masked_cross_entropy(log_logits: Tensor, labels: Tensor,
+                              idx_mask: Optional[Tensor] = None) -> Tensor:
         """Calculate masked cross entropy loss, a node-classification loss that
         focuses on nodes next to decision boundary.
 

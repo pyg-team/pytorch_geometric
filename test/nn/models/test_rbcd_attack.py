@@ -1,5 +1,3 @@
-from functools import partial
-
 import pytest
 import torch
 import torch.nn.functional as F
@@ -7,7 +5,7 @@ from torch.nn import Linear
 
 from torch_geometric.utils import to_undirected
 from torch_geometric.nn import GCNConv, RBCDAttack, global_add_pool
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import is_full_test
 
 
 class GCN(torch.nn.Module):
