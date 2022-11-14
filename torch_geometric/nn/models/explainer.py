@@ -211,7 +211,7 @@ class CaptumHeteroModel(CaptumModel):
         num_node_types = len(self.node_types)
 
         if self.mask_type == 'node':
-            node_tensors = args[0:num_node_types]
+            node_tensors = args[:num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
             edge_index_dict = args[num_node_types]
