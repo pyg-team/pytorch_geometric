@@ -220,7 +220,7 @@ class CaptumHeteroModel(CaptumModel):
             x_dict = args[num_edge_types]
             edge_index_dict = args[num_edge_types + 1]
         else:
-            node_tensors = args[0:num_node_types]
+            node_tensors = args[:num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
             edge_mask_tensors = args[num_node_types:num_node_types +
