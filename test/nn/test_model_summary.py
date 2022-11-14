@@ -37,6 +37,7 @@ class ModuleDictModel(nn.Module):
 
 @pytest.fixture
 def gcn():
+    torch.manual_seed(1)
     model = GCN(32, 16, num_layers=2, out_channels=32)
     x = torch.randn(100, 32)
     edge_index = torch.randint(100, size=(2, 20))
@@ -115,6 +116,7 @@ def test_summary_with_leaf_module(gcn):
         '| │    │    └─(lin)Linear                 | [100, 16]          | [100, 32]      | 512      |',  # noqa
         '+-----------------------------------------+--------------------+----------------+----------+',  # noqa
     ])
+
     assert summary(gcn['model'], gcn['x'], gcn['edge_index'],
                    leaf_module=None) == expected
 
@@ -194,7 +196,7 @@ def test_moduledict_model():
         '+---------------------------+---------------+----------------+----------+',  # noqa
     ])
 
-    summary(model, x, 'prelu') == expected
+    assert summary(model, x, 'prelu') == expected
 
 
 @withPackage('tabulate')
