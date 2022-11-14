@@ -1,12 +1,12 @@
-import os.path as osp
 import functools
-from typing import Optional, Tuple
+import os.path as osp
 import sys
+from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
 import torch
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 
 try:
     import higher
@@ -19,7 +19,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv, RBCDAttack
 
-
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 # IMPORTANT: Edge weights are being ignored later and most adjacency
@@ -31,7 +30,6 @@ data = dataset[0]
 
 class GCN(torch.nn.Module):
     """GCN that normalizes adjacency matrix once for all layers (no cache)."""
-
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
@@ -48,8 +46,9 @@ class GCN(torch.nn.Module):
         # Normalizing once lowers memory footprint and caching is not possible
         # during attack (for training it would be possible)
         if not skip_norm:
-            edge_index, edge_weight = self.gcn_norm(
-                edge_index, edge_weight, x.size(0), add_self_loops=True)
+            edge_index, edge_weight = self.gcn_norm(edge_index, edge_weight,
+                                                    x.size(0),
+                                                    add_self_loops=True)
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
@@ -67,15 +66,15 @@ data = data.to(device)
 x, edge_index, y = data.x, data.edge_index, data.y
 
 
-def train(model, x, edge_index, edge_weight=None,
-          epochs=200, lr=0.01, weight_decay=5e-4):
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=lr, weight_decay=weight_decay)
+def train(model, x, edge_index, edge_weight=None, epochs=200, lr=0.01,
+          weight_decay=5e-4):
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr,
+                                 weight_decay=weight_decay)
     for _ in range(epochs):
         optimizer.zero_grad()
         prediction = model(x, edge_index, edge_weight)
-        loss = F.cross_entropy(
-            prediction[data.train_mask], data.y[data.train_mask])
+        loss = F.cross_entropy(prediction[data.train_mask],
+                               data.y[data.train_mask])
         loss.backward()
         optimizer.step()
 
@@ -88,7 +87,6 @@ gcn.train()
 train(gcn, x, edge_index)
 gcn.eval()
 
-
 print(f'\n------------- GCN: Global Poisoning -------------\n')
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
@@ -96,9 +94,8 @@ print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 
 class PoisoningRBCDAttack(RBCDAttack):
-
-    def _forward(self, x: Tensor, edge_index: Tensor,
-                 edge_weight: Tensor, **kwargs) -> Tensor:
+    def _forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                 **kwargs) -> Tensor:
         """Forward model."""
         self.model.reset_parameters()
         self.model.train()
@@ -121,13 +118,13 @@ class PoisoningRBCDAttack(RBCDAttack):
         self.model.reset_parameters()
         # We purposely do not call `self.model.train()` to avoid dropout
         self.model.train()
-        opt = torch.optim.Adam(
-            self.model.parameters(), lr=0.04, weight_decay=5e-4)
+        opt = torch.optim.Adam(self.model.parameters(), lr=0.04,
+                               weight_decay=5e-4)
 
         with higher.innerloop_ctx(self.model, opt) as (fmodel, diffopt):
             edge_index, edge_weight = self._get_modified_adj(
-                self.edge_index, self.edge_weight,
-                self.block_edge_index, self.block_edge_weight)
+                self.edge_index, self.edge_weight, self.block_edge_index,
+                self.block_edge_weight)
 
             # Normalize only once (only relevant if model normalizes adj.)
             if hasattr(fmodel, 'gcn_norm'):
@@ -135,10 +132,10 @@ class PoisoningRBCDAttack(RBCDAttack):
                     edge_index, edge_weight, x.size(0), add_self_loops=True)
 
             for _ in range(50):
-                prediction = fmodel.forward(
-                    x, edge_index, edge_weight, skip_norm=True)
-                loss = F.cross_entropy(
-                    prediction[data.train_mask], data.y[data.train_mask])
+                prediction = fmodel.forward(x, edge_index, edge_weight,
+                                            skip_norm=True)
+                loss = F.cross_entropy(prediction[data.train_mask],
+                                       data.y[data.train_mask])
                 diffopt.step(loss)
 
             prediction = fmodel(x, edge_index, edge_weight)
@@ -163,13 +160,12 @@ def metric(*args, **kwargs):
 
 
 # for i in range(10):
-prbcd = PoisoningRBCDAttack(
-    gcn, metric=metric, lr=100)
+prbcd = PoisoningRBCDAttack(gcn, metric=metric, lr=100)
 
 # PRBCD: attack test set
 global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
-pert_edge_index, perts = prbcd.attack(
-    x, edge_index, y, budget=global_budget, idx_attack=data.test_mask)
+pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=global_budget,
+                                      idx_attack=data.test_mask)
 
 gcn.reset_parameters()
 gcn.train()
@@ -191,10 +187,10 @@ ax1.set_xlabel('Steps')
 # It is best practice choosing the learning rate s.t. the budget is exhausted
 ax2 = ax1.twinx()
 color = 'tab:blue'
-ax2.plot(prbcd.attack_statistics['prob_mass_after_update'],
-         color=color, linestyle='--', label='Before projection')
-ax2.plot(prbcd.attack_statistics['prob_mass_after_projection'],
-         color=color, label='After projection')
+ax2.plot(prbcd.attack_statistics['prob_mass_after_update'], color=color,
+         linestyle='--', label='Before projection')
+ax2.plot(prbcd.attack_statistics['prob_mass_after_projection'], color=color,
+         label='After projection')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_ylabel('Used budget')
 plt.legend()

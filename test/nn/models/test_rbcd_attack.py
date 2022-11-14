@@ -3,9 +3,9 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.utils import to_undirected
 from torch_geometric.nn import GCNConv, RBCDAttack, global_add_pool
 from torch_geometric.testing import is_full_test
+from torch_geometric.utils import to_undirected
 
 
 class GCN(torch.nn.Module):
@@ -44,22 +44,21 @@ class GNN(torch.nn.Module):
 @pytest.mark.parametrize('budget', [1])
 @pytest.mark.parametrize('is_undirected_graph', [False, True])
 def test_attack(mode, model, budget, is_undirected_graph):
-    attack = RBCDAttack(
-        model, mode=mode, epochs=4, epochs_resampling=2, max_final_samples=2,
-        log=False, is_undirected_graph=is_undirected_graph)
+    attack = RBCDAttack(model, mode=mode, epochs=4, epochs_resampling=2,
+                        max_final_samples=2, log=False,
+                        is_undirected_graph=is_undirected_graph)
     assert attack.__repr__() == 'RBCDAttack()'
 
     x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6],
-                               [1, 2, 3, 4, 5, 6, 7]])
+    edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6, 7]])
     if is_undirected_graph:
         edge_index = to_undirected(edge_index)
 
     if isinstance(model, GNN):
         y = torch.tensor([0])
         # all nodes belong to same graph
-        kwargs = dict(batch=torch.zeros(
-            x.shape[0], dtype=int, device=x.device))
+        kwargs = dict(
+            batch=torch.zeros(x.shape[0], dtype=int, device=x.device))
     else:
         y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
         kwargs = {}
