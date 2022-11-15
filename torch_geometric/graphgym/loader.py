@@ -4,6 +4,11 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
+from torch_geometric.data.lightning_datamodule import (
+    LightningDataset,
+    LightningLinkData,
+    LightningNodeData,
+)
 from torch_geometric.datasets import (
     PPI,
     Amazon,
@@ -15,17 +20,11 @@ from torch_geometric.datasets import (
     TUDataset,
 )
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.transform import (
-    create_link_label,
-    neg_sampling_transform,
-)
+from torch_geometric.graphgym.models.transform import create_link_label
 from torch_geometric.loader import (
     ClusterLoader,
-    DataLoader,
-    GraphSAINTEdgeSampler,
     GraphSAINTNodeSampler,
     GraphSAINTRandomWalkSampler,
-    NeighborSampler,
     RandomNodeSampler,
 )
 from torch_geometric.utils import (
@@ -142,8 +141,7 @@ def load_ogb(name, dataset_dir):
         splits = dataset.get_edge_split()
         id = splits['train']['edge'].T
         if cfg.dataset.resample_negative:
-            set_dataset_attr(dataset, 'train_pos_edge_index', id, id.shape[1])
-            dataset.transform = neg_sampling_transform
+            set_dataset_attr(dataset, 'train_edge_index', id, id.shape[1])
         else:
             id_neg = negative_sampling(edge_index=id,
                                        num_nodes=dataset.data.num_nodes,
@@ -245,96 +243,66 @@ def create_dataset():
     return dataset
 
 
-def get_loader(dataset, sampler, batch_size, shuffle=True):
-    if sampler == "full_batch" or len(dataset) > 1:
-        loader_train = DataLoader(dataset, batch_size=batch_size,
-                                  shuffle=shuffle, num_workers=cfg.num_workers,
-                                  pin_memory=True)
-    elif sampler == "neighbor":
-        loader_train = NeighborSampler(
-            dataset[0], sizes=cfg.train.neighbor_sizes[:cfg.gnn.layers_mp],
-            batch_size=batch_size, shuffle=shuffle,
-            num_workers=cfg.num_workers, pin_memory=True)
-    elif sampler == "random_node":
-        loader_train = RandomNodeSampler(dataset[0],
-                                         num_parts=cfg.train.train_parts,
-                                         shuffle=shuffle,
-                                         num_workers=cfg.num_workers,
-                                         pin_memory=True)
-    elif sampler == "saint_rw":
-        loader_train = \
-            GraphSAINTRandomWalkSampler(dataset[0],
-                                        batch_size=batch_size,
-                                        walk_length=cfg.train.walk_length,
-                                        num_steps=cfg.train.iter_per_epoch,
-                                        sample_coverage=0,
-                                        shuffle=shuffle,
-                                        num_workers=cfg.num_workers,
-                                        pin_memory=True)
-    elif sampler == "saint_node":
-        loader_train = \
-            GraphSAINTNodeSampler(dataset[0], batch_size=batch_size,
-                                  num_steps=cfg.train.iter_per_epoch,
-                                  sample_coverage=0, shuffle=shuffle,
-                                  num_workers=cfg.num_workers,
-                                  pin_memory=True)
-    elif sampler == "saint_edge":
-        loader_train = \
-            GraphSAINTEdgeSampler(dataset[0], batch_size=batch_size,
-                                  num_steps=cfg.train.iter_per_epoch,
-                                  sample_coverage=0, shuffle=shuffle,
-                                  num_workers=cfg.num_workers,
-                                  pin_memory=True)
-    elif sampler == "cluster":
-        loader_train = \
-            ClusterLoader(dataset[0],
-                          num_parts=cfg.train.train_parts,
-                          save_dir="{}/{}".format(cfg.dataset.dir,
-                                                  cfg.dataset.name.replace(
-                                                      "-", "_")),
-                          batch_size=batch_size, shuffle=shuffle,
-                          num_workers=cfg.num_workers,
-                          pin_memory=True)
-
-    else:
-        raise NotImplementedError("%s sampler is not implemented!" % sampler)
-    return loader_train
-
-
 def create_loader():
     """
-    Create data loader object
+    Create a LightningDataset object
 
-    Returns: List of PyTorch data loaders
+    Returns: PyG LightningDataset object
 
     """
+    # Provide backward compatibility for old config files
+    if cfg.train.sampler == "full_batch":
+        cfg.train.sampler = "full"
+
     dataset = create_dataset()
-    # train loader
+
     if cfg.dataset.task == 'graph':
-        id = dataset.data['train_graph_index']
-        loaders = [
-            get_loader(dataset[id], cfg.train.sampler, cfg.train.batch_size,
-                       shuffle=True)
-        ]
-        delattr(dataset.data, 'train_graph_index')
+        train_id = dataset.data['train_graph_index']
+        val_id = dataset.data['val_graph_index']
+        test_id = dataset.data['test_graph_index']
+        return LightningDataset(train_dataset=dataset[train_id],
+                                val_dataset=dataset[val_id],
+                                test_dataset=dataset[test_id],
+                                batch_size=cfg.train.batch_size,
+                                num_workers=cfg.num_workers)
+
+    if len(dataset) > 1:
+        LightningDataset(dataset, batch_size=cfg.train.batch_size,
+                         num_workers=cfg.num_workers)
+    data = dataset[0]
+
+    if cfg.dataset.task in ['link_pred', 'edge']:
+        if cfg.train.sampler in ["full", "neighbor", 'link_neighbor']:
+            return LightningLinkData(
+                data=data, loader=cfg.train.sampler,
+                batch_size=cfg.train.batch_size, num_workers=cfg.num_workers,
+                num_neighbors=cfg.train.neighbor_sizes, neg_sampling_ratio=1.0
+                if cfg.dataset.resample_negative else 0.0)
+
     else:
-        loaders = [
-            get_loader(dataset, cfg.train.sampler, cfg.train.batch_size,
-                       shuffle=True)
-        ]
-
-    # val and test loaders
-    for i in range(cfg.share.num_splits - 1):
-        if cfg.dataset.task == 'graph':
-            split_names = ['val_graph_index', 'test_graph_index']
-            id = dataset.data[split_names[i]]
-            loaders.append(
-                get_loader(dataset[id], cfg.val.sampler, cfg.train.batch_size,
-                           shuffle=False))
-            delattr(dataset.data, split_names[i])
-        else:
-            loaders.append(
-                get_loader(dataset, cfg.val.sampler, cfg.train.batch_size,
-                           shuffle=False))
-
-    return loaders
+        if cfg.train.sampler in ["full", "neighbor"]:
+            return LightningNodeData(data=data, loader=cfg.train.sampler,
+                                     batch_size=cfg.train.batch_size,
+                                     num_workers=cfg.num_workers,
+                                     num_neighbors=cfg.train.neighbor_sizes)
+        elif cfg.train.sampler == "random_node":
+            return LightningNodeData(
+                data=data, loader=RandomNodeSampler,
+                num_parts=data.num_nodes // cfg.train.batch_size,
+                num_workers=cfg.num_workers)
+        elif cfg.train.sampler == "saint_rw":
+            return LightningNodeData(data=data,
+                                     loader=GraphSAINTRandomWalkSampler,
+                                     batch_size=cfg.train.batch_size,
+                                     walk_length=cfg.train.walk_length,
+                                     num_steps=cfg.train.iter_per_epoch,
+                                     sample_coverage=0,
+                                     num_workers=cfg.num_workers)
+        elif cfg.train.sampler == "saint_node":
+            return LightningNodeData(data=data, loader=GraphSAINTNodeSampler,
+                                     batch_size=cfg.train.batch_size,
+                                     num_steps=cfg.train.iter_per_epoch,
+                                     sample_coverage=0,
+                                     num_workers=cfg.num_workers)
+    raise NotImplementedError("%s sampler is not implemented!" %
+                              cfg.train.sampler)
