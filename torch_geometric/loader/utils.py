@@ -36,6 +36,10 @@ class InputData:
 
 def index_select(value: FeatureTensorType, index: Tensor,
                  dim: int = 0) -> Tensor:
+
+    # PyTorch currently only supports indexing via `torch.int64` :(
+    index = index.to(torch.int64)
+
     if isinstance(value, Tensor):
         out: Optional[Tensor] = None
         if torch.utils.data.get_worker_info() is not None:
@@ -91,7 +95,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             edge_attr = value.storage.value()
             if edge_attr is not None:
                 index = index.to(edge_attr.device)
-                edge_attr = edge_attr[index]
+                edge_attr = index_select(edge_attr, index, dim=0)
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
@@ -112,7 +116,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                     perm = perm.to(value.device)
                 elif isinstance(value, np.ndarray):
                     perm = perm.cpu()
-                out_store[key] = index_select(value, perm[index], dim=dim)
+                out_store[key] = index_select(
+                    value,
+                    perm[index.to(torch.int64)],
+                    dim=dim,
+                )
 
     return store
 
