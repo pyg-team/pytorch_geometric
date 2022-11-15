@@ -182,14 +182,23 @@ def test_captum_attribution_methods_hetero(mask_type, method):
         for node_type in metadata[0]:
             num_nodes = data[node_type].num_nodes
             num_node_feats = data[node_type].x.shape[1]
-            assert x_attr_dict[node_type].shape == (1, num_nodes,
-                                                    num_node_feats)
+            assert x_attr_dict[node_type].shape == (num_nodes, num_node_feats)
     elif mask_type == 'edge':
         assert len(attributions) == len(metadata[1])
         _, edge_attr_dict = captum_output_to_dicts(attributions, mask_type,
                                                    metadata)
         for edge_type in metadata[1]:
             num_edges = data[edge_type].edge_index.shape[1]
-            assert edge_attr_dict[edge_type].shape == (1, num_edges)
+            assert edge_attr_dict[edge_type].shape == (num_edges, )
     else:
-        pass
+        assert len(attributions) == len(metadata[0]) + len(metadata[1])
+        x_attr_dict, edge_attr_dict = captum_output_to_dicts(
+            attributions, mask_type, metadata)
+        for edge_type in metadata[1]:
+            num_edges = data[edge_type].edge_index.shape[1]
+            assert edge_attr_dict[edge_type].shape == (num_edges, )
+
+        for node_type in metadata[0]:
+            num_nodes = data[node_type].num_nodes
+            num_node_feats = data[node_type].x.shape[1]
+            assert x_attr_dict[node_type].shape == (num_nodes, num_node_feats)

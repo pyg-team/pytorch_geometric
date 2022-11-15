@@ -174,12 +174,14 @@ def to_captum_input(data: Union[HeteroData, Data],
 def captum_output_to_dicts(
     captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
-    """Convert the output of Captum.attribute to `x_attr_dict` and
-    `edge_attr_dict`"""
+    """Convert the output of `Captum.attribute` which is a tuple of
+    attributions to two dictonaries with node and edge attribution
+    tesnors."""
     _raise_on_invalid_mask_type(mask_type)
     node_types = metadata[0]
     edge_types = metadata[1]
     x_attr_dict, edge_attr_dict = None, None
+    captum_attrs = [captum_attr.squeeze(0) for captum_attr in captum_attrs]
     if mask_type == "node":
         assert len(node_types) == len(captum_attrs)
         x_attr_dict = dict(zip(node_types, captum_attrs))
