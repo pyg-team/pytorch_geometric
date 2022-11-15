@@ -100,8 +100,12 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.data = data
         self.edge_type = edge_type
         self.link_sampler = link_sampler
-        self.input_data = InputData(edge_label_index[0], edge_label_index[1],
-                                    edge_label, edge_label_time)
+        self.input_data = InputData(
+            edge_label_index[0].clone(),
+            edge_label_index[1].clone(),
+            edge_label,
+            edge_label_time,
+        )
         self.neg_sampling_ratio = neg_sampling_ratio
         self.transform = transform
         self.filter_per_worker = filter_per_worker
