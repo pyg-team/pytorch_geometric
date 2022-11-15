@@ -203,7 +203,6 @@ def test_gnn_explainer_node_regression_single_output(edge_mask_type,
         mode="regression",
     )
 
-    explainer = GNNExplainer()
     model = model()
 
     x = torch.randn(8, 3)
@@ -211,14 +210,17 @@ def test_gnn_explainer_node_regression_single_output(edge_mask_type,
                                [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index)
 
-    # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, model=model,
-                            target=out, target_index=None,
-                            explainer_config=explainer_config,
-                            model_config=model_config, index=0)
+    if node_mask_type == "attributes":
+        for shared_mask in [True, False]:
+            explainer = GNNExplainer(shared_mask=shared_mask, )
+            # try to explain prediction for node 0
+            explanation = explainer(x=x, edge_index=edge_index, model=model,
+                                    target=out, target_index=None,
+                                    explainer_config=explainer_config,
+                                    model_config=model_config, index=0)
 
-    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
-                      explanation)
+            check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                              explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -388,7 +390,6 @@ def test_gnn_explainer_graph_regression(edge_mask_type, node_mask_type, model,
         mode="regression",
     )
 
-    explainer = GNNExplainer()
     model = model()
 
     x = torch.randn(8, 3)
@@ -400,16 +401,18 @@ def test_gnn_explainer_graph_regression(edge_mask_type, node_mask_type, model,
         target_index = 0
     else:
         target_index = None
+    if node_mask_type == "attributes":
+        for shared in [True, False]:
+            explainer = GNNExplainer(shared_mask=shared)
+            # try to explain prediction for node 0
+            explanation = explainer(x=x, edge_index=edge_index, model=model,
+                                    target=out, target_index=target_index,
+                                    explainer_config=explainer_config,
+                                    model_config=model_config, edge_attr=None,
+                                    batch=None)
 
-    # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, model=model,
-                            target=out, target_index=target_index,
-                            explainer_config=explainer_config,
-                            model_config=model_config, edge_attr=None,
-                            batch=None)
-
-    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
-                      explanation)
+            check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                              explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)

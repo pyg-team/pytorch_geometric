@@ -87,17 +87,17 @@ class GNNExplainer(ExplainerAlgorithm):
         self.clear(model)
 
         if model_config.task_level == ModelTaskLevel.node:
-            node_mask, edge_mask = self.explain_node(model, x, edge_index,
-                                                     explainer_config,
-                                                     model_config, target,
-                                                     index, target_index,
-                                                     **kwargs)
-        elif model_config.task_level == ModelTaskLevel.graph:
-            node_mask, edge_mask = self.explain_graph(model, x, edge_index,
+            node_mask, edge_mask = self._explain_node(model, x, edge_index,
                                                       explainer_config,
                                                       model_config, target,
-                                                      target_index, index=None,
+                                                      index, target_index,
                                                       **kwargs)
+        elif model_config.task_level == ModelTaskLevel.graph:
+            node_mask, edge_mask = self._explain_graph(model, x, edge_index,
+                                                       explainer_config,
+                                                       model_config, target,
+                                                       target_index,
+                                                       index=None, **kwargs)
         else:
             raise ValueError(
                 'GNNExplainer does not support task level {}'.format(
@@ -116,12 +116,12 @@ class GNNExplainer(ExplainerAlgorithm):
         return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
                            node_mask=node_mask, node_feat_mask=node_feat_mask)
 
-    def explain_graph(self, model: torch.nn.Module, x: Tensor,
-                      edge_index: Tensor, explainer_config: ExplainerConfig,
-                      model_config: ModelConfig, target: Tensor,
-                      target_index: Optional[Union[int, Tensor]] = None,
-                      index: Optional[Union[int, Tensor]] = None,
-                      **kwargs) -> Tuple[Tensor, Tensor]:
+    def _explain_graph(self, model: torch.nn.Module, x: Tensor,
+                       edge_index: Tensor, explainer_config: ExplainerConfig,
+                       model_config: ModelConfig, target: Tensor,
+                       target_index: Optional[Union[int, Tensor]] = None,
+                       index: Optional[Union[int, Tensor]] = None,
+                       **kwargs) -> Tuple[Tensor, Tensor]:
         self.train_node_edge_mask(model, x, edge_index, explainer_config,
                                   model_config, target, target_index, index,
                                   kwargs)
@@ -133,12 +133,12 @@ class GNNExplainer(ExplainerAlgorithm):
             edge_mask = torch.ones(edge_index.size(1))
         return node_mask, edge_mask
 
-    def explain_node(self, model: torch.nn.Module, x: Tensor,
-                     edge_index: Tensor, explainer_config: ExplainerConfig,
-                     model_config: ModelConfig, target: Tensor,
-                     index: Optional[Union[int, Tensor]],
-                     target_index: Optional[Union[int, Tensor]] = None,
-                     **kwargs) -> Tuple[Tensor, Tensor]:
+    def _explain_node(self, model: torch.nn.Module, x: Tensor,
+                      edge_index: Tensor, explainer_config: ExplainerConfig,
+                      model_config: ModelConfig, target: Tensor,
+                      index: Optional[Union[int, Tensor]],
+                      target_index: Optional[Union[int, Tensor]] = None,
+                      **kwargs) -> Tuple[Tensor, Tensor]:
 
         # if we are dealing with a node level task, we can restrict the
         # computation to the node of interest and its computation graph
@@ -257,8 +257,9 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if return_type == ModelReturnType.probs:
             y_hat = y_hat.log()
-        if return_type == ModelReturnType.raw:
+        elif return_type == ModelReturnType.raw:
             y_hat = y_hat.log_softmax(dim=-1)
+
         if node_index is not None and node_index >= 0:
             loss = -y_hat[node_index, y[node_index]]
         else:
