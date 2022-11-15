@@ -232,12 +232,9 @@ class RBCDAttack(Attack):
         # Prepare attack and define `self.iterable` to iterate over
         self._prepare(x, edge_index, labels, budget, idx_attack, **kwargs)
 
-        if self.log:  # pragma: no cover
-            pbar = tqdm(total=len(self.step_sequence))
-            pbar.set_description('Attack model')
-
         # Loop over the epochs (Algorithm 1, line 5)
-        for step in self.step_sequence:
+        for step in tqdm(
+                self.step_sequence, disable=not self.log, desc='Attack model'):
             loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
@@ -246,12 +243,6 @@ class RBCDAttack(Attack):
 
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
-
-            if self.log:  # pragma: no cover
-                pbar.update(1)
-
-        if self.log:  # pragma: no cover
-            pbar.close()
 
         ret = self._close(x, edge_index, labels, budget, idx_attack, **kwargs)
 
@@ -483,7 +474,7 @@ class RBCDAttack(Attack):
         if with_weight:
             self.block_edge_weight = self.block_edge_weight[is_not_sl]
 
-    def _sample_random_block(self, budget: int = 0) -> None:
+    def _sample_random_block(self, budget: int = 0):
         for _ in range(self.coeffs['max_trials_sampling']):
             self.current_block = torch.randint(
                 RBCDAttack._num_possible_edges(self.n,
@@ -506,11 +497,11 @@ class RBCDAttack(Attack):
         raise RuntimeError('Sampling random block was not successful. '
                            'Please decrease `budget`.')
 
-    def _resample_random_block(self, budget: int) -> None:
+    def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight <=
-                      self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight
+                      <= self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -609,8 +600,8 @@ class RBCDAttack(Attack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr /
-              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr
+              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -625,8 +616,8 @@ class RBCDAttack(Attack):
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Convert a linear index to index of upper triangular matrix."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n *
-                       (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n
+                       * (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
@@ -639,7 +630,7 @@ class RBCDAttack(Attack):
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
-    def _project(budget: int, values: Tensor, eps: float = 1e-7):
+    def _project(budget: int, values: Tensor, eps: float = 1e-7) -> Tensor:
         r"""Project `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
         if torch.clamp(values, 0, 1).sum() > budget:
             left = (values - 1).min()
@@ -649,13 +640,14 @@ class RBCDAttack(Attack):
         return torch.clamp(values, min=eps, max=1 - eps)
 
     @staticmethod
-    def _bisection(edge_weights, a, b, n_pert, eps=1e-5, max_iter=1e3):
+    def _bisection(edge_weights: Tensor, a: float, b: float, n_pert: int,
+                   eps=1e-5, max_iter=1e3) -> Tensor:
         """Bisection search for projection."""
-        def shift(offset):
+        def shift(offset: float):
             return (torch.clamp(edge_weights - offset, 0, 1).sum() - n_pert)
 
         miu = a
-        for i in range(int(max_iter)):
+        for _ in range(int(max_iter)):
             miu = (a + b) / 2
             # Check if middle point is root
             if (shift(miu) == 0.0):
@@ -741,6 +733,7 @@ class RBCDAttack(Attack):
         margin_ = RBCDAttack._margin(logits, labels, idx_mask)
         return margin_.mean()
 
+    @staticmethod
     def _masked_cross_entropy(log_logits: Tensor, labels: Tensor,
                               idx_mask: Optional[Tensor] = None) -> Tensor:
         """Calculate masked cross entropy loss, a node-classification loss that

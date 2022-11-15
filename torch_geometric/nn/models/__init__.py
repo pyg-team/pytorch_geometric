@@ -60,7 +60,7 @@ __all__ = [
     'LightGCN',
     'MaskLabel',
     'GroupAddRev',
-    'RBCDAttack'
+    'RBCDAttack',
 ]
 
 classes = __all__

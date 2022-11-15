@@ -16,8 +16,7 @@ dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 # IMPORTANT: Edge weights are being ignored later and most adjacency
 # preprocessings should be part of the model (part of backpropagation)
-transform = T.Compose([T.NormalizeFeatures()])
-dataset = Planetoid(path, dataset, transform=transform)
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 
