@@ -13,7 +13,7 @@ DATASET_NAME = 'some_dataset'
 CONFIG = {"hello": "world"}
 
 
-# @withPackage('huggingface_hub')
+@withPackage('huggingface_hub')
 @pytest.fixture
 def dummy_model_class():
     class DummyModel(torch.nn.Module, PyGModelHubMixin):
@@ -25,6 +25,7 @@ def dummy_model_class():
     return DummyModel
 
 
+@withPackage('huggingface_hub')
 @pytest.fixture
 def model(dummy_model_class):
     return dummy_model_class(MODEL_NAME, DATASET_NAME, CONFIG)
