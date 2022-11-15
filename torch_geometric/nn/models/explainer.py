@@ -257,7 +257,8 @@ class CaptumHeteroModel(CaptumModel):
 
         if len_remaining_args > 0:
             # If there are args other than `x_dict` and `edge_index_dict`
-            x = self.model(x_dict, edge_index_dict, *args[-len_remaining_args:])
+            x = self.model(x_dict, edge_index_dict,
+                           *args[-len_remaining_args:])
         else:
             x = self.model(x_dict, edge_index_dict)
 
