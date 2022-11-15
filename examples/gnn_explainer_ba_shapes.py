@@ -38,8 +38,8 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index,
-                 edge_weight=data.edge_weight).argmax(dim=-1)
+    pred = model.forward(data.x, data.edge_index,
+                         edge_weight=data.edge_weight).argmax(dim=-1)
 
     train_correct = int((pred[train_idx] == data.y[train_idx]).sum())
     train_acc = train_correct / train_idx.size(0)
@@ -50,35 +50,41 @@ def test():
     return train_acc, test_acc
 
 
-for epoch in range(1, 2001):
+pbar = tqdm(range(1, 2001))
+for epoch in pbar:
     loss = train()
     if epoch % 200 == 0:
         train_acc, test_acc = test()
-        print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, '
-              f'Train: {train_acc:.4f}, Test: {test_acc:.4f}')
-
+        pbar.set_description(f'Loss: {loss:.4f}, '
+                             f'Train: {train_acc:.4f}, Test: {test_acc:.4f}')
+pbar.close()
 model.eval()
-targets, preds = [], []
-explainer = Explainer(
-    model=model, algorithm=GNNExplainer(epochs=300),
-    explainer_config=ExplainerConfig(explanation_type="model",
-                                     node_mask_type="attributes",
-                                     edge_mask_type="object"),
-    model_config=ModelConfig(mode="classification", task_level="node",
-                             return_type="raw"))
 
-# Explanation ROC AUC over all test nodes:
-loop_mask = data.edge_index[0] != data.edge_index[1]
-for node_idx in tqdm(data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()):
-    explanation = explainer(x=data.x, edge_index=data.edge_index,
-                            target_index=None, index=node_idx,
-                            edge_weight=data.edge_weight)
+for explanation_type in ["phenomenon", "model"]:
+    targets, preds = [], []
+    explainer = Explainer(
+        model=model, algorithm=GNNExplainer(epochs=300),
+        explainer_config=ExplainerConfig(explanation_type=explanation_type,
+                                         node_mask_type="attributes",
+                                         edge_mask_type="object"),
+        model_config=ModelConfig(mode="classification", task_level="node",
+                                 return_type="raw"))
 
-    subgraph = k_hop_subgraph(node_idx, num_hops=3, edge_index=data.edge_index)
-    expl_edge_mask = explanation.edge_mask[loop_mask]
-    subgraph_edge_mask = subgraph[3][loop_mask]
-    targets.append(data.edge_label[subgraph_edge_mask].cpu())
-    preds.append(expl_edge_mask[subgraph_edge_mask].cpu())
+    # Explanation ROC AUC over all test nodes:
+    loop_mask = data.edge_index[0] != data.edge_index[1]
+    for node_idx in tqdm(
+            data.expl_mask.nonzero(as_tuple=False).view(-1).tolist(),
+            leave=False, desc="Training GNNExplainer"):
+        explanation = explainer(x=data.x, edge_index=data.edge_index,
+                                target_index=None, index=node_idx,
+                                target=data.y, edge_weight=data.edge_weight)
 
-auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
-print(f'Mean ROC AUC: {auc:.4f}')
+        subgraph = k_hop_subgraph(node_idx, num_hops=3,
+                                  edge_index=data.edge_index)
+        expl_edge_mask = explanation.edge_mask[loop_mask]
+        subgraph_edge_mask = subgraph[3][loop_mask]
+        targets.append(data.edge_label[subgraph_edge_mask].cpu())
+        preds.append(expl_edge_mask[subgraph_edge_mask].cpu())
+
+    auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
+    print(f'Mean ROC AUC (explanation type {explanation_type:10}): {auc:.4f}')
