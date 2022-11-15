@@ -13,6 +13,7 @@ try:
     )
 except ImportError:
     print('please install huggingface hub to use this mixin')
+    PyGModelHubMixin = None
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"

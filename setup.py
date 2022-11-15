@@ -74,6 +74,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
+        'huggingface': huggingface_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,
