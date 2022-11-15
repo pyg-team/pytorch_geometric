@@ -240,10 +240,10 @@ class MessagePassing(torch.nn.Module):
 
     def __lift__(self, src, edge_index, dim):
         if is_torch_sparse_tensor(edge_index):
-            # TODO: should we use `rowptr` when `dim=1`` as like SparseTensor?
             assert dim == 0 or dim == 1
             index = edge_index._indices()[1 - dim]
             return src.index_select(self.node_dim, index)
+
         elif isinstance(edge_index, Tensor):
             try:
                 index = edge_index[dim]
@@ -325,19 +325,21 @@ class MessagePassing(torch.nn.Module):
             out['edge_index'] = None
             out['edge_index_i'] = indices[0]
             out['edge_index_j'] = indices[1]
-            out['ptr'] = None  # TODO: should we handle this?
+            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
             if out.get('edge_weight', None) is None:
                 out['edge_weight'] = values
             if out.get('edge_attr', None) is None:
                 out['edge_attr'] = values
             if out.get('edge_type', None) is None:
                 out['edge_type'] = values
+
         elif isinstance(edge_index, Tensor):
             out['adj_t'] = None
             out['edge_index'] = edge_index
             out['edge_index_i'] = edge_index[i]
             out['edge_index_j'] = edge_index[j]
             out['ptr'] = None
+
         elif isinstance(edge_index, SparseTensor):
             out['adj_t'] = edge_index
             out['edge_index'] = None
@@ -365,7 +367,7 @@ class MessagePassing(torch.nn.Module):
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
                 :obj:`torch_sparse.SparseTensor` or a
-                :obj:`torch.sparse.Tensor that defines the underlying
+                :obj:`torch.sparse.Tensor` that defines the underlying
                 graph connectivity/message passing flow.
                 :obj:`edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
@@ -599,7 +601,7 @@ class MessagePassing(torch.nn.Module):
         explicitly need to be materialized.
         This function will only gets called in case it is implemented and
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`
-        or a `torch.sparse.Tensor`.
+        or a :obj:`torch.sparse.Tensor`.
         """
         raise NotImplementedError
 
