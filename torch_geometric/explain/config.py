@@ -16,6 +16,7 @@ class MaskType(Enum):
     object = 'object'
     attributes = 'attributes'
     both = 'both'
+    common_attributes = 'common_attributes'
 
 
 class ModelMode(Enum):
@@ -74,6 +75,9 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"attributes"`: Will mask the node attributes.
 
                 - :obj:`"both"`: Will mask both the node and its attributes..
+
+                - :obj:`"common_attributes"`: Will share the attribute mask
+                    across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
             on edges. Same types as :obj:`node_mask_type`.

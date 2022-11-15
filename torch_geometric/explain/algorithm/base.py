@@ -24,7 +24,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         model_config: ModelConfig,
         target: Tensor,
         target_index: Optional[Union[int, Tensor]] = None,
-        index: Optional[Union[int, Tensor]] = None,
+        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -38,7 +38,7 @@ class ExplainerAlgorithm(torch.nn.Module):
             target (torch.Tensor): the target of the model.
             target_index (int or torch.Tensor, optional): The target indices to
                 explain. (default: :obj:`None`)
-            index (Union[int, Tensor], optional): the node/edge index
+            node_index (Union[int, Tensor], optional): the node/edge index
                 to explain. Can be a single index if no batch is provided, or a
                 tuple of indices if a batch is provided. only used if the model
                 task level is :obj:`"node"` or :obj:`"edge"`.
