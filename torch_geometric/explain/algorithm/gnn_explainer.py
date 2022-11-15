@@ -139,7 +139,7 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
-        self.train_node_edge_mask(
+        self._train_node_edge_mask(
             model,
             x,
             edge_index,
@@ -187,7 +187,7 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             target = target[subset]
 
-        self.train_node_edge_mask(
+        self._train_node_edge_mask(
             model,
             x,
             edge_index,
@@ -219,7 +219,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return node_mask, edge_mask
 
-    def train_node_edge_mask(
+    def _train_node_edge_mask(
         self,
         model,
         x,
@@ -275,7 +275,7 @@ class GNNExplainer(ExplainerAlgorithm):
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
 
-    def loss_regression(
+    def _loss_regression(
         self,
         y_hat: torch.Tensor,
         y: torch.Tensor,
@@ -293,7 +293,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return loss_
 
-    def loss_classification(
+    def _loss_classification(
         self,
         y_hat: torch.Tensor,
         y: torch.Tensor,
@@ -325,10 +325,10 @@ class GNNExplainer(ExplainerAlgorithm):
     ) -> torch.Tensor:
 
         if model_mode == ModelMode.regression:
-            loss = self.loss_regression(y_hat, y, target_idx, node_index)
+            loss = self._loss_regression(y_hat, y, target_idx, node_index)
         else:
-            loss = self.loss_classification(y_hat, y, return_type, target_idx,
-                                            node_index)
+            loss = self._loss_classification(y_hat, y, return_type, target_idx,
+                                             node_index)
 
         if edge_mask_type is not None:
             m = self.edge_mask.sigmoid()
@@ -537,7 +537,6 @@ class GNNExplainer_:
             ),
             **kwargs,
         )
-        print(explanation.available_explanations)
         return self._convert_output(explanation, edge_index)
 
     def _convert_output(self, explanation, edge_index):

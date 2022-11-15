@@ -75,13 +75,7 @@ class GAT(torch.nn.Module):
         self.conv1 = GATConv(3, 16, heads=2, concat=True)
         self.conv2 = GATConv(2 * 16, 7, heads=2, concat=False)
 
-    def forward(
-        self,
-        x,
-        edge_index,
-        batch=None,
-        **kwargs,
-    ):
+    def forward(self, x, edge_index, batch=None, **kwargs):
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
@@ -378,8 +372,12 @@ def test_gnn_explainer_node_classification_multioutput(
     GNN_classification_singleoutput,
 ])
 @pytest.mark.parametrize('return_type', return_types_classification)
-def test_gnn_explainer_graph_classification(edge_mask_type, node_mask_type,
-                                            model, return_type):
+def test_gnn_explainer_graph_classification(
+    edge_mask_type,
+    node_mask_type,
+    model,
+    return_type,
+):
     explainer_config = ExplainerConfig(
         explanation_type="model",
         node_mask_type=node_mask_type,
@@ -422,8 +420,12 @@ def test_gnn_explainer_graph_classification(edge_mask_type, node_mask_type,
     GNN_regression_multioutput,
 ])
 @pytest.mark.parametrize('return_type', return_types_regression)
-def test_gnn_explainer_graph_regression(edge_mask_type, node_mask_type, model,
-                                        return_type):
+def test_gnn_explainer_graph_regression(
+    edge_mask_type,
+    node_mask_type,
+    model,
+    return_type,
+):
     explainer_config = ExplainerConfig(
         explanation_type="model",
         node_mask_type=node_mask_type,
@@ -468,7 +470,12 @@ def test_gnn_explainer_graph_regression(edge_mask_type, node_mask_type, model,
 @pytest.mark.parametrize('return_type', return_types_regression)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
 def test_gnn_explainer_with_meta_explainer_regression_graph(
-        edge_mask_type, node_mask_type, model, return_type, explanation_type):
+    edge_mask_type,
+    node_mask_type,
+    model,
+    return_type,
+    explanation_type,
+):
     explainer_config = ExplainerConfig(
         explanation_type=explanation_type,
         node_mask_type=node_mask_type,
