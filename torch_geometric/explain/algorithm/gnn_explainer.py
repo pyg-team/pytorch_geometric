@@ -67,7 +67,9 @@ class GNNExplainer(ExplainerAlgorithm):
         self.epochs = epochs
         self.lr = lr
         self.coeffs.update(kwargs)
+        # node_mask will never actually be None
         self.node_mask = None
+        # edge_mask is only None if edge_mask_type is != MaskType.object
         self.edge_mask = None
 
     def forward(
@@ -94,28 +96,17 @@ class GNNExplainer(ExplainerAlgorithm):
         model.eval()
 
         if model_config.task_level == ModelTaskLevel.node:
-            node_mask, edge_mask = self._explain_node(
-                model,
-                x,
-                edge_index,
-                explainer_config,
-                model_config,
-                target,
-                node_index,
-                target_index,
-                **kwargs,
-            )
+            node_mask, edge_mask = self._explain_node(model, x, edge_index,
+                                                      explainer_config,
+                                                      model_config, target,
+                                                      node_index, target_index,
+                                                      **kwargs)
         elif model_config.task_level == ModelTaskLevel.graph:
-            node_mask, edge_mask = self._explain_graph(
-                model,
-                x,
-                edge_index,
-                explainer_config,
-                model_config,
-                target,
-                target_index,
-                **kwargs,
-            )
+            node_mask, edge_mask = self._explain_graph(model, x, edge_index,
+                                                       explainer_config,
+                                                       model_config, target,
+                                                       target_index, **kwargs)
+
         if explainer_config.node_mask_type == MaskType.object:
             node_feat_mask = None
         else:
@@ -139,17 +130,9 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
-        self._train_node_edge_mask(
-            model,
-            x,
-            edge_index,
-            explainer_config,
-            model_config,
-            target,
-            target_index,
-            None,
-            kwargs,
-        )
+        self._train_node_edge_mask(model, x, edge_index, explainer_config,
+                                   model_config, target, target_index, None,
+                                   **kwargs)
 
         node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
         if explainer_config.edge_mask_type == MaskType.object:
@@ -187,17 +170,9 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             target = target[subset]
 
-        self._train_node_edge_mask(
-            model,
-            x,
-            edge_index,
-            explainer_config,
-            model_config,
-            target,
-            target_index,
-            index,
-            kwargs,
-        )
+        self._train_node_edge_mask(model, x, edge_index, explainer_config,
+                                   model_config, target, target_index, index,
+                                   **kwargs)
 
         if explainer_config.node_mask_type == MaskType.common_attributes:
             node_mask = self.node_mask.detach().sigmoid().squeeze(0)
@@ -221,15 +196,15 @@ class GNNExplainer(ExplainerAlgorithm):
 
     def _train_node_edge_mask(
         self,
-        model,
-        x,
-        edge_index,
-        explainer_config,
-        model_config,
-        target,
-        target_index,
-        index,
-        kwargs,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        explainer_config: ExplainerConfig,
+        model_config: ModelConfig,
+        target: Tensor,
+        target_index: Optional[Union[int, Tensor]] = None,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
     ):
         self._initialize_masks(x, edge_index,
                                node_mask_type=explainer_config.node_mask_type,
