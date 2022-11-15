@@ -272,6 +272,7 @@ class CaptumHeteroModel(CaptumModel):
         return x
 
 
+# TODO rename this to to_captum_model
 def to_captum(
     model: torch.nn.Module, mask_type: str = "edge",
     output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
