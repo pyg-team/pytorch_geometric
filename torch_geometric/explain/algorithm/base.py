@@ -165,3 +165,17 @@ class ExplainerAlgorithm(torch.nn.Module):
         if return_type == ModelReturnType.raw:
             return y.log_softmax(dim=-1)
         return y
+
+    def _reshape_common_attributes(
+        self,
+        common_mask: Tensor,
+        number_object: int,
+    ) -> Tensor:
+        """Reshapes the common mask (1,F) to (N,F) where N is the number of
+        objects.
+
+        Args:
+            common_mask (Tensor): the common mask.
+            number_object (int): the number of objects.
+        """
+        return torch.stack([common_mask] * number_object, dim=0)
