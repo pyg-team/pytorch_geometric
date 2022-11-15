@@ -5,7 +5,12 @@ import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import ExplainerConfig, ModelConfig
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.utils.subgraph import get_num_hops
@@ -74,9 +79,20 @@ class ExplainerAlgorithm(torch.nn.Module):
     ###########################################################################
 
     @torch.no_grad()
-    def get_initial_prediction(self, model: torch.nn.Module, *args,
-                               **kwargs) -> Tensor:
+    def get_initial_prediction(
+        self,
+        model: torch.nn.Module,
+        *args,
+        return_type: ModelReturnType,
+        model_mode: ModelMode,
+        **kwargs,
+    ) -> Tensor:
         r"""Returns the initial prediction of the model.
+
+        If the model mode is :obj:`"regression"`, the prediction is returned as
+        a scalar value.
+        If the model mode :obj:`"classification"`, the prediction is returned
+        as the predicted class label.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -84,7 +100,10 @@ class ExplainerAlgorithm(torch.nn.Module):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        return model(*args, **kwargs)
+        out = model(*args, **kwargs)
+        if model_mode == ModelMode.classification:
+            out = out.argmax(dim=-1)
+        return out
 
     def subgraph(
         self,
@@ -133,3 +152,16 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
+        """Converts the model output to log-probabilities.
+
+        Args:
+            y (Tensor): output of the model.
+            return_type (ModelReturnType): the model return type.
+        """
+        if return_type == ModelReturnType.probs:
+            return y.log()
+        if return_type == ModelReturnType.raw:
+            return y.log_softmax(dim=-1)
+        return y
