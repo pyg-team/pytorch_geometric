@@ -114,7 +114,6 @@ class GNNExplainer(ExplainerAlgorithm):
                 model_config,
                 target,
                 target_index,
-                node_index=None,
                 **kwargs,
             )
         if explainer_config.node_mask_type == MaskType.attributes:
@@ -140,7 +139,6 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         target_index: Optional[Union[int, Tensor]] = None,
-        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
         self.train_node_edge_mask(
@@ -151,7 +149,7 @@ class GNNExplainer(ExplainerAlgorithm):
             model_config,
             target,
             target_index,
-            node_index,
+            None,
             kwargs,
         )
 
@@ -174,6 +172,10 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
+
+        if index is None:
+            raise ValueError("Please provide node index for node-level "
+                             "explanation")
 
         # if we are dealing with a node level task, we can restrict the
         # computation to the node of interest and its computation graph
