@@ -85,7 +85,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if isinstance(target_index, Tensor) and target_index.numel() > 1:
             raise ValueError(
-                'GNNExplainer only supports single target index for now')
+                "GNNExplainer only supports single target index for now")
 
         assert model_config.task_level in [
             ModelTaskLevel.graph, ModelTaskLevel.node

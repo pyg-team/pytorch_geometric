@@ -4,6 +4,6 @@ from .gnn_explainer import GNNExplainer
 
 __all__ = classes = [
     'ExplainerAlgorithm',
-    "DummyExplainer",
-    "GNNExplainer",
+    'DummyExplainer',
+    'GNNExplainer',
 ]
