@@ -1,5 +1,6 @@
 import copy
 import re
+import warnings
 from collections import defaultdict, namedtuple
 from collections.abc import Mapping
 from itertools import chain
@@ -477,6 +478,18 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 mapping[subtype] = getattr(store, key)
         return mapping
 
+    def _check_type_name(self, name: str):
+        if not name.isidentifier():
+            warnings.warn(f"The type '{name}' contains invalid characters "
+                          f"which might lead to unexpected behavior down the "
+                          f"line. To avoid any issues, ensure that your type "
+                          f"only contains letters, numbers and underscores.")
+        elif '__' in name:
+            warnings.warn(f"The type '{name}' contains double underscores "
+                          f"('__') which might lead to unexpected behavior "
+                          f"down the line. To avoid any issues, ensure that "
+                          f"your type only contains single underscores.")
+
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
         of a particular node type :attr:`key`.
@@ -491,6 +504,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         """
         out = self._node_store_dict.get(key, None)
         if out is None:
+            self._check_type_name(key)
             out = NodeStorage(_parent=self, _key=key)
             self._node_store_dict[key] = out
         return out
@@ -510,6 +524,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         key = (src, rel, dst)
         out = self._edge_store_dict.get(key, None)
         if out is None:
+            self._check_type_name(rel)
             out = EdgeStorage(_parent=self, _key=key)
             self._edge_store_dict[key] = out
         return out
