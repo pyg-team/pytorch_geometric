@@ -7,8 +7,8 @@ import torch
 from torch_geometric.testing import withPackage
 
 pytest.importorskip("huggingface_hub")
-PyGModelHubMixin = pytest.importorskip(
-    "torch_geometric.nn.model_hub.PyGModelHubMixin")
+
+from torch_geometric.nn.model_hub import PyGModelHubMixin  # noqa
 
 REPO_NAME = "test"
 MODEL_NAME = 'test_model'
@@ -25,6 +25,9 @@ def dummy_model_class():
             PyGModelHubMixin.__init__(self, model_name, dataset_name,
                                       model_kwargs)
 
+        def load_state_dict(self, state_dict, strict):
+            return None
+
     return DummyModel
 
 
@@ -34,17 +37,28 @@ def model(dummy_model_class):
     return dummy_model_class(MODEL_NAME, DATASET_NAME, CONFIG)
 
 
+def test_model_init(dummy_model_class):
+    model = dummy_model_class(
+        MODEL_NAME, DATASET_NAME, model_kwargs={
+            **CONFIG, "tensor": torch.Tensor([1, 2, 3])
+        })
+    assert model.model_config == CONFIG
+
+
 @withPackage('huggingface_hub')
 def test_save_pretrained(model, tmp_path):
-    model.save_pretrained(f"{str(tmp_path/REPO_NAME)}")
-    files = os.listdir(f"{tmp_path/REPO_NAME}")
+    save_directory = f"{str(tmp_path / REPO_NAME)}"
+    model._save_pretrained = Mock()
+    model.save_pretrained(save_directory)
+    files = os.listdir(save_directory)
     assert "model.pth" in files
     assert len(files) >= 1
+    model._save_pretrained.assert_called_with(save_directory)
 
 
 @withPackage('huggingface_hub')
 def test_save_pretrained_with_push_to_hub(model, tmp_path):
-    save_directory = f"{str(tmp_path/REPO_NAME)}"
+    save_directory = f"{str(tmp_path / REPO_NAME)}"
 
     model.push_to_hub = Mock()
     model.construct_model_card = Mock()
@@ -71,4 +85,24 @@ def test_from_pretrained(model, dummy_model_class, tmp_path):
     model.save_pretrained(save_directory)
 
     model = dummy_model_class.from_pretrained(save_directory)
+    assert model.model_config == CONFIG
+
+
+# @patch('huggingface_hub.hf_hub_download')
+def test__from_pretrained_local(model, dummy_model_class, tmp_path,
+                                monkeypatch):
+    hf_hub_download = Mock(side_effect='model')
+    monkeypatch.setattr("torch_geometric.nn.model_hub.hf_hub_download",
+                        hf_hub_download)
+    monkeypatch.setattr("torch_geometric.nn.model_hub.torch.load",
+                        lambda x, **kwargs: {'state_dict': 1})
+
+    model = dummy_model_class._from_pretrained(
+        model_id=MODEL_NAME, revision=None, cache_dir=None,
+        force_download=False, proxies=None, resume_download=True,
+        local_files_only=False, use_auth_token=False,
+        dataset_name=DATASET_NAME, model_name=MODEL_NAME, map_location="cpu",
+        strict=False, **CONFIG)
+
+    assert hf_hub_download == 1
     assert model.model_config == CONFIG

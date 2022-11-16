@@ -55,6 +55,11 @@ class PyGModelHubMixin(ModelHubMixin):
     model = N2V.from_pretrained([huggingface repo id/ local filepath],
         model_name='node2vec', dataset_name='Cora',
         edge_index=data.edge_index)
+
+    Note: at the moment the model card is fairly basic--
+    override the `construct_model_card` method if you want to have
+    a more detailed model card
+
     """
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
         """
@@ -80,8 +85,7 @@ class PyGModelHubMixin(ModelHubMixin):
                                   datasets=dataset_name, model_name=model_name
                                   # metrics=['accuracy'],
                                   )
-        card = ModelCard.from_template(
-            card_data, model_description='info about model generate [TODO]')
+        card = ModelCard.from_template(card_data)
         return card
 
     def _save_pretrained(self, save_directory: Union[Path, str]):
@@ -145,13 +149,12 @@ class PyGModelHubMixin(ModelHubMixin):
                 use_auth_token=use_auth_token,
                 local_files_only=local_files_only,
             )
-        print(model_kwargs)
+
         if 'config' in model_kwargs.keys():
             config = model_kwargs['config']
             model_kwargs.pop('config')
             model_kwargs = {**model_kwargs, **config}
 
-        print(model_kwargs)
         model = cls(dataset_name, model_name, model_kwargs)
 
         state_dict = torch.load(model_file, map_location=map_location)
