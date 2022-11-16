@@ -37,6 +37,7 @@ def model(dummy_model_class):
     return dummy_model_class(MODEL_NAME, DATASET_NAME, CONFIG)
 
 
+@withPackage('huggingface_hub')
 def test_model_init(dummy_model_class):
     model = dummy_model_class(
         MODEL_NAME, DATASET_NAME, model_kwargs={
@@ -48,11 +49,19 @@ def test_model_init(dummy_model_class):
 @withPackage('huggingface_hub')
 def test_save_pretrained(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
-    model._save_pretrained = Mock()
+    # model._save_pretrained = Mock()
     model.save_pretrained(save_directory)
     files = os.listdir(save_directory)
     assert "model.pth" in files
     assert len(files) >= 1
+    #
+
+
+@withPackage('huggingface_hub')
+def test_save_pretrained_internal(model, tmp_path):
+    save_directory = f"{str(tmp_path / REPO_NAME)}"
+    model._save_pretrained = Mock()
+    model.save_pretrained(save_directory)
     model._save_pretrained.assert_called_with(save_directory)
 
 
@@ -88,9 +97,9 @@ def test_from_pretrained(model, dummy_model_class, tmp_path):
     assert model.model_config == CONFIG
 
 
-# @patch('huggingface_hub.hf_hub_download')
-def test__from_pretrained_local(model, dummy_model_class, tmp_path,
-                                monkeypatch):
+@withPackage('huggingface_hub')
+def test_from_pretrained_internal(model, dummy_model_class, tmp_path,
+                                  monkeypatch):
     hf_hub_download = Mock(side_effect='model')
     monkeypatch.setattr("torch_geometric.nn.model_hub.hf_hub_download",
                         hf_hub_download)
@@ -104,5 +113,5 @@ def test__from_pretrained_local(model, dummy_model_class, tmp_path,
         dataset_name=DATASET_NAME, model_name=MODEL_NAME, map_location="cpu",
         strict=False, **CONFIG)
 
-    assert hf_hub_download == 1
+    assert hf_hub_download.call_count == 1
     assert model.model_config == CONFIG
