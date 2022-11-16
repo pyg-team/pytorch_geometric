@@ -6,8 +6,8 @@ from typing import Any, Dict, Optional, Tuple, Union
 import torch
 from torch.nn import Module
 
-from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
@@ -20,7 +20,7 @@ except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 try:
-    from pyg_lib.ops import segment_matmul # noqa
+    from pyg_lib.ops import segment_matmul  # noqa
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
@@ -278,7 +278,7 @@ class ToHeteroModule(MessagePassing):
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
                 information for each individual node type or the same
-                features combined into one tensor. 
+                features combined into one tensor.
             edge_index (Dict[Tuple[str, str, str], Tensor] or Tensor):
                 A dictionary holding graph connectivity information for
                 each individual edge type or the same values combined
