@@ -24,7 +24,8 @@ try:
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
-    def grouped_matmul(inputs: List[Tensor], others: List[Tensor]) -> List[Tensor]:
+
+    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
         raise NotImplementedError
 
 
@@ -175,22 +176,37 @@ class ToHeteroModule(MessagePassing):
             assert submodule_is_msg_passing_or_lin, "Current PyG"
             if isinstance(submodule, torch.nn.Linear) or isinstance(submodule, torch_geometric.nn.dense.Linear):
                 lin_module_idxs.append(i)
+
             modules.append(submodule)
         self.lin_module_idxs = lin_module_idxs
         modules_nested_list = []
-        for layer in modules:
-            modules_nested_list.append([])
-            for edge_type in self.edge_types:
-                modules_nested_list[-1].append(copy.deepcopy(layer))
-                if hasattr(layer, 'reset_parameters'):
-                    modules_nested_list[-1][-1].reset_parameters()
-                elif sum([p.numel() for p in layer.parameters()]) > 0:
-                    warnings.warn(
-                        f"'{target}' will be duplicated, but its parameters "
-                        f"cannot be reset. To suppress this warning, add a "
-                        f"'reset_parameters()' method to '{target}'")
+        for layer_idx, layer in enumerate(modules):
+            if layer_idx in self.lin_module_idxs:
+                if isinstance(layer, torch.nn.Linear):
+                    in_ft = layer.in_features
+                    out_ft = layer.out_features
+                else:
+                    in_ft = layer.in_channels
+                    out_ft = layer.out_channels
+                heterolin = torch_geometric.nn.dense.HeteroLinear(in_ft,
+                    out_ft,
+                    len(self.node_types)
+                )
+                heterolin.reset_parameters()
+                modules_nested_list.append(heterolin)
+            else:
+                modules_nested_list.append([])
+                for edge_type in self.edge_types:
+                    modules_nested_list[-1].append(copy.deepcopy(layer))
+                    if hasattr(layer, 'reset_parameters'):
+                        modules_nested_list[-1][-1].reset_parameters()
+                    elif sum([p.numel() for p in layer.parameters()]) > 0:
+                        warnings.warn(
+                            f"'{target}' will be duplicated, but its parameters "
+                            f"cannot be reset. To suppress this warning, add a "
+                            f"'reset_parameters()' method to '{target}'")
 
-        self.modules_nested_list = self.modules_nested_list
+        self.modules_nested_list = modules_nested_list
 
     def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor, edge_type: Tensor):
         r"""
@@ -205,9 +221,9 @@ class ToHeteroModule(MessagePassing):
         """
         # (TODO) Add Sparse Tensor support
         for layer_idx, typed_layers in enumerate(self.modules_nested_list):
-            layer_is_lin = layer_idx in self.lin_module_idxs
-            if layer_is_lin:
-                out = torch_geometric.nn.dense.HeteroLinear(x, node_type)
+            if layer_idx in self.lin_module_idxs:
+                # HeteroLinear layer
+                out = typed_layers(x, node_type)
             else:
                 for j, layer in enumerate(typed_layers):
                     e_idx_type_j = edge_index[:, edge_type == j]
@@ -230,11 +246,11 @@ class ToHeteroModule(MessagePassing):
         """
         # (TODO) Add Sparse Tensor support
         for layer_idx, typed_layers in enumerate(self.modules_nested_list):
-            layer_is_lin = layer_idx in self.lin_module_idxs
-            if layer_is_lin:
+            if layer_idx in self.lin_module_idxs:
                 x = torch.cat([x_j for x_j in x_dict.values()])
                 node_type = torch.cat([j * torch.ones(x_j.shape[0]) for j, x_j in enumerate(x_dict.values())])
-                o = torch_geometric.nn.dense.HeteroLinear(x, node_type)
+                # HeteroLinear layer
+                o = typed_layers(x, node_type)
                 o_dict = {}
                 for j, ntype_j in enumerate(x_dict.keys()):
                     o_dict[ntype_j] = o[node_type == j, :]
