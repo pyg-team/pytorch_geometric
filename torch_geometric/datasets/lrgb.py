@@ -23,13 +23,19 @@ class LRGBDataset(InMemoryDataset):
     `source code <https://github.com/vijaydwivedi75/lrgb>`_ for more details
     on the individual datasets.
     
-    Dataset | Domain | Task
-    -- | -- | --
-    `PascalVOC-SP` | Computer Vision | Node Classification
-    `COCO-SP` | Computer Vision | Node Classification
-    `PCQM-Contact` | Quantum Chemistry | Link Prediction
-    `Peptides-func` | Chemistry | Graph Classification
-    `Peptides-struct` | Chemistry | Graph Regression    
+    +-------------------+-------------------+----------------------+
+    | Dataset           | Domain            | Task                 |
+    +===================+===================+======================+
+    | `PascalVOC-SP`    | Computer Vision   | Node Classification  |
+    +-------------------+-------------------+----------------------+
+    | `COCO-SP`         | Computer Vision   | Node Classification  |
+    +-------------------+-------------------+----------------------+
+    | `PCQM-Contact`    | Quantum Chemistry | Link Prediction      |
+    +-------------------+-------------------+----------------------+
+    | `Peptides-func`   | Chemistry         | Graph Classification |
+    +-------------------+-------------------+----------------------+
+    | `Peptides-struct` | Chemistry         | Graph Regression     |
+    +-------------------+-------------------+----------------------+
 
     Args:
         root (string): Root directory where the dataset should be saved.
