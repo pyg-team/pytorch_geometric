@@ -20,11 +20,10 @@ except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 try:
-    from pyg_lib.ops import grouped_matmul  # noqa
+    from pyg_lib.ops import segment_matmul # noqa
     _WITH_PYG_LIB = True
 except ImportError:
     _WITH_PYG_LIB = False
-
     def grouped_matmul(inputs: List[Tensor], others: List[Tensor]) -> List[Tensor]:
         raise NotImplementedError
 
@@ -239,7 +238,6 @@ class ToHeteroModule(MessagePassing):
                 o_dict = {}
                 for j, ntype_j in enumerate(x_dict.keys()):
                     o_dict[ntype_j] = o[node_type == j, :]
-
             else:
                 o_dict = {}
                 for j, layer in enumerate(typed_layers):
