@@ -124,29 +124,30 @@ def _raise_on_invalid_mask_type(mask_type: str):
         raise ValueError(f"Invalid mask type (got {mask_type})")
 
 
-def to_captum_input(data: Union[HeteroData, Data],
-                    mask_type: str) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
+def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
+                    *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
     """Given `data` and `mask_type`, converts it to a format to use
     in `Captum` explainability. Returns `inputs` and
     `additional_forward_args` required for `Captum`s `attribute` function.
-    `additonal_forward_args` will contain edges and features(if `mask_type` is
-    `edge`), please add other args that the model requires before passing it
-    to `attribute`.
+    `additonal_forward_args` will contain edges, features(if `mask_type` is
+    `edge`) and `args`.
     """
     _raise_on_invalid_mask_type(mask_type)
+
     if isinstance(data, Data):
+        additional_forward_args = []
         if mask_type == "node":
             inputs = [data.x.unsqueeze(0)]
-            additional_forward_args = [data.edge_index]
         elif mask_type == "edge":
             inputs = [_to_edge_mask(data.edge_index).unsqueeze(0)]
-            additional_forward_args = [data.x, data.edge_index]
+            additional_forward_args.append(data.x)
         else:
             inputs = [
                 data.x.unsqueeze(0),
                 _to_edge_mask(data.edge_index).unsqueeze(0)
             ]
-            additional_forward_args = [data.edge_index]
+        additional_forward_args.append(data.edge_index)
+
     else:
         metadata = data.metadata()
         node_types = metadata[0]
@@ -156,18 +157,18 @@ def to_captum_input(data: Union[HeteroData, Data],
         if mask_type == "node":
             for key in node_types:
                 inputs.append(data[key].x.unsqueeze(0))
-            additional_forward_args.append(data.edge_index_dict)
         elif mask_type == "edge":
             for key in edge_types:
                 inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
             additional_forward_args.append(data.x_dict)
-            additional_forward_args.append(data.edge_index_dict)
         else:
             for key in node_types:
                 inputs.append(data[key].x.unsqueeze(0))
             for key in edge_types:
                 inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
-            additional_forward_args.append(data.edge_index_dict)
+        additional_forward_args.append(data.edge_index_dict)
+
+    additional_forward_args.extend(args)
     return tuple(inputs), tuple(additional_forward_args)
 
 
