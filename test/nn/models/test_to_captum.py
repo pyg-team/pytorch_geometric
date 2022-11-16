@@ -150,17 +150,18 @@ def test_to_captum_input(mask_type):
 
     # Check for Data:
     data = Data(x, edge_index)
-    inputs, additional_forward_args = to_captum_input(data, mask_type)
+    args = 'test_args'
+    inputs, additional_forward_args = to_captum_input(data, mask_type, args)
     if mask_type == 'node':
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
-        assert len(additional_forward_args) == 1
+        assert len(additional_forward_args) == 2
         assert torch.allclose(additional_forward_args[0], edge_index)
     elif mask_type == 'edge':
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_edges)
         assert inputs[0].sum() == num_edges
-        assert len(additional_forward_args) == 2
+        assert len(additional_forward_args) == 3
         assert torch.allclose(additional_forward_args[0], x)
         assert torch.allclose(additional_forward_args[1], edge_index)
     else:
@@ -168,7 +169,7 @@ def test_to_captum_input(mask_type):
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
         assert inputs[1].shape == (1, num_edges)
         assert inputs[1].sum() == num_edges
-        assert len(additional_forward_args) == 1
+        assert len(additional_forward_args) == 2
         assert torch.allclose(additional_forward_args[0], edge_index)
 
     # Check for HeteroData:
@@ -178,12 +179,12 @@ def test_to_captum_input(mask_type):
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
     data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
-    inputs, additional_forward_args = to_captum_input(data, mask_type)
+    inputs, additional_forward_args = to_captum_input(data, mask_type, args)
     if mask_type == 'node':
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
         assert inputs[1].shape == (1, num_nodes, num_node_feats)
-        assert len(additional_forward_args) == 1
+        assert len(additional_forward_args) == 2
         for key in data.edge_types:
             torch.allclose(additional_forward_args[0][key],
                            data[key].edge_index)
@@ -192,7 +193,7 @@ def test_to_captum_input(mask_type):
         assert inputs[0].shape == (1, num_edges)
         assert inputs[1].shape == (1, num_edges)
         assert inputs[1].sum() == inputs[0].sum() == num_edges
-        assert len(additional_forward_args) == 2
+        assert len(additional_forward_args) == 3
         for key in data.node_types:
             torch.allclose(additional_forward_args[0][key], data[key].x)
         for key in data.edge_types:
@@ -205,7 +206,7 @@ def test_to_captum_input(mask_type):
         assert inputs[2].shape == (1, num_edges)
         assert inputs[3].shape == (1, num_edges)
         assert inputs[3].sum() == inputs[2].sum() == num_edges
-        assert len(additional_forward_args) == 1
+        assert len(additional_forward_args) == 2
         for key in data.edge_types:
             torch.allclose(additional_forward_args[0][key],
                            data[key].edge_index)

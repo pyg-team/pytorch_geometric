@@ -134,8 +134,8 @@ def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
     """
     _raise_on_invalid_mask_type(mask_type)
 
+    additional_forward_args = []
     if isinstance(data, Data):
-        additional_forward_args = []
         if mask_type == "node":
             inputs = [data.x.unsqueeze(0)]
         elif mask_type == "edge":
@@ -153,7 +153,6 @@ def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
         node_types = metadata[0]
         edge_types = metadata[1]
         inputs = []
-        additional_forward_args = []
         if mask_type == "node":
             for key in node_types:
                 inputs.append(data[key].x.unsqueeze(0))
@@ -191,7 +190,7 @@ def captum_output_to_dicts(
         edge_attr_dict = dict(zip(edge_types, captum_attrs))
     elif mask_type == "node_and_edge":
         assert len(edge_types) + len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs[0:len(node_types)]))
+        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
         edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
     return x_attr_dict, edge_attr_dict
 
@@ -203,6 +202,8 @@ class CaptumHeteroModel(CaptumModel):
         super().__init__(model, mask_type, output_id)
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
+        self.num_node_types = len(self.node_types)
+        self.num_edge_types = len(self.edge_types)
 
     def _captum_data_to_hetero_data(
         self, *args
@@ -210,25 +211,23 @@ class CaptumHeteroModel(CaptumModel):
             EdgeType, Tensor]]]:
         """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
         `edge_mask_dict`."""
-        num_edge_types = len(self.edge_types)
-        num_node_types = len(self.node_types)
 
         if self.mask_type == 'node':
-            node_tensors = args[:num_node_types]
+            node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
-            edge_index_dict = args[num_node_types]
+            edge_index_dict = args[self.num_node_types]
         elif self.mask_type == 'edge':
-            edge_mask_tensors = args[:num_edge_types]
-            x_dict = args[num_edge_types]
-            edge_index_dict = args[num_edge_types + 1]
+            edge_mask_tensors = args[:self.num_edge_types]
+            x_dict = args[self.num_edge_types]
+            edge_index_dict = args[self.num_edge_types + 1]
         else:
-            node_tensors = args[:num_node_types]
+            node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
             x_dict = dict(zip(self.node_types, node_tensors))
-            edge_mask_tensors = args[num_node_types:num_node_types +
-                                     num_edge_types]
-            edge_index_dict = args[num_node_types + num_edge_types]
+            edge_mask_tensors = args[self.num_node_types:self.num_node_types +
+                                     self.num_edge_types]
+            edge_index_dict = args[self.num_node_types + self.num_edge_types]
 
         if 'edge' in self.mask_type:
             edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
@@ -239,17 +238,15 @@ class CaptumHeteroModel(CaptumModel):
 
     def forward(self, *args):
         # Validate args:
-        num_nodes = len(self.node_types)
-        num_edges = len(self.edge_types)
         if self.mask_type == "node":
-            assert len(args) >= num_nodes + 1
-            len_remaining_args = len(args) - (num_nodes + 1)
+            assert len(args) >= self.num_node_types + 1
+            len_remaining_args = len(args) - (self.num_node_types + 1)
         elif self.mask_type == "edge":
-            assert len(args) >= num_edges + 2
-            len_remaining_args = len(args) - (num_edges + 2)
+            assert len(args) >= self.num_edge_types + 2
+            len_remaining_args = len(args) - (self.num_edge_types + 2)
         else:
-            assert len(args) >= num_nodes + num_edges + 1
-            len_remaining_args = len(args) - (num_edges + num_edges + 1)
+            assert len(args) >= self.num_node_types + self.num_edge_types + 1
+            len_remaining_args = len(args) - (self.num_node_types + self.num_edge_types + 1)
 
         # Get main args:
         (x_dict, edge_index_dict,
