@@ -177,7 +177,7 @@ def captum_output_to_dicts(
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
     """Convert the output of `Captum.attribute` which is a tuple of
     attributions to two dictonaries with node and edge attribution
-    tesnors."""
+    tensors."""
     _raise_on_invalid_mask_type(mask_type)
     node_types = metadata[0]
     edge_types = metadata[1]
