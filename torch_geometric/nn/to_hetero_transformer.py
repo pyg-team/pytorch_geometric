@@ -7,6 +7,7 @@ import torch
 from torch.nn import Module
 
 from torch_geometric.nn.fx import Transformer, get_submodule
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
@@ -17,6 +18,15 @@ try:
     from torch.fx import Graph, GraphModule, Node
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
+
+try:
+    from pyg_lib.ops import grouped_matmul  # noqa
+    _WITH_PYG_LIB = True
+except ImportError:
+    _WITH_PYG_LIB = False
+
+    def grouped_matmul(inputs: List[Tensor], others: List[Tensor]) -> List[Tensor]:
+        raise NotImplementedError
 
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
@@ -115,8 +125,173 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
-    return transformer.transform()
+    if _WITH_PYG_LIB:
+        return ToHeteroModule(module, metadata, aggr, input_map, debug)
+    else:
+        transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
+        return transformer.transform()
+
+
+class ToHeteroModule(MessagePassing):
+    aggrs = {
+        'sum': torch.add,
+        # For 'mean' aggregation, we first sum up all feature matrices, and
+        # divide by the number of matrices in a later step.
+        'mean': torch.add,
+        'max': torch.max,
+        'min': torch.min,
+        'mul': torch.mul,
+    }
+
+    def __init__(
+        self,
+        module: Module,
+        metadata: Metadata,
+        aggr: str = 'sum',
+        input_map: Optional[Dict[str, str]] = None,
+        debug: bool = False,
+    ):
+        super().__init__()
+
+        unused_node_types = get_unused_node_types(*metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behaviour.")
+
+        self.metadata = metadata
+        self.node_types = metadata[0]
+        self.edge_types = metadata[1]
+        self.aggr = aggr
+        self.input_map = self.input_map
+        assert len(metadata) == 2
+        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
+        assert aggr in self.aggrs.keys()
+        lin_module_idxs = []
+        modules = []
+        # parse out linear layers
+        for i, submodule in module.modules():
+            assert submodule_is_msg_passing_or_lin, "Current PyG"
+            if isinstance(submodule, torch.nn.Linear) or isinstance(submodule, torch_geometric.nn.dense.Linear):
+                lin_module_idxs.append(i)
+            modules.append(submodule)
+        self.lin_module_idxs = lin_module_idxs
+        modules_nested_list = []
+        for layer in modules:
+            modules_nested_list.append([])
+            for edge_type in self.edge_types:
+                modules_nested_list[-1].append(copy.deepcopy(layer))
+                if hasattr(layer, 'reset_parameters'):
+                    modules_nested_list[-1][-1].reset_parameters()
+                elif sum([p.numel() for p in layer.parameters()]) > 0:
+                    warnings.warn(
+                        f"'{target}' will be duplicated, but its parameters "
+                        f"cannot be reset. To suppress this warning, add a "
+                        f"'reset_parameters()' method to '{target}'")
+
+        self.modules_nested_list = self.modules_nested_list
+
+    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor, edge_type: Tensor):
+        r"""
+        Args:
+            x: The input node features. :obj:`[num_nodes, in_channels]`
+                node feature matrix.
+            edge_index (LongTensor): The edge indices.
+            node_type: The one-dimensional relation type/index for each node in
+                :obj:`x`.
+            edge_type: The one-dimensional relation type/index for each edge in
+                :obj:`edge_index`.
+        """
+        # (TODO) Add Sparse Tensor support
+        for layer_idx, typed_layers in enumerate(self.modules_nested_list):
+            layer_is_lin = layer_idx in self.lin_module_idxs
+            if layer_is_lin:
+                out = torch_geometric.nn.dense.HeteroLinear(x, node_type)
+            else:
+                for j, layer in enumerate(typed_layers):
+                    e_idx_type_j = edge_index[:, edge_type == j]
+                    o_j = layer(x, e_idx_type_j)
+                    if j == 0:
+                        out = torch.zeros(x.shape[0], o_j.shape[-1], device=x.device)
+                    out += o_j
+            x = out
+        return x
+
+
+    def dict_forward(self, x_dict: Dict[NodeType, Tensor], edge_index_dict: Dict[EdgeType, Tensor]):
+        r"""
+        Args:
+            x_dict (Dict[str, Tensor]): A dictionary holding node feature
+                information for each individual node type.
+            edge_index_dict (Dict[Tuple[str, str, str], Tensor]): A dictionary
+                holding graph connectivity information for each individual
+                edge type.
+        """
+        # (TODO) Add Sparse Tensor support
+        for layer_idx, typed_layers in enumerate(self.modules_nested_list):
+            layer_is_lin = layer_idx in self.lin_module_idxs
+            if layer_is_lin:
+                x = torch.cat([x_j for x_j in x_dict.values()])
+                node_type = torch.cat([j * torch.ones(x_j.shape[0]) for j, x_j in enumerate(x_dict.values())])
+                o = torch_geometric.nn.dense.HeteroLinear(x, node_type)
+                o_dict = {}
+                for j, ntype_j in enumerate(x_dict.keys()):
+                    o_dict[ntype_j] = o[node_type == j, :]
+
+            else:
+                o_dict = {}
+                for j, layer in enumerate(typed_layers):
+                    etype_j = self.edge_types[j]
+                    e_idx_type_j = edge_index_dict[etype_j]
+                    src_node_type_j = etype_j[0]
+                    dst_node_type_j = etype_j[-1]
+                    o_j = layer(x_dict, e_idx_type_j)
+                    if dst_node_type_j not in o_dict.keys():
+                        o_dict[dst_node_type_j] = o_j
+                    else:
+                        o_dict[dst_node_type_j] += o_j
+            x_dict = o_dict
+        return x
+
+
+    def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
+        edge_index:Union[Dict[EdgeType, Tensor], Tensor],
+        node_type=OptTensor = None,
+        edge_type=OptTensor = None):
+        r"""
+        Args:
+            x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
+                information for each individual node type or the same
+                features combined into one tensor. 
+            edge_index (Dict[Tuple[str, str, str], Tensor] or Tensor):
+                A dictionary holding graph connectivity information for
+                each individual edge type or the same values combined
+                into one tensor.
+            node_type: The one-dimensional relation type/index for each node in
+                :obj:`x` if it is provided as a single tensor.
+                Should be only :obj:`None` in case :obj:`x` is of type
+                Dict[str, Tensor].
+                (default: :obj:`None`)
+            edge_type: The one-dimensional relation type/index for each edge in
+                :obj:`edge_index` if it is provided as a single tensor.
+                Should be only :obj:`None` in case :obj:`edge_index` is of type
+                Dict[Tuple[str, str, str], Tensor].
+                (default: :obj:`None`)
+        """
+        if isinstance(x, Dict[NodeType, Tensor]):
+            if not isinstance(edge_index, Dict[EdgeType, Tensor]):
+                raise TypeError("If x is provided as a dictionary, \
+                    edge_indices must be as well")
+            return self.dict_forward(x, edge_index)
+        else:
+            if node_type is None or edge_type is None:
+                raise ValueError('If x and edge_indices are single tensors, \
+                    node_type and edge_type arguments must be provided.')
+            return self.fused_forward(x, edge_index)
+
+
 
 
 class ToHeteroTransformer(Transformer):
