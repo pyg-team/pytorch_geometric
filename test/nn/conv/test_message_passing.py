@@ -80,7 +80,7 @@ def test_my_conv():
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
     assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
-    assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
     conv.fuse = False
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
     assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
