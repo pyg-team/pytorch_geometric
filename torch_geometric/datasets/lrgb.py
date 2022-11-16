@@ -22,7 +22,7 @@ class LRGBDataset(InMemoryDataset):
     that are based on long-range dependencies in graphs. See the original
     `source code <https://github.com/vijaydwivedi75/lrgb>`_ for more details
     on the individual datasets.
-    
+
     +------------------------+-------------------+----------------------+
     | Dataset                | Domain            | Task                 |
     +========================+===================+======================+
