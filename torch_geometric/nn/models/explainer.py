@@ -246,7 +246,8 @@ class CaptumHeteroModel(CaptumModel):
             len_remaining_args = len(args) - (self.num_edge_types + 2)
         else:
             assert len(args) >= self.num_node_types + self.num_edge_types + 1
-            len_remaining_args = len(args) - (self.num_node_types + self.num_edge_types + 1)
+            len_remaining_args = len(args) - (self.num_node_types +
+                                              self.num_edge_types + 1)
 
         # Get main args:
         (x_dict, edge_index_dict,
