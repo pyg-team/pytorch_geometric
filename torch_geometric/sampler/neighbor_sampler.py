@@ -228,12 +228,17 @@ class NeighborSampler(BaseSampler):
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
             if _WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
+                # TODO (matthias) Ideally, `seed` should inherit the type of
+                # `colptr_dict` and `row_dict`.
+                colptrs = list(self.colptr_dict.values())
+                dtype = colptrs[0].dtype if len(colptrs) > 0 else torch.int64
                 out = torch.ops.pyg.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
                     self.colptr_dict,
                     self.row_dict,
-                    seed,  # seed_dict
+                    {k: v.to(dtype)
+                     for k, v in seed.items()},  # seed_dict
                     self.num_neighbors,
                     self.node_time_dict,
                     kwargs.get('seed_time_dict', None),
@@ -280,10 +285,12 @@ class NeighborSampler(BaseSampler):
         if issubclass(self.data_cls, Data):
             if _WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
+                # TODO (matthias) Ideally, `seed` should inherit the type of
+                # `colptr` and `row`.
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
                     self.row,
-                    seed,  # seed
+                    seed.to(self.colptr.dtype),  # seed
                     self.num_neighbors,
                     self.node_time,
                     kwargs.get('seed_time', None),
