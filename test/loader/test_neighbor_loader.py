@@ -15,6 +15,12 @@ from torch_geometric.testing.feature_store import MyFeatureStore
 from torch_geometric.testing.graph_store import MyGraphStore
 from torch_geometric.utils import k_hop_subgraph
 
+try:
+    import pyg_lib  # noqa
+    _WITH_PYG_LIB = True
+except ImportError:
+    _WITH_PYG_LIB = False
+
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges, dtype=torch.int64):
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
@@ -33,6 +39,9 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_homogeneous_neighbor_loader(directed, dtype):
+    if dtype != torch.int64 and not _WITH_PYG_LIB:
+        return
+
     torch.manual_seed(12345)
 
     data = Data()
@@ -69,6 +78,9 @@ def test_homogeneous_neighbor_loader(directed, dtype):
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_heterogeneous_neighbor_loader(directed, dtype):
+    if dtype != torch.int64 and not _WITH_PYG_LIB:
+        return
+
     torch.manual_seed(12345)
 
     data = HeteroData()
