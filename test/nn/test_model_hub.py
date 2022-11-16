@@ -4,8 +4,10 @@ from unittest.mock import Mock
 import pytest
 import torch
 
-from torch_geometric.nn.model_hub import PyGModelHubMixin
 from torch_geometric.testing import withPackage
+
+PyGModelHubMixin = pytest.importorskip(
+    "torch_geometric.nn.model_hub.PyGModelHubMixin")
 
 REPO_NAME = "test"
 MODEL_NAME = 'test_model'

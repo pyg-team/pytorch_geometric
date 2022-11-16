@@ -13,10 +13,6 @@ try:
     )
 except ImportError:
     print('please install huggingface hub to use this mixin')
-    ModelCard = None
-    ModelCardData = None
-    ModelHubMixin = None
-    hf_hub_download = None
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
