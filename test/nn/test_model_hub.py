@@ -6,6 +6,7 @@ import torch
 
 from torch_geometric.testing import withPackage
 
+pytest.importorskip("huggingface_hub")
 PyGModelHubMixin = pytest.importorskip(
     "torch_geometric.nn.model_hub.PyGModelHubMixin")
 
