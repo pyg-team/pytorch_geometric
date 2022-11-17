@@ -191,8 +191,8 @@ class ToHeteroModule(MessagePassing):
 
         self.heteromodule = heteromodule
 
-    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor,
-                      edge_type: Tensor):
+    def fused_forward(self, x: Tensor, edge_index: OptTensor, node_type: OptTensor,
+                      edge_type: OptTensor):
         r"""
         Args:
             x: The input node features. :obj:`[num_nodes, in_channels]`
@@ -218,7 +218,7 @@ class ToHeteroModule(MessagePassing):
         return out
 
     def dict_forward(self, x_dict: Dict[NodeType, Tensor],
-                     edge_index_dict: Dict[EdgeType, Tensor]):
+                     edge_index_dict: Optional[Dict[EdgeType, Tensor]]):
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
@@ -252,7 +252,7 @@ class ToHeteroModule(MessagePassing):
                     o_dict[dst_node_type_j] += o_j
         return o_dict
 
-    def foward(self, x: Optional[Union[Dict[NodeType, Tensor], Tensor]] = None,
+    def foward(self, x: [Union[Dict[NodeType, Tensor], Tensor]],
                edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
                node_type: OptTensor = None, edge_type: OptTensor = None):
         r"""

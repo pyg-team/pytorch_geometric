@@ -37,7 +37,7 @@ def test_to_hetero_gcn():
     # test dict input
     x_dict = heterodata.collect('x')
     e_idx_dict = heterodata.collect('edge_index')
-    out = rgcnconv(x_dict, e_idx_dict)
+    out = rgcnconv(x=x_dict, edge_index=e_idx_dict)
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
 
