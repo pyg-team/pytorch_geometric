@@ -253,7 +253,8 @@ class ToHeteroModule(MessagePassing):
         return o_dict
 
     def foward(self, x: Optional[Union[Dict[NodeType, Tensor], Tensor]] = None,
-               edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
+               edge_index: Optional[Union[Dict[EdgeType, Tensor],
+                                          Tensor]] = None,
                node_type: OptTensor = None, edge_type: OptTensor = None):
         r"""
         Args:
