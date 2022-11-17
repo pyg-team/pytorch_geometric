@@ -114,87 +114,6 @@ class CaptumModel(torch.nn.Module):
         return x
 
 
-def _to_edge_mask(edge_index: Tensor) -> Tensor:
-    num_edges = edge_index.shape[1]
-    return torch.ones(num_edges, requires_grad=True, device=edge_index.device)
-
-
-def _raise_on_invalid_mask_type(mask_type: str):
-    if mask_type not in ['node', 'edge', 'node_and_edge']:
-        raise ValueError(f"Invalid mask type (got {mask_type})")
-
-
-def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
-                    *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
-    """Given `data` and `mask_type`, converts it to a format to use
-    in `Captum` explainability. Returns `inputs` and
-    `additional_forward_args` required for `Captum`s `attribute` function.
-    `additonal_forward_args` will contain edges, features(if `mask_type` is
-    `edge`) and `args`.
-    """
-    _raise_on_invalid_mask_type(mask_type)
-
-    additional_forward_args = []
-    if isinstance(data, Data):
-        if mask_type == "node":
-            inputs = [data.x.unsqueeze(0)]
-        elif mask_type == "edge":
-            inputs = [_to_edge_mask(data.edge_index).unsqueeze(0)]
-            additional_forward_args.append(data.x)
-        else:
-            inputs = [
-                data.x.unsqueeze(0),
-                _to_edge_mask(data.edge_index).unsqueeze(0)
-            ]
-        additional_forward_args.append(data.edge_index)
-
-    else:
-        metadata = data.metadata()
-        node_types = metadata[0]
-        edge_types = metadata[1]
-        inputs = []
-        if mask_type == "node":
-            for key in node_types:
-                inputs.append(data[key].x.unsqueeze(0))
-        elif mask_type == "edge":
-            for key in edge_types:
-                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
-            additional_forward_args.append(data.x_dict)
-        else:
-            for key in node_types:
-                inputs.append(data[key].x.unsqueeze(0))
-            for key in edge_types:
-                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
-        additional_forward_args.append(data.edge_index_dict)
-
-    additional_forward_args.extend(args)
-    return tuple(inputs), tuple(additional_forward_args)
-
-
-def captum_output_to_dicts(
-    captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
-) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
-    """Convert the output of `Captum.attribute` which is a tuple of
-    attributions to two dictonaries with node and edge attribution
-    tensors."""
-    _raise_on_invalid_mask_type(mask_type)
-    node_types = metadata[0]
-    edge_types = metadata[1]
-    x_attr_dict, edge_attr_dict = None, None
-    captum_attrs = [captum_attr.squeeze(0) for captum_attr in captum_attrs]
-    if mask_type == "node":
-        assert len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs))
-    elif mask_type == "edge":
-        assert len(edge_types) == len(captum_attrs)
-        edge_attr_dict = dict(zip(edge_types, captum_attrs))
-    elif mask_type == "node_and_edge":
-        assert len(edge_types) + len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
-        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
-    return x_attr_dict, edge_attr_dict
-
-
 # TODO(jinu) Is there any point of inheriting from `CaptumModel`
 class CaptumHeteroModel(CaptumModel):
     def __init__(self, model: torch.nn.Module, mask_type: str, output_id: int,
@@ -271,8 +190,135 @@ class CaptumHeteroModel(CaptumModel):
         return x
 
 
-# TODO rename this to to_captum_model
+def _to_edge_mask(edge_index: Tensor) -> Tensor:
+    num_edges = edge_index.shape[1]
+    return torch.ones(num_edges, requires_grad=True, device=edge_index.device)
+
+
+def _raise_on_invalid_mask_type(mask_type: str):
+    if mask_type not in ['node', 'edge', 'node_and_edge']:
+        raise ValueError(f"Invalid mask type (got {mask_type})")
+
+
+def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
+                    *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
+    r"""Given `data` and `mask_type`, converts it to a format to use
+    in `Captum.ai <https://captum.ai/>`_ attribution methods. Returns `inputs`
+    and `additional_forward_args` required for `Captum`s `attribute` function.
+    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
+
+    Args:
+
+        data (HeteroData or Data): The data to explain.
+        mask_type (str): Denotes the type of mask to be created with
+            a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
+            and :obj:`"node_and_edge"`:
+        *args: Additional forward arguments of the model being explained
+            which will be added to `additonal_forward_args`.
+            For :obj:`Data` this is arguments other than `x` and `edge_index`.
+            For :obj:`HeteroData` this is arguments other than `x_dict`
+            and `edge_index_dict`.
+    """
+    _raise_on_invalid_mask_type(mask_type)
+
+    additional_forward_args = []
+    if isinstance(data, Data):
+        if mask_type == "node":
+            inputs = [data.x.unsqueeze(0)]
+        elif mask_type == "edge":
+            inputs = [_to_edge_mask(data.edge_index).unsqueeze(0)]
+            additional_forward_args.append(data.x)
+        else:
+            inputs = [
+                data.x.unsqueeze(0),
+                _to_edge_mask(data.edge_index).unsqueeze(0)
+            ]
+        additional_forward_args.append(data.edge_index)
+
+    else:
+        metadata = data.metadata()
+        node_types = metadata[0]
+        edge_types = metadata[1]
+        inputs = []
+        if mask_type == "node":
+            for key in node_types:
+                inputs.append(data[key].x.unsqueeze(0))
+        elif mask_type == "edge":
+            for key in edge_types:
+                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
+            additional_forward_args.append(data.x_dict)
+        else:
+            for key in node_types:
+                inputs.append(data[key].x.unsqueeze(0))
+            for key in edge_types:
+                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
+        additional_forward_args.append(data.edge_index_dict)
+
+    additional_forward_args.extend(args)
+    return tuple(inputs), tuple(additional_forward_args)
+
+
+def captum_output_to_dicts(
+    captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
+) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
+    r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
+    methods which is a tuple of attributions to two dictonaries with node and
+    edge attribution tensors. This function is used while explaining
+    :obj:`HeteroData` objects. See :obj:`torch_geometric.nn.to_captum_model`
+    for example usage.
+
+    Args:
+        captum_attrs (tuple[tensor]): The output of attribution methods.
+        mask_type (str): Denotes the type of mask to be created with
+            a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
+            and :obj:`"node_and_edge"`:
+
+            1. :obj:`"edge"`: Output will contain only edge attributions
+               dictionary with key `EdgeType` and values
+               edge mask tensor of shape :obj:`[num_edges]`.
+
+            2. :obj:`"node"`:  Output will contain only node attributions
+               dictionary with key `NodeType` and values
+               node mask tensor of shape :obj:`[num_nodes, num_features]`.
+
+            3. :obj:`"node_and_edge"`: Output will be node attribution followed
+                by edge attribution.
+
+        metadata (Metadata): The metadata of the heterogeneous graph.
+    """
+    _raise_on_invalid_mask_type(mask_type)
+    node_types = metadata[0]
+    edge_types = metadata[1]
+    x_attr_dict, edge_attr_dict = None, None
+    captum_attrs = [captum_attr.squeeze(0) for captum_attr in captum_attrs]
+    if mask_type == "node":
+        assert len(node_types) == len(captum_attrs)
+        x_attr_dict = dict(zip(node_types, captum_attrs))
+    elif mask_type == "edge":
+        assert len(edge_types) == len(captum_attrs)
+        edge_attr_dict = dict(zip(edge_types, captum_attrs))
+    elif mask_type == "node_and_edge":
+        assert len(edge_types) + len(node_types) == len(captum_attrs)
+        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
+        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
+    return x_attr_dict, edge_attr_dict
+
+
 def to_captum(
+    model: torch.nn.Module, mask_type: str = "edge",
+    output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
+) -> Union[CaptumModel, CaptumHeteroModel]:
+    r"""
+    Alias for `to_captum_model`.
+    .. warning::
+        :obj:`~torch_geometric.nn.to_captum` is deprecated and will
+        be removed in a future release.
+        Use :obj:`torch_geometric.nn.to_captum_model` instead.
+    """
+    return to_captum_model(model, mask_type, output_idx, metadata)
+
+
+def to_captum_model(
     model: torch.nn.Module, mask_type: str = "edge",
     output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
 ) -> Union[CaptumModel, CaptumHeteroModel]:
@@ -282,23 +328,48 @@ def to_captum(
     .. code-block:: python
 
         from captum.attr import IntegratedGradients
-        from torch_geometric.nn import GCN, to_captum
 
+        from torch_geometric.data import Data, HeteroData
+        from torch_geometric.nn import GCN, HeteroConv
+        from torch_geometric.nn import (captum_output_to_dicts,
+                                        to_captum_model, to_captum_input)
+
+        ## Explain Data (homogenous graph) ##
+        data = Data(x=(...), edge_index(...))
         model = GCN(...)
         ...  # Train the model.
 
         # Explain predictions for node `10`:
+        mask_type="edge"
         output_idx = 10
-
-        captum_model = to_captum(model, mask_type="edge",
-                                 output_idx=output_idx)
-        edge_mask = torch.ones(num_edges, requires_grad=True, device=device)
+        captum_model = to_captum_model(model, mask_type, output_idx)
+        inputs, additional_forward_args = to_captum_input(data, mask_type)
 
         ig = IntegratedGradients(captum_model)
-        ig_attr = ig.attribute(edge_mask.unsqueeze(0),
+        ig_attr = ig.attribute(inputs = inputs,
                                target=int(y[output_idx]),
-                               additional_forward_args=(x, edge_index),
+                               additional_forward_args=additional_forward_args,
                                internal_batch_size=1)
+
+        ## Explaining HeteroData (heterogenous graph) ##
+        data = HeteroData(...)
+        model = HeteroConv(...)
+        ...  # Train the model.
+
+        # Explain predictions for node `10`:
+        mask_type="edge"
+        metadata = data.metadata
+        output_idx = 10
+        captum_model = to_captum_model(model, mask_type, output_idx, metadata)
+        inputs, additional_forward_args = to_captum_input(data, mask_type,
+                                                          metadata)
+
+        ig = IntegratedGradients(captum_model)
+        ig_attr = ig.attribute(inputs = inputs,
+                               target=int(y[output_idx]),
+                               additional_forward_args=additional_forward_args,
+                               internal_batch_size=1)
+        ig_attr_dict = captum_output_to_dicts(ig_attr, mask_type, metadata)
 
     .. note::
         For an example of using a Captum attribution method within PyG, see
@@ -310,25 +381,7 @@ def to_captum(
         model (torch.nn.Module): The model to be explained.
         mask_type (str, optional): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
-            and :obj:`"node_and_edge"`:
-
-            1. :obj:`"edge"`: The inputs to the forward function should be an
-               edge mask tensor of shape :obj:`[1, num_edges]`, a regular
-               :obj:`x` matrix and a regular :obj:`edge_index` matrix.
-
-            2. :obj:`"node"`: The inputs to the forward function should be a
-               node feature tensor of shape :obj:`[1, num_nodes, num_features]`
-               and a regular :obj:`edge_index` matrix.
-
-            3. :obj:`"node_and_edge"`: The inputs to the forward function
-               should be a node feature tensor of shape
-               :obj:`[1, num_nodes, num_features]`, an edge mask tensor of
-               shape :obj:`[1, num_edges]` and a regular :obj:`edge_index`
-               matrix.
-
-            For all mask types, additional arguments can be passed to the
-            forward function as long as the first arguments are set as
-            described. (default: :obj:`"edge"`)
+            and :obj:`"node_and_edge"`. (default: :obj:`"edge"`)
         output_idx (int, optional): Index of the output element (node or link
             index) to be explained. With :obj:`output_idx` set, the forward
             function will return the output of the model for the element at
