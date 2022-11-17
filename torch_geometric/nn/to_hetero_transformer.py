@@ -175,7 +175,7 @@ class ToHeteroModule(MessagePassing):
         lin_module_idxs = []
         modules = []
         # parse out linear layers
-        for i, submodule in module.modules():
+        for i, submodule in enumerate(module.modules()):
             if isinstance(submodule, torch.nn.Linear) or isinstance(
                     submodule, torch_geometric.nn.dense.Linear):
                 lin_module_idxs.append(i)
