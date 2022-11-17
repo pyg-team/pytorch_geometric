@@ -2,7 +2,6 @@ import copy
 import warnings
 from collections import defaultdict, deque
 from typing import Any, Dict, Optional, Tensor, Tuple, Union
-from torch_geometric.typing import OptTensor
 
 import torch
 from torch.nn import Module
@@ -10,7 +9,7 @@ from torch.nn import Module
 import torch_geometric
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
