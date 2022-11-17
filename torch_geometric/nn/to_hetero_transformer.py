@@ -250,13 +250,14 @@ class ToHeteroModule(Module):
                 if dst_node_type_j not in o_dict.keys():
                     o_dict[dst_node_type_j] = o_j
                 else:
-                    o_dict[dst_node_type_j] = self.aggrs[self.aggr](o_j, o_dict[dst_node_type_j])
+                    o_dict[dst_node_type_j] = self.aggrs[self.aggr](
+                        o_j, o_dict[dst_node_type_j])
         return o_dict
 
     def foward(
         self,
-        x: Union[Dict[NodeType, Tensor],Tensor],
-        edge_index: Optional[Union[Dict[EdgeType,Tensor], Tensor]] = None,
+        x: Union[Dict[NodeType, Tensor], Tensor],
+        edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
         node_type: OptTensor = None,
         edge_type: OptTensor = None,
     ) -> Union[Dict[NodeType, Tensor], Tensor]:
