@@ -252,8 +252,8 @@ class ToHeteroModule(MessagePassing):
                     o_dict[dst_node_type_j] += o_j
         return o_dict
 
-    def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
-               edge_index: Union[Dict[EdgeType, Tensor], Tensor],
+    def foward(self, x: Optional[Union[Dict[NodeType, Tensor], Tensor]],
+               edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]],
                node_type: OptTensor = None, edge_type: OptTensor = None):
         r"""
         Args:
@@ -276,15 +276,27 @@ class ToHeteroModule(MessagePassing):
                 (default: :obj:`None`)
         """
         if isinstance(x, Dict[NodeType, Tensor]):
-            if not isinstance(edge_index, Dict[EdgeType, Tensor]):
-                raise TypeError("If x is provided as a dictionary, \
-                    edge_indices must be as well")
-            return self.dict_forward(x, edge_index)
+            if self.is_lin:
+                return self.dict_forward(x)
+            else:
+                if not isinstance(edge_index, Dict[EdgeType, Tensor]):
+                    raise TypeError("If x is provided as a dictionary, \
+                        edge_index must be as well")
+                return self.dict_forward(x, edge_index)
         else:
-            if node_type is None or edge_type is None:
-                raise ValueError('If x and edge_indices are single tensors, \
-                    node_type and edge_type arguments must be provided.')
-            return self.fused_forward(x, edge_index)
+            if self.is_lin:
+                if node_type is None:
+                    raise ValueError('If x is a single tensor, \
+                        node_type argument must be provided.')
+                return self.fused_forward(x, node_type)
+            else:
+                if not isinstance(edge_index, Tensor):
+                    raise TypeError("If x is provided as a Tensor, \
+                        edge_index must be as well")
+                if node_type is None or edge_type is None:
+                    raise ValueError('If x and edge_indices are single tensors, \
+                        node_type and edge_type arguments must be provided.')
+                return self.fused_forward(x, edge_index, node_type, edge_type)
 
 
 class ToHeteroTransformer(Transformer):
