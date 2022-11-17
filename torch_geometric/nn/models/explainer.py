@@ -368,7 +368,7 @@ def to_captum_model(
                                                           metadata)
 
         ig = IntegratedGradients(captum_model)
-        ig_attr = ig.attribute(inputs = inputs,
+        ig_attr = ig.attribute(inputs=inputs,
                                target=int(y[output_idx]),
                                additional_forward_args=additional_forward_args,
                                internal_batch_size=1)
