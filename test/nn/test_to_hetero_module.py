@@ -1,8 +1,9 @@
 import pytest
+
+from torch_geometric.data import HeteroData
 from torch_geometric.nn import ToHeteroModule
 from torch_geometric.nn.conv import GCNConv
 from torch_geometric.nn.dense import Linear
-from torch_geometric.data import HeteroData
 
 heterodata = HeteroData()
 heterodata['v0'].x = torch.randn(20, 10)
@@ -36,7 +37,7 @@ def test_to_hetero_gcn():
 	assert out['v0'].shape == (20, 5)
 	assert out['v1'].shape == (20, 5)
 
-    
+
     x = torch.cat(list(x_dict.values()), dim=0)
 
     num_node_dict = heterodata.collect('num_nodes')
