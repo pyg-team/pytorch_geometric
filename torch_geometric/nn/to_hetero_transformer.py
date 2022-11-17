@@ -165,15 +165,15 @@ class ToHeteroModule(MessagePassing):
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
-        self.is_lin = isinstance(submodule, torch.nn.Linear) or isinstance(
-            submodule, torch_geometric.nn.dense.Linear)
+        self.is_lin = isinstance(module, torch.nn.Linear) or isinstance(
+            module, torch_geometric.nn.dense.Linear)
         if self.is_lin:
-            if isinstance(layer, torch.nn.Linear):
-                in_ft = layer.in_features
-                out_ft = layer.out_features
+            if isinstance(module, torch.nn.Linear):
+                in_ft = module.in_features
+                out_ft = module.out_features
             else:
-                in_ft = layer.in_channels
-                out_ft = layer.out_channels
+                in_ft = module.in_channels
+                out_ft = module.out_channels
             heteromodule = torch_geometric.nn.dense.HeteroLinear(
                 in_ft, out_ft, len(self.node_types))
             heteromodule.reset_parameters()
