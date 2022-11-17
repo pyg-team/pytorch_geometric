@@ -5,7 +5,6 @@ from torch.nn import Linear
 
 from torch_geometric.explain import Explainer
 from torch_geometric.explain.algorithm import GNNExplainer
-from torch_geometric.explain.algorithm.gnn_explainer import GNNExplainer_
 from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
@@ -381,11 +380,3 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)
-
-
-def test_backward_compatibility():
-    model = GCN_single_output_classification()
-    explainer = GNNExplainer_(model, epochs=2, return_type="log_prob")
-    node_feat_mask, edge_mask = explainer.explain_node(2, x, edge_index)
-    assert node_feat_mask.shape == (8, 3)
-    assert edge_mask.shape == (14, 1)

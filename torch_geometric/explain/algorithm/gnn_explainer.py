@@ -512,17 +512,35 @@ class GNNExplainer_:
             ),
             **kwargs,
         )
-        return self._convert_output(explanation, edge_index)
+        return self._convert_output(explanation, edge_index,
+                                    node_index=node_idx, x=x)
 
-    def _convert_output(self, explanation, edge_index):
+    def _convert_output(self, explanation, edge_index, node_index=None,
+                        x=None):
         if "node_mask" in explanation.available_explanations:
             node_mask = explanation.node_mask
         else:
-            node_mask = explanation.node_feat_mask
+            if self.explainer_config.node_mask_type ==\
+                    MaskType.common_attributes:
+                node_mask = explanation.node_feat_mask[0]
+            else:
+                node_mask = explanation.node_feat_mask
 
-        if explanation.edge_mask is not None:
-            edge_mask = explanation.edge_mask.unsqueeze(-1)
+        if "edge_mask" in explanation.available_explanations:
+            edge_mask = explanation.edge_mask
         else:
-            edge_mask = torch.ones_like(edge_index, device=edge_index.device)
+            if node_index is not None:
+                _, _, _, _, hard_edge_mask, _ = self._explainer.subgraph(
+                    self.model,
+                    node_index,
+                    x,
+                    edge_index,
+                )
+                edge_mask = torch.zeros(edge_index.shape[1],
+                                        device=edge_index.device)
+                edge_mask[hard_edge_mask] = 1
+            else:
+                edge_mask = torch.ones(edge_index.shape[1],
+                                       device=edge_index.device)
 
         return node_mask, edge_mask
