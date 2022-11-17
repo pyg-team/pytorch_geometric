@@ -36,7 +36,8 @@ def test_to_hetero_gcn():
     rgcnconv = ToHeteroModule(gcnconv, heterodata.metadata())
     # test dict input
     x_dict = heterodata.collect('x')
-    out = rgcnconv(x_dict, heterodata.collect('edge_index'))
+    e_idx_dict = heterodata.collect('edge_index')
+    out = rgcnconv(x_dict, e_idx_dict)
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
 
@@ -49,7 +50,7 @@ def test_to_hetero_gcn():
         increment_dict[node_type] = ctr
         ctr += num_node_dict[node_type]
 
-    e_idx_dict = heterodata.collect('edge_index')
+    
     etypes_list = []
     for i, e_type in enumerate(e_idx_dict.keys()):
         src_type, dst_type = e_type[0], e_type[-1]
