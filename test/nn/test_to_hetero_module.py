@@ -8,10 +8,11 @@ from torch_geometric.nn.dense import Linear
 heterodata = HeteroData()
 heterodata['v0'].x = torch.randn(20, 10)
 heterodata['v1'].x = torch.randn(20, 10)
-heterodata[('v0','r0','v0')].edge_index = torch.randn(2, 30)
-heterodata[('v0','r2','v1')].edge_index = torch.randn(2, 40)
-heterodata[('v1','r3','v0')].edge_index = torch.randn(2, 50)
-heterodata[('v1','r4','v1')] = torch.randn(2, 50)
+heterodata[('v0', 'r0', 'v0')].edge_index = torch.randn(2, 30)
+heterodata[('v0', 'r2', 'v1')].edge_index = torch.randn(2, 40)
+heterodata[('v1', 'r3', 'v0')].edge_index = torch.randn(2, 50)
+heterodata[('v1', 'r4', 'v1')] = torch.randn(2, 50)
+
 
 def test_to_hetero_linear():
     lin = Linear(10, 5)
@@ -23,11 +24,11 @@ def test_to_hetero_linear():
     assert out['v1'].shape == (20, 5)
     x = torch.cat([x_j for x_j in x_dict.values()])
     node_type = torch.cat([
-        j * torch.ones(x_j.shape[0])
-        for j, x_j in enumerate(x_dict.values())
+        j * torch.ones(x_j.shape[0]) for j, x_j in enumerate(x_dict.values())
     ])
     out = heterolin(x=x, node_type=node_type)
     assert out.shape == (40, 5)
+
 
 def test_to_hetero_gcn():
     gcnconv = GCNConv(10, 5)
@@ -37,7 +38,6 @@ def test_to_hetero_gcn():
     out = rgcnconv(x_dict, heterodata.collect('edge_index'))
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
-
 
     x = torch.cat(list(x_dict.values()), dim=0)
 
@@ -53,8 +53,10 @@ def test_to_hetero_gcn():
     for i, e_type in enumerate(e_idx_dict.keys()):
         src_type, dst_type = e_type[0], e_type[-1]
         if torch.numel(e_idx_dict[e_type]) != 0:
-            e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
-            e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
+            e_idx_dict[e_type][
+                0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
+            e_idx_dict[e_type][
+                1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
     edge_type = torch.cat(etypes_list).to(torch.long).to(device)
     edge_index = torch.cat(list(e_idx_dict.values()), dim=1)
