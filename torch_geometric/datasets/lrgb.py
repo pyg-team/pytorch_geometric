@@ -126,7 +126,7 @@ class LRGBDataset(InMemoryDataset):
     def __init__(self, root: str, name: str, split: str = "train",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_filter: Optional[Callable] = None, ):
         self.name = name.lower()
         assert self.name in self.names
         assert split in ['train', 'val', 'test']
