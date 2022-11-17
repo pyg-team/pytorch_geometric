@@ -174,7 +174,7 @@ class ToHeteroModule(MessagePassing):
             else:
                 in_ft = layer.in_channels
                 out_ft = layer.out_channels
-            heteromodule= torch_geometric.nn.dense.HeteroLinear(
+            heteromodule = torch_geometric.nn.dense.HeteroLinear(
                 in_ft, out_ft, len(self.node_types))
             heteromodule.reset_parameters()
         else:
