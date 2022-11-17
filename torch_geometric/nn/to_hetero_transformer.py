@@ -254,7 +254,7 @@ class ToHeteroModule(Module):
                         o_j, o_dict[dst_node_type_j])
         return o_dict
 
-    def foward(
+    def forward(
         self,
         x: Union[Dict[NodeType, Tensor], Tensor],
         edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
