@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
@@ -205,7 +206,9 @@ def test_random_link_split_insufficient_negative_edges():
     transform = RandomLinkSplit(num_val=0.34, num_test=0.34,
                                 is_undirected=False, neg_sampling_ratio=2,
                                 split_labels=True)
-    train_data, val_data, test_data = transform(data)
+
+    with pytest.warns(UserWarning, match="not enough negative edges"):
+        train_data, val_data, test_data = transform(data)
 
     assert train_data.neg_edge_label_index.size() == (2, 2)
     assert val_data.neg_edge_label_index.size() == (2, 2)
