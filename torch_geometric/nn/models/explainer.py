@@ -273,7 +273,9 @@ def captum_output_to_dicts(
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
 
-            1. :obj:`"edge"`: Output will contain only edge attributions
+            1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge attributions.
+            The output will contain a dictionary with key `EdgeType` and values
+
                dictionary with key `EdgeType` and values
                edge mask tensor of shape :obj:`[num_edges]`.
 
