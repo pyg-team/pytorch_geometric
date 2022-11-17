@@ -20,7 +20,7 @@ def test_to_hetero_linear():
     heterolin = ToHeteroModule(lin, heterodata.metadata())
     # test dict input
     x_dict = heterodata.collect('x')
-    out = heterolin(x=x_dict)
+    out = heterolin(x_dict)
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
     x = torch.cat([x_j for x_j in x_dict.values()])
@@ -37,7 +37,7 @@ def test_to_hetero_gcn():
     # test dict input
     x_dict = heterodata.collect('x')
     e_idx_dict = heterodata.collect('edge_index')
-    out = rgcnconv(x=x_dict, edge_index=e_idx_dict)
+    out = rgcnconv(x_dict, edge_index=e_idx_dict)
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
 
@@ -62,5 +62,5 @@ def test_to_hetero_gcn():
     edge_type = torch.cat(etypes_list).to(torch.long).to(device)
     edge_index = torch.cat(list(e_idx_dict.values()), dim=1)
 
-    out = rgcnconv(x=x, edge_index=edge_index, edge_type=edge_type)
+    out = rgcnconv(x, edge_index=edge_index, edge_type=edge_type)
     assert out.shape == (40, 5)
