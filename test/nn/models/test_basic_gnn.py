@@ -201,6 +201,6 @@ def test_onnx():
         'edge_index': edge_index.numpy()
     })[0]
     out = torch.from_numpy(out)
-    assert torch.allclose(out, expected)
+    assert torch.allclose(out, expected, atol=1e-6)
 
     os.remove('model.onnx')
