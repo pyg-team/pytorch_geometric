@@ -168,7 +168,7 @@ class ToHeteroModule(MessagePassing):
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.aggr = aggr
-        self.input_map = self.input_map
+        self.input_map = input_map
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
