@@ -8,7 +8,6 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils.hetero import (
@@ -131,7 +130,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
     return transformer.transform()
 
 
-class ToHeteroModule(MessagePassing):
+class ToHeteroModule(Module):
     aggrs = {
         'sum': torch.add,
         # For 'mean' aggregation, we first sum up all feature matrices, and
@@ -214,7 +213,9 @@ class ToHeteroModule(MessagePassing):
                 if j == 0:
                     out = torch.zeros(x.shape[0], o_j.shape[-1],
                                       device=x.device)
-                out += o_j
+                out = self.aggrs[self.aggr](out, o_j)
+            if self.aggr == 'mean':
+                out /= len(self.edge_types)
         return out
 
     def dict_forward(self, x_dict: Dict[NodeType, Tensor],
@@ -249,7 +250,7 @@ class ToHeteroModule(MessagePassing):
                 if dst_node_type_j not in o_dict.keys():
                     o_dict[dst_node_type_j] = o_j
                 else:
-                    o_dict[dst_node_type_j] += o_j
+                    o_dict[dst_node_type_j] = self.aggrs[self.aggr](o_j, o_dict[dst_node_type_j])
         return o_dict
 
     def foward(
@@ -258,7 +259,7 @@ class ToHeteroModule(MessagePassing):
             edge_index: Optional[Union[Dict[EdgeType,Tensor],
                                         Tensor]] = None,
             node_type: OptTensor = None,
-            dge_type: OptTensor = None
+            edge_type: OptTensor = None,
     ) -> Union[Dict[NodeType, Tensor], Tensor]:
         r"""
         Args:
