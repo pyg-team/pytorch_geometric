@@ -1,11 +1,12 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, Tensor, OptTensor
 
 import torch
 from torch.nn import Module
 
+import torch_geometric
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
@@ -174,11 +175,9 @@ class ToHeteroModule(MessagePassing):
         modules = []
         # parse out linear layers
         for i, submodule in module.modules():
-            assert submodule_is_msg_passing_or_lin, "Current PyG"
             if isinstance(submodule, torch.nn.Linear) or isinstance(
                     submodule, torch_geometric.nn.dense.Linear):
                 lin_module_idxs.append(i)
-
             modules.append(submodule)
         self.lin_module_idxs = lin_module_idxs
         modules_nested_list = []
@@ -215,9 +214,9 @@ class ToHeteroModule(MessagePassing):
             x: The input node features. :obj:`[num_nodes, in_channels]`
                 node feature matrix.
             edge_index (LongTensor): The edge indices.
-            node_type: The one-dimensional relation type/index for each node in
+            node_type: The one-dimensional node type/index for each node in
                 :obj:`x`.
-            edge_type: The one-dimensional relation type/index for each edge in
+            edge_type: The one-dimensional edge type/index for each edge in
                 :obj:`edge_index`.
         """
         # (TODO) Add Sparse Tensor support
@@ -266,7 +265,7 @@ class ToHeteroModule(MessagePassing):
                     e_idx_type_j = edge_index_dict[etype_j]
                     src_node_type_j = etype_j[0]
                     dst_node_type_j = etype_j[-1]
-                    o_j = layer(x_dict, e_idx_type_j)
+                    o_j = layer(x_dict[src_node_type_j], e_idx_type_j)
                     if dst_node_type_j not in o_dict.keys():
                         o_dict[dst_node_type_j] = o_j
                     else:
