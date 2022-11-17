@@ -273,18 +273,19 @@ def captum_output_to_dicts(
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
 
-            1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge attributions.
-            The output will contain a dictionary with key `EdgeType` and values
-
-               dictionary with key `EdgeType` and values
+            1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge
+               attributions. The returned tuple has no node attributions and a
+               edge attribution dictionary with key `EdgeType` and value
                edge mask tensor of shape :obj:`[num_edges]`.
 
-            2. :obj:`"node"`:  Output will contain only node attributions
-               dictionary with key `NodeType` and values
-               node mask tensor of shape :obj:`[num_nodes, num_features]`.
+            2. :obj:`"node"`: :obj:`captum_attrs` contains only node
+               attributions. The returned tuple has node attribution dictonary
+               with key `NodeType` and value node mask tensor of shape
+               :obj:`[num_nodes, num_features] and no edge attribution.
 
-            3. :obj:`"node_and_edge"`: Output will be node attribution followed
-                by edge attribution.
+            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
+                attributions. The returned tuple contains node attribution
+                dictionary followed by edge attribution dictionary.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
@@ -391,8 +392,9 @@ def to_captum_model(
             index) to be explained. With :obj:`output_idx` set, the forward
             function will return the output of the model for the element at
             the index specified. (default: :obj:`None`)
-        metadata(Metadata, optional): Pass this if explanation is over a
-            `HeteroData` object. (default: :obj: `None`)
+        metadata(Metadata, optional): The metadata of the heterogeneous graph.
+            Only required if explaning over a `HeteroData` object.
+            (default: :obj: `None`)
     """
     if metadata is None:
         return CaptumModel(model, mask_type, output_idx)
