@@ -148,8 +148,6 @@ class ToHeteroModule(MessagePassing):
         module: Module,
         metadata: Metadata,
         aggr: str = 'sum',
-        input_map: Optional[Dict[str, str]] = None,
-        debug: bool = False,
     ):
         super().__init__()
 
@@ -165,46 +163,34 @@ class ToHeteroModule(MessagePassing):
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.aggr = aggr
-        self.input_map = input_map
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
-        lin_module_idxs = []
-        modules = []
-        # parse out linear layers
-        for i, submodule in enumerate(module.modules()):
-            print(submodule)
-            if isinstance(submodule, torch.nn.Linear) or isinstance(
-                    submodule, torch_geometric.nn.dense.Linear):
-                lin_module_idxs.append(i)
-            modules.append(submodule)
-        self.lin_module_idxs = lin_module_idxs
-        modules_nested_list = []
-        for layer_idx, layer in enumerate(modules):
-            if layer_idx in self.lin_module_idxs:
-                if isinstance(layer, torch.nn.Linear):
-                    in_ft = layer.in_features
-                    out_ft = layer.out_features
-                else:
-                    in_ft = layer.in_channels
-                    out_ft = layer.out_channels
-                heterolin = torch_geometric.nn.dense.HeteroLinear(
-                    in_ft, out_ft, len(self.node_types))
-                heterolin.reset_parameters()
-                modules_nested_list.append(heterolin)
+        self.is_lin = isinstance(submodule, torch.nn.Linear) or isinstance(
+            submodule, torch_geometric.nn.dense.Linear)
+        if self.is_lin:
+            if isinstance(layer, torch.nn.Linear):
+                in_ft = layer.in_features
+                out_ft = layer.out_features
             else:
-                modules_nested_list.append([])
-                for edge_type in self.edge_types:
-                    modules_nested_list[-1].append(copy.deepcopy(layer))
-                    if hasattr(layer, 'reset_parameters'):
-                        modules_nested_list[-1][-1].reset_parameters()
-                    elif sum([p.numel() for p in layer.parameters()]) > 0:
-                        warnings.warn(
-                            f"'{layer}' will be duplicated, but its parameters"
-                            f"cannot be reset. To suppress this warning, add a"
-                            f"'reset_parameters()' method to '{layer}'")
+                in_ft = layer.in_channels
+                out_ft = layer.out_channels
+            heteromodule= torch_geometric.nn.dense.HeteroLinear(
+                in_ft, out_ft, len(self.node_types))
+            heteromodule.reset_parameters()
+        else:
+            heteromodule = {}
+            for edge_type in self.edge_types:
+                heteromodule[edge_type] = copy.deepcopy(module)
+                if hasattr(module, 'reset_parameters'):
+                    module.reset_parameters()
+                elif sum([p.numel() for p in module.parameters()]) > 0:
+                    warnings.warn(
+                        f"'{module}' will be duplicated, but its parameters"
+                        f"cannot be reset. To suppress this warning, add a"
+                        f"'reset_parameters()' method to '{module}'")
 
-        self.modules_nested_list = modules_nested_list
+        self.heteromodule = heteromodule
 
     def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor,
                       edge_type: Tensor):
@@ -219,20 +205,18 @@ class ToHeteroModule(MessagePassing):
                 :obj:`edge_index`.
         """
         # (TODO) Add Sparse Tensor support
-        for layer_idx, typed_layers in enumerate(self.modules_nested_list):
-            if layer_idx in self.lin_module_idxs:
-                # HeteroLinear layer
-                out = typed_layers(x, node_type)
-            else:
-                for j, layer in enumerate(typed_layers):
-                    e_idx_type_j = edge_index[:, edge_type == j]
-                    o_j = layer(x, e_idx_type_j)
-                    if j == 0:
-                        out = torch.zeros(x.shape[0], o_j.shape[-1],
-                                          device=x.device)
-                    out += o_j
-            x = out
-        return x
+        if self.is_lin:
+            # HeteroLinear layer
+            out = self.heteromodule(x, node_type)
+        else:
+            for j, module in enumerate(self.heteromodule.values()):
+                e_idx_type_j = edge_index[:, edge_type == j]
+                o_j = module(x, e_idx_type_j)
+                if j == 0:
+                    out = torch.zeros(x.shape[0], o_j.shape[-1],
+                                      device=x.device)
+                out += o_j
+        return out
 
     def dict_forward(self, x_dict: Dict[NodeType, Tensor],
                      edge_index_dict: Dict[EdgeType, Tensor]):
@@ -245,32 +229,29 @@ class ToHeteroModule(MessagePassing):
                 edge type.
         """
         # (TODO) Add Sparse Tensor support
-        for layer_idx, typed_layers in enumerate(self.modules_nested_list):
-            if layer_idx in self.lin_module_idxs:
-                x = torch.cat([x_j for x_j in x_dict.values()])
-                node_type = torch.cat([
-                    j * torch.ones(x_j.shape[0])
-                    for j, x_j in enumerate(x_dict.values())
-                ])
-                # HeteroLinear layer
-                o = typed_layers(x, node_type)
-                o_dict = {}
-                for j, ntype_j in enumerate(x_dict.keys()):
-                    o_dict[ntype_j] = o[node_type == j, :]
-            else:
-                o_dict = {}
-                for j, layer in enumerate(typed_layers):
-                    etype_j = self.edge_types[j]
-                    e_idx_type_j = edge_index_dict[etype_j]
-                    src_node_type_j = etype_j[0]
-                    dst_node_type_j = etype_j[-1]
-                    o_j = layer(x_dict[src_node_type_j], e_idx_type_j)
-                    if dst_node_type_j not in o_dict.keys():
-                        o_dict[dst_node_type_j] = o_j
-                    else:
-                        o_dict[dst_node_type_j] += o_j
-            x_dict = o_dict
-        return x
+        if self.is_lin:
+            x = torch.cat([x_j for x_j in x_dict.values()])
+            node_type = torch.cat([
+                j * torch.ones(x_j.shape[0])
+                for j, x_j in enumerate(x_dict.values())
+            ])
+            # HeteroLinear layer
+            o = self.heteromodule(x, node_type)
+            o_dict = {}
+            for j, ntype_j in enumerate(x_dict.keys()):
+                o_dict[ntype_j] = o[node_type == j, :]
+        else:
+            o_dict = {}
+            for j, (etype_j, module) in enumerate(self.heteromodule.items()):
+                e_idx_type_j = edge_index_dict[etype_j]
+                src_node_type_j = etype_j[0]
+                dst_node_type_j = etype_j[-1]
+                o_j = module(x_dict[src_node_type_j], e_idx_type_j)
+                if dst_node_type_j not in o_dict.keys():
+                    o_dict[dst_node_type_j] = o_j
+                else:
+                    o_dict[dst_node_type_j] += o_j
+        return o_dict
 
     def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
                edge_index: Union[Dict[EdgeType, Tensor], Tensor],
