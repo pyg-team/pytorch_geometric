@@ -127,8 +127,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         debug (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-    transformer = ToHeteroTransformer(module, metadata, aggr, input_map,
-                                          debug)
+    transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
     return transformer.transform()
 
 
