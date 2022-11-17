@@ -1,4 +1,4 @@
-import pytest
+import pytest # noqa
 import torch
 
 from torch_geometric.data import HeteroData
