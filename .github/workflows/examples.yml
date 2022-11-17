@@ -16,10 +16,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.9]
-        torch-version: [1.12.0]
-        include:
-          - torch-version: 1.12.0
-            torchvision-version: 0.13.0
+        torch-version: [1.13.0]
 
     steps:
       - uses: actions/checkout@v3
@@ -30,8 +27,7 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}+cpu
         run: |
-          pip install numpy typing-extensions dataclasses
-          pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install torch==${{ matrix.torch-version }} --extra-index-url https://download.pytorch.org/whl/cpu
 
       - name: Install internal dependencies
         run: |
