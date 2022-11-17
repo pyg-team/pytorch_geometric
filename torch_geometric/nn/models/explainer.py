@@ -310,10 +310,13 @@ def to_captum(
 ) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""
     Alias for `to_captum_model`.
+
     .. warning::
+
         :obj:`~torch_geometric.nn.to_captum` is deprecated and will
         be removed in a future release.
         Use :obj:`torch_geometric.nn.to_captum_model` instead.
+
     """
     return to_captum_model(model, mask_type, output_idx, metadata)
 
