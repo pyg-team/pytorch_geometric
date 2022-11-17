@@ -1,5 +1,7 @@
 import pytest
 
+import torch
+
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import ToHeteroModule
 from torch_geometric.nn.conv import GCNConv
