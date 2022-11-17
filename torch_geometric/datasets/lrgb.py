@@ -95,7 +95,6 @@ class LRGBDataset(InMemoryDataset):
               - ~150.94
               - ~307.30
               - 11
-
     """
 
     names = [
