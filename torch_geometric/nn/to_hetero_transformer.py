@@ -272,8 +272,8 @@ class ToHeteroModule(MessagePassing):
 
     def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
         edge_index:Union[Dict[EdgeType, Tensor], Tensor],
-        node_type=OptTensor = None,
-        edge_type=OptTensor = None):
+        node_type:OptTensor = None,
+        edge_type:OptTensor = None):
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
