@@ -50,7 +50,6 @@ def test_to_hetero_gcn():
         increment_dict[node_type] = ctr
         ctr += num_node_dict[node_type]
 
-    
     etypes_list = []
     for i, e_type in enumerate(e_idx_dict.keys()):
         src_type, dst_type = e_type[0], e_type[-1]
