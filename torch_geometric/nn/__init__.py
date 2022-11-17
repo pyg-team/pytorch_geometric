@@ -2,7 +2,7 @@ from .meta import MetaLayer
 from .reshape import Reshape
 from .sequential import Sequential
 from .data_parallel import DataParallel
-from .to_hetero_transformer import to_hetero
+from .to_hetero_transformer import to_hetero, ToHeteroModule
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
 from .to_fixed_size_transformer import to_fixed_size
 from .encoding import PositionalEncoding
