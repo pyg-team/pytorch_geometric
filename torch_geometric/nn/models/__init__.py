@@ -9,7 +9,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .explainer import (Explainer, to_captum, to_captum_input,
+from .explainer import (Explainer, to_captum, to_captum_model, to_captum_input,
                         captum_output_to_dicts)
 from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
@@ -48,6 +48,7 @@ __all__ = [
     'DimeNetPlusPlus',
     'Explainer',
     'to_captum',
+    'to_captum_model',
     'to_captum_input',
     'captum_output_to_dicts',
     'GNNExplainer',
