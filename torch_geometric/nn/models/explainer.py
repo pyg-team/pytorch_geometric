@@ -281,7 +281,7 @@ def captum_output_to_dicts(
             2. :obj:`"node"`: :obj:`captum_attrs` contains only node
                attributions. The returned tuple has node attribution dictonary
                with key `NodeType` and value node mask tensor of shape
-               :obj:`[num_nodes, num_features] and no edge attribution.
+               :obj:`[num_nodes, num_features]` and no edge attribution.
 
             3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
                 attributions. The returned tuple contains node attribution
