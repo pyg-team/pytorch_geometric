@@ -128,7 +128,8 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
     if _WITH_PYG_LIB:
         return ToHeteroModule(module, metadata, aggr, input_map, debug)
     else:
-        transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
+        transformer = ToHeteroTransformer(module, metadata, aggr, input_map,
+                                          debug)
         return transformer.transform()
 
 
@@ -174,7 +175,8 @@ class ToHeteroModule(MessagePassing):
         # parse out linear layers
         for i, submodule in module.modules():
             assert submodule_is_msg_passing_or_lin, "Current PyG"
-            if isinstance(submodule, torch.nn.Linear) or isinstance(submodule, torch_geometric.nn.dense.Linear):
+            if isinstance(submodule, torch.nn.Linear) or isinstance(
+                    submodule, torch_geometric.nn.dense.Linear):
                 lin_module_idxs.append(i)
 
             modules.append(submodule)
@@ -188,10 +190,8 @@ class ToHeteroModule(MessagePassing):
                 else:
                     in_ft = layer.in_channels
                     out_ft = layer.out_channels
-                heterolin = torch_geometric.nn.dense.HeteroLinear(in_ft,
-                    out_ft,
-                    len(self.node_types)
-                )
+                heterolin = torch_geometric.nn.dense.HeteroLinear(
+                    in_ft, out_ft, len(self.node_types))
                 heterolin.reset_parameters()
                 modules_nested_list.append(heterolin)
             else:
@@ -208,7 +208,8 @@ class ToHeteroModule(MessagePassing):
 
         self.modules_nested_list = modules_nested_list
 
-    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor, edge_type: Tensor):
+    def fused_forward(self, x: Tensor, edge_index: Tensor, node_type: Tensor,
+                      edge_type: Tensor):
         r"""
         Args:
             x: The input node features. :obj:`[num_nodes, in_channels]`
@@ -229,13 +230,14 @@ class ToHeteroModule(MessagePassing):
                     e_idx_type_j = edge_index[:, edge_type == j]
                     o_j = layer(x, e_idx_type_j)
                     if j == 0:
-                        out = torch.zeros(x.shape[0], o_j.shape[-1], device=x.device)
+                        out = torch.zeros(x.shape[0], o_j.shape[-1],
+                                          device=x.device)
                     out += o_j
             x = out
         return x
 
-
-    def dict_forward(self, x_dict: Dict[NodeType, Tensor], edge_index_dict: Dict[EdgeType, Tensor]):
+    def dict_forward(self, x_dict: Dict[NodeType, Tensor],
+                     edge_index_dict: Dict[EdgeType, Tensor]):
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
@@ -248,7 +250,10 @@ class ToHeteroModule(MessagePassing):
         for layer_idx, typed_layers in enumerate(self.modules_nested_list):
             if layer_idx in self.lin_module_idxs:
                 x = torch.cat([x_j for x_j in x_dict.values()])
-                node_type = torch.cat([j * torch.ones(x_j.shape[0]) for j, x_j in enumerate(x_dict.values())])
+                node_type = torch.cat([
+                    j * torch.ones(x_j.shape[0])
+                    for j, x_j in enumerate(x_dict.values())
+                ])
                 # HeteroLinear layer
                 o = typed_layers(x, node_type)
                 o_dict = {}
@@ -269,11 +274,9 @@ class ToHeteroModule(MessagePassing):
             x_dict = o_dict
         return x
 
-
     def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
-        edge_index:Union[Dict[EdgeType, Tensor], Tensor],
-        node_type:OptTensor = None,
-        edge_type:OptTensor = None):
+               edge_index: Union[Dict[EdgeType, Tensor], Tensor],
+               node_type: OptTensor = None, edge_type: OptTensor = None):
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
@@ -304,8 +307,6 @@ class ToHeteroModule(MessagePassing):
                 raise ValueError('If x and edge_indices are single tensors, \
                     node_type and edge_type arguments must be provided.')
             return self.fused_forward(x, edge_index)
-
-
 
 
 class ToHeteroTransformer(Transformer):
