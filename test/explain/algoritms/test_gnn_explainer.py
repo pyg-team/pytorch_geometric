@@ -190,6 +190,10 @@ edge_mask_types = ["object", None]
 return_types_classification = ["log_probs", "raw", "probs"]
 return_types_regression = ["raw"]
 
+x = torch.randn(8, 3)
+edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+                           [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
+
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
@@ -214,9 +218,6 @@ def test_gnn_explainer_node_regression_single_output(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index)
 
     explainer = GNNExplainer()
@@ -260,9 +261,6 @@ def test_gnn_explainer_node_regression_multioutput(
     explainer = GNNExplainer()
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index)
 
     # try to explain prediction for node 0
@@ -305,9 +303,6 @@ def test_gnn_explainer_node_classification_single_output(
     explainer = GNNExplainer()
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index).argmax(dim=1)
 
     # try to explain prediction for node 0
@@ -350,9 +345,6 @@ def test_gnn_explainer_node_classification_multioutput(
     explainer = GNNExplainer()
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index).argmax(dim=-1)
 
     # try to explain prediction for node 0
@@ -392,9 +384,6 @@ def test_gnn_explainer_graph_classification(
     explainer = GNNExplainer()
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index, None, None).argmax(dim=-1)
 
     if isinstance(model, GNN_classification_multioutput):
@@ -439,9 +428,6 @@ def test_gnn_explainer_graph_regression(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index, None, None)
 
     if isinstance(model, GNN_regression_multioutput):
@@ -489,9 +475,6 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index, None, None)
 
     if isinstance(
@@ -541,9 +524,6 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index, None, None).argmax(dim=-1)
 
     if isinstance(model, GNN_classification_multioutput):
@@ -591,9 +571,6 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index).argmax(dim=-1)
 
     if isinstance(model, GCN_multioutput_classification):
@@ -639,9 +616,6 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 
     model = model()
 
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     out = model(x, edge_index)
 
     if isinstance(model, GCN_multioutput_regression):
@@ -662,9 +636,6 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 
 
 def test_backward_compatibility():
-    x = torch.randn(8, 3)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     model = GCN_single_output_classification()
     explainer = GNNExplainer_(model, epochs=2, return_type="log_prob")
     node_feat_mask, edge_mask = explainer.explain_node(2, x, edge_index)
