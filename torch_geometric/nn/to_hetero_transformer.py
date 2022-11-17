@@ -252,10 +252,13 @@ class ToHeteroModule(MessagePassing):
                     o_dict[dst_node_type_j] += o_j
         return o_dict
 
-    def foward(self, x: Union[Dict[NodeType, Tensor], Tensor],
-               edge_index: Optional[Union[Dict[EdgeType, Tensor],
+    def foward(self,
+                x: Union[Dict[NodeType, Tensor], Tensor],
+                edge_index: Optional[Union[Dict[EdgeType, Tensor],
                                           Tensor]] = None,
-               node_type: OptTensor = None, edge_type: OptTensor = None):
+                node_type: OptTensor = None,
+                edge_type: OptTensor = None
+            ) -> Union[Dict[NodeType, Tensor], Tensor]:
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
