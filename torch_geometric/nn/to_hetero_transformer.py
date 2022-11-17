@@ -1,7 +1,8 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, OptTensor, Tensor, Tuple, Union
+from typing import Any, Dict, Optional, Tensor, Tuple, Union
+from torch_geometric.typing import OptTensor
 
 import torch
 from torch.nn import Module
@@ -201,9 +202,9 @@ class ToHeteroModule(MessagePassing):
                         modules_nested_list[-1][-1].reset_parameters()
                     elif sum([p.numel() for p in layer.parameters()]) > 0:
                         warnings.warn(
-                            f"'{target}' will be duplicated, but its parameters "
-                            f"cannot be reset. To suppress this warning, add a "
-                            f"'reset_parameters()' method to '{target}'")
+                            f"'{layer}' will be duplicated, but its parameters"
+                            f"cannot be reset. To suppress this warning, add a"
+                            f"'reset_parameters()' method to '{layer}'")
 
         self.modules_nested_list = modules_nested_list
 
