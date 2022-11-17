@@ -1,7 +1,7 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, Tuple, Union, Tensor, OptTensor
+from typing import Any, Dict, Optional, OptTensor, Tensor, Tuple, Union
 
 import torch
 from torch.nn import Module
