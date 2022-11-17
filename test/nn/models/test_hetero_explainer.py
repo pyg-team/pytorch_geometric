@@ -7,8 +7,8 @@ from torch_geometric.nn import (
     HeteroConv,
     SAGEConv,
     captum_output_to_dicts,
-    to_captum,
     to_captum_input,
+    to_captum_model,
     to_hetero,
 )
 from torch_geometric.nn.models.explainer import (
@@ -143,7 +143,7 @@ def test_captum_attribution_methods_hetero(mask_type, method):
     data = get_hetero_data()
     metadata = data.metadata()
     model = HeteroSage(metadata)
-    captum_model = to_captum(model, mask_type, 0, metadata)
+    captum_model = to_captum_model(model, mask_type, 0, metadata)
     explainer = getattr(attr, method)(captum_model)
     assert isinstance(captum_model, CaptumHeteroModel)
 
