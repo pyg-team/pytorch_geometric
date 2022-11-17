@@ -294,7 +294,8 @@ class ToHeteroModule(MessagePassing):
                     raise TypeError("If x is provided as a Tensor, \
                         edge_index must be as well")
                 if node_type is None or edge_type is None:
-                    raise ValueError('If x and edge_indices are single tensors, \
+                    raise ValueError(
+                        'If x and edge_indices are single tensors, \
                         node_type and edge_type arguments must be provided.')
                 return self.fused_forward(x, edge_index, node_type, edge_type)
 
