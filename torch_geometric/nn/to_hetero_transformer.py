@@ -1,9 +1,10 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, Tensor, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
