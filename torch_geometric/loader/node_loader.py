@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator, Tuple, Union, List
+from typing import Any, Callable, Iterator, List, Tuple, Union
 
 import psutil
 import torch
@@ -162,12 +162,12 @@ class NodeLoader(torch.utils.data.DataLoader):
 
     def worker_init_function(self, worker_id):
         """Worker init default function.
-                Parameters
-                ----------
-                worker_id : int
-                    Worker ID.self.loader_cores : [int] (optional)
-                    List of cpu cores to which dataloader workers should affinitize to.
-                    default: node0_cores[1:num_workers]
+        Parameters
+        ----------
+        worker_id : int
+            Worker ID.self.loader_cores : [int] (optional)
+            List of cpu cores to which dataloader workers should affinitize to.
+            default: node0_cores[1:num_workers]
         """
         try:
             psutil.Process().cpu_affinity([self.loader_cores[worker_id]])
