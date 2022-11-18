@@ -232,8 +232,7 @@ class ToHeteroModule(Module):
         # (TODO) Add Sparse Tensor support
         if self.is_lin:
             x = torch.cat([x_j for x_j in x_dict.values()])
-            sizes = [feat.shape[0] for feat in x_dict.values()]
-            print(sizes)
+            size_list = [feat.shape[0] for feat in x_dict.values()]
             sizes = torch.tensor(sizes, dtype=torch.long, device=x.device)
             node_type = torch.arange(len(sizes), device=x.device)
             node_type = node_type.repeat_interleave(sizes)
@@ -242,14 +241,12 @@ class ToHeteroModule(Module):
             print(o.shape)
             o_dict = {
                 key: o_i.squeeze()
-                for key, o_i in zip(x_dict.keys(),
-                                    torch.tensor_split(o, sizes.cpu()))
+                for key, o_i in zip(x_dict.keys(), o.split(size_list))
             }
             print(
             {
                 key: o_i.squeeze().shape
-                for key, o_i in zip(x_dict.keys(), torch.tensor_split(
-                    o, sizes.cpu()))
+                for key, o_i in zip(x_dict.keys(), o.split(size_list))
             }
             )
         else:
