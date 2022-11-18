@@ -606,18 +606,18 @@ def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
     out = torch.randint(num_nodes, (num_samples, seed.numel()))
     mask = node_time[out] >= seed_time
-
     neg_sampling_complete = False
-    for i in range(5):  # Greedily search for alternative negatives.
+    for i in range(5):  # pragma: no cover
         if not mask.any():
             neg_sampling_complete = True
             break
 
+        # Greedily search for alternative negatives.
         numel = int(mask.sum())
         out[mask] = tmp = torch.randint(num_nodes, (numel, ))
         mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
 
-    if not neg_sampling_complete:
+    if not neg_sampling_complete:  # pragma: no cover
         # Not much options left. In that case, we set remaining negatives
         # to the node with minimum timestamp.
         out[mask] = node_time.argmin()
