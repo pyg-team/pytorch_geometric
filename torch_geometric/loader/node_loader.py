@@ -1,7 +1,9 @@
 from typing import Any, Callable, Iterator, Tuple, Union
 
 import torch
-
+import psutil
+from contextlib import contextmanager
+import os 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
@@ -12,6 +14,7 @@ from torch_geometric.loader.utils import (
     filter_data,
     filter_hetero_data,
     get_input_nodes,
+    get_numa_nodes_cores
 )
 from torch_geometric.sampler.base import (
     BaseSampler,
@@ -72,6 +75,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         input_time: OptTensor = None,
         transform: Callable = None,
         filter_per_worker: bool = False,
+        use_cpu_worker_affinity=False,
+        loader_cores=None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -89,9 +94,11 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
-
+        self.num_workers = kwargs.get('num_workers', 0)
+        # CPU Affinitization for loader and compute cores
+        worker_init_fn = WorkerInitWrapper(kwargs.get('worker_init_fn', None))
         iterator = range(input_nodes.size(0))
-        super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
+        super().__init__(iterator, collate_fn=self.collate_fn, worker_init_fn=worker_init_fn, **kwargs)
 
     def collate_fn(self, index: NodeSamplerInput) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
@@ -146,5 +153,113 @@ class NodeLoader(torch.utils.data.DataLoader):
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
+    def worker_init_function(self, worker_id):
+        """Worker init default function.
+                Parameters
+                ----------
+                worker_id : int
+                    Worker ID.self.loader_cores : [int] (optio
+                nal)
+                    List of cpu cores to which dataloader workers should affinitize to.
+                    default: node0_cores[0:num_workers]
+        """
+        try:
+            psutil.Process().cpu_affinity([self.loader_cores[worker_id]])
+            len(psutil.Process().cpu_affinity())
+        except:
+            raise Exception('ERROR: cannot use affinity id={} cpu_cores={}'
+                            .format(worker_id, self.loader_cores))
+    
+    def __enter__(self):
+        return self      
+    
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
+
+    @contextmanager
+    def enable_cpu_affinity(self, loader_cores: list[int] = None, verbose: bool = False):
+        """ Helper method for enabling cpu affinity for compute threads and dataloader workers
+        Only for CPU devices
+        Uses only NUMA node 0 by default for multi-node systems
+        Parameters
+        ----------
+        loader_cores : [int] (optional)
+            List of cpu cores to which dataloader workers should affinitize to. 
+            By default cpu0 is reserved for all auxiliary threads & ops
+            and DataLoader with affinitize to cores starting at id=1.
+            default: node0_cores[1:num_workers]
+        Usage
+        -----
+        with dataloader.enable_cpu_affinity(losfrt):
+            <training loop>
+        """
+        if self.device.type == 'cpu': 
+            if not self.num_workers > 0:
+                raise Exception('ERROR: affinity should be used with at least one DL worker')
+            if loader_cores and len(loader_cores) != self.num_workers:
+                raise Exception('ERROR: cpu_affinity incorrect '
+                                'number of loader_cores={} for num_workers={}'
+                                .format(loader_cores, self.num_workers))
+
+            worker_init_fn_old = self.worker_init_fn 
+            affinity_old = psutil.Process().cpu_affinity()
+            nthreads_old = torch.get_num_threads()
+            loader_cores = loader_cores[:] if loader_cores else []
+                        
+            def init_fn(worker_id):
+                try:
+                    if verbose:
+                        p = psutil.Process()
+                        p.cpu_affinity([loader_cores[worker_id]])
+                        print(f"Worker process #{worker_id}: {p}, affinity {p.cpu_affinity()}", flush=True)
+                    else:
+                        psutil.Process().cpu_affinity([loader_cores[worker_id]])
+                except:
+                    raise Exception('ERROR: cannot use affinity id={} cpu={}'
+                                    .format(worker_id, loader_cores))
+
+                worker_init_fn_old(worker_id)
+
+            if not loader_cores:
+                
+                numa_info = get_numa_nodes_cores()
+                if numa_info and len(numa_info[0]) > self.num_workers:
+                    # take one thread per each node 0 core
+                    node0_cores = [cpus[0] for core_id, cpus in numa_info[0]]
+                else:
+                    node0_cores = list(range(psutil.cpu_count(logical = False)))
+
+                if len(node0_cores) <= self.num_workers:
+                    raise Exception('ERROR: more workers than available cores')
+
+                loader_cores = loader_cores or node0_cores[0:self.num_workers]
+
+            try:
+                # set cpu affinity for dataloader
+                self.worker_init_fn = init_fn
+
+                self.cpu_affinity_enabled = True
+                print(f"{self.num_workers} DL workers are assigned to cpus {loader_cores}")
+                
+                yield
+            finally:
+                # restore omp_num_threads and cpu affinity
+                psutil.Process().cpu_affinity(affinity_old)
+                torch.set_num_threads(nthreads_old)
+                self.worker_init_fn = worker_init_fn_old
+
+                self.cpu_affinity_enabled = False
+        else:
+            yield
+            
+class WorkerInitWrapper(object):
+    """Wraps the :attr:`worker_init_fn` argument of the DataLoader to set the number of
+    OMP threads to 1 for PyTorch DataLoader workers.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, worker_id):
+        torch.set_num_threads(1)
+        if self.func is not None:
+            self.func(worker_id)

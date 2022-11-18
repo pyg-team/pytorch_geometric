@@ -1,4 +1,5 @@
 import argparse
+from contextlib import nullcontext
 
 import torch
 
@@ -108,26 +109,24 @@ def run(args: argparse.ArgumentParser) -> None:
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         model.eval()
-
-                        with amp:
-                            for _ in range(args.warmup):
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
-                            with timeit():
-                                # becomes a no-op if vtune_profile == False
-                                with emit_itt(args.vtune_profile):
+                        with subgraph_loader.enable_cpu_affinity(loader_cores=args.loader_cores) if args.cpu_affinity else nullcontext():
+                            with amp:
+                                for _ in range(args.warmup):
                                     model.inference(subgraph_loader, device,
                                                     progress_bar=True)
+                                with timeit():
+                                    # becomes a no-op if vtune_profile == False
+                                    with torch_profile() if args.profile else nullcontext():
+                                        with emit_itt(args.vtune_profile):
+                                            model.inference(subgraph_loader, device,
+                                                            progress_bar=True)
 
-                            if args.profile:
-                                with torch_profile():
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                                rename_profile_file(model_name, dataset_name,
-                                                    str(batch_size),
-                                                    str(layers),
-                                                    str(hidden_channels),
-                                                    str(num_neighbors))
+                                if args.profile:
+                                    rename_profile_file(model_name, dataset_name,
+                                                        str(batch_size),
+                                                        str(layers),
+                                                        str(hidden_channels),
+                                                        str(num_neighbors))
 
 
 if __name__ == '__main__':
@@ -162,6 +161,8 @@ if __name__ == '__main__':
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--vtune-profile', action='store_true')
     argparser.add_argument('--bf16', action='store_true')
+    argparser.add_argument('--cpu-affinity', action='store_true')
+    argparser.add_argument('--loader-cores', nargs='+', default=[], type=int)
 
     args = argparser.parse_args()
 
