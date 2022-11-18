@@ -281,7 +281,7 @@ class ToHeteroModule(Module):
                 Dict[Tuple[str, str, str], Tensor].
                 (default: :obj:`None`)
         """
-        if isinstance(x, Dict[NodeType, Tensor]):
+        if isinstance(x, Dict):
             if self.is_lin:
                 return self.dict_forward(x)
             else:
