@@ -23,7 +23,7 @@ __all__ = [
     'Sequential',
     'DataParallel',
     'to_hetero',
-    'ToHeteroModule'
+    'ToHeteroModule',
     'to_hetero_with_bases',
     'to_fixed_size',
     'PositionalEncoding',
