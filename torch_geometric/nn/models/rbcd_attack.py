@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.utils import to_undirected, coalesce
+from torch_geometric.utils import coalesce, to_undirected
 
 # (predictions, labels, ids/mask) -> Tensor with one element
 LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
