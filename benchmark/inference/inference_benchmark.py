@@ -109,24 +109,28 @@ def run(args: argparse.ArgumentParser) -> None:
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         model.eval()
-                        with subgraph_loader.enable_cpu_affinity(loader_cores=args.loader_cores) if args.cpu_affinity else nullcontext():
+                        with subgraph_loader.enable_cpu_affinity(
+                                loader_cores=args.loader_cores
+                        ) if args.cpu_affinity else nullcontext():
                             with amp:
                                 for _ in range(args.warmup):
                                     model.inference(subgraph_loader, device,
                                                     progress_bar=True)
                                 with timeit():
                                     # becomes a no-op if vtune_profile == False
-                                    with torch_profile() if args.profile else nullcontext():
+                                    with torch_profile(
+                                    ) if args.profile else nullcontext():
                                         with emit_itt(args.vtune_profile):
-                                            model.inference(subgraph_loader, device,
-                                                            progress_bar=True)
+                                            model.inference(
+                                                subgraph_loader, device,
+                                                progress_bar=True)
 
                                 if args.profile:
-                                    rename_profile_file(model_name, dataset_name,
-                                                        str(batch_size),
-                                                        str(layers),
-                                                        str(hidden_channels),
-                                                        str(num_neighbors))
+                                    rename_profile_file(
+                                        model_name, dataset_name,
+                                        str(batch_size), str(layers),
+                                        str(hidden_channels),
+                                        str(num_neighbors))
 
 
 if __name__ == '__main__':
