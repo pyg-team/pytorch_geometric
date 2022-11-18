@@ -145,12 +145,12 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: Optional[Union[int, Tensor]],
+        node_index: Optional[Union[int, Tensor]],
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
 
-        if index is None:
+        if node_index is None:
             raise ValueError("Please provide node index for node-level "
                              "explanation")
 
@@ -159,7 +159,7 @@ class GNNExplainer(ExplainerAlgorithm):
         num_nodes = x.size(0)
         num_edges = edge_index.size(1)
         x, edge_index, index, subset, hard_edge_mask, kwargs =\
-            self.subgraph(model, index, x, edge_index, **kwargs)
+            self.subgraph(model, node_index, x, edge_index, **kwargs)
         if target_index is not None and model_config.mode ==\
                 ModelMode.classification:
             target = torch.index_select(target, 1, subset)
@@ -199,7 +199,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         target_index: Optional[Union[int, Tensor]] = None,
-        index: Optional[Union[int, Tensor]] = None,
+        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
         self._initialize_masks(x, edge_index,
@@ -219,7 +219,7 @@ class GNNExplainer(ExplainerAlgorithm):
             out = model(x=h, edge_index=edge_index, **kwargs)
             loss_value = self.loss(
                 out, target, return_type=model_config.return_type,
-                target_idx=target_index, node_index=index,
+                target_idx=target_index, node_index=node_index,
                 edge_mask_type=explainer_config.edge_mask_type,
                 model_mode=model_config.mode)
             loss_value.backward(retain_graph=True)
@@ -328,11 +328,11 @@ class GNNExplainer(ExplainerAlgorithm):
         ]:
             logging.error("Model task level not supported.")
             return False
-        if explainer_config.edge_mask_type == MaskType.attributes:
+        if explainer_config.edge_mask_type not in [MaskType.object, None]:
             logging.error("Edge mask type not supported.")
             return False
 
-        if explainer_config.node_mask_type is None:
+        if explainer_config.node_mask_type in [MaskType.both, None]:
             logging.error("Node mask type not supported.")
             return False
 
@@ -417,8 +417,10 @@ class GNNExplainer_:
         allow_edge_mask: bool = True,
         **kwargs,
     ):
-        logging.warning("Using depreciated `GNNExplainer` use 'explain.Explainer' with explain.algorithm.GNNExplainer' instead")
-          assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
+        logging.warning(
+            "Using depreciated `GNNExplainer` use 'explain.Explainer'\
+                with explain.algorithm.GNNExplainer' instead")
+        assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
