@@ -238,7 +238,11 @@ class ToHeteroModule(Module):
             node_type = node_type.repeat_interleave(sizes)
             # HeteroLinear layer
             o = self.heteromodule(x, node_type)
-            o_dict = {key:o_i.reshape(-1) for key, o_i in zip(x_dict.keys(), torch.tensor_split(o, sizes))}
+            o_dict = {
+                key: o_i.reshape(-1)
+                for key, o_i in zip(x_dict.keys(), torch.tensor_split(
+                    o, sizes))
+            }
         else:
             o_dict = {}
             for j, (etype_j, module) in enumerate(self.heteromodule.items()):
