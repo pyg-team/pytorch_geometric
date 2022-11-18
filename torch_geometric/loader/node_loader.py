@@ -3,7 +3,7 @@ from typing import Any, Callable, Iterator, Tuple, Union
 import torch
 import psutil
 from contextlib import contextmanager
-import os 
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
