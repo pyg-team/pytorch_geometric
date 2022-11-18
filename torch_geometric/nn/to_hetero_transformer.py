@@ -190,8 +190,12 @@ class ToHeteroModule(Module):
 
         self.heteromodule = heteromodule
 
-    def fused_forward(self, x: Tensor, edge_index: OptTensor,
-                      node_type: OptTensor, edge_type: OptTensor):
+    def fused_forward(self,
+                    x: Tensor,
+                    edge_index: OptTensor = None,
+                    node_type: OptTensor = None,
+                    edge_type: OptTensor = None
+                ) -> Tensor:
         r"""
         Args:
             x: The input node features. :obj:`[num_nodes, in_channels]`
@@ -220,7 +224,7 @@ class ToHeteroModule(Module):
         self,
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Optional[Dict[EdgeType, Tensor]] = None,
-    ):
+    ) -> Dict[NodeType, Tensor]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
@@ -288,7 +292,7 @@ class ToHeteroModule(Module):
                 if not isinstance(edge_index, Dict):
                     raise TypeError("If x is provided as a dictionary, \
                         edge_index must be as well")
-                return self.dict_forward(x, edge_index=edge_index)
+                return self.dict_forward(x, edge_index_dict=edge_index)
         else:
             if self.is_lin:
                 if node_type is None:
