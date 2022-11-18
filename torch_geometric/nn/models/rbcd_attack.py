@@ -70,8 +70,8 @@ class RBCDAttack(Attack):
     block size is typically slightly smaller than specified.
 
     The attacks can be used for both global and local attacks as well as
-    test-time attacks (evasion) and training-time attacks (poisoning). Please see
-    the provided examples.
+    test-time attacks (evasion) and training-time attacks (poisoning). Please
+    see the provided examples.
 
     The attacks are designed with a focus on node- or graph-classification,
     however, to adapt to other tasks you most likely only need to provide an
@@ -90,14 +90,15 @@ class RBCDAttack(Attack):
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
-        mode (str, optional): Either :obj:`'projected'` for Projected-RBCD or :obj:`'greedy'`
-            for Greedy-RBCD. (default: :obj:`projected`).
+        mode (str, optional): Either :obj:`'projected'` for Projected-RBCD or
+            :obj:`'greedy'` for Greedy-RBCD. (default: :obj:`projected`).
         block_size (int, optional): Number of randomly selected elements in the
             adjacency matrix to consider. (default: :obj:`250_000`)
-        epochs (int, optional): Number of epochs (aborts early if :obj:`mode='greedy'`
-            and budget is satisfied) (default: :obj:`125`)
+        epochs (int, optional): Number of epochs (aborts early if
+            :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
         epochs_resampling (int, optional): Number of epochs to resample the
-            random block. Only relevant if :obj:`mode='projected'`. Defaults to 100.
+            random block. Only relevant if :obj:`mode='projected'`
+            (default: obj:`100`).
         loss (str or Callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
@@ -109,12 +110,12 @@ class RBCDAttack(Attack):
             (default: :obj:`'probability_margin_loss'`).
         metric (Callable, optional): Second (potentially
             non-differentiable) loss for monitoring or early stopping (if
-            :obj:`mode='greedy'`). Only relevant if :obj:`mode='projected'`. (default:
-            same as :attr:`loss`)
+            :obj:`mode='greedy'`). Only relevant if :obj:`mode='projected'`.
+            (default: same as :attr:`loss`)
         lr (float, optional): Learning rate that is being used if
-            :obj:`mode='projected'`. Additionally, it is heuristically corrected for
-            :attr:`block_size`, budget (see :attr:`attack`) and graph size.
-            (default: :obj:`1_000`)
+            :obj:`mode='projected'`. Additionally, it is heuristically
+            corrected for :attr:`block_size`, budget (see :attr:`attack`) and
+            graph size. (default: :obj:`1_000`)
         is_undirected_graph (bool, optional): If :obj:`True` the graph is
             assumed to be undirected. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
@@ -499,8 +500,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight <=
-                      self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight
+                      <= self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -599,8 +600,8 @@ class RBCDAttack(Attack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr /
-              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr
+              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -613,17 +614,17 @@ class RBCDAttack(Attack):
 
     @staticmethod
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
-        """Convert a linear index to index of upper triangular matrix."""
+        """Linear index to upper triangular matrix without diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n *
-                       (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n
+                       * (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
     def _linear_to_full_idx(n: int, lin_idx: Tensor) -> Tensor:
-        """Convert a linear index to index of matrix."""
+        """Linear index to dense matrix including diagonal."""
         row_idx = torch.div(lin_idx, n, rounding_mode='floor')
         col_idx = lin_idx % n
         return torch.stack((row_idx, col_idx))
@@ -668,7 +669,8 @@ class RBCDAttack(Attack):
         .. math::
             m = - s_{y} + max_{y' \ne y} s_{y'}
 
-        where :math:`m` is the margin :math:`s` the score and :math:`y` the labels.
+        where :math:`m` is the margin :math:`s` the score and :math:`y` the
+        labels.
 
         Args:
             score (Tensor): Some score (e.g. logits) of shape
