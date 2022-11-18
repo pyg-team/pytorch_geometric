@@ -23,7 +23,7 @@ heterodata[('v1', 'r4', 'v1')] = torch.randn(2, 50)
 
 def test_to_hetero_linear():
     lin = Linear(10, 5)
-    heterolin = ToHeteroModule(lin, heterodata.metadata())
+    heterolin = ToHeteroModule(lin, *heterodata.metadata())
     # test dict input
     x_dict = heterodata.collect('x')
     out = heterolin(x_dict)
@@ -38,7 +38,7 @@ def test_to_hetero_linear():
 
 def test_to_hetero_gcn():
     gcnconv = GCNConv(10, 5)
-    rgcnconv = ToHeteroModule(gcnconv, heterodata.metadata())
+    rgcnconv = ToHeteroModule(gcnconv, *heterodata.metadata())
     # test dict input
     x_dict = heterodata.collect('x')
     e_idx_dict = heterodata.collect('edge_index')
