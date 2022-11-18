@@ -417,7 +417,8 @@ class GNNExplainer_:
         allow_edge_mask: bool = True,
         **kwargs,
     ):
-        logging.warning("BackWardCompatibilityGNNExplainer is deprecated.")
+        logging.warning("Using depreciated `GNNExplainer` use 'explain.Explainer' with explain.algorithm.GNNExplainer' instead")
+          assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
