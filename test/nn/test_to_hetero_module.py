@@ -24,9 +24,8 @@ def test_to_hetero_linear():
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
     x = torch.cat([x_j for x_j in x_dict.values()])
-    node_type = torch.cat([
-        (j * torch.ones(x_j.shape[0])).long() for j, x_j in enumerate(x_dict.values())
-    ])
+    node_type = torch.cat([(j * torch.ones(x_j.shape[0])).long()
+                           for j, x_j in enumerate(x_dict.values())])
     out = heterolin(x=x, node_type=node_type)
     assert out.shape == (40, 5)
 
