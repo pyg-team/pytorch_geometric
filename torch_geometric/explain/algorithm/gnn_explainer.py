@@ -257,7 +257,7 @@ class GNNExplainer(ExplainerAlgorithm):
             y_hat = y_hat[..., target_idx].unsqueeze(-1)
             y = y[..., target_idx].unsqueeze(-1)
 
-        if node_index is not None and node_index >= 0:
+        if node_index is not None:
             loss_ = torch.cdist(y_hat[node_index], y[node_index])
         else:
             loss_ = torch.cdist(y_hat, y)
@@ -278,7 +278,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         y_hat = self._to_log_prob(y_hat, return_type)
 
-        if node_index is not None and node_index >= 0:
+        if node_index is not None:
             loss = -y_hat[node_index, y[node_index]]
         else:
             loss = -y_hat[0, y[0]]
