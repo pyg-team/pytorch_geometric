@@ -319,7 +319,7 @@ class RBCDAttack(Attack):
         edge_weight = torch.cat((self.edge_weight.to(self.device),
                                  add_edge_weight.to(self.device)))
         edge_index, edge_weight = coalesce(
-            edge_index, edge_weight, num_nodes=self.n, op='sum')
+            edge_index, edge_weight, num_nodes=self.n, reduce='sum')
 
         is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
         self.edge_index = edge_index[:, is_one_mask]
@@ -460,7 +460,7 @@ class RBCDAttack(Attack):
             (self.edge_weight.to(self.device), block_edge_weight))
 
         edge_index, edge_weight = coalesce(
-            edge_index, edge_weight, num_nodes=self.n, op='sum')
+            edge_index, edge_weight, num_nodes=self.n, reduce='sum')
 
         # Allow (soft) removal of edges
         edge_weight[edge_weight > 1] = 2 - edge_weight[edge_weight > 1]
