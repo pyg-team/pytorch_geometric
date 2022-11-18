@@ -241,8 +241,8 @@ class ToHeteroModule(Module):
             o = self.heteromodule(x, node_type)
             o_dict = {
                 key: o_i.squeeze()
-                for key, o_i in zip(x_dict.keys(), torch.tensor_split(
-                    o, sizes.cpu()))
+                for key, o_i in zip(x_dict.keys(),
+                                    torch.tensor_split(o, sizes.cpu()))
             }
         else:
             o_dict = {}
