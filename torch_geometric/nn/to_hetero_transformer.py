@@ -232,10 +232,10 @@ class ToHeteroModule(Module):
         # (TODO) Add Sparse Tensor support
         if self.is_lin:
             x = torch.cat([x_j for x_j in x_dict.values()])
-            node_type = torch.cat([
-                j * torch.ones(x_j.shape[0]).to(torch.long)
-                for j, x_j in enumerate(x_dict.values())
-            ])
+            sizes = [feat.shape[0] for feat in x_dict.values()]
+            sizes = torch.tensor(sizes, dtype=torch.long, device=device)
+            node_type = torch.arange(len(sizes), device=device)
+            node_type = node_type.repeat_interleave(sizes)
             # HeteroLinear layer
             o = self.heteromodule(x, node_type)
             o_dict = {}
