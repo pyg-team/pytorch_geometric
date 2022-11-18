@@ -211,9 +211,9 @@ class ToHeteroModule(Module):
                 e_idx_type_j = edge_index[:, edge_type == j]
                 o_j = module(x, e_idx_type_j)
                 if j == 0:
-                    out = torch.zeros(x.shape[0], o_j.shape[-1],
-                                      device=x.device)
-                out += o_j
+                    out = o_j
+                else:
+                    out += o_j
         return out
 
     def dict_forward(
