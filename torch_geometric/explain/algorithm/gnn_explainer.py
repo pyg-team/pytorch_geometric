@@ -38,10 +38,6 @@ class GNNExplainer(ExplainerAlgorithm):
             (default: :obj:`100`)
         lr (float, optional): The learning rate to apply.
             (default: :obj:`0.01`)
-        shared_mask (bool, optional): Whether to share the mask for node
-            features. When set to :obj:`True`, the node feature mask will be
-            shared across all nodes. (default: :obj:`True`). Only used when the
-            node mask type is :obj:`MaskType.attributes`.
         **kwargs (optional): Additional hyper-parameters to override default
             settings in
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
@@ -217,7 +213,7 @@ class GNNExplainer(ExplainerAlgorithm):
             parameters = [self.node_mask]
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
-        for _ in range(1, self.epochs + 1):
+        for _ in range(self.epochs):
             optimizer.zero_grad()
             h = x * self.node_mask.sigmoid()
             out = model(x=h, edge_index=edge_index, **kwargs)
@@ -338,12 +334,6 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if explainer_config.node_mask_type is None:
             logging.error("Node mask type not supported.")
-            return False
-
-        if model_config.task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.graph
-        ]:
-            logging.error("Model task level not supported.")
             return False
 
         return True

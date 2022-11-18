@@ -45,8 +45,8 @@ class ExplainerAlgorithm(torch.nn.Module):
                 explain. (default: :obj:`None`)
             node_index (Union[int, Tensor], optional): the node/edge index
                 to explain. Can be a single index if no batch is provided, or a
-                tuple of indices if a batch is provided. only used if the model
-                task level is :obj:`"node"` or :obj:`"edge"`.
+                tensor of indices if a batch is provided. only used if
+                the model task level is :obj:`"node"` or :obj:`"edge"`.
                 (default: :obj:`None`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
