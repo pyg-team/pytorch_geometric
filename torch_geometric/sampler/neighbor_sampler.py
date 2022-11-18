@@ -406,36 +406,6 @@ def edge_sample(
 
     # Negative Sampling #######################################################
 
-    def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
-                   seed_time: Optional[Tensor],
-                   node_time: Optional[Tensor]) -> Tensor:
-        if node_time is None:
-            return torch.randint(num_nodes, (seed.numel() * num_samples, ))
-
-        # Otherwise, we can only sample negatives that exist in the graph:
-        # TODO See if this greedy algorithm here can be improved.
-        assert seed_time is not None
-        seed_time = seed_time.view(1, -1).expand(num_samples, -1)
-        out = torch.randint(num_nodes, (num_samples, seed.numel()))
-        mask = node_time[out] >= seed_time
-
-        neg_sampling_complete = False
-        for i in range(5):  # Greedily search for alternative negatives.
-            if not mask.any():
-                neg_sampling_complete = True
-                break
-
-            numel = int(mask.sum())
-            out[mask] = tmp = torch.randint(num_nodes, (numel, ))
-            mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
-
-        if not neg_sampling_complete:
-            # Not much options left. In that case, we set remaining negatives
-            # to the node with minimum timestamp.
-            out[mask] = node_time.argmin()
-
-        return out.view(-1)
-
     if neg_sampling is not None:
         # When we are doing negative sampling, we append negative information
         # of nodes/edges to `src`, `dst`, `src_time`, `dst_time`.
@@ -491,9 +461,9 @@ def edge_sample(
             if edge_label_time is not None:
                 dst_time = edge_label_time.repeat(1 + neg_sampling.amount)
 
-    # Neighborhodd Sampling ###################################################
+    # Heterogeneus Neighborhood Sampling ######################################
 
-    if input_type is not None:  # Heterogeneous sampling:
+    if input_type is not None:
         seed_time_dict = None
         if input_type[0] != input_type[-1]:  # Two distinct node types:
 
@@ -525,28 +495,63 @@ def edge_sample(
 
         out = sample_fn(seed=seed_dict, seed_time_dict=seed_time_dict)
 
-        # Enhance `out` by label information:
-        pass
+        # Enhance `out` by label information ##################################
+        if disjoint:
+            for key, batch in out.batch.items():
+                out.batch[key] = batch % num_pos
 
-        # TODO MOVE SOMEWHERE ELSE
-        # DISJOINT:
-        # edge_label_index = torch.arange(src.numel()).repeat(2).view(2, -1)
-        # NON_DISJOINT
-        # edge_label_index = torch.stack([
-        #     inverse_src,
-        #     inverse_dst,
-        # ], dim=0)
+        if neg_sampling is None or neg_sampling.is_binary():
+            if disjoint:
+                if input_type[0] != input_type[-1]:
+                    edge_label_index = torch.arange(num_pos + num_neg)
+                    edge_label_index = edge_label_index.repeat(2).view(2, -1)
+                else:
+                    edge_label_index = torch.arange(2 * (num_pos + num_neg))
+                    edge_label_index = edge_label_index.view(2, -1)
+            else:
+                if input_type[0] != input_type[-1]:
+                    edge_label_index = torch.stack([
+                        inverse_src,
+                        inverse_dst,
+                    ], dim=0)
+                else:
+                    edge_label_index = inverse_seed.view(2, -1)
 
-        # if neg_sampling is None:
+            out.metadata = (index, edge_label_index, edge_label, src_time)
 
-        # if disjoint:
-        #     for key, batch in output.batch.items():
-        #         output.batch[key] = batch % num_seed_edges
+        elif neg_sampling.is_triplet():
+            if disjoint:
+                src_index = torch.arange(num_pos)
+                if input_type[0] != input_type[-1]:
+                    dst_pos_index = torch.arange(num_pos)
+                    # `dst_neg_index` needs to be offset such that indices with
+                    # offset `num_pos` belong to the same triplet:
+                    dst_neg_index = torch.arange(
+                        num_pos, seed_dict[input_type[-1]].numel())
+                    dst_neg_index = dst_neg_index.view(-1, num_pos).t()
+                else:
+                    dst_pos_index = torch.arange(num_pos, 2 * num_pos)
+                    dst_neg_index = torch.arange(
+                        2 * num_pos, seed_dict[input_type[-1]].numel())
+                    dst_neg_index = dst_neg_index.view(-1, num_pos).t()
+            else:
+                if input_type[0] != input_type[-1]:
+                    src_index = inverse_src
+                    dst_pos_index = inverse_dst[:num_pos]
+                    dst_neg_index = inverse_dst[num_pos:]
+                else:
+                    src_index = inverse_seed[:num_pos]
+                    dst_pos_index = inverse_seed[num_pos:2 * num_pos]
+                    dst_neg_index = inverse_seed[2 * num_pos:]
 
-        # output.metadata = (index, edge_label_index, edge_label,
-        #                    edge_label_time)
+            dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-    else:  # Homogeneous sampling:
+            out.metadata = (index, src_index, dst_pos_index, dst_neg_index,
+                            src_time)
+
+    # Homogeneus Neighborhood Sampling ########################################
+
+    else:
 
         seed = torch.cat([src, dst], dim=0)
         seed_time = None
@@ -588,3 +593,34 @@ def edge_sample(
                             src_time)
 
     return out
+
+
+def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
+               seed_time: Optional[Tensor],
+               node_time: Optional[Tensor]) -> Tensor:
+    if node_time is None:
+        return torch.randint(num_nodes, (seed.numel() * num_samples, ))
+
+    # Otherwise, we can only sample negatives that exist in the graph:
+    # TODO See if this greedy algorithm here can be improved.
+    assert seed_time is not None
+    seed_time = seed_time.view(1, -1).expand(num_samples, -1)
+    out = torch.randint(num_nodes, (num_samples, seed.numel()))
+    mask = node_time[out] >= seed_time
+
+    neg_sampling_complete = False
+    for i in range(5):  # Greedily search for alternative negatives.
+        if not mask.any():
+            neg_sampling_complete = True
+            break
+
+        numel = int(mask.sum())
+        out[mask] = tmp = torch.randint(num_nodes, (numel, ))
+        mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
+
+    if not neg_sampling_complete:
+        # Not much options left. In that case, we set remaining negatives
+        # to the node with minimum timestamp.
+        out[mask] = node_time.argmin()
+
+    return out.view(-1)
