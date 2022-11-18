@@ -166,7 +166,7 @@ class ToHeteroModule(Module):
                 in_ft = module.in_channels
                 out_ft = module.out_channels
             heteromodule = torch_geometric.nn.dense.HeteroLinear(
-                in_ft, out_ft, len(self.node_types))
+                in_ft, out_ft, len(self.node_types)).to(module.device)
             heteromodule.reset_parameters()
         else:
             unused_node_types = get_unused_node_types(*metadata)
@@ -178,7 +178,7 @@ class ToHeteroModule(Module):
                     f"This may lead to unexpected behaviour.")
             heteromodule = {}
             for edge_type in self.edge_types:
-                heteromodule[edge_type] = copy.deepcopy(module)
+                heteromodule[edge_type] = copy.deepcopy(module).to(module.device)
                 if hasattr(module, 'reset_parameters'):
                     module.reset_parameters()
                 elif sum([p.numel() for p in module.parameters()]) > 0:
