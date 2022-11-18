@@ -61,7 +61,7 @@ class RBCDAttack(Attack):
     attack) relaxed the discrete entries in the adjacency matrix
     :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturb the adjacency matrix
     (no feature perturbations). Thus, they support all models that can handle
-    weighted graphs are are differentiabile w.r.t. these edge weights. For
+    weighted graphs that are differentiable w.r.t. these edge weights. For
     non-differentiable models you might be able to e.g. use the gumble softmax
     trick.
 
@@ -71,7 +71,7 @@ class RBCDAttack(Attack):
     block size is typically slightly smaller than specified.
 
     The attacks can be used for both global and local attacks as well as
-    test-time attacks (evasion) and train-time attacks (poisoning). Please see
+    test-time attacks (evasion) and training-time attacks (poisoning). Please see
     the provided examples.
 
     The attacks are designed with a focus on node- or graph-classification,
@@ -91,29 +91,29 @@ class RBCDAttack(Attack):
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
-        mode (str, optional): Either 'projected' for Projected-RBCD or 'greedy'
+        mode (str, optional): Either :obj:`'projected'` for Projected-RBCD or :obj:`'greedy'`
             for Greedy-RBCD. (default: :obj:`projected`).
         block_size (int, optional): Number of randomly selected elements in the
             adjacency matrix to consider. (default: :obj:`250_000`)
-        epochs (int, optional): Number of epochs (aborts early if mode='greedy'
+        epochs (int, optional): Number of epochs (aborts early if :obj:`mode='greedy'`
             and budget is satisfied) (default: :obj:`125`)
         epochs_resampling (int, optional): Number of epochs to resample the
-            random block. Only relevant if mode='projected'. Defaults to 100.
+            random block. Only relevant if :obj:`mode='projected'`. Defaults to 100.
         loss (str or Callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
             classification, that the model returns raw predictions (i.e. no
             output activation) or uses :obj:`logsoftmax`, and that the number
             of predictions matches the number labels passed to :attr:`attack`.
-            Either pass Callable or one of: :obj:`masked`, :obj:`margin`,
-            :obj:`prob_margin`, :obj:`tanh_margin`
-            (default: :obj:`probability_margin_loss`).
+            Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
+            :obj:`'prob_margin'`, :obj:`'tanh_margin'`
+            (default: :obj:`'probability_margin_loss'`).
         metric (Callable, optional): Second (potentially
             non-differentiable) loss for monitoring or early stopping (if
-            mode='greedy'). Only relevant if mode='projected'. (default:
+            :obj:`mode='greedy'`). Only relevant if :obj:`mode='projected'`. (default:
             same as :attr:`loss`)
         lr (float, optional): Learning rate that is being used if
-            mode='projected'. Additionally, it is heuristically corrected for
+            :obj:`mode='projected'`. Additionally, it is heuristically corrected for
             :attr:`block_size`, budget (see :attr:`attack`) and graph size.
             (default: :obj:`1_000`)
         is_undirected_graph (bool, optional): If :obj:`True` the graph is
@@ -259,7 +259,7 @@ class RBCDAttack(Attack):
 
     def _prepare_greedy(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                         budget: int, idx_attack: Optional[Tensor] = None,
-                        **kwargs) -> None:
+                        **kwargs):
         """Prepare attack."""
         self.flipped_edges = torch.empty((2, 0), dtype=edge_index.dtype,
                                          device=self.device)
@@ -290,7 +290,7 @@ class RBCDAttack(Attack):
         # Sample initial search space (Algorithm 1, line 3-4)
         self._sample_random_block(budget)
 
-    def _update(self, step: Any, gradient: torch.Tensor, x: Tensor,
+    def _update(self, step: Any, gradient: Tensor, x: Tensor,
                 edge_index: Tensor, labels: Tensor, budget: int,
                 idx_attack: Optional[Tensor] = None,
                 **kwargs) -> Dict[str, float]:
@@ -298,7 +298,7 @@ class RBCDAttack(Attack):
         pass
 
     @torch.no_grad()
-    def _update_greedy(self, step_size: int, gradient: torch.Tensor, x: Tensor,
+    def _update_greedy(self, step_size: int, gradient: Tensor, x: Tensor,
                        edge_index: Tensor, *args, **kwargs) -> Dict[str, Any]:
         """Update edge weights given gradient."""
         _, topk_edge_index = torch.topk(gradient, step_size)
@@ -333,7 +333,7 @@ class RBCDAttack(Attack):
         return {}
 
     @torch.no_grad()
-    def _update_projected(self, epoch: int, gradient: torch.Tensor, x: Tensor,
+    def _update_projected(self, epoch: int, gradient: Tensor, x: Tensor,
                           edge_index: Tensor, labels: Tensor, budget: int,
                           idx_attack: Optional[Tensor] = None,
                           **kwargs) -> Dict[str, float]:
@@ -667,9 +667,9 @@ class RBCDAttack(Attack):
         r"""Margin loss between true score and highest non-target score:
 
         .. math::
-            $m = - s_{y} + max_{y' \ne y} s_{y'}$
+            m = - s_{y} + max_{y' \ne y} s_{y'}
 
-        where :math:`m` is the margin `s` the score and `y` the labels.
+        where :math:`m` is the margin :math:`s` the score and :math:`y` the labels.
 
         Args:
             score (Tensor): Some score (e.g. logits) of shape
