@@ -1,7 +1,10 @@
-from typing import Tuple
+from typing import Any, Optional, Tuple
 
 import torch
 from torch import Tensor
+from torch_sparse import SparseTensor
+
+from .num_nodes import maybe_num_nodes
 
 
 def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
@@ -46,3 +49,63 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
         row = batch + edge_index[1]
         col = batch + edge_index[2]
         return torch.stack([row, col], dim=0), edge_attr
+
+
+def is_torch_sparse_tensor(src: Any) -> bool:
+    """Returns :obj:`True` if the input :obj:`src` is a PyTorch
+    :obj:`SparseTensor` (in any sparse format).
+
+    Args:
+        src (Any): The input object to be checked.
+    """
+    return isinstance(src, Tensor) and src.is_sparse
+
+
+def is_sparse(src: Any) -> bool:
+    """Returns :obj:`True` if the input :obj:`src` is a PyTorch
+    :obj:`SparseTensor` (in any sparse format) or a
+    :obj:`torch_sparse.SparseTensor`.
+
+    Args:
+        src (Any): The input object to be checked.
+    """
+    return is_torch_sparse_tensor(src) or isinstance(src, SparseTensor)
+
+
+def to_torch_coo_tensor(
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> Tensor:
+    """Converts edge index to sparse adjacency matrix
+    :class:`torch.sparse.Tensor`.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_attr (Tensor, optional): The edge weights.
+            (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+
+    :rtype: :class:`torch.sparse.FloatTensor`
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> to_torch_coo_tensor(edge_index)
+        tensor(indices=tensor([[0, 1, 1, 2, 2, 3],
+                            [1, 0, 2, 1, 3, 2]]),
+            values=tensor([1., 1., 1., 1., 1., 1.]),
+            size=(4, 4), nnz=6, layout=torch.sparse_coo)
+
+    """
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    device = edge_index.device
+    if edge_weight is None:
+        edge_weight = torch.ones(edge_index.size(1), device=device)
+
+    shape = torch.Size((num_nodes, num_nodes))
+    adj = torch.sparse_coo_tensor(edge_index, edge_weight, shape,
+                                  device=device)
+    return adj.coalesce()

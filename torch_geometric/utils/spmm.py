@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, matmul
 
-from .torch_sparse_tensor import is_torch_sparse_tensor
+from .sparse import is_torch_sparse_tensor
 
 
 @torch.jit._overload
