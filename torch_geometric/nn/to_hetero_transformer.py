@@ -1,7 +1,11 @@
 import copy
 import warnings
 from collections import defaultdict, deque
+<<<<<<< HEAD
 from typing import Any, Dict, Optional, Tuple, Union
+=======
+from typing import Any, Dict, List, Optional, Tuple, Union
+>>>>>>> 91f4bb1e7bc42388e70e542b193601923f2d0cc4
 
 import torch
 from torch import Tensor
