@@ -239,7 +239,7 @@ class ToHeteroModule(Module):
             # HeteroLinear layer
             o = self.heteromodule(x, node_type)
             o_dict = {
-                key: o_i.reshape(-1)
+                key: o_i.squeeze()
                 for key, o_i in zip(x_dict.keys(), torch.tensor_split(
                     o, sizes))
             }
