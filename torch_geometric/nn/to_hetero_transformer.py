@@ -233,7 +233,7 @@ class ToHeteroModule(Module):
         if self.is_lin:
             x = torch.cat([x_j for x_j in x_dict.values()])
             size_list = [feat.shape[0] for feat in x_dict.values()]
-            sizes = torch.tensor(sizes, dtype=torch.long, device=x.device)
+            sizes = torch.tensor(size_list, dtype=torch.long, device=x.device)
             node_type = torch.arange(len(sizes), device=x.device)
             node_type = node_type.repeat_interleave(sizes)
             # HeteroLinear layer
