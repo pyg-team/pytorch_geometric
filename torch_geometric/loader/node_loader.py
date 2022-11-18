@@ -166,13 +166,13 @@ class NodeLoader(torch.utils.data.DataLoader):
             worker_id (int): DataLoader worked ID
         Raises:
             Exception: The number of cores and workers should match.
-        """        
+        """
         try:
             psutil.Process().cpu_affinity([self.loader_cores[worker_id]])
         except:
             raise Exception(
-                'ERROR: cannot use affinity for worker id={} cpu_cores={}'.format(
-                    worker_id, self.loader_cores))
+                'ERROR: cannot use affinity for worker id={} cpu_cores={}'.
+                format(worker_id, self.loader_cores))
 
     def __enter__(self):
         return self
@@ -181,11 +181,11 @@ class NodeLoader(torch.utils.data.DataLoader):
         return f'{self.__class__.__name__}()'
 
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores: List[int] = None):        
+    def enable_cpu_affinity(self, loader_cores: List[int] = None):
         """ Helper method for enabling cpu affinity for compute threads and dataloader workers
         Only for CPU devices
         Uses NUMA node 0 by default for multi-node systems
-        
+
         Args:
             loader_cores : [int] (optional)
                 List of cpu cores to which dataloader workers should affinitize to.
