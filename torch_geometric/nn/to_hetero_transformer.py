@@ -1,7 +1,7 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, Tuple, Union, List
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -144,8 +144,7 @@ class ToHeteroModule(Module):
     def __init__(
         self,
         module: Module,
-        node_types: Optional[List[NodeType]] = None,
-        edge_types: Optional[List[EdgeType]] = None,
+        metadata: Metadata,
         aggr: str = 'sum',
     ):
         super().__init__()
@@ -159,15 +158,15 @@ class ToHeteroModule(Module):
                 f"This may lead to unexpected behaviour.")
 
         self.metadata = metadata
-        self.node_types = node_types
-        self.edge_types = edge_types
+        self.node_types = metadata[0]
+        self.edge_types = metadata[1]
         self.aggr = aggr
+        assert len(metadata) == 2
         assert aggr in self.aggrs.keys()
         self.is_lin = isinstance(module, torch.nn.Linear) or isinstance(
             module, torch_geometric.nn.dense.Linear)
+        assert len(metadata[0]) > 0 and (len(metadata[1]) > 0 or self.is_lin)
         if self.is_lin:
-            assert len(node_types) > 0, 'For Linear modules,\
-                                please provide node_types.'
             if isinstance(module, torch.nn.Linear):
                 in_ft = module.in_features
                 out_ft = module.out_features
@@ -178,8 +177,6 @@ class ToHeteroModule(Module):
                 in_ft, out_ft, len(self.node_types))
             heteromodule.reset_parameters()
         else:
-            assert len(edge_types) > 0, 'For MessagePassing modules,\
-                                please provide edge_types.'
             heteromodule = {}
             for edge_type in self.edge_types:
                 heteromodule[edge_type] = copy.deepcopy(module)
