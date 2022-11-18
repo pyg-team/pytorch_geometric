@@ -1,7 +1,13 @@
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.testing import is_full_test
-from torch_geometric.utils import dense_to_sparse
+from torch_geometric.utils import (
+    dense_to_sparse,
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_torch_coo_tensor,
+)
 
 
 def test_dense_to_sparse():
@@ -35,3 +41,24 @@ def test_dense_to_sparse():
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3], [0, 1, 0, 3, 3]]
         assert edge_attr.tolist() == [3, 1, 2, 1, 2]
+
+
+def test_is_torch_sparse_tensor():
+    x = torch.randn(5, 5)
+
+    assert not is_torch_sparse_tensor(x)
+    assert not is_torch_sparse_tensor(SparseTensor.from_dense(x))
+    assert is_torch_sparse_tensor(x.to_sparse())
+
+
+def test_is_sparse():
+    x = torch.randn(5, 5)
+
+    assert not is_sparse(x)
+    assert is_sparse(SparseTensor.from_dense(x))
+    assert is_sparse(x.to_sparse())
+
+
+def to_torch_coo_tensor():
+    # TODO
+    pass
