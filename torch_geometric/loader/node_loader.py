@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator, Tuple, Union
+from typing import Any, Callable, Iterator, Tuple, Union, List
 
 import psutil
 import torch
@@ -183,7 +183,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         return f'{self.__class__.__name__}()'
 
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores: list[int] = None):
+    def enable_cpu_affinity(self, loader_cores: List[int] = None):
         """ Helper method for enabling cpu affinity for compute threads and dataloader workers
         Only for CPU devices
         Uses only NUMA node 0 by default for multi-node systems
