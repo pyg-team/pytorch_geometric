@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.utils import to_undirected, coalesce
+from torch_geometric.utils import coalesce, to_undirected
 
 # (predictions, labels, ids/mask) -> Tensor with one element
 LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
@@ -318,8 +318,8 @@ class RBCDAttack(Attack):
             dim=-1)
         edge_weight = torch.cat((self.edge_weight.to(self.device),
                                  add_edge_weight.to(self.device)))
-        edge_index, edge_weight = coalesce(
-            edge_index, edge_weight, num_nodes=self.n, op='sum')
+        edge_index, edge_weight = coalesce(edge_index, edge_weight,
+                                           num_nodes=self.n, op='sum')
 
         is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
         self.edge_index = edge_index[:, is_one_mask]
@@ -459,8 +459,8 @@ class RBCDAttack(Attack):
         edge_weight = torch.cat(
             (self.edge_weight.to(self.device), block_edge_weight))
 
-        edge_index, edge_weight = coalesce(
-            edge_index, edge_weight, num_nodes=self.n, op='sum')
+        edge_index, edge_weight = coalesce(edge_index, edge_weight,
+                                           num_nodes=self.n, op='sum')
 
         # Allow (soft) removal of edges
         edge_weight[edge_weight > 1] = 2 - edge_weight[edge_weight > 1]
@@ -500,8 +500,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight
-                      <= self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight <=
+                      self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -600,8 +600,8 @@ class RBCDAttack(Attack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr
-              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr /
+              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -616,8 +616,8 @@ class RBCDAttack(Attack):
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Linear index to upper triangular matrix without diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n
-                       * (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n *
+                       (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
