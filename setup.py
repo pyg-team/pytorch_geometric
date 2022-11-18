@@ -11,6 +11,7 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
+    'psutil>=5.8.0',
 ]
 
 graphgym_requires = [
