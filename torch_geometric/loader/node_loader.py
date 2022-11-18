@@ -160,20 +160,18 @@ class NodeLoader(torch.utils.data.DataLoader):
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
-    def worker_init_function(self, worker_id):
-        """Worker init default function.
-        Parameters
-        ----------
-        worker_id : int
-            Worker ID.self.loader_cores : [int] (optional)
-            List of cpu cores to which dataloader workers should affinitize to.
-            default: node0_cores[1:num_workers]
-        """
+    def worker_init_function(self, worker_id: int):
+        """ Worker init function using DL affinitization.
+        Args:
+            worker_id (int): DataLoader worked ID
+        Raises:
+            Exception: The number of cores and workers should match.
+        """        
         try:
             psutil.Process().cpu_affinity([self.loader_cores[worker_id]])
         except:
             raise Exception(
-                'ERROR: cannot use affinity id={} cpu_cores={}'.format(
+                'ERROR: cannot use affinity for worker id={} cpu_cores={}'.format(
                     worker_id, self.loader_cores))
 
     def __enter__(self):
@@ -183,21 +181,20 @@ class NodeLoader(torch.utils.data.DataLoader):
         return f'{self.__class__.__name__}()'
 
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores: List[int] = None):
+    def enable_cpu_affinity(self, loader_cores: List[int] = None):        
         """ Helper method for enabling cpu affinity for compute threads and dataloader workers
         Only for CPU devices
-        Uses only NUMA node 0 by default for multi-node systems
-        Parameters
-        ----------
-        loader_cores : [int] (optional)
-            List of cpu cores to which dataloader workers should affinitize to.
-            By default cpu0 is reserved for all auxiliary threads & ops.
-            DataLoader wil affinitize to cores starting at cpu1.
-            default: node0_cores[1:num_workers]
-        Usage
-        -----
+        Uses NUMA node 0 by default for multi-node systems
+        
+        Args:
+            loader_cores : [int] (optional)
+                List of cpu cores to which dataloader workers should affinitize to.
+                By default cpu0 is reserved for all auxiliary threads & ops.
+                DataLoader wil affinitize to cores starting at cpu1.
+                default: node0_cores[1:num_workers]
+        Usage:
         with dataloader.enable_cpu_affinity(losfrt):
-            <training loop>
+        <training loop>
         """
         if self.device.type == 'cpu':
             if not self.num_workers > 0:
