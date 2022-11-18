@@ -47,4 +47,6 @@ def test_heterogeneous_random_node_loader():
 
     for batch in loader:
         assert len(batch) == 4
+        assert batch.node_types == data.node_types
+        assert batch.edge_types == data.edge_types
         batch.validate()
