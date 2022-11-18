@@ -219,7 +219,8 @@ class ToHeteroModule(Module):
         return out
 
     def dict_forward(self, x_dict: Dict[NodeType, Tensor],
-                     edge_index_dict: Optional[Dict[EdgeType, Tensor]]):
+                     edge_index_dict: Optional[Dict[EdgeType, Tensor]] = None,
+                    ):
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
@@ -288,13 +289,13 @@ class ToHeteroModule(Module):
                 if not isinstance(edge_index, Dict[EdgeType, Tensor]):
                     raise TypeError("If x is provided as a dictionary, \
                         edge_index must be as well")
-                return self.dict_forward(x, edge_index)
+                return self.dict_forward(x, edge_index=edge_index)
         else:
             if self.is_lin:
                 if node_type is None:
                     raise ValueError('If x is a single tensor, \
                         node_type argument must be provided.')
-                return self.fused_forward(x, node_type)
+                return self.fused_forward(x, node_type=node_type)
             else:
                 if not isinstance(edge_index, Tensor):
                     raise TypeError("If x is provided as a Tensor, \
@@ -303,7 +304,12 @@ class ToHeteroModule(Module):
                     raise ValueError(
                         'If x and edge_indices are single tensors, \
                         node_type and edge_type arguments must be provided.')
-                return self.fused_forward(x, edge_index, node_type, edge_type)
+                return self.fused_forward(
+                    x,
+                    edge_index=edge_index,
+                    node_type=node_type,
+                    edge_type=edge_type
+                )
 
 
 class ToHeteroTransformer(Transformer):
