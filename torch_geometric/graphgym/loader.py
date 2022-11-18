@@ -26,7 +26,7 @@ from torch_geometric.loader import (
     GraphSAINTNodeSampler,
     GraphSAINTRandomWalkSampler,
     NeighborSampler,
-    RandomNodeSampler,
+    RandomNodeLoader,
 )
 from torch_geometric.utils import (
     index_to_mask,
@@ -256,11 +256,11 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
             batch_size=batch_size, shuffle=shuffle,
             num_workers=cfg.num_workers, pin_memory=True)
     elif sampler == "random_node":
-        loader_train = RandomNodeSampler(dataset[0],
-                                         num_parts=cfg.train.train_parts,
-                                         shuffle=shuffle,
-                                         num_workers=cfg.num_workers,
-                                         pin_memory=True)
+        loader_train = RandomNodeLoader(dataset[0],
+                                        num_parts=cfg.train.train_parts,
+                                        shuffle=shuffle,
+                                        num_workers=cfg.num_workers,
+                                        pin_memory=True)
     elif sampler == "saint_rw":
         loader_train = \
             GraphSAINTRandomWalkSampler(dataset[0],
