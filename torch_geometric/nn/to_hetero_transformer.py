@@ -1,7 +1,7 @@
 import copy
 import warnings
 from collections import defaultdict, deque
-from typing import Any, Dict, Optional, Tuple, Union, List
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -168,6 +168,7 @@ class ToHeteroModule(Module):
         if self.is_lin:
             assert len(node_types) > 0, 'For Linear modules,\
                                 please provide node_types.'
+
             if isinstance(module, torch.nn.Linear):
                 in_ft = module.in_features
                 out_ft = module.out_features
@@ -180,6 +181,7 @@ class ToHeteroModule(Module):
         else:
             assert len(edge_types) > 0, 'For MessagePassing modules,\
                                 please provide edge_types.'
+
             heteromodule = {}
             for edge_type in self.edge_types:
                 heteromodule[edge_type] = copy.deepcopy(module)
