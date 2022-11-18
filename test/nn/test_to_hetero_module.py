@@ -9,9 +9,15 @@ from torch_geometric.nn.dense import Linear
 heterodata = HeteroData()
 heterodata['v0'].x = torch.randn(20, 10)
 heterodata['v1'].x = torch.randn(20, 10)
-heterodata[('v0', 'r0', 'v0')].edge_index = torch.randint(high=20, size=(2, 30)).to(torch.long)
-heterodata[('v0', 'r2', 'v1')].edge_index = torch.randint(high=20, size=(2, 30)).to(torch.long)
-heterodata[('v1', 'r3', 'v0')].edge_index = torch.randint(high=20, size=(2, 30)).to(torch.long)
+heterodata[('v0', 'r0',
+            'v0')].edge_index = torch.randint(high=20,
+                                              size=(2, 30)).to(torch.long)
+heterodata[('v0', 'r2',
+            'v1')].edge_index = torch.randint(high=20,
+                                              size=(2, 30)).to(torch.long)
+heterodata[('v1', 'r3',
+            'v0')].edge_index = torch.randint(high=20,
+                                              size=(2, 30)).to(torch.long)
 heterodata[('v1', 'r4', 'v1')] = torch.randn(2, 50)
 
 
