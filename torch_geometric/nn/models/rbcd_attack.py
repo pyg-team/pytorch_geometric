@@ -5,11 +5,10 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 import numpy as np
 import torch
 import torch.nn.functional as F
-import torch_sparse
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import to_undirected, coalesce
 
 # (predictions, labels, ids/mask) -> Tensor with one element
 LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
@@ -318,8 +317,8 @@ class RBCDAttack(Attack):
             dim=-1)
         edge_weight = torch.cat((self.edge_weight.to(self.device),
                                  add_edge_weight.to(self.device)))
-        edge_index, edge_weight = torch_sparse.coalesce(
-            edge_index, edge_weight, m=self.n, n=self.n, op='sum')
+        edge_index, edge_weight = coalesce(
+            edge_index, edge_weight, num_nodes=self.n, op='sum')
 
         is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
         self.edge_index = edge_index[:, is_one_mask]
@@ -459,8 +458,8 @@ class RBCDAttack(Attack):
         edge_weight = torch.cat(
             (self.edge_weight.to(self.device), block_edge_weight))
 
-        edge_index, edge_weight = torch_sparse.coalesce(
-            edge_index, edge_weight, m=self.n, n=self.n, op='sum')
+        edge_index, edge_weight = coalesce(
+            edge_index, edge_weight, num_nodes=self.n, op='sum')
 
         # Allow (soft) removal of edges
         edge_weight[edge_weight > 1] = 2 - edge_weight[edge_weight > 1]
