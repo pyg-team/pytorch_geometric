@@ -152,15 +152,6 @@ class ToHeteroModule(Module):
         aggr: str = 'sum',
     ):
         super().__init__()
-
-        unused_node_types = get_unused_node_types(*metadata)
-        if len(unused_node_types) > 0:
-            warnings.warn(
-                f"There exist node types ({unused_node_types}) whose "
-                f"representations do not get updated during message passing "
-                f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behaviour.")
-
         self.metadata = metadata
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
@@ -181,6 +172,13 @@ class ToHeteroModule(Module):
                 in_ft, out_ft, len(self.node_types))
             heteromodule.reset_parameters()
         else:
+            unused_node_types = get_unused_node_types(*metadata)
+            if len(unused_node_types) > 0:
+                warnings.warn(
+                    f"There exist node types ({unused_node_types}) whose "
+                    f"representations do not get updated during message passing "
+                    f"as they do not occur as destination type in any edge type. "
+                    f"This may lead to unexpected behaviour.")
             heteromodule = {}
             for edge_type in self.edge_types:
                 heteromodule[edge_type] = copy.deepcopy(module)
