@@ -44,7 +44,7 @@ for epoch in range(1, 201):
     optimizer.step()
 
 explainer = Explainer(
-    model=model, algorithm=GNNExplainer(epochs=200, shared_mask=False),
+    model=model, algorithm=GNNExplainer(epochs=200),
     explainer_config=ExplainerConfig(explanation_type="model",
                                      node_mask_type="attributes",
                                      edge_mask_type="object"),
