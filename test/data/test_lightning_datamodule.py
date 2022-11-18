@@ -388,5 +388,4 @@ def test_lightning_hetero_link_data_custom_store():
     )
 
     batch = next(iter(datamodule.train_dataloader()))
-    assert 'edge_label' in batch['author', 'paper']
     assert 'edge_label_index' in batch['author', 'paper']
