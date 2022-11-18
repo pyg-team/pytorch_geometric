@@ -233,14 +233,12 @@ class ToHeteroModule(Module):
         if self.is_lin:
             x = torch.cat([x_j for x_j in x_dict.values()])
             sizes = [feat.shape[0] for feat in x_dict.values()]
-            sizes = torch.tensor(sizes, dtype=torch.long, device=x.device)
+            sizes = torch.tensor(sizes, dtype=torch.long)
             node_type = torch.arange(len(sizes), device=x.device)
             node_type = node_type.repeat_interleave(sizes)
             # HeteroLinear layer
             o = self.heteromodule(x, node_type)
-            o_dict = {}
-            for j, ntype_j in enumerate(x_dict.keys()):
-                o_dict[ntype_j] = o[node_type == j, :]
+            o_dict = {key:o_i for key, o_i in zip(x_dict.keys(), torch.tensor_split(o, sizes))}
         else:
             o_dict = {}
             for j, (etype_j, module) in enumerate(self.heteromodule.items()):
