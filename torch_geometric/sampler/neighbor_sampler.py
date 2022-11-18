@@ -1,3 +1,4 @@
+import math
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import torch
@@ -9,15 +10,11 @@ from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSamplingConfig,
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.utils import (
-    add_negative_samples,
-    remap_keys,
-    to_csc,
-    to_hetero_csc,
-)
+from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
 try:
@@ -396,106 +393,152 @@ def edge_sample(
     num_src_nodes: int,
     num_dst_nodes: int,
     disjoint: bool,
-    input_type: Optional[Tuple[str, str]] = None,
-    **kwargs,
+    input_type: Optional[Tuple[str, str, str]] = None,
+    neg_sampling: Optional[NegativeSamplingConfig] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
-    index, row, col, edge_label, edge_label_time = index
-    edge_label_index = torch.stack([row, col], dim=0)
-    negative_sampling_ratio = kwargs.get('negative_sampling_ratio', 0.0)
+    index, src, dst, edge_label, edge_label_time = index
+    src_time = dst_time = edge_label_time
 
-    out = add_negative_samples(
-        edge_label_index,
-        edge_label,
-        edge_label_time,
-        num_src_nodes,
-        num_dst_nodes,
-        negative_sampling_ratio,
-    )
-    edge_label_index, edge_label, edge_label_time = out
-    num_seed_edges = edge_label_index.size(1)
-    seed_time = seed_time_dict = None
+    assert edge_label_time is None or disjoint
 
-    if input_type is not None:
-        # Heterogeneous sampling:
-        if input_type[0] != input_type[-1]:
-            if disjoint:
-                seed_src = edge_label_index[0]
-                seed_dst = edge_label_index[1]
-                edge_label_index = torch.arange(0,
-                                                num_seed_edges).repeat(2).view(
-                                                    2, -1)
-                seed_dict = {
-                    input_type[0]: seed_src,
-                    input_type[-1]: seed_dst,
-                }
-                if edge_label_time is not None:
-                    seed_time_dict = {
-                        input_type[0]: edge_label_time,
-                        input_type[-1]: edge_label_time
-                    }
-            else:
-                seed_src = edge_label_index[0]
-                seed_src, inverse_src = seed_src.unique(return_inverse=True)
-                seed_dst = edge_label_index[1]
-                seed_dst, inverse_dst = seed_dst.unique(return_inverse=True)
-                edge_label_index = torch.stack([
-                    inverse_src,
-                    inverse_dst,
-                ], dim=0)
-                seed_dict = {
-                    input_type[0]: seed_src,
-                    input_type[-1]: seed_dst,
-                }
+    num_pos = src.numel()
+    num_neg = 0
 
-        else:  # Merge both source and destination node indices:
-            if disjoint:
-                seed_nodes = edge_label_index.view(-1)
-                edge_label_index = torch.arange(0, 2 * num_seed_edges)
-                edge_label_index = edge_label_index.view(2, -1)
-                seed_dict = {input_type[0]: seed_nodes}
-                if edge_label_time is not None:
-                    tmp = torch.cat([edge_label_time, edge_label_time])
-                    seed_time_dict = {input_type[0]: tmp}
-            else:
-                seed_nodes = edge_label_index.view(-1)
-                seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
-                edge_label_index = inverse.view(2, -1)
-                seed_dict = {input_type[0]: seed_nodes}
+    # Negative Sampling #######################################################
 
-        output = sample_fn(
-            seed=seed_dict,
-            seed_time_dict=seed_time_dict,
-        )
+    if neg_sampling is not None:
+        num_neg = int(num_pos * neg_sampling.amount)
 
-        if disjoint:
-            for key, batch in output.batch.items():
-                output.batch[key] = batch % num_seed_edges
+        if neg_sampling.is_binary():
+            # In the "binary" case, we randomly sample negative pairs of nodes.
+            src_neg = torch.randint(num_src_nodes, (num_neg, ))
+            src = torch.cat([src, src_neg], dim=0)
 
-        output.metadata = (index, edge_label_index, edge_label,
-                           edge_label_time)
+            dst_neg = torch.randint(num_dst_nodes, (num_neg, ))
+            dst = torch.cat([dst, dst_neg], dim=0)
 
-    else:
-        # Homogeneous sampling:
-        if disjoint:
-            seed_nodes = edge_label_index.view(-1)
-            edge_label_index = torch.arange(0, 2 * num_seed_edges)
-            edge_label_index = edge_label_index.view(2, -1)
+            if edge_label is None:
+                edge_label = torch.ones(num_pos)
+            elif edge_label.min() == 0:
+                edge_label = edge_label + 1
+            size = (num_neg, ) + edge_label.size()[1:]
+            edge_neg_label = edge_label.new_zeros(size)
+            edge_label = torch.cat([edge_label, edge_neg_label])
+
             if edge_label_time is not None:
-                seed_time = torch.cat([edge_label_time, edge_label_time])
+                edge_label_time = edge_label_time.repeat(
+                    1 + math.ceil(neg_sampling.amount))
+                edge_label_time = edge_label_time[:num_pos + num_neg]
+            src_time = dst_time = edge_label_time
 
-        else:
-            seed_nodes = edge_label_index.view(-1)
-            seed_nodes, inverse = seed_nodes.unique(return_inverse=True)
-            edge_label_index = inverse.view(2, -1)
+        elif neg_sampling.is_triplet():
+            # In the "triplet" case, we randomly sample negative destinations.
+            dst_neg = torch.randint(num_dst_nodes, (num_neg, ))
+            dst = torch.cat([dst, dst_neg], dim=0)
 
-        output = sample_fn(seed=seed_nodes, seed_time=seed_time)
+            assert edge_label is None
 
-        if disjoint:
-            output.batch = output.batch % num_seed_edges
+            if edge_label_time is not None:
+                neg_dst_time = edge_label_time.view(-1, 1).repeat(
+                    1, neg_sampling.amount).view(-1)
+                dst_time = torch.cat([dst_time, neg_dst_time], dim=0)
 
-        output.metadata = (index, edge_label_index, edge_label,
-                           edge_label_time)
+    # Neighborhodd Sampling ###################################################
 
-    return output
+    if input_type is not None:  # Heterogeneous sampling:
+        seed_time_dict = None
+        if input_type[0] != input_type[-1]:  # Two distinct node types:
+
+            if not disjoint:
+                src, inverse_src = src.unique(return_inverse=True)
+                dst, inverse_dst = dst.unique(return_inverse=True)
+
+            seed_dict = {input_type[0]: src, input_type[-1]: dst}
+
+            if edge_label_time is not None:  # Always disjoint.
+                seed_time_dict = {
+                    input_type[0]: src_time,
+                    input_type[-1]: dst_time,
+                }
+
+        else:  # Only a single node type: Merge both source and destination.
+
+            seed = torch.cat([src, dst], dim=0)
+
+            if not disjoint:
+                seed, inverse_seed = seed.unique(return_inverse=True)
+
+            seed_dict = {input_type[0]: seed}
+
+            if edge_label_time is not None:  # Always disjoint.
+                seed_time_dict = {
+                    input_type[0]: torch.cat([src_time, dst_time], dim=0),
+                }
+
+        out = sample_fn(seed=seed_dict, seed_time_dict=seed_time_dict)
+
+        # Enhance `out` by label information:
+        pass
+
+        # TODO MOVE SOMEWHERE ELSE
+        # DISJOINT:
+        # edge_label_index = torch.arange(src.numel()).repeat(2).view(2, -1)
+        # NON_DISJOINT
+        # edge_label_index = torch.stack([
+        #     inverse_src,
+        #     inverse_dst,
+        # ], dim=0)
+
+        # if neg_sampling is None:
+
+        # if disjoint:
+        #     for key, batch in output.batch.items():
+        #         output.batch[key] = batch % num_seed_edges
+
+        # output.metadata = (index, edge_label_index, edge_label,
+        #                    edge_label_time)
+
+    else:  # Homogeneous sampling:
+
+        seed = torch.cat([src, dst], dim=0)
+        seed_time = None
+
+        if not disjoint:
+            seed, inverse_seed = seed.unique(return_inverse=True)
+
+        if edge_label_time is not None:  # Always disjoint.
+            seed_time = torch.cat([src_time, dst_time])
+
+        out = sample_fn(seed=seed, seed_time=seed_time)
+
+        # Enhance `out` by label information:
+        if neg_sampling is None or neg_sampling.is_binary():
+            if disjoint:
+                out.batch = out.batch % num_pos
+                edge_label_index = torch.arange(2 * seed.numel()).view(2, -1)
+            else:
+                edge_label_index = inverse_seed.view(2, -1)
+
+            out.metadata = (index, edge_label_index, edge_label, seed_time)
+
+        elif neg_sampling.is_triplet():
+            if disjoint:
+                out.batch = torch.cat([
+                    out.batch[:2 * num_pos] % num_pos,
+                    (out.batch[2 * num_pos:] - 2 * num_pos) / num_pos
+                ], dim=0)
+                src_index = torch.arange(num_pos)
+                dst_pos_index = torch.arange(num_pos, 2 * num_pos)
+                dst_neg_index = torch.arange(2 * num_pos, seed.numel())
+            else:
+                src_index = inverse_seed[:num_pos]
+                dst_pos_index = inverse_seed[num_pos:2 * num_pos]
+                dst_neg_index = inverse_seed[2 * num_pos:]
+            dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
+
+            out.metadata = (index, src_index, dst_pos_index, dst_neg_index,
+                            src_time)
+
+    return out

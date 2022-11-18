@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Dict, Optional, Tuple, Union
 
 from torch import Tensor
 
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.utils.mixin import CastMixin
 
 # An input to a node-based sampler consists of two tensors:
 #  * The example indices
@@ -16,9 +18,9 @@ NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 #   * The example indices
 #   * The row of the edge index in COO format
 #   * The column of the edge index in COO format
-#   * The labels of the edges
+#   * The labels of the edges (optional)
 #   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, Tensor, OptTensor]
+EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, OptTensor, OptTensor]
 
 
 # A sampler output contains the following information.
@@ -64,6 +66,45 @@ class HeteroSamplerOutput:
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
+
+
+class NegativeSamplingStrategy(Enum):
+    # 'binary': Randomly sample negative edges in the graph.
+    binary = 'binary'
+    # 'triplet': Randomly sample negative destination nodes for each positive
+    # source node.
+    triplet = 'triplet'
+
+
+@dataclass
+class NegativeSamplingConfig(CastMixin):
+    strategy: NegativeSamplingStrategy
+    amount: Union[float, int] = 1
+
+    def __init__(
+        self,
+        strategy: Union[NegativeSamplingStrategy, str],
+        amount: Union[float, int] = 1,
+    ):
+        self.strategy = NegativeSamplingStrategy(strategy)
+        self.amount = amount
+
+        if self.amount <= 0:
+            raise ValueError(f"The attribute 'amount' needs to be positive "
+                             f"for '{self.__class__.__name__}' "
+                             f"(got {self.amount})")
+
+        if self.is_triplet() and isinstance(self.amount, float):
+            raise ValueError(f"The attribute 'amount' needs to be an integer "
+                             f"for '{self.__class__.__name__}' when using "
+                             f"'triplet' negative sampling strategy "
+                             f"(got {self.amount})")
+
+    def is_binary(self) -> bool:
+        return self.strategy == NegativeSamplingStrategy.binary
+
+    def is_triplet(self) -> bool:
+        return self.strategy == NegativeSamplingStrategy.triplet
 
 
 class BaseSampler(ABC):

@@ -19,7 +19,7 @@ def unique_edge_pairs(edge_index):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
+@pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     pos_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index = get_edge_index(100, 50, 500)
@@ -39,7 +39,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
         num_neighbors=[-1] * 2,
         batch_size=20,
         edge_label_index=edge_label_index,
-        edge_label=edge_label if neg_sampling_ratio == 0.0 else None,
+        edge_label=edge_label if neg_sampling_ratio is None else None,
         directed=directed,
         neg_sampling_ratio=neg_sampling_ratio,
         shuffle=True,
@@ -60,7 +60,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
-        if neg_sampling_ratio == 0.0:
+        if neg_sampling_ratio is None:
             assert batch.edge_label_index.size(1) == 20
 
             # Assert positive samples are present in the original graph:
@@ -312,9 +312,8 @@ def test_homogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 4
+        assert len(batch) == 3
         assert batch.input_id.numel() == 20
-        assert batch.num_nodes <= 40
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
 
