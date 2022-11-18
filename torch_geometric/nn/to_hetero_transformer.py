@@ -190,12 +190,9 @@ class ToHeteroModule(Module):
 
         self.heteromodule = heteromodule
 
-    def fused_forward(self,
-                    x: Tensor,
-                    edge_index: OptTensor = None,
-                    node_type: OptTensor = None,
-                    edge_type: OptTensor = None
-                ) -> Tensor:
+    def fused_forward(self, x: Tensor, edge_index: OptTensor = None,
+                      node_type: OptTensor = None,
+                      edge_type: OptTensor = None) -> Tensor:
         r"""
         Args:
             x: The input node features. :obj:`[num_nodes, in_channels]`
