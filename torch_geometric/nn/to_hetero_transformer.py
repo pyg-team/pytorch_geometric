@@ -242,8 +242,8 @@ class ToHeteroModule(Module):
             print(o.shape)
             o_dict = {
                 key: o_i.squeeze()
-                for key, o_i in zip(x_dict.keys(), torch.tensor_split(
-                    o, sizes.cpu()))
+                for key, o_i in zip(x_dict.keys(),
+                                    torch.tensor_split(o, sizes.cpu()))
             }
             print(
             {
