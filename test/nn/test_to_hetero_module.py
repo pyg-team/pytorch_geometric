@@ -59,7 +59,7 @@ def test_to_hetero_gcn():
                 1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
     edge_type = torch.cat(etypes_list).to(torch.long)
-    edge_index = torch.cat(list(e_idx_dict.values()), dim=1).to(torch.long)
+    edge_index = torch.cat(list(e_idx_dict.values()), dim=1)
 
     out = rgcnconv(x, edge_index=edge_index, edge_type=edge_type)
     assert out.shape == (40, 5)
