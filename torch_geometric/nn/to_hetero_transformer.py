@@ -243,12 +243,10 @@ class ToHeteroModule(Module):
                 key: o_i.squeeze()
                 for key, o_i in zip(x_dict.keys(), o.split(size_list))
             }
-            print(
-            {
+            print({
                 key: o_i.squeeze().shape
                 for key, o_i in zip(x_dict.keys(), o.split(size_list))
-            }
-            )
+            })
         else:
             o_dict = {}
             for j, (etype_j, module) in enumerate(self.heteromodule.items()):
