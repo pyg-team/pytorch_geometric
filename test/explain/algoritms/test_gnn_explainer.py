@@ -221,8 +221,9 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
     )
 
     model = model()
-
-    out = model(x, edge_index, None, None)
+    model.eval()
+    with torch.no_grad():
+        out = model(x, edge_index, None, None)
 
     if isinstance(
             model,
@@ -362,8 +363,8 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     )
 
     model = model()
-
-    out = model(x, edge_index)
+    with torch.no_grad():
+        out = model(x, edge_index)
 
     if isinstance(model, GCN_multioutput_regression):
         target_index = 0

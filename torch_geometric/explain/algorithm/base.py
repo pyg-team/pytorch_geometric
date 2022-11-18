@@ -78,7 +78,6 @@ class ExplainerAlgorithm(torch.nn.Module):
 
     ###########################################################################
 
-    @torch.no_grad()
     def get_initial_prediction(
         self,
         model: torch.nn.Module,
@@ -100,7 +99,8 @@ class ExplainerAlgorithm(torch.nn.Module):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        out = model(*args, **kwargs)
+        with torch.no_grad():
+            out = model(*args, **kwargs)
         if model_mode == ModelMode.classification:
             out = out.argmax(dim=-1)
         return out

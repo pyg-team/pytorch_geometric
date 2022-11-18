@@ -222,7 +222,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 target_idx=target_index, node_index=node_index,
                 edge_mask_type=explainer_config.edge_mask_type,
                 model_mode=model_config.mode)
-            loss_value.backward(retain_graph=True)
+            loss_value.backward(retain_graph=False)
             optimizer.step()
 
     def _initialize_masks(
