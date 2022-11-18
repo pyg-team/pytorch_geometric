@@ -234,7 +234,6 @@ def get_numa_nodes_cores():
                 if core_online == 1:
                     with open(os.path.join(cpu_dir, 'topology', 'core_id')) as core_id_file:
                         core_id = int(core_id_file.read().strip())
-                        print(core_id)
                         if core_id in thread_siblings:
                             thread_siblings[core_id].append(cpu_id)
                         else:
