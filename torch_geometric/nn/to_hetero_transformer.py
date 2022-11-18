@@ -245,13 +245,11 @@ class ToHeteroModule(Module):
                 for key, o_i in zip(x_dict.keys(),
                                     torch.tensor_split(o, sizes.cpu()))
             }
-            print(
-            {
+            print({
                 key: o_i.squeeze().shape
-                for key, o_i in zip(x_dict.keys(), torch.tensor_split(
-                    o, sizes.cpu()))
-            }
-            )
+                for key, o_i in zip(x_dict.keys(),
+                                    torch.tensor_split(o, sizes.cpu()))
+            })
         else:
             o_dict = {}
             for j, (etype_j, module) in enumerate(self.heteromodule.items()):
