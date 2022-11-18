@@ -213,9 +213,7 @@ class ToHeteroModule(Module):
                 if j == 0:
                     out = torch.zeros(x.shape[0], o_j.shape[-1],
                                       device=x.device)
-                out = self.aggrs[self.aggr](out, o_j)
-            if self.aggr == 'mean':
-                out /= len(self.edge_types)
+                out += o_j
         return out
 
     def dict_forward(
@@ -235,7 +233,7 @@ class ToHeteroModule(Module):
         if self.is_lin:
             x = torch.cat([x_j for x_j in x_dict.values()])
             node_type = torch.cat([
-                j * torch.ones(x_j.shape[0])
+                j * torch.ones(x_j.shape[0]).to(torch.long)
                 for j, x_j in enumerate(x_dict.values())
             ])
             # HeteroLinear layer
@@ -253,8 +251,7 @@ class ToHeteroModule(Module):
                 if dst_node_type_j not in o_dict.keys():
                     o_dict[dst_node_type_j] = o_j
                 else:
-                    o_dict[dst_node_type_j] = self.aggrs[self.aggr](
-                        o_j, o_dict[dst_node_type_j])
+                    o_dict[dst_node_type_j] += o_j
         return o_dict
 
     def forward(
@@ -288,7 +285,7 @@ class ToHeteroModule(Module):
             if self.is_lin:
                 return self.dict_forward(x)
             else:
-                if not isinstance(edge_index, Dict[EdgeType, Tensor]):
+                if not isinstance(edge_index, Dict):
                     raise TypeError("If x is provided as a dictionary, \
                         edge_index must be as well")
                 return self.dict_forward(x, edge_index=edge_index)
