@@ -85,7 +85,7 @@ class LinkLoader(torch.utils.data.DataLoader):
             node types of the returned mini-batch.
             If set to :obj:`None`, no negative sampling strategy is applied.
             (default: :obj:`None`)
-        neg_sampling_ratio (float, optional): The ratio of sampled negative
+        neg_sampling_ratio (int, optional): The ratio of sampled negative
             edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`).
@@ -112,7 +112,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
         neg_sampling: Optional[NegativeSamplingConfig] = None,
-        neg_sampling_ratio: Optional[float] = None,
+        neg_sampling_ratio: Optional[int] = None,
         transform: Callable = None,
         filter_per_worker: bool = False,
         **kwargs,

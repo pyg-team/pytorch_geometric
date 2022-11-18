@@ -1,3 +1,5 @@
+import math
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
@@ -79,12 +81,12 @@ class NegativeSamplingStrategy(Enum):
 @dataclass
 class NegativeSamplingConfig(CastMixin):
     strategy: NegativeSamplingStrategy
-    amount: Union[float, int] = 1
+    amount: int = 1
 
     def __init__(
         self,
         strategy: Union[NegativeSamplingStrategy, str],
-        amount: Union[float, int] = 1,
+        amount: int = 1,
     ):
         self.strategy = NegativeSamplingStrategy(strategy)
         self.amount = amount
@@ -94,11 +96,13 @@ class NegativeSamplingConfig(CastMixin):
                              f"for '{self.__class__.__name__}' "
                              f"(got {self.amount})")
 
-        if self.is_triplet() and isinstance(self.amount, float):
-            raise ValueError(f"The attribute 'amount' needs to be an integer "
-                             f"for '{self.__class__.__name__}' when using "
-                             f"'triplet' negative sampling strategy "
-                             f"(got {self.amount})")
+        if not isinstance(self.amount, int):
+            if self.amount != math.ceil(self.amount):
+                warnings.warn(f"The attribute 'amount' needs to be an integer "
+                              f"for '{self.__class__.__name__}'"
+                              f"(got {self.amount}). We will automatically "
+                              f"set it to {math.ceil(self.amount)}.")
+            self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
         return self.strategy == NegativeSamplingStrategy.binary

@@ -2,6 +2,7 @@ import math
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData, remote_backend_utils
 from torch_geometric.data.feature_store import FeatureStore
@@ -47,7 +48,7 @@ class NeighborSampler(BaseSampler):
         self.directed = directed
         self._disjoint = disjoint
         self.temporal_strategy = temporal_strategy
-        self.node_time = self.node_time_dict = None
+        self.node_time = None
         self.input_type = input_type
 
         # Set the number of source and destination nodes if we can, otherwise
@@ -69,7 +70,6 @@ class NeighborSampler(BaseSampler):
         # If we are working with a `Data` object, convert the edge_index to
         # CSC and store it:
         if isinstance(data, Data):
-            self.node_time = None
             if time_attr is not None:
                 self.node_time = data[time_attr]
 
@@ -82,9 +82,8 @@ class NeighborSampler(BaseSampler):
         # If we are working with a `HeteroData` object, convert each edge
         # type's edge_index to CSC and store it:
         elif isinstance(data, HeteroData):
-            self.node_time_dict = None
             if time_attr is not None:
-                self.node_time_dict = data.collect(time_attr)
+                self.node_time = data.collect(time_attr)
 
             self.node_types, self.edge_types = data.metadata()
             self._set_num_neighbors_and_num_hops(num_neighbors)
@@ -95,7 +94,7 @@ class NeighborSampler(BaseSampler):
             # Obtain CSC representations for in-memory sampling:
             out = to_hetero_csc(data, device='cpu', share_memory=share_memory,
                                 is_sorted=is_sorted,
-                                node_time_dict=self.node_time_dict)
+                                node_time_dict=self.node_time)
             colptr_dict, row_dict, perm_dict = out
 
             # Conversions to/from C++ string type:
@@ -126,7 +125,6 @@ class NeighborSampler(BaseSampler):
             edge_attrs = graph_store.get_all_edge_attrs()
 
             # TODO support `collect` on `FeatureStore`:
-            self.node_time_dict = None
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -153,7 +151,7 @@ class NeighborSampler(BaseSampler):
                 for attr in time_attrs:
                     attr.index = None
                 time_tensors = feature_store.multi_get_tensor(time_attrs)
-                self.node_time_dict = {
+                self.node_time = {
                     time_attr.group_name: time_tensor
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
@@ -202,8 +200,7 @@ class NeighborSampler(BaseSampler):
 
     @property
     def is_temporal(self) -> bool:
-        return (getattr(self, 'node_time') is not None
-                or getattr(self, 'node_time_dict') is not None)
+        return self.node_time is not None
 
     @property
     def disjoint(self) -> bool:
@@ -237,7 +234,7 @@ class NeighborSampler(BaseSampler):
                     {k: v.to(dtype)
                      for k, v in seed.items()},  # seed_dict
                     self.num_neighbors,
-                    self.node_time_dict,
+                    self.node_time,
                     kwargs.get('seed_time_dict', None),
                     True,  # csc
                     self.replace,
@@ -347,7 +344,7 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         return edge_sample(index, self._sample, self.num_src_nodes,
                            self.num_dst_nodes, self.disjoint, self.input_type,
-                           **kwargs)
+                           node_time=self.node_time, **kwargs)
 
     # Other Utilities #########################################################
 
@@ -394,6 +391,7 @@ def edge_sample(
     num_dst_nodes: int,
     disjoint: bool,
     input_type: Optional[Tuple[str, str, str]] = None,
+    node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
     neg_sampling: Optional[NegativeSamplingConfig] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
@@ -408,15 +406,61 @@ def edge_sample(
 
     # Negative Sampling #######################################################
 
+    def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
+                   seed_time: Optional[Tensor],
+                   node_time: Optional[Tensor]) -> Tensor:
+        if node_time is None:
+            return torch.randint(num_nodes, (seed.numel() * num_samples, ))
+
+        # Otherwise, we can only sample negatives that exist in the graph:
+        # TODO See if this greedy algorithm here can be improved.
+        assert seed_time is not None
+        seed_time = seed_time.view(1, -1).expand(num_samples, -1)
+        out = torch.randint(num_nodes, (num_samples, seed.numel()))
+        mask = node_time[out] >= seed_time
+
+        neg_sampling_complete = False
+        for i in range(5):  # Greedily search for alternative negatives.
+            if not mask.any():
+                neg_sampling_complete = True
+                break
+
+            numel = int(mask.sum())
+            out[mask] = tmp = torch.randint(num_nodes, (numel, ))
+            mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
+
+        if not neg_sampling_complete:
+            # Not much options left. In that case, we set remaining negatives
+            # to the node with minimum timestamp.
+            out[mask] = node_time.argmin()
+
+        return out.view(-1)
+
     if neg_sampling is not None:
-        num_neg = int(num_pos * neg_sampling.amount)
+        # When we are doing negative sampling, we append negative information
+        # of nodes/edges to `src`, `dst`, `src_time`, `dst_time`.
+        # Later on, we can easily reconstruct what belongs to positive and
+        # negative examples by slicing via `num_pos`.
+        num_neg = num_pos * neg_sampling.amount
 
         if neg_sampling.is_binary():
             # In the "binary" case, we randomly sample negative pairs of nodes.
-            src_neg = torch.randint(num_src_nodes, (num_neg, ))
+            if isinstance(node_time, dict):
+                src_node_time = node_time.get(input_type[0])
+            else:
+                src_node_time = node_time
+
+            src_neg = neg_sample(src, neg_sampling.amount, num_src_nodes,
+                                 src_time, src_node_time)
             src = torch.cat([src, src_neg], dim=0)
 
-            dst_neg = torch.randint(num_dst_nodes, (num_neg, ))
+            if isinstance(node_time, dict):
+                dst_node_time = node_time.get(input_type[-1])
+            else:
+                dst_node_time = node_time
+
+            dst_neg = neg_sample(dst, neg_sampling.amount, num_dst_nodes,
+                                 dst_time, dst_node_time)
             dst = torch.cat([dst, dst_neg], dim=0)
 
             if edge_label is None:
@@ -428,22 +472,24 @@ def edge_sample(
             edge_label = torch.cat([edge_label, edge_neg_label])
 
             if edge_label_time is not None:
-                edge_label_time = edge_label_time.repeat(
-                    1 + math.ceil(neg_sampling.amount))
-                edge_label_time = edge_label_time[:num_pos + num_neg]
-            src_time = dst_time = edge_label_time
+                src_time = dst_time = edge_label_time.repeat(
+                    1 + neg_sampling.amount)
 
         elif neg_sampling.is_triplet():
             # In the "triplet" case, we randomly sample negative destinations.
-            dst_neg = torch.randint(num_dst_nodes, (num_neg, ))
+            if isinstance(node_time, dict):
+                dst_node_time = node_time.get(input_type[-1])
+            else:
+                dst_node_time = node_time
+
+            dst_neg = neg_sample(dst, neg_sampling.amount, num_dst_nodes,
+                                 dst_time, dst_node_time)
             dst = torch.cat([dst, dst_neg], dim=0)
 
             assert edge_label is None
 
             if edge_label_time is not None:
-                neg_dst_time = edge_label_time.view(-1, 1).repeat(
-                    1, neg_sampling.amount).view(-1)
-                dst_time = torch.cat([dst_time, neg_dst_time], dim=0)
+                dst_time = edge_label_time.repeat(1 + neg_sampling.amount)
 
     # Neighborhodd Sampling ###################################################
 
@@ -513,7 +559,7 @@ def edge_sample(
 
         out = sample_fn(seed=seed, seed_time=seed_time)
 
-        # Enhance `out` by label information:
+        # Enhance `out` by label information ##################################
         if neg_sampling is None or neg_sampling.is_binary():
             if disjoint:
                 out.batch = out.batch % num_pos
@@ -525,13 +571,13 @@ def edge_sample(
 
         elif neg_sampling.is_triplet():
             if disjoint:
-                out.batch = torch.cat([
-                    out.batch[:2 * num_pos] % num_pos,
-                    (out.batch[2 * num_pos:] - 2 * num_pos) / num_pos
-                ], dim=0)
+                out.batch = out.batch % num_pos
                 src_index = torch.arange(num_pos)
                 dst_pos_index = torch.arange(num_pos, 2 * num_pos)
+                # `dst_neg_index` needs to be offset such that indices with
+                # offset `num_pos` belong to the same triplet:
                 dst_neg_index = torch.arange(2 * num_pos, seed.numel())
+                dst_neg_index = dst_neg_index.view(-1, num_pos).t()
             else:
                 src_index = inverse_seed[:num_pos]
                 dst_pos_index = inverse_seed[num_pos:2 * num_pos]

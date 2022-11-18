@@ -334,3 +334,87 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
             'paper', 'paper'].edge_label_index.unique().numel()
+
+
+@withPackage('pyg_lib')
+@pytest.mark.parametrize('disjoint', [False, True])
+@pytest.mark.parametrize('temporal', [False, True])
+@pytest.mark.parametrize('amount', [1, 2])
+def test_homogeneous_link_neighbor_loader_triplet(disjoint, temporal, amount):
+    if not disjoint and temporal:
+        return
+
+    data = Data()
+    data.x = torch.arange(100)
+    data.edge_index = get_edge_index(100, 100, 500)
+    data.edge_attr = torch.arange(500)
+
+    time_attr = edge_label_time = None
+    if temporal:
+        time_attr = 'time'
+        edge_label_time = torch.arange(data.num_edges)
+        data.time = torch.arange(data.num_nodes)
+
+        edge_label_time = torch.max(data.time[data.edge_index[0]],
+                                    data.time[data.edge_index[1]])
+        edge_label_time = edge_label_time + 50
+
+    batch_size = 4
+    loader = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        batch_size=batch_size,
+        edge_label_index=data.edge_index,
+        edge_label_time=edge_label_time,
+        time_attr=time_attr,
+        directed=True,
+        disjoint=disjoint,
+        neg_sampling=dict(strategy='triplet', amount=amount),
+        shuffle=True,
+    )
+
+    assert str(loader) == 'LinkNeighborLoader()'
+    assert len(loader) == 500 / batch_size
+
+    for batch in loader:
+        assert isinstance(batch, Data)
+        num_elems = 7 + (1 if disjoint else 0) + (2 if temporal else 0)
+        assert len(batch) == num_elems
+
+        # Check that `src_index` and `dst_pos_index` point to valid edges:
+        assert torch.equal(batch.x[batch.src_index],
+                           data.edge_index[0, batch.input_id])
+        assert torch.equal(batch.x[batch.dst_pos_index],
+                           data.edge_index[1, batch.input_id])
+
+        # Check that `dst_neg_index` points to valid nodes in the batch:
+        if amount == 1:
+            assert batch.dst_neg_index.size() == (batch_size, )
+        else:
+            assert batch.dst_neg_index.size() == (batch_size, amount)
+        assert batch.dst_neg_index.min() >= 0
+        assert batch.dst_neg_index.max() < batch.num_nodes
+
+        if disjoint:
+            # In disjoint mode, seed nodes should always be placed first:
+            assert batch.src_index.min() == 0
+            assert batch.src_index.max() == batch_size - 1
+
+            assert batch.dst_pos_index.min() == batch_size
+            assert batch.dst_pos_index.max() == 2 * batch_size - 1
+
+            assert batch.dst_neg_index.min() == 2 * batch_size
+            max_seed_nodes = 2 * batch_size + batch_size * amount
+            assert batch.dst_neg_index.max() == max_seed_nodes - 1
+
+            assert batch.batch.min() == 0
+            assert batch.batch.max() == batch_size - 1
+
+            # Check that `batch` is always increasing:
+            for i in range(0, max_seed_nodes, batch_size):
+                batch_vector = batch.batch[i:i + batch_size]
+                assert torch.equal(batch_vector, torch.arange(batch_size))
+
+        if temporal:
+            for i in range(batch_size):
+                assert batch.time[batch.batch == i].max() <= batch.seed_time[i]
