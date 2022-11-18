@@ -52,6 +52,6 @@ explainer = Explainer(
                              return_type="log_probs"))
 node_idx = 10
 explanation = explainer(x=data.x, edge_index=data.edge_index,
-                        target_index=None, index=node_idx,
+                        target_index=None, node_index=node_idx,
                         edge_weight=data.edge_weight)
 print(explanation.available_explanations)
