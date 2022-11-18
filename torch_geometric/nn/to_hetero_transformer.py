@@ -177,7 +177,7 @@ class ToHeteroModule(Module):
                     f"This may lead to unexpected behaviour.")
             heteromodule = {}
             for edge_type in self.edge_types:
-                heteromodule[edge_type] = copy.deepcopy(module).to(list(module.parameters())[0].device)
+p                heteromodule[edge_type] = copy.deepcopy(module)
                 if hasattr(module, 'reset_parameters'):
                     module.reset_parameters()
                 elif sum([p.numel() for p in module.parameters()]) > 0:
