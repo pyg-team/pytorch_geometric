@@ -215,9 +215,9 @@ def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
             and :obj:`"node_and_edge"`:
         *args: Additional forward arguments of the model being explained
             which will be added to `additonal_forward_args`.
-            For :obj:`Data` this is arguments other than `x` and `edge_index`.
-            For :obj:`HeteroData` this is arguments other than `x_dict`
-            and `edge_index_dict`.
+            For :class:`Data` this is arguments other than :obj:`x` and :obj:`edge_index`.
+            For :class:`HeteroData` this is arguments other than :obj:`x_dict`
+            and :obj:`edge_index_dict`.
     """
     _raise_on_invalid_mask_type(mask_type)
 
