@@ -93,13 +93,16 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         target_index: Optional[Union[int, Tensor]] = None,
-        node_index: Optional[int] = None,
+        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
 
         if isinstance(target_index, Tensor) and target_index.numel() > 1:
-            raise ValueError(
+            raise NotImplementedError(
                 "GNNExplainer only supports single target index for now")
+        if isinstance(node_index, Tensor) and node_index.numel() > 1:
+            raise NotImplementedError(
+                "GNNExplainer only supports single node index for now")
 
         assert model_config.task_level in [
             ModelTaskLevel.graph, ModelTaskLevel.node
