@@ -202,7 +202,7 @@ def _raise_on_invalid_mask_type(mask_type: str):
 
 def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
                     *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
-    r"""Given `data` and `mask_type`, converts it to a format to use
+    r"""Given :obj:`data` and :obj:`mask_type`, converts it to a format to use
     in `Captum.ai <https://captum.ai/>`_ attribution methods. Returns `inputs`
     and `additional_forward_args` required for `Captum`s `attribute` functions.
     See :obj:`torch_geometric.nn.to_captum_model` for example usage.
