@@ -29,6 +29,10 @@ def run(args: argparse.ArgumentParser) -> None:
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
+
+        if args.num_layers != [1] and not hetero and args.num_steps != -1:
+            raise ValueError("Layer-wise inference requires `steps=-1`")
+
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
         else:
@@ -46,6 +50,12 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Evaluation bench for {model_name}:')
 
             for batch_size in args.eval_batch_sizes:
+                num_nodes = data[
+                    'paper'].num_nodes if hetero else data.num_nodes
+                sampler = torch.utils.data.RandomSampler(
+                    range(num_nodes), num_samples=args.num_steps *
+                    batch_size) if args.num_steps != -1 else None
+
                 if not hetero:
                     subgraph_loader = NeighborLoader(
                         data,
@@ -54,6 +64,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=args.num_workers,
+                        sampler=sampler,
                     )
 
                 for layers in args.num_layers:
@@ -67,6 +78,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             batch_size=batch_size,
                             shuffle=False,
                             num_workers=args.num_workers,
+                            sampler=sampler,
                         )
 
                     for hidden_channels in args.num_hidden_channels:
@@ -143,6 +155,9 @@ if __name__ == '__main__':
         '--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
     argparser.add_argument('--num-workers', default=0, type=int)
+    argparser.add_argument(
+        '--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
     argparser.add_argument('--warmup', default=1, type=int)
     argparser.add_argument('--profile', action='store_true')
     argparser.add_argument('--vtune-profile', action='store_true')

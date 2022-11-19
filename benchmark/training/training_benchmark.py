@@ -60,6 +60,9 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
 def run(args: argparse.ArgumentParser) -> None:
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # If we use a custom number of steps, then we need to use RandomSampler,
+    # which already does shuffle.
+    shuffle = False if args.num_steps != -1 else True
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
@@ -90,6 +93,11 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Training bench for {model_name}:')
 
             for batch_size in args.batch_sizes:
+                num_nodes = int(mask[-1].sum()) if hetero else int(mask.sum())
+                sampler = torch.utils.data.RandomSampler(
+                    range(num_nodes), num_samples=args.num_steps *
+                    batch_size) if args.num_steps != -1 else None
+
                 for layers in args.num_layers:
                     num_neighbors = args.num_neighbors
                     if type(num_neighbors) is list:
@@ -108,8 +116,9 @@ def run(args: argparse.ArgumentParser) -> None:
                         num_neighbors=num_neighbors,
                         input_nodes=mask,
                         batch_size=batch_size,
-                        shuffle=True,
+                        shuffle=shuffle,
                         num_workers=args.num_workers,
+                        sampler=sampler,
                     )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -202,6 +211,9 @@ if __name__ == '__main__':
     argparser.add_argument('--no-progress-bar', action='store_true',
                            default=False, help='turn off using progress bar')
     argparser.add_argument('--num-epochs', default=1, type=int)
+    argparser.add_argument(
+        '--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
 
     args = argparser.parse_args()
 

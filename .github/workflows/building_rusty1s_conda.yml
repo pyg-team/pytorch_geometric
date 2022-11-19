@@ -10,23 +10,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2019]
+        # We have trouble building for Windows - drop for now.
+        os: [ubuntu-18.04, macos-10.15]  # windows-2019
         python-version: ['3.7', '3.8', '3.9', '3.10']
-        torch-version: [1.11.0, 1.12.0]
-        cuda-version: ['cpu', 'cu102', 'cu113', 'cu115', 'cu116']
+        torch-version: [1.13.0]  # [1.12.0, 1.13.0]
+        cuda-version: ['cpu', 'cu102', 'cu113', 'cu116', 'cu117']
         exclude:
-          - torch-version: 1.11.0
-            cuda-version: 'cu116'
           - torch-version: 1.12.0
-            cuda-version: 'cu115'
+            cuda-version: 'cu117'
+          - torch-version: 1.13.0
+            cuda-version: 'cu102'
+          - torch-version: 1.13.0
+            cuda-version: 'cu113'
           - os: macos-10.15
             cuda-version: 'cu102'
           - os: macos-10.15
             cuda-version: 'cu113'
           - os: macos-10.15
-            cuda-version: 'cu115'
-          - os: macos-10.15
             cuda-version: 'cu116'
+          - os: macos-10.15
+            cuda-version: 'cu117'
           - os: windows-2019
             cuda-version: 'cu102'
           - os: windows-2019  # Complains about CUDA mismatch.
