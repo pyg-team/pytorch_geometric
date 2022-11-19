@@ -334,16 +334,16 @@ def to_captum_model(
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
 
+    Sample code for homogenous graphs:
+
     .. code-block:: python
 
         from captum.attr import IntegratedGradients
 
-        from torch_geometric.data import Data, HeteroData
-        from torch_geometric.nn import GCN, HeteroConv
-        from torch_geometric.nn import (captum_output_to_dicts,
-                                        to_captum_model, to_captum_input)
+        from torch_geometric.data import Data
+        from torch_geometric.nn import GCN
+        from torch_geometric.nn import to_captum_model, to_captum_input
 
-        ## Explain Data (homogenous graph) ##
         data = Data(x=(...), edge_index(...))
         model = GCN(...)
         ...  # Train the model.
@@ -360,7 +360,18 @@ def to_captum_model(
                                additional_forward_args=additional_forward_args,
                                internal_batch_size=1)
 
-        ## Explaining HeteroData (heterogenous graph) ##
+
+    Sample code for heterogenous graphs:
+
+    .. code-block:: python
+
+        from captum.attr import IntegratedGradients
+
+        from torch_geometric.data import HeteroData
+        from torch_geometric.nn import HeteroConv
+        from torch_geometric.nn import (captum_output_to_dicts,
+                                        to_captum_model, to_captum_input)
+
         data = HeteroData(...)
         model = HeteroConv(...)
         ...  # Train the model.
@@ -379,6 +390,7 @@ def to_captum_model(
                                additional_forward_args=additional_forward_args,
                                internal_batch_size=1)
         ig_attr_dict = captum_output_to_dicts(ig_attr, mask_type, metadata)
+
 
     .. note::
         For an example of using a Captum attribution method within PyG, see
