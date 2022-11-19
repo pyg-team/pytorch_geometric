@@ -392,7 +392,7 @@ def to_captum_model(
             index) to be explained. With :obj:`output_idx` set, the forward
             function will return the output of the model for the element at
             the index specified. (default: :obj:`None`)
-        metadata(Metadata, optional): The metadata of the heterogeneous graph.
+        metadata (Metadata, optional): The metadata of the heterogeneous graph.
             Only required if explaning over a `HeteroData` object.
             (default: :obj: `None`)
     """
