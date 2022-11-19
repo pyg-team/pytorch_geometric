@@ -29,15 +29,16 @@ class GNNExplainer(ExplainerAlgorithm):
 
     .. note::
         Configuration supported:
+
         - :class:`torch_geometric.explain.config.ModelConfig`
 
             - :attr:`task_level`:  :obj:`ModelTaskLevel.node`, or
-            :obj:`ModelTaskLevel.graph`
+              :obj:`ModelTaskLevel.graph`
 
         - :class:`torch_geometric.explain.config.ExplainerConfig`
 
             - :attr:`node_mask_type`:  :obj:`MaskType.object`,
-            :obj:`MaskType.attributes`, or :obj:`MaskType.common_attributes`
+              :obj:`MaskType.attributes`, or :obj:`MaskType.common_attributes`
 
             - :attr:`edge_mask_type`: :obj:`MaskType.object` or :obj:`None`
 
