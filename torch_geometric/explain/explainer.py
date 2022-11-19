@@ -83,6 +83,15 @@ class Explainer:
         r"""Computes the explanation of the GNN  for the given inputs and
         target.
 
+
+        .. note::
+
+            If you get an error message like :obj:`Trying to backward through
+            the graph a second time `, make sure that the target you provided
+            was computed with :obj:`torch.no_grad()` if it is the output of the
+            model. (If you want to use the output of the model as target, you
+            you should set the explanation type to :obj:`"phenomenon"`).
+
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The input edge indices.
@@ -96,10 +105,8 @@ class Explainer:
                 explain. (default: :obj:`None`). Is used if the model
                 outputs multiple targets.
             node_index (Union[int, Tensor], optional): the node/edge index
-                to explain. Can be a single index if no batch is provided, or a
-                tuple of indices if a batch is provided. only used if the model
-                task level is :obj:`"node"` or :obj:`"edge"`.
-                (default: :obj:`None`)
+                to explain. only used if the model task level is :obj:`"node"`
+                or :obj:`"edge"`. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:

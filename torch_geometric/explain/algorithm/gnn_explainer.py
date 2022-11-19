@@ -28,6 +28,21 @@ class GNNExplainer(ExplainerAlgorithm):
     GNN's node-predictions.
 
     .. note::
+        Configuration supported:
+        - :class:`torch_geometric.explain.config.ModelConfig`
+
+            - :attr:`task_level`:  :obj:`ModelTaskLevel.node`, or
+            :obj:`ModelTaskLevel.graph`
+
+        - :class:`torch_geometric.explain.config.ExplainerConfig`
+
+            - :attr:`node_mask_type`:  :obj:`MaskType.object`,
+            :obj:`MaskType.attributes`, or :obj:`MaskType.common_attributes`
+
+            - :attr:`edge_mask_type`: :obj:`MaskType.object` or :obj:`None`
+
+
+    .. note::
 
         For an example of using GNN-Explainer, see `examples/gnn_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
@@ -332,7 +347,10 @@ class GNNExplainer(ExplainerAlgorithm):
             logging.error("Edge mask type not supported.")
             return False
 
-        if explainer_config.node_mask_type in [MaskType.both, None]:
+        if explainer_config.node_mask_type not in [
+                MaskType.common_attributes, MaskType.object,
+                MaskType.attributes
+        ]:
             logging.error("Node mask type not supported.")
             return False
 

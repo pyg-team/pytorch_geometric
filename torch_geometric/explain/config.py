@@ -74,7 +74,8 @@ class ExplainerConfig(CastMixin):
 
                 - :obj:`"attributes"`: Will mask the node attributes.
 
-                - :obj:`"both"`: Will mask both the node and its attributes..
+                - :obj:`"both"`: Will mask both the node and its attributes
+                    (combination of :obj:`"object"` and :obj:`"attributes"`).
 
                 - :obj:`"common_attributes"`: Will share the attribute mask
                     across all nodes.
