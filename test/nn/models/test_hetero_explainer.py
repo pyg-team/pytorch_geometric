@@ -85,13 +85,15 @@ class GraphSAGE(torch.nn.Module):
         return self.conv2(x, edge_index)
 
 
-class HeteroSage(torch.nn.Module):
+class HeteroSAGE(torch.nn.Module):
     def __init__(self, metadata: Metadata):
         super().__init__()
         self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
 
-    def forward(self, x_dict, edge_index_dict, *args) -> torch.Tensor:
-        assert args
+    def forward(self, x_dict, edge_index_dict,
+                additonal_arg=None) -> torch.Tensor:
+        # Make sure additonal args gets passed.
+        assert additonal_arg is not None
         return self.graph_sage(x_dict, edge_index_dict)['paper']
 
 
@@ -142,13 +144,13 @@ def test_captum_attribution_methods_hetero(mask_type, method):
     from captum import attr  # noqa
     data = get_hetero_data()
     metadata = data.metadata()
-    model = HeteroSage(metadata)
+    model = HeteroSAGE(metadata)
     captum_model = to_captum_model(model, mask_type, 0, metadata)
     explainer = getattr(attr, method)(captum_model)
     assert isinstance(captum_model, CaptumHeteroModel)
 
-    args = 'test_args'
-    input, additional_forward_args = to_captum_input(data, mask_type, args)
+    args = ['additional_arg1']
+    input, additional_forward_args = to_captum_input(data, mask_type, *args)
     if mask_type == 'node':
         sliding_window_shapes = ((3, 3), (3, 3))
     elif mask_type == 'edge':

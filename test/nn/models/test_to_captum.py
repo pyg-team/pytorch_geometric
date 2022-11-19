@@ -4,7 +4,7 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.models import to_captum, to_captum_input
+from torch_geometric.nn.models import to_captum_input, to_captum_model
 from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
@@ -33,7 +33,8 @@ methods = [
 @pytest.mark.parametrize('model', [GCN, GAT])
 @pytest.mark.parametrize('output_idx', [None, 1])
 def test_to_captum(model, mask_type, output_idx):
-    captum_model = to_captum(model, mask_type=mask_type, output_idx=output_idx)
+    captum_model = to_captum_model(model, mask_type=mask_type,
+                                   output_idx=output_idx)
     pre_out = model(x, edge_index)
     if mask_type == 'node':
         mask = x * 0.0
@@ -63,7 +64,7 @@ def test_to_captum(model, mask_type, output_idx):
 def test_captum_attribution_methods(mask_type, method):
     from captum import attr  # noqa
 
-    captum_model = to_captum(GCN, mask_type, 0)
+    captum_model = to_captum_model(GCN, mask_type, 0)
     explainer = getattr(attr, method)(captum_model)
     data = Data(x, edge_index)
     input, additional_forward_args = to_captum_input(data, mask_type)
