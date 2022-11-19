@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.deprecation import deprecated
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
@@ -203,9 +204,10 @@ def _raise_on_invalid_mask_type(mask_type: str):
 def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
                     *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
     r"""Given :obj:`data` and :obj:`mask_type`, converts it to a format to use
-    in `Captum.ai <https://captum.ai/>`_ attribution methods. Returns :obj:`inputs`
-    and :obj:`additional_forward_args` required for `Captum's :obj:`attribute` functions.
-    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
+    in `Captum.ai <https://captum.ai/>`_ attribution methods. Returns
+    :obj:`inputs` and :obj:`additional_forward_args` required for `Captum's
+    :obj:`attribute` functions. See :obj:`torch_geometric.nn.to_captum_model`
+    for example usage.
 
     Args:
 
@@ -215,9 +217,9 @@ def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
             and :obj:`"node_and_edge"`:
         *args: Additional forward arguments of the model being explained
             which will be added to :obj:`additonal_forward_args`.
-            For :class:`Data` this is arguments other than :obj:`x` and :obj:`edge_index`.
-            For :class:`HeteroData` this is arguments other than :obj:`x_dict`
-            and :obj:`edge_index_dict`.
+            For :class:`Data` this is arguments other than :obj:`x` and
+            :obj:`edge_index`. For :class:`HeteroData` this is arguments other
+            than :obj:`x_dict` and :obj:`edge_index_dict`.
     """
     _raise_on_invalid_mask_type(mask_type)
 
@@ -307,6 +309,7 @@ def captum_output_to_dicts(
     return x_attr_dict, edge_attr_dict
 
 
+@deprecated(details='Use `torch_geometric.nn.to_captum_model` instead')
 def to_captum(
     model: torch.nn.Module, mask_type: str = "edge",
     output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
