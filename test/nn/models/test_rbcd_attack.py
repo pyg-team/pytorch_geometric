@@ -4,7 +4,11 @@ import torch.nn.functional as F
 from torch.nn import Linear
 
 from torch_geometric.nn import (
-    GCNConv, PRBCDAttack, GRBCDAttack, global_add_pool)
+    GCNConv,
+    GRBCDAttack,
+    PRBCDAttack,
+    global_add_pool,
+)
 from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_undirected
 

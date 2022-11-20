@@ -9,7 +9,7 @@ from torch import Tensor
 import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GATConv, GCNConv, PRBCDAttack, GRBCDAttack
+from torch_geometric.nn import GATConv, GCNConv, GRBCDAttack, PRBCDAttack
 from torch_geometric.utils import softmax
 
 dataset = 'Cora'
@@ -22,7 +22,6 @@ data = dataset[0]
 
 class GCN(torch.nn.Module):
     """GCN that normalizes adjacency matrix once for all layers (no cache)."""
-
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
@@ -48,7 +47,6 @@ class GCN(torch.nn.Module):
 
 class WeightedGATConv(GATConv):
     """Extended GAT to allow for weighted edges (disabling edge features)."""
-
     def edge_update(self, alpha_j: Tensor, alpha_i: Optional[Tensor],
                     edge_attr: Optional[Tensor], index: Tensor,
                     ptr: Optional[Tensor], size_i: Optional[int]) -> Tensor:
@@ -71,7 +69,6 @@ class WeightedGATConv(GATConv):
 
 class GAT(torch.nn.Module):
     """GAT that supports weights edges."""
-
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gat_conv = functools.partial(

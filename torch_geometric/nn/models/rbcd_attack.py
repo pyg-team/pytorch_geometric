@@ -77,14 +77,11 @@ class RBCDAttack(Attack):
             progress. (default: :obj:`True`)
     """
 
-    coeffs = {
-        'max_trials_sampling': 20,
-        'eps': 1e-7
-    }
+    coeffs = {'max_trials_sampling': 20, 'eps': 1e-7}
 
     def __init__(self, model: torch.nn.Module, block_size: int = 250_000,
-                 epochs: int = 125,
-                 loss: Optional[Union[str, LOSS_TYPE]] = None,
+                 epochs: int = 125, loss: Optional[Union[str,
+                                                         LOSS_TYPE]] = None,
                  is_undirected_graph: bool = True, log: bool = True,
                  **kwargs) -> None:
         super().__init__()
@@ -287,8 +284,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight
-                      <= self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight <=
+                      self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -348,8 +345,8 @@ class RBCDAttack(Attack):
         https://dongkwan-kim.github.io/blogs/indices-for-the-upper-triangle-matrix/
         but here we omit entries on the main diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n
-                       * (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n *
+                       (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
@@ -537,15 +534,14 @@ class PRBCDAttack(RBCDAttack):
         'eps': 1e-7
     }
 
-    def __init__(self, model: torch.nn.Module,
-                 block_size: int = 250_000, epochs: int = 125,
-                 epochs_resampling: int = 100,
+    def __init__(self, model: torch.nn.Module, block_size: int = 250_000,
+                 epochs: int = 125, epochs_resampling: int = 100,
                  loss: Optional[Union[str, LOSS_TYPE]] = None,
                  metric: Optional[Union[str, LOSS_TYPE]] = None,
                  lr: float = 1_000, is_undirected_graph: bool = True,
                  log: bool = True, **kwargs) -> None:
-        super().__init__(
-            model, block_size, epochs, loss, is_undirected_graph, log)
+        super().__init__(model, block_size, epochs, loss, is_undirected_graph,
+                         log)
 
         if metric is None:
             self.metric = self.loss
@@ -694,8 +690,8 @@ class PRBCDAttack(RBCDAttack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr
-              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr /
+              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -788,14 +784,13 @@ class GRBCDAttack(RBCDAttack):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
-
     def __init__(self, model: torch.nn.Module, mode: str = 'projected',
                  block_size: int = 250_000, epochs: int = 125,
                  loss: Optional[Union[str, LOSS_TYPE]] = None,
-                 is_undirected_graph: bool = True,
-                 log: bool = True, **kwargs) -> None:
-        super().__init__(model, block_size, epochs, loss,
-                         is_undirected_graph, log, **kwargs)
+                 is_undirected_graph: bool = True, log: bool = True,
+                 **kwargs) -> None:
+        super().__init__(model, block_size, epochs, loss, is_undirected_graph,
+                         log, **kwargs)
 
     def _prepare(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
