@@ -42,7 +42,7 @@ from torch_geometric.loader import GraphSAINTNodeSampler  # noqa
 from torch_geometric.loader import GraphSAINTEdgeSampler  # noqa
 from torch_geometric.loader import GraphSAINTRandomWalkSampler  # noqa
 from torch_geometric.loader import ShaDowKHopSampler  # noqa
-from torch_geometric.loader import RandomNodeSampler  # noqa
+from torch_geometric.loader import RandomNodeLoader  # noqa
 from torch_geometric.loader import DataLoader  # noqa
 from torch_geometric.loader import DataListLoader  # noqa
 from torch_geometric.loader import DenseDataLoader  # noqa
@@ -66,8 +66,8 @@ GraphSAINTRandomWalkSampler = deprecated(
     'data.GraphSAINTRandomWalkSampler')(GraphSAINTRandomWalkSampler)
 ShaDowKHopSampler = deprecated("use 'loader.ShaDowKHopSampler' instead",
                                'data.ShaDowKHopSampler')(ShaDowKHopSampler)
-RandomNodeSampler = deprecated("use 'loader.RandomNodeSampler' instead",
-                               'data.RandomNodeSampler')(RandomNodeSampler)
+RandomNodeSampler = deprecated("use 'loader.RandomNodeLoader' instead",
+                               'data.RandomNodeSampler')(RandomNodeLoader)
 DataLoader = deprecated("use 'loader.DataLoader' instead",
                         'data.DataLoader')(DataLoader)
 DataListLoader = deprecated("use 'loader.DataListLoader' instead",
