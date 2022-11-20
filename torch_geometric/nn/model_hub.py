@@ -20,8 +20,13 @@ MODEL_WEIGHTS_NAME = 'model.pth'
 
 
 class PyGModelHubMixin(ModelHubMixin):
-    """
+    r"""
     Mixin for saving and loading models to Huggingface Model Hub
+
+    Args:
+        model_name (str): Name of the model as shown on the model card
+        dataset_name (str): Name of the dataset you trained model against
+        model_kwargs (Dict): Arguments that will be passed to the PyG model
 
     Example of using this with Node2Vec and the Cora dataset from Planetoid:
 
@@ -62,14 +67,11 @@ class PyGModelHubMixin(ModelHubMixin):
 
     """
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
-        """
-
-        Args:
-            model_name (str): Name of the model as shown on the model card
-            dataset_name (str): Name of dataset you trained model against
-            model_kwargs (Dict): arguments that will be passed to the PyG model
-        """
         ModelHubMixin.__init__(self)
+        # Huggingface Hub api only accepts saving the config as a dict.
+        # If the model is instantiated with non-native python types
+        # such as torch Tensors (node2vec being an example), we have to remove
+        # these as they are not json serialisable
         self.model_config = {
             k: v
             for k, v in model_kwargs.items() if type(v) in [str, int, float]
@@ -79,19 +81,22 @@ class PyGModelHubMixin(ModelHubMixin):
 
     def construct_model_card(self, model_name: str,
                              dataset_name: str) -> ModelCard:
-        card_data = ModelCardData(language='en', license='mit',
-                                  library_name=MODEL_HUB_ORGANIZATION,
-                                  tags=[MODEL_HUB_ORGANIZATION, model_name],
-                                  datasets=dataset_name, model_name=model_name
-                                  # metrics=['accuracy'],
-                                  )
+        card_data = ModelCardData(
+            language='en',
+            license='mit',
+            library_name=MODEL_HUB_ORGANIZATION,
+            tags=[MODEL_HUB_ORGANIZATION, model_name],
+            datasets=dataset_name,
+            model_name=model_name,
+        )
         card = ModelCard.from_template(card_data)
         return card
 
     def _save_pretrained(self, save_directory: Union[Path, str]):
-        """
+        r"""
         Args:
-            save_directory (Path, str): local filepath to save model state dict
+            save_directory (Path or str): local filepath to
+                save model state dict
         """
         path = os.path.join(save_directory, MODEL_WEIGHTS_NAME)
         model_to_save = self.module if hasattr(self, "module") else self
@@ -101,6 +106,10 @@ class PyGModelHubMixin(ModelHubMixin):
                         **kwargs):
 
         config = self.model_config
+        # due to way huggingface hub handles the loading/saving of models,
+        # the model config can end up in one of the items in the kwargs
+        # this has to be removed to prevent a duplication of arguments to
+        # ModelHubMixin.save_pretrained
         if 'config' in kwargs.keys():
             kwargs.pop('config')
 
@@ -150,9 +159,8 @@ class PyGModelHubMixin(ModelHubMixin):
                 local_files_only=local_files_only,
             )
 
-        if 'config' in model_kwargs.keys():
-            config = model_kwargs['config']
-            model_kwargs.pop('config')
+        config = model_kwargs.pop('config', None)
+        if config is not None:
             model_kwargs = {**model_kwargs, **config}
 
         model = cls(dataset_name, model_name, model_kwargs)

@@ -54,7 +54,6 @@ def test_save_pretrained(model, tmp_path):
     files = os.listdir(save_directory)
     assert "model.pth" in files
     assert len(files) >= 1
-    #
 
 
 @withPackage('huggingface_hub')
