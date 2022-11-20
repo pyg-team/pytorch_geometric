@@ -232,8 +232,8 @@ class RBCDAttack(Attack):
             loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
-            scalars = self._update(step, gradient, x, labels,
-                                   budget, idx_attack, **kwargs)
+            scalars = self._update(step, gradient, x, labels, budget,
+                                   idx_attack, **kwargs)
 
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
@@ -281,9 +281,8 @@ class RBCDAttack(Attack):
         steps = range(self.epochs)
         return steps
 
-    def _update(self, step: Any, gradient: Tensor, x: Tensor,
-                labels: Tensor, budget: int,
-                idx_attack: Optional[Tensor] = None,
+    def _update(self, step: Any, gradient: Tensor, x: Tensor, labels: Tensor,
+                budget: int, idx_attack: Optional[Tensor] = None,
                 **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
         pass
@@ -337,8 +336,7 @@ class RBCDAttack(Attack):
         pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
         # Projection to stay within relaxed `L_0` budget
         # (Algorithm 1, line 8)
-        self.block_edge_weight = self._project(budget,
-                                               self.block_edge_weight,
+        self.block_edge_weight = self._project(budget, self.block_edge_weight,
                                                self.coeffs['eps'])
 
         # For monitoring
@@ -454,8 +452,8 @@ class RBCDAttack(Attack):
             (edge_weight.to(self.device), block_edge_weight))
 
         modified_edge_index, modified_edge_weight = coalesce(
-            modified_edge_index, modified_edge_weight,
-            num_nodes=self.n, reduce='sum')
+            modified_edge_index, modified_edge_weight, num_nodes=self.n,
+            reduce='sum')
 
         # Allow (soft) removal of edges
         is_edge_in_clean_adj = modified_edge_weight > 1
@@ -496,8 +494,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight
-                      <= self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight <=
+                      self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -508,8 +506,7 @@ class RBCDAttack(Attack):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             lin_index = torch.randint(
-                self._num_possible_edges(self.n,
-                                         self.is_undirected_graph),
+                self._num_possible_edges(self.n, self.is_undirected_graph),
                 (n_edges_resample, ), device=self.device)
 
             current_block = torch.cat((self.current_block, lin_index))
@@ -578,8 +575,8 @@ class RBCDAttack(Attack):
 
         # Recover best sample
         self.block_edge_weight = best_edge_weight.to(self.device)
-        flipped_edges = self.block_edge_index[
-            :, torch.where(best_edge_weight)[0]]
+        flipped_edges = self.block_edge_index[:,
+                                              torch.where(best_edge_weight)[0]]
 
         edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight, self.block_edge_index,
@@ -594,8 +591,8 @@ class RBCDAttack(Attack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr
-              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr /
+              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -613,8 +610,8 @@ class RBCDAttack(Attack):
         https://dongkwan-kim.github.io/blogs/indices-for-the-upper-triangle-matrix/
         but here we omit entries on the main diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n
-                       * (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n *
+                       (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
