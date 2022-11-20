@@ -225,22 +225,21 @@ class RBCDAttack(Attack):
         self.attack_statistics = defaultdict(list)
 
         # Prepare attack and define `self.iterable` to iterate over
-        step_sequence = self._prepare(
-            x, edge_index, labels, budget, idx_attack, **kwargs)
+        step_sequence = self._prepare(budget)
 
         # Loop over the epochs (Algorithm 1, line 5)
         for step in tqdm(step_sequence, disable=not self.log, desc='Attack'):
             loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
-            scalars = self._update(step, gradient, x, edge_index, labels,
+            scalars = self._update(step, gradient, x, labels,
                                    budget, idx_attack, **kwargs)
 
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
 
         perturbed_edge_index, flipped_edges = self._close(
-            x, edge_index, labels, budget, idx_attack, **kwargs)
+            x, labels, budget, idx_attack, **kwargs)
 
         assert flipped_edges.shape[1] <= budget, (
             f'# perturbed edges {flipped_edges.shape[1]} '
@@ -248,17 +247,13 @@ class RBCDAttack(Attack):
 
         return perturbed_edge_index, flipped_edges
 
-    def _prepare(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                 budget: int, idx_attack: Optional[Tensor] = None,
-                 **kwargs) -> Iterable[Any]:
+    def _prepare(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
         pass
 
-    def _prepare_greedy(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                        budget: int, idx_attack: Optional[Tensor] = None,
-                        **kwargs) -> Iterable[Any]:
+    def _prepare_greedy(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
-        self.flipped_edges = torch.empty((2, 0), dtype=edge_index.dtype,
+        self.flipped_edges = torch.empty((2, 0), dtype=self.edge_index.dtype,
                                          device=self.device)
 
         # Determine the number of edges to be flipped in each attach step/epoch
@@ -275,9 +270,7 @@ class RBCDAttack(Attack):
 
         return steps
 
-    def _prepare_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                           budget: int, idx_attack: Optional[Tensor] = None,
-                           **kwargs) -> Iterable[Any]:
+    def _prepare_projected(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
         # For early stopping (not explicitly covered by pseudo code)
         self.best_metric = float('-Inf')
@@ -289,7 +282,7 @@ class RBCDAttack(Attack):
         return steps
 
     def _update(self, step: Any, gradient: Tensor, x: Tensor,
-                edge_index: Tensor, labels: Tensor, budget: int,
+                labels: Tensor, budget: int,
                 idx_attack: Optional[Tensor] = None,
                 **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
@@ -297,7 +290,9 @@ class RBCDAttack(Attack):
 
     @torch.no_grad()
     def _update_greedy(self, step_size: int, gradient: Tensor, x: Tensor,
-                       edge_index: Tensor, *args, **kwargs) -> Dict[str, Any]:
+                       labels: Tensor, budget: int,
+                       idx_attack: Optional[Tensor] = None,
+                       **kwargs) -> Dict[str, Any]:
         """Update edge weights given gradient."""
         _, topk_edge_index = torch.topk(gradient, step_size)
 
@@ -332,7 +327,7 @@ class RBCDAttack(Attack):
 
     @torch.no_grad()
     def _update_projected(self, epoch: int, gradient: Tensor, x: Tensor,
-                          edge_index: Tensor, labels: Tensor, budget: int,
+                          labels: Tensor, budget: int,
                           idx_attack: Optional[Tensor] = None,
                           **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
@@ -390,8 +385,8 @@ class RBCDAttack(Attack):
         scalars['metric'] = metric.item()
         return scalars
 
-    def _close(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-               budget: int, idx_attack: Optional[Tensor] = None,
+    def _close(self, x: Tensor, labels: Tensor, budget: int,
+               idx_attack: Optional[Tensor] = None,
                **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         pass
@@ -400,8 +395,8 @@ class RBCDAttack(Attack):
         """Clean up and prepare return argument."""
         return self.edge_index, self.flipped_edges
 
-    def _close_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                         budget: int, idx_attack: Optional[Tensor] = None,
+    def _close_projected(self, x: Tensor, labels: Tensor, budget: int,
+                         idx_attack: Optional[Tensor] = None,
                          **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         # Retrieve best epoch if early stopping is active
@@ -452,20 +447,24 @@ class RBCDAttack(Attack):
         if self.is_undirected_graph:
             block_edge_index, block_edge_weight = to_undirected(
                 block_edge_index, block_edge_weight, self.n, reduce='mean')
-        edge_index = torch.cat(
-            (self.edge_index.to(self.device), block_edge_index), dim=-1)
-        edge_weight = torch.cat(
-            (self.edge_weight.to(self.device), block_edge_weight))
 
-        edge_index, edge_weight = coalesce(edge_index, edge_weight,
-                                           num_nodes=self.n, reduce='sum')
+        modified_edge_index = torch.cat(
+            (edge_index.to(self.device), block_edge_index), dim=-1)
+        modified_edge_weight = torch.cat(
+            (edge_weight.to(self.device), block_edge_weight))
+
+        modified_edge_index, modified_edge_weight = coalesce(
+            modified_edge_index, modified_edge_weight,
+            num_nodes=self.n, reduce='sum')
 
         # Allow (soft) removal of edges
-        edge_weight[edge_weight > 1] = 2 - edge_weight[edge_weight > 1]
+        is_edge_in_clean_adj = modified_edge_weight > 1
+        modified_edge_weight[is_edge_in_clean_adj] = (
+            2 - modified_edge_weight[is_edge_in_clean_adj])
 
-        return edge_index, edge_weight
+        return modified_edge_index, modified_edge_weight
 
-    def _filter_self_loops(self, with_weight: bool):
+    def _filter_self_loops_in_block(self, with_weight: bool):
         is_not_sl = self.block_edge_index[0] != self.block_edge_index[1]
         self.current_block = self.current_block[is_not_sl]
         self.block_edge_index = self.block_edge_index[:, is_not_sl]
@@ -484,7 +483,7 @@ class RBCDAttack(Attack):
             else:
                 self.block_edge_index = self._linear_to_full_idx(
                     self.n, self.current_block)
-                self._filter_self_loops(with_weight=False)
+                self._filter_self_loops_in_block(with_weight=False)
 
             self.block_edge_weight = torch.full_like(self.current_block,
                                                      self.coeffs['eps'],
@@ -533,7 +532,7 @@ class RBCDAttack(Attack):
                 unique_idx[:sorted_idx.size(0)]] = block_edge_weight_prev
 
             if not self.is_undirected_graph:
-                self._filter_self_loops(with_weight=True)
+                self._filter_self_loops_in_block(with_weight=True)
 
             if self.current_block.size(0) > budget:
                 return
