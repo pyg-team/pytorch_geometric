@@ -1,6 +1,6 @@
 import abc
 from collections import defaultdict
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -174,11 +174,6 @@ class RBCDAttack(Attack):
 
         self.coeffs.update(kwargs)
 
-        # Need to contain the perturbations (shape [2, # perts.])
-        self.flipped_edges = None
-        # A sequence the attack is iteration over (values are passed to `step`)
-        self.step_sequence = tuple()
-
         if self.mode == 'projected':
             self._prepare = self._prepare_projected
             self._update = self._update_projected
@@ -230,11 +225,11 @@ class RBCDAttack(Attack):
         self.attack_statistics = defaultdict(list)
 
         # Prepare attack and define `self.iterable` to iterate over
-        self._prepare(x, edge_index, labels, budget, idx_attack, **kwargs)
+        step_sequence = self._prepare(
+            x, edge_index, labels, budget, idx_attack, **kwargs)
 
         # Loop over the epochs (Algorithm 1, line 5)
-        for step in tqdm(self.step_sequence, disable=not self.log,
-                         desc='Attack model'):
+        for step in tqdm(step_sequence, disable=not self.log, desc='Attack'):
             loss, gradient = self._forward_and_gradient(
                 x, labels, idx_attack, **kwargs)
 
@@ -244,22 +239,24 @@ class RBCDAttack(Attack):
             scalars['loss'] = loss.item()
             self._append_statistics(scalars)
 
-        ret = self._close(x, edge_index, labels, budget, idx_attack, **kwargs)
+        perturbed_edge_index, flipped_edges = self._close(
+            x, edge_index, labels, budget, idx_attack, **kwargs)
 
-        assert self.flipped_edges.shape[1] <= budget, (
-            f'# perturbed edges {self.flipped_edges.shape[1]} '
+        assert flipped_edges.shape[1] <= budget, (
+            f'# perturbed edges {flipped_edges.shape[1]} '
             f'exceeds budget {budget}')
 
-        return ret
+        return perturbed_edge_index, flipped_edges
 
     def _prepare(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-                 budget: int, idx_attack: Optional[Tensor] = None, **kwargs):
+                 budget: int, idx_attack: Optional[Tensor] = None,
+                 **kwargs) -> Iterable[Any]:
         """Prepare attack."""
         pass
 
     def _prepare_greedy(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                         budget: int, idx_attack: Optional[Tensor] = None,
-                        **kwargs):
+                        **kwargs) -> Iterable[Any]:
         """Prepare attack."""
         self.flipped_edges = torch.empty((2, 0), dtype=edge_index.dtype,
                                          device=self.device)
@@ -273,22 +270,23 @@ class RBCDAttack(Attack):
         else:
             steps = [1] * budget
 
-        self.step_sequence = steps
-
         # Sample initial search space (Algorithm 2, line 3-4)
         self._sample_random_block(step_size)
 
+        return steps
+
     def _prepare_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                            budget: int, idx_attack: Optional[Tensor] = None,
-                           **kwargs):
+                           **kwargs) -> Iterable[Any]:
         """Prepare attack."""
-        self.step_sequence = list(range(self.epochs))
-
         # For early stopping (not explicitly covered by pseudo code)
         self.best_metric = float('-Inf')
 
         # Sample initial search space (Algorithm 1, line 3-4)
         self._sample_random_block(budget)
+
+        steps = range(self.epochs)
+        return steps
 
     def _update(self, step: Any, gradient: Tensor, x: Tensor,
                 edge_index: Tensor, labels: Tensor, budget: int,
@@ -303,21 +301,21 @@ class RBCDAttack(Attack):
         """Update edge weights given gradient."""
         _, topk_edge_index = torch.topk(gradient, step_size)
 
-        add_edge_index = self.block_edge_index[:, topk_edge_index]
-        add_edge_weight = torch.ones_like(add_edge_index[0],
-                                          dtype=torch.float32)
+        flip_edge_index = self.block_edge_index[:, topk_edge_index]
+        flip_edge_weight = torch.ones_like(flip_edge_index[0],
+                                           dtype=torch.float32)
 
-        self.flipped_edges = torch.cat((self.flipped_edges, add_edge_index),
+        self.flipped_edges = torch.cat((self.flipped_edges, flip_edge_index),
                                        axis=-1)
 
         if self.is_undirected_graph:
-            add_edge_index, add_edge_weight = to_undirected(
-                add_edge_index, add_edge_weight, self.n, reduce='mean')
+            flip_edge_index, flip_edge_weight = to_undirected(
+                flip_edge_index, flip_edge_weight, self.n, reduce='mean')
         edge_index = torch.cat(
-            (self.edge_index.to(self.device), add_edge_index.to(self.device)),
+            (self.edge_index.to(self.device), flip_edge_index.to(self.device)),
             dim=-1)
         edge_weight = torch.cat((self.edge_weight.to(self.device),
-                                 add_edge_weight.to(self.device)))
+                                 flip_edge_weight.to(self.device)))
         edge_index, edge_weight = coalesce(edge_index, edge_weight,
                                            num_nodes=self.n, reduce='sum')
 
@@ -398,13 +396,13 @@ class RBCDAttack(Attack):
         """Clean up and prepare return argument."""
         pass
 
-    def _close_greedy(self, *args, **kwargs) -> Any:
+    def _close_greedy(self, *args, **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         return self.edge_index, self.flipped_edges
 
     def _close_projected(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                          budget: int, idx_attack: Optional[Tensor] = None,
-                         **kwargs) -> Any:
+                         **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         # Retrieve best epoch if early stopping is active
         # (not explicitly covered by pseudo code)
@@ -581,18 +579,16 @@ class RBCDAttack(Attack):
 
         # Recover best sample
         self.block_edge_weight = best_edge_weight.to(self.device)
-        self.flipped_edges = self.block_edge_index[:,
-                                                   torch.where(best_edge_weight
-                                                               )[0]]
+        flipped_edges = self.block_edge_index[
+            :, torch.where(best_edge_weight)[0]]
 
         edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight, self.block_edge_index,
             self.block_edge_weight)
         edge_mask = edge_weight == 1
-        self.edge_index = edge_index[:, edge_mask]
-        self.edge_weight = edge_weight[edge_mask]
+        edge_index = edge_index[:, edge_mask]
 
-        return self.edge_index, self.flipped_edges
+        return edge_index, flipped_edges
 
     def _update_edge_weights(self, budget: int, epoch: int, gradient: Tensor):
         # The learning rate is refined heuristically, s.t. (1) it is
