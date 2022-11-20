@@ -1,12 +1,12 @@
 import logging
 from math import sqrt
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Dict
 import numpy as np
 import torch
 from torch import Tensor
 from torch.nn.parameter import Parameter
-
-from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
+import pandas as pd
+# from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
@@ -19,6 +19,7 @@ from torch_geometric.explain.explanations import Explanation
 from torch_geometric.utils import to_dense_adj
 from torch_geometric.utils import k_hop_subgraph
 
+from pgmpy.estimators.CITests import chi_square
 from .base import ExplainerAlgorithm
 
 
@@ -97,11 +98,16 @@ Explanations for Graph Neural Networks"
         ]
 
         model.eval()
+        node_feat_mask= None
+        node_mask = None
+        edge_mask= None
+        edge_index= None
+
 
         if model_config.task_level == ModelTaskLevel.node:
             pass
             # TODO
-            # node_mask, edge_mask = self._explain_node(model, x, edge_index,
+            # node_mask, node_feature_mask = self._explain_node(model, x, edge_index,
             #                                           explainer_config,
             #                                           model_config, target,
             #                                           node_index, target_index,
@@ -172,10 +178,10 @@ Explanations for Graph Neural Networks"
         target: Tensor,
         num_samples: int =100,
         top_node=None,
-        p_threshold=0.05,
+        significance_threshold=0.05,
         pred_threshold=0.1
 
-    ) -> Tuple[Tensor, Optional[Tensor]]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
 
         neighbors, edge_index, mapping, edge_mask = k_hop_subgraph(node_index, num_hops=5,
                    edge_index=edge_index, relabel_nodes=True)
@@ -185,67 +191,73 @@ Explanations for Graph Neural Networks"
         if node_index not in neighbors:
             neighbors = np.append(neighbors, node_index)
 
-        pred_torch = model(x, edge_index, edge_weight).cpu()
-        oftmax_pred = np.asarray([torch.softmax(pred_torch[node_].data) for node_ in range(x.shape[0])])
+        pred_model = model(x, edge_index, edge_weight).cpu()
+        softmax_pred = np.asarray([torch.softmax(pred_model[node_].data) for node_ in range(x.shape[0])])
         # softmax_pred = np.asarray([softmax(np.asarray(pred_torch[node_].data)) for node_ in range(self.X.shape[0])])
+        pred_single_node = pred_model[node_index].data
+        label_node = torch.argmax(pred_single_node)
+        soft_pred_single_node = torch.softmax(pred_single_node)
 
-        return node_mask, edge_mask
+        Samples = []
+        Pred_Samples = []
 
-    def _train_node_edge_mask(
-        self,
-        model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
-        target: Tensor,
-        target_index: Optional[Union[int, Tensor]] = None,
-        index: Optional[Union[int, Tensor]] = None,
-        **kwargs,
-    ):
-        self._initialize_masks(x, edge_index,
-                               node_mask_type=explainer_config.node_mask_type,
-                               edge_mask_type=explainer_config.edge_mask_type)
+        for iteration in range(num_samples):
 
-        if explainer_config.edge_mask_type == MaskType.object:
-            set_masks(model, self.edge_mask, edge_index, apply_sigmoid=True)
-            parameters = [self.node_mask, self.edge_mask]
-        else:
-            parameters = [self.node_mask]
-        optimizer = torch.optim.Adam(parameters, lr=self.lr)
+            X_perturb = x.cpu().detach().numpy()
+            sample = []
+            for node in neighbors:
+                seed = np.random.choice([True, False])
+                if seed:
+                    X_perturb = self.perturb_features_on_node(X_perturb, node, is_random=True)
+                sample.append(seed)
 
-        for _ in range(1, self.epochs + 1):
-            optimizer.zero_grad()
-            h = x * self.node_mask.sigmoid()
-            out = model(x=h, edge_index=edge_index, **kwargs)
-            loss_value = self.loss(
-                out, target, return_type=model_config.return_type,
-                target_idx=target_index, node_index=index,
-                edge_mask_type=explainer_config.edge_mask_type,
-                model_mode=model_config.mode)
-            loss_value.backward(retain_graph=True)
-            optimizer.step()
+            X_perturb_torch = torch.tensor(X_perturb, dtype=torch.float)# todo .to(self.device)
+            pred_perturb_torch = model(X_perturb_torch, edge_index, edge_weight).cpu()
+            softmax_pred_perturb = np.asarray(
+                [torch.softmax(pred_perturb_torch[node_].data) for node_ in range(self.X.shape[0])]
+            )
 
-    def _initialize_masks(
-        self,
-        x: Tensor,
-        edge_index: Tensor,
-        node_mask_type: MaskType,
-        edge_mask_type: MaskType,
-    ):
-        (N, F), E = x.size(), edge_index.size(1)
-        device = x.device
-        std = 0.1
-        if node_mask_type == MaskType.object:
-            self.node_mask = Parameter(torch.randn(N, 1, device=device) * std)
-        elif node_mask_type == MaskType.attributes:
-            self.node_mask = Parameter(torch.randn(N, F, device=device) * std)
-        else:
-            self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
+            sample_bool = []
+            for node in neighbors:
+                if (softmax_pred_perturb[node, target] + pred_threshold) < softmax_pred[node, target]:
+                    sample_bool.append(1)
+                else:
+                    sample_bool.append(0)
 
-        if edge_mask_type == MaskType.object:
-            std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
-            self.edge_mask = Parameter(torch.randn(E, device=device) * std)
+            Samples.append(sample)
+            Pred_Samples.append(sample_bool)
+
+        Samples = np.asarray(Samples)
+        Pred_Samples = np.asarray(Pred_Samples)
+        Combine_Samples = Samples - Samples
+        for s in range(Samples.shape[0]):
+            Combine_Samples[s] = np.asarray(
+                [Samples[s, i] * 10 + Pred_Samples[s, i] + 1 for i in range(Samples.shape[1])]
+            )
+
+        data_pgm = pd.DataFrame(Combine_Samples)
+        data_pgm = data_pgm.rename(columns={0: "A", 1: "B"})  # Trick to use chi_square test on first two data columns
+        ind_ori_to_sub = dict(zip(neighbors, list(data_pgm.columns)))
+
+        p_values = []
+        for node in neighbors:
+            if node == node_index:
+                p = 0  # p<0.05 => we are confident that we can reject the null hypothesis (i.e. the prediction is the same after perturbing the neighbouring node
+                # => this neighbour has no influence on the prediction - should not be in the explanation)
+            else:
+                chi2, p, _ = chi_square(
+                    ind_ori_to_sub[node], ind_ori_to_sub[node_index], [],
+                    data_pgm, boolean=False, significance_level= significance_threshold
+                )
+            p_values.append(p)
+
+        pgm_stats = dict(zip(neighbors, p_values))
+        node_mask = torch.Tensor(neighbors)
+        node_feature_mask = torch.Tensor(zip(neighbors, p_values))
+        return node_mask, node_feature_mask
+
+
+
 
     def _loss_regression(
         self,

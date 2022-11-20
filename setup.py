@@ -35,6 +35,8 @@ full_requires = graphgym_requires + [
     'scikit-image',
     'pytorch-memlab',
     'torchmetrics>=0.7',
+    'pgmpy',
+    'statsmodels',
 ]
 
 benchmark_requires = [
