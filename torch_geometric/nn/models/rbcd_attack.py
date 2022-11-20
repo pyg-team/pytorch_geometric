@@ -217,8 +217,8 @@ class RBCDAttack(Attack):
         assert kwargs.get('edge_weight', None) is None, \
             '`edge_weight` is not supported'
         edge_weight = torch.ones(edge_index.size(1), device=self.device)
-        self.edge_index = edge_index.cpu()
-        self.edge_weight = edge_weight.cpu()
+        self.edge_index = edge_index.cpu().clone()
+        self.edge_weight = edge_weight.cpu().clone()
         self.n = x.size(0)
 
         # For collecting attack statistics
@@ -367,9 +367,9 @@ class RBCDAttack(Attack):
         # (not explicitly covered by pseudo code)
         if metric > self.best_metric:
             self.best_metric = metric
-            self.best_block = self.current_block.cpu()
-            self.best_edge_index = self.block_edge_index.cpu()
-            self.best_pert_edge_weight = self.block_edge_weight.detach().cpu()
+            self.best_block = self.current_block.cpu().clone()
+            self.best_edge_index = self.block_edge_index.cpu().clone()
+            self.best_pert_edge_weight = self.block_edge_weight.cpu().detach()
 
         # Resampling of search space (Algorithm 1, line 9-14)
         if epoch < self.epochs_resampling - 1:
@@ -485,9 +485,9 @@ class RBCDAttack(Attack):
                     self.n, self.current_block)
                 self._filter_self_loops_in_block(with_weight=False)
 
-            self.block_edge_weight = torch.full_like(self.current_block,
-                                                     self.coeffs['eps'],
-                                                     dtype=torch.float32)
+            self.block_edge_weight = torch.full(self.current_block.shape,
+                                                self.coeffs['eps'],
+                                                device=self.device)
             if self.current_block.size(0) >= budget:
                 return
         raise RuntimeError('Sampling random block was not successful. '
