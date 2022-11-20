@@ -50,55 +50,18 @@ class Attack(torch.nn.Module):
 
 
 class RBCDAttack(Attack):
-    r"""Projected and Greedy Randomized Block Coordinate
+    r"""Abstract class for Projected and Greedy Randomized Block Coordinate
     Descent (PRBCD and GRBCD, respectively) adversarial attack from the
     `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_
     paper.
 
-    Both attacks use an efficient gradient based approach that (during the
-    attack) relaxed the discrete entries in the adjacency matrix
-    :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturb the adjacency matrix
-    (no feature perturbations). Thus, they support all models that can handle
-    weighted graphs that are differentiable w.r.t. these edge weights. For
-    non-differentiable models you might be able to e.g. use the gumble softmax
-    trick.
-
-    The memory overhead of both attacks is driven by the additional
-    edges (at most :attr:`block_size`). For scalability reasons, the block is
-    drawn with replacement and then the index is made unique. Thus, the actual
-    block size is typically slightly smaller than specified.
-
-    The attacks can be used for both global and local attacks as well as
-    test-time attacks (evasion) and training-time attacks (poisoning). Please
-    see the provided examples.
-
-    The attacks are designed with a focus on node- or graph-classification,
-    however, to adapt to other tasks you most likely only need to provide an
-    appropriate loss and model. However, we currently do not support batching
-    out of the box.
-
-    .. note::
-        For examples of using the (P/G)RBCD Attack, see
-        `examples/rbcd_attack.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack.py>`_
-        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack_poisoning.py>`_
-        for a training time (poisoning) attack.
-
     Args:
         model (torch.nn.Module): The GNN module to assess.
-        mode (str, optional): Either :obj:`'projected'` for Projected-RBCD or
-            :obj:`'greedy'` for Greedy-RBCD. (default: :obj:`projected`).
         block_size (int, optional): Number of randomly selected elements in the
             adjacency matrix to consider. (default: :obj:`250_000`)
         epochs (int, optional): Number of epochs (aborts early if
             :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
-        epochs_resampling (int, optional): Number of epochs to resample the
-            random block. Only relevant if :obj:`mode='projected'`
-            (default: obj:`100`).
         loss (str or Callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
@@ -106,16 +69,8 @@ class RBCDAttack(Attack):
             output activation) or uses :obj:`logsoftmax`, and that the number
             of predictions matches the number labels passed to :attr:`attack`.
             Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
-            :obj:`'prob_margin'`, :obj:`'tanh_margin'`
-            (default: :obj:`'probability_margin_loss'`).
-        metric (Callable, optional): Second (potentially
-            non-differentiable) loss for monitoring or early stopping (if
-            :obj:`mode='greedy'`). Only relevant if :obj:`mode='projected'`.
-            (default: same as :attr:`loss`)
-        lr (float, optional): Learning rate that is being used if
-            :obj:`mode='projected'`. Additionally, it is heuristically
-            corrected for :attr:`block_size`, budget (see :attr:`attack`) and
-            graph size. (default: :obj:`1_000`)
+            :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
+            (default: :obj:`'probability_margin_loss'`)
         is_undirected_graph (bool, optional): If :obj:`True` the graph is
             assumed to be undirected. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
@@ -123,26 +78,20 @@ class RBCDAttack(Attack):
     """
 
     coeffs = {
-        'max_final_samples': 20,  # only used if `self.mode='projected'``
-        'max_trials_sampling': 20,  # only used if `self.mode='projected'``
-        'with_early_stopping': True,  # only used if `self.mode='projected'``
+        'max_trials_sampling': 20,
         'eps': 1e-7
     }
 
-    def __init__(self, model: torch.nn.Module, mode: str = 'projected',
-                 block_size: int = 250_000, epochs: int = 125,
-                 epochs_resampling: int = 100,
+    def __init__(self, model: torch.nn.Module, block_size: int = 250_000,
+                 epochs: int = 125,
                  loss: Optional[Union[str, LOSS_TYPE]] = None,
-                 metric: Optional[Union[str, LOSS_TYPE]] = None,
-                 lr: float = 1_000, is_undirected_graph: bool = True,
-                 log: bool = True, **kwargs) -> None:
+                 is_undirected_graph: bool = True, log: bool = True,
+                 **kwargs) -> None:
         super().__init__()
 
         self.model = model
-        self.mode = mode
         self.block_size = block_size
         self.epochs = epochs
-        self.epochs_resampling = epochs_resampling
 
         if loss is None:
             if self.model == 'projected':
@@ -163,25 +112,10 @@ class RBCDAttack(Attack):
         else:
             self.loss = loss
 
-        if metric is None:
-            self.metric = self.loss
-        else:
-            self.metric = metric
-
-        self.lr = lr
         self.is_undirected_graph = is_undirected_graph
         self.log = log
 
         self.coeffs.update(kwargs)
-
-        if self.mode == 'projected':
-            self._prepare = self._prepare_projected
-            self._update = self._update_projected
-            self._close = self._close_projected
-        else:
-            self._prepare = self._prepare_greedy
-            self._update = self._update_greedy
-            self._close = self._close_greedy
 
     def attack(self, x: Tensor, edge_index: Tensor, labels: Tensor,
                budget: int, idx_attack: Optional[Tensor] = None,
@@ -247,168 +181,27 @@ class RBCDAttack(Attack):
 
         return perturbed_edge_index, flipped_edges
 
+    @abc.abstractmethod
     def _prepare(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
-        pass
 
-    def _prepare_greedy(self, budget: int) -> Iterable[Any]:
-        """Prepare attack."""
-        self.flipped_edges = torch.empty((2, 0), dtype=self.edge_index.dtype,
-                                         device=self.device)
+        raise NotImplementedError('Abstractmethod needs to be implemented')
 
-        # Determine the number of edges to be flipped in each attach step/epoch
-        step_size = budget // self.epochs
-        if step_size > 0:
-            steps = self.epochs * [step_size]
-            for i in range(budget % self.epochs):
-                steps[i] += 1
-        else:
-            steps = [1] * budget
-
-        # Sample initial search space (Algorithm 2, line 3-4)
-        self._sample_random_block(step_size)
-
-        return steps
-
-    def _prepare_projected(self, budget: int) -> Iterable[Any]:
-        """Prepare attack."""
-        # For early stopping (not explicitly covered by pseudo code)
-        self.best_metric = float('-Inf')
-
-        # Sample initial search space (Algorithm 1, line 3-4)
-        self._sample_random_block(budget)
-
-        steps = range(self.epochs)
-        return steps
-
+    @abc.abstractmethod
     def _update(self, step: Any, gradient: Tensor, x: Tensor, labels: Tensor,
                 budget: int, idx_attack: Optional[Tensor] = None,
                 **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
-        pass
 
-    @torch.no_grad()
-    def _update_greedy(self, step_size: int, gradient: Tensor, x: Tensor,
-                       labels: Tensor, budget: int,
-                       idx_attack: Optional[Tensor] = None,
-                       **kwargs) -> Dict[str, Any]:
-        """Update edge weights given gradient."""
-        _, topk_edge_index = torch.topk(gradient, step_size)
+        raise NotImplementedError('Abstractmethod needs to be implemented')
 
-        flip_edge_index = self.block_edge_index[:, topk_edge_index]
-        flip_edge_weight = torch.ones_like(flip_edge_index[0],
-                                           dtype=torch.float32)
-
-        self.flipped_edges = torch.cat((self.flipped_edges, flip_edge_index),
-                                       axis=-1)
-
-        if self.is_undirected_graph:
-            flip_edge_index, flip_edge_weight = to_undirected(
-                flip_edge_index, flip_edge_weight, self.n, reduce='mean')
-        edge_index = torch.cat(
-            (self.edge_index.to(self.device), flip_edge_index.to(self.device)),
-            dim=-1)
-        edge_weight = torch.cat((self.edge_weight.to(self.device),
-                                 flip_edge_weight.to(self.device)))
-        edge_index, edge_weight = coalesce(edge_index, edge_weight,
-                                           num_nodes=self.n, reduce='sum')
-
-        is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
-        self.edge_index = edge_index[:, is_one_mask]
-        self.edge_weight = edge_weight[is_one_mask]
-        # self.edge_weight = torch.ones_like(self.edge_weight)
-        assert self.edge_index.size(1) == self.edge_weight.size(0)
-
-        # Sample initial search space (Algorithm 2, line 3-4)
-        self._sample_random_block(step_size)
-
-        return {}
-
-    @torch.no_grad()
-    def _update_projected(self, epoch: int, gradient: Tensor, x: Tensor,
-                          labels: Tensor, budget: int,
-                          idx_attack: Optional[Tensor] = None,
-                          **kwargs) -> Dict[str, float]:
-        """Update edge weights given gradient."""
-        # Gradient update step (Algorithm 1, line 7)
-        self._update_edge_weights(budget, epoch, gradient)
-        # For monitoring
-        pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
-        # Projection to stay within relaxed `L_0` budget
-        # (Algorithm 1, line 8)
-        self.block_edge_weight = self._project(budget, self.block_edge_weight,
-                                               self.coeffs['eps'])
-
-        # For monitoring
-        scalars = dict(
-            prob_mass_after_update=pmass_update.sum().item(),
-            prob_mass_after_update_max=pmass_update.max().item(),
-            prob_mass_after_projection=self.block_edge_weight.sum().item(),
-            prob_mass_after_projection_nonzero_weights=(
-                self.block_edge_weight > self.coeffs['eps']).sum().item(),
-            prob_mass_after_projection_max=self.block_edge_weight.max().item())
-        if not self.coeffs['with_early_stopping']:
-            return scalars
-
-        # Calculate metric after the current epoch (overhead
-        # for monitoring and early stopping)
-        topk_block_edge_weight = torch.zeros_like(self.block_edge_weight)
-        topk_block_edge_weight[torch.topk(self.block_edge_weight,
-                                          budget).indices] = 1
-        edge_index, edge_weight = self._get_modified_adj(
-            self.edge_index, self.edge_weight, self.block_edge_index,
-            topk_block_edge_weight)
-        prediction = self._forward(x, edge_index, edge_weight, **kwargs)
-        metric = self.metric(prediction, labels, idx_attack)
-
-        # Save best epoch for early stopping
-        # (not explicitly covered by pseudo code)
-        if metric > self.best_metric:
-            self.best_metric = metric
-            self.best_block = self.current_block.cpu().clone()
-            self.best_edge_index = self.block_edge_index.cpu().clone()
-            self.best_pert_edge_weight = self.block_edge_weight.cpu().detach()
-
-        # Resampling of search space (Algorithm 1, line 9-14)
-        if epoch < self.epochs_resampling - 1:
-            self._resample_random_block(budget)
-        elif epoch == self.epochs_resampling - 1:
-            # Retrieve best epoch if early stopping is active
-            # (not explicitly covered by pseudo code)
-            self.current_block = self.best_block.to(self.device)
-            self.block_edge_index = self.best_edge_index.to(self.device)
-            block_edge_weight = self.best_pert_edge_weight.clone()
-            self.block_edge_weight = block_edge_weight.to(self.device)
-
-        scalars['metric'] = metric.item()
-        return scalars
-
+    @abc.abstractmethod
     def _close(self, x: Tensor, labels: Tensor, budget: int,
                idx_attack: Optional[Tensor] = None,
                **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
-        pass
 
-    def _close_greedy(self, *args, **kwargs) -> Tuple[Tensor, Tensor]:
-        """Clean up and prepare return argument."""
-        return self.edge_index, self.flipped_edges
-
-    def _close_projected(self, x: Tensor, labels: Tensor, budget: int,
-                         idx_attack: Optional[Tensor] = None,
-                         **kwargs) -> Tuple[Tensor, Tensor]:
-        """Clean up and prepare return argument."""
-        # Retrieve best epoch if early stopping is active
-        # (not explicitly covered by pseudo code)
-        if self.coeffs['with_early_stopping']:
-            self.current_block = self.best_block.to(self.device)
-            self.block_edge_index = self.best_edge_index.to(self.device)
-            self.block_edge_weight = self.best_pert_edge_weight.to(self.device)
-
-        # Sample final discrete graph (Algorithm 1, line 16)
-        edge_index, flipped_edges = self._sample_final_edges(
-            x, labels, budget, idx_attack=idx_attack, **kwargs)
-
-        return edge_index, flipped_edges
+        raise NotImplementedError('Abstractmethod needs to be implemented')
 
     def _forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
                  **kwargs) -> Tensor:
@@ -494,8 +287,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight <=
-                      self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight
+                      <= self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -540,61 +333,6 @@ class RBCDAttack(Attack):
         for key, value in mapping.items():
             self.attack_statistics[key].append(value)
 
-    @torch.no_grad()
-    def _sample_final_edges(self, x: Tensor, labels: Tensor, budget: int,
-                            idx_attack: Optional[Tensor] = None,
-                            **kwargs) -> Tuple[Tensor, Tensor]:
-        best_metric = float('-Inf')
-        block_edge_weight = self.block_edge_weight
-        block_edge_weight[block_edge_weight <= self.coeffs['eps']] = 0
-
-        for i in range(self.coeffs['max_final_samples']):
-            if i == 0:
-                # In first iteration employ top k heuristic instead of sampling
-                sampled_edges = torch.zeros_like(block_edge_weight)
-                sampled_edges[torch.topk(block_edge_weight,
-                                         budget).indices] = 1
-            else:
-                sampled_edges = torch.bernoulli(block_edge_weight).float()
-
-            if sampled_edges.sum() > budget:
-                # Allowed budget is exceeded
-                continue
-            self.block_edge_weight = sampled_edges
-
-            edge_index, edge_weight = self._get_modified_adj(
-                self.edge_index, self.edge_weight, self.block_edge_index,
-                self.block_edge_weight)
-            prediction = self._forward(x, edge_index, edge_weight, **kwargs)
-            metric = self.metric(prediction, labels, idx_attack)
-
-            # Save best sample
-            if metric > best_metric:
-                best_metric = metric
-                best_edge_weight = self.block_edge_weight.clone().cpu()
-
-        # Recover best sample
-        self.block_edge_weight = best_edge_weight.to(self.device)
-        flipped_edges = self.block_edge_index[:,
-                                              torch.where(best_edge_weight)[0]]
-
-        edge_index, edge_weight = self._get_modified_adj(
-            self.edge_index, self.edge_weight, self.block_edge_index,
-            self.block_edge_weight)
-        edge_mask = edge_weight == 1
-        edge_index = edge_index[:, edge_mask]
-
-        return edge_index, flipped_edges
-
-    def _update_edge_weights(self, budget: int, epoch: int, gradient: Tensor):
-        # The learning rate is refined heuristically, s.t. (1) it is
-        # independent of the number of perturbations (assuming an undirected
-        # adjacency matrix) and (2) to decay learning rate during fine-tuning
-        # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr /
-              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
-        self.block_edge_weight.data.add_(lr * gradient)
-
     @staticmethod
     def _num_possible_edges(n: int, is_undirected_graph: bool) -> int:
         """Determine number of possible edges for graph."""
@@ -610,8 +348,8 @@ class RBCDAttack(Attack):
         https://dongkwan-kim.github.io/blogs/indices-for-the-upper-triangle-matrix/
         but here we omit entries on the main diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n *
-                       (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n
+                       * (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
@@ -622,38 +360,6 @@ class RBCDAttack(Attack):
         row_idx = torch.div(lin_idx, n, rounding_mode='floor')
         col_idx = lin_idx % n
         return torch.stack((row_idx, col_idx))
-
-    @staticmethod
-    def _project(budget: int, values: Tensor, eps: float = 1e-7) -> Tensor:
-        r"""Project `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
-        if torch.clamp(values, 0, 1).sum() > budget:
-            left = (values - 1).min()
-            right = values.max()
-            miu = RBCDAttack._bisection(values, left, right, budget)
-            values = values - miu
-        return torch.clamp(values, min=eps, max=1 - eps)
-
-    @staticmethod
-    def _bisection(edge_weights: Tensor, a: float, b: float, n_pert: int,
-                   eps=1e-5, max_iter=1e3) -> Tensor:
-        """Bisection search for projection."""
-        def shift(offset: float):
-            return (torch.clamp(edge_weights - offset, 0, 1).sum() - n_pert)
-
-        miu = a
-        for _ in range(int(max_iter)):
-            miu = (a + b) / 2
-            # Check if middle point is root
-            if (shift(miu) == 0.0):
-                break
-            # Decide the side to repeat the steps
-            if (shift(miu) * shift(a) < 0):
-                b = miu
-            else:
-                a = miu
-            if ((b - a) <= eps):
-                break
-        return miu
 
     @staticmethod
     def _margin(score: Tensor, labels: Tensor,
@@ -756,3 +462,397 @@ class RBCDAttack(Attack):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
+
+
+class PRBCDAttack(RBCDAttack):
+    r"""Projected Randomized Block Coordinate Descent (PRBCD) adversarial attack
+    from the `Robustness of Graph Neural Networks at Scale
+    <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
+
+    This attack uses an efficient gradient based approach that (during the
+    attack) relaxes the discrete entries in the adjacency matrix
+    :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturbs the adjacency matrix
+    (no feature perturbations). Thus, this attack supports all models that can
+    handle weighted graphs that are differentiable w.r.t. these edge weights.
+    For non-differentiable models you might be able to e.g. use the gumble
+    softmax trick.
+
+    The memory overhead is driven by the additional edges (at most
+    :attr:`block_size`). For scalability reasons, the block is drawn with
+    replacement and then the index is made unique. Thus, the actual block size
+    is typically slightly smaller than specified.
+
+    This attack can be used for both global and local attacks as well as
+    test-time attacks (evasion) and training-time attacks (poisoning). Please
+    see the provided examples.
+
+    This attack is designed with a focus on node- or graph-classification,
+    however, to adapt to other tasks you most likely only need to provide an
+    appropriate loss and model. However, we currently do not support batching
+    out of the box (sampling needs to be adapted).
+
+    .. note::
+        For examples of using the PRBCD Attack, see
+        `examples/rbcd_attack.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        rbcd_attack.py>`_
+        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        rbcd_attack_poisoning.py>`_
+        for a training time (poisoning) attack.
+
+    Args:
+        model (torch.nn.Module): The GNN module to assess.
+        block_size (int, optional): Number of randomly selected elements in the
+            adjacency matrix to consider. (default: :obj:`250_000`)
+        epochs (int, optional): Number of epochs (aborts early if
+            :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
+        epochs_resampling (int, optional): Number of epochs to resample the
+            random block. (default: obj:`100`)
+        loss (str or Callable, optional): A loss to quantify the "strength" of
+            an attack. Note that this function must match the output format of
+            :attr:`model`. By default, it is assumed that the task is
+            classification, that the model returns raw predictions (i.e. no
+            output activation) or uses :obj:`logsoftmax`, and that the number
+            of predictions matches the number labels passed to :attr:`attack`.
+            Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
+            :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
+            (default: :obj:`'probability_margin_loss'`)
+        metric (Callable, optional): Second (potentially
+            non-differentiable) loss for monitoring or early stopping (if
+            :obj:`mode='greedy'`). (default: same as :attr:`loss`)
+        lr (float, optional): Learning rate for updating edge weights.
+            Additionally, it is heuristically corrected for :attr:`block_size`,
+            budget (see :attr:`attack`) and graph size. (default: :obj:`1_000`)
+        is_undirected_graph (bool, optional): If :obj:`True` the graph is
+            assumed to be undirected. (default: :obj:`True`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
+    """
+
+    coeffs = {
+        'max_final_samples': 20,
+        'max_trials_sampling': 20,
+        'with_early_stopping': True,
+        'eps': 1e-7
+    }
+
+    def __init__(self, model: torch.nn.Module,
+                 block_size: int = 250_000, epochs: int = 125,
+                 epochs_resampling: int = 100,
+                 loss: Optional[Union[str, LOSS_TYPE]] = None,
+                 metric: Optional[Union[str, LOSS_TYPE]] = None,
+                 lr: float = 1_000, is_undirected_graph: bool = True,
+                 log: bool = True, **kwargs) -> None:
+        super().__init__(
+            model, block_size, epochs, loss, is_undirected_graph, log)
+
+        if metric is None:
+            self.metric = self.loss
+        else:
+            self.metric = metric
+
+        self.epochs_resampling = epochs_resampling
+        self.lr = lr
+
+        self.coeffs.update(kwargs)
+
+    def _prepare(self, budget: int) -> Iterable[Any]:
+        """Prepare attack."""
+        # For early stopping (not explicitly covered by pseudo code)
+        self.best_metric = float('-Inf')
+
+        # Sample initial search space (Algorithm 1, line 3-4)
+        self._sample_random_block(budget)
+
+        steps = range(self.epochs)
+        return steps
+
+    @torch.no_grad()
+    def _update(self, epoch: int, gradient: Tensor, x: Tensor, labels: Tensor,
+                budget: int, idx_attack: Optional[Tensor] = None,
+                **kwargs) -> Dict[str, float]:
+        """Update edge weights given gradient."""
+        # Gradient update step (Algorithm 1, line 7)
+        self._update_edge_weights(budget, epoch, gradient)
+        # For monitoring
+        pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
+        # Projection to stay within relaxed `L_0` budget
+        # (Algorithm 1, line 8)
+        self.block_edge_weight = self._project(budget, self.block_edge_weight,
+                                               self.coeffs['eps'])
+
+        # For monitoring
+        scalars = dict(
+            prob_mass_after_update=pmass_update.sum().item(),
+            prob_mass_after_update_max=pmass_update.max().item(),
+            prob_mass_after_projection=self.block_edge_weight.sum().item(),
+            prob_mass_after_projection_nonzero_weights=(
+                self.block_edge_weight > self.coeffs['eps']).sum().item(),
+            prob_mass_after_projection_max=self.block_edge_weight.max().item())
+        if not self.coeffs['with_early_stopping']:
+            return scalars
+
+        # Calculate metric after the current epoch (overhead
+        # for monitoring and early stopping)
+        topk_block_edge_weight = torch.zeros_like(self.block_edge_weight)
+        topk_block_edge_weight[torch.topk(self.block_edge_weight,
+                                          budget).indices] = 1
+        edge_index, edge_weight = self._get_modified_adj(
+            self.edge_index, self.edge_weight, self.block_edge_index,
+            topk_block_edge_weight)
+        prediction = self._forward(x, edge_index, edge_weight, **kwargs)
+        metric = self.metric(prediction, labels, idx_attack)
+
+        # Save best epoch for early stopping
+        # (not explicitly covered by pseudo code)
+        if metric > self.best_metric:
+            self.best_metric = metric
+            self.best_block = self.current_block.cpu().clone()
+            self.best_edge_index = self.block_edge_index.cpu().clone()
+            self.best_pert_edge_weight = self.block_edge_weight.cpu().detach()
+
+        # Resampling of search space (Algorithm 1, line 9-14)
+        if epoch < self.epochs_resampling - 1:
+            self._resample_random_block(budget)
+        elif epoch == self.epochs_resampling - 1:
+            # Retrieve best epoch if early stopping is active
+            # (not explicitly covered by pseudo code)
+            self.current_block = self.best_block.to(self.device)
+            self.block_edge_index = self.best_edge_index.to(self.device)
+            block_edge_weight = self.best_pert_edge_weight.clone()
+            self.block_edge_weight = block_edge_weight.to(self.device)
+
+        scalars['metric'] = metric.item()
+        return scalars
+
+    def _close(self, x: Tensor, labels: Tensor, budget: int,
+               idx_attack: Optional[Tensor] = None,
+               **kwargs) -> Tuple[Tensor, Tensor]:
+        """Clean up and prepare return argument."""
+        # Retrieve best epoch if early stopping is active
+        # (not explicitly covered by pseudo code)
+        if self.coeffs['with_early_stopping']:
+            self.current_block = self.best_block.to(self.device)
+            self.block_edge_index = self.best_edge_index.to(self.device)
+            self.block_edge_weight = self.best_pert_edge_weight.to(self.device)
+
+        # Sample final discrete graph (Algorithm 1, line 16)
+        edge_index, flipped_edges = self._sample_final_edges(
+            x, labels, budget, idx_attack=idx_attack, **kwargs)
+
+        return edge_index, flipped_edges
+
+    @torch.no_grad()
+    def _sample_final_edges(self, x: Tensor, labels: Tensor, budget: int,
+                            idx_attack: Optional[Tensor] = None,
+                            **kwargs) -> Tuple[Tensor, Tensor]:
+        best_metric = float('-Inf')
+        block_edge_weight = self.block_edge_weight
+        block_edge_weight[block_edge_weight <= self.coeffs['eps']] = 0
+
+        for i in range(self.coeffs['max_final_samples']):
+            if i == 0:
+                # In first iteration employ top k heuristic instead of sampling
+                sampled_edges = torch.zeros_like(block_edge_weight)
+                sampled_edges[torch.topk(block_edge_weight,
+                                         budget).indices] = 1
+            else:
+                sampled_edges = torch.bernoulli(block_edge_weight).float()
+
+            if sampled_edges.sum() > budget:
+                # Allowed budget is exceeded
+                continue
+            self.block_edge_weight = sampled_edges
+
+            edge_index, edge_weight = self._get_modified_adj(
+                self.edge_index, self.edge_weight, self.block_edge_index,
+                self.block_edge_weight)
+            prediction = self._forward(x, edge_index, edge_weight, **kwargs)
+            metric = self.metric(prediction, labels, idx_attack)
+
+            # Save best sample
+            if metric > best_metric:
+                best_metric = metric
+                best_edge_weight = self.block_edge_weight.clone().cpu()
+
+        # Recover best sample
+        self.block_edge_weight = best_edge_weight.to(self.device)
+        flipped_edges = self.block_edge_index[:,
+                                              torch.where(best_edge_weight)[0]]
+
+        edge_index, edge_weight = self._get_modified_adj(
+            self.edge_index, self.edge_weight, self.block_edge_index,
+            self.block_edge_weight)
+        edge_mask = edge_weight == 1
+        edge_index = edge_index[:, edge_mask]
+
+        return edge_index, flipped_edges
+
+    def _update_edge_weights(self, budget: int, epoch: int, gradient: Tensor):
+        # The learning rate is refined heuristically, s.t. (1) it is
+        # independent of the number of perturbations (assuming an undirected
+        # adjacency matrix) and (2) to decay learning rate during fine-tuning
+        # (i.e. fixed search space).
+        lr = (budget / self.n * self.lr
+              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        self.block_edge_weight.data.add_(lr * gradient)
+
+    @staticmethod
+    def _project(budget: int, values: Tensor, eps: float = 1e-7) -> Tensor:
+        r"""Project `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
+        if torch.clamp(values, 0, 1).sum() > budget:
+            left = (values - 1).min()
+            right = values.max()
+            miu = PRBCDAttack._bisection(values, left, right, budget)
+            values = values - miu
+        return torch.clamp(values, min=eps, max=1 - eps)
+
+    @staticmethod
+    def _bisection(edge_weights: Tensor, a: float, b: float, n_pert: int,
+                   eps=1e-5, max_iter=1e3) -> Tensor:
+        """Bisection search for projection."""
+        def shift(offset: float):
+            return (torch.clamp(edge_weights - offset, 0, 1).sum() - n_pert)
+
+        miu = a
+        for _ in range(int(max_iter)):
+            miu = (a + b) / 2
+            # Check if middle point is root
+            if (shift(miu) == 0.0):
+                break
+            # Decide the side to repeat the steps
+            if (shift(miu) * shift(a) < 0):
+                b = miu
+            else:
+                a = miu
+            if ((b - a) <= eps):
+                break
+        return miu
+
+
+class GRBCDAttack(RBCDAttack):
+    r"""Greedy Randomized Block Coordinate Descent (GRBCD) adversarial attack
+    from the `Robustness of Graph Neural Networks at Scale
+    <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
+
+    This attack uses an efficient gradient based approach that (during the
+    attack) relaxes the discrete entries in the adjacency matrix
+    :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturbs the adjacency matrix
+    (no feature perturbations). Thus, this attack supports all models that can
+    handle weighted graphs that are differentiable w.r.t. these edge weights.
+    For non-differentiable models you might be able to e.g. use the gumble
+    softmax trick.
+
+    The memory overhead is driven by the additional edges (at most
+    :attr:`block_size`). For scalability reasons, the block is drawn with
+    replacement and then the index is made unique. Thus, the actual block size
+    is typically slightly smaller than specified.
+
+    This attack can be used for both global and local attacks as well as
+    test-time attacks (evasion) and training-time attacks (poisoning). Please
+    see the provided examples.
+
+    This attack is designed with a focus on node- or graph-classification,
+    however, to adapt to other tasks you most likely only need to provide an
+    appropriate loss and model. However, we currently do not support batching
+    out of the box (sampling needs to be adapted).
+
+    .. note::
+        For examples of using the GRBCD Attack, see
+        `examples/rbcd_attack.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        rbcd_attack.py>`_
+        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        rbcd_attack_poisoning.py>`_
+        for a training time (poisoning) attack.
+
+    Args:
+        model (torch.nn.Module): The GNN module to assess.
+        block_size (int, optional): Number of randomly selected elements in the
+            adjacency matrix to consider. (default: :obj:`250_000`)
+        epochs (int, optional): Number of epochs (aborts early if
+            :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
+        loss (str or Callable, optional): A loss to quantify the "strength" of
+            an attack. Note that this function must match the output format of
+            :attr:`model`. By default, it is assumed that the task is
+            classification, that the model returns raw predictions (i.e. no
+            output activation) or uses :obj:`logsoftmax`, and that the number
+            of predictions matches the number labels passed to :attr:`attack`.
+            Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
+            :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
+            (default: :obj:`'probability_margin_loss'`)
+        is_undirected_graph (bool, optional): If :obj:`True` the graph is
+            assumed to be undirected. (default: :obj:`True`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
+    """
+
+    def __init__(self, model: torch.nn.Module, mode: str = 'projected',
+                 block_size: int = 250_000, epochs: int = 125,
+                 loss: Optional[Union[str, LOSS_TYPE]] = None,
+                 is_undirected_graph: bool = True,
+                 log: bool = True, **kwargs) -> None:
+        super().__init__(model, block_size, epochs, loss,
+                         is_undirected_graph, log, **kwargs)
+
+    def _prepare(self, budget: int) -> Iterable[Any]:
+        """Prepare attack."""
+        self.flipped_edges = torch.empty((2, 0), dtype=self.edge_index.dtype,
+                                         device=self.device)
+
+        # Determine the number of edges to be flipped in each attach step/epoch
+        step_size = budget // self.epochs
+        if step_size > 0:
+            steps = self.epochs * [step_size]
+            for i in range(budget % self.epochs):
+                steps[i] += 1
+        else:
+            steps = [1] * budget
+
+        # Sample initial search space (Algorithm 2, line 3-4)
+        self._sample_random_block(step_size)
+
+        return steps
+
+    @torch.no_grad()
+    def _update(self, step_size: int, gradient: Tensor, x: Tensor,
+                labels: Tensor, budget: int,
+                idx_attack: Optional[Tensor] = None,
+                **kwargs) -> Dict[str, Any]:
+        """Update edge weights given gradient."""
+        _, topk_edge_index = torch.topk(gradient, step_size)
+
+        flip_edge_index = self.block_edge_index[:, topk_edge_index]
+        flip_edge_weight = torch.ones_like(flip_edge_index[0],
+                                           dtype=torch.float32)
+
+        self.flipped_edges = torch.cat((self.flipped_edges, flip_edge_index),
+                                       axis=-1)
+
+        if self.is_undirected_graph:
+            flip_edge_index, flip_edge_weight = to_undirected(
+                flip_edge_index, flip_edge_weight, self.n, reduce='mean')
+        edge_index = torch.cat(
+            (self.edge_index.to(self.device), flip_edge_index.to(self.device)),
+            dim=-1)
+        edge_weight = torch.cat((self.edge_weight.to(self.device),
+                                 flip_edge_weight.to(self.device)))
+        edge_index, edge_weight = coalesce(edge_index, edge_weight,
+                                           num_nodes=self.n, reduce='sum')
+
+        is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
+        self.edge_index = edge_index[:, is_one_mask]
+        self.edge_weight = edge_weight[is_one_mask]
+        # self.edge_weight = torch.ones_like(self.edge_weight)
+        assert self.edge_index.size(1) == self.edge_weight.size(0)
+
+        # Sample initial search space (Algorithm 2, line 3-4)
+        self._sample_random_block(step_size)
+
+        return {}
+
+    def _close(self, *args, **kwargs) -> Tuple[Tensor, Tensor]:
+        """Clean up and prepare return argument."""
+        return self.edge_index, self.flipped_edges

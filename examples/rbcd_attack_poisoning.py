@@ -17,7 +17,7 @@ except ImportError:
 import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, RBCDAttack
+from torch_geometric.nn import GCNConv, PRBCDAttack
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -92,7 +92,7 @@ clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
 
 
-class PoisoningRBCDAttack(RBCDAttack):
+class PoisoningPRBCDAttack(PRBCDAttack):
     def _forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
                  **kwargs) -> Tensor:
         """Forward model."""
@@ -159,7 +159,7 @@ def metric(*args, **kwargs):
 
 
 # for i in range(10):
-prbcd = PoisoningRBCDAttack(gcn, metric=metric, lr=100)
+prbcd = PoisoningPRBCDAttack(gcn, metric=metric, lr=100)
 
 # PRBCD: attack test set
 global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges

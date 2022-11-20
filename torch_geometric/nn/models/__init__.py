@@ -22,7 +22,7 @@ from .linkx import LINKX
 from .lightgcn import LightGCN
 from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
-from .rbcd_attack import RBCDAttack
+from .rbcd_attack import PRBCDAttack, GRBCDAttack
 
 __all__ = [
     'MLP',
@@ -60,7 +60,8 @@ __all__ = [
     'LightGCN',
     'MaskLabel',
     'GroupAddRev',
-    'RBCDAttack',
+    'PRBCDAttack',
+    'GRBCDAttack',
 ]
 
 classes = __all__

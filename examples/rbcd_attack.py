@@ -9,7 +9,7 @@ from torch import Tensor
 import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GATConv, GCNConv, RBCDAttack
+from torch_geometric.nn import GATConv, GCNConv, PRBCDAttack, GRBCDAttack
 from torch_geometric.utils import softmax
 
 dataset = 'Cora'
@@ -22,6 +22,7 @@ data = dataset[0]
 
 class GCN(torch.nn.Module):
     """GCN that normalizes adjacency matrix once for all layers (no cache)."""
+
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gcn_conv = functools.partial(
@@ -47,6 +48,7 @@ class GCN(torch.nn.Module):
 
 class WeightedGATConv(GATConv):
     """Extended GAT to allow for weighted edges (disabling edge features)."""
+
     def edge_update(self, alpha_j: Tensor, alpha_i: Optional[Tensor],
                     edge_attr: Optional[Tensor], index: Tensor,
                     ptr: Optional[Tensor], size_i: Optional[int]) -> Tensor:
@@ -69,6 +71,7 @@ class WeightedGATConv(GATConv):
 
 class GAT(torch.nn.Module):
     """GAT that supports weights edges."""
+
     def __init__(self, hidden_dim: int = 16):
         super().__init__()
         gat_conv = functools.partial(
@@ -132,12 +135,12 @@ def metric(*args, **kwargs):
 print('\n------------- GAT: Local Evasion -------------\n')
 # Note: GRBCD is faster than PRBCD for small budgets but is not as consistent
 
-grbcd = RBCDAttack(gat, mode='greedy')
+grbcd = GRBCDAttack(gat)
 # The learning rate is one of the most important parameters for PRBCD and a
 # good heuristic is to choose it s.t. the budget is exhausted within a few
 # steps. Moreover, a high learning rate mitigates the impact of the relaxation
 # gap ({0, 1} -> [0, 1]) of the edge weights. See poisoning example for a plot.
-prbcd = RBCDAttack(gat, metric=metric, lr=2_000)
+prbcd = PRBCDAttack(gat, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')
@@ -145,10 +148,10 @@ print(f'Clean accuracy: {clean_accuracy:.3f}')
 # GRBCD: attack single node
 pert_edge_index, perts = grbcd.attack(x, edge_index, y, budget=local_budget,
                                       idx_attack=[node_idx])
-clean_margin = -RBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+clean_margin = -PRBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+                                                     [node_idx])
+pert_margin = -PRBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
                                                     [node_idx])
-pert_margin = -RBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
-                                                   [node_idx])
 print(f'GRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
@@ -156,18 +159,18 @@ print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 # PRBCD: attack single node
 pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=local_budget,
                                       idx_attack=[node_idx])
-clean_margin = -RBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+clean_margin = -PRBCDAttack._probability_margin_loss(gat(x, edge_index), y,
+                                                     [node_idx])
+pert_margin = -PRBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
                                                     [node_idx])
-pert_margin = -RBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
-                                                   [node_idx])
 print(f'PRBCD: Confidence margin of target to best non-target dropped from '
       f'{clean_margin:.3f} to {pert_margin:.3f}')
 print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
 print('\n------------- GCN: Global Evasion -------------\n')
 
-grbcd = RBCDAttack(gcn, mode='greedy')
-prbcd = RBCDAttack(gcn, metric=metric, lr=2_000)
+grbcd = GRBCDAttack(gcn)
+prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
 
 clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
 print(f'Clean accuracy: {clean_accuracy:.3f}')

@@ -3,7 +3,8 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import GCNConv, RBCDAttack, global_add_pool
+from torch_geometric.nn import (
+    GCNConv, PRBCDAttack, GRBCDAttack, global_add_pool)
 from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_undirected
 
@@ -39,22 +40,22 @@ class GNN(torch.nn.Module):
         return x
 
 
-@pytest.mark.parametrize('mode', ['projected', 'greedy'])
-@pytest.mark.parametrize('model', [GCN(), GNN()])
+@pytest.mark.parametrize('attack_type', [PRBCDAttack, GRBCDAttack])
+@pytest.mark.parametrize('model', [GCN, GNN])
 @pytest.mark.parametrize('budget', [1])
 @pytest.mark.parametrize('is_undirected_graph', [False, True])
-def test_attack(mode, model, budget, is_undirected_graph):
-    attack = RBCDAttack(model, mode=mode, epochs=4, epochs_resampling=2,
-                        max_final_samples=2, log=False,
-                        is_undirected_graph=is_undirected_graph)
-    assert attack.__repr__() == 'RBCDAttack()'
+def test_attack(attack_type, model, budget, is_undirected_graph):
+    attack = attack_type(model(), epochs=4, epochs_resampling=2,
+                         max_final_samples=2, log=False,
+                         is_undirected_graph=is_undirected_graph)
+    assert attack.__repr__() == f'{attack_type.__name__}()'
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6, 7]])
     if is_undirected_graph:
         edge_index = to_undirected(edge_index)
 
-    if isinstance(model, GNN):
+    if model == GNN:
         y = torch.tensor([0])
         # all nodes belong to same graph
         kwargs = dict(
@@ -67,7 +68,7 @@ def test_attack(mode, model, budget, is_undirected_graph):
 
     m = edge_index.size(1)
     if budget == 1:
-        if mode == 'projected':
+        if attack == PRBCDAttack:
             assert perturbations.shape in [(2, 0), (2, 1)]
 
             if perturbations.size(1):
@@ -93,7 +94,7 @@ def test_attack(mode, model, budget, is_undirected_graph):
         pert_edge_index, perturbations = jit.attack(x, edge_index, y, budget)
 
         if budget == 1:
-            if mode == 'projected':
+            if attack == PRBCDAttack:
                 assert perturbations.shape in [(2, 0), (2, 1)]
 
                 if perturbations.size(1):
