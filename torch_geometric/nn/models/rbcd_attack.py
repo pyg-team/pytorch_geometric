@@ -462,8 +462,8 @@ class RBCDAttack(Attack):
 
 
 class PRBCDAttack(RBCDAttack):
-    r"""Projected Randomized Block Coordinate Descent (PRBCD) adversarial attack
-    from the `Robustness of Graph Neural Networks at Scale
+    r"""Projected Randomized Block Coordinate Descent (PRBCD) adversarial
+    attack from the `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
 
     This attack uses an efficient gradient based approach that (during the
