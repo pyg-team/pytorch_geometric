@@ -146,18 +146,18 @@ class RBCDAttack(Attack):
 
         if loss is None:
             if self.model == 'projected':
-                self.loss = RBCDAttack._probability_margin_loss
+                self.loss = self._probability_margin_loss
             else:
-                self.loss = RBCDAttack._masked_cross_entropy
+                self.loss = self._masked_cross_entropy
         elif isinstance(loss, str):
             if loss == 'masked':
-                self.loss = RBCDAttack._masked_cross_entropy
+                self.loss = self._masked_cross_entropy
             elif loss == 'margin':
-                self.loss = RBCDAttack._margin
+                self.loss = self._margin
             elif loss == 'prob_margin':
-                self.loss = RBCDAttack._probability_margin_loss
+                self.loss = self._probability_margin_loss
             elif loss == 'tanh_margin':
-                self.loss = RBCDAttack._tanh_margin_loss
+                self.loss = self._tanh_margin_loss
             else:
                 raise ValueError(f'Unknown loss `{loss}`')
         else:
@@ -344,9 +344,9 @@ class RBCDAttack(Attack):
         pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
         # Projection to stay within relaxed `L_0` budget
         # (Algorithm 1, line 8)
-        self.block_edge_weight = RBCDAttack._project(budget,
-                                                     self.block_edge_weight,
-                                                     self.coeffs['eps'])
+        self.block_edge_weight = self._project(budget,
+                                               self.block_edge_weight,
+                                               self.coeffs['eps'])
 
         # For monitoring
         scalars = dict(
@@ -477,15 +477,14 @@ class RBCDAttack(Attack):
     def _sample_random_block(self, budget: int = 0):
         for _ in range(self.coeffs['max_trials_sampling']):
             self.current_block = torch.randint(
-                RBCDAttack._num_possible_edges(self.n,
-                                               self.is_undirected_graph),
+                self._num_possible_edges(self.n, self.is_undirected_graph),
                 (self.block_size, ), device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
             if self.is_undirected_graph:
-                self.block_edge_index = RBCDAttack._linear_to_triu_idx(
+                self.block_edge_index = self._linear_to_triu_idx(
                     self.n, self.current_block)
             else:
-                self.block_edge_index = RBCDAttack._linear_to_full_idx(
+                self.block_edge_index = self._linear_to_full_idx(
                     self.n, self.current_block)
                 self._filter_self_loops(with_weight=False)
 
@@ -500,8 +499,8 @@ class RBCDAttack(Attack):
     def _resample_random_block(self, budget: int):
         # Keep at most half of the block (i.e. resample low weights)
         sorted_idx = torch.argsort(self.block_edge_weight)
-        keep_above = (self.block_edge_weight <=
-                      self.coeffs['eps']).sum().long()
+        keep_above = (self.block_edge_weight
+                      <= self.coeffs['eps']).sum().long()
         if keep_above < sorted_idx.size(0) // 2:
             keep_above = sorted_idx.size(0) // 2
         sorted_idx = sorted_idx[keep_above:]
@@ -512,8 +511,8 @@ class RBCDAttack(Attack):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             lin_index = torch.randint(
-                RBCDAttack._num_possible_edges(self.n,
-                                               self.is_undirected_graph),
+                self._num_possible_edges(self.n,
+                                         self.is_undirected_graph),
                 (n_edges_resample, ), device=self.device)
 
             current_block = torch.cat((self.current_block, lin_index))
@@ -521,10 +520,10 @@ class RBCDAttack(Attack):
                 current_block, sorted=True, return_inverse=True)
 
             if self.is_undirected_graph:
-                self.block_edge_index = RBCDAttack._linear_to_triu_idx(
+                self.block_edge_index = self._linear_to_triu_idx(
                     self.n, self.current_block)
             else:
-                self.block_edge_index = RBCDAttack._linear_to_full_idx(
+                self.block_edge_index = self._linear_to_full_idx(
                     self.n, self.current_block)
 
             # Merge existing weights with new edge weights
@@ -600,8 +599,8 @@ class RBCDAttack(Attack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr /
-              np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
+        lr = (budget / self.n * self.lr
+              / np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
     @staticmethod
@@ -616,8 +615,8 @@ class RBCDAttack(Attack):
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Linear index to upper triangular matrix without diagonal."""
         row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n *
-                       (n - 1) - 7) / 2.0 - 0.5)).long()
+            torch.sqrt(-8 * lin_idx.double() + 4 * n
+                       * (n - 1) - 7) / 2.0 - 0.5)).long()
         col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
             (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
         return torch.stack((row_idx, col_idx))
