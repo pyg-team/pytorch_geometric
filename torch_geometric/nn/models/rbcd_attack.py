@@ -608,7 +608,9 @@ class RBCDAttack(Attack):
 
     @staticmethod
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
-        """Linear index to upper triangular matrix without diagonal."""
+        """Linear index to upper triangular matrix without diagonal. This is
+        similar to https://dongkwan-kim.github.io/blogs/indices-for-the-upper-triangle-matrix/
+        but here we omit entries on the main diagonal."""
         row_idx = (n - 2 - torch.floor(
             torch.sqrt(-8 * lin_idx.double() + 4 * n
                        * (n - 1) - 7) / 2.0 - 0.5)).long()
