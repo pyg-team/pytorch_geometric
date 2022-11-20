@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Added `GRBCD` and `PRBCD` adversarial attack ([#5972](https://github.com/pyg-team/pytorch_geometric/pull/5972))
+- Added `HeteroData` support in `RandomNodeLoader` ([#6007](https://github.com/pyg-team/pytorch_geometric/pull/6007))
+- Added bipartite `GraphSAGE` example ([#5834](https://github.com/pyg-team/pytorch_geometric/pull/5834))
 - Added `LRGBDataset` to include 5 datasets from the [Long Range Graph Benchmark](https://openreview.net/pdf?id=in7XC5RcjEn) ([#5935](https://github.com/pyg-team/pytorch_geometric/pull/5935))
 - Added a warning for invalid node and edge type names in `HeteroData` ([#5990](https://github.com/pyg-team/pytorch_geometric/pull/5990))
 - Added PyTorch 1.13 support ([#5975](https://github.com/pyg-team/pytorch_geometric/pull/5975))
