@@ -110,8 +110,7 @@ class PyGModelHubMixin(ModelHubMixin):
         # the model config can end up in one of the items in the kwargs
         # this has to be removed to prevent a duplication of arguments to
         # ModelHubMixin.save_pretrained
-        if 'config' in kwargs.keys():
-            kwargs.pop('config')
+        kwargs.pop('config', None)
 
         ModelHubMixin.save_pretrained(self, save_directory, config,
                                       push_to_hub, **kwargs)
