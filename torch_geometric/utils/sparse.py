@@ -4,8 +4,6 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from .num_nodes import maybe_num_nodes
-
 
 def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
     r"""Converts a dense adjacency matrix to a sparse adjacency matrix defined
