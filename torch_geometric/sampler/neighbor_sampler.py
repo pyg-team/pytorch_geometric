@@ -605,10 +605,10 @@ def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
     # If we are in a temporal-sampling scenario, we need to respect the
     # timestamp of the given nodes we can use as negative examples.
     # That is, we can only sample nodes for which `node_time < seed_time`.
-    # For now, we use a greedy algorithm to sample such negative nodes that
-    # naively samples nodes and discards any which do not respect the temporal
-    # constraints. We iteratively repeat this process until we have sample
-    # a valid node for each seed.
+    # For now, we use a greedy algorithm which randomly samples negative
+    # nodes and discard any which do not respect the temporal constraint.
+    # We iteratively repeat this process until we have sampled a valid node for
+    # each seed.
     # TODO See if this greedy algorithm here can be improved.
     assert seed_time is not None
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
