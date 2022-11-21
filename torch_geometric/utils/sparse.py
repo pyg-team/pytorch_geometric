@@ -76,7 +76,7 @@ def to_torch_coo_tensor(
     size: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tensor:
     """Converts a sparse adjacency matrix defined by edge indices and edge
-    attributes edge index to a :class:`torch.sparse.Tensor`.
+    attributes to a :class:`torch.sparse.Tensor`.
 
     Args:
         edge_index (LongTensor): The edge indices.
