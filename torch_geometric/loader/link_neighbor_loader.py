@@ -139,10 +139,12 @@ class LinkNeighborLoader(LinkLoader):
             Samples can be accessed via the attributes :obj:`src_index`,
             :obj:`dst_pos_index` and :obj:`dst_neg_index` in the respective
             node types of the returned mini-batch.
+            :obj:`edge_label` needs to be :obj:`None` for
+            :obj:`"triplet"`-based negative sampling.
             If set to :obj:`None`, no negative sampling strategy is applied.
             (default: :obj:`None`)
-        neg_sampling_ratio (int, optional): The ratio of sampled negative
-            edges to the number of positive edges.
+        neg_sampling_ratio (int or float, optional): The ratio of sampled
+            negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
@@ -181,7 +183,7 @@ class LinkNeighborLoader(LinkLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         neg_sampling: Optional[NegativeSamplingConfig] = None,
-        neg_sampling_ratio: Optional[int] = None,
+        neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,

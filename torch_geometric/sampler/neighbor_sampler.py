@@ -1,3 +1,4 @@
+import math
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import torch
@@ -410,7 +411,7 @@ def edge_sample(
         # of nodes/edges to `src`, `dst`, `src_time`, `dst_time`.
         # Later on, we can easily reconstruct what belongs to positive and
         # negative examples by slicing via `num_pos`.
-        num_neg = num_pos * neg_sampling.amount
+        num_neg = round(num_pos * neg_sampling.amount)
 
         if neg_sampling.is_binary():
             # In the "binary" case, we randomly sample negative pairs of nodes.
@@ -419,8 +420,9 @@ def edge_sample(
             else:
                 src_node_time = node_time
 
-            src_neg = neg_sample(src, neg_sampling.amount, num_src_nodes,
-                                 src_time, src_node_time)
+            src_neg = neg_sample(src, math.ceil(neg_sampling.amount),
+                                 num_src_nodes, src_time, src_node_time)
+            src_neg = src_neg[:num_neg]
             src = torch.cat([src, src_neg], dim=0)
 
             if isinstance(node_time, dict):
@@ -428,8 +430,9 @@ def edge_sample(
             else:
                 dst_node_time = node_time
 
-            dst_neg = neg_sample(dst, neg_sampling.amount, num_dst_nodes,
-                                 dst_time, dst_node_time)
+            dst_neg = neg_sample(dst, math.ceil(neg_sampling.amount),
+                                 num_dst_nodes, dst_time, dst_node_time)
+            dst_neg = dst_neg[:num_neg]
             dst = torch.cat([dst, dst_neg], dim=0)
 
             if edge_label is None:
@@ -442,7 +445,7 @@ def edge_sample(
 
             if edge_label_time is not None:
                 src_time = dst_time = edge_label_time.repeat(
-                    1 + neg_sampling.amount)
+                    1 + math.ceil(neg_sampling.amount))[:num_pos + num_neg]
 
         elif neg_sampling.is_triplet():
             # In the "triplet" case, we randomly sample negative destinations.
@@ -597,10 +600,17 @@ def edge_sample(
 def neg_sample(seed: Tensor, num_samples: int, num_nodes: int,
                seed_time: Optional[Tensor],
                node_time: Optional[Tensor]) -> Tensor:
+    # TODO: Do not sample false negatives.
     if node_time is None:
         return torch.randint(num_nodes, (seed.numel() * num_samples, ))
 
-    # Otherwise, we can only sample negatives that exist in the graph:
+    # If we are in a temporal-sampling scenario, we need to respect the
+    # timestamp of the given nodes we can use as negative examples.
+    # That is, we can only sample nodes for which `node_time < seed_time`.
+    # For now, we use a greedy algorithm to sample such negative nodes that
+    # naively samples nodes and discards any which do not respect the temporal
+    # constraints. We iteratively repeat this process until we have sample
+    # a valid node for each seed.
     # TODO See if this greedy algorithm here can be improved.
     assert seed_time is not None
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)

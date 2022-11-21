@@ -81,12 +81,12 @@ class NegativeSamplingStrategy(Enum):
 @dataclass
 class NegativeSamplingConfig(CastMixin):
     strategy: NegativeSamplingStrategy
-    amount: int = 1
+    amount: Union[int, float] = 1
 
     def __init__(
         self,
         strategy: Union[NegativeSamplingStrategy, str],
-        amount: int = 1,
+        amount: Union[int, float] = 1,
     ):
         self.strategy = NegativeSamplingStrategy(strategy)
         self.amount = amount
@@ -96,12 +96,12 @@ class NegativeSamplingConfig(CastMixin):
                              f"for '{self.__class__.__name__}' "
                              f"(got {self.amount})")
 
-        if not isinstance(self.amount, int):
+        if self.is_triplet():
             if self.amount != math.ceil(self.amount):
-                warnings.warn(f"The attribute 'amount' needs to be an integer "
-                              f"for '{self.__class__.__name__}'"
-                              f"(got {self.amount}). We will automatically "
-                              f"set it to {math.ceil(self.amount)}.")
+                raise ValueError(f"The attribute 'amount' needs to be an "
+                                 f"integer for '{self.__class__.__name__}' "
+                                 f"with 'triplet' negative sampling "
+                                 f"(got {self.amount}).")
             self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
