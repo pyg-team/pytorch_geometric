@@ -42,12 +42,11 @@ class GNNExplainer(ExplainerAlgorithm):
 
             - :attr:`edge_mask_type`: :obj:`MaskType.object` or :obj:`None`
 
-
     .. note::
 
-        For an example of using GNN-Explainer, see `examples/gnn_explainer.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        gnn_explainer.py>`_.
+        For an example of using :class:`GNNExplainer`, see
+        `examples/gnn_explainer.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
@@ -146,7 +145,7 @@ class GNNExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
         self._train_node_edge_mask(model, x, edge_index, explainer_config,
-                                   model_config, target, target_index, None,
+                                   model_config, target, None, target_index,
                                    **kwargs)
 
         node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
@@ -186,7 +185,7 @@ class GNNExplainer(ExplainerAlgorithm):
             target = target[subset]
 
         self._train_node_edge_mask(model, x, edge_index, explainer_config,
-                                   model_config, target, target_index, index,
+                                   model_config, target, index, target_index,
                                    **kwargs)
 
         if explainer_config.node_mask_type == MaskType.common_attributes:
@@ -217,8 +216,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        target_index: Optional[Union[int, Tensor]] = None,
         node_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
         self._initialize_masks(x, edge_index,
@@ -367,7 +366,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
 
 class GNNExplainer_:
-    r"""Deprecated version of  GNN-Explainer model from the `"GNNExplainer:
+    r"""Deprecated version of GNN-Explainer model from the `"GNNExplainer:
     Generating Explanations for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
     structures and small subsets node features that play a crucial role in a
@@ -484,7 +483,6 @@ class GNNExplainer_:
                 self.model,
                 x,
                 edge_index,
-                return_type=self.model_config.return_type,
                 model_mode=self.model_config.mode,
                 **kwargs,
             ),
@@ -516,15 +514,14 @@ class GNNExplainer_:
             edge_index=edge_index,
             explainer_config=self.explainer_config,
             model_config=self.model_config,
-            node_index=node_idx,
             target=self._explainer.get_initial_prediction(
                 self.model,
                 x,
                 edge_index,
-                return_type=self.model_config.return_type,
                 model_mode=self.model_config.mode,
                 **kwargs,
             ),
+            index=node_idx,
             **kwargs,
         )
         return self._convert_output(explanation, edge_index,

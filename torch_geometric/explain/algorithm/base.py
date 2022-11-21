@@ -80,8 +80,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     def get_initial_prediction(
         self,
         model: torch.nn.Module,
-        model_mode: ModelMode,
         *args,
+        model_mode: ModelMode,
         **kwargs,
     ) -> Tensor:
         r"""Returns the initial prediction of the model.
