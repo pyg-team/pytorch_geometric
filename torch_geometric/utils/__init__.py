@@ -18,7 +18,8 @@ from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
-from .sparse import dense_to_sparse
+from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
+                     to_torch_coo_tensor)
 from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
 from .grid import grid
@@ -36,7 +37,6 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
 from .scatter import scatter
-from .torch_sparse_tensor import is_torch_sparse_tensor
 from .spmm import spmm
 
 __all__ = [
@@ -98,6 +98,8 @@ __all__ = [
     'train_test_split_edges',
     'scatter',
     'is_torch_sparse_tensor',
+    'is_sparse',
+    'to_torch_coo_tensor',
     'spmm',
 ]
 
