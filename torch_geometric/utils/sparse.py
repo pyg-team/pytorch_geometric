@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -52,8 +52,8 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
 
 
 def is_torch_sparse_tensor(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is a PyTorch
-    :obj:`SparseTensor` (in any sparse format).
+    """Returns :obj:`True` if the input :obj:`src` is a
+    :class:`torch.sparse.Tensor` (in any sparse layout).
 
     Args:
         src (Any): The input object to be checked.
@@ -62,9 +62,9 @@ def is_torch_sparse_tensor(src: Any) -> bool:
 
 
 def is_sparse(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is a PyTorch
-    :obj:`SparseTensor` (in any sparse format) or a
-    :obj:`torch_sparse.SparseTensor`.
+    """Returns :obj:`True` if the input :obj:`src` is of type
+    :class:`torch.sparse.Tensor` (in any sparse layout) or of type
+    :class:`torch_sparse.SparseTensor`.
 
     Args:
         src (Any): The input object to be checked.
@@ -74,18 +74,20 @@ def is_sparse(src: Any) -> bool:
 
 def to_torch_coo_tensor(
     edge_index: Tensor,
-    edge_weight: Optional[Tensor] = None,
-    num_nodes: Optional[int] = None,
+    edge_attr: Optional[Tensor] = None,
+    size: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tensor:
-    """Converts edge index to sparse adjacency matrix
-    :class:`torch.sparse.Tensor`.
+    """Converts a sparse adjacency matrix defined by edge indices and edge
+    attributes edge index to a :class:`torch.sparse.Tensor`.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        edge_attr (Tensor, optional): The edge weights.
+        edge_attr (Tensor, optional): The edge attributes.
             (default: :obj:`None`)
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        size (int or (int, int), optional): The size of the sparse matrix.
+            If given as an integer, will create a quadratic sparse matrix.
+            If set to :obj:`None`, will infer a quadratic sparse matrix based
+            on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
 
     :rtype: :class:`torch.sparse.FloatTensor`
 
@@ -100,12 +102,16 @@ def to_torch_coo_tensor(
             size=(4, 4), nnz=6, layout=torch.sparse_coo)
 
     """
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    device = edge_index.device
-    if edge_weight is None:
-        edge_weight = torch.ones(edge_index.size(1), device=device)
+    if size is None:
+        size = int(edge_index.max()) + 1
+    if not isinstance(size, (tuple, list)):
+        size = (size, size)
 
-    shape = torch.Size((num_nodes, num_nodes))
-    adj = torch.sparse_coo_tensor(edge_index, edge_weight, shape,
-                                  device=device)
-    return adj.coalesce()
+    if edge_attr is None:
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+
+    size = tuple(size) + edge_attr.size()[1:]
+    out = torch.sparse_coo_tensor(edge_index, edge_attr, size,
+                                  device=edge_index.device)
+    out = out.coalesce()
+    return out

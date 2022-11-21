@@ -59,25 +59,33 @@ def test_is_sparse():
     assert is_sparse(x.to_sparse())
 
 
-def to_torch_coo_tensor():
+def test_to_torch_coo_tensor():
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],
         [1, 0, 2, 1, 3, 2],
     ])
-    edge_weight = torch.tensor([1., 2., 3., 4., 5., 6.])
+    edge_attr = torch.randn(edge_index.size(1), 8)
+
     adj = to_torch_coo_tensor(edge_index)
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_coo
     assert torch.allclose(adj.indices(), edge_index)
 
-    adj = to_torch_coo_tensor(edge_index, num_nodes=6)
+    adj = to_torch_coo_tensor(edge_index, size=6)
     assert adj.size() == (6, 6)
+    assert adj.layout == torch.sparse_coo
+    assert torch.allclose(adj.indices(), edge_index)
 
-    adj = to_torch_coo_tensor(edge_index, edge_weight)
-    assert torch.allclose(adj.values(), edge_weight)
+    adj = to_torch_coo_tensor(edge_index, edge_attr)
+    assert adj.size() == (4, 4, 8)
+    assert adj.layout == torch.sparse_coo
+    assert torch.allclose(adj.indices(), edge_index)
+    assert torch.allclose(adj.values(), edge_attr)
 
     if is_full_test():
         jit = torch.jit.script(to_torch_coo_tensor)
-        adj = jit(edge_index, edge_weight)
+        adj = jit(edge_index, edge_attr)
+        assert adj.size() == (4, 4, 8)
+        assert adj.layout == torch.sparse_coo
         assert torch.allclose(adj.indices(), edge_index)
-        assert torch.allclose(adj.values(), edge_weight)
+        assert torch.allclose(adj.values(), edge_attr)
