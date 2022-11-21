@@ -96,6 +96,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.num_workers = kwargs.get('num_workers', 0)
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu')
+        
+        self.cpu_affinity_enabled = False
         worker_init_fn = WorkerInitWrapper(kwargs.get('worker_init_fn', None))
 
         iterator = range(input_nodes.size(0))
@@ -207,7 +209,6 @@ class NodeLoader(torch.utils.data.DataLoader):
                 worker_init_fn_old(worker_id)
 
             if not loader_cores:
-
                 numa_info = get_numa_nodes_cores()
                 if numa_info and len(numa_info[0]) > self.num_workers:
                     # take one thread per each node 0 core
@@ -225,7 +226,6 @@ class NodeLoader(torch.utils.data.DataLoader):
             try:
                 # set cpu affinity for dataloader
                 self.worker_init_fn = init_fn
-
                 self.cpu_affinity_enabled = True
                 print(
                     f"{self.num_workers} DataLoader workers are assigned to CPUs {loader_cores}"
