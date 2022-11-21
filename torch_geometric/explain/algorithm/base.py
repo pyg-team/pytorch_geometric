@@ -173,11 +173,11 @@ class ExplainerAlgorithm(torch.nn.Module):
         common_mask: Tensor,
         num_objects: int,
     ) -> Tensor:
-        r"""Reshapes the common mask from shape :obj:`[1, F]` to :obj:`[N, F]`
-        where :obj:`N` refers to the number of objects.
+        r"""Reshapes the common mask from shape :obj:`[1, F]` or `F` to
+        :obj:`[N, F]` where :obj:`N` refers to the number of objects.
 
         Args:
             common_mask (Tensor): the common mask.
             number_object (int): the number of objects.
         """
-        return torch.stack([common_mask] * num_objects, dim=0)
+        return torch.stack([common_mask.squeeze(0)] * num_objects, dim=0)
