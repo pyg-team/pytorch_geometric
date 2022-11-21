@@ -24,7 +24,7 @@ class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
     Explanations for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
-    structures and small subsets node features that play a crucial role in a
+    structures and node features that play a crucial role in a
     GNN's node-predictions.
 
     .. note::
@@ -103,10 +103,6 @@ class GNNExplainer(ExplainerAlgorithm):
             raise NotImplementedError(
                 "GNNExplainer only supports single target index for now")
 
-        assert model_config.task_level in [
-            ModelTaskLevel.graph, ModelTaskLevel.node
-        ]
-
         model.eval()
 
         if model_config.task_level == ModelTaskLevel.node:
@@ -120,6 +116,9 @@ class GNNExplainer(ExplainerAlgorithm):
                                                        explainer_config,
                                                        model_config, target,
                                                        target_index, **kwargs)
+
+        else:
+            raise ValueError("Invalid task level")
 
         if explainer_config.node_mask_type == MaskType.object:
             node_feat_mask = None
@@ -216,7 +215,7 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        node_index: Optional[Union[int, Tensor]] = None,
+        index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
@@ -237,7 +236,7 @@ class GNNExplainer(ExplainerAlgorithm):
             out = model(x=h, edge_index=edge_index, **kwargs)
             loss_value = self.loss(
                 out, target, return_type=model_config.return_type,
-                target_idx=target_index, node_index=node_index,
+                target_index=target_index, index=index,
                 edge_mask_type=explainer_config.edge_mask_type,
                 model_mode=model_config.mode)
             loss_value.backward(retain_graph=False)
@@ -268,15 +267,15 @@ class GNNExplainer(ExplainerAlgorithm):
         self,
         y_hat: torch.Tensor,
         y: torch.Tensor,
-        target_idx: Optional[int] = None,
-        node_index: Optional[int] = None,
+        index: Optional[int] = None,
+        target_index: Optional[int] = None,
     ):
-        if target_idx is not None:
-            y_hat = y_hat[..., target_idx].unsqueeze(-1)
-            y = y[..., target_idx].unsqueeze(-1)
+        if target_index is not None:
+            y_hat = y_hat[..., target_index].unsqueeze(-1)
+            y = y[..., target_index].unsqueeze(-1)
 
-        if node_index is not None:
-            loss_ = torch.cdist(y_hat[node_index], y[node_index])
+        if index is not None:
+            loss_ = torch.cdist(y_hat[index], y[index])
         else:
             loss_ = torch.cdist(y_hat, y)
 
@@ -287,17 +286,17 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: torch.Tensor,
         y: torch.Tensor,
         return_type: ModelReturnType,
-        target_idx: Optional[int] = None,
-        node_index: Optional[int] = None,
+        index: Optional[int] = None,
+        target_index: Optional[int] = None,
     ):
-        if target_idx is not None:
-            y_hat = y_hat[target_idx]
-            y = y[target_idx]
+        if target_index is not None:
+            y_hat = y_hat[target_index]
+            y = y[target_index]
 
         y_hat = self._to_log_prob(y_hat, return_type)
 
-        if node_index is not None:
-            loss = -y_hat[node_index, y[node_index]]
+        if index is not None:
+            loss = -y_hat[index, y[index]]
         else:
             loss = -y_hat[0, y[0]]
         return loss
@@ -308,16 +307,16 @@ class GNNExplainer(ExplainerAlgorithm):
         y: torch.Tensor,
         edge_mask_type: MaskType,
         return_type: ModelReturnType,
-        node_index: Optional[int] = None,
-        target_idx: Optional[int] = None,
+        index: Optional[int] = None,
+        target_index: Optional[int] = None,
         model_mode: ModelMode = ModelMode.regression,
     ) -> torch.Tensor:
 
         if model_mode == ModelMode.regression:
-            loss = self._loss_regression(y_hat, y, target_idx, node_index)
+            loss = self._loss_regression(y_hat, y, index, target_index)
         else:
-            loss = self._loss_classification(y_hat, y, return_type, target_idx,
-                                             node_index)
+            loss = self._loss_classification(y_hat, y, return_type, index,
+                                             target_index)
 
         if edge_mask_type is not None:
             m = self.edge_mask.sigmoid()
@@ -524,11 +523,10 @@ class GNNExplainer_:
             index=node_idx,
             **kwargs,
         )
-        return self._convert_output(explanation, edge_index,
-                                    node_index=node_idx, x=x)
+        return self._convert_output(explanation, edge_index, index=node_idx,
+                                    x=x)
 
-    def _convert_output(self, explanation, edge_index, node_index=None,
-                        x=None):
+    def _convert_output(self, explanation, edge_index, index=None, x=None):
         if "node_mask" in explanation.available_explanations:
             node_mask = explanation.node_mask
         else:
@@ -541,10 +539,10 @@ class GNNExplainer_:
         if "edge_mask" in explanation.available_explanations:
             edge_mask = explanation.edge_mask
         else:
-            if node_index is not None:
+            if index is not None:
                 _, _, _, _, hard_edge_mask, _ = self._explainer.subgraph(
                     self.model,
-                    node_index,
+                    index,
                     x,
                     edge_index,
                 )

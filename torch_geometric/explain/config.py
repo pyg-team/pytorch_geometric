@@ -15,7 +15,6 @@ class MaskType(Enum):
     """Enum class for the mask type."""
     object = 'object'
     attributes = 'attributes'
-    both = 'both'
     common_attributes = 'common_attributes'
 
 
@@ -73,9 +72,6 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"object"`: Will mask the whole node.
 
                 - :obj:`"attributes"`: Will mask the node attributes.
-
-                - :obj:`"both"`: Will mask both the node and its attributes
-                    (combination of :obj:`"object"` and :obj:`"attributes"`).
 
                 - :obj:`"common_attributes"`: Will share the attribute mask
                     across all nodes.
