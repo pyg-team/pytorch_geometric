@@ -437,8 +437,6 @@ def edge_sample(
 
             if edge_label is None:
                 edge_label = torch.ones(num_pos)
-            elif edge_label.min() == 0:
-                edge_label = edge_label + 1
             size = (num_neg, ) + edge_label.size()[1:]
             edge_neg_label = edge_label.new_zeros(size)
             edge_label = torch.cat([edge_label, edge_neg_label])

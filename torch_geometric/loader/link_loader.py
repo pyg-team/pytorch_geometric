@@ -136,15 +136,14 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.data = data
         self.edge_type = edge_type
         self.link_sampler = link_sampler
-        self.input_data = InputData(
-            edge_label_index[0].clone(),
-            edge_label_index[1].clone(),
-            edge_label,
-            edge_label_time,
-        )
         self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
+
+        if (self.neg_sampling is not None and self.neg_sampling.is_binary()
+                and edge_label is not None and edge_label.min() == 0):
+            # Increment labels such that `zero` now denotes "negative".
+            edge_label = edge_label + 1
 
         if (self.neg_sampling is not None and self.neg_sampling.is_triplet()
                 and edge_label is not None):
@@ -154,6 +153,13 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "`neg_pos_index` of the returned mini-batch "
                              "instead to differentiate between positive and "
                              "negative samples.")
+
+        self.input_data = InputData(
+            edge_label_index[0].clone(),
+            edge_label_index[1].clone(),
+            edge_label,
+            edge_label_time,
+        )
 
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
