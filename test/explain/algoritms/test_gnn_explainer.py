@@ -331,8 +331,8 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
                           model_config=model_config)
 
     # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, target=out,
-                            target_index=target_index, node_index=2)
+    explanation = explainer(x=x, edge_index=edge_index, target=out, index=2,
+                            target_index=target_index)
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)
@@ -376,8 +376,8 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
                           model_config=model_config)
 
     # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, target=out,
-                            target_index=target_index, node_index=2)
+    explanation = explainer(x=x, edge_index=edge_index, target=out, index=2,
+                            target_index=target_index)
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)

@@ -92,17 +92,17 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
-        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
 
+        if isinstance(index, Tensor) and index.numel() > 1:
+            raise NotImplementedError(
+                "GNNExplainer only supports single node index for now")
         if isinstance(target_index, Tensor) and target_index.numel() > 1:
             raise NotImplementedError(
                 "GNNExplainer only supports single target index for now")
-        if isinstance(node_index, Tensor) and node_index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single node index for now")
 
         assert model_config.task_level in [
             ModelTaskLevel.graph, ModelTaskLevel.node
@@ -114,7 +114,7 @@ class GNNExplainer(ExplainerAlgorithm):
             node_mask, edge_mask = self._explain_node(model, x, edge_index,
                                                       explainer_config,
                                                       model_config, target,
-                                                      node_index, target_index,
+                                                      index, target_index,
                                                       **kwargs)
         elif model_config.task_level == ModelTaskLevel.graph:
             node_mask, edge_mask = self._explain_graph(model, x, edge_index,
@@ -164,12 +164,12 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        node_index: Optional[Union[int, Tensor]],
+        index: Optional[Union[int, Tensor]],
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Tuple[Tensor, Optional[Tensor]]:
 
-        if node_index is None:
+        if index is None:
             raise ValueError("Please provide node index for node-level "
                              "explanation")
 
@@ -178,7 +178,7 @@ class GNNExplainer(ExplainerAlgorithm):
         num_nodes = x.size(0)
         num_edges = edge_index.size(1)
         x, edge_index, index, subset, hard_edge_mask, kwargs =\
-            self.subgraph(model, node_index, x, edge_index, **kwargs)
+            self.subgraph(model, index, x, edge_index, **kwargs)
         if target_index is not None and model_config.mode ==\
                 ModelMode.classification:
             target = torch.index_select(target, 1, subset)

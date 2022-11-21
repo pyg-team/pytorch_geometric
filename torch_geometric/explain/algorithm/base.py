@@ -28,8 +28,8 @@ class ExplainerAlgorithm(torch.nn.Module):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
-        node_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -39,14 +39,13 @@ class ExplainerAlgorithm(torch.nn.Module):
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The input edge indices.
             explainer_config (ExplainerConfig): The explainer configuration.
-            model_config (ModelConfig): the model configuration.
-            target (torch.Tensor): the target of the model.
+            model_config (ModelConfig): The model configuration.
+            target (torch.Tensor): The target of the model.
+            index (Union[int, Tensor], optional): The index of the model
+                output to explain. Can be a single index or a tensor of
+                indices. (default: :obj:`None`)
             target_index (int or torch.Tensor, optional): The target indices to
-                explain. (default: :obj:`None`)
-            node_index (Union[int, Tensor], optional): the node/edge index
-                to explain. Can be a single index if no batch is provided, or a
-                tensor of indices if a batch is provided. only used if
-                the model task level is :obj:`"node"` or :obj:`"edge"`.
+                explain in case targets are multi-dimensional.
                 (default: :obj:`None`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
@@ -81,20 +80,20 @@ class ExplainerAlgorithm(torch.nn.Module):
     def get_initial_prediction(
         self,
         model: torch.nn.Module,
-        *args,
-        return_type: ModelReturnType,
         model_mode: ModelMode,
+        *args,
         **kwargs,
     ) -> Tensor:
         r"""Returns the initial prediction of the model.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
-        If the model mode :obj:`"classification"`, the prediction is returned
-        as the predicted class label.
+        If the model mode is :obj:`"classification"`, the prediction is
+        returned as the predicted class label.
 
         Args:
             model (torch.nn.Module): The model to explain.
+            model_mode (ModelMode): The mode of the model.
             *args: Arguments passed to :obj:`model`.
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.

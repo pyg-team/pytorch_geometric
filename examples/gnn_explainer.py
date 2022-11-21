@@ -51,7 +51,6 @@ explainer = Explainer(
     model_config=ModelConfig(mode="classification", task_level="node",
                              return_type="log_probs"))
 node_idx = 10
-explanation = explainer(x=data.x, edge_index=data.edge_index,
-                        target_index=None, node_index=node_idx,
-                        edge_weight=data.edge_weight)
+explanation = explainer(x=data.x, edge_index=data.edge_index, index=node_idx,
+                        target_index=None, edge_weight=data.edge_weight)
 print(explanation.available_explanations)

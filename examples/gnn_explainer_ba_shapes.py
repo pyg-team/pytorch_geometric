@@ -76,7 +76,7 @@ for explanation_type in ["phenomenon", "model"]:
             data.expl_mask.nonzero(as_tuple=False).view(-1).tolist(),
             leave=False, desc="Training GNNExplainer"):
         explanation = explainer(x=data.x, edge_index=data.edge_index,
-                                target_index=None, node_index=node_idx,
+                                index=node_idx, target_index=None,
                                 target=data.y, edge_weight=data.edge_weight)
 
         subgraph = k_hop_subgraph(node_idx, num_hops=3,
