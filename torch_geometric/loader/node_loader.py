@@ -96,7 +96,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.num_workers = kwargs.get('num_workers', 0)
         self.device = torch.device(
             'cuda' if torch.cuda.is_available() else 'cpu')
-        
+
         self.cpu_affinity_enabled = False
         worker_init_fn = WorkerInitWrapper(kwargs.get('worker_init_fn', None))
 
@@ -192,7 +192,8 @@ class NodeLoader(torch.utils.data.DataLoader):
             if loader_cores and len(loader_cores) != self.num_workers:
                 raise Exception(
                     'ERROR: cpu_affinity incorrect '
-                    f'number of loader_cores={loader_cores} for num_workers={self.num_workers}')
+                    f'number of loader_cores={loader_cores} for num_workers={self.num_workers}'
+                )
 
             worker_init_fn_old = self.worker_init_fn
             affinity_old = psutil.Process().cpu_affinity()
@@ -204,7 +205,8 @@ class NodeLoader(torch.utils.data.DataLoader):
                     psutil.Process().cpu_affinity([loader_cores[worker_id]])
                 except:
                     raise Exception(
-                        f'ERROR: cannot use affinity id={worker_id} cpu={loader_cores}')
+                        f'ERROR: cannot use affinity id={worker_id} cpu={loader_cores}'
+                    )
 
                 worker_init_fn_old(worker_id)
 
