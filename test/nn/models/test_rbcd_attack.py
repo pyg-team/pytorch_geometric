@@ -68,7 +68,8 @@ def test_attack(attack_type, model, budget, is_undirected_graph):
         y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
         kwargs = {}
 
-    pert_edge_index, perturbations = attack(x, edge_index, y, budget, **kwargs)
+    pert_edge_index, perturbations = attack.attack(x, edge_index, y, budget,
+                                                   **kwargs)
 
     m = edge_index.size(1)
     if budget == 1:

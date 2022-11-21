@@ -43,10 +43,7 @@ class GRBCDAttack(torch.nn.Module):
         `examples/rbcd_attack.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         rbcd_attack.py>`_
-        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack_poisoning.py>`_
-        for a training time (poisoning) attack.
+        for a test time attack (evasion).
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
@@ -71,11 +68,16 @@ class GRBCDAttack(torch.nn.Module):
 
     coeffs = {'max_trials_sampling': 20, 'eps': 1e-7}
 
-    def __init__(self, model: torch.nn.Module, block_size: int = 250_000,
-                 epochs: int = 125,
-                 loss: Optional[Union[str, LOSS_TYPE]] = 'masked',
-                 is_undirected_graph: bool = True, log: bool = True,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        block_size: int = 250_000,
+        epochs: int = 125,
+        loss: Optional[Union[str, LOSS_TYPE]] = 'masked',
+        is_undirected_graph: bool = True,
+        log: bool = True,
+        **kwargs,
+    ):
         super().__init__()
 
         self.model = model
@@ -159,20 +161,16 @@ class GRBCDAttack(torch.nn.Module):
         perturbed_edge_index, flipped_edges = self._close(
             x, labels, budget, idx_attack, **kwargs)
 
-        assert flipped_edges.shape[1] <= budget, (
-            f'# perturbed edges {flipped_edges.shape[1]} '
+        assert flipped_edges.size(1) <= budget, (
+            f'# perturbed edges {flipped_edges.size(1)} '
             f'exceeds budget {budget}')
 
         return perturbed_edge_index, flipped_edges
 
-    def __call__(self, *args, **kwargs):
-        return self.attack(*args, **kwargs)
-
     @torch.no_grad()
     def _prepare(self, budget: int) -> Iterable[Any]:
         """Prepare attack."""
-        self.flipped_edges = torch.empty((2, 0), dtype=self.edge_index.dtype,
-                                         device=self.device)
+        self.flipped_edges = self.edge_index.new_empty(2, 0).to(self.device)
 
         # Determine the number of edges to be flipped in each attach step/epoch
         step_size = budget // self.epochs
@@ -519,12 +517,19 @@ class PRBCDAttack(GRBCDAttack):
         'eps': 1e-7
     }
 
-    def __init__(self, model: torch.nn.Module, block_size: int = 250_000,
-                 epochs: int = 125, epochs_resampling: int = 100,
-                 loss: Optional[Union[str, LOSS_TYPE]] = 'prob_margin',
-                 metric: Optional[Union[str, LOSS_TYPE]] = None,
-                 lr: float = 1_000, is_undirected_graph: bool = True,
-                 log: bool = True, **kwargs) -> None:
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        block_size: int = 250_000,
+        epochs: int = 125,
+        epochs_resampling: int = 100,
+        loss: Optional[Union[str, LOSS_TYPE]] = 'prob_margin',
+        metric: Optional[Union[str, LOSS_TYPE]] = None,
+        lr: float = 1_000,
+        is_undirected_graph: bool = True,
+        log: bool = True,
+        **kwargs,
+    ):
         super().__init__(model, block_size, epochs, loss, is_undirected_graph,
                          log)
 
