@@ -6,10 +6,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv, GCNConv, GRBCDAttack, PRBCDAttack
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.utils import softmax
 
 dataset = 'Cora'
@@ -32,13 +32,12 @@ class GCN(torch.nn.Module):
         )
         self.conv1 = gcn_conv(dataset.num_features, hidden_dim)
         self.conv2 = gcn_conv(hidden_dim, dataset.num_classes)
-        self.gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
 
     def forward(self, x, edge_index, edge_weight=None):
         # Normalizing once lowers memory footprint and caching is not possible
         # during attack (for training it would be possible)
-        edge_index, edge_weight = self.gcn_norm(edge_index, edge_weight,
-                                                x.size(0), add_self_loops=True)
+        edge_index, edge_weight = gcn_norm(edge_index, edge_weight, x.size(0),
+                                           add_self_loops=True)
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
