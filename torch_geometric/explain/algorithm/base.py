@@ -147,34 +147,37 @@ class ExplainerAlgorithm(torch.nn.Module):
     # Helper functions ########################################################
 
     def _flow(self, model: torch.nn.Module) -> str:
+        r"""Determines the message passing flow of the :obj:`model`."""
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
 
     def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
-        """Converts the model output to log-probabilities.
+        r"""Converts the model output to log-probabilities.
 
         Args:
-            y (Tensor): output of the model.
-            return_type (ModelReturnType): the model return type.
+            y (Tensor): The output of the model.
+            return_type (ModelReturnType): The model return type.
         """
         if return_type == ModelReturnType.probs:
             return y.log()
         if return_type == ModelReturnType.raw:
             return y.log_softmax(dim=-1)
-        return y
+        if return_type == ModelReturnType.log_probs:
+            return y
+        raise NotImplementedError
 
     def _reshape_common_attributes(
         self,
         common_mask: Tensor,
-        number_object: int,
+        num_objects: int,
     ) -> Tensor:
-        """Reshapes the common mask (1,F) to (N,F) where N is the number of
-        objects.
+        r"""Reshapes the common mask from shape :obj:`[1, F]` to :obj:`[N, F]`
+        where :obj:`N` refers to the number of objects.
 
         Args:
             common_mask (Tensor): the common mask.
             number_object (int): the number of objects.
         """
-        return torch.stack([common_mask] * number_object, dim=0)
+        return torch.stack([common_mask] * num_objects, dim=0)

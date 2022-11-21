@@ -13,7 +13,7 @@ def set_masks(
     edge_index: Tensor,
     apply_sigmoid: bool = True,
 ):
-    """Apply mask to every graph layer in the :obj:`model`."""
+    r"""Apply mask to every graph layer in the :obj:`model`."""
     loop_mask = edge_index[0] != edge_index[1]
 
     # Loop over layers and set masks on MessagePassing layers:
@@ -31,7 +31,7 @@ def set_hetero_masks(
     edge_index_dict: Dict[EdgeType, Tensor],
     apply_sigmoid: bool = True,
 ):
-    """Apply masks to every heterogeneous graph layer in the :obj:`model`
+    r"""Apply masks to every heterogeneous graph layer in the :obj:`model`
     according to edge types."""
     for module in model.modules():
         if isinstance(module, torch.nn.ModuleDict):
@@ -48,7 +48,7 @@ def set_hetero_masks(
 
 
 def clear_masks(model: torch.nn.Module):
-    """Clear all masks from the model."""
+    r"""Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
             module.explain = False
