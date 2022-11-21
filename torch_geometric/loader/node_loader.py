@@ -160,20 +160,6 @@ class NodeLoader(torch.utils.data.DataLoader):
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
-    def worker_init_function(self, worker_id: int):
-        """ Worker init function using DL affinitization.
-        Args:
-            worker_id (int): DataLoader worked ID
-        Raises:
-            Exception: The number of cores and workers should match.
-        """
-        try:
-            psutil.Process().cpu_affinity([self.loader_cores[worker_id]])
-        except:
-            raise Exception(
-                'ERROR: cannot use affinity for worker id={} cpu_cores={}'.
-                format(worker_id, self.loader_cores))
-
     def __enter__(self):
         return self
 
@@ -204,8 +190,7 @@ class NodeLoader(torch.utils.data.DataLoader):
             if loader_cores and len(loader_cores) != self.num_workers:
                 raise Exception(
                     'ERROR: cpu_affinity incorrect '
-                    'number of loader_cores={} for num_workers={}'.format(
-                        loader_cores, self.num_workers))
+                    f'number of loader_cores={loader_cores} for num_workers={self.num_workers}')
 
             worker_init_fn_old = self.worker_init_fn
             affinity_old = psutil.Process().cpu_affinity()
@@ -217,8 +202,7 @@ class NodeLoader(torch.utils.data.DataLoader):
                     psutil.Process().cpu_affinity([loader_cores[worker_id]])
                 except:
                     raise Exception(
-                        'ERROR: cannot use affinity id={} cpu={}'.format(
-                            worker_id, loader_cores))
+                        f'ERROR: cannot use affinity id={worker_id} cpu={loader_cores}')
 
                 worker_init_fn_old(worker_id)
 
@@ -246,14 +230,12 @@ class NodeLoader(torch.utils.data.DataLoader):
                 print(
                     f"{self.num_workers} DataLoader workers are assigned to CPUs {loader_cores}"
                 )
-
                 yield
             finally:
                 # restore omp_num_threads and cpu affinity
                 psutil.Process().cpu_affinity(affinity_old)
                 torch.set_num_threads(nthreads_old)
                 self.worker_init_fn = worker_init_fn_old
-
                 self.cpu_affinity_enabled = False
         else:
             yield
