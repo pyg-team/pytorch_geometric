@@ -80,17 +80,14 @@ class Explainer:
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        r"""Computes the explanation of the GNN  for the given inputs and
+        r"""Computes the explanation of the GNN for the given inputs and
         target.
-
 
         .. note::
 
-            If you get an error message like :obj:`Trying to backward through
-            the graph a second time `, make sure that the target you provided
-            was computed with :obj:`torch.no_grad()` if it is the output of the
-            model. (If you want to use the output of the model as target, you
-            you should set the explanation type to :obj:`"phenomenon"`).
+            If you get an error message like "Trying to backward through the
+            graph a second time", make sure that the target you provided
+            was computed with :obj:`torch.no_grad()`.
 
         Args:
             x (torch.Tensor): The input node features.
