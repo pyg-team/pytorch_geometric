@@ -63,8 +63,7 @@ def test_prbcd_attack(model, budget, is_undirected_graph, with_early_stopping):
     if model == GNN:
         y = torch.tensor([0])
         # all nodes belong to same graph
-        kwargs = dict(
-            batch=torch.zeros(x.shape[0], dtype=int, device=x.device))
+        kwargs = dict(batch=edge_index.new_zeros(x.size(0)))
     else:
         y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
         kwargs = {}
@@ -119,8 +118,7 @@ def test_grbcd_attack(model, budget, is_undirected_graph):
     if model == GNN:
         y = torch.tensor([0])
         # all nodes belong to same graph
-        kwargs = dict(
-            batch=torch.zeros(x.shape[0], dtype=int, device=x.device))
+        kwargs = dict(batch=edge_index.new_zeros(x.size(0)))
     else:
         y = torch.tensor([0, 1, 1, 0, 1, 0, 1, 0])
         kwargs = {}

@@ -346,10 +346,11 @@ class PRBCDAttack(torch.nn.Module):
 
     def _sample_random_block(self, budget: int = 0):
         for _ in range(self.coeffs['max_trials_sampling']):
-            self.current_block = torch.randint(
-                self._num_possible_edges(self.num_nodes,
-                                         self.is_undirected_graph),
-                (self.block_size, ), device=self.device)
+            num_possible_edges = self._num_possible_edges(
+                self.num_nodes, self.is_undirected_graph)
+            self.current_block = torch.randint(num_possible_edges,
+                                               (self.block_size, ),
+                                               device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
             if self.is_undirected_graph:
                 self.block_edge_index = self._linear_to_triu_idx(
@@ -381,10 +382,10 @@ class PRBCDAttack(torch.nn.Module):
         # Sample until enough edges were drawn
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
-            lin_index = torch.randint(
-                self._num_possible_edges(self.num_nodes,
-                                         self.is_undirected_graph),
-                (n_edges_resample, ), device=self.device)
+            num_possible_edges = self._num_possible_edges(
+                self.num_nodes, self.is_undirected_graph)
+            lin_index = torch.randint(num_possible_edges, (n_edges_resample, ),
+                                      device=self.device)
 
             current_block = torch.cat((self.current_block, lin_index))
             self.current_block, unique_idx = torch.unique(
@@ -469,7 +470,8 @@ class PRBCDAttack(torch.nn.Module):
 
     @staticmethod
     def _project(budget: int, values: Tensor, eps: float = 1e-7) -> Tensor:
-        r"""Project `values`: $budget \ge \sum \Pi_{[0, 1]}(\text{values})$."""
+        r"""Project :obj:`values`:
+        :math:`budget \ge \sum \Pi_{[0, 1]}(\text{values})`."""
         if torch.clamp(values, 0, 1).sum() > budget:
             left = (values - 1).min()
             right = values.max()
@@ -639,9 +641,10 @@ class GRBCDAttack(PRBCDAttack):
     from the `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
 
-    GRBCD shares most of the properties and requirements with PRBCD (see doc).
-    It also uses an efficient gradient based approach. However, it greedily
-    flips edges based on the gradient towards the adjacency matrix.
+    GRBCD shares most of the properties and requirements with
+    :class:`PRBCDAttack`. It also uses an efficient gradient based approach.
+    However, it greedily flips edges based on the gradient towards the
+    adjacency matrix.
 
     .. note::
         For examples of using the GRBCD Attack, see
