@@ -184,10 +184,12 @@ def test_onnx():
 
     model = MyModel()
     x = torch.randn(3, 8)
-    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    edge_index = torch.tensor([[0, 1, 2], [1, 0, 2]])
+    expected = model(x, edge_index)
+    assert expected.size() == (3, 16)
 
     torch.onnx.export(model, (x, edge_index), 'model.onnx',
-                      input_names=('x', 'edge_index'))
+                      input_names=('x', 'edge_index'), opset_version=16)
 
     model = onnx.load('model.onnx')
     onnx.checker.check_model(model)
@@ -198,6 +200,7 @@ def test_onnx():
         'x': x.numpy(),
         'edge_index': edge_index.numpy()
     })[0]
-    assert out.shape == (3, 16)
+    out = torch.from_numpy(out)
+    assert torch.allclose(out, expected, atol=1e-6)
 
     os.remove('model.onnx')
