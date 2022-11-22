@@ -146,17 +146,20 @@ class FusedAggregation(Aggregation):
 
         #######################################################################
 
+        outs: List[Optional[Tensor]] = []
+
         # Iterate over all reduction ops to compute first results:
         for i, reduce in enumerate(self.reduce_ops):
             if reduce is None:
+                outs.append(None)
                 continue
 
             src = x * x if reduce == 'pow_sum' else x
             reduce = 'sum' if reduce == 'pow_sum' else reduce
 
-            offset = slice(i * F, (i + 1) * F)
-            out[:, offset].scatter_reduce_(0, index, src, reduce=reduce,
-                                           include_self=False)
+            out = x.new_empty(dim_size, F)
+            out.scatter_reduce_(0, index, src, reduce, include_self=False)
+            outs.append(out)
 
         #######################################################################
 
@@ -164,13 +167,13 @@ class FusedAggregation(Aggregation):
         i = self.aggr_index.get(MeanAggregation)
         if i is not None:
             if self.lookup_ops[i] is None:
-                sum_ = out[:, i * F:(i + 1) * F]
+                sum_ = outs[i]
             else:
                 tmp_aggr, j = self.lookup_ops[i]
                 assert tmp_aggr == SumAggregation
-                sum_ = out[:, j * F:(j + 1) * F]
+                sum_ = outs[j]
 
-            out[:, i * F:(i + 1) * F] = sum_ / count
+            outs[i] = sum_ / count
 
         # Compute `VarAggregation` second to be able to re-use it:
         i = self.aggr_index.get(VarAggregation)
@@ -183,21 +186,21 @@ class FusedAggregation(Aggregation):
             else:
                 tmp_aggr, j = self.lookup_ops[i]
                 if tmp_aggr == SumAggregation:
-                    mean = out[:, j * F:(j + 1) * F] / count
+                    mean = outs[j] / count
                 elif tmp_aggr == MeanAggregation:
-                    mean = out[:, j * F:(j + 1) * F]
+                    mean = outs[j]
                 else:
                     raise NotImplementedError
 
-            pow_sum = out[:, i * F:(i + 1) * F]
-            out[:, i * F:(i + 1) * F] = (pow_sum / count) - (mean * mean)
+            pow_sum = outs[i]
+            outs[i] = (pow_sum / count) - (mean * mean)
 
         # Compute `StdAggregation` last:
         i = self.aggr_index.get(StdAggregation)
         if i is not None:
             var = None
             if self.lookup_ops[i] is None:
-                pow_sum = out[:, i * F:(i + 1) * F]
+                pow_sum = outs[i]
                 mean = x.new_empty(dim_size, F)
                 mean.scatter_reduce_(0, index, src, reduce='sum',
                                      include_self=False)
@@ -205,23 +208,24 @@ class FusedAggregation(Aggregation):
             else:
                 tmp_aggr, j = self.lookup_ops[i]
                 if tmp_aggr == VarAggregation:
-                    var = out[:, j * F:(j + 1) * F]
+                    var = outs[j]
                 elif tmp_aggr == SumAggregation:
-                    pow_sum = out[:, i * F:(i + 1) * F]
-                    mean = out[:, j * F:(j + 1) * F] / count
+                    pow_sum = outs[i]
+                    mean = outs[j] / count
                 elif tmp_aggr == MeanAggregation:
-                    pow_sum = out[:, i * F:(i + 1) * F]
-                    mean = out[:, j * F:(j + 1) * F]
+                    pow_sum = outs[i]
+                    mean = outs[j]
                 else:
                     raise NotImplementedError
 
             if var is None:
                 var = (pow_sum / count) - (mean * mean)
 
-            out[:, i * F:(i + 1) * F] = (var.relu() + 1e-5).sqrt()
+            outs[i] = (var.relu() + 1e-5).sqrt()
 
         #######################################################################
 
+        out = torch.cat(outs, dim=-1)
         out[mask] = 0.  # Set non-existing indices to zero.
 
         return out
