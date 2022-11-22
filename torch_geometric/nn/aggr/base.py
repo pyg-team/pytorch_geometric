@@ -59,6 +59,7 @@ class Aggregation(torch.nn.Module):
           features :math:`(|\mathcal{V}|, F_{out})`
     """
     _validate = __debug__
+    _is_fusable = False
 
     # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
