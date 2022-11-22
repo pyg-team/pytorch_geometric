@@ -96,12 +96,17 @@ class GNNExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
 
-        if isinstance(index, Tensor) and index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single node index for now")
-        if isinstance(target_index, Tensor) and target_index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single target index for now")
+        if isinstance(index, Tensor):
+            if index.numel() > 1:
+                raise NotImplementedError(
+                    "GNNExplainer only supports single node index for now")
+            index = index.item()
+
+        if isinstance(target_index, Tensor):
+            if target_index.numel() > 1:
+                raise NotImplementedError(
+                    "GNNExplainer only supports single target index for now")
+            target_index = target_index.item()
 
         model.eval()
         num_nodes = x.size(0)

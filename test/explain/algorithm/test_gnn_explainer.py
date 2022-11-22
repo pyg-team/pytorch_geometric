@@ -95,7 +95,7 @@ class GNN_regression_multioutput(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
-        # pass arguments in the right oder
+        # pass arguments in the right order
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
@@ -112,7 +112,7 @@ class GNN_regression_singleoutput(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
-        # pass arguments in the right oder
+        # pass arguments in the right order
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
@@ -129,7 +129,7 @@ class GNN_classification_singleoutput(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
-        # pass arguments in the right oder
+        # pass arguments in the right order
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
@@ -148,7 +148,7 @@ class GNN_classification_multioutput(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
-        # pass arguments in the right oder
+        # pass arguments in the right order
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.conv2(x, edge_index)
@@ -239,7 +239,7 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=2),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -285,7 +285,7 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=2),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -332,7 +332,7 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=2),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -377,7 +377,7 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=2),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
