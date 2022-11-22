@@ -107,8 +107,7 @@ def test_prbcd_attack(model, budget, is_undirected_graph, with_early_stopping):
 @pytest.mark.parametrize('budget', [1])
 @pytest.mark.parametrize('is_undirected_graph', [False, True])
 def test_grbcd_attack(model, budget, is_undirected_graph):
-    attack = GRBCDAttack(model(), epochs=4, epochs_resampling=2,
-                         max_final_samples=2, log=False,
+    attack = GRBCDAttack(model(), epochs=4, log=False,
                          is_undirected_graph=is_undirected_graph)
     assert attack.__repr__() == f'{GRBCDAttack.__name__}()'
 
