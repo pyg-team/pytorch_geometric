@@ -36,3 +36,32 @@ def test_fused_aggregation(aggrs):
     expected.mean().backward()
     assert y.grad is not None
     assert torch.allclose(x.grad, y.grad)
+
+
+if __name__ == '__main__':
+    import time
+
+    x = torch.randn(50000, 64, device='cuda')
+    index = torch.randint(1000, (x.size(0), ), device='cuda')
+
+    aggrs = ['sum', 'mean', 'min', 'max', 'std']
+    aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
+    fused_aggr = FusedAggregation(aggrs)
+
+    num_warmups, num_steps = (500, 1000)
+
+    for i in range(num_warmups + num_steps):
+        if i == num_warmups:
+            torch.cuda.synchronize()
+            t = time.perf_counter()
+        torch.cat([aggr(x, index, dim_size=1000) for aggr in aggrs], dim=-1)
+    torch.cuda.synchronize()
+    print(f'Vanilla implementation: {time.perf_counter() - t:.4f} seconds')
+
+    for i in range(num_warmups + num_steps):
+        if i == num_warmups:
+            torch.cuda.synchronize()
+            t = time.perf_counter()
+        fused_aggr(x, index, dim_size=1000)
+    torch.cuda.synchronize()
+    print(f'Fused implementation:   {time.perf_counter() - t:.4f} seconds')
