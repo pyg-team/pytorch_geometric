@@ -1,4 +1,8 @@
-import torch
+import torch 
+from torch_geometric.data import Data
+from rdkit import Chem, RDLogger
+
+RDLogger.DisableLog('rdApp.*')
 
 x_map = {
     'atomic_num':
@@ -8,6 +12,11 @@ x_map = {
         'CHI_TETRAHEDRAL_CW',
         'CHI_TETRAHEDRAL_CCW',
         'CHI_OTHER',
+        'CHI_TETRAHEDRAL',
+        'CHI_ALLENE',
+        'CHI_SQUAREPLANAR',
+        'CHI_TRIGONALBIPYRAMIDAL',
+        'CHI_OCTAHEDRAL',
     ],
     'degree':
     list(range(0, 11)),
@@ -33,19 +42,36 @@ x_map = {
 
 e_map = {
     'bond_type': [
-        'misc',
+        'UNSPECIFIED',
         'SINGLE',
         'DOUBLE',
         'TRIPLE',
+        'QUADRUPLE',
+        'QUINTUPLE',
+        'HEXTUPLE',
+        'ONEANDAHALF',
+        'TWOANDAHALF',
+        'THREEANDAHALF',
+        'FOURANDAHALF',
+        'FIVEANDAHALF',
         'AROMATIC',
+        'IONIC',
+        'HYDROGEN',
+        'THREECENTER',
+        'DATIVEONE',
+        'DATIVE',
+        'DATIVEL',
+        'DATIVER',
+        'OTHER',
+        'ZERO'
     ],
     'stereo': [
         'STEREONONE',
+        'STEREOANY',
         'STEREOZ',
         'STEREOE',
         'STEREOCIS',
         'STEREOTRANS',
-        'STEREOANY',
     ],
     'is_conjugated': [False, True],
 }
@@ -63,11 +89,6 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
-    from rdkit import Chem, RDLogger
-
-    from torch_geometric.data import Data
-
-    RDLogger.DisableLog('rdApp.*')
 
     mol = Chem.MolFromSmiles(smiles)
 
@@ -76,7 +97,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     if with_hydrogen:
         mol = Chem.AddHs(mol)
     if kekulize:
-        mol = Chem.Kekulize(mol)
+        Chem.Kekulize(mol)
 
     xs = []
     for atom in mol.GetAtoms():
@@ -117,3 +138,63 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
 
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, smiles=smiles)
+
+
+def to_smiles(data, kekulize: bool = False):
+    """Converts a :class:`torch_geometric.data.Data` instance to a SMILES
+    string.
+
+    Args:
+        data (torch_geometric.data.Data): The molecular graph.
+        kekulize (bool, optional): If set to :obj:`True`, converts aromatic
+            bonds to single/double bonds. (default: :obj:`False`)
+    """
+
+    mol = Chem.RWMol()
+
+    for i in range(data.num_nodes):
+        atom = Chem.Atom(data.x[i, 0].item()) 
+        atom.SetChiralTag(Chem.rdchem.ChiralType.values[data.x[i, 1].item()])
+        atom.SetFormalCharge(x_map['formal_charge'][data.x[i, 3].item()])
+        atom.SetNumExplicitHs(x_map['num_hs'][data.x[i, 4].item()])
+        atom.SetNumRadicalElectrons(x_map['num_radical_electrons'][data.x[i, 5].item()])
+        atom.SetHybridization(Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
+        atom.SetIsAromatic(data.x[i, 7].item())
+        mol.AddAtom(atom)
+
+
+   
+    edges = [tuple(i) for i in data.edge_index.t().tolist()]
+    visited = set()
+
+    for edge_idx in range(len(edges)):
+        i, j = edges[edge_idx]
+        if tuple(sorted(edges[edge_idx])) in visited:
+            continue
+    
+        bond_type = Chem.BondType.values[data.edge_attr[edge_idx, 0].item()] 
+        mol.AddBond(i, j, bond_type)
+
+        # Set stereochemistry.
+        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[edge_idx, 1].item()]
+        if stereo != Chem.rdchem.BondStereo.STEREONONE:
+            db = mol.GetBondBetweenAtoms(i, j)
+            db.SetStereoAtoms(j, i)
+            db.SetStereo(stereo)
+
+            
+        # Set conjugation.
+        mol.GetBondBetweenAtoms(i, j).SetIsConjugated(
+            data.edge_attr[edge_idx, 2].item())
+
+        visited.add(tuple(sorted(edges[edge_idx])))
+
+    mol = mol.GetMol()
+
+    if kekulize:
+        Chem.Kekulize(mol)
+
+    Chem.SanitizeMol(mol)
+    Chem.AssignStereochemistry(mol)
+
+    return Chem.MolToSmiles(mol, isomericSmiles=True)
