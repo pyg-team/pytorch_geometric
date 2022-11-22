@@ -16,7 +16,6 @@ from torch_geometric.utils import (
     is_sparse,
     is_torch_sparse_tensor,
     spmm,
-    to_torch_coo_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -43,12 +42,9 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     if is_sparse(edge_index):
         assert flow in ["source_to_target"]
         adj_t = edge_index
-        if is_torch_sparse_tensor(adj_t):
-            edge_index, edge_weight = gcn_norm(adj_t._indices(),
-                                               adj_t._values(), num_nodes,
-                                               improved, add_self_loops, flow,
-                                               dtype)
-            return to_torch_coo_tensor(edge_index, edge_weight)
+        is_torch_sparse = is_torch_sparse_tensor(adj_t)
+        if is_torch_sparse:
+            adj_t = SparseTensor.from_torch_sparse_coo_tensor(adj_t)
 
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
@@ -59,6 +55,9 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
         adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
+
+        if is_torch_sparse:
+            adj_t = adj_t.to_torch_sparse_coo_tensor()
         return adj_t
 
     else:
