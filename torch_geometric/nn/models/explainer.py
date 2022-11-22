@@ -5,7 +5,7 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Data
 from torch_geometric.deprecation import deprecated
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, Metadata, NodeType
@@ -201,17 +201,24 @@ def _raise_on_invalid_mask_type(mask_type: str):
         raise ValueError(f"Invalid mask type (got {mask_type})")
 
 
-def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
+def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
+                    edge_index: Union[Tensor, Dict[EdgeType,
+                                                   Tensor]], mask_type: str,
                     *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
-    r"""Given :obj:`data` and :obj:`mask_type`, converts it to a format to use
-    in `Captum.ai <https://captum.ai/>`_ attribution methods. Returns
-    :obj:`inputs` and :obj:`additional_forward_args` required for `Captum's
-    :obj:`attribute` functions. See :obj:`torch_geometric.nn.to_captum_model`
-    for example usage.
+    r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
+    to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
+    methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
+    required for `Captum's :obj:`attribute` functions.
+    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
 
     Args:
 
-        data (HeteroData or Data): The data to explain.
+        x (Tensor or Dict[NodeType, Tensor]): The node features. For
+            heterogenous graphs this is a dictionary holding node featues
+            for each node type.
+        edge_index(Tensor or Dict[EdgeType, Tensor]): The edge indicies. For
+            heterogenous graphs this is a dictionary holding edge index
+            for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
@@ -224,38 +231,38 @@ def to_captum_input(data: Union[HeteroData, Data], mask_type: str,
     _raise_on_invalid_mask_type(mask_type)
 
     additional_forward_args = []
-    if isinstance(data, Data):
+    if isinstance(x, Tensor) and isinstance(edge_index, Tensor):
         if mask_type == "node":
-            inputs = [data.x.unsqueeze(0)]
+            inputs = [x.unsqueeze(0)]
         elif mask_type == "edge":
-            inputs = [_to_edge_mask(data.edge_index).unsqueeze(0)]
-            additional_forward_args.append(data.x)
+            inputs = [_to_edge_mask(edge_index).unsqueeze(0)]
+            additional_forward_args.append(x)
         else:
-            inputs = [
-                data.x.unsqueeze(0),
-                _to_edge_mask(data.edge_index).unsqueeze(0)
-            ]
-        additional_forward_args.append(data.edge_index)
+            inputs = [x.unsqueeze(0), _to_edge_mask(edge_index).unsqueeze(0)]
+        additional_forward_args.append(edge_index)
 
-    else:
-        metadata = data.metadata()
-        node_types = metadata[0]
-        edge_types = metadata[1]
+    elif isinstance(x, Dict) and isinstance(edge_index, Dict):
+        node_types = x.keys()
+        edge_types = edge_index.keys()
         inputs = []
         if mask_type == "node":
             for key in node_types:
-                inputs.append(data[key].x.unsqueeze(0))
+                inputs.append(x[key].unsqueeze(0))
         elif mask_type == "edge":
             for key in edge_types:
-                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
-            additional_forward_args.append(data.x_dict)
+                inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
+            additional_forward_args.append(x)
         else:
             for key in node_types:
-                inputs.append(data[key].x.unsqueeze(0))
+                inputs.append(x[key].unsqueeze(0))
             for key in edge_types:
-                inputs.append(_to_edge_mask(data[key].edge_index).unsqueeze(0))
-        additional_forward_args.append(data.edge_index_dict)
+                inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
+        additional_forward_args.append(edge_index)
 
+    else:
+        raise ValueError(
+            "'x' and 'edge_index' need to be either"
+            f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})")
     additional_forward_args.extend(args)
     return tuple(inputs), tuple(additional_forward_args)
 
@@ -352,7 +359,8 @@ def to_captum_model(
         mask_type="edge"
         output_idx = 10
         captum_model = to_captum_model(model, mask_type, output_idx)
-        inputs, additional_forward_args = to_captum_input(data, mask_type)
+        inputs, additional_forward_args = to_captum_input(data.x,
+                                            data.edge_index,mask_type)
 
         ig = IntegratedGradients(captum_model)
         ig_attr = ig.attribute(inputs = inputs,
@@ -381,8 +389,8 @@ def to_captum_model(
         metadata = data.metadata
         output_idx = 10
         captum_model = to_captum_model(model, mask_type, output_idx, metadata)
-        inputs, additional_forward_args = to_captum_input(data, mask_type,
-                                                          metadata)
+        inputs, additional_forward_args = to_captum_input(data.x_dict,
+                                            data.edge_index_dict, mask_type)
 
         ig = IntegratedGradients(captum_model)
         ig_attr = ig.attribute(inputs=inputs,
