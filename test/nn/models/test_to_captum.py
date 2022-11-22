@@ -67,7 +67,8 @@ def test_captum_attribution_methods(mask_type, method):
     captum_model = to_captum_model(GCN, mask_type, 0)
     explainer = getattr(attr, method)(captum_model)
     data = Data(x, edge_index)
-    input, additional_forward_args = to_captum_input(data, mask_type)
+    input, additional_forward_args = to_captum_input(data.x, data.edge_index,
+                                                     mask_type)
     if mask_type == 'node':
         sliding_window_shapes = (3, 3)
     elif mask_type == 'edge':
@@ -152,7 +153,8 @@ def test_to_captum_input(mask_type):
     # Check for Data:
     data = Data(x, edge_index)
     args = 'test_args'
-    inputs, additional_forward_args = to_captum_input(data, mask_type, args)
+    inputs, additional_forward_args = to_captum_input(data.x, data.edge_index,
+                                                      mask_type, args)
     if mask_type == 'node':
         assert len(inputs) == 1
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
@@ -180,7 +182,9 @@ def test_to_captum_input(mask_type):
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
     data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
-    inputs, additional_forward_args = to_captum_input(data, mask_type, args)
+    inputs, additional_forward_args = to_captum_input(data.x_dict,
+                                                      data.edge_index_dict,
+                                                      mask_type, args)
     if mask_type == 'node':
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_nodes, num_node_feats)
