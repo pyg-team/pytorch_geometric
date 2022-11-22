@@ -64,16 +64,19 @@ class FusedAggregation(Aggregation):
                                  f"'{self.__class__.__name__}' which is not "
                                  f"fusable")
 
-        # Check whether degree information can be shared across aggregators:
+        # Check whether we need to compute degree information:
         self.need_degree = False
         for cls in self.aggr_cls:
             if cls in DEGREE_BASED_AGGRS:
                 self.need_degree = True
 
-        # Determine which operator to compute originally for each aggregator:
+        # Determine which reduction to use for each aggregator:
+        # An entry of `None` means that this operator re-uses intermediate
+        # outputs from other aggregators.
         self.reduce_ops: List[Optional[str]] = []
-        # Determine which operator is used as intermediate output:
+        # Determine which `(Aggregator, index)` to use as intermediate output:
         self.lookup_ops: List[Optional[Tuple[Any, int]]] = []
+
         for cls in self.aggr_cls:
             if cls == MeanAggregation:
                 # Directly use output of `SumAggregation`:
@@ -141,6 +144,8 @@ class FusedAggregation(Aggregation):
         index = index.view(-1, 1).expand(-1, F)
         out = x.new_empty(dim_size, len(self.aggr_cls) * F)
 
+        #######################################################################
+
         # Iterate over all reduction ops to compute first results:
         for i, reduce in enumerate(self.reduce_ops):
             if reduce is None:
@@ -152,6 +157,8 @@ class FusedAggregation(Aggregation):
             offset = slice(i * F, (i + 1) * F)
             out[:, offset].scatter_reduce_(0, index, src, reduce=reduce,
                                            include_self=False)
+
+        #######################################################################
 
         # Compute `MeanAggregation` first to be able to re-use it:
         i = self.aggr_index.get(MeanAggregation)
@@ -165,6 +172,7 @@ class FusedAggregation(Aggregation):
 
             out[:, i * F:(i + 1) * F] = sum_ / count
 
+        # Compute `VarAggregation` second to be able to re-use it:
         i = self.aggr_index.get(VarAggregation)
         if i is not None:
             if self.lookup_ops[i] is None:
@@ -184,6 +192,7 @@ class FusedAggregation(Aggregation):
             pow_sum = out[:, i * F:(i + 1) * F]
             out[:, i * F:(i + 1) * F] = (pow_sum / count) - (mean * mean)
 
+        # Compute `StdAggregation` last:
         i = self.aggr_index.get(StdAggregation)
         if i is not None:
             var = None
@@ -210,6 +219,8 @@ class FusedAggregation(Aggregation):
                 var = (pow_sum / count) - (mean * mean)
 
             out[:, i * F:(i + 1) * F] = (var.relu() + 1e-5).sqrt()
+
+        #######################################################################
 
         out[mask] = 0.  # Set non-existing indices to zero.
 
