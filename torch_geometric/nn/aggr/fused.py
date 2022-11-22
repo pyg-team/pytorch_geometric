@@ -180,7 +180,7 @@ class FusedAggregation(Aggregation):
         if i is not None:
             if self.lookup_ops[i] is None:
                 mean = x.new_empty(dim_size, F)
-                mean.scatter_reduce_(0, index, src, reduce='sum',
+                mean.scatter_reduce_(0, index, x, reduce='sum',
                                      include_self=False)
                 mean = mean / count
             else:
@@ -202,7 +202,7 @@ class FusedAggregation(Aggregation):
             if self.lookup_ops[i] is None:
                 pow_sum = outs[i]
                 mean = x.new_empty(dim_size, F)
-                mean.scatter_reduce_(0, index, src, reduce='sum',
+                mean.scatter_reduce_(0, index, x, reduce='sum',
                                      include_self=False)
                 mean = mean / count
             else:
