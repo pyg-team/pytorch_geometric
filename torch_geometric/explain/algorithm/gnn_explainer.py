@@ -19,6 +19,10 @@ from torch_geometric.explain.explanations import Explanation
 
 from .base import ExplainerAlgorithm
 
+OptTensorType = Optional[Tensor]
+IndexType = Optional[Union[int, Tuple[int, int], Tensor]]
+TargetIndexType = Optional[Union[int, Tensor]]
+
 
 class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
@@ -91,8 +95,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: Optional[Union[int, Tuple[int, int], Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        index: IndexType = None,
+        target_index: TargetIndexType = None,
         **kwargs,
     ) -> Explanation:
         index, target_index = self.validate_indexes(model_config, index,
@@ -143,17 +147,14 @@ class GNNExplainer(ExplainerAlgorithm):
                            node_mask=node_mask, node_feat_mask=node_feat_mask)
 
     def validate_indexes(
-        self, model_config: ModelConfig,
-        index: Optional[Union[int, Tuple[int, int],
-                              Tensor]], target_index: Optional[Union[int,
-                                                                     Tensor]]
-    ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
+            self, model_config: ModelConfig, index: IndexType,
+            target_index: TargetIndexType
+    ) -> Tuple[OptTensorType, OptTensorType]:
         if model_config.task_level == ModelTaskLevel.node:
             if index is None:
                 raise ValueError("Index must be provided for node level task")
-            elif isinstance(index, int):
+            elif not isinstance(index, Tensor):
                 index = torch.tensor([index])
-
             if index.dim() != 1:
                 raise ValueError("Index must be an int or 1D tensor")
             if index.shape != (1, ):
@@ -162,9 +163,8 @@ class GNNExplainer(ExplainerAlgorithm):
         elif model_config.task_level == ModelTaskLevel.edge:
             if index is None:
                 raise ValueError("Index must be provided for edge level task")
-            elif isinstance(index, tuple):
+            elif not isinstance(index, Tensor):
                 index = torch.tensor([index])
-
             if index.dim() != 2:
                 raise ValueError("Index must be a tuple or 2D tensor")
             if index.shape != (2, 1):
@@ -176,9 +176,12 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             raise NotImplementedError
 
-        if isinstance(target_index, Tensor) and target_index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single target index for now")
+        if target_index is not None:
+            if not isinstance(target_index, Tensor):
+                target_index = torch.tensor([target_index])
+            if target_index.shape != (1, ):
+                raise NotImplementedError(
+                    "GNNExplainer only supports single target index for now")
 
         return index, target_index
 
@@ -188,9 +191,9 @@ class GNNExplainer(ExplainerAlgorithm):
         num_edges: int,
         explainer_config: ExplainerConfig,
         task_level: ModelTaskLevel,
-        hard_edge_mask: Optional[Tensor],
-        subset: Optional[Tensor],
-    ) -> Tuple[Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
+        hard_edge_mask: OptTensorType,
+        subset: OptTensorType,
+    ) -> Tuple[OptTensorType, OptTensorType, OptTensorType]:
         """Extract and reshape the masks from the model parameters."""
 
         node_mask = self.node_mask.detach() if self.node_mask is not None\
@@ -237,8 +240,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        index: OptTensorType = None,
+        target_index: OptTensorType = None,
         **kwargs,
     ):
         self._initialize_masks(x, edge_index,
