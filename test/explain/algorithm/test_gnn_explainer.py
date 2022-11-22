@@ -219,13 +219,13 @@ edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
     GCN_node_classification_single_output, GCN_node_classification_multi_output
 ])
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_regression)
+@pytest.mark.parametrize('return_type', return_types_classification)
 def test_gnn_explainer_with_meta_explainer_classification_node(
     edge_mask_type,
     node_mask_type,
     model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     explainer_config = ExplainerConfig(
         explanation_type=explanation_type,
@@ -264,14 +264,14 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
 @pytest.mark.parametrize(
     'model',
     [GCN_node_regression_single_output, GCN_node_regression_multi_output])
-@pytest.mark.parametrize('return_type', return_types_regression)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
+@pytest.mark.parametrize('return_type', return_types_regression)
 def test_gnn_explainer_with_meta_explainer_regression_node(
     edge_mask_type,
     node_mask_type,
     model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     explainer_config = ExplainerConfig(
         explanation_type=explanation_type,
@@ -323,13 +323,13 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     GCN_graph_classification_multi_output
 ])
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_regression)
+@pytest.mark.parametrize('return_type', return_types_classification)
 def test_gnn_explainer_with_meta_explainer_classification_graph(
     edge_mask_type,
     node_mask_type,
     model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     explainer_config = ExplainerConfig(
         explanation_type=explanation_type,
@@ -370,14 +370,14 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
     GCN_graph_regression_single_output,
     GCN_graph_regression_multi_output,
 ])
-@pytest.mark.parametrize('return_type', return_types_regression)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
+@pytest.mark.parametrize('return_type', return_types_regression)
 def test_gnn_explainer_with_meta_explainer_regression_graph(
     edge_mask_type,
     node_mask_type,
     model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     explainer_config = ExplainerConfig(
         explanation_type=explanation_type,
