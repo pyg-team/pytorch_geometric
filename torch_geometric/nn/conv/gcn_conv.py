@@ -4,14 +4,20 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, fill_diag, matmul, mul
+from torch_sparse import SparseTensor, fill_diag, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor, PairTensor
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import (
+    add_remaining_self_loops,
+    is_sparse,
+    is_torch_sparse_tensor,
+    spmm,
+    to_torch_coo_tensor,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
@@ -34,9 +40,16 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
     fill_value = 2. if improved else 1.
 
-    if isinstance(edge_index, SparseTensor):
+    if is_sparse(edge_index):
         assert flow in ["source_to_target"]
         adj_t = edge_index
+        if is_torch_sparse_tensor(adj_t):
+            edge_index, edge_weight = gcn_norm(adj_t._indices(),
+                                               adj_t._values(), num_nodes,
+                                               improved, add_self_loops, flow,
+                                               dtype)
+            return to_torch_coo_tensor(edge_index, edge_weight)
+
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
         if add_self_loops:
@@ -169,18 +182,7 @@ class GCNConv(MessagePassing):
         """"""
 
         if self.normalize:
-            if isinstance(edge_index, Tensor):
-                cache = self._cached_edge_index
-                if cache is None:
-                    edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, self.flow, x.dtype)
-                    if self.cached:
-                        self._cached_edge_index = (edge_index, edge_weight)
-                else:
-                    edge_index, edge_weight = cache[0], cache[1]
-
-            elif isinstance(edge_index, SparseTensor):
+            if is_sparse(edge_index):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
@@ -190,6 +192,17 @@ class GCNConv(MessagePassing):
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
+
+            elif isinstance(edge_index, Tensor):
+                cache = self._cached_edge_index
+                if cache is None:
+                    edge_index, edge_weight = gcn_norm(  # yapf: disable
+                        edge_index, edge_weight, x.size(self.node_dim),
+                        self.improved, self.add_self_loops, self.flow, x.dtype)
+                    if self.cached:
+                        self._cached_edge_index = (edge_index, edge_weight)
+                else:
+                    edge_index, edge_weight = cache[0], cache[1]
 
         x = self.lin(x)
 
@@ -206,4 +219,4 @@ class GCNConv(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
