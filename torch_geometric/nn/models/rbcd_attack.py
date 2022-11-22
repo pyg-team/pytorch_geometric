@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -139,7 +139,7 @@ class GRBCDAttack(torch.nn.Module):
         edge_weight = torch.ones(edge_index.size(1), device=self.device)
         self.edge_index = edge_index.cpu().clone()
         self.edge_weight = edge_weight.cpu().clone()
-        self.n = x.size(0)
+        self.num_nodes = x.size(0)
 
         # For collecting attack statistics
         self.attack_statistics = defaultdict(list)
@@ -168,7 +168,7 @@ class GRBCDAttack(torch.nn.Module):
         return perturbed_edge_index, flipped_edges
 
     @torch.no_grad()
-    def _prepare(self, budget: int) -> Iterable[Any]:
+    def _prepare(self, budget: int) -> List[int]:
         """Prepare attack."""
         self.flipped_edges = self.edge_index.new_empty(2, 0).to(self.device)
 
@@ -203,14 +203,15 @@ class GRBCDAttack(torch.nn.Module):
 
         if self.is_undirected_graph:
             flip_edge_index, flip_edge_weight = to_undirected(
-                flip_edge_index, flip_edge_weight, self.n, reduce='mean')
+                flip_edge_index, flip_edge_weight, self.num_nodes, 'mean')
         edge_index = torch.cat(
             (self.edge_index.to(self.device), flip_edge_index.to(self.device)),
             dim=-1)
         edge_weight = torch.cat((self.edge_weight.to(self.device),
                                  flip_edge_weight.to(self.device)))
         edge_index, edge_weight = coalesce(edge_index, edge_weight,
-                                           num_nodes=self.n, reduce='sum')
+                                           num_nodes=self.num_nodes,
+                                           reduce='sum')
 
         is_one_mask = torch.isclose(edge_weight, torch.tensor(1.))
         self.edge_index = edge_index[:, is_one_mask]
@@ -221,7 +222,11 @@ class GRBCDAttack(torch.nn.Module):
         # Sample initial search space (Algorithm 2, line 3-4)
         self._sample_random_block(step_size)
 
-        return {}
+        # Return debug information
+        scalars = {
+            'number_positive_entries_in_gradient': (gradient > 0).sum().item()
+        }
+        return scalars
 
     @torch.no_grad()
     def _close(self, *args, **kwargs) -> Tuple[Tensor, Tensor]:
@@ -262,7 +267,7 @@ class GRBCDAttack(torch.nn.Module):
         """Merges adjacency matrix with current block (incl. weights)"""
         if self.is_undirected_graph:
             block_edge_index, block_edge_weight = to_undirected(
-                block_edge_index, block_edge_weight, self.n, reduce='mean')
+                block_edge_index, block_edge_weight, self.num_nodes, 'mean')
 
         modified_edge_index = torch.cat(
             (edge_index.to(self.device), block_edge_index), dim=-1)
@@ -270,8 +275,7 @@ class GRBCDAttack(torch.nn.Module):
             (edge_weight.to(self.device), block_edge_weight))
 
         modified_edge_index, modified_edge_weight = coalesce(
-            modified_edge_index, modified_edge_weight, num_nodes=self.n,
-            reduce='sum')
+            modified_edge_index, modified_edge_weight, self.num_nodes, 'sum')
 
         # Allow (soft) removal of edges
         is_edge_in_clean_adj = modified_edge_weight > 1
@@ -290,15 +294,16 @@ class GRBCDAttack(torch.nn.Module):
     def _sample_random_block(self, budget: int = 0):
         for _ in range(self.coeffs['max_trials_sampling']):
             self.current_block = torch.randint(
-                self._num_possible_edges(self.n, self.is_undirected_graph),
+                self._num_possible_edges(self.num_nodes,
+                                         self.is_undirected_graph),
                 (self.block_size, ), device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
             if self.is_undirected_graph:
                 self.block_edge_index = self._linear_to_triu_idx(
-                    self.n, self.current_block)
+                    self.num_nodes, self.current_block)
             else:
                 self.block_edge_index = self._linear_to_full_idx(
-                    self.n, self.current_block)
+                    self.num_nodes, self.current_block)
                 self._filter_self_loops_in_block(with_weight=False)
 
             self.block_edge_weight = torch.full(self.current_block.shape,
@@ -325,13 +330,13 @@ class GRBCDAttack(torch.nn.Module):
     def _linear_to_triu_idx(n: int, lin_idx: Tensor) -> Tensor:
         """Linear index to upper triangular matrix without diagonal. This is
         similar to
-        https://dongkwan-kim.github.io/blogs/indices-for-the-upper-triangle-matrix/
-        but here we omit entries on the main diagonal."""
-        row_idx = (n - 2 - torch.floor(
-            torch.sqrt(-8 * lin_idx.double() + 4 * n *
-                       (n - 1) - 7) / 2.0 - 0.5)).long()
-        col_idx = (lin_idx + row_idx + 1 - n * (n - 1) // 2 + torch.div(
-            (n - row_idx) * ((n - row_idx) - 1), 2, rounding_mode='floor'))
+        https://stackoverflow.com/questions/242711/algorithm-for-index-numbers-of-triangular-matrix-coefficients/28116498#28116498
+        with number nodes decremented and col index incremented by one."""
+        nn = n * (n - 1)
+        row_idx = n - 2 - torch.floor(
+            torch.sqrt(-8 * lin_idx.double() + 4 * nn - 7) / 2.0 - 0.5).long()
+        col_idx = 1 + lin_idx + row_idx - nn // 2 + torch.div(
+            (n - row_idx) * (n - row_idx - 1), 2, rounding_mode='floor')
         return torch.stack((row_idx, col_idx))
 
     @staticmethod
@@ -544,7 +549,7 @@ class PRBCDAttack(GRBCDAttack):
         self.coeffs.update(kwargs)
 
     @torch.no_grad()
-    def _prepare(self, budget: int) -> Iterable[Any]:
+    def _prepare(self, budget: int) -> Iterable[int]:
         """Prepare attack."""
         # For early stopping (not explicitly covered by pseudo code)
         self.best_metric = float('-Inf')
@@ -646,7 +651,8 @@ class PRBCDAttack(GRBCDAttack):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             lin_index = torch.randint(
-                self._num_possible_edges(self.n, self.is_undirected_graph),
+                self._num_possible_edges(self.num_nodes,
+                                         self.is_undirected_graph),
                 (n_edges_resample, ), device=self.device)
 
             current_block = torch.cat((self.current_block, lin_index))
@@ -655,10 +661,10 @@ class PRBCDAttack(GRBCDAttack):
 
             if self.is_undirected_graph:
                 self.block_edge_index = self._linear_to_triu_idx(
-                    self.n, self.current_block)
+                    self.num_nodes, self.current_block)
             else:
                 self.block_edge_index = self._linear_to_full_idx(
-                    self.n, self.current_block)
+                    self.num_nodes, self.current_block)
 
             # Merge existing weights with new edge weights
             block_edge_weight_prev = self.block_edge_weight[sorted_idx]
@@ -726,7 +732,7 @@ class PRBCDAttack(GRBCDAttack):
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
-        lr = (budget / self.n * self.lr /
+        lr = (budget / self.num_nodes * self.lr /
               np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
         self.block_edge_weight.data.add_(lr * gradient)
 
