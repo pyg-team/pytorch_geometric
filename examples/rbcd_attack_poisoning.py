@@ -39,13 +39,15 @@ class GCN(torch.nn.Module):
         )
         self.conv1 = gcn_conv(dataset.num_features, hidden_dim)
         self.conv2 = gcn_conv(hidden_dim, dataset.num_classes)
+        self.norm = gcn_norm
 
     def forward(self, x, edge_index, edge_weight=None, skip_norm=False):
         # Normalizing once lowers memory footprint and caching is not possible
         # during attack (for training it would be possible)
         if not skip_norm:
-            edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
-                                               x.size(0), add_self_loops=True)
+            edge_index, edge_weight = self.norm(edge_index, edge_weight,
+                                                num_nodes=x.size(0),
+                                                add_self_loops=True)
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
@@ -124,9 +126,10 @@ class PoisoningPRBCDAttack(PRBCDAttack):
                 self.block_edge_weight)
 
             # Normalize only once (only relevant if model normalizes adj.)
-            if hasattr(fmodel, 'gcn_norm'):
-                edge_index, edge_weight = fmodel.gcn_norm(
-                    edge_index, edge_weight, x.size(0), add_self_loops=True)
+            if hasattr(fmodel, 'norm'):
+                edge_index, edge_weight = fmodel.norm(edge_index, edge_weight,
+                                                      num_nodes=x.size(0),
+                                                      add_self_loops=True)
 
             for _ in range(50):
                 prediction = fmodel.forward(x, edge_index, edge_weight,
