@@ -7,7 +7,7 @@ from captum.attr import IntegratedGradients
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import Explainer, GCNConv, to_captum
+from torch_geometric.nn import Explainer, GCNConv, to_captum_model
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -49,7 +49,7 @@ target = int(data.y[output_idx])
 
 # Captum assumes that for all given input tensors, dimension 0 is
 # equal to the number of samples. Therefore, we use unsqueeze(0).
-captum_model = to_captum(model, mask_type='edge', output_idx=output_idx)
+captum_model = to_captum_model(model, mask_type='edge', output_idx=output_idx)
 edge_mask = torch.ones(data.num_edges, requires_grad=True, device=device)
 
 ig = IntegratedGradients(captum_model)
@@ -69,7 +69,7 @@ plt.show()
 # Node explainability
 # ===================
 
-captum_model = to_captum(model, mask_type='node', output_idx=output_idx)
+captum_model = to_captum_model(model, mask_type='node', output_idx=output_idx)
 
 ig = IntegratedGradients(captum_model)
 ig_attr_node = ig.attribute(data.x.unsqueeze(0), target=target,
@@ -88,8 +88,8 @@ plt.show()
 # Node and edge explainability
 # ============================
 
-captum_model = to_captum(model, mask_type='node_and_edge',
-                         output_idx=output_idx)
+captum_model = to_captum_model(model, mask_type='node_and_edge',
+                               output_idx=output_idx)
 
 ig = IntegratedGradients(captum_model)
 ig_attr_node, ig_attr_edge = ig.attribute(
