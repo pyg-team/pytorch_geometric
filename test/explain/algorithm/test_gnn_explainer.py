@@ -176,6 +176,12 @@ def check_explanation(
         assert explanation.node_mask.shape == x.shape[0]
         assert explanation.node_mask.min() >= 0
         assert explanation.node_mask.max() <= 1
+    elif node_mask_type == MaskType.common_attributes:
+        assert explanation.node_features_mask.shape == x.shape
+        assert explanation.node_features_mask.min() >= 0
+        assert explanation.node_features_mask.max() <= 1
+        assert explanation.node_features_mask[
+            0] == explanation.node_features_mask[1]
 
     if edge_mask_type == MaskType.object:
         assert explanation.edge_mask.shape == (edge_index.shape[1], )

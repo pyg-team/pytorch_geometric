@@ -26,7 +26,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size
-from torch_geometric.utils import is_torch_sparse_tensor
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
 
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
@@ -183,14 +183,15 @@ class MessagePassing(torch.nn.Module):
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
-        if is_torch_sparse_tensor(edge_index):
+        if is_sparse(edge_index):
             if self.flow == 'target_to_source':
                 raise ValueError(
                     ('Flow direction "target_to_source" is invalid for '
-                     'message propagation via `torch.sparse.Tensor`. If '
-                     'you really want to make use of a reverse message '
-                     'passing flow, pass in the transposed sparse tensor to '
-                     'the message passing module, e.g., `adj_t.t()`.'))
+                     'message propagation via `torch_sparse.SparseTensor` '
+                     'or `torch.sparse.Tensor`. If you really want to make '
+                     'use of a reverse message passing flow, pass in the '
+                     'transposed sparse tensor to the message passing module, '
+                     'e.g., `adj_t.t()`.'))
             the_size[0] = edge_index.size(1)
             the_size[1] = edge_index.size(0)
             return the_size
@@ -210,18 +211,6 @@ class MessagePassing(torch.nn.Module):
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
-            return the_size
-
-        elif isinstance(edge_index, SparseTensor):
-            if self.flow == 'target_to_source':
-                raise ValueError(
-                    ('Flow direction "target_to_source" is invalid for '
-                     'message propagation via `torch_sparse.SparseTensor`. If '
-                     'you really want to make use of a reverse message '
-                     'passing flow, pass in the transposed sparse tensor to '
-                     'the message passing module, e.g., `adj_t.t()`.'))
-            the_size[0] = edge_index.sparse_size(1)
-            the_size[1] = edge_index.sparse_size(0)
             return the_size
 
         raise ValueError(
@@ -403,9 +392,7 @@ class MessagePassing(torch.nn.Module):
         size = self.__check_input__(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
-        if ((isinstance(edge_index, SparseTensor)
-             or is_torch_sparse_tensor(edge_index)) and self.fuse
-                and not self.explain):
+        if is_sparse(edge_index) and self.fuse and not self.explain:
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
