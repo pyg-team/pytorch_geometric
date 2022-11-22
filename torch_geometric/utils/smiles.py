@@ -1,6 +1,7 @@
-import torch 
-from torch_geometric.data import Data
+import torch
 from rdkit import Chem, RDLogger
+
+from torch_geometric.data import Data
 
 RDLogger.DisableLog('rdApp.*')
 
@@ -42,27 +43,10 @@ x_map = {
 
 e_map = {
     'bond_type': [
-        'UNSPECIFIED',
-        'SINGLE',
-        'DOUBLE',
-        'TRIPLE',
-        'QUADRUPLE',
-        'QUINTUPLE',
-        'HEXTUPLE',
-        'ONEANDAHALF',
-        'TWOANDAHALF',
-        'THREEANDAHALF',
-        'FOURANDAHALF',
-        'FIVEANDAHALF',
-        'AROMATIC',
-        'IONIC',
-        'HYDROGEN',
-        'THREECENTER',
-        'DATIVEONE',
-        'DATIVE',
-        'DATIVEL',
-        'DATIVER',
-        'OTHER',
+        'UNSPECIFIED', 'SINGLE', 'DOUBLE', 'TRIPLE', 'QUADRUPLE', 'QUINTUPLE',
+        'HEXTUPLE', 'ONEANDAHALF', 'TWOANDAHALF', 'THREEANDAHALF',
+        'FOURANDAHALF', 'FIVEANDAHALF', 'AROMATIC', 'IONIC', 'HYDROGEN',
+        'THREECENTER', 'DATIVEONE', 'DATIVE', 'DATIVEL', 'DATIVER', 'OTHER',
         'ZERO'
     ],
     'stereo': [
@@ -153,17 +137,17 @@ def to_smiles(data, kekulize: bool = False):
     mol = Chem.RWMol()
 
     for i in range(data.num_nodes):
-        atom = Chem.Atom(data.x[i, 0].item()) 
+        atom = Chem.Atom(data.x[i, 0].item())
         atom.SetChiralTag(Chem.rdchem.ChiralType.values[data.x[i, 1].item()])
         atom.SetFormalCharge(x_map['formal_charge'][data.x[i, 3].item()])
         atom.SetNumExplicitHs(x_map['num_hs'][data.x[i, 4].item()])
-        atom.SetNumRadicalElectrons(x_map['num_radical_electrons'][data.x[i, 5].item()])
-        atom.SetHybridization(Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
+        atom.SetNumRadicalElectrons(
+            x_map['num_radical_electrons'][data.x[i, 5].item()])
+        atom.SetHybridization(
+            Chem.rdchem.HybridizationType.values[data.x[i, 6].item()])
         atom.SetIsAromatic(data.x[i, 7].item())
         mol.AddAtom(atom)
 
-
-   
     edges = [tuple(i) for i in data.edge_index.t().tolist()]
     visited = set()
 
@@ -171,21 +155,21 @@ def to_smiles(data, kekulize: bool = False):
         i, j = edges[edge_idx]
         if tuple(sorted(edges[edge_idx])) in visited:
             continue
-    
-        bond_type = Chem.BondType.values[data.edge_attr[edge_idx, 0].item()] 
+
+        bond_type = Chem.BondType.values[data.edge_attr[edge_idx, 0].item()]
         mol.AddBond(i, j, bond_type)
 
         # Set stereochemistry.
-        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[edge_idx, 1].item()]
+        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[edge_idx,
+                                                              1].item()]
         if stereo != Chem.rdchem.BondStereo.STEREONONE:
             db = mol.GetBondBetweenAtoms(i, j)
             db.SetStereoAtoms(j, i)
             db.SetStereo(stereo)
 
-            
         # Set conjugation.
-        mol.GetBondBetweenAtoms(i, j).SetIsConjugated(
-            data.edge_attr[edge_idx, 2].item())
+        mol.GetBondBetweenAtoms(i, j).SetIsConjugated(data.edge_attr[edge_idx,
+                                                                     2].item())
 
         visited.add(tuple(sorted(edges[edge_idx])))
 
