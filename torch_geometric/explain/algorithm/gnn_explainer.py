@@ -32,8 +32,8 @@ class GNNExplainer(ExplainerAlgorithm):
 
         - :class:`torch_geometric.explain.config.ModelConfig`
 
-            - :attr:`task_level`:  :obj:`ModelTaskLevel.node`, or
-              :obj:`ModelTaskLevel.graph`
+            - :attr:`task_level`:  :obj:`ModelTaskLevel.node`,
+              :obj:`ModelTaskLevel.edge`, or :obj:`ModelTaskLevel.graph`
 
         - :class:`torch_geometric.explain.config.ExplainerConfig`
 
@@ -91,17 +91,12 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: Optional[Union[int, Tensor]] = None,
+        index: Optional[Union[int, Tuple[int, int], Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-
-        if isinstance(index, Tensor) and index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single node index for now")
-        if isinstance(target_index, Tensor) and target_index.numel() > 1:
-            raise NotImplementedError(
-                "GNNExplainer only supports single target index for now")
+        index, target_index = self.validate_indexes(model_config, index,
+                                                    target_index)
 
         model.eval()
         num_nodes = x.size(0)
@@ -110,9 +105,6 @@ class GNNExplainer(ExplainerAlgorithm):
         if model_config.task_level == ModelTaskLevel.node:
             # if we are dealing with a node level task, we can restrict the
             # computation to the node of interest and its computation graph
-            if index is None:
-                raise ValueError("index must be provided for node level task")
-
             x, edge_index, index, subset, hard_edge_mask, kwargs =\
                 self.subgraph(model, index, x, edge_index, **kwargs)
             if target_index is not None and model_config.mode ==\
@@ -120,9 +112,19 @@ class GNNExplainer(ExplainerAlgorithm):
                 target = torch.index_select(target, 1, subset)
             else:
                 target = target[subset]
-        else:
+        elif model_config.task_level == ModelTaskLevel.edge:
+            x, edge_index, index, subset, hard_edge_mask, kwargs =\
+                self.subgraph(model, index, x, edge_index, **kwargs)
+            if target_index is not None and model_config.mode ==\
+                    ModelMode.classification:
+                target = torch.index_select(target, 1, subset)
+            else:
+                target = target[subset]
+        elif model_config.task_level == ModelTaskLevel.graph:
             hard_edge_mask = None
             subset = None
+        else:
+            raise NotImplementedError
 
         self._train_node_edge_mask(model, x, edge_index, explainer_config,
                                    model_config, target, index, target_index,
@@ -139,6 +141,46 @@ class GNNExplainer(ExplainerAlgorithm):
         # build explanation
         return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
                            node_mask=node_mask, node_feat_mask=node_feat_mask)
+
+    def validate_indexes(
+        self, model_config: ModelConfig,
+        index: Optional[Union[int, Tuple[int, int],
+                              Tensor]], target_index: Optional[Union[int,
+                                                                     Tensor]]
+    ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
+        if model_config.task_level == ModelTaskLevel.node:
+            if index is None:
+                raise ValueError("Index must be provided for node level task")
+            elif isinstance(index, int):
+                index = torch.tensor([index])
+
+            if index.dim() != 1:
+                raise ValueError("Index must be an int or 1D tensor")
+            if index.shape != (1, ):
+                raise NotImplementedError(
+                    "GNNExplainer only supports single node index for now")
+        elif model_config.task_level == ModelTaskLevel.edge:
+            if index is None:
+                raise ValueError("Index must be provided for edge level task")
+            elif isinstance(index, tuple):
+                index = torch.tensor([index])
+
+            if index.dim() != 2:
+                raise ValueError("Index must be a tuple or 2D tensor")
+            if index.shape != (2, 1):
+                raise NotImplementedError(
+                    "GNNExplainer only supports single edge index for now")
+        elif model_config.task_level == ModelTaskLevel.graph:
+            if index is not None:
+                raise ValueError("Index must be None for graph level task")
+        else:
+            raise NotImplementedError
+
+        if isinstance(target_index, Tensor) and target_index.numel() > 1:
+            raise NotImplementedError(
+                "GNNExplainer only supports single target index for now")
+
+        return index, target_index
 
     def _get_masks(
         self,
@@ -321,7 +363,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
     ) -> bool:
         if model_config.task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.graph
+                ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph
         ]:
             logging.error("Model task level not supported.")
             return False
