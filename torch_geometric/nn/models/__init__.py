@@ -12,6 +12,7 @@ from .dimenet import DimeNet, DimeNetPlusPlus
 from .explainer import (Explainer, to_captum, to_captum_model, to_captum_input,
                         captum_output_to_dicts)
 from .gnn_explainer import GNNExplainer
+from .graphmask_explainer import GraphMaskExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -52,6 +53,7 @@ __all__ = [
     'to_captum_input',
     'captum_output_to_dicts',
     'GNNExplainer',
+    'GraphMaskExplainer',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
