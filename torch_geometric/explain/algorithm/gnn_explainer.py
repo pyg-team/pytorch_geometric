@@ -20,8 +20,7 @@ from torch_geometric.explain.explanations import Explanation
 from .base import ExplainerAlgorithm
 
 OptTensorType = Optional[Tensor]
-IndexType = Optional[Union[int, Tuple[int, int], Tensor]]
-TargetIndexType = Optional[Union[int, Tensor]]
+IndexType = Optional[Union[int, Tensor]]
 
 
 class GNNExplainer(ExplainerAlgorithm):
@@ -96,7 +95,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         index: IndexType = None,
-        target_index: TargetIndexType = None,
+        target_index: IndexType = None,
         **kwargs,
     ) -> Explanation:
         self._validate_indexes(model_config, index, target_index)
@@ -146,7 +145,7 @@ class GNNExplainer(ExplainerAlgorithm):
                            node_mask=node_mask, node_feat_mask=node_feat_mask)
 
     def _validate_indexes(self, model_config: ModelConfig, index: IndexType,
-                          target_index: TargetIndexType):
+                          target_index: IndexType):
         if model_config.task_level == ModelTaskLevel.node:
             if index is None:
                 raise ValueError("Index must be provided for node level task")
@@ -156,7 +155,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif model_config.task_level == ModelTaskLevel.edge:
             if index is None:
                 raise ValueError("Index must be provided for edge level task")
-            elif isinstance(index, Tensor) and index.shape != (2, 1):
+            elif isinstance(index, Tensor) and index.shape != (1, ):
                 raise NotImplementedError(
                     "GNNExplainer only supports single edge index for now")
         elif model_config.task_level == ModelTaskLevel.graph:
@@ -184,7 +183,7 @@ class GNNExplainer(ExplainerAlgorithm):
         if self.node_mask is not None:
             node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
             if explainer_config.node_mask_type == MaskType.object:
-                if task_level == ModelTaskLevel.node:
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                     node_mask_ = torch.zeros(num_nodes, dtype=torch.float)
                     node_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
@@ -192,7 +191,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 else:
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.attributes:
-                if task_level == ModelTaskLevel.node:
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                     node_feat_mask_ = torch.zeros(num_nodes,
                                                   node_mask.size(-1),
                                                   dtype=torch.float)
@@ -209,7 +208,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if self.edge_mask is not None:
             edge_mask = self.edge_mask.detach().sigmoid()
-            if task_level == ModelTaskLevel.node:
+            if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                 edge_mask_ = torch.zeros(num_edges, dtype=torch.float)
                 edge_mask_[hard_edge_mask] = edge_mask
             elif task_level == ModelTaskLevel.graph:
@@ -228,7 +227,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         index: IndexType = None,
-        target_index: TargetIndexType = None,
+        target_index: IndexType = None,
         **kwargs,
     ):
         self._initialize_masks(x, edge_index,
@@ -282,7 +281,7 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: torch.Tensor,
         y: torch.Tensor,
         index: IndexType = None,
-        target_index: TargetIndexType = None,
+        target_index: IndexType = None,
     ):
         if target_index is not None:
             y_hat = y_hat[..., target_index].unsqueeze(-1)
@@ -301,7 +300,7 @@ class GNNExplainer(ExplainerAlgorithm):
         y: torch.Tensor,
         return_type: ModelReturnType,
         index: IndexType = None,
-        target_index: TargetIndexType = None,
+        target_index: IndexType = None,
     ):
         if target_index is not None:
             y_hat = y_hat.squeeze(0)[target_index]
@@ -322,7 +321,7 @@ class GNNExplainer(ExplainerAlgorithm):
         edge_mask_type: MaskType,
         return_type: ModelReturnType,
         index: IndexType = None,
-        target_index: TargetIndexType = None,
+        target_index: IndexType = None,
         model_mode: ModelMode = ModelMode.regression,
     ) -> torch.Tensor:
         if model_mode == ModelMode.regression:

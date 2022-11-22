@@ -86,7 +86,73 @@ class GAT_node(torch.nn.Module):
 # model for edge level tasks
 # --------------------------------------------------------------------
 
-# TODO: add edge level models
+
+class GCN_edge_classification_single_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 7)
+        self.linear1 = Linear(14, 4)
+
+    def forward(self, x, edge_index, batch=None):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index)
+        src, dst = edge_index
+        edge_x = torch.cat([x[src], x[dst]], dim=1)
+        return self.linear1(edge_x).log_softmax(dim=1)
+
+
+class GCN_edge_classification_multi_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 7)
+        self.linear1 = Linear(14, 4)
+        self.linear2 = Linear(14, 4)
+
+    def forward(self, x, edge_index, batch=None):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index)
+        src, dst = edge_index
+        edge_x = torch.cat([x[src], x[dst]], dim=1)
+        out_1 = self.linear1(edge_x).log_softmax(dim=1)
+        out_2 = self.linear2(edge_x).log_softmax(dim=1)
+        return torch.stack([out_1, out_2], dim=0)
+
+
+class GCN_edge_regression_single_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 7)
+        self.linear1 = Linear(14, 1)
+
+    def forward(self, x, edge_index, batch=None):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index)
+        src, dst = edge_index
+        edge_x = torch.cat([x[src], x[dst]], dim=1)
+        return self.linear1(edge_x)
+
+
+class GCN_edge_regression_multi_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 7)
+        self.linear1 = Linear(14, 4)
+
+    def forward(self, x, edge_index, batch=None):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index)
+        src, dst = edge_index
+        edge_x = torch.cat([x[src], x[dst]], dim=1)
+        return self.linear1(edge_x)
+
 
 # --------------------------------------------------------------------
 # model for graph level tasks
@@ -309,7 +375,97 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 # test for edge level tasks
 # --------------------------------------------------------------------
 
-# TODO: add edge level tests
+
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize('model', [
+    GCN_edge_classification_single_output, GCN_edge_classification_multi_output
+])
+@pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
+@pytest.mark.parametrize('return_type', return_types_classification)
+def test_gnn_explainer_with_meta_explainer_classification_edge(
+    edge_mask_type,
+    node_mask_type,
+    model,
+    explanation_type,
+    return_type,
+):
+    explainer_config = ExplainerConfig(
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
+    )
+    model_config = ModelConfig(
+        task_level='edge',
+        return_type=return_type,
+        mode="classification",
+    )
+
+    model = model()
+    out = model(x, edge_index).argmax(dim=-1)
+
+    if isinstance(model, GCN_edge_classification_multi_output):
+        target_index = 0
+    else:
+        target_index = None
+
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
+                          explainer_config=explainer_config,
+                          model_config=model_config)
+
+    # try to explain prediction for edge 0
+    explanation = explainer(x=x, edge_index=edge_index, target=out, index=0,
+                            target_index=target_index)
+
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
+
+
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize(
+    'model',
+    [GCN_edge_regression_single_output, GCN_edge_regression_multi_output])
+@pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
+@pytest.mark.parametrize('return_type', return_types_regression)
+def test_gnn_explainer_with_meta_explainer_regression_edge(
+    edge_mask_type,
+    node_mask_type,
+    model,
+    explanation_type,
+    return_type,
+):
+    explainer_config = ExplainerConfig(
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
+    )
+    model_config = ModelConfig(
+        task_level='edge',
+        return_type=return_type,
+        mode="regression",
+    )
+
+    model = model()
+    with torch.no_grad():
+        out = model(x, edge_index)
+
+    if isinstance(model, GCN_edge_regression_multi_output):
+        target_index = 0
+    else:
+        target_index = None
+
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
+                          explainer_config=explainer_config,
+                          model_config=model_config)
+
+    # try to explain prediction for edge 0
+    explanation = explainer(x=x, edge_index=edge_index, target=out, index=0,
+                            target_index=target_index)
+
+    check_explanation(edge_mask_type, node_mask_type, x, edge_index,
+                      explanation)
+
 
 # --------------------------------------------------------------------
 # test for graph level tasks
