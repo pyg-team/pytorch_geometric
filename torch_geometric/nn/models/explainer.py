@@ -322,7 +322,7 @@ def to_captum(
     output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
 ) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""
-    Alias for `to_captum_model`.
+    Alias for :obj:`to_captum_model`.
 
     .. warning::
 
