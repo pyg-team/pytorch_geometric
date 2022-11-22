@@ -239,7 +239,7 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -285,7 +285,7 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -332,7 +332,7 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
                           explainer_config=explainer_config,
                           model_config=model_config)
 
@@ -377,7 +377,7 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(),
+    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
                           explainer_config=explainer_config,
                           model_config=model_config)
 

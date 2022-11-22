@@ -99,8 +99,7 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: TargetIndexType = None,
         **kwargs,
     ) -> Explanation:
-        index, target_index = self.validate_indexes(model_config, index,
-                                                    target_index)
+        self._validate_indexes(model_config, index, target_index)
 
         model.eval()
         num_nodes = x.size(0)
@@ -146,28 +145,18 @@ class GNNExplainer(ExplainerAlgorithm):
         return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
                            node_mask=node_mask, node_feat_mask=node_feat_mask)
 
-    def validate_indexes(
-            self, model_config: ModelConfig, index: IndexType,
-            target_index: TargetIndexType
-    ) -> Tuple[OptTensorType, OptTensorType]:
+    def _validate_indexes(self, model_config: ModelConfig, index: IndexType,
+                          target_index: TargetIndexType):
         if model_config.task_level == ModelTaskLevel.node:
             if index is None:
                 raise ValueError("Index must be provided for node level task")
-            elif not isinstance(index, Tensor):
-                index = torch.tensor([index])
-            if index.dim() != 1:
-                raise ValueError("Index must be an int or 1D tensor")
-            if index.shape != (1, ):
+            elif isinstance(index, Tensor) and index.shape != (1, ):
                 raise NotImplementedError(
                     "GNNExplainer only supports single node index for now")
         elif model_config.task_level == ModelTaskLevel.edge:
             if index is None:
                 raise ValueError("Index must be provided for edge level task")
-            elif not isinstance(index, Tensor):
-                index = torch.tensor([index])
-            if index.dim() != 2:
-                raise ValueError("Index must be a tuple or 2D tensor")
-            if index.shape != (2, 1):
+            elif isinstance(index, Tensor) and index.shape != (2, 1):
                 raise NotImplementedError(
                     "GNNExplainer only supports single edge index for now")
         elif model_config.task_level == ModelTaskLevel.graph:
@@ -176,14 +165,9 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             raise NotImplementedError
 
-        if target_index is not None:
-            if not isinstance(target_index, Tensor):
-                target_index = torch.tensor([target_index])
-            if target_index.shape != (1, ):
-                raise NotImplementedError(
-                    "GNNExplainer only supports single target index for now")
-
-        return index, target_index
+        if isinstance(target_index, Tensor) and target_index.shape != (1, ):
+            raise NotImplementedError(
+                "GNNExplainer only supports single target index for now")
 
     def _get_masks(
         self,
@@ -243,8 +227,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: OptTensorType = None,
-        target_index: OptTensorType = None,
+        index: IndexType = None,
+        target_index: TargetIndexType = None,
         **kwargs,
     ):
         self._initialize_masks(x, edge_index,
@@ -297,8 +281,8 @@ class GNNExplainer(ExplainerAlgorithm):
         self,
         y_hat: torch.Tensor,
         y: torch.Tensor,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
+        index: IndexType = None,
+        target_index: TargetIndexType = None,
     ):
         if target_index is not None:
             y_hat = y_hat[..., target_index].unsqueeze(-1)
@@ -316,12 +300,12 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: torch.Tensor,
         y: torch.Tensor,
         return_type: ModelReturnType,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
+        index: IndexType = None,
+        target_index: TargetIndexType = None,
     ):
         if target_index is not None:
-            y_hat = y_hat[target_index]
-            y = y[target_index]
+            y_hat = y_hat.squeeze(0)[target_index]
+            y = y.squeeze(0)[target_index]
 
         y_hat = self._to_log_prob(y_hat, return_type)
 
@@ -337,11 +321,10 @@ class GNNExplainer(ExplainerAlgorithm):
         y: torch.Tensor,
         edge_mask_type: MaskType,
         return_type: ModelReturnType,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
+        index: IndexType = None,
+        target_index: TargetIndexType = None,
         model_mode: ModelMode = ModelMode.regression,
     ) -> torch.Tensor:
-
         if model_mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y, index, target_index)
         elif model_mode == ModelMode.classification:
