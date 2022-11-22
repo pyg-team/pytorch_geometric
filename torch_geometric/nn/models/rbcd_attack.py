@@ -203,7 +203,8 @@ class GRBCDAttack(torch.nn.Module):
 
         if self.is_undirected_graph:
             flip_edge_index, flip_edge_weight = to_undirected(
-                flip_edge_index, flip_edge_weight, self.num_nodes, 'mean')
+                flip_edge_index, flip_edge_weight, num_nodes=self.num_nodes,
+                reduce='mean')
         edge_index = torch.cat(
             (self.edge_index.to(self.device), flip_edge_index.to(self.device)),
             dim=-1)
@@ -267,7 +268,8 @@ class GRBCDAttack(torch.nn.Module):
         """Merges adjacency matrix with current block (incl. weights)"""
         if self.is_undirected_graph:
             block_edge_index, block_edge_weight = to_undirected(
-                block_edge_index, block_edge_weight, self.num_nodes, 'mean')
+                block_edge_index, block_edge_weight, num_nodes=self.num_nodes,
+                reduce='mean')
 
         modified_edge_index = torch.cat(
             (edge_index.to(self.device), block_edge_index), dim=-1)
@@ -275,7 +277,8 @@ class GRBCDAttack(torch.nn.Module):
             (edge_weight.to(self.device), block_edge_weight))
 
         modified_edge_index, modified_edge_weight = coalesce(
-            modified_edge_index, modified_edge_weight, self.num_nodes, 'sum')
+            modified_edge_index, modified_edge_weight,
+            num_nodes=self.num_nodes, reduce='sum')
 
         # Allow (soft) removal of edges
         is_edge_in_clean_adj = modified_edge_weight > 1
