@@ -64,7 +64,8 @@ if __name__ == '__main__':
     t_forward = t_backward = 0
     for i in range(num_warmups + num_steps):
         x = torch.randn(num_edges, num_feats, device='cuda')
-        x.requires_grad_(True)
+        if args.backward:
+            x.requires_grad_(True)
         torch.cuda.synchronize()
 
         t_start = time.perf_counter()
@@ -91,7 +92,8 @@ if __name__ == '__main__':
     t_forward = t_backward = 0
     for i in range(num_warmups + num_steps):
         x = torch.randn(num_edges, num_feats, device='cuda')
-        x.requires_grad_(True)
+        if args.backward:
+            x.requires_grad_(True)
         torch.cuda.synchronize()
 
         t_start = time.perf_counter()
