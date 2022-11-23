@@ -180,9 +180,10 @@ class SoftmaxAggregation(Aggregation):
             alpha = x * t
 
         if not self.learn and self.semi_grad:
-            alpha = alpha.detach()
-
-        alpha = softmax(alpha, index, ptr, dim_size, dim)
+            with torch.no_grad():
+                alpha = softmax(alpha, index, ptr, dim_size, dim)
+        else:
+            alpha = softmax(alpha, index, ptr, dim_size, dim)
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
     def __repr__(self) -> str:
