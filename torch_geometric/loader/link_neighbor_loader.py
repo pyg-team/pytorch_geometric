@@ -118,7 +118,7 @@ class LinkNeighborLoader(LinkLoader):
         neg_sampling (NegativeSamplingConfig, optional): The negative sampling
             strategy. Can be either :obj:`"binary"` or :obj:`"triplet"`, and
             can be further customized by an additional :obj:`amount` argument
-            to control the number of negatives to sample.
+            to control the ratio of sampled negatives to positive edges.
             If set to :obj:`"binary"`, will randomly sample negative links
             from the graph.
             In case :obj:`edge_label` does not exist, it will be automatically

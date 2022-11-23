@@ -212,7 +212,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
         edge_label_time=edge_time,
         batch_size=32,
         time_attr='time',
-        neg_sampling_ratio=1.0,
+        neg_sampling_ratio=0.5,
         drop_last=True,
     )
     for batch in loader:
