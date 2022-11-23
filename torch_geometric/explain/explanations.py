@@ -39,6 +39,12 @@ class Explanation(Data):
             **kwargs,
         )
 
+    def get_explanation_graph() -> Data:
+        pass
+
+    def get_complement_graph() -> Data:
+        pass
+
     @property
     def available_explanations(self) -> List[str]:
         """Returns the available explanation masks."""
