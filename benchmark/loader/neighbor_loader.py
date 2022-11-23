@@ -66,10 +66,10 @@ def run(args: argparse.ArgumentParser) -> None:
                             f'runtimes={runtimes}, average runtime={average_time}'
                         )
                         average_times.append(average_time)
-
-        if args.eval_batch_sizes is not None:
+        eval_batch_sizes = args.eval_batch_sizes if args.eval_batch_sizes else None
+        if eval_batch_sizes is not None:
             print('Evaluation sampling with all neighbors')
-            for batch_size in args.eval_batch_sizes:
+            for batch_size in eval_batch_sizes:
                 subgraph_loader = NeighborLoader(data, num_neighbors=[-1],
                                                  input_nodes=eval_idx,
                                                  batch_size=batch_size,
