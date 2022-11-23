@@ -26,7 +26,7 @@ def test_fused_aggregation(aggrs):
 
     aggr = FusedAggregation(aggrs)
     assert str(aggr) == 'FusedAggregation()'
-    out = aggr(x, index)
+    out = torch.cat(aggr(x, index), dim=-1)
 
     expected = torch.cat([aggr(y, index) for aggr in aggrs], dim=-1)
     assert torch.allclose(out, expected)
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         torch.cuda.synchronize()
 
         t_start = time.perf_counter()
-        out = fused_aggr(x, index, dim_size=num_nodes)
+        out = torch.cat(fused_aggr(x, index, dim_size=num_nodes), dim=-1)
 
         torch.cuda.synchronize()
         if i >= num_warmups:
