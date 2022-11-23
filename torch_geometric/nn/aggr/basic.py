@@ -101,12 +101,8 @@ class VarAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         mean = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
-
-        if self.semi_grad:
-            with torch.no_grad():
-                mean_2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
-        else:
-            mean_2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
+        x2 = x.detach() * x.detach() if self.semi_grad else x * x
+        mean_2 = self.reduce(x2, index, ptr, dim_size, dim, 'mean')
         return mean_2 - mean * mean
 
 
@@ -204,10 +200,9 @@ class SoftmaxAggregation(Aggregation):
             alpha = x * t
 
         if not self.learn and self.semi_grad:
-            with torch.no_grad():
-                alpha = softmax(alpha, index, ptr, dim_size, dim)
-        else:
-            alpha = softmax(alpha, index, ptr, dim_size, dim)
+            alpha = alpha.detach()
+        alpha = softmax(alpha, index, ptr, dim_size, dim)
+        alpha = softmax(alpha, index, ptr, dim_size, dim)
         return self.reduce(x * alpha, index, ptr, dim_size, dim, reduce='sum')
 
     def __repr__(self) -> str:

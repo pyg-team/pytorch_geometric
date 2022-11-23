@@ -251,16 +251,11 @@ class FusedAggregation(Aggregation):
             # `include_self=True` + manual masking leads to faster runtime:
             out = x.new_full((dim_size, num_feats), fill_value)
 
+            src = x
             if reduce == 'pow_sum':
-                if self.semi_grad:
-                    with torch.no_grad():
-                        out.scatter_reduce_(0, index, x * x, 'sum',
-                                            include_self=True)
-                else:
-                    out.scatter_reduce_(0, index, x * x, 'sum',
-                                        include_self=True)
-            else:
-                out.scatter_reduce_(0, index, x, reduce, include_self=True)
+                reduce = 'sum'
+                src = x.detach() * x.detach() if self.semi_grad else x * x
+            out.scatter_reduce_(0, index, src, reduce, include_self=True)
 
             if fill_value != 0.0:
                 assert mask is not None
