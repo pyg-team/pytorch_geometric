@@ -455,3 +455,11 @@ def test_hetero_transformer_self_loop_error():
     with pytest.raises(ValueError, match="incorrect message passing"):
         to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
                                                        ('b', 'to', 'a')]))
+
+
+def test_to_hetero_validate():
+    model = Net1()
+    metadata = (['my test'], [('my test', 'rel', 'my test')])
+
+    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
+        model = to_hetero(model, metadata, debug=False)

@@ -174,7 +174,7 @@ class ToHeteroWithBasesTransformer(Transformer):
                     f"The type '{name}' contains invalid characters which "
                     f"may lead to unexpected behaviour. To avoid any issues, "
                     f"ensure that your types only contain letters, numbers "
-                    f"and single underscores.")
+                    f"and underscores.")
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False

@@ -165,7 +165,7 @@ class ToHeteroTransformer(Transformer):
                     f"The type '{name}' contains invalid characters which "
                     f"may lead to unexpected behaviour. To avoid any issues, "
                     f"ensure that your types only contain letters, numbers "
-                    f"and single underscores.")
+                    f"and underscores.")
 
     def placeholder(self, node: Node, target: Any, name: str):
         # Adds a `get` call to the input dictionary for every node-type or
