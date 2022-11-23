@@ -597,4 +597,5 @@ def test_cpu_affinity_neighbor_loader():
                     stdout=subprocess.PIPE)
                 stdout = process.communicate()[0].decode('utf-8')
                 output.append(int(stdout.split(':')[1].strip()))
+            output = output[0] if nw == 1 else output
             assert output == expected[i]
