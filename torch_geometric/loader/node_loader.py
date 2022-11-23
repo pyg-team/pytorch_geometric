@@ -189,8 +189,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         and exacerbate performance.
 
         .. code-block:: python
-
-            with dataloader.enable_cpu_affinity(loader_cores=[1,2,3]):
+            loader = NeigborLoader(data, num_workers=3)
+            with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
                 <training or inference loop>
         Args:
             loader_cores ([int], optional):
