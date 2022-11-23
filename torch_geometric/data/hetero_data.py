@@ -479,16 +479,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return mapping
 
     def _check_type_name(self, name: str):
-        if not name.isidentifier() and not name.isdigit():
-            warnings.warn(f"The type '{name}' contains invalid characters "
-                          f"which might lead to unexpected behavior down the "
-                          f"line. To avoid any issues, ensure that your type "
-                          f"only contains letters, numbers and underscores.")
-        elif '__' in name:
+        if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which might lead to unexpected behavior "
-                          f"down the line. To avoid any issues, ensure that "
-                          f"your type only contains single underscores.")
+                          f"('__') which may lead to unexpected behaviour. "
+                          f"To avoid any issues, ensure that your type names "
+                          f"only contain single underscores.")
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
