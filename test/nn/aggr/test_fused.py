@@ -46,8 +46,7 @@ if __name__ == '__main__':
 
     aggrs = ['sum', 'mean', 'max', 'std']
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
-    from torch_geometric.nn.aggr import MultiAggregation
-    fused_aggr = MultiAggregation(aggrs)
+    fused_aggr = FusedAggregation(aggrs)
 
     num_warmups, num_steps = (500, 1000)
 
