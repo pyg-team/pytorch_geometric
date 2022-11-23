@@ -49,7 +49,8 @@ def run(args: argparse.ArgumentParser) -> None:
                         shuffle=True, num_workers=args.num_workers,
                         filter_per_worker=args.filter)
                     cpu_affinity = train_loader.enable_cpu_affinity(
-                    args.loader_cores) if args.cpu_affinity else nullcontext()
+                        args.loader_cores
+                    ) if args.cpu_affinity else nullcontext()
                     runtimes = []
                     num_iterations = 0
                     with profile, cpu_affinity:
@@ -76,7 +77,7 @@ def run(args: argparse.ArgumentParser) -> None:
                                                  num_workers=args.num_workers,
                                                  filter_per_worker=args.filter)
                 cpu_affinity = train_loader.enable_cpu_affinity(
-                args.loader_cores) if args.cpu_affinity else nullcontext()
+                    args.loader_cores) if args.cpu_affinity else nullcontext()
                 runtimes = []
                 num_iterations = 0
                 with profile, cpu_affinity:
