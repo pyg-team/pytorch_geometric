@@ -73,6 +73,8 @@ class PNAConv(MessagePassing):
             be split between towers or not (default: :obj:`False`).
         act (str or Callable, optional): Pre- and post-layer activation
             function to use. (default: :obj:`"relu"`)
+        train_norm (bool, optional) Whether a normalization parameter
+            is fixed or a trainable parameter. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
@@ -99,11 +101,12 @@ class PNAConv(MessagePassing):
         post_layers: int = 1,
         divide_input: bool = False,
         act: Union[str, Callable, None] = "relu",
+        train_norm: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
 
-        aggr = DegreeScalerAggregation(aggregators, scalers, deg)
+        aggr = DegreeScalerAggregation(aggregators, scalers, deg, train_norm)
         super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if divide_input:

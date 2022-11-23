@@ -25,15 +25,19 @@ class DegreeScalerAggregation(Aggregation):
             :obj:`"attenuation"`, :obj:`"linear"` and :obj:`"inverse_linear"`.
         deg (Tensor): Histogram of in-degrees of nodes in the training set,
             used by scalers to normalize.
+        train_norm (bool, optional) Whether a normalization parameter
+            is fixed or a trainable parameter. (default: :obj:`False`)
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         aggr: Union[str, List[str], Aggregation],
         scaler: Union[str, List[str]],
         deg: Tensor,
+        train_norm: bool = False,
         aggr_kwargs: Optional[List[Dict[str, Any]]] = None,
     ):
         super().__init__()
@@ -43,20 +47,42 @@ class DegreeScalerAggregation(Aggregation):
         elif isinstance(aggr, (tuple, list)):
             self.aggr = MultiAggregation(aggr, aggr_kwargs)
         else:
-            raise ValueError(f"Only strings, list, tuples and instances of"
-                             f"`torch_geometric.nn.aggr.Aggregation` are "
-                             f"valid aggregation schemes (got '{type(aggr)}')")
+            raise ValueError(
+                f"Only strings, list, tuples and instances of"
+                f"`torch_geometric.nn.aggr.Aggregation` are "
+                f"valid aggregation schemes (got '{type(aggr)}')"
+            )
 
         self.scaler = [scaler] if isinstance(aggr, str) else scaler
 
         deg = deg.to(torch.float)
         num_nodes = int(deg.sum())
         bin_degrees = torch.arange(deg.numel(), device=deg.device)
-        self.avg_deg: Dict[str, float] = {
-            'lin': float((bin_degrees * deg).sum()) / num_nodes,
-            'log': float(((bin_degrees + 1).log() * deg).sum()) / num_nodes,
-            'exp': float((bin_degrees.exp() * deg).sum()) / num_nodes,
+        self.init_avg_deg: Dict[str, float] = {
+            "lin": float((bin_degrees * deg).sum()) / num_nodes,
+            "log": float(((bin_degrees + 1).log() * deg).sum()) / num_nodes,
         }
+
+        if train_norm:
+            self.avg_deg_lin = torch.nn.Parameter(
+                torch.Tensor([self.init_avg_deg["lin"]])
+            )
+            self.avg_deg_log = torch.nn.Parameter(
+                torch.Tensor([self.init_avg_deg["log"]])
+            )
+        else:
+            self.register_buffer(
+                "avg_deg_lin", torch.Tensor([self.init_avg_deg["lin"]])
+            )
+            self.register_buffer(
+                "avg_deg_log", torch.Tensor([self.init_avg_deg["log"]])
+            )
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.avg_deg_lin.data.fill_(self.init_avg_deg["lin"])
+        self.avg_deg_log.data.fill_(self.init_avg_deg["log"])
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -75,16 +101,16 @@ class DegreeScalerAggregation(Aggregation):
 
         outs = []
         for scaler in self.scaler:
-            if scaler == 'identity':
+            if scaler == "identity":
                 out_scaler = out
-            elif scaler == 'amplification':
-                out_scaler = out * (torch.log(deg + 1) / self.avg_deg['log'])
-            elif scaler == 'attenuation':
-                out_scaler = out * (self.avg_deg['log'] / torch.log(deg + 1))
-            elif scaler == 'linear':
-                out_scaler = out * (deg / self.avg_deg['lin'])
-            elif scaler == 'inverse_linear':
-                out_scaler = out * (self.avg_deg['lin'] / deg)
+            elif scaler == "amplification":
+                out_scaler = out * (torch.log(deg + 1) / self.avg_deg_log)
+            elif scaler == "attenuation":
+                out_scaler = out * (self.avg_deg_log / torch.log(deg + 1))
+            elif scaler == "linear":
+                out_scaler = out * (deg / self.avg_deg_lin)
+            elif scaler == "inverse_linear":
+                out_scaler = out * (self.avg_deg_lin / deg)
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
             outs.append(out_scaler)
