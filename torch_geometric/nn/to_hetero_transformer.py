@@ -163,8 +163,8 @@ class ToHeteroTransformer(Transformer):
             if not name.isidentifier():
                 warnings.warn(
                     f"The type '{name}' contains invalid characters which "
-                    f"might lead to unexpected behaviour. To avoid any issues "
-                    f", ensure that your types only contain letters, numbers, "
+                    f"may lead to unexpected behaviour. To avoid any issues, "
+                    f"ensure that your types only contain letters, numbers "
                     f"and single underscores.")
 
     def placeholder(self, node: Node, target: Any, name: str):

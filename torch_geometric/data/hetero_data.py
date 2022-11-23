@@ -481,9 +481,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _check_type_name(self, name: str):
         if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which might lead to unexpected behavior "
-                          f"down the line. To avoid any issues, ensure that "
-                          f"your type only contains single underscores.")
+                          f"('__') which may lead to unexpected behaviour. "
+                          f"To avoid any issues, ensure that your type names "
+                          f"only contain single underscores.")
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
