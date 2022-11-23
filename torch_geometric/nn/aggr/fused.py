@@ -20,6 +20,35 @@ class FusedAggregation(Aggregation):
     r"""Helper class to fuse computation of multiple aggregations together.
     Used internally in :class:`~torch_geometric.nn.aggr.MultiAggregation` to
     speed-up computation.
+    Currently, the following optimizations are performed:
+
+    * :class:`MeanAggregation` will share the output with
+      :class:`SumAggregation` in case it is present as well.
+
+    * :class:`VarAggregation` will share the output with either
+      :class:`MeanAggregation` or :class:`SumAggregation` in case one of them
+      is present as well.
+
+    * :class:`StdAggregation` will share the output with either
+      :class:`VarAggregation`, :class:`MeanAggregation` or
+      :class:`SumAggregation` in case one of them is present as well.
+
+    In addition, temporary values such as the count per group index or the
+    mask for invalid rows are shared as well.
+
+    Benchmarking results on PyTorch 1.12 (summed over 1000 runs):
+
+    +------------------------------+---------+---------+
+    | Aggregators                  | Vanilla | Fusion  |
+    +==============================+=========+=========+
+    | :obj:`[sum, mean]`           | 0.4019s | 0.1666s |
+    +------------------------------+---------+---------+
+    | :obj:`[sum, mean, min, max]` | 0.7841s | 0.4223s |
+    +------------------------------+---------+---------+
+    | :obj:`[sum, mean, var]`      | 0.9711s | 0.3614s |
+    +------------------------------+---------+---------+
+    | :obj:`[sum, mean, var, std]` | 1.5994s | 0.3722s |
+    +------------------------------+---------+---------+
 
     Args:
         aggrs (list): The list of aggregation schemes to use.
