@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added triplet sampling in `LinkNeighborLoader` ([#6004](https://github.com/pyg-team/pytorch_geometric/pull/6004))
+- Added `FusedAggregation` of simple scatter reductions ([#6036](https://github.com/pyg-team/pytorch_geometric/pull/6036))
 - Added a `to_smiles` function ([#6038](https://github.com/pyg-team/pytorch_geometric/pull/6038))
 - Added option to make normalization coefficients trainable in `PNAConv` ([#6039](https://github.com/pyg-team/pytorch_geometric/pull/6039))
 - Added `semi_grad` option in `VarAggregation` and `StdAggregation` ([#6042](https://github.com/pyg-team/pytorch_geometric/pull/6042))

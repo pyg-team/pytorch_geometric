@@ -329,9 +329,7 @@ def test_lightning_hetero_link_data():
     )
     assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
     for batch in datamodule.train_dataloader():
-        assert 'edge_label' in batch['author', 'paper']
         assert 'edge_label_index' in batch['author', 'paper']
-        break
 
     data['author'].time = torch.arange(data['author'].num_nodes)
     data['paper'].time = torch.arange(data['paper'].num_nodes)
@@ -349,10 +347,8 @@ def test_lightning_hetero_link_data():
     )
 
     for batch in datamodule.train_dataloader():
-        assert 'edge_label' in batch['author', 'paper']
         assert 'edge_label_index' in batch['author', 'paper']
         assert 'edge_label_time' in batch['author', 'paper']
-        break
 
 
 @withPackage('pytorch_lightning')
@@ -388,5 +384,4 @@ def test_lightning_hetero_link_data_custom_store():
     )
 
     batch = next(iter(datamodule.train_dataloader()))
-    assert 'edge_label' in batch['author', 'paper']
     assert 'edge_label_index' in batch['author', 'paper']
