@@ -111,14 +111,13 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         # define context manager parameters
-                        if args.cpu_affinity:
-                            cpu_affinity = subgraph_loader.enable_cpu_affinity(
-                                args.loader_cores)
-                        else:
-                            cpu_affinity = nullcontext()
+                        
+                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
                         profile = torch_profile(
                         ) if args.profile else nullcontext()
-                        emit_itt = emit_itt(
+                        itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
 
                         with cpu_affinity, amp, timeit() as time:
@@ -126,7 +125,7 @@ def run(args: argparse.ArgumentParser) -> None:
                                 model.inference(subgraph_loader, device,
                                                 progress_bar=True)
                             time.reset()
-                            with emit_itt, profile:
+                            with itt, profile:
                                 model.inference(subgraph_loader, device,
                                                 progress_bar=True)
 
@@ -139,39 +138,35 @@ def run(args: argparse.ArgumentParser) -> None:
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
-    argparser.add_argument('--datasets', nargs='+',
-                           default=['ogbn-mag', 'ogbn-products',
-                                    'Reddit'], type=str)
-    argparser.add_argument(
-        '--use-sparse-tensor', action='store_true',
+    add = argparser.add_argument
+    
+    add('--datasets', nargs='+',
+        default=['ogbn-mag', 'ogbn-products',
+                 'Reddit'], type=str)
+    add('--use-sparse-tensor', action='store_true',
         help='use torch_sparse.SparseTensor as graph storage format')
-    argparser.add_argument(
-        '--models', nargs='+',
+    add('--models', nargs='+',
         default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
-    argparser.add_argument('--root', default='../../data', type=str,
-                           help='relative path to look for the datasets')
-    argparser.add_argument('--eval-batch-sizes', nargs='+',
-                           default=[512, 1024, 2048, 4096, 8192], type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+',
-                           default=[64, 128, 256], type=int)
-    argparser.add_argument(
-        '--num-heads', default=2, type=int,
+    add('--root', default='../../data', type=str,
+        help='relative path to look for the datasets')
+    add('--eval-batch-sizes', nargs='+',
+        default=[512, 1024, 2048, 4096, 8192], type=int)
+    add('--num-layers', nargs='+', default=[2, 3], type=int)
+    add('--num-hidden-channels', nargs='+',
+        default=[64, 128, 256], type=int)
+    add('--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')
-    argparser.add_argument(
-        '--hetero-num-neighbors', default=10, type=int,
+    add('--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
-    argparser.add_argument('--num-workers', default=0, type=int)
-    argparser.add_argument(
-        '--num-steps', default=-1, type=int,
+    add('--num-workers', default=0, type=int)
+    add('--num-steps', default=-1, type=int,
         help='number of steps, -1 means iterating through all the data')
-    argparser.add_argument('--warmup', default=1, type=int)
-    argparser.add_argument('--profile', action='store_true')
-    argparser.add_argument('--vtune-profile', action='store_true')
-    argparser.add_argument('--bf16', action='store_true')
-    argparser.add_argument('--cpu-affinity', action='store_true')
-    argparser.add_argument('--loader-cores', nargs='+', default=[], type=int)
-
-    args = argparser.parse_args()
-
-    run(args)
+    add('--warmup', default=1, type=int)
+    add('--profile', action='store_true')
+    add('--vtune-profile', action='store_true')
+    add('--bf16', action='store_true')
+    add('--cpu-affinity', action='store_true',
+        help="Use DataLoader affinitzation.")
+    add('--loader-cores', nargs='+', default=[], type=int,
+        help="List of CPU core IDs to use for DataLoader workers.")
+    run(argparser.parse_args())
