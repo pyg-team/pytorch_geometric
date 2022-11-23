@@ -578,12 +578,11 @@ def test_memmap_neighbor_loader():
 @onlyUnix
 def test_cpu_affinity_neighbor_loader():
     data = Data(x=torch.randn(1, 1))
-    num_workers = 1
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                            num_workers=num_workers)
+                            num_workers=2)
     # test default core ids [1,2] and custom [3,6]
-    loader_cores = [None, 0]
-    expected = [1, 0]
+    loader_cores = [None, [3, 6]]
+    expected = [[1, 2], [3, 6]]
     for i, core_ids in enumerate(loader_cores):
         output = []
         with loader.enable_cpu_affinity(loader_cores=core_ids):

@@ -37,10 +37,7 @@ def run(args: argparse.ArgumentParser) -> None:
 
         data = dataset[0].to(args.device)
         average_times = []
-        # define contextmanager settings
         profile = torch_profile() if args.profile else nullcontext()
-        cpu_affinity = subgraph_loader.enable_cpu_affinity(
-            args.loader_cores) if args.cpu_affinity else nullcontext()
         # run dataloader iteration
         if neighbor_sizes is not None:
             for num_neighbors in neighbor_sizes:
@@ -51,6 +48,8 @@ def run(args: argparse.ArgumentParser) -> None:
                         input_nodes=train_idx, batch_size=batch_size,
                         shuffle=True, num_workers=args.num_workers,
                         filter_per_worker=args.filter)
+                    cpu_affinity = train_loader.enable_cpu_affinity(
+                    args.loader_cores) if args.cpu_affinity else nullcontext()
                     runtimes = []
                     num_iterations = 0
                     with profile, cpu_affinity:
@@ -76,6 +75,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                                  shuffle=False,
                                                  num_workers=args.num_workers,
                                                  filter_per_worker=args.filter)
+                cpu_affinity = train_loader.enable_cpu_affinity(
+                args.loader_cores) if args.cpu_affinity else nullcontext()
                 runtimes = []
                 num_iterations = 0
                 with profile, cpu_affinity:
