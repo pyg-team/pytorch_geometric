@@ -180,8 +180,15 @@ class GNNExplainer(ExplainerAlgorithm):
                 else:
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.common_attributes:
-                node_feat_mask_ = self._reshape_common_attributes(
-                    node_mask, num_nodes)
+                if task_level == ModelTaskLevel.node:
+                    node_feat_mask_ = torch.zeros(num_nodes, node_mask.numel(),
+                                                  dtype=torch.float)
+                    node_feat_mask_[subset] = node_mask
+                elif task_level == ModelTaskLevel.graph:
+                    node_feat_mask_ = self._reshape_common_attributes(
+                        node_mask, num_nodes)
+                else:
+                    raise NotImplementedError
             else:
                 raise NotImplementedError
 
