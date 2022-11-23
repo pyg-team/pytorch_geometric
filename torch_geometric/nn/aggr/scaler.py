@@ -31,7 +31,6 @@ class DegreeScalerAggregation(Aggregation):
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         aggr: Union[str, List[str], Aggregation],
@@ -47,11 +46,9 @@ class DegreeScalerAggregation(Aggregation):
         elif isinstance(aggr, (tuple, list)):
             self.aggr = MultiAggregation(aggr, aggr_kwargs)
         else:
-            raise ValueError(
-                f"Only strings, list, tuples and instances of"
-                f"`torch_geometric.nn.aggr.Aggregation` are "
-                f"valid aggregation schemes (got '{type(aggr)}')"
-            )
+            raise ValueError(f"Only strings, list, tuples and instances of"
+                             f"`torch_geometric.nn.aggr.Aggregation` are "
+                             f"valid aggregation schemes (got '{type(aggr)}')")
 
         self.scaler = [scaler] if isinstance(aggr, str) else scaler
 
@@ -65,18 +62,14 @@ class DegreeScalerAggregation(Aggregation):
 
         if train_norm:
             self.avg_deg_lin = torch.nn.Parameter(
-                torch.Tensor([self.init_avg_deg["lin"]])
-            )
+                torch.Tensor([self.init_avg_deg["lin"]]))
             self.avg_deg_log = torch.nn.Parameter(
-                torch.Tensor([self.init_avg_deg["log"]])
-            )
+                torch.Tensor([self.init_avg_deg["log"]]))
         else:
-            self.register_buffer(
-                "avg_deg_lin", torch.Tensor([self.init_avg_deg["lin"]])
-            )
-            self.register_buffer(
-                "avg_deg_log", torch.Tensor([self.init_avg_deg["log"]])
-            )
+            self.register_buffer("avg_deg_lin",
+                                 torch.Tensor([self.init_avg_deg["lin"]]))
+            self.register_buffer("avg_deg_log",
+                                 torch.Tensor([self.init_avg_deg["log"]]))
 
         self.reset_parameters()
 
