@@ -76,6 +76,8 @@ class PNAConv(MessagePassing):
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
+        train_norm (bool, optional) Whether normalization parameters
+            are trainable. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -100,10 +102,11 @@ class PNAConv(MessagePassing):
         divide_input: bool = False,
         act: Union[str, Callable, None] = "relu",
         act_kwargs: Optional[Dict[str, Any]] = None,
+        train_norm: bool = False,
         **kwargs,
     ):
 
-        aggr = DegreeScalerAggregation(aggregators, scalers, deg)
+        aggr = DegreeScalerAggregation(aggregators, scalers, deg, train_norm)
         super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if divide_input:
