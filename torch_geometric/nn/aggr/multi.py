@@ -70,20 +70,20 @@ class MultiAggregation(Aggregation):
         ])
 
         # Divide the set into fusable and non-fusable aggregations:
-        fused_aggrs = []
-        self.fused_out_index = []
-        self.non_fused_aggrs = []
-        self.non_fused_out_index = []
+        fused_aggrs: List[Aggregation] = []
+        self.fused_out_index: List[int] = []
+        # self.non_fused_aggrs: List[Aggregation] = []
+        self.is_fused_aggr: List[bool] = []
         for i, aggr in enumerate(self.aggrs):
             if aggr.__class__ in FusedAggregation.FUSABLE_AGGRS:
                 fused_aggrs.append(aggr)
                 self.fused_out_index.append(i)
+                self.is_fused_aggr.append(True)
             else:
-                self.non_fused_aggrs.append(aggr)
-                self.non_fused_out_index.append(i)
+                self.is_fused_aggr.append(False)
 
         if len(fused_aggrs) > 0:
-            self.fused_aggr = FusedAggregation(fused_aggrs, cat=False)
+            self.fused_aggr = FusedAggregation(fused_aggrs)
         else:
             self.fused_aggr = None
 
@@ -158,14 +158,15 @@ class MultiAggregation(Aggregation):
             outs = [aggr(x, index, ptr, dim_size, dim) for aggr in self.aggrs]
             return self.combine(outs)
 
-        outs = [None] * len(self.aggrs)
+        outs: List[Tensor] = [x] * len(self.aggrs)  # Fill with dummy tensors.
 
         fused_outs = self.fused_aggr(x, index, ptr, dim_size, dim)
         for i, out in zip(self.fused_out_index, fused_outs):
             outs[i] = out
 
-        for i, aggr in zip(self.non_fused_out_index, self.non_fused_aggrs):
-            outs[i] = aggr(x, index, ptr, dim_size, dim)
+        for i, aggr in enumerate(self.aggrs):
+            if not self.is_fused_aggr[i]:
+                outs[i] = aggr(x, index, ptr, dim_size, dim)
 
         return self.combine(outs)
 
@@ -176,10 +177,10 @@ class MultiAggregation(Aggregation):
         if self.mode == 'cat':
             return torch.cat(inputs, dim=-1)
 
-        if self.mode == 'proj':
+        if hasattr(self, 'lin'):
             return self.lin(torch.cat(inputs, dim=-1))
 
-        if self.mode == 'attn':
+        if hasattr(self, 'multihead_attn'):
             x = torch.stack(
                 [head(x) for x, head in zip(inputs, self.lin_heads)],
                 dim=0,
