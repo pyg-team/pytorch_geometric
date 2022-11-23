@@ -7,7 +7,6 @@ from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -80,24 +79,22 @@ class NodeLoader(torch.utils.data.DataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        # Get node type (or `None` for homogeneous graphs):
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
-
         self.data = data
-        self.node_type = node_type
+        # self.node_type = node_type
         self.node_sampler = node_sampler
-        self.input_data = InputData(input_nodes, input_time)
+        self.input_nodes = get_input_nodes(data, input_nodes)
+        # self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
 
-        iterator = range(input_nodes.size(0))
+        iterator = range(len(self.input_nodes))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
     def collate_fn(self, index: NodeSamplerInput) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
-        input_data: NodeSamplerInput = self.input_data[index]
+        input_nodes: NodeSamplerInput = self.input_nodes[index]
 
-        out = self.node_sampler.sample_from_nodes(input_data)
+        out = self.node_sampler.sample_from_nodes(input_nodes)
 
         if self.filter_per_worker:  # Execute `filter_fn` in the worker process
             out = self.filter_fn(out)
@@ -130,8 +127,9 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.node_type].input_id = out.metadata
-            data[self.node_type].batch_size = out.metadata.size(0)
+            for key, metadata in out.metadata.items():
+                data[key].input_id = out.metadata
+                data[key].batch_size = out.metadata.size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

@@ -42,6 +42,7 @@ NoneType = Optional[Tensor]
 
 # Types for sampling ##########################################################
 
-InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+InputNodes = Union[OptTensor, NodeType, List[NodeType],
+                   Tuple[NodeType, OptTensor], Dict[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
 NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
