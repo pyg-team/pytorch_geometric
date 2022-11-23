@@ -1,10 +1,10 @@
 import os
 import random
+import subprocess
 import sys
 
 import numpy as np
 import pytest
-import subprocess
 import torch
 from torch_sparse import SparseTensor
 
@@ -573,16 +573,17 @@ def test_memmap_neighbor_loader():
     assert batch.x.size() == (batch.num_nodes, 32)
 
     os.remove(path)
-    
-@onlyUnix    
+
+
+@onlyUnix
 def test_cpu_affinity_neighbor_loader():
     data = Data(x=torch.randn(1, 1))
     num_workers = 2
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
                             num_workers=num_workers)
     # test default core ids [1,2] and custom [3,6]
-    loader_cores = [None, [3,6]]
-    expected = [[1,2], [3,6]]
+    loader_cores = [None, [3, 6]]
+    expected = [[1, 2], [3, 6]]
     for i, core_ids in enumerate(loader_cores):
         output = []
         with loader.enable_cpu_affinity(loader_cores=core_ids):
@@ -590,8 +591,9 @@ def test_cpu_affinity_neighbor_loader():
                 iterator = loader._get_iterator().iterator
                 workers = iterator._workers
             for worker in workers:
-                process = subprocess.Popen(['taskset', '-c', '-p' ,f'{worker.pid}'], 
-                                            stdout=subprocess.PIPE)
+                process = subprocess.Popen(
+                    ['taskset', '-c', '-p', f'{worker.pid}'],
+                    stdout=subprocess.PIPE)
                 stdout = process.communicate()[0].decode('utf-8')
                 output.append(int(stdout.split(':')[1].strip()))
             assert output == expected[i]
