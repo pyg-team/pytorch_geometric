@@ -25,8 +25,8 @@ class DegreeScalerAggregation(Aggregation):
             :obj:`"attenuation"`, :obj:`"linear"` and :obj:`"inverse_linear"`.
         deg (Tensor): Histogram of in-degrees of nodes in the training set,
             used by scalers to normalize.
-        train_norm (bool, optional) Whether a normalization parameter
-            is fixed or a trainable parameter. (default: :obj:`False`)
+        train_norm (bool, optional) Whether normalization parameters
+            are trainable. (default: :obj:`False`)
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
@@ -53,29 +53,24 @@ class DegreeScalerAggregation(Aggregation):
         self.scaler = [scaler] if isinstance(aggr, str) else scaler
 
         deg = deg.to(torch.float)
-        num_nodes = int(deg.sum())
-        bin_degrees = torch.arange(deg.numel(), device=deg.device)
-        self.init_avg_deg: Dict[str, float] = {
-            "lin": float((bin_degrees * deg).sum()) / num_nodes,
-            "log": float(((bin_degrees + 1).log() * deg).sum()) / num_nodes,
-        }
+        N = int(deg.sum())
+        bin_degree = torch.arange(deg.numel(), device=deg.device)
+
+        self.init_avg_deg_lin = float((bin_degree * deg).sum()) / N
+        self.init_avg_deg_log = float(((bin_degree + 1).log() * deg).sum()) / N
 
         if train_norm:
-            self.avg_deg_lin = torch.nn.Parameter(
-                torch.Tensor([self.init_avg_deg["lin"]]))
-            self.avg_deg_log = torch.nn.Parameter(
-                torch.Tensor([self.init_avg_deg["log"]]))
+            self.avg_deg_lin = torch.nn.Parameter(torch.Tensor(1))
+            self.avg_deg_log = torch.nn.Parameter(torch.Tensor(1))
         else:
-            self.register_buffer("avg_deg_lin",
-                                 torch.Tensor([self.init_avg_deg["lin"]]))
-            self.register_buffer("avg_deg_log",
-                                 torch.Tensor([self.init_avg_deg["log"]]))
+            self.register_buffer('avg_deg_lin', torch.Tensor(1))
+            self.register_buffer('avg_deg_log', torch.Tensor(1))
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.avg_deg_lin.data.fill_(self.init_avg_deg["lin"])
-        self.avg_deg_log.data.fill_(self.init_avg_deg["log"])
+        self.avg_deg_lin.data.fill_(self.init_avg_deg_lin)
+        self.avg_deg_log.data.fill_(self.init_avg_deg_log)
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -94,15 +89,15 @@ class DegreeScalerAggregation(Aggregation):
 
         outs = []
         for scaler in self.scaler:
-            if scaler == "identity":
+            if scaler == 'identity':
                 out_scaler = out
-            elif scaler == "amplification":
+            elif scaler == 'amplification':
                 out_scaler = out * (torch.log(deg + 1) / self.avg_deg_log)
-            elif scaler == "attenuation":
+            elif scaler == 'attenuation':
                 out_scaler = out * (self.avg_deg_log / torch.log(deg + 1))
-            elif scaler == "linear":
+            elif scaler == 'linear':
                 out_scaler = out * (deg / self.avg_deg_lin)
-            elif scaler == "inverse_linear":
+            elif scaler == 'inverse_linear':
                 out_scaler = out * (self.avg_deg_lin / deg)
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
