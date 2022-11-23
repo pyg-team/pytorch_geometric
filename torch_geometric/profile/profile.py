@@ -128,7 +128,7 @@ class timeit(ContextDecorator):
             self.duration = self.duration / self.avg_time_divisor
         if self.log:
             print(f'Time: {self.duration:.8f}s', flush=True)
-            
+
     def reset(self):
         r"""Prints the duration and resets current timer."""
         if self.t_start is None:
