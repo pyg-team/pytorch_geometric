@@ -235,10 +235,9 @@ class NodeLoader(torch.utils.data.DataLoader):
                 else:
                     node0_cores = list(range(psutil.cpu_count(logical=False)))
 
-                if node0_cores is not None and (len(node0_cores) - 1 <
-                                                self.num_workers):
+                if len(node0_cores) - 1 < self.num_workers:
                     raise Exception(
-                        f'More workers than available cores {node0_cores}')
+                        f'More workers than available cores {node0_cores[1:]}')
 
                 # set default loader core ids
                 loader_cores = node0_cores[1:self.num_workers + 1]
