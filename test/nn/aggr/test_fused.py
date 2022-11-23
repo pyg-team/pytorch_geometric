@@ -19,7 +19,7 @@ def test_fused_aggregation(aggrs):
 
     x = torch.randn(6, 1)
     y = x.clone()
-    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    index = torch.tensor([0, 0, 1, 1, 1, 3])
 
     x.requires_grad_(True)
     y.requires_grad_(True)
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     x = torch.randn(50000, 64, device='cuda')
     index = torch.randint(1000, (x.size(0), ), device='cuda')
 
-    aggrs = ['sum', 'mean', 'min', 'max', 'std']
+    aggrs = ['sum', 'mean', 'max', 'std']
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
     fused_aggr = FusedAggregation(aggrs)
 

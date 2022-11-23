@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,35 +13,7 @@ from torch_geometric.nn import (
     SumAggregation,
     VarAggregation,
 )
-
-# We can fuse all aggregations together that rely on `scatter` directives.
-FUSABLE_AGGRS = {
-    SumAggregation,
-    MeanAggregation,
-    MaxAggregation,
-    MinAggregation,
-    MulAggregation,
-    VarAggregation,
-    StdAggregation,
-}
-
-# All aggregations that rely on computing the degree of indices.
-DEGREE_BASED_AGGRS = {
-    MeanAggregation,
-    VarAggregation,
-    StdAggregation,
-}
-
-# Map aggregations to `reduce` options in `scatter` directives.
-REDUCE = {
-    SumAggregation: 'sum',
-    MeanAggregation: 'sum',
-    MaxAggregation: 'amax',
-    MinAggregation: 'amin',
-    MulAggregation: 'prod',
-    VarAggregation: 'pow_sum',
-    StdAggregation: 'pow_sum',
-}
+from torch_geometric.nn.resolver import aggregation_resolver
 
 
 class FusedAggregation(Aggregation):
@@ -52,14 +24,59 @@ class FusedAggregation(Aggregation):
     Args:
         aggrs (list): The list of aggregation schemes to use.
     """
-    def __init__(self, aggrs: List[Aggregation]):
+    # We can fuse all aggregations together that rely on `scatter` directives.
+    FUSABLE_AGGRS = {
+        SumAggregation,
+        MeanAggregation,
+        MinAggregation,
+        MaxAggregation,
+        MulAggregation,
+        VarAggregation,
+        StdAggregation,
+    }
+
+    # All aggregations that rely on computing the degree of indices.
+    DEGREE_BASED_AGGRS = {
+        MeanAggregation,
+        VarAggregation,
+        StdAggregation,
+    }
+
+    # All aggregations that require manual masking for invalid rows:
+    MASK_REQUIRED_AGGRS = {
+        MinAggregation,
+        MaxAggregation,
+        MulAggregation,
+    }
+
+    # Map aggregations to `reduce` options in `scatter` directives.
+    REDUCE = {
+        SumAggregation: 'sum',
+        MeanAggregation: 'sum',
+        MinAggregation: 'amin',
+        MaxAggregation: 'amax',
+        MulAggregation: 'prod',
+        VarAggregation: 'pow_sum',
+        StdAggregation: 'pow_sum',
+    }
+
+    def __init__(self, aggrs: List[Union[Aggregation, str]]):
         super().__init__()
 
+        if not isinstance(aggrs, (list, tuple)):
+            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
+                             f"be a list or tuple (got '{type(aggrs)}').")
+
+        if len(aggrs) == 0:
+            raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
+                             f"not be empty.")
+
+        aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
         self.aggr_cls = [aggr.__class__ for aggr in aggrs]
         self.aggr_index = {cls: i for i, cls in enumerate(self.aggr_cls)}
 
         for cls in self.aggr_cls:
-            if cls not in FUSABLE_AGGRS:
+            if cls not in self.FUSABLE_AGGRS:
                 raise ValueError(f"Received aggregation '{cls.__name__}' in "
                                  f"'{self.__class__.__name__}' which is not "
                                  f"fusable")
@@ -67,8 +84,14 @@ class FusedAggregation(Aggregation):
         # Check whether we need to compute degree information:
         self.need_degree = False
         for cls in self.aggr_cls:
-            if cls in DEGREE_BASED_AGGRS:
+            if cls in self.DEGREE_BASED_AGGRS:
                 self.need_degree = True
+
+        # Check whether we need to compute mask information:
+        self.requires_mask = False
+        for cls in self.aggr_cls:
+            if cls in self.MASK_REQUIRED_AGGRS:
+                self.requires_mask = True
 
         # Determine which reduction to use for each aggregator:
         # An entry of `None` means that this operator re-uses intermediate
@@ -85,20 +108,20 @@ class FusedAggregation(Aggregation):
                     self.lookup_ops.append(
                         (SumAggregation, self.aggr_index[SumAggregation]))
                 else:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(None)
 
             elif cls == VarAggregation:
                 if MeanAggregation in self.aggr_index:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(
                         (MeanAggregation, self.aggr_index[MeanAggregation]))
                 elif SumAggregation in self.aggr_index:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(
                         (SumAggregation, self.aggr_index[SumAggregation]))
                 else:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(None)
 
             elif cls == StdAggregation:
@@ -108,19 +131,19 @@ class FusedAggregation(Aggregation):
                     self.lookup_ops.append(
                         (VarAggregation, self.aggr_index[VarAggregation]))
                 elif MeanAggregation in self.aggr_index:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(
                         (MeanAggregation, self.aggr_index[MeanAggregation]))
                 elif SumAggregation in self.aggr_index:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(
                         (SumAggregation, self.aggr_index[SumAggregation]))
                 else:
-                    self.reduce_ops.append(REDUCE[cls])
+                    self.reduce_ops.append(self.REDUCE[cls])
                     self.lookup_ops.append(None)
 
             else:
-                self.reduce_ops.append(REDUCE[cls])
+                self.reduce_ops.append(self.REDUCE[cls])
                 self.lookup_ops.append(None)
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
@@ -128,21 +151,23 @@ class FusedAggregation(Aggregation):
                 dim: int = -2) -> Tensor:
 
         # Assert two-dimensional input for now to simplify computation:
+        # TODO refactor this to support any dimension.
         self.assert_index_present(index)
         self.assert_two_dimensional_input(x, dim)
 
         if self.need_degree:
             count = x.new_zeros(dim_size)
             count.scatter_add_(0, index, x.new_ones(x.size(0)))
-            count = count.view(-1, 1)
+            if self.requires_mask:
+                mask = count == 0
+            count = count.clamp_(min=1).view(-1, 1)
 
-        # Mask to set non-existing indicses to zero:
-        mask = x.new_ones(dim_size, dtype=torch.bool)
-        mask[index] = False
+        elif self.requires_mask:  # Mask to set non-existing indicses to zero:
+            mask = x.new_ones(dim_size, dtype=torch.bool)
+            mask[index] = False
 
-        F = x.size(-1)
-        index = index.view(-1, 1).expand(-1, F)
-        out = x.new_empty(dim_size, len(self.aggr_cls) * F)
+        num_feats = x.size(-1)
+        index = index.view(-1, 1).expand(-1, num_feats)
 
         #######################################################################
 
@@ -157,8 +182,19 @@ class FusedAggregation(Aggregation):
             src = x * x if reduce == 'pow_sum' else x
             reduce = 'sum' if reduce == 'pow_sum' else reduce
 
-            out = x.new_empty(dim_size, F)
-            out.scatter_reduce_(0, index, src, reduce, include_self=False)
+            fill_value = 0.0
+            if reduce == 'amin':
+                fill_value = float('inf')
+            elif reduce == 'amax':
+                fill_value = float('-inf')
+            elif reduce == 'prod':
+                fill_value = 1.0
+
+            # `include_self=True` + manual masking leads to faster runtime:
+            out = x.new_full((dim_size, num_feats), fill_value)
+            out.scatter_reduce_(0, index, src, reduce, include_self=True)
+            if fill_value != 0.0:
+                out = out.masked_fill(mask.view(-1, 1), 0.0)
             outs.append(out)
 
         #######################################################################
@@ -179,9 +215,8 @@ class FusedAggregation(Aggregation):
         i = self.aggr_index.get(VarAggregation)
         if i is not None:
             if self.lookup_ops[i] is None:
-                mean = x.new_empty(dim_size, F)
-                mean.scatter_reduce_(0, index, x, reduce='sum',
-                                     include_self=False)
+                mean = x.new_zeros(dim_size, num_feats)
+                mean.scatter_reduce_(0, index, x, 'sum', include_self=True)
                 mean = mean / count
             else:
                 tmp_aggr, j = self.lookup_ops[i]
@@ -201,9 +236,8 @@ class FusedAggregation(Aggregation):
             var = None
             if self.lookup_ops[i] is None:
                 pow_sum = outs[i]
-                mean = x.new_empty(dim_size, F)
-                mean.scatter_reduce_(0, index, x, reduce='sum',
-                                     include_self=False)
+                mean = x.new_zeros(dim_size, num_feats)
+                mean.scatter_reduce_(0, index, x, 'sum', include_self=True)
                 mean = mean / count
             else:
                 tmp_aggr, j = self.lookup_ops[i]
@@ -226,6 +260,5 @@ class FusedAggregation(Aggregation):
         #######################################################################
 
         out = torch.cat(outs, dim=-1)
-        out[mask] = 0.  # Set non-existing indices to zero.
 
         return out
