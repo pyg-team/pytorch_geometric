@@ -586,7 +586,7 @@ def test_cpu_affinity_neighbor_loader():
     for i, nw in enumerate(num_workers):
         output = []
         loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                        num_workers=nw)
+                                num_workers=nw)
         with loader.enable_cpu_affinity(loader_cores=loader_cores[i]):
             for batch in loader:
                 iterator = loader._get_iterator().iterator
