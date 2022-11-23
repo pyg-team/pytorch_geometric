@@ -111,7 +111,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         # define context manager parameters
-                        
+
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
                             args.loader_cores
                         ) if args.cpu_affinity else nullcontext()
@@ -139,21 +139,19 @@ def run(args: argparse.ArgumentParser) -> None:
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
     add = argparser.add_argument
-    
+
     add('--datasets', nargs='+',
-        default=['ogbn-mag', 'ogbn-products',
-                 'Reddit'], type=str)
+        default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
         help='use torch_sparse.SparseTensor as graph storage format')
     add('--models', nargs='+',
         default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
     add('--root', default='../../data', type=str,
         help='relative path to look for the datasets')
-    add('--eval-batch-sizes', nargs='+',
-        default=[512, 1024, 2048, 4096, 8192], type=int)
+    add('--eval-batch-sizes', nargs='+', default=[512, 1024, 2048, 4096, 8192],
+        type=int)
     add('--num-layers', nargs='+', default=[2, 3], type=int)
-    add('--num-hidden-channels', nargs='+',
-        default=[64, 128, 256], type=int)
+    add('--num-hidden-channels', nargs='+', default=[64, 128, 256], type=int)
     add('--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')
     add('--hetero-num-neighbors', default=10, type=int,
