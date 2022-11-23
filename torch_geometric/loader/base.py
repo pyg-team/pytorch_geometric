@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
 from torch.utils.data.dataloader import _BaseDataLoaderIter
-
+from torch import set_num_threads
 
 class DataLoaderIterator:
     r"""A data loader iterator extended by a simple post transformation
@@ -34,3 +34,15 @@ class DataLoaderIterator:
 
     def __next__(self) -> Any:
         return self.transform_fn(next(self.iterator))
+    
+class WorkerInitWrapper:
+    """Wraps the :attr:`worker_init_fn` argument of the DataLoader to set the number of
+    OMP threads to 1 for PyTorch DataLoader workers.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, worker_id):
+        set_num_threads(1)
+        if self.func is not None:
+            self.func(worker_id)
