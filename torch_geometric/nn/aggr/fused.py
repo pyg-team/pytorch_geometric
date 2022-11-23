@@ -114,6 +114,11 @@ class FusedAggregation(Aggregation):
                                  f"'{self.__class__.__name__}' which is not "
                                  f"fusable")
 
+        self.semi_grad = False
+        for aggr in aggrs:
+            if hasattr(aggr, 'semi_grad'):
+                self.semi_grad = self.semi_grad or aggr.semi_grad
+
         # Check whether we need to compute degree information:
         self.need_degree = False
         for cls in aggr_classes:
@@ -235,9 +240,6 @@ class FusedAggregation(Aggregation):
                 continue
             assert isinstance(reduce, str)
 
-            src = x * x if reduce == 'pow_sum' else x
-            reduce = 'sum' if reduce == 'pow_sum' else reduce
-
             fill_value = 0.0
             if reduce == 'amin':
                 fill_value = float('inf')
@@ -248,10 +250,23 @@ class FusedAggregation(Aggregation):
 
             # `include_self=True` + manual masking leads to faster runtime:
             out = x.new_full((dim_size, num_feats), fill_value)
-            out.scatter_reduce_(0, index, src, reduce, include_self=True)
+
+            if reduce == 'pow_sum':
+                reduce = 'sum'
+                if self.semi_grad:
+                    with torch.no_grad():
+                        out.scatter_reduce_(0, index, x * x, reduce,
+                                            include_self=True)
+                else:
+                    out.scatter_reduce_(0, index, x * x, reduce,
+                                        include_self=True)
+            else:
+                out.scatter_reduce_(0, index, x, reduce, include_self=True)
+
             if fill_value != 0.0:
                 assert mask is not None
                 out = out.masked_fill(mask.view(-1, 1), 0.0)
+
             outs.append(out)
 
         #######################################################################
