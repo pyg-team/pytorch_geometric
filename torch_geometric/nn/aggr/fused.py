@@ -3,8 +3,8 @@ from typing import Any, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.nn import (
-    Aggregation,
+from torch_geometric.nn.aggr.base import Aggregation
+from torch_geometric.nn.aggr.basic import (
     MaxAggregation,
     MeanAggregation,
     MinAggregation,
@@ -52,6 +52,8 @@ class FusedAggregation(Aggregation):
 
     Args:
         aggrs (list): The list of aggregation schemes to use.
+        cat (bool, optional): Whether to concatenate the output.
+            (default: :obj:`True`)
     """
     # We can fuse all aggregations together that rely on `scatter` directives.
     FUSABLE_AGGRS = {
@@ -89,8 +91,9 @@ class FusedAggregation(Aggregation):
         StdAggregation: 'pow_sum',
     }
 
-    def __init__(self, aggrs: List[Union[Aggregation, str]]):
+    def __init__(self, aggrs: List[Union[Aggregation, str]], cat: bool = True):
         super().__init__()
+        self.cat = cat
 
         if not isinstance(aggrs, (list, tuple)):
             raise ValueError(f"'aggrs' of '{self.__class__.__name__}' should "
@@ -288,6 +291,7 @@ class FusedAggregation(Aggregation):
 
         #######################################################################
 
-        out = torch.cat(outs, dim=-1)
-
-        return out
+        if self.cat:
+            return torch.cat(outs, dim=-1) if len(outs) > 1 else outs[0]
+        else:
+            return outs
