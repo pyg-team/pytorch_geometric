@@ -1,9 +1,8 @@
+from typing import Any
+
 import torch
-from rdkit import Chem, RDLogger
 
-from torch_geometric.data import Data
-
-RDLogger.DisableLog('rdApp.*')
+import torch_geometric
 
 x_map = {
     'atomic_num':
@@ -43,11 +42,28 @@ x_map = {
 
 e_map = {
     'bond_type': [
-        'UNSPECIFIED', 'SINGLE', 'DOUBLE', 'TRIPLE', 'QUADRUPLE', 'QUINTUPLE',
-        'HEXTUPLE', 'ONEANDAHALF', 'TWOANDAHALF', 'THREEANDAHALF',
-        'FOURANDAHALF', 'FIVEANDAHALF', 'AROMATIC', 'IONIC', 'HYDROGEN',
-        'THREECENTER', 'DATIVEONE', 'DATIVE', 'DATIVEL', 'DATIVER', 'OTHER',
-        'ZERO'
+        'UNSPECIFIED',
+        'SINGLE',
+        'DOUBLE',
+        'TRIPLE',
+        'QUADRUPLE',
+        'QUINTUPLE',
+        'HEXTUPLE',
+        'ONEANDAHALF',
+        'TWOANDAHALF',
+        'THREEANDAHALF',
+        'FOURANDAHALF',
+        'FIVEANDAHALF',
+        'AROMATIC',
+        'IONIC',
+        'HYDROGEN',
+        'THREECENTER',
+        'DATIVEONE',
+        'DATIVE',
+        'DATIVEL',
+        'DATIVER',
+        'OTHER',
+        'ZERO',
     ],
     'stereo': [
         'STEREONONE',
@@ -62,7 +78,7 @@ e_map = {
 
 
 def from_smiles(smiles: str, with_hydrogen: bool = False,
-                kekulize: bool = False):
+                kekulize: bool = False) -> 'torch_geometric.data.Data':
     r"""Converts a SMILES string to a :class:`torch_geometric.data.Data`
     instance.
 
@@ -73,6 +89,11 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
+    from rdkit import Chem, RDLogger
+
+    from torch_geometric.data import Data
+
+    RDLogger.DisableLog('rdApp.*')
 
     mol = Chem.MolFromSmiles(smiles)
 
@@ -124,7 +145,8 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, smiles=smiles)
 
 
-def to_smiles(data, kekulize: bool = False):
+def to_smiles(data: 'torch_geometric.data.Data',
+              kekulize: bool = False) -> Any:
     """Converts a :class:`torch_geometric.data.Data` instance to a SMILES
     string.
 
@@ -133,6 +155,7 @@ def to_smiles(data, kekulize: bool = False):
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic
             bonds to single/double bonds. (default: :obj:`False`)
     """
+    from rdkit import Chem
 
     mol = Chem.RWMol()
 
@@ -151,27 +174,26 @@ def to_smiles(data, kekulize: bool = False):
     edges = [tuple(i) for i in data.edge_index.t().tolist()]
     visited = set()
 
-    for edge_idx in range(len(edges)):
-        i, j = edges[edge_idx]
-        if tuple(sorted(edges[edge_idx])) in visited:
+    for i in range(len(edges)):
+        src, dst = edges[i]
+        if tuple(sorted(edges[i])) in visited:
             continue
 
-        bond_type = Chem.BondType.values[data.edge_attr[edge_idx, 0].item()]
-        mol.AddBond(i, j, bond_type)
+        bond_type = Chem.BondType.values[data.edge_attr[i, 0].item()]
+        mol.AddBond(src, dst, bond_type)
 
-        # Set stereochemistry.
-        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[edge_idx,
-                                                              1].item()]
+        # Set stereochemistry:
+        stereo = Chem.rdchem.BondStereo.values[data.edge_attr[i, 1].item()]
         if stereo != Chem.rdchem.BondStereo.STEREONONE:
-            db = mol.GetBondBetweenAtoms(i, j)
-            db.SetStereoAtoms(j, i)
+            db = mol.GetBondBetweenAtoms(src, dst)
+            db.SetStereoAtoms(dst, src)
             db.SetStereo(stereo)
 
-        # Set conjugation.
-        mol.GetBondBetweenAtoms(i, j).SetIsConjugated(data.edge_attr[edge_idx,
-                                                                     2].item())
+        # Set conjugation:
+        is_conjugated = bool(data.edge_attr[i, 2].item())
+        mol.GetBondBetweenAtoms(src, dst).SetIsConjugated(is_conjugated)
 
-        visited.add(tuple(sorted(edges[edge_idx])))
+        visited.add(tuple(sorted(edges[i])))
 
     mol = mol.GetMol()
 
