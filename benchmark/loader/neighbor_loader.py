@@ -61,12 +61,13 @@ def run(args: argparse.ArgumentParser) -> None:
                             stop = default_timer()
                             runtimes.append(round(stop - start, 3))
                         average_time = round(sum(runtimes) / args.runs, 3)
-                        print(
-                            f'batch size={batch_size}, iterations={num_iterations}, '
-                            f'runtimes={runtimes}, average runtime={average_time}'
-                        )
+                        print(f'batch size={batch_size}, '
+                              f'iterations={num_iterations}, '
+                              f'runtimes={runtimes}, '
+                              f'average runtime={average_time}')
                         average_times.append(average_time)
-        eval_batch_sizes = args.eval_batch_sizes if args.eval_batch_sizes else None
+        eval_batch_sizes = (args.eval_batch_sizes
+                            if args.eval_batch_sizes else None)
         if eval_batch_sizes is not None:
             print('Evaluation sampling with all neighbors')
             for batch_size in eval_batch_sizes:
@@ -88,9 +89,10 @@ def run(args: argparse.ArgumentParser) -> None:
                         stop = default_timer()
                         runtimes.append(round(stop - start, 3))
                     average_time = round(sum(runtimes) / args.runs, 3)
-                    print(
-                        f'batch size={batch_size}, iterations={num_iterations}, '
-                        f'runtimes={runtimes}, average runtime={average_time}')
+                    print(f'batch size={batch_size}, '
+                          f'iterations={num_iterations}, '
+                          f'runtimes={runtimes}, '
+                          f'average runtime={average_time}')
                     average_times.append(average_time)
         print(f"Total time averages: {average_times}")
 

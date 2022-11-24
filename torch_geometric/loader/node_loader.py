@@ -156,10 +156,11 @@ class NodeLoader(torch.utils.data.DataLoader):
             return super()._get_iterator()
 
         # if not self.is_cuda_available and not self.cpu_affinity_enabled:
-        # TODO: Add manual page for best CPU practices for PyG and switch on warning message
+        # TODO: Add manual page for best CPU practices
         # link = ...
-        # Warning(f'Dataloader CPU affinity opt is not enabled, consider switching it on '
-        #             f'(see enable_cpu_affinity() or CPU best practices for PyG [{link}])')
+        # Warning('Dataloader CPU affinity opt is not enabled, consider '
+        #          'switching it on with enable_cpu_affinity() or see CPU '
+        #          f'best practices for PyG [{link}])')
         # Execute `filter_fn` in the main process:
         return DataLoaderIterator(super()._get_iterator(), self.filter_fn)
 
@@ -173,25 +174,30 @@ class NodeLoader(torch.utils.data.DataLoader):
     def enable_cpu_affinity(self, loader_cores: Optional[List[int]] = None):
         r"""A context manager to enable CPU affinity for DataLoader workers.
         Only for CPU devices!
-        As of now, be default it uses NUMA node 0 cores, for a multi-node system.
+        As of now, be default it uses NUMA node 0 cores, for a multi-node
+        system.
 
-        Affinitization places DataLoader workers threads on specific CPU cores. In effect,
-        it allows for more efficient local memory allocation and reduces remote memory calls.
-        Every time a process or thread moves from one core to another, registers and caches
-        need to be flushed and reloaded. This can become very costly if it happens often,
-        and our threads may also no longer be close to their data, or be able to share data in a cache.
+        Affinitization places DataLoader workers threads on specific CPU
+        cores. In effect, it allows for more efficient local memory allocation
+        and reduces remote memory calls.
+        Every time a process or thread moves from one core to another,
+        registers and caches need to be flushed and reloaded. This can become
+        very costly if it happens often, and our threads may also no longer be
+        close to their data, or be able to share data in a cache.
 
         Args:
             loader_cores ([int], optional):
-                List of cpu cores to which dataloader workers should affinitize to.
-                By default cpu0 is reserved for all auxiliary threads & ops.
+                List of cpu cores to which dataloader workers should
+                affinitize to. By default cpu0 is reserved for all auxiliary
+                threads & ops.
                 DataLoader wil affinitize to cores starting at cpu1.
                 default: node0_cores[1:num_workers]
 
 
         .. warning::
-            If you want to further affinitize compute threads (i.e. with OMP), please make sure that you exclude
-            loader_cores from the list of cores available for compute. This will cause core oversubsription
+            If you want to further affinitize compute threads (i.e. with OMP),
+            please make sure that you exclude loader_cores from the list of
+            cores available for compute. This will cause core oversubsription
             and exacerbate performance.
 
         .. code-block:: python
@@ -200,18 +206,17 @@ class NodeLoader(torch.utils.data.DataLoader):
             with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
                 <training or inference loop>
 
-        This will be gradually extended to increase performance on dual socket CPUs.
+        This will be gradually extended to increase performance on dual socket
+        CPUs.
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
-                raise ValueError(
-                    'ERROR: affinity should be used with at least one DL worker'
-                )
+                raise ValueError('ERROR: affinity should be used with at '
+                                 'least one DL worker')
             if loader_cores and len(loader_cores) != self.num_workers:
-                raise Exception(
-                    'ERROR: cpu_affinity incorrect '
-                    f'number of loader_cores={loader_cores} for num_workers={self.num_workers}'
-                )
+                raise Exception('ERROR: cpu_affinity incorrect '
+                                f'number of loader_cores={loader_cores} '
+                                f'for num_workers={self.num_workers}')
 
             worker_init_fn_old = self.worker_init_fn
             affinity_old = psutil.Process().cpu_affinity()
@@ -221,10 +226,9 @@ class NodeLoader(torch.utils.data.DataLoader):
             def init_fn(worker_id):
                 try:
                     psutil.Process().cpu_affinity([loader_cores[worker_id]])
-                except:
-                    raise Exception(
-                        f'ERROR: cannot use affinity id={worker_id} cpu={loader_cores}'
-                    )
+                except IndexError:
+                    raise Exception('ERROR: cannot use affinity'
+                                    f'id={worker_id} cpu={loader_cores}')
 
                 worker_init_fn_old(worker_id)
 
@@ -249,9 +253,8 @@ class NodeLoader(torch.utils.data.DataLoader):
                 # set cpu affinity for dataloader
                 self.worker_init_fn = init_fn
                 self.cpu_affinity_enabled = True
-                logging.info(
-                    f"{self.num_workers} DataLoader workers are assigned to CPUs {loader_cores}"
-                )
+                logging.info(f'{self.num_workers} DataLoader workers '
+                             f'are assigned to CPUs {loader_cores}')
                 yield
             finally:
                 # restore omp_num_threads and cpu affinity

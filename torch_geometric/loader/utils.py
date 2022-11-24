@@ -209,7 +209,8 @@ def filter_custom_store(
 
 def get_numa_nodes_cores():
     """ Returns numa nodes info, format:
-        {<node_id>: [(<core_id>, [<sibling_thread_id_0>, <sibling_thread_id_1>, ...]), ...], ...}
+        {<node_id>: [(<core_id>, [<sibling_thread_id_0>, <sibling_thread_id_1>
+        ...]), ...], ...}
         E.g.: {0: [(0, [0, 4]), (1, [1, 5])], 1: [(2, [2, 6]), (3, [3, 7])]}
 
         If not available, returns {}

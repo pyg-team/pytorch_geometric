@@ -1,6 +1,5 @@
 from typing import Any, Callable
 
-from torch import set_num_threads
 from torch.utils.data.dataloader import _BaseDataLoaderIter
 
 
@@ -38,8 +37,8 @@ class DataLoaderIterator:
 
 
 class WorkerInitWrapper:
-    """Wraps the :attr:`worker_init_fn` argument of the DataLoader to set the number of
-    OMP threads to 1 for PyTorch DataLoader workers.
+    r"""Wraps the :attr:`worker_init_fn` argument of the DataLoader
+    to set the number of OMP threads to 1 for PyTorch DataLoader workers.
     """
     def __init__(self, func):
         self.func = func
