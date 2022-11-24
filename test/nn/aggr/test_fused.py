@@ -46,11 +46,15 @@ if __name__ == '__main__':
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
     num_nodes, num_edges, num_feats = 1000, 50000, 64
+
     num_warmups, num_steps = 500, 1000
+    if args.device == 'cpu':
+        num_warmups, num_steps = num_warmups // 10, num_steps // 10
 
     aggrs = ['sum', 'mean', 'max', 'std']
     print(f'Aggregators: {", ".join(aggrs)}')
@@ -58,17 +62,19 @@ if __name__ == '__main__':
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
     fused_aggr = FusedAggregation(aggrs)
 
-    index = torch.randint(num_nodes, (num_edges, ), device='cuda')
-    out_grad = torch.randn(num_nodes, len(aggrs) * num_feats, device='cuda')
+    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+    out_grad = torch.randn(num_nodes,
+                           len(aggrs) * num_feats, device=args.device)
 
     t_forward = t_backward = 0
     for i in range(num_warmups + num_steps):
-        x = torch.randn(num_edges, num_feats, device='cuda')
+        x = torch.randn(num_edges, num_feats, device=args.device)
         if args.backward:
             x.requires_grad_(True)
-        torch.cuda.synchronize()
 
+        torch.cuda.synchronize()
         t_start = time.perf_counter()
+
         outs = [aggr(x, index, dim_size=num_nodes) for aggr in aggrs]
         out = torch.cat(outs, dim=-1)
 
@@ -91,12 +97,13 @@ if __name__ == '__main__':
 
     t_forward = t_backward = 0
     for i in range(num_warmups + num_steps):
-        x = torch.randn(num_edges, num_feats, device='cuda')
+        x = torch.randn(num_edges, num_feats, device=args.device)
         if args.backward:
             x.requires_grad_(True)
-        torch.cuda.synchronize()
 
+        torch.cuda.synchronize()
         t_start = time.perf_counter()
+
         out = torch.cat(fused_aggr(x, index, dim_size=num_nodes), dim=-1)
 
         torch.cuda.synchronize()
