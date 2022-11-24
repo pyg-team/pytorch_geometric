@@ -187,7 +187,7 @@ class NodeLoader(torch.utils.data.DataLoader):
                 By default cpu0 is reserved for all auxiliary threads & ops.
                 DataLoader wil affinitize to cores starting at cpu1.
                 default: node0_cores[1:num_workers]
-        
+
 
         .. warning::
             If you want to further affinitize compute threads (i.e. with OMP), please make sure that you exclude
@@ -195,11 +195,11 @@ class NodeLoader(torch.utils.data.DataLoader):
             and exacerbate performance.
 
         .. code-block:: python
-               
+
             loader = NeigborLoader(data, num_workers=3)
             with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
                 <training or inference loop>
-                
+
         This will be gradually extended to increase performance on dual socket CPUs.
         """
         if not self.is_cuda_available:
