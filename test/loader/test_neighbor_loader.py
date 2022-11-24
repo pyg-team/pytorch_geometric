@@ -577,7 +577,7 @@ def test_memmap_neighbor_loader():
 
 @onlyUnix
 def test_cpu_affinity_neighbor_loader():
-    data = Data(x=torch.randn(1, 1))
+    data = Data(x=torch.randn(10, 10))
 
     # test default core ids [1] and custom [0,1]
     num_workers = [1, 2]
