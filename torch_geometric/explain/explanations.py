@@ -1,3 +1,4 @@
+import copy
 from typing import List, Optional
 
 from torch import Tensor
@@ -39,11 +40,34 @@ class Explanation(Data):
             **kwargs,
         )
 
-    def get_explanation_graph() -> Data:
-        pass
+    def get_explanation_subgraph(self) -> Data:
+        r"""Returns the explanation graph :obj:`~torch_geometric.data.Data`
+        for Explanations node, edge, and feature masks.
+        """
+        x_ = copy.copy(self.x)
+        edge_attr_ = copy.copy(self.edge_attr)
 
-    def get_complement_graph() -> Data:
-        pass
+        # update node and edge attributes
+        if self.node_feat_mask is not None:
+            x_ = self.x * self.node_feat_mask
+        if self.edge_feat_mask is not None:
+            edge_attr_ = self.edge_attr * self.edge_feat_mask
+
+        # filter nodes and edges
+        edge_index_ = self.edge_index[
+            self.edge_mask] if self.edge_mask is not None else copy.copy(
+                self.edge_mask)
+        node_subset = self.x[
+            self.node_mask] if self.node_mask is not None else copy.copy(
+                self.x)
+
+        explanation_graph = Data(x=x_, edge_index=edge_index_,
+                                 edge_attr=edge_attr_)
+
+        return explanation_graph.subgraph(node_subset)
+
+    def get_complement_subgraph(self) -> Data:
+        pass  # TODO (blaz)
 
     @property
     def available_explanations(self) -> List[str]:
