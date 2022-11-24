@@ -131,7 +131,7 @@ class StdAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         var = self.var_aggr(x, index, ptr, dim_size, dim)
-        return (var.relu() + 1e-5).sqrt()
+        return var.clamp(min=1e-5).sqrt()
 
 
 class SoftmaxAggregation(Aggregation):
