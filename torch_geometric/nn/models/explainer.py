@@ -208,7 +208,7 @@ def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
     r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
     to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
-    required for `Captum's :obj:`attribute` functions.
+    required for `Captum`'s :obj:`attribute` functions.
     See :obj:`torch_geometric.nn.to_captum_model` for example usage.
 
     Args:
@@ -293,8 +293,8 @@ def captum_output_to_dicts(
                :obj:`[num_nodes, num_features]` and no edge attribution.
 
             3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
-                attributions. The returned tuple contains node attribution
-                dictionary followed by edge attribution dictionary.
+               attributions. The returned tuple contains node attribution
+               dictionary followed by edge attribution dictionary.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
@@ -397,7 +397,7 @@ def to_captum_model(
                                target=int(y[output_idx]),
                                additional_forward_args=additional_forward_args,
                                internal_batch_size=1)
-        ig_attr_dict = captum_output_to_dicts(ig_attr, mask_type, metadata)
+        edge_attr_dict = captum_output_to_dicts(ig_attr, mask_type, metadata)
 
 
     .. note::
