@@ -157,7 +157,8 @@ class GNNExplainer(ExplainerAlgorithm):
                 raise ValueError("Index must be provided for edge level task")
             elif isinstance(index, Tensor) and index.shape != (1, ):
                 raise NotImplementedError(
-                    "GNNExplainer only supports single edge index for now")
+                    "GNNExplainer only supports single index into edge_index"
+                    " for now")
         elif model_config.task_level == ModelTaskLevel.graph:
             if index is not None:
                 raise ValueError("Index must be None for graph level task")
