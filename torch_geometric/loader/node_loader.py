@@ -174,7 +174,6 @@ class NodeLoader(torch.utils.data.DataLoader):
         r"""A context manager to enable CPU affinity for DataLoader workers.
         Only for CPU devices!
         As of now, be default it uses NUMA node 0 cores, for a multi-node system.
-        This will be gradually extended to increase performance on dual socket CPUs.
 
         Affinitization places DataLoader workers threads on specific CPU cores. In effect,
         it allows for more efficient local memory allocation and reduces remote memory calls.
@@ -182,22 +181,26 @@ class NodeLoader(torch.utils.data.DataLoader):
         need to be flushed and reloaded. This can become very costly if it happens often,
         and our threads may also no longer be close to their data, or be able to share data in a cache.
 
-        Important:
-
-        If you want to further affinitize compute threads (i.e. with OMP), please make sure that you exclude
-        loader_cores from the list of cores available for compute. This will cause core oversubsription
-        and exacerbate performance.
-
-        .. code-block:: python
-            loader = NeigborLoader(data, num_workers=3)
-            with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
-                <training or inference loop>
         Args:
             loader_cores ([int], optional):
                 List of cpu cores to which dataloader workers should affinitize to.
                 By default cpu0 is reserved for all auxiliary threads & ops.
                 DataLoader wil affinitize to cores starting at cpu1.
                 default: node0_cores[1:num_workers]
+        
+
+        .. warning::
+            If you want to further affinitize compute threads (i.e. with OMP), please make sure that you exclude
+            loader_cores from the list of cores available for compute. This will cause core oversubsription
+            and exacerbate performance.
+
+        .. code-block:: python
+               
+            loader = NeigborLoader(data, num_workers=3)
+            with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
+                <training or inference loop>
+                
+        This will be gradually extended to increase performance on dual socket CPUs.
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
