@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import pytest
 import torch
+from time import sleep
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
@@ -577,9 +578,8 @@ def test_memmap_neighbor_loader():
 
 @onlyUnix
 def test_cpu_affinity_neighbor_loader():
-    data = Data(x=torch.randn(10, 10))
-
-    # test default core ids [1] and custom [0,1]
+    data = Data(x=torch.randn(1, 1))
+    # test default core id [1] and custom [0,1] with 2 workers
     num_workers = [1, 2]
     loader_cores = [None, [0, 1]]
     expected = [1, [0, 1]]
@@ -588,14 +588,14 @@ def test_cpu_affinity_neighbor_loader():
         loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
                                 num_workers=nw)
         with loader.enable_cpu_affinity(loader_cores=loader_cores[i]):
-            for batch in loader:
-                iterator = loader._get_iterator().iterator
-                workers = iterator._workers
+            iterator = loader._get_iterator().iterator
+            workers = iterator._workers
             for worker in workers:
+                sleep(1) # gives time for worker to init
                 process = subprocess.Popen(
                     ['taskset', '-c', '-p', f'{worker.pid}'],
                     stdout=subprocess.PIPE)
                 stdout = process.communicate()[0].decode('utf-8')
                 output.append(int(stdout.split(':')[1].strip()))
-            output = output[0] if nw == 1 else output
-            assert output == expected[i]
+        output = output[0] if nw == 1 else output
+        assert output == expected[i]

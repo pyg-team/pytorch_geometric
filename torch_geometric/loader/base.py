@@ -45,6 +45,6 @@ class WorkerInitWrapper:
         self.func = func
 
     def __call__(self, worker_id):
-        set_num_threads(1)
         if self.func is not None:
             self.func(worker_id)
+        

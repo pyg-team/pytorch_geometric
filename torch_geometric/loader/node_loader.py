@@ -182,7 +182,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         need to be flushed and reloaded. This can become very costly if it happens often,
         and our threads may also no longer be close to their data, or be able to share data in a cache.
 
-        .. note::
+        Important:
 
         If you want to further affinitize compute threads (i.e. with OMP), please make sure that you exclude
         loader_cores from the list of cores available for compute. This will cause core oversubsription
@@ -246,7 +246,7 @@ class NodeLoader(torch.utils.data.DataLoader):
                 # set cpu affinity for dataloader
                 self.worker_init_fn = init_fn
                 self.cpu_affinity_enabled = True
-                logging.debug(
+                logging.info(
                     f"{self.num_workers} DataLoader workers are assigned to CPUs {loader_cores}"
                 )
                 yield
