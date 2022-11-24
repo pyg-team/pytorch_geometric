@@ -478,6 +478,10 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
+    def __init__(self, *args, **kwargs):
+        self._attrs_cache = {"node": set(), "edge": set(), "other": set()}
+        super().__init__(*args, **kwargs)
+
     @property
     def _key(self) -> Any:
         return None
@@ -493,6 +497,36 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         return size if dim is None else size[dim]
 
     def is_node_attr(self, key: str) -> bool:
+        if key in self._attrs_cache["node"]:
+            return True
+
+        if key in self._attrs_cache["edge"] or key in self._attrs_cache[
+                "other"]:
+            return False
+
+        self._cache_attr(key)
+        return self.is_node_attr(key)
+
+    def is_edge_attr(self, key: str) -> bool:
+        if key in self._attrs_cache["edge"]:
+            return True
+
+        if key in self._attrs_cache["node"] or key in self._attrs_cache[
+                "other"]:
+            return False
+
+        self._cache_attr(key)
+        return self.is_edge_attr(key)
+
+    def _cache_attr(self, key: str):
+        if self._is_node_attr(key):
+            self._attrs_cache["node"].add(key)
+        elif self._is_edge_attr(key):
+            self._attrs_cache["edge"].add(key)
+        else:
+            self._attrs_cache["other"].add(key)
+
+    def _is_node_attr(self, key: str) -> bool:
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
@@ -505,7 +539,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return True
         return 'edge' not in key
 
-    def is_edge_attr(self, key: str) -> bool:
+    def _is_edge_attr(self, key: str) -> bool:
         value = self[key]
         cat_dim = self._parent().__cat_dim__(key, value, self)
 
