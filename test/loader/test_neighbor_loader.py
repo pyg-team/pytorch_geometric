@@ -2,11 +2,11 @@ import os
 import random
 import subprocess
 import sys
+from time import sleep
 
 import numpy as np
 import pytest
 import torch
-from time import sleep
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData
@@ -591,7 +591,7 @@ def test_cpu_affinity_neighbor_loader():
             iterator = loader._get_iterator().iterator
             workers = iterator._workers
             for worker in workers:
-                sleep(1) # gives time for worker to init
+                sleep(1)  # gives time for worker to init
                 process = subprocess.Popen(
                     ['taskset', '-c', '-p', f'{worker.pid}'],
                     stdout=subprocess.PIPE)

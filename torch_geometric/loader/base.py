@@ -47,4 +47,3 @@ class WorkerInitWrapper:
     def __call__(self, worker_id):
         if self.func is not None:
             self.func(worker_id)
-        
