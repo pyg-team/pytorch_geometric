@@ -14,6 +14,7 @@ from torch_geometric.nn.aggr.basic import (
     VarAggregation,
 )
 from torch_geometric.nn.resolver import aggregation_resolver
+from torch_geometric.utils import scatter
 
 
 class FusedAggregation(Aggregation):
@@ -41,13 +42,13 @@ class FusedAggregation(Aggregation):
     +------------------------------+---------+---------+
     | Aggregators                  | Vanilla | Fusion  |
     +==============================+=========+=========+
-    | :obj:`[sum, mean]`           | 0.4019s | 0.1666s |
+    | :obj:`[sum, mean]`           | 0.3325s | 0.1996s |
     +------------------------------+---------+---------+
-    | :obj:`[sum, mean, min, max]` | 0.7841s | 0.4223s |
+    | :obj:`[sum, mean, min, max]` | 0.7139s | 0.5037s |
     +------------------------------+---------+---------+
-    | :obj:`[sum, mean, var]`      | 0.9711s | 0.3614s |
+    | :obj:`[sum, mean, var]`      | 0.6849s | 0.3871s |
     +------------------------------+---------+---------+
-    | :obj:`[sum, mean, var, std]` | 1.5994s | 0.3722s |
+    | :obj:`[sum, mean, var, std]` | 1.0955s | 0.3973s |
     +------------------------------+---------+---------+
 
     Args:
@@ -71,20 +72,13 @@ class FusedAggregation(Aggregation):
         StdAggregation,
     }
 
-    # All aggregations that require manual masking for invalid rows:
-    MASK_REQUIRED_AGGRS = {
-        MinAggregation,
-        MaxAggregation,
-        MulAggregation,
-    }
-
     # Map aggregations to `reduce` options in `scatter` directives.
     REDUCE = {
         'SumAggregation': 'sum',
         'MeanAggregation': 'sum',
-        'MinAggregation': 'amin',
-        'MaxAggregation': 'amax',
-        'MulAggregation': 'prod',
+        'MinAggregation': 'min',
+        'MaxAggregation': 'max',
+        'MulAggregation': 'mul',
         'VarAggregation': 'pow_sum',
         'StdAggregation': 'pow_sum',
     }
@@ -124,12 +118,6 @@ class FusedAggregation(Aggregation):
         for cls in aggr_classes:
             if cls in self.DEGREE_BASED_AGGRS:
                 self.need_degree = True
-
-        # Check whether we need to compute mask information:
-        self.requires_mask = False
-        for cls in aggr_classes:
-            if cls in self.MASK_REQUIRED_AGGRS:
-                self.requires_mask = True
 
         # Determine which reduction to use for each aggregator:
         # An entry of `None` means that this operator re-uses intermediate
@@ -214,20 +202,12 @@ class FusedAggregation(Aggregation):
                 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
         count: Optional[Tensor] = None
-        mask: Optional[Tensor] = None
         if self.need_degree:
             count = x.new_zeros(dim_size)
             count.scatter_add_(0, index, x.new_ones(x.size(0)))
-            if self.requires_mask:
-                mask = count == 0
             count = count.clamp_(min=1).view(-1, 1)
 
-        elif self.requires_mask:  # Mask to set non-existing indicses to zero:
-            mask = x.new_ones(dim_size, dtype=torch.bool)
-            mask[index] = False
-
         num_feats = x.size(-1)
-        index = index.view(-1, 1).expand(-1, num_feats)
 
         #######################################################################
 
@@ -240,32 +220,17 @@ class FusedAggregation(Aggregation):
                 continue
             assert isinstance(reduce, str)
 
-            fill_value = 0.0
-            if reduce == 'amin':
-                fill_value = float('inf')
-            elif reduce == 'amax':
-                fill_value = float('-inf')
-            elif reduce == 'prod':
-                fill_value = 1.0
-
             # `include_self=True` + manual masking leads to faster runtime:
-            out = x.new_full((dim_size, num_feats), fill_value)
+            # out = x.new_full((dim_size, num_feats), fill_value)
 
             if reduce == 'pow_sum':
-                reduce = 'sum'
                 if self.semi_grad:
                     with torch.no_grad():
-                        out.scatter_reduce_(0, index, x * x, reduce,
-                                            include_self=True)
+                        out = scatter(x * x, index, 0, dim_size, reduce='sum')
                 else:
-                    out.scatter_reduce_(0, index, x * x, reduce,
-                                        include_self=True)
+                    out = scatter(x * x, index, 0, dim_size, reduce='sum')
             else:
-                out.scatter_reduce_(0, index, x, reduce, include_self=True)
-
-            if fill_value != 0.0:
-                assert mask is not None
-                out = out.masked_fill(mask.view(-1, 1), 0.0)
+                out = scatter(x, index, 0, dim_size, reduce=reduce)
 
             outs.append(out)
 
@@ -295,8 +260,7 @@ class FusedAggregation(Aggregation):
             assert count is not None
 
             if self.lookup_ops[i] is None:
-                mean = x.new_zeros(dim_size, num_feats)
-                mean.scatter_reduce_(0, index, x, 'sum', include_self=True)
+                mean = scatter(x, index, 0, dim_size, reduce='sum')
                 mean = mean / count
             else:
                 lookup_op = self.lookup_ops[i]
@@ -328,7 +292,7 @@ class FusedAggregation(Aggregation):
             if self.lookup_ops[i] is None:
                 pow_sum = outs[i]
                 mean = x.new_zeros(dim_size, num_feats)
-                mean.scatter_reduce_(0, index, x, 'sum', include_self=True)
+                mean = scatter(x, index, 0, dim_size, reduce='sum')
                 assert count is not None
                 mean = mean / count
             else:

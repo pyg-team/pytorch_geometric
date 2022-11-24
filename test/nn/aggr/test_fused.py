@@ -57,6 +57,7 @@ if __name__ == '__main__':
         num_warmups, num_steps = num_warmups // 10, num_steps // 10
 
     aggrs = ['sum', 'mean', 'max', 'std']
+    aggrs = ['sum', 'mean', 'var', 'std']
     print(f'Aggregators: {", ".join(aggrs)}')
     print('=========================')
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
