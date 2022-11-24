@@ -356,7 +356,7 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = (var.relu() + 1e-5).sqrt()
+            outs[i] = var.clamp(min=1e-5).sqrt()
 
         #######################################################################
 
