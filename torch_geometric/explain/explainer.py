@@ -8,6 +8,7 @@ from torch_geometric.explain import ExplainerAlgorithm, Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
+    ModelReturnType,
     ModelConfig,
     ModelMode,
     ThresholdConfig,
@@ -18,7 +19,6 @@ from torch_geometric.explain.config import (
 class Explainer:
     r"""An explainer class for instance-level explanations of Graph Neural
     Networks.
-
     Args:
         model (torch.nn.Module): The model to explain.
         algorithm (ExplainerAlgorithm): The explanation algorithm.
@@ -53,12 +53,10 @@ class Explainer:
 
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
-
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
         If the model mode :obj:`"classification"`, the prediction is returned
         as the predicted class label.
-
         Args:
             *args: Arguments passed to the model.
             **kwargs (optional): Additional keyword arguments passed to the
@@ -66,7 +64,7 @@ class Explainer:
         """
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.classification:
+        if self.model_config.mode == ModelMode.classification and self.model_config.return_type != ModelReturnType.raw:
             return out.argmax(dim=-1)
         return out
 
@@ -76,23 +74,31 @@ class Explainer:
         edge_index: Tensor,
         *,
         target: Optional[Tensor] = None,
+        index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        r"""Computes the explanation of the GNN  for the given inputs and
+        r"""Computes the explanation of the GNN for the given inputs and
         target.
-
+        .. note::
+            If you get an error message like "Trying to backward through the
+            graph a second time", make sure that the target you provided
+            was computed with :obj:`torch.no_grad()`.
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The input edge indices.
-            target (torch.Tensor): the target of the model.
+            target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
                 set to :obj:`None` and will get automatically inferred.
                 (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The index of the model
+                output to explain. Can be a single index or a tensor of
+                indices. (default: :obj:`None`)
             target_index (int or torch.Tensor, optional): The target indices to
-                explain. (default: :obj:`None`)
+                explain in case targets are multi-dimensional.
+                (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -112,6 +118,7 @@ class Explainer:
             explainer_config=self.explainer_config,
             model_config=self.model_config,
             target=target,
+            index=index,
             target_index=target_index,
             **kwargs,
         )
@@ -121,7 +128,6 @@ class Explainer:
     def _post_process(self, explanation: Explanation) -> Explanation:
         R"""Post-processes the explanation mask according to the thresholding
         method and the user configuration.
-
         Args:
             explanation (Explanation): The explanation mask to post-process.
         """
@@ -130,7 +136,6 @@ class Explainer:
 
     def _threshold(self, explanation: Explanation) -> Explanation:
         """Threshold the explanation mask according to the thresholding method.
-
         Args:
             explanation (Explanation): The explanation to threshold.
         """
