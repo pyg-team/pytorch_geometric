@@ -160,14 +160,14 @@ class Aggregation(torch.nn.Module):
 
     def reduce(self, x: Tensor, index: Optional[Tensor] = None,
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-               dim: int = -2, reduce: str = 'add') -> Tensor:
+               dim: int = -2, reduce: str = 'sum') -> Tensor:
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment_csr(x, ptr, reduce=reduce)
 
         assert index is not None
-        return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
+        return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(self, x: Tensor, index: Optional[Tensor] = None,
                        ptr: Optional[Tensor] = None,

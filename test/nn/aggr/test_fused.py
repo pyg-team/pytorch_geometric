@@ -29,7 +29,10 @@ def test_fused_aggregation(aggrs):
     out = torch.cat(aggr(x, index), dim=-1)
 
     expected = torch.cat([aggr(y, index) for aggr in aggrs], dim=-1)
-    assert torch.allclose(out, expected)
+    assert torch.allclose(out, expected, atol=1e-6)
+
+    jit = torch.jit.script(aggr)
+    assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-6)
 
     out.mean().backward()
     assert x.grad is not None
@@ -41,9 +44,6 @@ def test_fused_aggregation(aggrs):
 if __name__ == '__main__':
     import argparse
     import time
-    import warnings
-
-    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')

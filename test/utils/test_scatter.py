@@ -2,62 +2,57 @@ import pytest
 import torch
 import torch_scatter
 
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import withCUDA
 from torch_geometric.utils import scatter
 
 
-@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max', 'mul'])
-def test_scatter(reduce):
-    torch.manual_seed(12345)
-
-    src = torch.randn(8, 100, 32)
+def test_scatter_validate():
+    src = torch.randn(100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
 
+    with pytest.raises(ValueError, match="must be one-dimensional"):
+        scatter(src, index.view(-1, 1))
+
+    with pytest.raises(ValueError, match="must lay between 0 and 1"):
+        scatter(src, index, dim=2)
+
+    with pytest.raises(ValueError, match="invalid `reduce` argument 'std'"):
+        scatter(src, index, reduce='std')
+
+
+@withCUDA
+@pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
+def test_scatter(reduce, device):
+    src = torch.randn(100, 16, device=device)
+    index = torch.randint(0, 8, (100, ), device=device)
+
+    out1 = scatter(src, index, dim=0, reduce=reduce)
+    out2 = torch_scatter.scatter(src, index, dim=0, reduce=reduce)
+    assert out1.device == device
+    assert torch.allclose(out1, out2, atol=1e-6)
+
+    jit = torch.jit.script(scatter)
+    out3 = jit(src, index, dim=0, reduce=reduce)
+    assert torch.allclose(out1, out3, atol=1e-6)
+
+    src = torch.randn(8, 100, 16, device=device)
     out1 = scatter(src, index, dim=1, reduce=reduce)
     out2 = torch_scatter.scatter(src, index, dim=1, reduce=reduce)
+    assert out1.device == device
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@withCUDA
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
-def test_pytorch_scatter_backward(reduce):
-    torch.manual_seed(12345)
+def test_scatter_backward(reduce, device):
+    src = torch.randn(8, 100, 16, device=device, requires_grad=True)
+    index = torch.randint(0, 8, (100, ), device=device)
 
-    src = torch.randn(8, 100, 32).requires_grad_(True)
-    index = torch.randint(0, 10, (100, ), dtype=torch.long)
-
-    out = scatter(src, index, dim=1, reduce=reduce).relu()
+    out = scatter(src, index, dim=1, reduce=reduce)
 
     assert src.grad is None
     out.mean().backward()
     assert src.grad is not None
-
-
-@withPackage('torch>=1.12.0')
-@pytest.mark.parametrize('reduce', ['min', 'max'])
-def test_pytorch_scatter_inplace_backward(reduce):
-    torch.manual_seed(12345)
-
-    src = torch.randn(8, 100, 32).requires_grad_(True)
-    index = torch.randint(0, 10, (100, ), dtype=torch.long)
-
-    out = scatter(src, index, dim=1, reduce=reduce).relu_()
-
-    with pytest.raises(RuntimeError, match="modified by an inplace operation"):
-        out.mean().backward()
-
-
-@pytest.mark.parametrize('reduce', ['sum', 'add', 'min', 'max', 'mul'])
-def test_scatter_with_out(reduce):
-    torch.manual_seed(12345)
-
-    src = torch.randn(8, 100, 32)
-    index = torch.randint(0, 10, (100, ), dtype=torch.long)
-    out = torch.randn(8, 10, 32)
-
-    out1 = scatter(src, index, dim=1, out=out.clone(), reduce=reduce)
-    out2 = torch_scatter.scatter(src, index, dim=1, out=out.clone(),
-                                 reduce=reduce)
-    assert torch.allclose(out1, out2, atol=1e-6)
 
 
 if __name__ == '__main__':
@@ -81,11 +76,8 @@ if __name__ == '__main__':
 
     import argparse
     import time
-    import warnings
 
     import torch_scatter
-
-    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
@@ -155,6 +147,34 @@ if __name__ == '__main__':
 
             out = torch_scatter.scatter(x, index, dim=0, dim_size=num_nodes,
                                         reduce=aggr)
+
+            torch.cuda.synchronize()
+            if i >= num_warmups:
+                t_forward += time.perf_counter() - t_start
+
+            if args.backward:
+                t_start = time.perf_counter()
+                out.backward(out_grad)
+
+                torch.cuda.synchronize()
+                if i >= num_warmups:
+                    t_backward += time.perf_counter() - t_start
+
+        print(f'torch_sparse forward:  {t_forward:.4f}s')
+        if args.backward:
+            print(f'torch_sparse backward: {t_backward:.4f}s')
+        print('==============================')
+
+        t_forward = t_backward = 0
+        for i in range(num_warmups + num_steps):
+            x = torch.randn(num_edges, num_feats, device=args.device)
+            if args.backward:
+                x.requires_grad_(True)
+
+            torch.cuda.synchronize()
+            t_start = time.perf_counter()
+
+            out = scatter(x, index, dim=0, dim_size=num_nodes, reduce=aggr)
 
             torch.cuda.synchronize()
             if i >= num_warmups:
