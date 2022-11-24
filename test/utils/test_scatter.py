@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # Insights on GPU:
     # ================
     # * "sum": Prefer `scatter_add_` implementation
-    # * "mean": Prefer manual implementation via `scatter_reduce_` + `count`
+    # * "mean": Prefer manual implementation via `scatter_add_` + `count`
     # * "min"/"max":
     #   * Prefer `scatter_reduce_` implementation without gradients
     #   * Prefer `torch_sparse` implementation with gradients
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # Insights on CPU:
     # ================
     # * "sum": Prefer `scatter_add_` implementation
-    # * "mean": Prefer manual implementation via `scatter_reduce_` + `count`
+    # * "mean": Prefer manual implementation via `scatter_add_` + `count`
     # * "min"/"max": Prefer `scatter_reduce_` implementation
     # * "mul" (probably not worth branching for this):
     #   * Prefer `scatter_reduce_` implementation without gradients
