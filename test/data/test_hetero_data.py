@@ -422,9 +422,6 @@ def test_hetero_data_to_canonical():
 
 def test_hetero_data_invalid_names():
     data = HeteroData()
-    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
-        data['my test'].x = torch.randn(10, 16)
-    assert data.node_types == ['my test']
     with pytest.warns(UserWarning, match="single underscores"):
         data['my test', 'a__b', 'my test'].edge_attr = torch.randn(10, 16)
     assert data.edge_types == [('my test', 'a__b', 'my test')]

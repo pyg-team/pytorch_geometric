@@ -67,6 +67,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
+from .lrgb import LRGBDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -153,6 +154,7 @@ __all__ = [
     'Twitch',
     'Airports',
     'BAShapes',
+    'LRGBDataset',
     'MalNetTiny',
     'OMDB',
     'PolBlogs',
