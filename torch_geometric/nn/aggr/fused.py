@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr.base import Aggregation
@@ -34,8 +33,8 @@ class FusedAggregation(Aggregation):
       :class:`VarAggregation`, :class:`MeanAggregation` or
       :class:`SumAggregation` in case one of them is present as well.
 
-    In addition, temporary values such as the count per group index or the
-    mask for invalid rows are shared as well.
+    In addition, temporary values such as the count per group index are shared
+    as well.
 
     Benchmarking results on PyTorch 1.12 (summed over 1000 runs):
 
@@ -207,8 +206,6 @@ class FusedAggregation(Aggregation):
             count.scatter_add_(0, index, x.new_ones(x.size(0)))
             count = count.clamp_(min=1).view(-1, 1)
 
-        num_feats = x.size(-1)
-
         #######################################################################
 
         outs: List[Optional[Tensor]] = []
@@ -220,13 +217,10 @@ class FusedAggregation(Aggregation):
                 continue
             assert isinstance(reduce, str)
 
-            # `include_self=True` + manual masking leads to faster runtime:
-            # out = x.new_full((dim_size, num_feats), fill_value)
-
             if reduce == 'pow_sum':
                 if self.semi_grad:
-                    with torch.no_grad():
-                        out = scatter(x * x, index, 0, dim_size, reduce='sum')
+                    out = scatter(x.detach() * x.detach(), index, 0, dim_size,
+                                  reduce='sum')
                 else:
                     out = scatter(x * x, index, 0, dim_size, reduce='sum')
             else:
@@ -260,8 +254,8 @@ class FusedAggregation(Aggregation):
             assert count is not None
 
             if self.lookup_ops[i] is None:
-                mean = scatter(x, index, 0, dim_size, reduce='sum')
-                mean = mean / count
+                sum_ = scatter(x, index, 0, dim_size, reduce='sum')
+                mean = sum_ / count
             else:
                 lookup_op = self.lookup_ops[i]
                 assert lookup_op is not None
@@ -291,10 +285,9 @@ class FusedAggregation(Aggregation):
 
             if self.lookup_ops[i] is None:
                 pow_sum = outs[i]
-                mean = x.new_zeros(dim_size, num_feats)
-                mean = scatter(x, index, 0, dim_size, reduce='sum')
+                sum_ = scatter(x, index, 0, dim_size, reduce='sum')
                 assert count is not None
-                mean = mean / count
+                mean = sum_ / count
             else:
                 lookup_op = self.lookup_ops[i]
                 assert lookup_op is not None

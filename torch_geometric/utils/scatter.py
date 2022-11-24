@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 
 import torch
@@ -10,6 +11,8 @@ major, minor = int(major), int(minor)
 has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
 
 if has_pytorch112:  # pragma: no cover
+
+    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
     def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
         size = [1] * ref.dim()

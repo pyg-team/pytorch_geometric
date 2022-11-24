@@ -76,11 +76,8 @@ if __name__ == '__main__':
 
     import argparse
     import time
-    import warnings
 
     import torch_scatter
-
-    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
