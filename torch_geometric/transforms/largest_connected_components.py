@@ -34,7 +34,8 @@ class LargestConnectedComponents(BaseTransform):
 
         adj = to_scipy_sparse_matrix(data.edge_index, num_nodes=data.num_nodes)
 
-        num_components, component = sp.csgraph.connected_components(adj, connection=self.connection)
+        num_components, component = sp.csgraph.connected_components(
+            adj, connection=self.connection)
 
         if num_components <= self.num_components:
             return data
