@@ -94,7 +94,6 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             model (torch.nn.Module): The model to explain.
-            model_mode (ModelMode): The mode of the model.
             *args: Arguments passed to :obj:`model`.
             model_mode (ModelMode): The mode of the model.
             **kwargs (optional): Additional keyword arguments passed to
@@ -152,7 +151,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
-        return "source_to_target"
+        return 'source_to_target'
 
     def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
         r"""Converts the model output to log-probabilities.

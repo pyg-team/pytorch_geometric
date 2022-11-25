@@ -107,8 +107,8 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        if self.explainer_config.explanation_type == \
-                ExplanationType.phenomenon:
+        if (self.explainer_config.explanation_type ==
+                ExplanationType.phenomenon):
             if target is None:
                 raise ValueError(
                     f"The target has to be provided for the explanation type "
