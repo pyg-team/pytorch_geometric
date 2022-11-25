@@ -371,25 +371,20 @@ class GNNExplainer_:
         if 'node_mask' in explanation.available_explanations:
             node_mask = explanation.node_mask
         else:
-            if self.explainer_config.node_mask_type ==\
-                    MaskType.common_attributes:
+            if (self.explainer_config.node_mask_type ==
+                    MaskType.common_attributes):
                 node_mask = explanation.node_feat_mask[0]
             else:
                 node_mask = explanation.node_feat_mask
 
+        edge_mask = None
         if 'edge_mask' in explanation.available_explanations:
             edge_mask = explanation.edge_mask
         else:
             if index is not None:
-                _, _, _, _, hard_edge_mask, _ = self._explainer.subgraph(
-                    self.model,
-                    index,
-                    x,
-                    edge_index,
-                )
-                edge_mask = torch.zeros(edge_index.shape[1],
-                                        device=edge_index.device)
-                edge_mask[hard_edge_mask] = 1
+                _, edge_mask = self._explainer._get_hard_masks(
+                    self.model, index, edge_index, num_nodes=x.size(0))
+                edge_mask = edge_mask.to(x.dtype)
             else:
                 edge_mask = torch.ones(edge_index.shape[1],
                                        device=edge_index.device)
