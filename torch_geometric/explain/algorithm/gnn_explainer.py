@@ -136,10 +136,13 @@ class GNNExplainer(ExplainerAlgorithm):
                                    **kwargs)
 
         node_mask, node_feat_mask, edge_mask = self._get_masks(
-            num_nodes=num_nodes, num_edges=num_edges,
+            num_nodes=num_nodes,
+            num_edges=num_edges,
             explainer_config=explainer_config,
-            task_level=model_config.task_level, hard_edge_mask=hard_edge_mask,
-            subset=subset)
+            task_level=model_config.task_level,
+            hard_edge_mask=hard_edge_mask,
+            subset=subset,
+        )
 
         self._clean_model(model)
 
@@ -156,14 +159,14 @@ class GNNExplainer(ExplainerAlgorithm):
         hard_edge_mask: Optional[Tensor],
         subset: Optional[Tensor],
     ) -> Tuple[Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
-        """Extract and reshape the masks from the model parameters."""
+        """Extracts and reshapes the masks from the model parameters."""
         node_mask_, node_feat_mask_, edge_mask_ = None, None, None
 
         if self.node_mask is not None:
             node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
             if explainer_config.node_mask_type == MaskType.object:
                 if task_level == ModelTaskLevel.node:
-                    node_mask_ = torch.zeros(num_nodes, dtype=torch.float)
+                    node_mask_ = node_mask.new_zeros(num_nodes)
                     node_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
                     node_mask_ = node_mask
@@ -171,9 +174,8 @@ class GNNExplainer(ExplainerAlgorithm):
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.attributes:
                 if task_level == ModelTaskLevel.node:
-                    node_feat_mask_ = torch.zeros(num_nodes,
-                                                  node_mask.size(-1),
-                                                  dtype=torch.float)
+                    node_feat_mask_ = node_mask.new_zeros(
+                        num_nodes, node_mask.size(-1))
                     node_feat_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
                     node_feat_mask_ = node_mask
@@ -181,8 +183,8 @@ class GNNExplainer(ExplainerAlgorithm):
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.common_attributes:
                 if task_level == ModelTaskLevel.node:
-                    node_feat_mask_ = torch.zeros(num_nodes, node_mask.numel(),
-                                                  dtype=torch.float)
+                    node_feat_mask_ = node_mask.new_zeros(
+                        num_nodes, node_mask.numel())
                     node_feat_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
                     node_feat_mask_ = self._reshape_common_attributes(
@@ -195,7 +197,7 @@ class GNNExplainer(ExplainerAlgorithm):
         if self.edge_mask is not None:
             edge_mask = self.edge_mask.detach().sigmoid()
             if task_level == ModelTaskLevel.node:
-                edge_mask_ = torch.zeros(num_edges, dtype=torch.float)
+                edge_mask_ = edge_mask.new_zeros(num_edges)
                 edge_mask_[hard_edge_mask] = edge_mask
             elif task_level == ModelTaskLevel.graph:
                 edge_mask_ = edge_mask
