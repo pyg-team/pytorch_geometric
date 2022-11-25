@@ -16,15 +16,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
-        torch-version: [1.12.0]
+        torch-version: [1.13.0]
         include:
-          - torch-version: 1.12.0
-            torchvision-version: 0.13.0
+          - torch-version: 1.13.0
+            torchvision-version: 0.14.0
         exclude:
           - os: windows-latest  # Complains about CUDA mismatch.
             python-version: '3.7'
-          - os: windows-latest  # Complains about missing numpy package.
-            python-version: '3.10'
 
     steps:
       - uses: actions/checkout@v3
@@ -35,8 +33,7 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}+cpu
         run: |
-          pip install numpy typing-extensions dataclasses
-          pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install torch==${{ matrix.torch-version }} torchvision==${{ matrix.torchvision-version}} --extra-index-url https://download.pytorch.org/whl/cpu
 
       - name: Install internal dependencies
         run: |

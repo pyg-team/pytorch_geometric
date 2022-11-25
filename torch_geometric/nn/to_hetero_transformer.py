@@ -141,7 +141,16 @@ class ToHeteroTransformer(Transformer):
     ):
         super().__init__(module, input_map, debug)
 
-        unused_node_types = get_unused_node_types(*metadata)
+        self.metadata = metadata
+        self.aggr = aggr
+        assert len(metadata) == 2
+        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
+        assert aggr in self.aggrs.keys()
+
+        self.validate()
+
+    def validate(self):
+        unused_node_types = get_unused_node_types(*self.metadata)
         if len(unused_node_types) > 0:
             warnings.warn(
                 f"There exist node types ({unused_node_types}) whose "
@@ -149,11 +158,14 @@ class ToHeteroTransformer(Transformer):
                 f"as they do not occur as destination type in any edge type. "
                 f"This may lead to unexpected behaviour.")
 
-        self.metadata = metadata
-        self.aggr = aggr
-        assert len(metadata) == 2
-        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
-        assert aggr in self.aggrs.keys()
+        names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
+        for name in names:
+            if not name.isidentifier():
+                warnings.warn(
+                    f"The type '{name}' contains invalid characters which "
+                    f"may lead to unexpected behaviour. To avoid any issues, "
+                    f"ensure that your types only contain letters, numbers "
+                    f"and underscores.")
 
     def placeholder(self, node: Node, target: Any, name: str):
         # Adds a `get` call to the input dictionary for every node-type or

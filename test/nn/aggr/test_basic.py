@@ -62,6 +62,18 @@ def test_basic_aggregation(Aggregation):
         assert torch.allclose(out, aggr(x, ptr=ptr))
 
 
+def test_var_aggregation():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+
+    var_aggr = VarAggregation()
+    out = var_aggr(x, index)
+
+    mean_aggr = MeanAggregation()
+    expected = mean_aggr((x - mean_aggr(x, index)[index]).pow(2), index)
+    assert torch.allclose(out, expected, atol=1e-6)
+
+
 @pytest.mark.parametrize('Aggregation', [
     SoftmaxAggregation,
     PowerMeanAggregation,

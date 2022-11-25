@@ -6,6 +6,7 @@ from torch import Tensor
 from torch.nn import Linear, MultiheadAttention
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.nn.resolver import aggregation_resolver
 
 
@@ -68,10 +69,30 @@ class MultiAggregation(Aggregation):
             for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
         ])
 
+        # Divide the set into fusable and non-fusable aggregations:
+        fused_aggrs: List[Aggregation] = []
+        self.fused_out_index: List[int] = []
+        # self.non_fused_aggrs: List[Aggregation] = []
+        self.is_fused_aggr: List[bool] = []
+        for i, aggr in enumerate(self.aggrs):
+            if aggr.__class__ in FusedAggregation.FUSABLE_AGGRS:
+                fused_aggrs.append(aggr)
+                self.fused_out_index.append(i)
+                self.is_fused_aggr.append(True)
+            else:
+                self.is_fused_aggr.append(False)
+
+        if len(fused_aggrs) > 0:
+            self.fused_aggr = FusedAggregation(fused_aggrs)
+        else:
+            self.fused_aggr = None
+
         self.mode = mode
-        mode_kwargs = copy.copy(mode_kwargs or {})
+        mode_kwargs = copy.copy(mode_kwargs) or {}
+
         self.in_channels = mode_kwargs.pop('in_channels', None)
         self.out_channels = mode_kwargs.pop('out_channels', None)
+
         if mode == 'proj' or mode == 'attn':
             if len(aggrs) == 1:
                 raise ValueError("Multiple aggregations are required for "
@@ -83,7 +104,7 @@ class MultiAggregation(Aggregation):
                     f"and `out_channels` specified.")
 
             if isinstance(self.in_channels, int):
-                self.in_channels = (self.in_channels, ) * len(aggrs)
+                self.in_channels = [self.in_channels] * len(aggrs)
 
             if mode == 'proj':
                 self.lin = Linear(
@@ -92,7 +113,7 @@ class MultiAggregation(Aggregation):
                     **mode_kwargs,
                 )
 
-            if mode == 'attn':
+            elif mode == 'attn':
                 self.lin_heads = torch.nn.ModuleList([
                     Linear(channels, self.out_channels)
                     for channels in self.in_channels
@@ -113,18 +134,17 @@ class MultiAggregation(Aggregation):
     def reset_parameters(self):
         for aggr in self.aggrs:
             aggr.reset_parameters()
-        if hasattr(self, 'lin'):
+        if self.mode == 'proj':
             self.lin.reset_parameters()
-        if hasattr(self, 'lin_heads'):
+        if self.mode == 'attn':
             for lin in self.lin_heads:
                 lin.reset_parameters()
-        if hasattr(self, 'multihead_attn'):
             self.multihead_attn._reset_parameters()
 
     def get_out_channels(self, in_channels: int) -> int:
         if self.out_channels is not None:
             return self.out_channels
-        # TODO: Support having customized `out_channels` in each aggregation
+        # TODO Support having customized `out_channels` in each aggregation.
         if self.mode == 'cat':
             return in_channels * len(self.aggrs)
         return in_channels
@@ -132,16 +152,33 @@ class MultiAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        outs = []
-        for aggr in self.aggrs:
-            outs.append(aggr(x, index, ptr, dim_size, dim))
 
-        return self.combine(outs) if len(outs) > 1 else outs[0]
+        # `FusedAggregation` is currently limited to two-dimensional inputs:
+        if index is None or x.dim() != 2 or self.fused_aggr is None:
+            outs = [aggr(x, index, ptr, dim_size, dim) for aggr in self.aggrs]
+            return self.combine(outs)
+
+        outs: List[Tensor] = [x] * len(self.aggrs)  # Fill with dummy tensors.
+
+        fused_outs = self.fused_aggr(x, index, ptr, dim_size, dim)
+        for i, out in zip(self.fused_out_index, fused_outs):
+            outs[i] = out
+
+        for i, aggr in enumerate(self.aggrs):
+            if not self.is_fused_aggr[i]:
+                outs[i] = aggr(x, index, ptr, dim_size, dim)
+
+        return self.combine(outs)
 
     def combine(self, inputs: List[Tensor]) -> Tensor:
-        if self.mode in ['cat', 'proj']:
-            out = torch.cat(inputs, dim=-1)
-            return self.lin(out) if hasattr(self, 'lin') else out
+        if len(inputs) == 1:
+            return inputs[0]
+
+        if self.mode == 'cat':
+            return torch.cat(inputs, dim=-1)
+
+        if hasattr(self, 'lin'):
+            return self.lin(torch.cat(inputs, dim=-1))
 
         if hasattr(self, 'multihead_attn'):
             x = torch.stack(
@@ -158,9 +195,5 @@ class MultiAggregation(Aggregation):
         raise ValueError(f"Combine mode '{self.mode}' is not supported.")
 
     def __repr__(self) -> str:
-        args = [f'  {aggr}' for aggr in self.aggrs]
-        return '{}([\n{}\n], mode={})'.format(
-            self.__class__.__name__,
-            ',\n'.join(args),
-            self.mode,
-        )
+        aggrs = ',\n'.join([f'  {aggr}' for aggr in self.aggrs]) + ',\n'
+        return f'{self.__class__.__name__}([\n{aggrs}], mode={self.mode})'

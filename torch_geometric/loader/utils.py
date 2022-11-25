@@ -1,5 +1,7 @@
 import copy
+import glob
 import math
+import os
 from collections.abc import Sequence
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -36,6 +38,10 @@ class InputData:
 
 def index_select(value: FeatureTensorType, index: Tensor,
                  dim: int = 0) -> Tensor:
+
+    # PyTorch currently only supports indexing via `torch.int64` :(
+    index = index.to(torch.int64)
+
     if isinstance(value, Tensor):
         out: Optional[Tensor] = None
         if torch.utils.data.get_worker_info() is not None:
@@ -91,7 +97,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             edge_attr = value.storage.value()
             if edge_attr is not None:
                 index = index.to(edge_attr.device)
-                edge_attr = edge_attr[index]
+                edge_attr = index_select(edge_attr, index, dim=0)
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
@@ -112,7 +118,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                     perm = perm.to(value.device)
                 elif isinstance(value, np.ndarray):
                     perm = perm.cpu()
-                out_store[key] = index_select(value, perm[index], dim=dim)
+                out_store[key] = index_select(
+                    value,
+                    perm[index.to(torch.int64)],
+                    dim=dim,
+                )
 
     return store
 
@@ -195,6 +205,53 @@ def filter_custom_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
+
+
+def get_numa_nodes_cores():
+    """ Returns numa nodes info, format:
+        {<node_id>: [(<core_id>, [<sibling_thread_id_0>, <sibling_thread_id_1>
+        ...]), ...], ...}
+        E.g.: {0: [(0, [0, 4]), (1, [1, 5])], 1: [(2, [2, 6]), (3, [3, 7])]}
+
+        If not available, returns {}
+    """
+    numa_node_paths = glob.glob('/sys/devices/system/node/node[0-9]*')
+
+    if not numa_node_paths:
+        return {}
+
+    nodes = {}
+    try:
+        for node_path in numa_node_paths:
+            numa_node_id = int(os.path.basename(node_path)[4:])
+
+            thread_siblings = {}
+            for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
+                cpu_id = int(os.path.basename(cpu_dir)[3:])
+                if cpu_id > 0:
+                    with open(os.path.join(cpu_dir,
+                                           'online')) as core_online_file:
+                        core_online = int(
+                            core_online_file.read().splitlines()[0])
+                else:
+                    core_online = 1  # cpu0 is always online (special case)
+                if core_online == 1:
+                    with open(os.path.join(cpu_dir, 'topology',
+                                           'core_id')) as core_id_file:
+                        core_id = int(core_id_file.read().strip())
+                        if core_id in thread_siblings:
+                            thread_siblings[core_id].append(cpu_id)
+                        else:
+                            thread_siblings[core_id] = [cpu_id]
+
+            nodes[numa_node_id] = sorted([(k, sorted(v))
+                                          for k, v in thread_siblings.items()])
+
+    except (OSError, ValueError, IndexError, IOError):
+        Warning('Failed to read NUMA info')
+        return {}
+
+    return nodes
 
 
 # Input Utilities #############################################################
