@@ -46,7 +46,7 @@ class GNNExplainer(ExplainerAlgorithm):
         `examples/gnn_explainer.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
         `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`.
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.

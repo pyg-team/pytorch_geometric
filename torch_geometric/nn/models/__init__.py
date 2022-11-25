@@ -71,5 +71,5 @@ GNNExplainer = deprecated(
     "use 'explain.Explainer' with 'explain.algorithm.GNNExplainer' instead",
     'nn.models.GNNExplainer')(GNNExplainer_)
 
-classes == copy.copy(classes)
+classes = copy.copy(classes)
 __all__ += ['Explainer', 'GNNExplainer']
