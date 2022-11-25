@@ -1,6 +1,8 @@
 import os
 import random
+import subprocess
 import sys
+from time import sleep
 
 import numpy as np
 import pytest
@@ -572,3 +574,28 @@ def test_memmap_neighbor_loader():
     assert batch.x.size() == (batch.num_nodes, 32)
 
     os.remove(path)
+
+
+@onlyUnix
+def test_cpu_affinity_neighbor_loader():
+    data = Data(x=torch.randn(1, 1))
+    # test default core id [1] and custom [0,1] with 2 workers
+    num_workers = [1, 2]
+    loader_cores = [None, [0, 1]]
+    expected = [1, [0, 1]]
+    for i, nw in enumerate(num_workers):
+        output = []
+        loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
+                                num_workers=nw)
+        with loader.enable_cpu_affinity(loader_cores=loader_cores[i]):
+            iterator = loader._get_iterator().iterator
+            workers = iterator._workers
+            for worker in workers:
+                sleep(1)  # gives time for worker to init
+                process = subprocess.Popen(
+                    ['taskset', '-c', '-p', f'{worker.pid}'],
+                    stdout=subprocess.PIPE)
+                stdout = process.communicate()[0].decode('utf-8')
+                output.append(int(stdout.split(':')[1].strip()))
+        output = output[0] if nw == 1 else output
+        assert output == expected[i]

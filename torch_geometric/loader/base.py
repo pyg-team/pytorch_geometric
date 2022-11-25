@@ -34,3 +34,15 @@ class DataLoaderIterator:
 
     def __next__(self) -> Any:
         return self.transform_fn(next(self.iterator))
+
+
+class WorkerInitWrapper:
+    r"""Wraps the :attr:`worker_init_fn` argument
+    for PyTorch DataLoader workers.
+    """
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, worker_id):
+        if self.func is not None:
+            self.func(worker_id)
