@@ -93,8 +93,8 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             model (torch.nn.Module): The model to explain.
-            model_mode (ModelMode): The mode of the model.
             *args: Arguments passed to :obj:`model`.
+            model_mode (ModelMode): The mode of the model.
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """

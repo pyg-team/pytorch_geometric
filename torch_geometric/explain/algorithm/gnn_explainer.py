@@ -24,29 +24,29 @@ class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
     Explanations for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
-    structures and node features that play a crucial role in a
-    GNN's node-predictions.
+    structures and node features that play a crucial role in the predictions
+    made by a GNN.
 
-    .. note::
-        Configuration supported:
+    The following configurations are currently supported:
 
-        - :class:`torch_geometric.explain.config.ModelConfig`
+    - :class:`torch_geometric.explain.config.ModelConfig`
 
-            - :attr:`task_level`:  :obj:`ModelTaskLevel.node`, or
-              :obj:`ModelTaskLevel.graph`
+        - :attr:`task_level`: :obj:`"node"` or :obj:`"graph"`
 
-        - :class:`torch_geometric.explain.config.ExplainerConfig`
+    - :class:`torch_geometric.explain.config.ExplainerConfig`
 
-            - :attr:`node_mask_type`:  :obj:`MaskType.object`,
-              :obj:`MaskType.attributes`, or :obj:`MaskType.common_attributes`
+        - :attr:`node_mask_type`: :obj:`"object"`, :obj:`"common_attributes"`
+          or :obj:`"attributes"`
 
-            - :attr:`edge_mask_type`: :obj:`MaskType.object` or :obj:`None`
+        - :attr:`edge_mask_type`: :obj:`"object"` or :obj:`None`
 
     .. note::
 
         For an example of using :class:`GNNExplainer`, see
         `examples/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_.
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
+        `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`.
 
     Args:
         epochs (int, optional): The number of epochs to train.
@@ -68,12 +68,7 @@ class GNNExplainer(ExplainerAlgorithm):
         'EPS': 1e-15,
     }
 
-    def __init__(
-        self,
-        epochs: int = 100,
-        lr: float = 0.01,
-        **kwargs,
-    ):
+    def __init__(self, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
