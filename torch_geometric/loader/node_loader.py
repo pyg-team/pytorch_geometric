@@ -99,7 +99,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.is_cuda_available = torch.cuda.is_available()
 
         self.cpu_affinity_enabled = False
-        worker_init_fn = WorkerInitWrapper(kwargs.get('worker_init_fn', None))
+        worker_init_fn = WorkerInitWrapper(kwargs.pop('worker_init_fn', None))
 
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn,
