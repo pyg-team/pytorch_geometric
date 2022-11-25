@@ -76,23 +76,34 @@ class Explainer:
         edge_index: Tensor,
         *,
         target: Optional[Tensor] = None,
+        index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        r"""Computes the explanation of the GNN  for the given inputs and
+        r"""Computes the explanation of the GNN for the given inputs and
         target.
+
+        .. note::
+
+            If you get an error message like "Trying to backward through the
+            graph a second time", make sure that the target you provided
+            was computed with :meth:`torch.no_grad`.
 
         Args:
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The input edge indices.
-            target (torch.Tensor): the target of the model.
+            target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
                 set to :obj:`None` and will get automatically inferred.
                 (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The index of the model
+                output to explain. Can be a single index or a tensor of
+                indices. (default: :obj:`None`)
             target_index (int or torch.Tensor, optional): The target indices to
-                explain. (default: :obj:`None`)
+                explain in case targets are multi-dimensional.
+                (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -112,6 +123,7 @@ class Explainer:
             explainer_config=self.explainer_config,
             model_config=self.model_config,
             target=target,
+            index=index,
             target_index=target_index,
             **kwargs,
         )

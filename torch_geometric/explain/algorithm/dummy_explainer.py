@@ -46,7 +46,7 @@ class DummyExplainer(ExplainerAlgorithm):
 
     def supports(
         self,
-        explanation_config: ExplainerConfig,
+        explainer_config: ExplainerConfig,
         model_config: ModelConfig,
     ) -> bool:
         return True
