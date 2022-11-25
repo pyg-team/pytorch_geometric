@@ -214,7 +214,7 @@ class EGConv(MessagePassing):
                                        dim_size, reduce='mean')
                 out = mean_squares - mean * mean
                 if aggr == 'std':
-                    out = torch.sqrt(out.relu_() + 1e-5)
+                    out = out.clamp(min=1e-5).sqrt()
             else:
                 out = scatter(inputs, index, 0, None, dim_size, reduce=aggr)
 
