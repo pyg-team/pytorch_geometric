@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data.data import Data, warn_or_raise
 
 
 class Explanation(Data):
@@ -42,7 +42,8 @@ class Explanation(Data):
 
     def get_explanation_subgraph(self) -> Data:
         r"""Returns the explanation graph :obj:`~torch_geometric.data.Data`
-        for Explanations node, edge, and feature masks.
+        for given `node_mask`, `edge_mask`, `node_feat_mask`, and
+        `node_feat_mask`.
         """
         x_ = copy.copy(self.x)
         edge_attr_ = copy.copy(self.edge_attr)
@@ -68,6 +69,38 @@ class Explanation(Data):
 
     def get_complement_subgraph(self) -> Data:
         pass  # TODO (blaz)
+
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validate the correctness of the explanation"""
+        status = super().validate()
+
+        if self.node_mask is not None:
+            if self.num_nodes != self.node_mask.shape[0]:
+                status = False
+                warn_or_raise(f"'num_nodes' ({self.num_nodes}) does not match "
+                              f"'node_mask' shape ({self.node_mask.shape}")
+        if self.edge_mask is not None:
+            if self.num_edges != self.edge_mask.shape[0]:
+                status = False
+                warn_or_raise(f"'num_edges' ({self.num_edges}) does not match "
+                              f"'edge_mask' shape ({self.edge_mask.shape}")
+        if self.node_feat_mask is not None:
+            if self.x.shape != self.node_feat_mask.shape:
+                status = False
+                warn_or_raise(
+                    f"'node_feat_mask' shape ({self.node_feat_mask.shape}) "
+                    f"and the shape of 'x' ({self.x.shape}) do not match")
+        if self.edge_feat_mask is not None:
+            if self.edge_attr is None:
+                status = False
+                warn_or_raise(
+                    "'edge_attr' is None while `edge_feat_mask` is defined")
+            elif self.edge_attr.shape != self.edge_feat_mask:
+                status = False
+                warn_or_raise(
+                    f"'edge_feat_mask' shape ({self.edge_feat_mask})")
+
+        return status
 
     @property
     def available_explanations(self) -> List[str]:
