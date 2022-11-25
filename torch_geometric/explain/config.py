@@ -7,42 +7,48 @@ from torch_geometric.utils.mixin import CastMixin
 
 class ExplanationType(Enum):
     """Enum class for the explanation type."""
-    model = 'model'
-    phenomenon = 'phenomenon'
+
+    model = "model"
+    phenomenon = "phenomenon"
 
 
 class MaskType(Enum):
     """Enum class for the mask type."""
-    object = 'object'
-    attributes = 'attributes'
-    common_attributes = 'common_attributes'
+
+    object = "object"
+    common_attributes = "common_attributes"
+    attributes = "attributes"
 
 
 class ModelMode(Enum):
     """Enum class for the model return type."""
-    classification = 'classification'
-    regression = 'regression'
+
+    classification = "classification"
+    regression = "regression"
 
 
 class ModelTaskLevel(Enum):
     """Enum class for the model task level."""
-    node = 'node'
-    edge = 'edge'
-    graph = 'graph'
+
+    node = "node"
+    edge = "edge"
+    graph = "graph"
 
 
 class ModelReturnType(Enum):
     """Enum class for the model return type."""
-    raw = 'raw'
-    probs = 'probs'
-    log_probs = 'log_probs'
+
+    raw = "raw"
+    probs = "probs"
+    log_probs = "log_probs"
 
 
 class ThresholdType(Enum):
     """Enum class for the threshold type."""
-    hard = 'hard'
-    topk = 'topk'
-    topk_hard = 'topk_hard'
+
+    hard = "hard"
+    topk = "topk"
+    topk_hard = "topk_hard"
     # connected = 'connected'  # TODO
 
 
@@ -69,12 +75,11 @@ class ExplainerConfig(CastMixin):
 
                 - :obj:`None`: Will not apply any mask on nodes.
 
-                - :obj:`"object"`: Will mask the whole node.
+                - :obj:`"object"`: Will mask each node.
 
-                - :obj:`"attributes"`: Will mask the node attributes.
+                - :obj:`"common_attributes"`: Will mask each feature.
 
-                - :obj:`"common_attributes"`: Will share the attribute mask
-                    across all nodes.
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
             on edges. Same types as :obj:`node_mask_type`.
@@ -197,8 +202,8 @@ class ThresholdConfig(CastMixin):
             raise ValueError(f"Threshold value must be a float or int "
                              f"(got {type(self.value)}).")
 
-        if (self.type == ThresholdType.hard
-                and (self.value < 0 or self.value > 1)):
+        if self.type == ThresholdType.hard and (self.value < 0
+                                                or self.value > 1):
             raise ValueError(f"Threshold value must be between 0 and 1 "
                              f"(got {self.value})")
 

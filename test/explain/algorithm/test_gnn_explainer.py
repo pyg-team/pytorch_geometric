@@ -1,10 +1,8 @@
 import pytest
 import torch
-import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.explain import Explainer
-from torch_geometric.explain.algorithm import GNNExplainer
+from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
@@ -23,9 +21,30 @@ class GCN_node_classification_single_output(torch.nn.Module):
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 7)
 
-    def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
+        return self.conv2(x, edge_index)
+
+
+class GCN_regression_single_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 1)
+
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
+        return self.conv2(x, edge_index)
+
+
+class GCN_classification_single_output(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 7)
+
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         return x.log_softmax(dim=1)
 
@@ -38,8 +57,7 @@ class GCN_node_classification_multi_output(torch.nn.Module):
         self.conv2_2 = GCNConv(16, 7)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         out_1 = self.conv2(x, edge_index).log_softmax(dim=1)
         out_2 = self.conv2_2(x, edge_index).log_softmax(dim=1)
         return torch.stack([out_1, out_2], dim=0)
@@ -52,8 +70,7 @@ class GCN_node_regression_single_output(torch.nn.Module):
         self.conv2 = GCNConv(16, 1)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         return self.conv2(x, edge_index)
 
 
@@ -64,8 +81,7 @@ class GCN_node_regression_multi_output(torch.nn.Module):
         self.conv2 = GCNConv(16, 7)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         return self.conv2(x, edge_index)
 
 
@@ -75,9 +91,8 @@ class GAT_node(torch.nn.Module):
         self.conv1 = GATConv(3, 16, heads=2, concat=True)
         self.conv2 = GATConv(2 * 16, 7, heads=2, concat=False)
 
-    def forward(self, x, edge_index, batch=None, **kwargs):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         return x.log_softmax(dim=1)
 
@@ -95,8 +110,7 @@ class GCN_edge_classification_single_output(torch.nn.Module):
         self.linear1 = Linear(14, 4)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         src, dst = edge_index
         edge_x = torch.cat([x[src], x[dst]], dim=1)
@@ -112,8 +126,7 @@ class GCN_edge_classification_multi_output(torch.nn.Module):
         self.linear2 = Linear(14, 4)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         src, dst = edge_index
         edge_x = torch.cat([x[src], x[dst]], dim=1)
@@ -130,8 +143,7 @@ class GCN_edge_regression_single_output(torch.nn.Module):
         self.linear1 = Linear(14, 1)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         src, dst = edge_index
         edge_x = torch.cat([x[src], x[dst]], dim=1)
@@ -146,8 +158,7 @@ class GCN_edge_regression_multi_output(torch.nn.Module):
         self.linear1 = Linear(14, 4)
 
     def forward(self, x, edge_index, batch=None):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         src, dst = edge_index
         edge_x = torch.cat([x[src], x[dst]], dim=1)
@@ -169,8 +180,7 @@ class GCN_graph_classification_single_output(torch.nn.Module):
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
         # pass arguments in the right oder
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         x = global_add_pool(x, batch)
         x = self.lin(x)
@@ -188,8 +198,7 @@ class GCN_graph_classification_multi_output(torch.nn.Module):
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
         # pass arguments in the right oder
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         x = global_add_pool(x, batch)
         out_1 = self.lin(x).log_softmax(dim=1)
@@ -207,8 +216,7 @@ class GCN_graph_regression_single_output(torch.nn.Module):
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
         # pass arguments in the right oder
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         x = global_add_pool(x, batch)
         return self.lin(x)
@@ -224,8 +232,7 @@ class GCN_graph_regression_multi_output(torch.nn.Module):
     def forward(self, x, edge_index, edge_attr=None, batch=None):
         # edge_attr is for checking if explain can
         # pass arguments in the right oder
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
+        x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
         x = global_add_pool(x, batch)
         return self.lin(x)
@@ -271,21 +278,27 @@ return_types_classification = ["log_probs", "raw", "probs"]
 return_types_regression = ["raw"]
 
 x = torch.randn(8, 3)
-edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                           [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
+edge_index = torch.tensor([
+    [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+    [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
+])
 
 # --------------------------------------------------------------------
 # test for node level tasks
 # --------------------------------------------------------------------
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('model', [
-    GCN_node_classification_single_output, GCN_node_classification_multi_output
-])
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
+@pytest.mark.parametrize(
+    "model",
+    [
+        GCN_node_classification_single_output,
+        GCN_node_classification_multi_output
+    ],
+)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_classification)
+@pytest.mark.parametrize("return_type", return_types_classification)
 def test_gnn_explainer_with_meta_explainer_classification_node(
     edge_mask_type,
     node_mask_type,
@@ -299,7 +312,7 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='node',
+        task_level="node",
         return_type=return_type,
         mode="classification",
     )
@@ -313,9 +326,12 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for node 0
     explanation = explainer(x=x, edge_index=edge_index, target=out, index=2,
@@ -325,13 +341,13 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
                       explanation)
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
 @pytest.mark.parametrize(
-    'model',
+    "model",
     [GCN_node_regression_single_output, GCN_node_regression_multi_output])
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_regression)
+@pytest.mark.parametrize("return_type", return_types_regression)
 def test_gnn_explainer_with_meta_explainer_regression_node(
     edge_mask_type,
     node_mask_type,
@@ -345,7 +361,7 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='node',
+        task_level="node",
         return_type=return_type,
         mode="regression",
     )
@@ -359,9 +375,12 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for node 0
     explanation = explainer(x=x, edge_index=edge_index, target=out, index=2,
@@ -376,13 +395,17 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 # --------------------------------------------------------------------
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('model', [
-    GCN_edge_classification_single_output, GCN_edge_classification_multi_output
-])
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
+@pytest.mark.parametrize(
+    "model",
+    [
+        GCN_edge_classification_single_output,
+        GCN_edge_classification_multi_output
+    ],
+)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_classification)
+@pytest.mark.parametrize("return_type", return_types_classification)
 def test_gnn_explainer_with_meta_explainer_classification_edge(
     edge_mask_type,
     node_mask_type,
@@ -396,7 +419,7 @@ def test_gnn_explainer_with_meta_explainer_classification_edge(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='edge',
+        task_level="edge",
         return_type=return_type,
         mode="classification",
     )
@@ -409,9 +432,12 @@ def test_gnn_explainer_with_meta_explainer_classification_edge(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for edge 0
     explanation = explainer(x=x, edge_index=edge_index, target=out, index=0,
@@ -421,13 +447,13 @@ def test_gnn_explainer_with_meta_explainer_classification_edge(
                       explanation)
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
 @pytest.mark.parametrize(
-    'model',
+    "model",
     [GCN_edge_regression_single_output, GCN_edge_regression_multi_output])
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_regression)
+@pytest.mark.parametrize("return_type", return_types_regression)
 def test_gnn_explainer_with_meta_explainer_regression_edge(
     edge_mask_type,
     node_mask_type,
@@ -441,7 +467,7 @@ def test_gnn_explainer_with_meta_explainer_regression_edge(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='edge',
+        task_level="edge",
         return_type=return_type,
         mode="regression",
     )
@@ -455,9 +481,12 @@ def test_gnn_explainer_with_meta_explainer_regression_edge(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for edge 0
     explanation = explainer(x=x, edge_index=edge_index, target=out, index=0,
@@ -472,14 +501,17 @@ def test_gnn_explainer_with_meta_explainer_regression_edge(
 # --------------------------------------------------------------------
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('model', [
-    GCN_graph_classification_single_output,
-    GCN_graph_classification_multi_output
-])
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
+@pytest.mark.parametrize(
+    "model",
+    [
+        GCN_graph_classification_single_output,
+        GCN_graph_classification_multi_output
+    ],
+)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_classification)
+@pytest.mark.parametrize("return_type", return_types_classification)
 def test_gnn_explainer_with_meta_explainer_classification_graph(
     edge_mask_type,
     node_mask_type,
@@ -493,7 +525,7 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='graph',
+        task_level="graph",
         return_type=return_type,
         mode="classification",
     )
@@ -507,27 +539,38 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, target=out,
-                            target_index=target_index, edge_attr=None,
-                            batch=None)
+    explanation = explainer(
+        x=x,
+        edge_index=edge_index,
+        target=out,
+        target_index=target_index,
+        edge_attr=None,
+        batch=None,
+    )
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)
 
 
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('model', [
-    GCN_graph_regression_single_output,
-    GCN_graph_regression_multi_output,
-])
+@pytest.mark.parametrize("edge_mask_type", edge_mask_types)
+@pytest.mark.parametrize("node_mask_type", node_mask_types)
+@pytest.mark.parametrize(
+    "model",
+    [
+        GCN_graph_regression_single_output,
+        GCN_graph_regression_multi_output,
+    ],
+)
 @pytest.mark.parametrize("explanation_type", ["model", "phenomenon"])
-@pytest.mark.parametrize('return_type', return_types_regression)
+@pytest.mark.parametrize("return_type", return_types_regression)
 def test_gnn_explainer_with_meta_explainer_regression_graph(
     edge_mask_type,
     node_mask_type,
@@ -541,7 +584,7 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
         edge_mask_type=edge_mask_type,
     )
     model_config = ModelConfig(
-        task_level='graph',
+        task_level="graph",
         return_type=return_type,
         mode="regression",
     )
@@ -556,14 +599,22 @@ def test_gnn_explainer_with_meta_explainer_regression_graph(
     else:
         target_index = None
 
-    explainer = Explainer(model=model, algorithm=GNNExplainer(epochs=10),
-                          explainer_config=explainer_config,
-                          model_config=model_config)
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=10),
+        explainer_config=explainer_config,
+        model_config=model_config,
+    )
 
     # try to explain prediction for node 0
-    explanation = explainer(x=x, edge_index=edge_index, target=out,
-                            target_index=target_index, edge_attr=None,
-                            batch=None)
+    explanation = explainer(
+        x=x,
+        edge_index=edge_index,
+        target=out,
+        target_index=target_index,
+        edge_attr=None,
+        batch=None,
+    )
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)

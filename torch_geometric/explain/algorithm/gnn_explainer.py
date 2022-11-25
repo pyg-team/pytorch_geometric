@@ -27,29 +27,29 @@ class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
     Explanations for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
-    structures and node features that play a crucial role in a
-    GNN's node-predictions.
+    structures and node features that play a crucial role in the predictions
+    made by a GNN.
 
-    .. note::
-        Configuration supported:
+    The following configurations are currently supported:
 
-        - :class:`torch_geometric.explain.config.ModelConfig`
+    - :class:`torch_geometric.explain.config.ModelConfig`
 
-            - :attr:`task_level`:  :obj:`ModelTaskLevel.node`,
-              :obj:`ModelTaskLevel.edge`, or :obj:`ModelTaskLevel.graph`
+        - :attr:`task_level`: :obj:`"node"` or :obj:`"graph"`
 
-        - :class:`torch_geometric.explain.config.ExplainerConfig`
+    - :class:`torch_geometric.explain.config.ExplainerConfig`
 
-            - :attr:`node_mask_type`:  :obj:`MaskType.object`,
-              :obj:`MaskType.attributes`, or :obj:`MaskType.common_attributes`
+        - :attr:`node_mask_type`: :obj:`"object"`, :obj:`"common_attributes"`
+          or :obj:`"attributes"`
 
-            - :attr:`edge_mask_type`: :obj:`MaskType.object` or :obj:`None`
+        - :attr:`edge_mask_type`: :obj:`"object"` or :obj:`None`
 
     .. note::
 
         For an example of using :class:`GNNExplainer`, see
         `examples/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_.
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
+        `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
@@ -62,29 +62,22 @@ class GNNExplainer(ExplainerAlgorithm):
     """
 
     coeffs = {
-        'edge_size': 0.005,
-        'edge_reduction': 'sum',
-        'node_feat_size': 1.0,
-        'node_feat_reduction': 'mean',
-        'edge_ent': 1.0,
-        'node_feat_ent': 0.1,
-        'EPS': 1e-15,
+        "edge_size": 0.005,
+        "edge_reduction": "sum",
+        "node_feat_size": 1.0,
+        "node_feat_reduction": "mean",
+        "edge_ent": 1.0,
+        "node_feat_ent": 0.1,
+        "EPS": 1e-15,
     }
 
-    def __init__(
-        self,
-        epochs: int = 100,
-        lr: float = 0.01,
-        **kwargs,
-    ):
+    def __init__(self, epochs: int = 100, lr: float = 0.01, **kwargs):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
         self.coeffs.update(kwargs)
-        # node_mask will never actually be None
-        self.node_mask = None
-        # edge_mask is only None if edge_mask_type is != MaskType.object
-        self.edge_mask = None
+
+        self.node_mask = self.edge_mask = None
 
     def forward(
         self,
@@ -107,18 +100,18 @@ class GNNExplainer(ExplainerAlgorithm):
         if model_config.task_level == ModelTaskLevel.node:
             # if we are dealing with a node level task, we can restrict the
             # computation to the node of interest and its computation graph
-            x, edge_index, index, subset, hard_edge_mask, kwargs =\
+            x, edge_index, index, subset, hard_edge_mask, kwargs = \
                 self.subgraph(model, index, x, edge_index, **kwargs)
-            if target_index is not None and model_config.mode ==\
-                    ModelMode.classification:
+            if (target_index is not None
+                    and model_config.mode == ModelMode.classification):
                 target = torch.index_select(target, 1, subset)
             else:
                 target = target[subset]
         elif model_config.task_level == ModelTaskLevel.edge:
-            x, edge_index, index, subset, hard_edge_mask, kwargs =\
+            x, edge_index, index, subset, hard_edge_mask, kwargs = \
                 self.subgraph(model, index, x, edge_index, **kwargs)
-            if target_index is not None and model_config.mode ==\
-                    ModelMode.classification:
+            if (target_index is not None
+                    and model_config.mode == ModelMode.classification):
                 target = torch.index_select(target, 1, subset)
             else:
                 target = target[subset]
@@ -128,21 +121,37 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             raise NotImplementedError
 
-        self._train_node_edge_mask(model, x, edge_index, explainer_config,
-                                   model_config, target, index, target_index,
-                                   **kwargs)
+        self._train_node_edge_mask(
+            model,
+            x,
+            edge_index,
+            explainer_config,
+            model_config,
+            target,
+            index,
+            target_index,
+            **kwargs,
+        )
 
         node_mask, node_feat_mask, edge_mask = self._get_masks(
-            num_nodes=num_nodes, num_edges=num_edges,
+            num_nodes=num_nodes,
+            num_edges=num_edges,
             explainer_config=explainer_config,
-            task_level=model_config.task_level, hard_edge_mask=hard_edge_mask,
-            subset=subset)
+            task_level=model_config.task_level,
+            hard_edge_mask=hard_edge_mask,
+            subset=subset,
+        )
 
         self._clean_model(model)
 
         # build explanation
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feat_mask)
+        return Explanation(
+            x=x,
+            edge_index=edge_index,
+            edge_mask=edge_mask,
+            node_mask=node_mask,
+            node_feat_mask=node_feat_mask,
+        )
 
     def _validate_indexes(self, model_config: ModelConfig, index: IndexType,
                           target_index: IndexType):
@@ -185,7 +194,7 @@ class GNNExplainer(ExplainerAlgorithm):
             node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
             if explainer_config.node_mask_type == MaskType.object:
                 if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
-                    node_mask_ = torch.zeros(num_nodes, dtype=torch.float)
+                    node_mask_ = node_mask.new_zeros(num_nodes)
                     node_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
                     node_mask_ = node_mask
@@ -193,24 +202,30 @@ class GNNExplainer(ExplainerAlgorithm):
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.attributes:
                 if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
-                    node_feat_mask_ = torch.zeros(num_nodes,
-                                                  node_mask.size(-1),
-                                                  dtype=torch.float)
+                    node_feat_mask_ = node_mask.new_zeros(
+                        num_nodes, node_mask.size(-1))
                     node_feat_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
                     node_feat_mask_ = node_mask
                 else:
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.common_attributes:
-                node_feat_mask_ = self._reshape_common_attributes(
-                    node_mask, num_nodes)
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
+                    node_feat_mask_ = node_mask.new_zeros(
+                        num_nodes, node_mask.numel())
+                    node_feat_mask_[subset] = node_mask
+                elif task_level == ModelTaskLevel.graph:
+                    node_feat_mask_ = self._reshape_common_attributes(
+                        node_mask, num_nodes)
+                else:
+                    raise NotImplementedError
             else:
                 raise NotImplementedError
 
         if self.edge_mask is not None:
             edge_mask = self.edge_mask.detach().sigmoid()
             if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
-                edge_mask_ = torch.zeros(num_edges, dtype=torch.float)
+                edge_mask_ = edge_mask.new_zeros(num_edges)
                 edge_mask_[hard_edge_mask] = edge_mask
             elif task_level == ModelTaskLevel.graph:
                 edge_mask_ = edge_mask
@@ -231,15 +246,20 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: IndexType = None,
         **kwargs,
     ):
-        self._initialize_masks(x, edge_index,
-                               node_mask_type=explainer_config.node_mask_type,
-                               edge_mask_type=explainer_config.edge_mask_type)
+        self._initialize_masks(
+            x,
+            edge_index,
+            node_mask_type=explainer_config.node_mask_type,
+            edge_mask_type=explainer_config.edge_mask_type,
+        )
 
         if explainer_config.edge_mask_type == MaskType.object:
             set_masks(model, self.edge_mask, edge_index, apply_sigmoid=True)
             parameters = [self.node_mask, self.edge_mask]
         else:
+            assert explainer_config.edge_mask_type is None
             parameters = [self.node_mask]
+
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
         for _ in range(self.epochs):
@@ -247,10 +267,14 @@ class GNNExplainer(ExplainerAlgorithm):
             h = x * self.node_mask.sigmoid()
             out = model(x=h, edge_index=edge_index, **kwargs)
             loss_value = self.loss(
-                out, target, return_type=model_config.return_type,
-                target_index=target_index, index=index,
+                out,
+                target,
+                return_type=model_config.return_type,
+                target_index=target_index,
+                index=index,
                 edge_mask_type=explainer_config.edge_mask_type,
-                model_mode=model_config.mode)
+                model_mode=model_config.mode,
+            )
             loss_value.backward(retain_graph=False)
             optimizer.step()
 
@@ -274,7 +298,7 @@ class GNNExplainer(ExplainerAlgorithm):
             raise NotImplementedError
 
         if edge_mask_type == MaskType.object:
-            std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
+            std = torch.nn.init.calculate_gain("relu") * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
 
     def _loss_regression(
@@ -289,11 +313,11 @@ class GNNExplainer(ExplainerAlgorithm):
             y = y[..., target_index].unsqueeze(-1)
 
         if index is not None:
-            loss_ = torch.cdist(y_hat[index], y[index])
+            loss = torch.cdist(y_hat[index], y[index])
         else:
-            loss_ = torch.cdist(y_hat, y)
+            loss = torch.cdist(y_hat, y)
 
-        return loss_
+        return loss
 
     def _loss_classification(
         self,
@@ -335,18 +359,18 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if edge_mask_type is not None:
             m = self.edge_mask.sigmoid()
-            edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
-            loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
-            ent = -m * torch.log(m + self.coeffs['EPS']) - (
-                1 - m) * torch.log(1 - m + self.coeffs['EPS'])
-            loss = loss + self.coeffs['edge_ent'] * ent.mean()
+            edge_reduce = getattr(torch, self.coeffs["edge_reduction"])
+            loss = loss + self.coeffs["edge_size"] * edge_reduce(m)
+            ent = -m * torch.log(m + self.coeffs["EPS"]) - (
+                1 - m) * torch.log(1 - m + self.coeffs["EPS"])
+            loss = loss + self.coeffs["edge_ent"] * ent.mean()
 
         m = self.node_mask.sigmoid()
-        node_feat_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
-        loss = loss + self.coeffs['node_feat_size'] * node_feat_reduce(m)
-        ent = -m * torch.log(m + self.coeffs['EPS']) - (
-            1 - m) * torch.log(1 - m + self.coeffs['EPS'])
-        loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
+        node_feat_reduce = getattr(torch, self.coeffs["node_feat_reduction"])
+        loss = loss + self.coeffs["node_feat_size"] * node_feat_reduce(m)
+        ent = -m * torch.log(m + self.coeffs["EPS"]) - (
+            1 - m) * torch.log(1 - m + self.coeffs["EPS"])
+        loss = loss + self.coeffs["node_feat_ent"] * ent.mean()
 
         return loss
 
@@ -356,7 +380,9 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
     ) -> bool:
         if model_config.task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph
+                ModelTaskLevel.node,
+                ModelTaskLevel.edge,
+                ModelTaskLevel.graph,
         ]:
             logging.error("Model task level not supported.")
             return False
@@ -365,8 +391,9 @@ class GNNExplainer(ExplainerAlgorithm):
             return False
 
         if explainer_config.node_mask_type not in [
-                MaskType.common_attributes, MaskType.object,
-                MaskType.attributes
+                MaskType.common_attributes,
+                MaskType.object,
+                MaskType.attributes,
         ]:
             logging.error("Node mask type not supported.")
             return False
@@ -380,66 +407,21 @@ class GNNExplainer(ExplainerAlgorithm):
 
 
 class GNNExplainer_:
-    r"""Deprecated version of GNN-Explainer model from the `"GNNExplainer:
-    Generating Explanations for Graph Neural Networks"
-    <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
-    structures and small subsets node features that play a crucial role in a
-    GNN’s node-predictions.
-    .. note::
-        For an example of using GNN-Explainer, see `examples/gnn_explainer.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        gnn_explainer.py>`_.
-    Args:
-        model (torch.nn.Module): The GNN module to explain.
-        epochs (int, optional): The number of epochs to train.
-            (default: :obj:`100`)
-        lr (float, optional): The learning rate to apply.
-            (default: :obj:`0.01`)
-        num_hops (int, optional): The number of hops the :obj:`model` is
-            aggregating information from.
-            If set to :obj:`None`, will automatically try to detect this
-            information based on the number of
-            :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
-            layers inside :obj:`model`. (default: :obj:`None`)
-        return_type (str, optional): Denotes the type of output from
-            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
-            returns the logarithm of probabilities), :obj:`"prob"` (the
-            model returns probabilities), :obj:`"raw"` (the model returns raw
-            scores) and :obj:`"regression"` (the model returns scalars).
-            (default: :obj:`"log_prob"`)
-        feat_mask_type (str, optional): Denotes the type of feature mask
-            that will be learned. Valid inputs are :obj:`"feature"` (a single
-            feature-level mask for all nodes), :obj:`"individual_feature"`
-            (individual feature-level masks for each node), and :obj:`"scalar"`
-            (scalar mask for each each node). (default: :obj:`"feature"`)
-        allow_edge_mask (boolean, optional): If set to :obj:`False`, the edge
-            mask will not be optimized. (default: :obj:`True`)
-        log (bool, optional): If set to :obj:`False`, will not log any learning
-            progress. (default: :obj:`True`)
-        **kwargs (optional): Additional hyper-parameters to override default
-            settings in :attr:`~torch_geometric.nn.models.GNNExplainer.coeffs`.
-    """
+    r"""Deprecated version for :class:`GNNExplainer`."""
 
-    coeffs = {
-        'edge_size': 0.005,
-        'edge_reduction': 'sum',
-        'node_feat_size': 1.0,
-        'node_feat_reduction': 'mean',
-        'edge_ent': 1.0,
-        'node_feat_ent': 0.1,
-    }
+    coeffs = GNNExplainer.coeffs
 
     conversion_node_mask_type = {
-        'feature': 'common_attributes',
-        'individual_feature': 'attributes',
-        'scalar': 'object',
+        "feature": "common_attributes",
+        "individual_feature": "attributes",
+        "scalar": "object",
     }
 
     conversion_return_type = {
-        'log_prob': 'log_probs',
-        'prob': 'probs',
-        'raw': 'raw',
-        "regression": 'raw',
+        "log_prob": "log_probs",
+        "prob": "probs",
+        "raw": "raw",
+        "regression": "raw",
     }
 
     def __init__(
@@ -447,15 +429,12 @@ class GNNExplainer_:
         model: torch.nn.Module,
         epochs: int = 100,
         lr: float = 0.01,
-        return_type: str = 'log_prob',
-        feat_mask_type: str = 'feature',
+        return_type: str = "log_prob",
+        feat_mask_type: str = "feature",
         allow_edge_mask: bool = True,
         **kwargs,
     ):
-        logging.warning(
-            "Using depreciated `GNNExplainer` use 'explain.Explainer'\
-                with explain.algorithm.GNNExplainer' instead")
-        assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
+        assert feat_mask_type in ["feature", "individual_feature", "scalar"]
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
@@ -477,14 +456,6 @@ class GNNExplainer_:
         edge_index: Tensor,
         **kwargs,
     ) -> Tuple[Tensor, Tensor]:
-        r"""Learns and returns a node feature mask and an edge mask that play a
-        crucial role to explain the prediction made by the GNN for a graph.
-        Args:
-            x (Tensor): The node feature matrix.
-            edge_index (LongTensor): The edge indices.
-            **kwargs (optional): Additional arguments passed to the GNN module.
-        :rtype: (:class:`Tensor`, :class:`Tensor`)
-        """
         self.model_config.task_level = ModelTaskLevel.graph
 
         explanation = self._explainer(
@@ -511,16 +482,6 @@ class GNNExplainer_:
         edge_index: Tensor,
         **kwargs,
     ) -> Tuple[Tensor, Tensor]:
-        r"""Learns and returns a node feature mask and an edge mask that play a
-        crucial role to explain the prediction made by the GNN for node
-        :attr:`node_idx`.
-        Args:
-            node_idx (int): The node to explain.
-            x (Tensor): The node feature matrix.
-            edge_index (LongTensor): The edge indices.
-            **kwargs (optional): Additional arguments passed to the GNN module.
-        :rtype: (:class:`Tensor`, :class:`Tensor`)
-        """
         self.model_config.task_level = ModelTaskLevel.node
         explanation = self._explainer(
             model=self.model,
@@ -545,7 +506,7 @@ class GNNExplainer_:
         if "node_mask" in explanation.available_explanations:
             node_mask = explanation.node_mask
         else:
-            if self.explainer_config.node_mask_type ==\
+            if self.explainer_config.node_mask_type == \
                     MaskType.common_attributes:
                 node_mask = explanation.node_feat_mask[0]
             else:

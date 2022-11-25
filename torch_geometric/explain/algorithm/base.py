@@ -77,6 +77,7 @@ class ExplainerAlgorithm(torch.nn.Module):
 
     ###########################################################################
 
+    @torch.no_grad()
     def get_initial_prediction(
         self,
         model: torch.nn.Module,
@@ -95,11 +96,11 @@ class ExplainerAlgorithm(torch.nn.Module):
             model (torch.nn.Module): The model to explain.
             model_mode (ModelMode): The mode of the model.
             *args: Arguments passed to :obj:`model`.
+            model_mode (ModelMode): The mode of the model.
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        with torch.no_grad():
-            out = model(*args, **kwargs)
+        out = model(*args, **kwargs)
         if model_mode == ModelMode.classification:
             out = out.argmax(dim=-1)
         return out
@@ -151,7 +152,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
-        return 'source_to_target'
+        return "source_to_target"
 
     def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
         r"""Converts the model output to log-probabilities.

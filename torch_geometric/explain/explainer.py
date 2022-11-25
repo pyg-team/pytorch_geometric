@@ -87,7 +87,7 @@ class Explainer:
 
             If you get an error message like "Trying to backward through the
             graph a second time", make sure that the target you provided
-            was computed with :obj:`torch.no_grad()`.
+            was computed with :meth:`torch.no_grad`.
 
         Args:
             x (torch.Tensor): The input node features.
@@ -107,8 +107,8 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        if (self.explainer_config.explanation_type ==
-                ExplanationType.phenomenon):
+        if self.explainer_config.explanation_type == \
+                ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
                     f"The target has to be provided for the explanation type "

@@ -9,8 +9,8 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .explainer import (Explainer, to_captum, to_captum_model, to_captum_input,
-                        captum_output_to_dicts)
+from .captum import (to_captum, to_captum_model, to_captum_input,
+                     captum_output_to_dicts)
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -23,14 +23,7 @@ from .lightgcn import LightGCN
 from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
 
-from torch_geometric.deprecation import deprecated
-from torch_geometric.explain.algorithm.gnn_explainer import GNNExplainer_
-
-GNNExplainer = deprecated(
-    "use 'explain.Explainer' with 'explain.algorithm.GNNExplainer' instead",
-    'nn.models.GNNExplainer')(GNNExplainer_)
-
-__all__ = [
+__all__ = classes = [
     'MLP',
     'GCN',
     'GraphSAGE',
@@ -52,7 +45,6 @@ __all__ = [
     'SchNet',
     'DimeNet',
     'DimeNetPlusPlus',
-    'Explainer',
     'to_captum',
     'to_captum_model',
     'to_captum_input',
@@ -68,7 +60,16 @@ __all__ = [
     'LightGCN',
     'MaskLabel',
     'GroupAddRev',
-    'GNNExplainer',
 ]
 
-classes = __all__
+import copy
+from torch_geometric.deprecation import deprecated
+from torch_geometric.explain.algorithm.gnn_explainer import GNNExplainer_
+from .captum import Explainer
+
+GNNExplainer = deprecated(
+    "use 'explain.Explainer' with 'explain.algorithm.GNNExplainer' instead",
+    'nn.models.GNNExplainer')(GNNExplainer_)
+
+classes = copy.copy(classes)
+__all__ += ['Explainer', 'GNNExplainer']
