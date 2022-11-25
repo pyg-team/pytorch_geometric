@@ -31,7 +31,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
     - :class:`torch_geometric.explain.config.ModelConfig`
 
-        - :attr:`task_level`: :obj:`"node"` or :obj:`"graph"`
+        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"`, or :obj:`"graph"`
 
     - :class:`torch_geometric.explain.config.ExplainerConfig`
 
