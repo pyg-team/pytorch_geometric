@@ -427,8 +427,7 @@ def to_captum_model(
 
 class Explainer(torch.nn.Module):
     r"""An abstract class for integrating explainability into Graph Neural
-    Networks, *e.g.* :class:`~torch_geometric.nn.GNNExplainer` and
-    :class:`~torch_geometric.nn.PGExplainer`.
+    Networks.
     It also provides general visualization methods for graph attributions.
 
     Args:
