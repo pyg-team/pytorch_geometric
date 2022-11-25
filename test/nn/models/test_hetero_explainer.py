@@ -3,13 +3,13 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import (
-    CaptumHeteroModel,
     SAGEConv,
     captum_output_to_dicts,
     to_captum_input,
     to_captum_model,
     to_hetero,
 )
+from torch_geometric.nn.models.captum import CaptumHeteroModel
 from torch_geometric.testing import withPackage
 
 mask_types = ['edge', 'node_and_edge', 'node']
