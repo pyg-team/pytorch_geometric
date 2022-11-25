@@ -198,7 +198,7 @@ edge_attr = torch.randn(edge_index.size(1), 2)
     GCN_classification_multi_output,
     GCN_classification_single_output,
 ])
-def test_gnn_explainer_with_meta_explainer_classification_node(
+def test_gnn_explainer_classification_node(
     edge_mask_type,
     node_mask_type,
     Model,
@@ -244,7 +244,7 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     GCN_regression_multi_output,
 ])
 @pytest.mark.parametrize('return_type', return_types_regression)
-def test_gnn_explainer_with_meta_explainer_regression_node(
+def test_gnn_explainer_regression_node(
     edge_mask_type,
     node_mask_type,
     Model,
@@ -290,7 +290,7 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     GNN_classification_multi_output,
 ])
 @pytest.mark.parametrize('return_type', return_types_classification)
-def test_gnn_explainer_with_meta_explainer_classification_graph(
+def test_gnn_explainer_classification_graph(
     edge_mask_type,
     node_mask_type,
     Model,
@@ -337,7 +337,7 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
     GNN_regression_multi_output,
 ])
 @pytest.mark.parametrize('return_type', return_types_regression)
-def test_gnn_explainer_with_meta_explainer_regression_graph(
+def test_gnn_explainer_regression_graph(
     edge_mask_type,
     node_mask_type,
     Model,
