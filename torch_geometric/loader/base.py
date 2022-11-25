@@ -37,8 +37,8 @@ class DataLoaderIterator:
 
 
 class WorkerInitWrapper:
-    r"""Wraps the :attr:`worker_init_fn` argument of the DataLoader
-    to set the number of OMP threads to 1 for PyTorch DataLoader workers.
+    r"""Wraps the :attr:`worker_init_fn` argument
+    for PyTorch DataLoader workers.
     """
     def __init__(self, func):
         self.func = func
