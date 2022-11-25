@@ -7,60 +7,14 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.deprecation import deprecated
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
-
-
-def set_masks(
-    model: torch.nn.Module,
-    mask: Tensor,
-    edge_index: Tensor,
-    apply_sigmoid: bool = True,
-):
-    """Apply mask to every graph layer in the :obj:`model`."""
-    loop_mask = edge_index[0] != edge_index[1]
-
-    # Loop over layers and set masks on MessagePassing layers:
-    for module in model.modules():
-        if isinstance(module, MessagePassing):
-            module.explain = True
-            module._edge_mask = mask
-            module._loop_mask = loop_mask
-            module._apply_sigmoid = apply_sigmoid
-
-
-def set_hetero_masks(
-    model: torch.nn.Module,
-    mask_dict: Dict[EdgeType, Tensor],
-    edge_index_dict: Dict[EdgeType, Tensor],
-    apply_sigmoid: bool = True,
-):
-    """Apply masks to every heterogeneous graph layer in the :obj:`model`
-    according to edge types."""
-    for module in model.modules():
-        if isinstance(module, torch.nn.ModuleDict):
-            for edge_type in mask_dict.keys():
-                # TODO (jinu) Use common function get `str_edge_type`.
-                str_edge_type = '__'.join(edge_type)
-                if str_edge_type in module:
-                    set_masks(
-                        module[str_edge_type],
-                        mask_dict[edge_type],
-                        edge_index_dict[edge_type],
-                        apply_sigmoid=apply_sigmoid,
-                    )
-
-
-def clear_masks(model: torch.nn.Module):
-    """Clear all masks from the model."""
-    for module in model.modules():
-        if isinstance(module, MessagePassing):
-            module.explain = False
-            module._edge_mask = None
-            module._loop_mask = None
-            module._apply_sigmoid = True
-    return module
 
 
 class CaptumModel(torch.nn.Module):
