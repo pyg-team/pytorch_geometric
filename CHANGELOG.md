@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-MM-DD
 ### Added
+- Added CPU affinitization for `NodeLoader` ([#6005](https://github.com/pyg-team/pytorch_geometric/pull/6005))
 - Added triplet sampling in `LinkNeighborLoader` ([#6004](https://github.com/pyg-team/pytorch_geometric/pull/6004))
 - Added `FusedAggregation` of simple scatter reductions ([#6036](https://github.com/pyg-team/pytorch_geometric/pull/6036))
 - Added a `to_smiles` function ([#6038](https://github.com/pyg-team/pytorch_geometric/pull/6038))
