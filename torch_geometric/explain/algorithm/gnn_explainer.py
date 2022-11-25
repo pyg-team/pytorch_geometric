@@ -19,9 +19,6 @@ from torch_geometric.explain.explanations import Explanation
 
 from .base import ExplainerAlgorithm
 
-OptTensorType = Optional[Tensor]
-IndexType = Optional[Union[int, Tensor]]
-
 
 class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
@@ -87,8 +84,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: IndexType = None,
-        target_index: IndexType = None,
+        index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
         self._validate_indexes(model_config, index, target_index)
@@ -143,8 +140,9 @@ class GNNExplainer(ExplainerAlgorithm):
         return Explanation(edge_mask=edge_mask, node_mask=node_mask,
                            node_feat_mask=node_feat_mask, **data_kwargs)
 
-    def _validate_indexes(self, model_config: ModelConfig, index: IndexType,
-                          target_index: IndexType):
+    def _validate_indexes(self, model_config: ModelConfig,
+                          index: Optional[Union[int, Tensor]],
+                          target_index: Optional[Union[int, Tensor]]):
         if model_config.task_level == ModelTaskLevel.node:
             if index is None:
                 raise ValueError("Index must be provided for node level task")
@@ -174,9 +172,9 @@ class GNNExplainer(ExplainerAlgorithm):
         num_edges: int,
         explainer_config: ExplainerConfig,
         task_level: ModelTaskLevel,
-        hard_edge_mask: OptTensorType,
-        subset: OptTensorType,
-    ) -> Tuple[OptTensorType, OptTensorType, OptTensorType]:
+        hard_edge_mask: Optional[Tensor],
+        subset: Optional[Tensor],
+    ) -> Tuple[Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
         """Extracts and reshapes the masks from the model parameters."""
         node_mask_, node_feat_mask_, edge_mask_ = None, None, None
 
@@ -232,8 +230,8 @@ class GNNExplainer(ExplainerAlgorithm):
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
         target: Tensor,
-        index: IndexType = None,
-        target_index: IndexType = None,
+        index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
         self._initialize_masks(
@@ -295,8 +293,8 @@ class GNNExplainer(ExplainerAlgorithm):
         self,
         y_hat: torch.Tensor,
         y: torch.Tensor,
-        index: IndexType = None,
-        target_index: IndexType = None,
+        index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
     ):
         if target_index is not None:
             y_hat = y_hat[..., target_index].unsqueeze(-1)
@@ -314,8 +312,8 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: torch.Tensor,
         y: torch.Tensor,
         return_type: ModelReturnType,
-        index: IndexType = None,
-        target_index: IndexType = None,
+        index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
     ):
         if target_index is not None:
             y_hat = y_hat[target_index]
@@ -336,8 +334,8 @@ class GNNExplainer(ExplainerAlgorithm):
         y: torch.Tensor,
         edge_mask_type: MaskType,
         return_type: ModelReturnType,
-        index: IndexType = None,
-        target_index: IndexType = None,
+        index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[Union[int, Tensor]] = None,
         model_mode: ModelMode = ModelMode.regression,
     ) -> torch.Tensor:
 
@@ -423,7 +421,7 @@ class GNNExplainer_:
         allow_edge_mask: bool = True,
         **kwargs,
     ):
-        assert feat_mask_type in ["feature", "individual_feature", "scalar"]
+        assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
