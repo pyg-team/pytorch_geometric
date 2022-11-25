@@ -87,7 +87,7 @@ class Explainer:
 
             If you get an error message like "Trying to backward through the
             graph a second time", make sure that the target you provided
-            was computed with :obj:`torch.no_grad()`.
+            was computed with :meth:`torch.no_grad`.
 
         Args:
             x (torch.Tensor): The input node features.
