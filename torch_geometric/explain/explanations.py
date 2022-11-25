@@ -98,7 +98,9 @@ class Explanation(Data):
             elif self.edge_attr.shape != self.edge_feat_mask:
                 status = False
                 warn_or_raise(
-                    f"'edge_feat_mask' shape ({self.edge_feat_mask})")
+                    f"'edge_feat_mask' shape ({self.edge_feat_mask.shape}) "
+                    f"and the shape of 'edge_attr' ({self.edge_attr.shape}) "
+                    "do not match.")
 
         return status
 
