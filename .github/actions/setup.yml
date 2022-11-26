@@ -1,0 +1,33 @@
+name: Setup
+
+inputs:
+  workflow_call:
+    python-version:
+      required: true
+    torch-version:
+      required: true
+    cuda-version:
+      required: false
+      default: cpu
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      run: |
+        pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+
+    - name: Install extension packages
+      run: |
+        pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+
+    - name: Install pyg-lib
+      if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
+      run: |
+        pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
