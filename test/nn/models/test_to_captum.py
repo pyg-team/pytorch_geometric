@@ -1,8 +1,10 @@
 import pytest
 import torch
 
-from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv, to_captum
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.models import to_captum_input, to_captum_model
 from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
@@ -31,7 +33,8 @@ methods = [
 @pytest.mark.parametrize('model', [GCN, GAT])
 @pytest.mark.parametrize('output_idx', [None, 1])
 def test_to_captum(model, mask_type, output_idx):
-    captum_model = to_captum(model, mask_type=mask_type, output_idx=output_idx)
+    captum_model = to_captum_model(model, mask_type=mask_type,
+                                   output_idx=output_idx)
     pre_out = model(x, edge_index)
     if mask_type == 'node':
         mask = x * 0.0
@@ -61,22 +64,16 @@ def test_to_captum(model, mask_type, output_idx):
 def test_captum_attribution_methods(mask_type, method):
     from captum import attr  # noqa
 
-    captum_model = to_captum(GCN, mask_type, 0)
-    input_mask = torch.ones((1, edge_index.shape[1]), dtype=torch.float,
-                            requires_grad=True)
+    captum_model = to_captum_model(GCN, mask_type, 0)
     explainer = getattr(attr, method)(captum_model)
-
+    data = Data(x, edge_index)
+    input, additional_forward_args = to_captum_input(data.x, data.edge_index,
+                                                     mask_type)
     if mask_type == 'node':
-        input = x.clone().unsqueeze(0)
-        additional_forward_args = (edge_index, )
         sliding_window_shapes = (3, 3)
     elif mask_type == 'edge':
-        input = input_mask
-        additional_forward_args = (x, edge_index)
         sliding_window_shapes = (5, )
     elif mask_type == 'node_and_edge':
-        input = (x.clone().unsqueeze(0), input_mask)
-        additional_forward_args = (edge_index, )
         sliding_window_shapes = ((3, 3), (5, ))
 
     if method == 'IntegratedGradients':
@@ -100,9 +97,9 @@ def test_captum_attribution_methods(mask_type, method):
         attributions = explainer.attribute(
             input, target=0, additional_forward_args=additional_forward_args)
     if mask_type == 'node':
-        assert attributions.shape == (1, 8, 3)
+        assert attributions[0].shape == (1, 8, 3)
     elif mask_type == 'edge':
-        assert attributions.shape == (1, 14)
+        assert attributions[0].shape == (1, 14)
     else:
         assert attributions[0].shape == (1, 8, 3)
         assert attributions[1].shape == (1, 14)
@@ -144,3 +141,77 @@ def test_custom_explain_message():
 
     assert torch.allclose(conv.x_i, x[edge_index[1]])
     assert torch.allclose(conv.x_j, x[edge_index[0]])
+
+
+@withPackage('captum')
+@pytest.mark.parametrize('mask_type', ['node', 'edge', 'node_and_edge'])
+def test_to_captum_input(mask_type):
+    num_nodes = x.shape[0]
+    num_node_feats = x.shape[1]
+    num_edges = edge_index.shape[1]
+
+    # Check for Data:
+    data = Data(x, edge_index)
+    args = 'test_args'
+    inputs, additional_forward_args = to_captum_input(data.x, data.edge_index,
+                                                      mask_type, args)
+    if mask_type == 'node':
+        assert len(inputs) == 1
+        assert inputs[0].shape == (1, num_nodes, num_node_feats)
+        assert len(additional_forward_args) == 2
+        assert torch.allclose(additional_forward_args[0], edge_index)
+    elif mask_type == 'edge':
+        assert len(inputs) == 1
+        assert inputs[0].shape == (1, num_edges)
+        assert inputs[0].sum() == num_edges
+        assert len(additional_forward_args) == 3
+        assert torch.allclose(additional_forward_args[0], x)
+        assert torch.allclose(additional_forward_args[1], edge_index)
+    else:
+        assert len(inputs) == 2
+        assert inputs[0].shape == (1, num_nodes, num_node_feats)
+        assert inputs[1].shape == (1, num_edges)
+        assert inputs[1].sum() == num_edges
+        assert len(additional_forward_args) == 2
+        assert torch.allclose(additional_forward_args[0], edge_index)
+
+    # Check for HeteroData:
+    data = HeteroData()
+    x2 = torch.rand(8, 3)
+    data['paper'].x = x
+    data['author'].x = x2
+    data['paper', 'to', 'author'].edge_index = edge_index
+    data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
+    inputs, additional_forward_args = to_captum_input(data.x_dict,
+                                                      data.edge_index_dict,
+                                                      mask_type, args)
+    if mask_type == 'node':
+        assert len(inputs) == 2
+        assert inputs[0].shape == (1, num_nodes, num_node_feats)
+        assert inputs[1].shape == (1, num_nodes, num_node_feats)
+        assert len(additional_forward_args) == 2
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[0][key],
+                           data[key].edge_index)
+    elif mask_type == 'edge':
+        assert len(inputs) == 2
+        assert inputs[0].shape == (1, num_edges)
+        assert inputs[1].shape == (1, num_edges)
+        assert inputs[1].sum() == inputs[0].sum() == num_edges
+        assert len(additional_forward_args) == 3
+        for key in data.node_types:
+            torch.allclose(additional_forward_args[0][key], data[key].x)
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[1][key],
+                           data[key].edge_index)
+    else:
+        assert len(inputs) == 4
+        assert inputs[0].shape == (1, num_nodes, num_node_feats)
+        assert inputs[1].shape == (1, num_nodes, num_node_feats)
+        assert inputs[2].shape == (1, num_edges)
+        assert inputs[3].shape == (1, num_edges)
+        assert inputs[3].sum() == inputs[2].sum() == num_edges
+        assert len(additional_forward_args) == 2
+        for key in data.edge_types:
+            torch.allclose(additional_forward_args[0][key],
+                           data[key].edge_index)

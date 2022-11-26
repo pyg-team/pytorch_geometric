@@ -33,7 +33,7 @@ def onlyUnix(func: Callable) -> Callable:
     )(func)
 
 
-def withPython(*args) -> Callable:
+def onlyPython(*args) -> Callable:
     r"""A decorator to skip tests for any Python version not listed."""
     def decorator(func: Callable) -> Callable:
         import pytest
@@ -71,10 +71,21 @@ def withPackage(*args) -> Callable:
     return decorator
 
 
-def withCUDA(func: Callable) -> Callable:
+def onlyCUDA(func: Callable) -> Callable:
     r"""A decorator to skip tests if CUDA is not found."""
     import pytest
     return pytest.mark.skipif(
         not torch.cuda.is_available(),
         reason="CUDA not available",
     )(func)
+
+
+def withCUDA(func: Callable):
+    r"""A decorator to test both on CPU and CUDA (if available)."""
+    import pytest
+
+    devices = [torch.device('cpu')]
+    if torch.cuda.is_available():
+        devices.append(torch.device('cuda:0'))
+
+    return pytest.mark.parametrize('device', devices)(func)
