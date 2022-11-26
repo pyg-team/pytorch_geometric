@@ -16,7 +16,6 @@ class ERGraph(GraphGenerator):
         edge_prob: float: Probability of an edge.
         num_motifs: number of motifs to attach to the base graph
     """
-
     def __init__(
         self,
         motif: Callable,
