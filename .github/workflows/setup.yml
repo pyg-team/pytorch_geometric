@@ -1,0 +1,38 @@
+name: Setup
+
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+    python-version:
+      required: true
+      type: string
+    torch-version:
+      required: true
+      type: string
+    cuda-version:
+      required: false
+      type: string
+      default: cpu
+
+jobs:
+  setup:
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+        run: |
+          pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+
+      - name: Install extension packages
+        run: |
+          pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+
+      - name: Install pyg-lib
+        if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
+        run: |
+          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
