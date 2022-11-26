@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: .github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
           torch-version: ${{ matrix.torch-version }}
