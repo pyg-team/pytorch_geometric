@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 from torch.nn.parameter import Parameter
 import pandas as pd
-# from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
+from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
     ExplainerConfig,
     MaskType,
@@ -17,10 +17,18 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.explain.explanations import Explanation
 from torch_geometric.utils import to_dense_adj
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
 
+from scipy.special import softmax
+# from pgmpy.estimators import PC as ConstraintBasedEstimator
 from pgmpy.estimators.CITests import chi_square
+from pgmpy.estimators import HillClimbSearch, BicScore
+from pgmpy.models import BayesianModel
+from pgmpy.inference import VariableElimination
+from scipy import stats
 from .base import ExplainerAlgorithm
+
 
 
 class PGMExplainer(ExplainerAlgorithm):
@@ -59,8 +67,8 @@ Explanations for Graph Neural Networks"
 
     def perturb_features_on_node(self, feature_matrix, node_idx, is_random=False, is_pertubation_scaled=False):
         # return a random perturbed feature matrix
-        # random = False for nothing, True for random.randint.
-        # mode = "random" for random 0-1, "scale" for scaling with original feature
+        # random = is_random for nothing, True for random.randint.
+        # is_pertubation_scaled=True, "scale" for scaling with original feature
 
         X_perturb = feature_matrix
         if not is_pertubation_scaled:
@@ -97,7 +105,7 @@ Explanations for Graph Neural Networks"
         ]
 
         model.eval()
-        node_feat_mask = None
+        node_feature_mask = None
         node_mask = None
         edge_mask = None
         # edge_index = None
@@ -116,6 +124,7 @@ Explanations for Graph Neural Networks"
                                top_node = None,
                                           significance_threshold = 0.05,
                                                                    pred_threshold = 0.1)
+            print(node_feature_mask, 'here')
         elif model_config.task_level == ModelTaskLevel.graph:
             pass
             # TODO
@@ -134,7 +143,7 @@ Explanations for Graph Neural Networks"
 
         # build explanation
         return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feat_mask)
+                           node_mask=node_mask, node_feat_mask=node_feature_mask)
 
     def n_hops_adj(self, n_hops, edge_index):
         # edge_index is the sparse representation of the adj matrix
@@ -205,6 +214,218 @@ Explanations for Graph Neural Networks"
 
         return Samples
 
+    def generalize_target(self, x):
+        if x > 10:
+            return x - 10
+        else:
+            return x
+
+    def generalize_others(self, x):
+        if x == 2:
+            return 1
+        elif x == 12:
+            return 11
+        else:
+            return x
+
+    def generate_evidence(self, evidence_list):
+        return dict(zip(evidence_list, [1 for node in evidence_list]))
+
+    def chi_square(self, X, Y, Z, data):
+        """
+        Modification of Chi-square conditional independence test from pgmpy
+        Tests the null hypothesis that X is independent from Y given Zs.
+        Parameters
+        ----------
+        X: int, string, hashable object
+            A variable name contained in the data set
+        Y: int, string, hashable object
+            A variable name contained in the data set, different from X
+        Zs: list of variable names
+            A list of variable names contained in the data set, different from X and Y.
+            This is the separating set that (potentially) makes X and Y independent.
+            Default: []
+        Returns
+        -------
+        chi2: float
+            The chi2 test statistic.
+        p_value: float
+            The p_value, i.e. the probability of observing the computed chi2
+            statistic (or an even higher value), given the null hypothesis
+            that X _|_ Y | Zs.
+        sufficient_data: bool
+            A flag that indicates if the sample size is considered sufficient.
+            As in [4], require at least 5 samples per parameter (on average).
+            That is, the size of the data set must be greater than
+            `5 * (c(X) - 1) * (c(Y) - 1) * prod([c(Z) for Z in Zs])`
+            (c() denotes the variable cardinality).
+        References
+        ----------
+        [1] Koller & Friedman, Probabilistic Graphical Models - Principles and Techniques, 2009
+        Section 18.2.2.3 (page 789)
+        [2] Neapolitan, Learning Bayesian Networks, Section 10.3 (page 600ff)
+            http://www.cs.technion.ac.il/~dang/books/Learning%20Bayesian%20Networks(Neapolitan,%20Richard).pdf
+        [3] Chi-square test https://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test#Test_of_independence
+        [4] Tsamardinos et al., The max-min hill-climbing BN structure learning algorithm, 2005, Section 4
+        """
+        X = str(int(X))
+        Y = str(int(Y))
+        if isinstance(Z, (frozenset, list, set, tuple)):
+            Z = list(Z)
+        Z = [str(int(z)) for z in Z]
+
+        state_names = {
+            var_name: data.loc[:, var_name].unique() for var_name in data.columns
+        }
+
+        row_index = state_names[X]
+        column_index = pd.MultiIndex.from_product(
+            [state_names[Y]] + [state_names[z] for z in Z], names=[Y] + Z
+        )
+
+        XYZ_state_counts = pd.crosstab(
+            index=data[X], columns=[data[Y]] + [data[z] for z in Z],
+            rownames=[X], colnames=[Y] + Z
+        )
+
+        if not isinstance(XYZ_state_counts.columns, pd.MultiIndex):
+            XYZ_state_counts.columns = pd.MultiIndex.from_arrays([XYZ_state_counts.columns])
+        XYZ_state_counts = XYZ_state_counts.reindex(
+            index=row_index, columns=column_index
+        ).fillna(0)
+
+        if Z:
+            XZ_state_counts = XYZ_state_counts.sum(axis=1, level=list(range(1, len(Z) + 1)))  # marginalize out Y
+            YZ_state_counts = XYZ_state_counts.sum().unstack(Z)  # marginalize out X
+        else:
+            XZ_state_counts = XYZ_state_counts.sum(axis=1)
+            YZ_state_counts = XYZ_state_counts.sum()
+        Z_state_counts = YZ_state_counts.sum()  # marginalize out both
+
+        XYZ_expected = np.zeros(XYZ_state_counts.shape)
+
+        r_index = 0
+        for X_val in XYZ_state_counts.index:
+            X_val_array = []
+            if Z:
+                for Y_val in XYZ_state_counts.columns.levels[0]:
+                    temp = XZ_state_counts.loc[X_val] * YZ_state_counts.loc[Y_val] / Z_state_counts
+                    X_val_array = X_val_array + list(temp.to_numpy())
+                XYZ_expected[r_index] = np.asarray(X_val_array)
+                r_index = +1
+            else:
+                for Y_val in XYZ_state_counts.columns:
+                    temp = XZ_state_counts.loc[X_val] * YZ_state_counts.loc[Y_val] / Z_state_counts
+                    X_val_array = X_val_array + [temp]
+                XYZ_expected[r_index] = np.asarray(X_val_array)
+                r_index = +1
+
+        observed = XYZ_state_counts.to_numpy().reshape(1, -1)
+        expected = XYZ_expected.reshape(1, -1)
+        observed, expected = zip(*((o, e) for o, e in zip(observed[0], expected[0]) if not (e == 0 or np.isnan(e))))
+        chi2, significance_level = stats.chisquare(observed, expected)
+
+        return chi2, significance_level
+
+    def search_MK(self, data, target, nodes):
+        target = str(int(target))
+        data.columns = data.columns.astype(str)
+        nodes = [str(int(node)) for node in nodes]
+
+        MB = nodes
+        while True:
+            count = 0
+            for node in nodes:
+                evidences = MB.copy()
+                evidences.remove(node)
+                _, p = self.chi_square(target, node, evidences, data[nodes + [target]])
+                if p > 0.05:
+                    MB.remove(node)
+                    count = 0
+                else:
+                    count = count + 1
+                    if count == len(MB):
+                        return MB
+
+    def pgm_generate(self, target, data, pgm_stats, subnodes, child=None):
+
+        subnodes = [str(int(node)) for node in subnodes]
+        target = str(int(target))
+        subnodes_no_target = [node for node in subnodes if node != target]
+        data.columns = data.columns.astype(str)
+
+        MK_blanket = self.search_MK(data, target, subnodes_no_target.copy())
+
+        if child == None:
+            est = HillClimbSearch(data[subnodes_no_target], scoring_method=BicScore(data))
+            pgm_no_target = est.estimate()
+            for node in MK_blanket:
+                if node != target:
+                    pgm_no_target.add_edge(node, target)
+
+            #   Create the pgm
+            pgm_explanation = BayesianModel()
+            for node in pgm_no_target.nodes():
+                pgm_explanation.add_node(node)
+            for edge in pgm_no_target.edges():
+                pgm_explanation.add_edge(edge[0], edge[1])
+
+            #   Fit the pgm
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+            pgm_explanation.fit(data_ex)
+        else:
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+
+            est = HillClimbSearch(data_ex, scoring_method=BicScore(data_ex))
+            pgm_w_target_explanation = est.estimate()
+
+            #   Create the pgm
+            pgm_explanation = BayesianModel()
+            for node in pgm_w_target_explanation.nodes():
+                pgm_explanation.add_node(node)
+            for edge in pgm_w_target_explanation.edges():
+                pgm_explanation.add_edge(edge[0], edge[1])
+
+            #   Fit the pgm
+            data_ex = data[subnodes].copy()
+            data_ex[target] = data[target].apply(self.generalize_target)
+            for node in subnodes_no_target:
+                data_ex[node] = data[node].apply(self.generalize_others)
+            pgm_explanation.fit(data_ex)
+
+        return pgm_explanation
+
+    def pgm_conditional_prob(self, target, pgm_explanation, evidence_list):
+        pgm_infer = VariableElimination(pgm_explanation)
+        for node in evidence_list:
+            if node not in list(pgm_infer.variables):
+                print("Not valid evidence list.")
+                return None
+        evidences = self.generate_evidence(evidence_list)
+        elimination_order = [node for node in list(pgm_infer.variables) if node not in evidence_list]
+        elimination_order = [node for node in elimination_order if node != target]
+        q = pgm_infer.query([target], evidence=evidences,
+                            elimination_order=elimination_order, show_progress=False)
+        return q.values[0]
+
+    def get_model_layers(self, model):
+        r"""
+        get the number of message passing layers in the model-- in PGM only the nodes reachable by
+        message passing is considered for the explanation
+        Args:
+            model:
+
+        Returns:
+
+        """
+        return [module for module in model.modules() if not isinstance(module, MessagePassing)]
+
     def _explain_graph(
             self,
             model: torch.nn.Module,
@@ -221,7 +442,7 @@ Explanations for Graph Neural Networks"
     def _explain_node(
             self,
             model: torch.nn.Module,
-            x: Tensor,
+            x: Tensor, # [num_rows x num_features]
             node_index: int,
             edge_index: Tensor,
             edge_weight: Tensor,
@@ -234,8 +455,9 @@ Explanations for Graph Neural Networks"
             pred_threshold=0.1
 
     ) -> tuple[torch.Tensor, torch.Tensor]:
-
-        neighbors, edge_index_new, mapping, edge_mask = k_hop_subgraph(node_index, num_hops=5,
+        logging.info(f'Explaining node: {node_index}')
+        num_hops = self.get_model_layers(model)
+        neighbors, edge_index_new, mapping, edge_mask = k_hop_subgraph(node_index, num_hops=num_hops,
                                                                    edge_index=edge_index, relabel_nodes=True)
 
         neighbors = neighbors.cpu().detach().numpy()
@@ -270,10 +492,11 @@ Explanations for Graph Neural Networks"
             )
 
             sample_bool = []
-            if (softmax_pred_perturb[node, np.argmax(softmax_pred[node])] + pred_threshold) < np.max(softmax_pred[node]):
-                sample_bool.append(1)
-            else:
-                sample_bool.append(0)
+            for node in neighbors:
+                if (softmax_pred_perturb[node, np.argmax(softmax_pred[node])] + pred_threshold) < np.max(softmax_pred[node]):
+                    sample_bool.append(1)
+                else:
+                    sample_bool.append(0)
 
             Samples.append(sample)
             Pred_Samples.append(sample_bool)
@@ -289,8 +512,11 @@ Explanations for Graph Neural Networks"
         data_pgm = pd.DataFrame(Combine_Samples)
         data_pgm = data_pgm.rename(columns={0: "A", 1: "B"})  # Trick to use chi_square test on first two data columns
         ind_ori_to_sub = dict(zip(neighbors, list(data_pgm.columns)))
-
+        ind_sub_to_ori = dict(zip(list(data_pgm.columns), neighbors))
         p_values = []
+
+        dependent_neighbors = []
+        dependent_neighbors_p_values = []
         for node in neighbors:
             if node == node_index:
                 p = 0  # p<0.05 => we are confident that we can reject the null hypothesis (i.e. the prediction is the same after perturbing the neighbouring node
@@ -301,11 +527,25 @@ Explanations for Graph Neural Networks"
                     data_pgm, boolean=False, significance_level=significance_threshold
                 )
             p_values.append(p)
+            if p < significance_threshold:
+                dependent_neighbors.append(node)
+                dependent_neighbors_p_values.append(p)
 
         pgm_stats = dict(zip(neighbors, p_values))
+
+        if top_node == None:
+            pgm_nodes = dependent_neighbors
+        else:
+            top_p = np.min((top_node, len(neighbors) - 1))
+            ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
+            pgm_nodes = [ind_sub_to_ori[node] for node in ind_top_p]
         node_mask = torch.Tensor(neighbors)
-        node_feature_mask = torch.Tensor(zip(neighbors, p_values))
-        return node_mask, node_feature_mask
+        node_feature_mask = torch.Tensor(list(zip(neighbors, p_values)))
+
+        data_pgm = data_pgm.rename(columns={"A": 0, "B": 1})
+        data_pgm = data_pgm.rename(columns=ind_sub_to_ori)
+
+        return node_mask, node_feature_mask, pgm_stats, pgm_nodes, data_pgm
 
     def _loss_regression(
             self,
