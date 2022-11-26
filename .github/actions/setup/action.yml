@@ -1,14 +1,13 @@
 name: Setup
 
 inputs:
-  workflow_call:
-    python-version:
-      required: true
-    torch-version:
-      required: true
-    cuda-version:
-      required: false
-      default: cpu
+  python-version:
+    required: true
+  torch-version:
+    required: true
+  cuda-version:
+    required: false
+    default: cpu
 
 runs:
   using: composite
