@@ -12,7 +12,7 @@ inputs:
     default: cpu
   torchvision-version:
     required: false
-    default: '1.14.0'
+    default: '0.14.0'
 
 runs:
   using: composite
