@@ -11,7 +11,8 @@ jobs:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v3
