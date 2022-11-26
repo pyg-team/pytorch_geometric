@@ -104,7 +104,7 @@ def get_shape(input: Union[Any, Tuple[Any]]) -> str:
     out = []
     for x in input:
         if isinstance(x, SparseTensor):
-            out.append(str(list(x.sparse_sizes())))
+            out.append(str(list(x.sizes())))
         elif hasattr(x, 'size'):
             out.append(str(list(x.size())))
     out = ', '.join(out)
