@@ -10,6 +10,9 @@ inputs:
   cuda-version:
     required: false
     default: cpu
+  torchvision-version:
+    required: false
+    default: '1.14.0'
 
 runs:
   using: composite
@@ -22,7 +25,7 @@ runs:
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       run: |
-        pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        pip install torch==${{ inputs.torch-version }} torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install extension packages
