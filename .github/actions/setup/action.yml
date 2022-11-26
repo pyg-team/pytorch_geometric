@@ -1,0 +1,40 @@
+name: Setup
+
+inputs:
+  python-version:
+    required: false
+    default: '3.9'
+  torch-version:
+    required: false
+    default: '1.13.0'
+  cuda-version:
+    required: false
+    default: cpu
+  torchvision-version:
+    required: false
+    default: '0.14.0'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      run: |
+        pip install torch==${{ inputs.torch-version }} torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+      shell: bash
+
+    - name: Install extension packages
+      run: |
+        pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+      shell: bash
+
+    - name: Install pyg-lib
+      if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
+      run: |
+        pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+      shell: bash
