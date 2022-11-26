@@ -16,13 +16,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
-        torch-version: [1.13.0]
-        include:
-          - torch-version: 1.13.0
-            torchvision-version: 0.14.0
-        exclude:
-          - os: windows-latest  # Complains about CUDA mismatch.
-            python-version: '3.7'
 
     steps:
       - name: Checkout repository
@@ -32,8 +25,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
-          torch-version: ${{ matrix.torch-version }}
-          # TODO torchvision
 
       - name: Install main package
         run: |

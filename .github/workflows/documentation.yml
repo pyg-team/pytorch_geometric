@@ -9,13 +9,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   make_html:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
-        torch-version: [1.13.0]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -24,8 +18,7 @@ jobs:
       - name: Setup packages
         uses: ./.github/actions/setup
         with:
-          python-version: ${{ matrix.python-version }}
-          torch-version: ${{ matrix.torch-version }}
+          python-version: 3.8
 
       - name: Install main package
         run: |

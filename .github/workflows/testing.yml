@@ -9,17 +9,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.9]
-        torch-version: [1.13.0]
-        include:
-          - torch-version: 1.13.0
-            # torchvision-version: 0.14.0
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -27,10 +17,6 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-          torch-version: ${{ matrix.torch-version }}
-          # TODO torchvision
 
       - name: Install main package
         run: |

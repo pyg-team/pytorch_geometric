@@ -10,6 +10,7 @@ jobs:
   sdist:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

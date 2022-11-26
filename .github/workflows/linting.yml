@@ -10,6 +10,7 @@ jobs:
 
   pylint:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -28,6 +29,7 @@ jobs:
 
   mypy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
