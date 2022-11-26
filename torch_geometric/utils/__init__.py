@@ -29,7 +29,7 @@ from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph
-from .smiles import from_smiles
+from .smiles import from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from .negative_sampling import (negative_sampling, batched_negative_sampling,
@@ -88,6 +88,7 @@ __all__ = [
     'from_trimesh',
     'to_cugraph',
     'from_smiles',
+    'to_smiles',
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
