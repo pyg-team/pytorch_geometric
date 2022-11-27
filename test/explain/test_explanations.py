@@ -28,11 +28,9 @@ def create_random_explanation(
                       if edge_feat_mask else None)
 
     return Explanation(  # Create explanation.
-        node_mask=node_mask,
-        edge_mask=edge_mask,
-        node_feat_mask=node_feat_mask,
-        edge_feat_mask=edge_feat_mask,
-    )
+        node_mask=node_mask, edge_mask=edge_mask,
+        node_feat_mask=node_feat_mask, edge_feat_mask=edge_feat_mask, x=data.x,
+        edge_index=data.edge_index, edge_attr=data.edge_attr)
 
 
 @pytest.mark.parametrize('node_mask', [True, False])
@@ -60,3 +58,43 @@ def test_available_explanations(data, node_mask, edge_mask, node_feat_mask,
     )
 
     assert set(explanation.available_explanations) == set(expected)
+
+
+def test_get_explanation_data():
+    pass
+
+
+def test_validate_explanation(data):
+    # validate random explanation
+    explanation = create_random_explanation(data)
+    explanation.validate(raise_on_error=True)
+
+    # missmatch between x and node_mask shape
+    with pytest.raises(ValueError):
+        explanation = create_random_explanation(data)
+        explanation.x = torch.randn(9, 5)
+        explanation.validate(raise_on_error=True)
+
+    # missmatch between x and node_feat_mask shape
+    with pytest.raises(ValueError):
+        explanation = create_random_explanation(data)
+        explanation.x = torch.randn(10, 4)
+        explanation.validate(raise_on_error=True)
+
+    # missmatch between edge_index and edge_mask shape
+    with pytest.raises(ValueError):
+        explanation = create_random_explanation(data)
+        explanation.edge_index = torch.randint(0, 10, (2, 21))
+        explanation.validate(raise_on_error=True)
+
+    # missmatch between edge_index and edge_mask shape
+    with pytest.raises(ValueError):
+        explanation = create_random_explanation(data)
+        explanation.edge_attr = torch.randn(20, 1)
+        explanation.validate(raise_on_error=True)
+
+    # empty edge_attr with edge_mask present
+    with pytest.raises(ValueError):
+        explanation = create_random_explanation(data)
+        explanation.edge_attr = None
+        explanation.validate(raise_on_error=True)

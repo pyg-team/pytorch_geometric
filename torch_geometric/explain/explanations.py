@@ -117,7 +117,7 @@ class Explanation(Data):
                 status = False
                 warn_or_raise(
                     "'edge_attr' is None while `edge_feat_mask` is defined")
-            elif self.edge_attr.shape != self.edge_feat_mask:
+            elif self.edge_attr.shape != self.edge_feat_mask.shape:
                 status = False
                 warn_or_raise(
                     f"'edge_feat_mask' shape ({self.edge_feat_mask.shape}) "
