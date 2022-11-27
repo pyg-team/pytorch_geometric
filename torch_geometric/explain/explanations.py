@@ -41,34 +41,56 @@ class Explanation(Data):
         )
 
     def get_explanation_subgraph(self) -> Data:
-        r"""Returns the explanation graph :obj:`~torch_geometric.data.Data`
+        r"""
+        Return the explanation graph :obj:`~torch_geometric.data.Data` for
+        this :obj:`~toch_geometric.explain.Explanation`.
+        """
+        mask_dict = {
+            'node_mask': not self.node_mask,
+            'edge_mask': not self.edge_mask,
+            'node_feat_mask': not self.node_feat_mask,
+            'edge_feat_mask': not self.edge_feat_mask
+        }
+
+        return self._mask_data(mask_dict)
+
+    def get_complement_subgraph(self) -> Data:
+        r"""
+        Return the complement of the explanation graph
+        :obj:`~torch_geometric.data.Data` for this
+        :obj:`~toch_geometric.explain.Explanation`.
+        """
+        mask_dict = {
+            'node_mask': self.node_mask,
+            'edge_mask': self.edge_mask,
+            'node_feat_mask': self.node_feat_mask,
+            'edge_feat_mask': self.edge_feat_mask
+        }
+
+        return self._mask_data(mask_dict)
+
+    def _mask_data(self, mask_dict) -> Data:
+        r"""Returns the a masked graph :obj:`~torch_geometric.data.Data`
         for given `node_mask`, `edge_mask`, `node_feat_mask`, and
-        `node_feat_mask`.
+        `node_feat_mask` in `mask_dict`.
         """
         x_ = copy.copy(self.x)
+        edge_index_ = copy.copy(self.edge_index)
         edge_attr_ = copy.copy(self.edge_attr)
 
         # update node and edge attributes
-        if self.node_feat_mask is not None:
-            x_ = self.x * self.node_feat_mask
-        if self.edge_feat_mask is not None:
-            edge_attr_ = self.edge_attr * self.edge_feat_mask
+        if 'node_feat_mask' in mask_dict:
+            x_ *= mask_dict['node_feat_mask']
+        if 'edge_feat_mask' in mask_dict:
+            edge_attr_ *= mask_dict['edge_feat_mask']
+        if 'node_mask' in mask_dict:
+            node_subset = self.x[mask_dict['node_mask']]
+        if 'edge_mask' in mask_dict:
+            edge_index_ = edge_index_[mask_dict['edge_mask']]
 
-        # filter nodes and edges
-        edge_index_ = self.edge_index[
-            self.edge_mask] if self.edge_mask is not None else copy.copy(
-                self.edge_mask)
-        node_subset = self.x[
-            self.node_mask] if self.node_mask is not None else copy.copy(
-                self.x)
+        masked_data = Data(x=x_, edge_index=edge_index_, edge_attr=edge_attr_)
 
-        explanation_graph = Data(x=x_, edge_index=edge_index_,
-                                 edge_attr=edge_attr_)
-
-        return explanation_graph.subgraph(node_subset)
-
-    def get_complement_subgraph(self) -> Data:
-        pass  # TODO (blaz)
+        return masked_data.subgraph(node_subset)
 
     def validate(self, raise_on_error: bool = True) -> bool:
         r"""Validate the correctness of the explanation"""
