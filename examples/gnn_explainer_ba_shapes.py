@@ -76,7 +76,6 @@ for explanation_type in ['phenomenon', 'model']:
 
     # Explanation ROC AUC over all test nodes:
     targets, preds = [], []
-    non_loop_mask = data.edge_index[0] != data.edge_index[1]
     node_indices = data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
         explanation = explainer(data.x, data.edge_index, index=node_index,
