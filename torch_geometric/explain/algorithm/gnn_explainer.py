@@ -187,7 +187,6 @@ class GNNExplainer(ExplainerAlgorithm):
                 y_hat, y = y_hat[index], y[index]
 
             loss = self._loss(y_hat, y, explainer_config, model_config)
-
             loss.backward()
             optimizer.step()
 
