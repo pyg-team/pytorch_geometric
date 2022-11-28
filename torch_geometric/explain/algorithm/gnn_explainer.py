@@ -187,7 +187,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
             loss = self._loss(y_hat, y, explainer_config, model_config)
 
-            loss.backward(retain_graph=False)
+            loss.backward()
             optimizer.step()
 
     def _initialize_masks(

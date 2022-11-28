@@ -82,11 +82,11 @@ for explanation_type in ['phenomenon', 'model']:
         explanation = explainer(data.x, data.edge_index, index=node_index,
                                 target=data.y, edge_weight=data.edge_weight)
 
-        _, _, _, edge_mask = k_hop_subgraph(node_index, num_hops=3,
-                                            edge_index=data.edge_index)
+        _, _, _, hard_edge_mask = k_hop_subgraph(node_index, num_hops=3,
+                                                 edge_index=data.edge_index)
 
-        targets.append(data.edge_label[edge_mask].cpu())
-        preds.append(explanation[edge_mask].cpu())
+        targets.append(data.edge_label[hard_edge_mask].cpu())
+        preds.append(explanation.edge_mask[hard_edge_mask].cpu())
 
     auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
     print(f'Mean ROC AUC (explanation type {explanation_type:10}): {auc:.4f}')
