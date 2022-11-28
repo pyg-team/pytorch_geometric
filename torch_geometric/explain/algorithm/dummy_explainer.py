@@ -1,7 +1,6 @@
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
@@ -41,12 +40,9 @@ class DummyExplainer(ExplainerAlgorithm):
             **mask_dict,
         )
 
-    def loss(self, y_hat: Tensor, y: Tensor) -> torch.Tensor:
-        return F.mse_loss(y_hat, y)
-
     def supports(
         self,
-        explanation_config: ExplainerConfig,
+        explainer_config: ExplainerConfig,
         model_config: ModelConfig,
     ) -> bool:
         return True

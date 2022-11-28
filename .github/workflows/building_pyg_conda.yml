@@ -32,11 +32,10 @@ jobs:
             cuda-version: 'cu117'
           - os: windows-2019
             cuda-version: 'cu102'
-          - os: windows-2019  # Complains about CUDA mismatch.
-            python-version: '3.7'
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Conda for Python ${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
