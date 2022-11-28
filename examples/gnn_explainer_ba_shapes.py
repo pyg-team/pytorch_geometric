@@ -78,8 +78,9 @@ for explanation_type in ['phenomenon', 'model']:
     targets, preds = [], []
     node_indices = data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
+        target = data.y if explanation_type == 'phenomenon' else None
         explanation = explainer(data.x, data.edge_index, index=node_index,
-                                target=data.y, edge_weight=data.edge_weight)
+                                target=target, edge_weight=data.edge_weight)
 
         _, _, _, hard_edge_mask = k_hop_subgraph(node_index, num_hops=3,
                                                  edge_index=data.edge_index)
