@@ -31,7 +31,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
     - :class:`torch_geometric.explain.config.ModelConfig`
 
-        - :attr:`task_level`: :obj:`"node"` or :obj:`"graph"`
+        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"` or :obj:`"graph"`
 
     - :class:`torch_geometric.explain.config.ExplainerConfig`
 
@@ -124,7 +124,13 @@ class GNNExplainer(ExplainerAlgorithm):
                 target = torch.index_select(target, 1, subset)
             else:
                 target = target[subset]
-
+        elif model_config.task_level == ModelTaskLevel.edge:
+            # if we are dealing with a node level task, we can restrict the
+            # computation to the two nodes of interest and their computation
+            # graph
+            # TODO
+            hard_edge_mask = None
+            subset = None
         elif model_config.task_level == ModelTaskLevel.graph:
             subset = None
             hard_edge_mask = None
@@ -164,7 +170,7 @@ class GNNExplainer(ExplainerAlgorithm):
         if self.node_mask is not None:
             node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
             if explainer_config.node_mask_type == MaskType.object:
-                if task_level == ModelTaskLevel.node:
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                     node_mask_ = node_mask.new_zeros(num_nodes)
                     node_mask_[subset] = node_mask
                 elif task_level == ModelTaskLevel.graph:
@@ -172,7 +178,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 else:
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.attributes:
-                if task_level == ModelTaskLevel.node:
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                     node_feat_mask_ = node_mask.new_zeros(
                         num_nodes, node_mask.size(-1))
                     node_feat_mask_[subset] = node_mask
@@ -181,7 +187,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 else:
                     raise NotImplementedError
             elif explainer_config.node_mask_type == MaskType.common_attributes:
-                if task_level == ModelTaskLevel.node:
+                if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                     node_feat_mask_ = node_mask.new_zeros(
                         num_nodes, node_mask.numel())
                     node_feat_mask_[subset] = node_mask
@@ -195,7 +201,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         if self.edge_mask is not None:
             edge_mask = self.edge_mask.detach().sigmoid()
-            if task_level == ModelTaskLevel.node:
+            if task_level in [ModelTaskLevel.node, ModelTaskLevel.edge]:
                 edge_mask_ = edge_mask.new_zeros(num_edges)
                 edge_mask_[hard_edge_mask] = edge_mask
             elif task_level == ModelTaskLevel.graph:
@@ -353,7 +359,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
     ) -> bool:
         if model_config.task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.graph
+                ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph
         ]:
             logging.error("Model task level not supported.")
             return False

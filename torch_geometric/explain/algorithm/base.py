@@ -50,6 +50,7 @@ class ExplainerAlgorithm(torch.nn.Module):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
+        pass
 
     @abstractmethod
     def loss(self, y_hat: Tensor, y: Tensor, **kwargs) -> Tensor:
@@ -60,6 +61,7 @@ class ExplainerAlgorithm(torch.nn.Module):
                 (*e.g.*, the forward pass of the model with the mask applied).
             y (torch.Tensor): the reference output.
         """
+        pass
 
     @abstractmethod
     def supports(

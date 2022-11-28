@@ -1,4 +1,5 @@
 import copy
+import functools
 from typing import Optional, Union
 
 import torch
@@ -10,9 +11,42 @@ from torch_geometric.explain.config import (
     ExplanationType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
+    ModelTaskLevel,
     ThresholdConfig,
     ThresholdType,
 )
+
+
+def decorate_link_prediction_model(model, index, model_config: ModelConfig):
+    if model_config.return_type == ModelReturnType.raw:
+
+        def get_complement_and_out(out):
+            out = out.sigmoid()
+            complement = 1 - out
+            return torch.stack((complement, out), dim=-1)
+
+        model_config.return_type = ModelReturnType.probs
+    elif model_config.return_type == ModelReturnType.log_probs:
+
+        def get_complement_and_out(out):
+            complement = torch.log(1 + torch.exp((torch.log(-out))))
+            return torch.stack((complement, out), dim=-1)
+    elif model_config.return_type == ModelReturnType.probs:
+
+        def get_complement_and_out(out):
+            complement = 1 - out
+            return torch.stack((complement, out), dim=-1)
+    else:
+        raise NotImplementedError
+
+    @functools.wraps(model)
+    def wrapper(*args, **kwargs):
+        out = model(*args, edge_label_index=index, **kwargs)
+        out = get_complement_and_out(out)
+        return out
+
+    return wrapper
 
 
 class Explainer:
@@ -106,6 +140,17 @@ class Explainer:
                 (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
+        if self.model_config.task_level == ModelTaskLevel.edge:
+            # decorate the model forward function to make its output match the
+            # node classification format
+            self.model.forward = decorate_link_prediction_model(
+                self.model.forward, index, self.model_config)
+            assert isinstance(index, Tensor) and len(index.shape) == 1 or (
+                len(index.shape) == 2 and index.shape[0] == 1
+            ), "Explainer only supports single edge index expressed as a "
+            "tensor for now"
+            index = 0
+
         # Choose the `target` depending on the explanation type:
         if (self.explainer_config.explanation_type ==
                 ExplanationType.phenomenon):
@@ -127,6 +172,10 @@ class Explainer:
             target_index=target_index,
             **kwargs,
         )
+
+        if self.model_config.task_level == ModelTaskLevel.edge:
+            # restore original forward function in the model
+            self.model.forward = self.model.forward.__wrapped__
 
         return self._post_process(explanation)
 
