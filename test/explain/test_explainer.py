@@ -30,6 +30,8 @@ class DummyModel(torch.nn.Module):
     DummyModel(out_dim=2),
 ])
 def test_get_prediction(data, model):
+    assert model.training
+
     explainer = Explainer(
         model,
         algorithm=DummyExplainer(),
@@ -43,14 +45,18 @@ def test_get_prediction(data, model):
         ),
     )
     pred = explainer.get_prediction(data.x, data.edge_index)
+    assert model.training
     assert pred.size() == (model.out_dim, )
 
 
 @pytest.mark.parametrize('target', [None, torch.randn(2)])
 @pytest.mark.parametrize('explanation_type', [x for x in ExplanationType])
 def test_forward(data, target, explanation_type):
+    model = DummyModel(out_dim=2)
+    assert model.training
+
     explainer = Explainer(
-        DummyModel(out_dim=2),
+        model,
         algorithm=DummyExplainer(),
         explainer_config=dict(
             explanation_type=explanation_type,
@@ -67,6 +73,7 @@ def test_forward(data, target, explanation_type):
             explainer(data.x, data.edge_index, target=target)
     else:
         explanation = explainer(data.x, data.edge_index, target=target)
+        assert model.training
         assert 'node_feat_mask' in explanation.available_explanations
         assert explanation.node_feat_mask.size() == data.x.size()
 

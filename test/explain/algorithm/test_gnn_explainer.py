@@ -192,18 +192,20 @@ edge_attr = torch.randn(edge_index.size(1), 2)
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize("explanation_type", ['model', 'phenomenon'])
-@pytest.mark.parametrize('return_type', return_types_classification)
 @pytest.mark.parametrize('Model', [
     GCN_classification_multi_output,
     GCN_classification_single_output,
 ])
-def test_gnn_explainer_with_meta_explainer_classification_node(
+@pytest.mark.parametrize("explanation_type", ['model', 'phenomenon'])
+@pytest.mark.parametrize('return_type', return_types_classification)
+@pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
+def test_gnn_explainer_classification_node(
     edge_mask_type,
     node_mask_type,
     Model,
-    return_type,
     explanation_type,
+    return_type,
+    index,
 ):
     model = Model()
     with torch.no_grad():
@@ -229,7 +231,7 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
     else:
         target_index = None
 
-    explanation = explainer(x, edge_index, target=out, index=2,
+    explanation = explainer(x, edge_index, target=out, index=index,
                             target_index=target_index)
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
@@ -238,19 +240,15 @@ def test_gnn_explainer_with_meta_explainer_classification_node(
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('Model', [
     GCN_regression_single_output,
     GCN_regression_multi_output,
 ])
+@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('return_type', return_types_regression)
-def test_gnn_explainer_with_meta_explainer_regression_node(
-    edge_mask_type,
-    node_mask_type,
-    Model,
-    return_type,
-    explanation_type,
-):
+@pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
+def test_gnn_explainer_regression_node(edge_mask_type, node_mask_type, Model,
+                                       explanation_type, return_type, index):
     model = Model()
     with torch.no_grad():
         out = model(x, edge_index)
@@ -275,8 +273,8 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
     else:
         target_index = None
 
-    explanation = explainer(x=x, edge_index=edge_index, target=out, index=2,
-                            target_index=target_index)
+    explanation = explainer(x=x, edge_index=edge_index, target=out,
+                            index=index, target_index=target_index)
 
     check_explanation(edge_mask_type, node_mask_type, x, edge_index,
                       explanation)
@@ -284,18 +282,18 @@ def test_gnn_explainer_with_meta_explainer_regression_node(
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('Model', [
     GNN_classification_single_output,
     GNN_classification_multi_output,
 ])
+@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('return_type', return_types_classification)
-def test_gnn_explainer_with_meta_explainer_classification_graph(
+def test_gnn_explainer_classification_graph(
     edge_mask_type,
     node_mask_type,
     Model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     model = Model()
     with torch.no_grad():
@@ -331,18 +329,18 @@ def test_gnn_explainer_with_meta_explainer_classification_graph(
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('Model', [
     GNN_regression_single_output,
     GNN_regression_multi_output,
 ])
+@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('return_type', return_types_regression)
-def test_gnn_explainer_with_meta_explainer_regression_graph(
+def test_gnn_explainer_regression_graph(
     edge_mask_type,
     node_mask_type,
     Model,
-    return_type,
     explanation_type,
+    return_type,
 ):
     model = Model()
     with torch.no_grad():

@@ -3,6 +3,7 @@ from math import sqrt
 from typing import Optional, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
@@ -76,6 +77,34 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self.node_mask = self.edge_mask = None
 
+    def supports(
+        self,
+        explainer_config: ExplainerConfig,
+        model_config: ModelConfig,
+    ) -> bool:
+
+        task_level = model_config.task_level
+        if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
+            logging.error(f"Task level '{task_level.value}' not supported")
+            return False
+
+        edge_mask_type = explainer_config.edge_mask_type
+        if edge_mask_type not in [MaskType.object, None]:
+            logging.error(f"Edge mask type '{edge_mask_type.value}' not "
+                          f"supported")
+            return False
+
+        node_mask_type = explainer_config.node_mask_type
+        if node_mask_type not in [
+                MaskType.common_attributes, MaskType.object,
+                MaskType.attributes
+        ]:
+            logging.error(f"Node mask type '{node_mask_type.value}' not "
+                          f"supported.")
+            return False
+
+        return True
+
     def forward(
         self,
         model: torch.nn.Module,
@@ -85,127 +114,39 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
 
-        if isinstance(index, Tensor):
-            if index.numel() > 1:
-                raise NotImplementedError(
-                    f"'{self.__class__.__name}' only supports a single "
-                    f"`index` for now")
-            index = index.item()
-
-        if isinstance(target_index, Tensor):
-            if target_index.numel() > 1:
-                raise NotImplementedError(
-                    f"'{self.__class__.__name__}' only supports a single "
-                    f"`target_index` for now")
-            target_index = target_index.item()
-
-        model.eval()
-        num_nodes = x.size(0)
-        num_edges = edge_index.size(1)
-
-        data_kwargs = dict(x=x, edge_index=edge_index)
-
+        hard_node_mask = hard_edge_mask = None
         if model_config.task_level == ModelTaskLevel.node:
-            # If we are dealing with a node-level task, we can restrict the
-            # computation to the node of interest and its computation graph:
-            if index is None:
-                raise NotImplementedError("The `index` must currently be "
-                                          "provided for a node-level task")
+            # We need to compute hard masks to properly clean up edges and
+            # nodes attributions not involved during message passing:
+            hard_node_mask, hard_edge_mask = self._get_hard_masks(
+                model, index, edge_index, num_nodes=x.size(0))
 
-            x, edge_index, index, subset, hard_edge_mask, kwargs = (
-                self.subgraph(model, index, x, edge_index, **kwargs))
+        self._train(model, x, edge_index, explainer_config, model_config,
+                    target, index, target_index, **kwargs)
 
-            if (target_index is not None
-                    and model_config.mode == ModelMode.classification):
-                target = torch.index_select(target, 1, subset)
-            else:
-                target = target[subset]
-
-        elif model_config.task_level == ModelTaskLevel.graph:
-            subset = None
-            hard_edge_mask = None
-        else:
-            raise NotImplementedError
-
-        self._train_node_edge_mask(model, x, edge_index, explainer_config,
-                                   model_config, target, index, target_index,
-                                   **kwargs)
-
-        node_mask, node_feat_mask, edge_mask = self._get_masks(
-            num_nodes=num_nodes,
-            num_edges=num_edges,
-            explainer_config=explainer_config,
-            task_level=model_config.task_level,
-            hard_edge_mask=hard_edge_mask,
-            subset=subset,
-        )
+        node_mask = self._post_process_mask(self.node_mask, x.size(0),
+                                            hard_node_mask, apply_sigmoid=True)
+        edge_mask = self._post_process_mask(self.edge_mask, edge_index.size(1),
+                                            hard_edge_mask, apply_sigmoid=True)
 
         self._clean_model(model)
 
-        return Explanation(edge_mask=edge_mask, node_mask=node_mask,
-                           node_feat_mask=node_feat_mask, **data_kwargs)
+        # TODO Consider dropping differentiation between `mask` and `feat_mask`
+        node_feat_mask = None
+        if explainer_config.node_mask_type in {
+                MaskType.attributes, MaskType.common_attributes
+        }:
+            node_feat_mask = node_mask
+            node_mask = None
 
-    def _get_masks(
-        self,
-        num_nodes: int,
-        num_edges: int,
-        explainer_config: ExplainerConfig,
-        task_level: ModelTaskLevel,
-        hard_edge_mask: Optional[Tensor],
-        subset: Optional[Tensor],
-    ) -> Tuple[Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
-        """Extracts and reshapes the masks from the model parameters."""
-        node_mask_, node_feat_mask_, edge_mask_ = None, None, None
+        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
+                           node_mask=node_mask, node_feat_mask=node_feat_mask)
 
-        if self.node_mask is not None:
-            node_mask = self.node_mask.detach().sigmoid().squeeze(-1)
-            if explainer_config.node_mask_type == MaskType.object:
-                if task_level == ModelTaskLevel.node:
-                    node_mask_ = node_mask.new_zeros(num_nodes)
-                    node_mask_[subset] = node_mask
-                elif task_level == ModelTaskLevel.graph:
-                    node_mask_ = node_mask
-                else:
-                    raise NotImplementedError
-            elif explainer_config.node_mask_type == MaskType.attributes:
-                if task_level == ModelTaskLevel.node:
-                    node_feat_mask_ = node_mask.new_zeros(
-                        num_nodes, node_mask.size(-1))
-                    node_feat_mask_[subset] = node_mask
-                elif task_level == ModelTaskLevel.graph:
-                    node_feat_mask_ = node_mask
-                else:
-                    raise NotImplementedError
-            elif explainer_config.node_mask_type == MaskType.common_attributes:
-                if task_level == ModelTaskLevel.node:
-                    node_feat_mask_ = node_mask.new_zeros(
-                        num_nodes, node_mask.numel())
-                    node_feat_mask_[subset] = node_mask
-                elif task_level == ModelTaskLevel.graph:
-                    node_feat_mask_ = self._reshape_common_attributes(
-                        node_mask, num_nodes)
-                else:
-                    raise NotImplementedError
-            else:
-                raise NotImplementedError
-
-        if self.edge_mask is not None:
-            edge_mask = self.edge_mask.detach().sigmoid()
-            if task_level == ModelTaskLevel.node:
-                edge_mask_ = edge_mask.new_zeros(num_edges)
-                edge_mask_[hard_edge_mask] = edge_mask
-            elif task_level == ModelTaskLevel.graph:
-                edge_mask_ = edge_mask
-            else:
-                raise NotImplementedError
-
-        return node_mask_, node_feat_mask_, edge_mask_
-
-    def _train_node_edge_mask(
+    def _train(
         self,
         model: torch.nn.Module,
         x: Tensor,
@@ -214,7 +155,7 @@ class GNNExplainer(ExplainerAlgorithm):
         model_config: ModelConfig,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[int] = None,
         **kwargs,
     ):
         self._initialize_masks(
@@ -224,29 +165,29 @@ class GNNExplainer(ExplainerAlgorithm):
             edge_mask_type=explainer_config.edge_mask_type,
         )
 
+        parameters = [self.node_mask]  # We always learn a node mask.
         if explainer_config.edge_mask_type == MaskType.object:
             set_masks(model, self.edge_mask, edge_index, apply_sigmoid=True)
-            parameters = [self.node_mask, self.edge_mask]
-        else:
-            assert explainer_config.edge_mask_type is None
-            parameters = [self.node_mask]
+            parameters.append(self.edge_mask)
 
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
         for _ in range(self.epochs):
             optimizer.zero_grad()
+
             h = x * self.node_mask.sigmoid()
-            out = model(x=h, edge_index=edge_index, **kwargs)
-            loss_value = self.loss(
-                out,
-                target,
-                return_type=model_config.return_type,
-                target_index=target_index,
-                index=index,
-                edge_mask_type=explainer_config.edge_mask_type,
-                model_mode=model_config.mode,
-            )
-            loss_value.backward(retain_graph=False)
+
+            y_hat = model(x=h, edge_index=edge_index, **kwargs)
+            y = target
+
+            if target_index is not None:
+                y_hat, y = y_hat[target_index], y[target_index]
+            if index is not None:
+                y_hat, y = y_hat[index], y[index]
+
+            loss = self._loss(y_hat, y, explainer_config, model_config)
+
+            loss.backward()
             optimizer.step()
 
     def _initialize_masks(
@@ -256,8 +197,9 @@ class GNNExplainer(ExplainerAlgorithm):
         node_mask_type: MaskType,
         edge_mask_type: MaskType,
     ):
-        (N, F), E = x.size(), edge_index.size(1)
         device = x.device
+        (N, F), E = x.size(), edge_index.size(1)
+
         std = 0.1
         if node_mask_type == MaskType.object:
             self.node_mask = Parameter(torch.randn(N, 1, device=device) * std)
@@ -271,66 +213,42 @@ class GNNExplainer(ExplainerAlgorithm):
         if edge_mask_type == MaskType.object:
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
+        elif edge_mask_type is not None:
+            raise NotImplementedError
 
-    def _loss_regression(
-        self,
-        y_hat: torch.Tensor,
-        y: torch.Tensor,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
-    ):
-        if target_index is not None:
-            y_hat = y_hat[..., target_index].unsqueeze(-1)
-            y = y[..., target_index].unsqueeze(-1)
-
-        if index is not None:
-            loss = torch.cdist(y_hat[index], y[index])
-        else:
-            loss = torch.cdist(y_hat, y)
-
-        return loss
+    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        return F.mse_loss(y_hat, y)
 
     def _loss_classification(
         self,
-        y_hat: torch.Tensor,
-        y: torch.Tensor,
+        y_hat: Tensor,
+        y: Tensor,
         return_type: ModelReturnType,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
-    ):
-        if target_index is not None:
-            y_hat = y_hat[target_index]
-            y = y[target_index]
+    ) -> Tensor:
+
+        if y.dim() == 0:  # `index` was given as an integer.
+            y_hat, y = y_hat.unsqueeze(0), y.unsqueeze(0)
 
         y_hat = self._to_log_prob(y_hat, return_type)
+        return (-y_hat).gather(1, y.view(-1, 1)).mean()
 
-        if index is not None:
-            loss = -y_hat[index, y[index]]
-        else:
-            loss = -y_hat[0, y[0]]
-
-        return loss
-
-    def loss(
+    def _loss(
         self,
-        y_hat: torch.Tensor,
-        y: torch.Tensor,
-        edge_mask_type: MaskType,
-        return_type: ModelReturnType,
-        index: Optional[int] = None,
-        target_index: Optional[int] = None,
-        model_mode: ModelMode = ModelMode.regression,
-    ) -> torch.Tensor:
+        y_hat: Tensor,
+        y: Tensor,
+        explainer_config: ExplainerConfig,
+        model_config: ModelConfig,
+    ) -> Tensor:
 
-        if model_mode == ModelMode.regression:
-            loss = self._loss_regression(y_hat, y, index, target_index)
-        elif model_mode == ModelMode.classification:
-            loss = self._loss_classification(y_hat, y, return_type, index,
-                                             target_index)
+        if model_config.mode == ModelMode.regression:
+            loss = self._loss_regression(y_hat, y)
+        elif model_config.mode == ModelMode.classification:
+            loss = self._loss_classification(y_hat, y,
+                                             model_config.return_type)
         else:
             raise NotImplementedError
 
-        if edge_mask_type is not None:
+        if explainer_config.edge_mask_type is not None:
             m = self.edge_mask.sigmoid()
             edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
             loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
@@ -346,29 +264,6 @@ class GNNExplainer(ExplainerAlgorithm):
         loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
         return loss
-
-    def supports(
-        self,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
-    ) -> bool:
-        if model_config.task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.graph
-        ]:
-            logging.error("Model task level not supported.")
-            return False
-        if explainer_config.edge_mask_type not in [MaskType.object, None]:
-            logging.error("Edge mask type not supported.")
-            return False
-
-        if explainer_config.node_mask_type not in [
-                MaskType.common_attributes, MaskType.object,
-                MaskType.attributes
-        ]:
-            logging.error("Node mask type not supported.")
-            return False
-
-        return True
 
     def _clean_model(self, model):
         clear_masks(model)
@@ -476,25 +371,20 @@ class GNNExplainer_:
         if 'node_mask' in explanation.available_explanations:
             node_mask = explanation.node_mask
         else:
-            if self.explainer_config.node_mask_type ==\
-                    MaskType.common_attributes:
+            if (self.explainer_config.node_mask_type ==
+                    MaskType.common_attributes):
                 node_mask = explanation.node_feat_mask[0]
             else:
                 node_mask = explanation.node_feat_mask
 
+        edge_mask = None
         if 'edge_mask' in explanation.available_explanations:
             edge_mask = explanation.edge_mask
         else:
             if index is not None:
-                _, _, _, _, hard_edge_mask, _ = self._explainer.subgraph(
-                    self.model,
-                    index,
-                    x,
-                    edge_index,
-                )
-                edge_mask = torch.zeros(edge_index.shape[1],
-                                        device=edge_index.device)
-                edge_mask[hard_edge_mask] = 1
+                _, edge_mask = self._explainer._get_hard_masks(
+                    self.model, index, edge_index, num_nodes=x.size(0))
+                edge_mask = edge_mask.to(x.dtype)
             else:
                 edge_mask = torch.ones(edge_index.shape[1],
                                        device=edge_index.device)
