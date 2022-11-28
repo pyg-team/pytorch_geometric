@@ -37,9 +37,8 @@ class DataLoaderIterator:
 
 
 class WorkerInitWrapper:
-    r"""Wraps the :attr:`worker_init_fn` argument
-    for PyTorch DataLoader workers.
-    """
+    r"""Wraps the :attr:`worker_init_fn` argument for PyTorch data loader
+    workers."""
     def __init__(self, func):
         self.func = func
 

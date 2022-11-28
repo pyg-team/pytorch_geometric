@@ -93,13 +93,13 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
+
         # TODO: Unify DL affinitization in `BaseDataLoader` class
         # CPU Affinitization for loader and compute cores
         self.num_workers = kwargs.get('num_workers', 0)
         self.is_cuda_available = torch.cuda.is_available()
-
         self.cpu_affinity_enabled = False
-        worker_init_fn = WorkerInitWrapper(kwargs.get('worker_init_fn', None))
+        worker_init_fn = WorkerInitWrapper(kwargs.pop('worker_init_fn', None))
 
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn,
@@ -172,12 +172,10 @@ class NodeLoader(torch.utils.data.DataLoader):
 
     @contextmanager
     def enable_cpu_affinity(self, loader_cores: Optional[List[int]] = None):
-        r"""A context manager to enable CPU affinity for DataLoader workers.
-        Only for CPU devices!
-        As of now, be default it uses NUMA node 0 cores, for a multi-node
-        system.
+        r"""A context manager to enable CPU affinity for data loader workers
+        (only used when running on CPU devices).
 
-        Affinitization places DataLoader workers threads on specific CPU
+        Affinitization places data loader workers threads on specific CPU
         cores. In effect, it allows for more efficient local memory allocation
         and reduces remote memory calls.
         Every time a process or thread moves from one core to another,
@@ -185,29 +183,29 @@ class NodeLoader(torch.utils.data.DataLoader):
         very costly if it happens often, and our threads may also no longer be
         close to their data, or be able to share data in a cache.
 
-        Args:
-            loader_cores ([int], optional):
-                List of cpu cores to which dataloader workers should
-                affinitize to. By default cpu0 is reserved for all auxiliary
-                threads & ops.
-                DataLoader wil affinitize to cores starting at cpu1.
-                default: node0_cores[1:num_workers]
-
-
         .. warning::
-            If you want to further affinitize compute threads (i.e. with OMP),
-            please make sure that you exclude loader_cores from the list of
-            cores available for compute. This will cause core oversubsription
-            and exacerbate performance.
+            If you want to further affinitize compute threads
+            (*i.e.* with OMP), please make sure that you exclude
+            :obj:`loader_cores` from the list of cores available for compute.
+            This will cause core oversubsription and exacerbate performance.
 
         .. code-block:: python
 
             loader = NeigborLoader(data, num_workers=3)
             with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
-                <training or inference loop>
+                for batch in loader:
+                    pass
 
         This will be gradually extended to increase performance on dual socket
         CPUs.
+
+        Args:
+            loader_cores ([int], optional): List of CPU cores to which data
+                loader workers should affinitize to.
+                By default, :obj:`cpu0` is reserved for all auxiliary threads
+                and ops.
+                The :class:`DataLoader` wil affinitize to cores starting at
+                :obj:`cpu1`. (default: :obj:`node0_cores[1:num_workers]`)
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
