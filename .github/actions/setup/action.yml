@@ -26,6 +26,8 @@ runs:
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       run: |
         pip install torch==${{ inputs.torch-version }} torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
     - name: Install extension packages
