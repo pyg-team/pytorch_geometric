@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
+from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
     ExplainerConfig,
@@ -15,7 +16,6 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.explain.explanations import Explanation
 
 from .base import ExplainerAlgorithm
 
