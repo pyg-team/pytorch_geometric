@@ -279,7 +279,9 @@ def _test_gnn_explainer(
             mode=mode,
         ))
 
-    if isinstance(model, GCN_node_classification_multi_output):
+    if isinstance(model, (GCN_node_classification_multi_output,
+                          GCN_edge_classification_multi_output,
+                          GCN_graph_classification_multi_output)):
         target_index = 0
     else:
         target_index = None
