@@ -134,7 +134,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         if index is None:
             return None, None  # Consider all nodes and edges.
 
-        _, _, mapping, edge_mask = k_hop_subgraph(
+        index, _, _, edge_mask = k_hop_subgraph(
             index,
             num_hops=self._num_hops(model),
             edge_index=edge_index,
@@ -144,13 +144,14 @@ class ExplainerAlgorithm(torch.nn.Module):
         )
 
         node_mask = edge_index.new_zeros(num_nodes, dtype=torch.bool)
-        node_mask[mapping] = True
+        node_mask[index] = True
 
         return node_mask, edge_mask
 
-    def _num_hops(self, model: torch.nn.Module) -> int:
-        r"""Returns the number of hops the model is aggregating information
-        from.
+    @staticmethod
+    def _num_hops(model: torch.nn.Module) -> int:
+        r"""Returns the number of hops the :obj:`model` is aggregating
+        information from.
         """
         num_hops = 0
         for module in model.modules():
@@ -158,14 +159,16 @@ class ExplainerAlgorithm(torch.nn.Module):
                 num_hops += 1
         return num_hops
 
-    def _flow(self, model: torch.nn.Module) -> str:
+    @staticmethod
+    def _flow(model: torch.nn.Module) -> str:
         r"""Determines the message passing flow of the :obj:`model`."""
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
 
-    def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
+    @staticmethod
+    def _to_log_prob(y: Tensor, return_type: ModelReturnType) -> Tensor:
         r"""Converts the model output to log-probabilities.
 
         Args:

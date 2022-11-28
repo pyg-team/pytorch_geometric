@@ -64,10 +64,16 @@ class Explainer:
             **kwargs (optional): Additional keyword arguments passed to the
                 model.
         """
+        training = self.model.training
+        self.model.eval()
+
         with torch.no_grad():
             out = self.model(*args, **kwargs)
         if self.model_config.mode == ModelMode.classification:
-            return out.argmax(dim=-1)
+            out = out.argmax(dim=-1)
+
+        self.model.train(training)
+
         return out
 
     def __call__(

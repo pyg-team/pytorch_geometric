@@ -226,7 +226,7 @@ class GNNExplainer(ExplainerAlgorithm):
         return_type: ModelReturnType,
     ) -> Tensor:
 
-        if y.dim() == 0:
+        if y.dim() == 0:  # `index` was given as an integer.
             y_hat, y = y_hat.unsqueeze(0), y.unsqueeze(0)
 
         y_hat = self._to_log_prob(y_hat, return_type)
