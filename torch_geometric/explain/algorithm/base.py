@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,7 +13,6 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
-from torch_geometric.utils.subgraph import get_num_hops
 
 
 class ExplainerAlgorithm(torch.nn.Module):
@@ -29,7 +28,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         model_config: ModelConfig,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -44,21 +43,13 @@ class ExplainerAlgorithm(torch.nn.Module):
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int or torch.Tensor, optional): The target indices to
-                explain in case targets are multi-dimensional.
-                (default: :obj:`None`)
+            target_index (int, optional): The index of the model outputs to
+                reference in case the model returns a list of tensors, *e.g.*,
+                in a multi-task learning scenario. Should be kept to
+                :obj:`None` in case the model only returns a single output
+                tensor. (default: :obj:`None`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
-        """
-
-    @abstractmethod
-    def loss(self, y_hat: Tensor, y: Tensor, **kwargs) -> Tensor:
-        r"""Computes the loss to be used for the explanation algorithm.
-
-        Args:
-            y_hat (torch.Tensor): the output of the explanation algorithm.
-                (*e.g.*, the forward pass of the model with the mask applied).
-            y (torch.Tensor): the reference output.
         """
 
     @abstractmethod
@@ -104,56 +95,80 @@ class ExplainerAlgorithm(torch.nn.Module):
             out = out.argmax(dim=-1)
         return out
 
-    def subgraph(
+    # Helper functions ########################################################
+
+    def _post_process_mask(
+        self,
+        mask: Optional[Tensor],
+        num_elems: int,
+        hard_mask: Optional[Tensor] = None,
+        apply_sigmoid: bool = True,
+    ) -> Optional[Tensor]:
+        r""""Post processes any mask to not include any attributions of
+        elements not involved during message passing."""
+        if mask is None:
+            return mask
+
+        if mask.size(0) == 1:  # common_attributes:
+            mask = mask.repeat(num_elems, 1)
+
+        mask = mask.detach().squeeze(-1)
+
+        if apply_sigmoid:
+            mask = mask.sigmoid()
+
+        if hard_mask is not None:
+            mask[~hard_mask] = 0.
+
+        return mask
+
+    def _get_hard_masks(
         self,
         model: torch.nn.Module,
-        node_idx: Union[int, Tensor],
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        **kwargs,
-    ):
-        r"""Returns the subgraph for the given node(s).
+        index: Optional[Union[int, Tensor]],
+        edge_index: Tensor,
+        num_nodes: int,
+    ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
+        r"""Returns hard node and edge masks that only include the nodes and
+        edges visited during message passing."""
+        if index is None:
+            return None, None  # Consider all nodes and edges.
 
-        Args:
-            model (torch.nn.Module): The model to explain.
-            node_idx (int or torch.Tensor): The node(s) to explain.
-            x (torch.Tensor): The input node feature matrix.
-            edge_index (torch.LongTensor): The input edge indices.
-            **kwargs (optional): Additional keyword arguments passed to
-                :obj:`model`.
-
-        :rtype: (Tensor, LongTensor, LongTensor, LongTensor, BoolTensor, dict)
-        """
-        num_nodes, num_edges = x.size(0), edge_index.size(1)
-
-        node_idx, edge_index, mapping, edge_mask = k_hop_subgraph(
-            node_idx=node_idx,
-            num_hops=get_num_hops(model),
+        index, _, _, edge_mask = k_hop_subgraph(
+            index,
+            num_hops=self._num_hops(model),
             edge_index=edge_index,
             relabel_nodes=True,
             num_nodes=num_nodes,
             flow=self._flow(model),
         )
 
-        x = x[node_idx]
-        for key, value in kwargs.items():
-            if torch.is_tensor(value) and value.size(0) == num_nodes:
-                kwargs[key] = value[node_idx]
-            elif torch.is_tensor(value) and value.size(0) == num_edges:
-                kwargs[key] = value[edge_mask]
+        node_mask = edge_index.new_zeros(num_nodes, dtype=torch.bool)
+        node_mask[index] = True
 
-        return x, edge_index, mapping, node_idx, edge_mask, kwargs
+        return node_mask, edge_mask
 
-    # Helper functions ########################################################
+    @staticmethod
+    def _num_hops(model: torch.nn.Module) -> int:
+        r"""Returns the number of hops the :obj:`model` is aggregating
+        information from.
+        """
+        num_hops = 0
+        for module in model.modules():
+            if isinstance(module, MessagePassing):
+                num_hops += 1
+        return num_hops
 
-    def _flow(self, model: torch.nn.Module) -> str:
+    @staticmethod
+    def _flow(model: torch.nn.Module) -> str:
         r"""Determines the message passing flow of the :obj:`model`."""
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
 
-    def _to_log_prob(self, y: Tensor, return_type: ModelReturnType) -> Tensor:
+    @staticmethod
+    def _to_log_prob(y: Tensor, return_type: ModelReturnType) -> Tensor:
         r"""Converts the model output to log-probabilities.
 
         Args:
@@ -167,17 +182,3 @@ class ExplainerAlgorithm(torch.nn.Module):
         if return_type == ModelReturnType.log_probs:
             return y
         raise NotImplementedError
-
-    def _reshape_common_attributes(
-        self,
-        common_mask: Tensor,
-        num_objects: int,
-    ) -> Tensor:
-        r"""Reshapes the common mask from shape :obj:`[1, F]` or `F` to
-        :obj:`[N, F]` where :obj:`N` refers to the number of objects.
-
-        Args:
-            common_mask (Tensor): the common mask.
-            number_object (int): the number of objects.
-        """
-        return torch.stack([common_mask.squeeze(0)] * num_objects, dim=0)

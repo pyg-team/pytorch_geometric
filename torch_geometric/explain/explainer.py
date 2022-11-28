@@ -64,10 +64,16 @@ class Explainer:
             **kwargs (optional): Additional keyword arguments passed to the
                 model.
         """
+        training = self.model.training
+        self.model.eval()
+
         with torch.no_grad():
             out = self.model(*args, **kwargs)
         if self.model_config.mode == ModelMode.classification:
-            return out.argmax(dim=-1)
+            out = out.argmax(dim=-1)
+
+        self.model.train(training)
+
         return out
 
     def __call__(
@@ -77,7 +83,7 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -101,9 +107,11 @@ class Explainer:
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int or torch.Tensor, optional): The target indices to
-                explain in case targets are multi-dimensional.
-                (default: :obj:`None`)
+            target_index (int, optional): The index of the model outputs to
+                reference in case the model returns a list of tensors, *e.g.*,
+                in a multi-task learning scenario. Should be kept to
+                :obj:`None` in case the model only returns a single output
+                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -116,6 +124,9 @@ class Explainer:
         else:
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
+        training = self.model.training
+        self.model.eval()
+
         explanation = self.algorithm(
             model=self.model,
             x=x,
@@ -127,6 +138,8 @@ class Explainer:
             target_index=target_index,
             **kwargs,
         )
+
+        self.model.train(training)
 
         return self._post_process(explanation)
 
