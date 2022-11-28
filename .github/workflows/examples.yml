@@ -9,30 +9,14 @@ jobs:
 
   pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.9]
-        torch-version: [1.13.0]
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
-        run: |
-          pip install torch==${{ matrix.torch-version }} --extra-index-url https://download.pytorch.org/whl/cpu
-
-      - name: Install internal dependencies
-        run: |
-          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+      - name: Setup packages
+        uses: ./.github/actions/setup
 
       - name: Install main package
         run: |
@@ -58,5 +42,4 @@ jobs:
 
       - name: Run GNNExplainer
         run: |
-          pip install networkx matplotlib
           python examples/gnn_explainer.py
