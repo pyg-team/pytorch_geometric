@@ -14,6 +14,14 @@ def data():
     )
 
 
+@pytest.fixture
+def small_data():
+    return Data(
+        x=torch.randn(4, 3), edge_index=torch.tensor([[0, 0, 0, 1, 1, 2],
+                                                      [1, 2, 3, 2, 3, 3]]),
+        edge_attr=torch.randn(6, 3))
+
+
 def create_random_explanation(
     data: Data,
     node_mask: bool = True,
@@ -60,8 +68,98 @@ def test_available_explanations(data, node_mask, edge_mask, node_feat_mask,
     assert set(explanation.available_explanations) == set(expected)
 
 
-def test_get_explanation_data():
-    pass
+def test_node_mask(small_data):
+    node_mask = torch.tensor([True, False, True, False])
+    node_feat_mask = torch.zeros(4, 3)
+    node_feat_mask[:, 1] = 1
+    explanation = Explanation(node_mask=node_mask,
+                              node_feat_mask=node_feat_mask.type(torch.bool),
+                              x=small_data.x, edge_index=small_data.edge_index,
+                              edge_attr=small_data.edge_attr)
+    explanation.validate(raise_on_error=True)
+
+    # test explanation graph
+    # removing node 0 and 2 removes 5 edges
+    # the node_feat_mask only leaves feature 1 nonzero
+    explanation_graph = explanation.get_explanation_subgraph()
+    assert explanation_graph.x.shape == (2, 3)
+    assert explanation_graph.edge_index.shape == (2, 1)
+    assert explanation_graph.edge_attr.shape == (1, 3)
+    assert torch.allclose(explanation_graph.x[:, 0], torch.zeros(2))
+    assert torch.allclose(explanation_graph.x[:, 2], torch.zeros(2))
+
+    # test complement graph
+    # removing node 1 and 3 removes 5 edges
+    # the node_feat_mask sets feature 1 to zero
+    complement_graph = explanation.get_complement_subgraph()
+    assert complement_graph.x.shape == (2, 3)
+    assert complement_graph.edge_index.shape == (2, 1)
+    assert complement_graph.edge_attr.shape == (1, 3)
+    assert torch.allclose(complement_graph.x[:, 1], torch.zeros(2))
+
+
+def test_edge_mask(small_data):
+    edge_mask = torch.tensor([True, False, True, False, False, True])
+    edge_feat_mask = torch.zeros(6, 3)
+    edge_feat_mask[:, 1] = 1
+    explanation = Explanation(edge_mask=edge_mask,
+                              edge_feat_mask=edge_feat_mask.type(torch.bool),
+                              x=small_data.x, edge_index=small_data.edge_index,
+                              edge_attr=small_data.edge_attr)
+    explanation.validate(raise_on_error=True)
+
+    # test explanation graph
+    # removing edges does not change the nodes
+    # the edge_feat_mask only leaves feature 1 nonzero
+    explanation_graph = explanation.get_explanation_subgraph()
+    assert explanation_graph.x.shape == (4, 3)
+    assert explanation_graph.edge_index.shape == (2, 3)
+    assert explanation_graph.edge_attr.shape == (3, 3)
+    assert torch.allclose(explanation_graph.edge_attr[:, 0], torch.zeros(3))
+    assert torch.allclose(explanation_graph.edge_attr[:, 2], torch.zeros(3))
+
+    # test complement graph
+    # removing edges does not change the nodes
+    # the edge_feat_mask sets feature 1 to zero
+    complement_graph = explanation.get_complement_subgraph()
+    assert complement_graph.x.shape == (4, 3)
+    assert complement_graph.edge_index.shape == (2, 3)
+    assert complement_graph.edge_attr.shape == (3, 3)
+    assert torch.allclose(complement_graph.edge_attr[:, 1], torch.zeros(3))
+
+
+def test_full_explanation_mask(small_data):
+    node_mask = torch.tensor([True, False, False, False])
+    node_feat_mask = torch.zeros(4, 3)
+    node_feat_mask[:, 1] = 1
+
+    edge_mask = torch.tensor([True, False, True, False, False, True])
+    edge_feat_mask = torch.zeros(6, 3)
+    edge_feat_mask[:, 1] = 1
+
+    explanation = Explanation(node_mask=node_mask, edge_mask=edge_mask,
+                              node_feat_mask=node_feat_mask.type(torch.bool),
+                              edge_feat_mask=edge_feat_mask.type(torch.bool),
+                              x=small_data.x, edge_index=small_data.edge_index,
+                              edge_attr=small_data.edge_attr)
+
+    # explanation
+    explanation_graph = explanation.get_explanation_subgraph()
+    assert explanation_graph.x.shape == (1, 3)
+    assert explanation_graph.edge_index.shape == (2, 0)
+    assert explanation_graph.edge_attr.shape == (0, 3)
+    assert torch.allclose(explanation_graph.x[:, 0], torch.zeros(1))
+    assert torch.allclose(explanation_graph.x[:, 2], torch.zeros(1))
+
+    # complement
+    complement_graph = explanation.get_complement_subgraph()
+    assert complement_graph.x.shape == (3, 3)
+    assert complement_graph.edge_index.shape == (2, 2)
+    assert complement_graph.edge_attr.shape == (2, 3)
+    assert torch.allclose(complement_graph.edge_attr[:, 0], torch.zeros(2))
+    assert torch.allclose(complement_graph.edge_attr[:, 2], torch.zeros(2))
+    assert torch.allclose(complement_graph.x[:, 0], torch.zeros(3))
+    assert torch.allclose(complement_graph.x[:, 2], torch.zeros(3))
 
 
 def test_validate_explanation(data):
