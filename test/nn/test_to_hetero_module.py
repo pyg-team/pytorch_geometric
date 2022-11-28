@@ -29,6 +29,7 @@ def test_to_hetero_linear():
     out = heterolin(x_dict)
     assert out['v0'].shape == (20, 5)
     assert out['v1'].shape == (20, 5)
+    # test fused input
     x = torch.cat([x_j for x_j in x_dict.values()])
     node_type = torch.cat([(j * torch.ones(x_j.shape[0])).long()
                            for j, x_j in enumerate(x_dict.values())])
@@ -66,6 +67,6 @@ def test_to_hetero_gcn():
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
     edge_type = torch.cat(etypes_list).to(torch.long)
     edge_index = torch.cat(list(e_idx_dict.values()), dim=1)
-
+    # test fused input
     out = rgcnconv(x, edge_index=edge_index, edge_type=edge_type)
     assert out.shape == (40, 5)
