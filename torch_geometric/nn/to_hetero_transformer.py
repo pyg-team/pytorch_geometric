@@ -20,15 +20,6 @@ try:
 except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
-try:
-    from pyg_lib.ops import segment_matmul  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
-
-    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
-        raise NotImplementedError
-
 
 def get_dict(mapping: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return mapping if mapping is not None else {}
@@ -154,10 +145,14 @@ class ToHeteroModule(Module):
         self.aggr = aggr
         assert len(metadata) == 2
         assert aggr in self.aggrs.keys()
+        # check wether module is linear
         self.is_lin = isinstance(module, torch.nn.Linear) or isinstance(
             module, torch_geometric.nn.dense.Linear)
-        assert len(metadata[0]) > 0 and (len(metadata[1]) > 0 or self.is_lin)
+        # check metadata[0] has node types
+        # check metadata[1] has edge types if module is MessagePassing
+        assert len(metadata[0]) > 0 and (len(metadata[1]) > 0 or not self.is_lin)
         if self.is_lin:
+            # make HeteroLinear layer based on metadata
             if isinstance(module, torch.nn.Linear):
                 in_ft = module.in_features
                 out_ft = module.out_features
@@ -169,6 +164,7 @@ class ToHeteroModule(Module):
                 len(self.node_types)).to(list(module.parameters())[0].device)
             heteromodule.reset_parameters()
         else:
+            # copy MessagePassing module for each edge type
             unused_node_types = get_unused_node_types(*metadata)
             if len(unused_node_types) > 0:
                 warnings.warn(
@@ -204,9 +200,10 @@ class ToHeteroModule(Module):
         """
         # (TODO) Add Sparse Tensor support
         if self.is_lin:
-            # HeteroLinear layer
+            # call HeteroLinear layer
             out = self.heteromodule(x, node_type)
         else:
+            # iterate over each edge type
             for j, module in enumerate(self.heteromodule.values()):
                 e_idx_type_j = edge_index[:, edge_type == j]
                 o_j = module(x, e_idx_type_j)
@@ -231,6 +228,7 @@ class ToHeteroModule(Module):
         """
         # (TODO) Add Sparse Tensor support
         if self.is_lin:
+            # fuse inputs
             x = torch.cat([x_j for x_j in x_dict.values()])
             size_list = [feat.shape[0] for feat in x_dict.values()]
             sizes = torch.tensor(size_list, dtype=torch.long, device=x.device)
@@ -244,6 +242,7 @@ class ToHeteroModule(Module):
             }
         else:
             o_dict = {}
+            # iterate over each edge_type
             for j, (etype_j, module) in enumerate(self.heteromodule.items()):
                 e_idx_type_j = edge_index_dict[etype_j]
                 src_node_type_j = etype_j[0]
@@ -282,7 +281,9 @@ class ToHeteroModule(Module):
                 Dict[Tuple[str, str, str], Tensor].
                 (default: :obj:`None`)
         """
+        # check if x is passed as a dict or fused
         if isinstance(x, Dict):
+            # check what inputs to pass
             if self.is_lin:
                 return self.dict_forward(x)
             else:
