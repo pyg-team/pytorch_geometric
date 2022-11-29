@@ -125,7 +125,7 @@ class Explainer:
                     f"type '{explanation_type.value}'")
         elif explanation_type == ExplanationType.model:
             if target is not None:
-                raise warnings.warn(
+                warnings.warn(
                     f"The 'target' should not be provided for the explanation "
                     f"type '{explanation_type.value}'")
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
