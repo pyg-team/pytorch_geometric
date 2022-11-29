@@ -315,6 +315,23 @@ class GNNExplainer_:
             return_type=self.conversion_return_type[return_type],
         )
 
+    ###########################################################################
+
+    @torch.no_grad()
+    def get_initial_prediction(self, model: torch.nn.Module, *args,
+                               model_mode: ModelMode, **kwargs) -> Tensor:
+
+        training = model.training
+        model.eval()
+
+        out = model(*args, **kwargs)
+        if model_mode == ModelMode.classification:
+            out = out.argmax(dim=-1)
+
+        model.train(training)
+
+        return out
+
     def explain_graph(
         self,
         x: Tensor,
@@ -329,7 +346,7 @@ class GNNExplainer_:
             edge_index=edge_index,
             explainer_config=self.explainer_config,
             model_config=self.model_config,
-            target=self._explainer.get_initial_prediction(
+            target=self.get_initial_prediction(
                 self.model,
                 x,
                 edge_index,
@@ -354,7 +371,7 @@ class GNNExplainer_:
             edge_index=edge_index,
             explainer_config=self.explainer_config,
             model_config=self.model_config,
-            target=self._explainer.get_initial_prediction(
+            target=self.get_initial_prediction(
                 self.model,
                 x,
                 edge_index,
