@@ -179,15 +179,13 @@ class GNNExplainer(ExplainerAlgorithm):
 
             y_hat = model(x=h, edge_index=edge_index, **kwargs)
             y = target
-            # print('index', index)
+
             if target_index is not None:
                 y_hat, y = y_hat[target_index], y[target_index]
             if index is not None:
                 y_hat, y = y_hat[index], y[index]
-            # print(y_hat, y)
 
             loss = self._loss(y_hat, y, explainer_config, model_config)
-            print('LOSS', loss)
 
             loss.backward()
             optimizer.step()
@@ -317,6 +315,23 @@ class GNNExplainer_:
             return_type=self.conversion_return_type[return_type],
         )
 
+    ###########################################################################
+
+    @torch.no_grad()
+    def get_initial_prediction(self, model: torch.nn.Module, *args,
+                               model_mode: ModelMode, **kwargs) -> Tensor:
+
+        training = model.training
+        model.eval()
+
+        out = model(*args, **kwargs)
+        if model_mode == ModelMode.classification:
+            out = out.argmax(dim=-1)
+
+        model.train(training)
+
+        return out
+
     def explain_graph(
         self,
         x: Tensor,
@@ -331,7 +346,7 @@ class GNNExplainer_:
             edge_index=edge_index,
             explainer_config=self.explainer_config,
             model_config=self.model_config,
-            target=self._explainer.get_initial_prediction(
+            target=self.get_initial_prediction(
                 self.model,
                 x,
                 edge_index,
@@ -356,7 +371,7 @@ class GNNExplainer_:
             edge_index=edge_index,
             explainer_config=self.explainer_config,
             model_config=self.model_config,
-            target=self._explainer.get_initial_prediction(
+            target=self.get_initial_prediction(
                 self.model,
                 x,
                 edge_index,

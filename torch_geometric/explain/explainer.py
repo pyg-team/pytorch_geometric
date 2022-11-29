@@ -1,4 +1,5 @@
 import copy
+import warnings
 from typing import Optional, Union
 
 import torch
@@ -51,6 +52,7 @@ class Explainer:
                 f"'{self.algorithm.__class__.__name__}' does not support the "
                 f"given explanation settings.")
 
+    @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
@@ -115,13 +117,17 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        if (self.explainer_config.explanation_type ==
-                ExplanationType.phenomenon):
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
-                    f"The target has to be provided for the explanation type "
-                    f"'{self.explainer_config.explanation_type.value}'")
-        else:
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+        elif explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{explanation_type.value}'")
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
         training = self.model.training
