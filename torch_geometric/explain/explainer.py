@@ -42,15 +42,9 @@ class Explainer:
         self.model_config = ModelConfig.cast(model_config)
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        if not self.algorithm.supports(
-                self.explainer_config,
-                self.model_config,
-        ):
-            raise ValueError(
-                f"The explanation algorithm "
-                f"'{self.algorithm.__class__.__name__}' does not support the "
-                f"given explanation settings.")
+        self.algorithm.connect(self.explainer_config, self.model_config)
 
+    @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
@@ -128,11 +122,9 @@ class Explainer:
         self.model.eval()
 
         explanation = self.algorithm(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            explainer_config=self.explainer_config,
-            model_config=self.model_config,
+            self.model,
+            x,
+            edge_index,
             target=target,
             index=index,
             target_index=target_index,
