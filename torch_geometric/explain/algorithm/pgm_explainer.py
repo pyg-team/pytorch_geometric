@@ -55,7 +55,6 @@ Explanations for Graph Neural Networks"
             **kwargs,
     ):
         super().__init__()
-        # self.num_layers = num_layers
         self.perturb_feature_list = perturb_feature_list
         self.perturb_mode = perturb_mode
         self.perturb_indicator = perturb_indicator
@@ -65,7 +64,26 @@ Explanations for Graph Neural Networks"
         # print("Number of layers: ", self.num_layers)
         print("Perturbation mode: ", self.perturb_mode)
 
-    def perturb_features_on_node(self, feature_matrix, node_idx, is_random=False, is_pertubation_scaled=False):
+    def perturb_features_on_node(
+            self,
+            feature_matrix: torch.Tensor,
+            node_idx: int,
+            is_random: bool = False,
+            is_pertubation_scaled: bool = False):
+        r"""
+        pertub node feature matrix. This allows for checking how much influence
+        neighbouring nodes has on the output
+        Args:
+            feature_matrix: node feature matrix of the input graph
+                of shape [num_nodes, num_features]
+            node_idx: index of the node we are calculating the explanation for
+            is_random: whether to use the original feature matrix or a random number
+            is_pertubation_scaled: whether to scale the pertubed matrix
+                with the original feature matrix
+
+        Returns:
+
+        """
         # return a random perturbed feature matrix
         # random = is_random for nothing, True for random.randint.
         # is_pertubation_scaled=True, "scale" for scaling with original feature
@@ -113,15 +131,15 @@ Explanations for Graph Neural Networks"
         edge_weight = kwargs.get('edge_weight')
         if model_config.task_level == ModelTaskLevel.node:
 
-            node_mask, node_feature_mask = self._explain_node(
+            neighbors, pgm_explanation, marginal_prob, pgm_stats, pgm_nodes, data_pgm = self._explain_node(
                 model,x, index,
             edge_index,
             edge_weight,
             explainer_config,
             model_config,
-            target,
+            target[index],
             num_samples= 100,
-                               top_node = None,
+            top_node = None,
                                           significance_threshold = 0.05,
                                                                    pred_threshold = 0.1)
             print(node_feature_mask, 'here')
@@ -139,11 +157,13 @@ Explanations for Graph Neural Networks"
         #     node_feat_mask = node_mask
         #     node_mask = None
 
-        self._clean_model(model)
-
         # build explanation
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feature_mask)
+        return Explanation(
+            x=x, edge_index=edge_index,
+            markov_blanket=neighbors,
+            pgm_explation=pgm_explanation,
+            marginal_probability=marginal_prob,
+            pgm_stats=pgm_stats, pgm_nodes=pgm_nodes, data_pgm=data_pgm)
 
     def n_hops_adj(self, n_hops, edge_index):
         # edge_index is the sparse representation of the adj matrix
@@ -156,15 +176,15 @@ Explanations for Graph Neural Networks"
             n_hop_adjacency = n_hop_adjacency + power_adj
             n_hop_adjacency = (n_hop_adjacency > 0).int()
         return n_hop_adjacency
-
-    def extract_n_hops_neighbors(self, edge_index, node_idx):
-        # Return the n-hops neighbors of a node
-        node_adjacency = edge_index[node_idx]
-        neighbors = torch.nonzero(node_adjacency)[0]
-        node_idx_new = sum(node_adjacency[:node_idx])
-        sub_A = self.A[neighbors][:, neighbors]
-        sub_X = self.X[neighbors]
-        return node_idx_new, sub_A, sub_X, neighbors
+    #
+    # def extract_n_hops_neighbors(self, edge_index, node_idx):
+    #     # Return the n-hops neighbors of a node
+    #     node_adjacency = edge_index[node_idx]
+    #     neighbors = torch.nonzero(node_adjacency)[0]
+    #     node_idx_new = sum(node_adjacency[:node_idx])
+    #     sub_A = self.A[neighbors][:, neighbors]
+    #     sub_X = self.X[neighbors]
+    #     return node_idx_new, sub_A, sub_X, neighbors
 
     def batch_perturb_features_on_node(self, num_samples, index_to_perturb,
         X_features, edge_features, percentage, p_threshold, pred_threshold):
@@ -279,20 +299,22 @@ Explanations for Graph Neural Networks"
         }
 
         row_index = state_names[X]
-        column_index = pd.MultiIndex.from_product(
-            [state_names[Y]] + [state_names[z] for z in Z], names=[Y] + Z
-        )
+        # column_index = pd.MultiIndex.from_product(
+        #     [state_names[Y]] + [state_names[z] for z in Z], names=[Y] + Z
+        # )
 
         XYZ_state_counts = pd.crosstab(
             index=data[X], columns=[data[Y]] + [data[z] for z in Z],
             rownames=[X], colnames=[Y] + Z
         )
 
-        if not isinstance(XYZ_state_counts.columns, pd.MultiIndex):
-            XYZ_state_counts.columns = pd.MultiIndex.from_arrays([XYZ_state_counts.columns])
-        XYZ_state_counts = XYZ_state_counts.reindex(
-            index=row_index, columns=column_index
-        ).fillna(0)
+        # if not isinstance(XYZ_state_counts.columns, pd.MultiIndex):
+        #     XYZ_state_counts.columns = pd.MultiIndex.from_arrays([XYZ_state_counts.columns])
+        # XYZ_state_counts = XYZ_state_counts.reindex(
+        #     index=row_index, columns=column_index
+        # ).fillna(0)
+
+        XYZ_state_counts = XYZ_state_counts.fillna(0)
 
         if Z:
             XZ_state_counts = XYZ_state_counts.sum(axis=1, level=list(range(1, len(Z) + 1)))  # marginalize out Y
@@ -327,25 +349,26 @@ Explanations for Graph Neural Networks"
 
         return chi2, significance_level
 
-    def search_MK(self, data, target, nodes):
+    def search_markov_blanket(self, data, target, nodes):
         target = str(int(target))
         data.columns = data.columns.astype(str)
         nodes = [str(int(node)) for node in nodes]
 
-        MB = nodes
+        markov_blanket = nodes
         while True:
             count = 0
             for node in nodes:
-                evidences = MB.copy()
+                evidences = markov_blanket.copy()
                 evidences.remove(node)
+                # _, p = chi_square(target, node, evidences, data[nodes + [target]], boolean=False)
                 _, p = self.chi_square(target, node, evidences, data[nodes + [target]])
                 if p > 0.05:
-                    MB.remove(node)
+                    markov_blanket.remove(node)
                     count = 0
                 else:
                     count = count + 1
-                    if count == len(MB):
-                        return MB
+                    if count == len(markov_blanket):
+                        return markov_blanket
 
     def pgm_generate(self, target, data, pgm_stats, subnodes, child=None):
 
@@ -354,7 +377,7 @@ Explanations for Graph Neural Networks"
         subnodes_no_target = [node for node in subnodes if node != target]
         data.columns = data.columns.astype(str)
 
-        MK_blanket = self.search_MK(data, target, subnodes_no_target.copy())
+        MK_blanket = self.search_markov_blanket(data, target, subnodes_no_target.copy())
 
         if child == None:
             est = HillClimbSearch(data[subnodes_no_target], scoring_method=BicScore(data))
@@ -450,24 +473,26 @@ Explanations for Graph Neural Networks"
             model_config: ModelConfig,
             target: Tensor,
             num_samples: int = 100,
-            top_node=None,
+            top_node: int =None,
             significance_threshold=0.05,
             pred_threshold=0.1
 
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    ):
         logging.info(f'Explaining node: {node_index}')
-        num_hops = self.get_model_layers(model)
-        neighbors, edge_index_new, mapping, edge_mask = k_hop_subgraph(node_index, num_hops=num_hops,
-                                                                   edge_index=edge_index, relabel_nodes=True)
+        # we only need to consider the effects of neighbours out to the
+        # number of GNN layers, so the subgraph num_hops is set to this
+        num_hops = len(self.get_model_layers(model))
+        neighbors, edge_index_new, mapping, edge_mask = k_hop_subgraph(
+            node_index, num_hops=num_hops, edge_index=edge_index, relabel_nodes=True)
 
         neighbors = neighbors.cpu().detach().numpy()
 
         if node_index not in neighbors:
             neighbors = np.append(neighbors, node_index)
 
-        pred_model = target.cpu()
+        pred_model = model(x, edge_index, edge_weight)
 
-        softmax_pred = np.asarray([softmax(np.asarray(pred_model[node_].data)) for node_ in range(x.shape[0])])
+        softmax_pred = np.asarray([softmax(np.asarray(pred_model[node_].data.cpu())) for node_ in range(x.shape[0])])
         pred_single_node = pred_model[node_index].data
         # label_node = torch.argmax(pred_single_node)
         # soft_pred_single_node = torch.softmax(pred_single_node)
@@ -530,7 +555,7 @@ Explanations for Graph Neural Networks"
             if p < significance_threshold:
                 dependent_neighbors.append(node)
                 dependent_neighbors_p_values.append(p)
-
+        # dict of node_id: p_value of whether it influences the prediction of target node
         pgm_stats = dict(zip(neighbors, p_values))
 
         if top_node == None:
@@ -539,85 +564,20 @@ Explanations for Graph Neural Networks"
             top_p = np.min((top_node, len(neighbors) - 1))
             ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
             pgm_nodes = [ind_sub_to_ori[node] for node in ind_top_p]
-        node_mask = torch.Tensor(neighbors)
-        node_feature_mask = torch.Tensor(list(zip(neighbors, p_values)))
 
         data_pgm = data_pgm.rename(columns={"A": 0, "B": 1})
         data_pgm = data_pgm.rename(columns=ind_sub_to_ori)
 
-        return node_mask, node_feature_mask, pgm_stats, pgm_nodes, data_pgm
+        pgm_explanation = self.pgm_generate(target, data_pgm, pgm_stats, neighbors)
+        marginal_probs = []
+        for num_of_evidence in range(len(neighbors) - 1):
+            cond_prob = self.pgm_conditional_prob(node_index, pgm_explanation,
+                                                       neighbors[0:num_of_evidence + 1])
+            marginal_probs.append(dict(
+                conditional_probability=cond_prob,
+                conditioned_on_nodes=neighbors[0:num_of_evidence + 1]))
 
-    def _loss_regression(
-            self,
-            y_hat: torch.Tensor,
-            y: torch.Tensor,
-            target_idx: Optional[int] = None,
-            node_index: Optional[int] = None,
-    ):
-        if target_idx is not None:
-            y_hat = y_hat[..., target_idx].unsqueeze(-1)
-            y = y[..., target_idx].unsqueeze(-1)
-
-        if node_index is not None and node_index >= 0:
-            loss_ = torch.cdist(y_hat[node_index], y[node_index])
-        else:
-            loss_ = torch.cdist(y_hat, y)
-
-        return loss_
-
-    def _loss_classification(
-            self,
-            y_hat: torch.Tensor,
-            y: torch.Tensor,
-            return_type: ModelReturnType,
-            target_idx: Optional[int] = None,
-            node_index: Optional[int] = None,
-    ):
-        if target_idx is not None:
-            y_hat = y_hat[target_idx]
-            y = y[target_idx]
-
-        y_hat = self._to_log_prob(y_hat, return_type)
-
-        if node_index is not None and node_index >= 0:
-            loss = -y_hat[node_index, y[node_index]]
-        else:
-            loss = -y_hat[0, y[0]]
-        return loss
-
-    def loss(
-            self,
-            y_hat: torch.Tensor,
-            y: torch.Tensor,
-            edge_mask_type: MaskType,
-            return_type: ModelReturnType,
-            node_index: Optional[int] = None,
-            target_idx: Optional[int] = None,
-            model_mode: ModelMode = ModelMode.regression,
-    ) -> torch.Tensor:
-
-        if model_mode == ModelMode.regression:
-            loss = self._loss_regression(y_hat, y, target_idx, node_index)
-        else:
-            loss = self._loss_classification(y_hat, y, return_type, target_idx,
-                                             node_index)
-
-        if edge_mask_type is not None:
-            m = self.edge_mask.sigmoid()
-            edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
-            loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
-            ent = -m * torch.log(m + self.coeffs['EPS']) - (
-                    1 - m) * torch.log(1 - m + self.coeffs['EPS'])
-            loss = loss + self.coeffs['edge_ent'] * ent.mean()
-
-        m = self.node_mask.sigmoid()
-        node_feat_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
-        loss = loss + self.coeffs['node_feat_size'] * node_feat_reduce(m)
-        ent = -m * torch.log(m + self.coeffs['EPS']) - (
-                1 - m) * torch.log(1 - m + self.coeffs['EPS'])
-        loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
-
-        return loss
+        return neighbors, pgm_explanation, marginal_probs, pgm_stats, pgm_nodes, data_pgm
 
     def supports(
             self,
@@ -629,23 +589,6 @@ Explanations for Graph Neural Networks"
         ]:
             logging.error("Model task level not supported.")
             return False
-        if explainer_config.edge_mask_type == MaskType.attributes:
-            logging.error("Edge mask type not supported.")
-            return False
-
-        if explainer_config.node_mask_type is None:
-            logging.error("Node mask type not supported.")
-            return False
-
-        if model_config.task_level not in [
-            ModelTaskLevel.node, ModelTaskLevel.graph
-        ]:
-            logging.error("Model task level not supported.")
-            return False
 
         return True
 
-    def _clean_model(self, model):
-        clear_masks(model)
-        self.node_mask = None
-        self.edge_mask = None
