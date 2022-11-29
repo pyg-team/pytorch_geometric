@@ -60,7 +60,7 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"phenomenon"`: Explains the phenomenon that the model
                   is trying to predict.
 
-            In practice this means that the explanation algorithm will either
+            In practice, this means that the explanation algorithm will either
             compute their losses with respect to the model output or the target
             output.
 

@@ -8,7 +8,6 @@ from torch_geometric.explain import Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ModelConfig,
-    ModelMode,
     ModelReturnType,
 )
 from torch_geometric.nn import MessagePassing
@@ -92,31 +91,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             raise ValueError(
                 f"The explanation algorithm '{self.__class__.__name__}' does "
                 f"not support the given explanation settings.")
-
-    @torch.no_grad()
-    def get_initial_prediction(
-        self,
-        model: torch.nn.Module,
-        *args,
-        **kwargs,
-    ) -> Tensor:
-        r"""Returns the initial prediction of the model.
-
-        If the model mode is :obj:`"regression"`, the prediction is returned as
-        a scalar value.
-        If the model mode is :obj:`"classification"`, the prediction is
-        returned as the predicted class label.
-
-        Args:
-            model (torch.nn.Module): The model to explain.
-            *args: Arguments passed to :obj:`model`.
-            **kwargs (optional): Additional keyword arguments passed to
-                :obj:`model`.
-        """
-        out = model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.classification:
-            out = out.argmax(dim=-1)
-        return out
 
     # Helper functions ########################################################
 

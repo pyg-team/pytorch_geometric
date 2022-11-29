@@ -285,6 +285,20 @@ class GNNExplainer_:
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
         self._explainer.connect(explainer_config, model_config)
 
+    @torch.no_grad()
+    def get_initial_prediction(self, *args, **kwargs) -> Tensor:
+
+        training = self.model.training
+        self.model.eval()
+
+        out = self.model(*args, **kwargs)
+        if self._explainer.model_config.mode == ModelMode.classification:
+            out = out.argmax(dim=-1)
+
+        self.model.train(training)
+
+        return out
+
     def explain_graph(
         self,
         x: Tensor,
@@ -294,11 +308,10 @@ class GNNExplainer_:
         self._explainer.model_config.task_level = ModelTaskLevel.graph
 
         explanation = self._explainer(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            target=self._explainer.get_initial_prediction(
-                self.model, x, edge_index, **kwargs),
+            self.model,
+            x,
+            edge_index,
+            target=self.get_initial_prediction(x, edge_index, **kwargs),
             **kwargs,
         )
         return self._convert_output(explanation, edge_index)
@@ -312,11 +325,10 @@ class GNNExplainer_:
     ) -> Tuple[Tensor, Tensor]:
         self._explainer.model_config.task_level = ModelTaskLevel.node
         explanation = self._explainer(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            target=self._explainer.get_initial_prediction(
-                self.model, x, edge_index, **kwargs),
+            self.model,
+            x,
+            edge_index,
+            target=self.get_initial_prediction(x, edge_index, **kwargs),
             index=node_idx,
             **kwargs,
         )
