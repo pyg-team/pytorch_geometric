@@ -3,21 +3,14 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import (
-    GCNConv,
-    HeteroConv,
     SAGEConv,
     captum_output_to_dicts,
     to_captum_input,
     to_captum_model,
     to_hetero,
 )
-from torch_geometric.nn.models.explainer import (
-    CaptumHeteroModel,
-    clear_masks,
-    set_hetero_masks,
-)
+from torch_geometric.nn.models.captum import CaptumHeteroModel
 from torch_geometric.testing import withPackage
-from torch_geometric.typing import Metadata
 
 mask_types = ['edge', 'node_and_edge', 'node']
 methods = [
@@ -51,29 +44,6 @@ def get_hetero_data():
     return data
 
 
-class HeteroModel(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-
-        self.conv1 = HeteroConv({
-            ('paper', 'to', 'paper'):
-            GCNConv(-1, 32),
-            ('author', 'to', 'paper'):
-            SAGEConv((-1, -1), 32),
-            ('paper', 'to', 'author'):
-            SAGEConv((-1, -1), 32),
-        })
-
-        self.conv2 = HeteroConv({
-            ('paper', 'to', 'paper'):
-            GCNConv(-1, 32),
-            ('author', 'to', 'paper'):
-            SAGEConv((-1, -1), 32),
-            ('paper', 'to', 'author'):
-            SAGEConv((-1, -1), 32),
-        })
-
-
 class GraphSAGE(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -86,7 +56,7 @@ class GraphSAGE(torch.nn.Module):
 
 
 class HeteroSAGE(torch.nn.Module):
-    def __init__(self, metadata: Metadata):
+    def __init__(self, metadata):
         super().__init__()
         self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
 
@@ -95,46 +65,6 @@ class HeteroSAGE(torch.nn.Module):
         # Make sure additonal args gets passed.
         assert additonal_arg is not None
         return self.graph_sage(x_dict, edge_index_dict)['paper']
-
-
-def test_set_clear_mask():
-    data = get_hetero_data()
-    edge_mask_dict = {
-        ('paper', 'to', 'paper'): torch.ones(200),
-        ('author', 'to', 'paper'): torch.ones(100),
-        ('paper', 'to', 'author'): torch.ones(100),
-    }
-
-    model = HeteroModel()
-
-    set_hetero_masks(model, edge_mask_dict, data.edge_index_dict)
-    for edge_type in data.edge_types:  # Check that masks are correctly set:
-        str_edge_type = '__'.join(edge_type)
-        assert torch.allclose(model.conv1.convs[str_edge_type]._edge_mask,
-                              edge_mask_dict[edge_type])
-        assert model.conv1.convs[str_edge_type].explain
-
-    clear_masks(model)
-    for edge_type in data.edge_types:
-        str_edge_type = '__'.join(edge_type)
-        assert model.conv1.convs[str_edge_type]._edge_mask is None
-        assert not model.conv1.convs[str_edge_type].explain
-
-    model = GraphSAGE()
-    model = to_hetero(GraphSAGE(), data.metadata(), debug=False)
-
-    set_hetero_masks(model, edge_mask_dict, data.edge_index_dict)
-    for edge_type in data.edge_types:  # Check that masks are correctly set:
-        str_edge_type = '__'.join(edge_type)
-        assert torch.allclose(model.conv1[str_edge_type]._edge_mask,
-                              edge_mask_dict[edge_type])
-        assert model.conv1[str_edge_type].explain
-
-    clear_masks(model)
-    for edge_type in data.edge_types:
-        str_edge_type = '__'.join(edge_type)
-        assert model.conv1[str_edge_type]._edge_mask is None
-        assert not model.conv1[str_edge_type].explain
 
 
 @withPackage('captum')

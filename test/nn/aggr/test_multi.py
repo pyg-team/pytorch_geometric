@@ -32,9 +32,11 @@ def test_multi_aggr(multi_aggr_tuple):
     assert str(aggr) == ('MultiAggregation([\n'
                          '  MeanAggregation(),\n'
                          '  SumAggregation(),\n'
-                         '  MaxAggregation()\n'
+                         '  MaxAggregation(),\n'
                          f"], mode={aggr_kwargs['mode']})")
 
     out = aggr(x, index)
     assert torch.allclose(out, aggr(x, ptr=ptr))
     assert out.size() == (4, expand * x.size(1))
+
+    # TODO test JIT support

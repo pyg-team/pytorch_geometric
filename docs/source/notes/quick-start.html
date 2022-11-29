@@ -137,8 +137,12 @@
       $("#command pre").text('conda install pyg -c pyg');
     }
 
-    else {
+    else if (os == "windows") {
       $("#command pre").text(`pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+    }
+
+    else {
+      $("#command pre").text(`pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
   }
 

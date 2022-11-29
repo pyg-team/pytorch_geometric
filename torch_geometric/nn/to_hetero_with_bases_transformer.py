@@ -146,7 +146,20 @@ class ToHeteroWithBasesTransformer(Transformer):
     ):
         super().__init__(module, input_map, debug)
 
-        unused_node_types = get_unused_node_types(*metadata)
+        self.metadata = metadata
+        self.num_bases = num_bases
+        self.in_channels = in_channels or {}
+        assert len(metadata) == 2
+        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
+
+        self.validate()
+
+        # Compute IDs for each node and edge type:
+        self.node_type2id = {k: i for i, k in enumerate(metadata[0])}
+        self.edge_type2id = {k: i for i, k in enumerate(metadata[1])}
+
+    def validate(self):
+        unused_node_types = get_unused_node_types(*self.metadata)
         if len(unused_node_types) > 0:
             warnings.warn(
                 f"There exist node types ({unused_node_types}) whose "
@@ -154,15 +167,14 @@ class ToHeteroWithBasesTransformer(Transformer):
                 f"as they do not occur as destination type in any edge type. "
                 f"This may lead to unexpected behaviour.")
 
-        self.metadata = metadata
-        self.num_bases = num_bases
-        self.in_channels = in_channels or {}
-        assert len(metadata) == 2
-        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
-
-        # Compute IDs for each node and edge type:
-        self.node_type2id = {k: i for i, k in enumerate(metadata[0])}
-        self.edge_type2id = {k: i for i, k in enumerate(metadata[1])}
+        names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
+        for name in names:
+            if not name.isidentifier():
+                warnings.warn(
+                    f"The type '{name}' contains invalid characters which "
+                    f"may lead to unexpected behaviour. To avoid any issues, "
+                    f"ensure that your types only contain letters, numbers "
+                    f"and underscores.")
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False

@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
-from torch_geometric.testing import withPackage, withPython
+from torch_geometric.testing import onlyPython, withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -138,7 +138,7 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
-@withPython('3.7', '3.8', '3.9')  # Packaging does not support Python 3.10 yet.
+@onlyPython('3.7', '3.8', '3.9')  # Packaging does not support Python 3.10 yet.
 def test_packaging():
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
 

@@ -225,7 +225,7 @@ Models
 .. automodule:: torch_geometric.nn.models
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv, Explainer
 
 Encodings
 ---------
