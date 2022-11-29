@@ -143,3 +143,6 @@ def test_edge_mask(data):
     assert (out.edge_mask == 0.0).sum() == 3
     assert out.edge_index.size() == (2, 3)
     assert out.edge_attr.size() == (3, 3)
+
+
+# TODO: Add tests for heterogeneous explanations

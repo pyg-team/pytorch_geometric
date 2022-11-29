@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -11,6 +11,7 @@ from torch_geometric.explain.config import (
     ModelReturnType,
 )
 from torch_geometric.nn import MessagePassing
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -20,8 +21,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
@@ -50,7 +51,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config` and :obj:`self.model_config`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`, and
+        :obj:`self.is_hetero`."""
         pass
 
     ###########################################################################
@@ -81,11 +83,13 @@ class ExplainerAlgorithm(torch.nn.Module):
         self,
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
+        is_hetero: bool,
     ):
         r"""Connects an explainer and model configuration to the explainer
         algorithm."""
         self._explainer_config = ExplainerConfig.cast(explainer_config)
         self._model_config = ModelConfig.cast(model_config)
+        self._is_hetero = is_hetero
 
         if not self.supports():
             raise ValueError(

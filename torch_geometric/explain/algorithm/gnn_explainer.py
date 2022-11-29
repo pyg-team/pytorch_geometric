@@ -99,6 +99,11 @@ class GNNExplainer(ExplainerAlgorithm):
                           f"supported.")
             return False
 
+        is_hetero = self._is_hetero
+        if is_hetero:
+            logging.error("Heterogeneous graphs not supported.")
+            return False
+
         return True
 
     def forward(
