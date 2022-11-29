@@ -1,5 +1,3 @@
-
-
 import os.path as osp
 
 import torch
@@ -9,7 +7,6 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.explain.metrics.faithfulness import get_node_faithfulness
 from torch_geometric.nn import GCNConv
-
 
 # based on examples/gnn_explainer.py
 dataset = 'Cora'
@@ -59,15 +56,16 @@ explainer = Explainer(
     ),
 )
 
-
-add_args = {
-    'edge_weight': data.edge_weight
-}
+add_args = {'edge_weight': data.edge_weight}
 
 topk = 10
 
-for node_index in range(0,50):
-      explanation = explainer(data.x, data.edge_index, index=node_index,
-                        edge_weight=data.edge_weight)
-      _, node_feat_faithfulness = get_node_faithfulness(node_index, data, explanation, model, topk, device,**add_args)
-      print(f'Faithfulness score with topk {topk} for node idx {node_index}  : {node_feat_faithfulness:.4f} ')
+for node_index in range(0, 50):
+    explanation = explainer(data.x, data.edge_index, index=node_index,
+                            edge_weight=data.edge_weight)
+    _, node_feat_faithfulness = get_node_faithfulness(node_index, data,
+                                                      explanation, model, topk,
+                                                      device, **add_args)
+    print(
+        f'Faithfulness score with topk {topk} for node idx {node_index}  : {node_feat_faithfulness:.4f} '
+    )
