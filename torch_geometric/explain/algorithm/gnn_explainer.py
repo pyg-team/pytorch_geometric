@@ -179,13 +179,15 @@ class GNNExplainer(ExplainerAlgorithm):
 
             y_hat = model(x=h, edge_index=edge_index, **kwargs)
             y = target
-
+            # print('index', index)
             if target_index is not None:
                 y_hat, y = y_hat[target_index], y[target_index]
             if index is not None:
                 y_hat, y = y_hat[index], y[index]
+            # print(y_hat, y)
 
             loss = self._loss(y_hat, y, explainer_config, model_config)
+            print('LOSS', loss)
 
             loss.backward()
             optimizer.step()

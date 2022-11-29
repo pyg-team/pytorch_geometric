@@ -138,7 +138,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             index,
             num_hops=self._num_hops(model),
             edge_index=edge_index,
-            relabel_nodes=True,
             num_nodes=num_nodes,
             flow=self._flow(model),
         )
