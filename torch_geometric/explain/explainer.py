@@ -1,4 +1,5 @@
 import copy
+import warnings
 from typing import Optional, Union
 
 import torch
@@ -42,15 +43,9 @@ class Explainer:
         self.model_config = ModelConfig.cast(model_config)
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        if not self.algorithm.supports(
-                self.explainer_config,
-                self.model_config,
-        ):
-            raise ValueError(
-                f"The explanation algorithm "
-                f"'{self.algorithm.__class__.__name__}' does not support the "
-                f"given explanation settings.")
+        self.algorithm.connect(self.explainer_config, self.model_config)
 
+    @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
@@ -115,24 +110,26 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        if (self.explainer_config.explanation_type ==
-                ExplanationType.phenomenon):
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
-                    f"The target has to be provided for the explanation type "
-                    f"'{self.explainer_config.explanation_type.value}'")
-        else:
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+        elif explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{explanation_type.value}'")
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
         training = self.model.training
         self.model.eval()
 
         explanation = self.algorithm(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            explainer_config=self.explainer_config,
-            model_config=self.model_config,
+            self.model,
+            x,
+            edge_index,
             target=target,
             index=index,
             target_index=target_index,
