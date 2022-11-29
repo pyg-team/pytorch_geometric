@@ -31,7 +31,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
     - :class:`torch_geometric.explain.config.ModelConfig`
 
-        - :attr:`task_level`: :obj:`"node"` or :obj:`"graph"`
+        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"`, or :obj:`"graph"`
 
     - :class:`torch_geometric.explain.config.ExplainerConfig`
 
@@ -78,7 +78,9 @@ class GNNExplainer(ExplainerAlgorithm):
 
     def supports(self) -> bool:
         task_level = self.model_config.task_level
-        if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
+        if task_level not in [
+                ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph
+        ]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
 
@@ -110,7 +112,6 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
-
         hard_node_mask = hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
             # We need to compute hard masks to properly clean up edges and
@@ -254,7 +255,7 @@ class GNNExplainer_:
         'log_prob': 'log_probs',
         'prob': 'probs',
         'raw': 'raw',
-        "regression": 'raw',
+        'regression': 'raw',
     }
 
     def __init__(
