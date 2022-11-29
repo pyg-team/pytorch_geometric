@@ -23,8 +23,6 @@ class ExplainerAlgorithm(torch.nn.Module):
         x: Tensor,
         edge_index: Tensor,
         *,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
@@ -36,8 +34,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             model (torch.nn.Module): The model to explain.
             x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The input edge indices.
-            explainer_config (ExplainerConfig): The explainer configuration.
-            model_config (ModelConfig): The model configuration.
             target (torch.Tensor): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
@@ -52,23 +48,54 @@ class ExplainerAlgorithm(torch.nn.Module):
         """
 
     @abstractmethod
-    def supports(
+    def supports(self) -> bool:
+        r"""Checks if the explainer supports the user-defined settings provided
+        in :obj:`self.explainer_config` and :obj:`self.model_config`."""
+        pass
+
+    ###########################################################################
+
+    @property
+    def explainer_config(self) -> ExplainerConfig:
+        r"""Returns the connected explainer configuration."""
+        if not hasattr(self, '_explainer_config'):
+            raise ValueError(
+                f"The explanation algorithm '{self.__class__.__name__}' is "
+                f"not yet connected to any explainer configuration. Please "
+                f"call `{self.__class__.__name__}.connect(...)` before "
+                f"proceeding.")
+        return self._explainer_config
+
+    @property
+    def model_config(self) -> ModelConfig:
+        r"""Returns the connected model configuration."""
+        if not hasattr(self, '_model_config'):
+            raise ValueError(
+                f"The explanation algorithm '{self.__class__.__name__}' is "
+                f"not yet connected to any model configuration. Please call "
+                f"`{self.__class__.__name__}.connect(...)` before "
+                f"proceeding.")
+        return self._model_config
+
+    def connect(
         self,
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
-    ) -> bool:
-        r"""Checks if the explainer supports the user-defined settings.
+    ):
+        r"""Connects an explainer and model configuration to the explainer
+        algorithm."""
+        self._explainer_config = ExplainerConfig.cast(explainer_config)
+        self._model_config = ModelConfig.cast(model_config)
 
-        Args:
-            explainer_config (ExplainerConfig): The explainer configuration.
-            model_config (ModelConfig): the model configuration.
-        """
-        pass
+        if not self.supports():
+            raise ValueError(
+                f"The explanation algorithm '{self.__class__.__name__}' does "
+                f"not support the given explanation settings.")
 
     # Helper functions ########################################################
 
+    @staticmethod
     def _post_process_mask(
-        self,
         mask: Optional[Tensor],
         num_elems: int,
         hard_mask: Optional[Tensor] = None,
@@ -92,8 +119,8 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         return mask
 
+    @staticmethod
     def _get_hard_masks(
-        self,
         model: torch.nn.Module,
         index: Optional[Union[int, Tensor]],
         edge_index: Tensor,
@@ -106,10 +133,10 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         index, _, _, edge_mask = k_hop_subgraph(
             index,
-            num_hops=self._num_hops(model),
+            num_hops=ExplainerAlgorithm._num_hops(model),
             edge_index=edge_index,
             num_nodes=num_nodes,
-            flow=self._flow(model),
+            flow=ExplainerAlgorithm._flow(model),
         )
 
         node_mask = edge_index.new_zeros(num_nodes, dtype=torch.bool)
@@ -136,18 +163,16 @@ class ExplainerAlgorithm(torch.nn.Module):
                 return module.flow
         return 'source_to_target'
 
-    @staticmethod
-    def _to_log_prob(y: Tensor, return_type: ModelReturnType) -> Tensor:
+    def _to_log_prob(self, y: Tensor) -> Tensor:
         r"""Converts the model output to log-probabilities.
 
         Args:
             y (Tensor): The output of the model.
-            return_type (ModelReturnType): The model return type.
         """
-        if return_type == ModelReturnType.probs:
+        if self.model_config.return_type == ModelReturnType.probs:
             return y.log()
-        if return_type == ModelReturnType.raw:
+        if self.model_config.return_type == ModelReturnType.raw:
             return y.log_softmax(dim=-1)
-        if return_type == ModelReturnType.log_probs:
+        if self.model_config.return_type == ModelReturnType.log_probs:
             return y
         raise NotImplementedError
