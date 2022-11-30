@@ -13,7 +13,11 @@ from .home import get_home_dir, set_home_dir
 from .debug import is_debug_enabled, debug, set_debug
 from .experimental import (is_experimental_mode_enabled, experimental_mode,
                            set_experimental_mode)
+from .validate import (is_validation_enabled, optional_validation,
+                       set_validation)
 from .lazy_loader import LazyLoader
+
+
 
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
@@ -29,6 +33,9 @@ __all__ = [
     'is_experimental_mode_enabled',
     'experimental_mode',
     'set_experimental_mode',
+    'is_validation_enabled',
+    'optional_validation',
+    'set_validation',
     'torch_geometric',
     '__version__',
 ]

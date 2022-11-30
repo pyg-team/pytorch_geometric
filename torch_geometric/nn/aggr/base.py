@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from typing import Optional, Tuple
 
 import torch
@@ -59,7 +58,6 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` or node
           features :math:`(|\mathcal{V}|, F_{out})`
     """
-    _validate = __debug__
 
     # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
@@ -86,48 +84,9 @@ class Aggregation(torch.nn.Module):
     def reset_parameters(self):
         pass
 
-    @staticmethod
-    def validate() -> bool:
-        r"""Returns :obj:`True` if validation is enabled"""
-        return Aggregation._validate
-
-    @staticmethod
-    def set_validate_args(value: bool):
-        r"""Sets whether validation is enabled or disabled.
-
-        The default behavior mimics Python's :obj:`assert`` statement:
-        validation is on by default, but is disabled if Python is run in
-        optimized mode (via :obj:`python -O`).
-        Validation may be expensive, so you may want to disable it once a model
-        is working.
-
-        Args:
-            value (bool): Whether to enable validation.
-        """
-        Aggregation._validate = value
-
-    @staticmethod
-    @contextmanager
-    def validation_context(value: bool):
-        r"""Creates a context-manager for managing the validation of
-        Aggregation layers.
-
-        Example:
-
-            >>> with Aggregation.validate(False):
-            ...     out = model(data.x, data.edge_index)
-        """
-        try:
-            prev = Aggregation.validate()
-            Aggregation.set_validate_args(value)
-            yield
-        finally:
-            Aggregation.set_validate_args(prev)
-
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                  dim: int = -2, **kwargs) -> Tensor:
-
         if dim >= x.dim() or dim < -x.dim():
             raise ValueError(f"Encountered invalid dimension '{dim}' of "
                              f"source tensor with {x.dim()} dimensions")
@@ -146,7 +105,7 @@ class Aggregation(torch.nn.Module):
         if index is not None:
             if dim_size is None:
                 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
-            elif self._validate:
+            elif is_validation_enabled():
                 if index.numel() > 0 and dim_size <= int(index.max()):
                     raise ValueError(f"Encountered invalid 'dim_size' (got "
                                      f"'{dim_size}' but expected "
@@ -214,3 +173,9 @@ def expand_left(ptr: Tensor, dim: int, dims: int) -> Tensor:
     for _ in range(dims + dim if dim < 0 else dim):
         ptr = ptr.unsqueeze(0)
     return ptr
+
+
+def is_validation_enabled() -> bool:
+    from torch_geometric import is_validation_enabled
+
+    return is_validation_enabled()
