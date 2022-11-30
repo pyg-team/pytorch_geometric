@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Optional, Tuple
 
 import torch
@@ -86,6 +87,11 @@ class Aggregation(torch.nn.Module):
         pass
 
     @staticmethod
+    def validate() -> bool:
+        r"""Returns :obj:`True` if validation is enabled"""
+        return Aggregation._validate
+
+    @staticmethod
     def set_validate_args(value: bool):
         r"""Sets whether validation is enabled or disabled.
 
@@ -99,6 +105,24 @@ class Aggregation(torch.nn.Module):
             value (bool): Whether to enable validation.
         """
         Aggregation._validate = value
+
+    @staticmethod
+    @contextmanager
+    def validation_context(value: bool):
+        r"""Creates a context-manager for managing the validation of
+        Aggregation layers.
+
+        Example:
+
+            >>> with Aggregation.validate(False):
+            ...     out = model(data.x, data.edge_index)
+        """
+        try:
+            prev = Aggregation.validate()
+            Aggregation.set_validate_args(value)
+            yield
+        finally:
+            Aggregation.set_validate_args(prev)
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
