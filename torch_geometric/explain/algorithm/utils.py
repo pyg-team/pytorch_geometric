@@ -56,12 +56,3 @@ def clear_masks(model: torch.nn.Module):
             module._loop_mask = None
             module._apply_sigmoid = True
     return module
-
-
-def clear_hetero_masks(model: torch.nn.Module):
-    r"""Clear all masks from the model."""
-    for module in model.modules():
-        if isinstance(module, torch.nn.ModuleDict):
-            for sub_module in module.values():
-                clear_masks(sub_module)
-    return module
