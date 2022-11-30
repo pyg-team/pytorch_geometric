@@ -22,9 +22,9 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    notes/load_csv
    notes/graphgym
    notes/batching
-   notes/remote
    notes/sparse_tensor
    notes/jit
+   notes/remote
    notes/cheatsheet
    notes/data_cheatsheet
    notes/colabs
