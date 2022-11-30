@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.data import Data, HeteroData
+from torch_geometric.data import Batch, Data, HeteroData
 from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import to_captum_input, to_captum_model
@@ -31,30 +31,45 @@ methods = [
 
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('model', [GCN, GAT])
-@pytest.mark.parametrize('output_idx', [None, 1])
-def test_to_captum(model, mask_type, output_idx):
+@pytest.mark.parametrize('output_idx, batch_size', [(None, 1),
+                                                    (None, 2), (1, 1), (1, 2),
+                                                    ([1, 2], 2), ([1, 2], 4)])
+def test_to_captum(model, mask_type, output_idx, batch_size):
     captum_model = to_captum_model(model, mask_type=mask_type,
                                    output_idx=output_idx)
-    pre_out = model(x, edge_index)
+    batch = Batch.from_data_list(
+        [Data(x=x, edge_index=edge_index) for i in range(batch_size)])
+
+    pre_out = model(batch.x, batch.edge_index)
     if mask_type == 'node':
         mask = x * 0.0
-        out = captum_model(mask.unsqueeze(0), edge_index)
+        mask = torch.cat([mask.unsqueeze(0)] * batch_size)
+        out = captum_model(mask, edge_index)
     elif mask_type == 'edge':
         mask = torch.ones(edge_index.shape[1], dtype=torch.float,
                           requires_grad=True) * 0.5
-        out = captum_model(mask.unsqueeze(0), x, edge_index)
+        mask = torch.cat([mask.unsqueeze(0)] * batch_size)
+        out = captum_model(mask, x, edge_index)
     elif mask_type == 'node_and_edge':
         node_mask = x * 0.0
+        node_mask = torch.cat([node_mask.unsqueeze(0)] * batch_size)
         edge_mask = torch.ones(edge_index.shape[1], dtype=torch.float,
                                requires_grad=True) * 0.5
-        out = captum_model(node_mask.unsqueeze(0), edge_mask.unsqueeze(0),
-                           edge_index)
+        edge_mask = torch.cat([edge_mask.unsqueeze(0)] * batch_size)
+        out = captum_model(node_mask, edge_mask, edge_index)
 
     if output_idx is not None:
-        assert out.shape == (1, 7)
-        assert torch.any(out != pre_out[[output_idx]])
+        assert out.shape == (batch_size, 7)
+        # Concatenate several output_idx if batch_size > len(output_idx)
+        output_idx = output_idx if isinstance(output_idx,
+                                              list) else [output_idx]
+        indices = []
+        for _ in range(batch_size // len(output_idx)):
+            indices.extend(output_idx)
+        assert torch.any(
+            out != pre_out[batch.ptr[:-1] + torch.tensor(indices)])
     else:
-        assert out.shape == (8, 7)
+        assert out.shape == (batch_size * 8, 7)
         assert torch.any(out != pre_out)
 
 
@@ -145,33 +160,35 @@ def test_custom_explain_message():
 
 @withPackage('captum')
 @pytest.mark.parametrize('mask_type', ['node', 'edge', 'node_and_edge'])
-def test_to_captum_input(mask_type):
+@pytest.mark.parametrize('n_samples', [x.shape[0], 1, 2])
+def test_to_captum_input(mask_type, n_samples):
     num_nodes = x.shape[0]
     num_node_feats = x.shape[1]
     num_edges = edge_index.shape[1]
 
     # Check for Data:
     data = Data(x, edge_index)
-    args = 'test_args'
+    args = ['test_args']
     inputs, additional_forward_args = to_captum_input(data.x, data.edge_index,
-                                                      mask_type, args)
+                                                      mask_type, n_samples,
+                                                      args)
     if mask_type == 'node':
         assert len(inputs) == 1
-        assert inputs[0].shape == (1, num_nodes, num_node_feats)
+        assert inputs[0].shape == (n_samples, num_nodes, num_node_feats)
         assert len(additional_forward_args) == 2
         assert torch.allclose(additional_forward_args[0], edge_index)
     elif mask_type == 'edge':
         assert len(inputs) == 1
-        assert inputs[0].shape == (1, num_edges)
-        assert inputs[0].sum() == num_edges
+        assert inputs[0].shape == (n_samples, num_edges)
+        assert inputs[0].sum() == num_edges * n_samples
         assert len(additional_forward_args) == 3
         assert torch.allclose(additional_forward_args[0], x)
         assert torch.allclose(additional_forward_args[1], edge_index)
     else:
         assert len(inputs) == 2
-        assert inputs[0].shape == (1, num_nodes, num_node_feats)
-        assert inputs[1].shape == (1, num_edges)
-        assert inputs[1].sum() == num_edges
+        assert inputs[0].shape == (n_samples, num_nodes, num_node_feats)
+        assert inputs[1].shape == (n_samples, num_edges)
+        assert inputs[1].sum() == num_edges * n_samples
         assert len(additional_forward_args) == 2
         assert torch.allclose(additional_forward_args[0], edge_index)
 
@@ -182,9 +199,9 @@ def test_to_captum_input(mask_type):
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
     data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
-    inputs, additional_forward_args = to_captum_input(data.x_dict,
-                                                      data.edge_index_dict,
-                                                      mask_type, args)
+    inputs, additional_forward_args = to_captum_input(
+        data.x_dict, data.edge_index_dict, mask_type,
+        additional_forward_args=args)
     if mask_type == 'node':
         assert len(inputs) == 2
         assert inputs[0].shape == (1, num_nodes, num_node_feats)

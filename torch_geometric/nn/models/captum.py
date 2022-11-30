@@ -1,11 +1,11 @@
 from inspect import signature
 from math import sqrt
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Batch, Data
 from torch_geometric.deprecation import deprecated
 from torch_geometric.explain.algorithm.utils import (
     clear_masks,
@@ -32,39 +32,56 @@ class CaptumModel(torch.nn.Module):
         # The mask tensor, which comes from Captum's attribution methods,
         # contains the number of samples in dimension 0. Since we are
         # working with only one sample, we squeeze the tensors below.
-        assert mask.shape[0] == 1, "Dimension 0 of input should be 1"
+        # TODO: ramona check that dim 0 is the same for all masks
+        batch_size = mask.shape[0]
+        if type(self.output_idx) == list:
+            msg = "`internal_batch_size` needs to be a multiple of the " \
+                  "number of objects to be evaluated."
+            assert mask.shape[0] % (len(self.output_idx)) == 0, msg
+            batch_size = mask.shape[0] // len(self.output_idx)
         if self.mask_type == "edge":
             assert len(args) >= 2, "Expects at least x and edge_index as args."
         if self.mask_type == "node":
             assert len(args) >= 1, "Expects at least edge_index as args."
         if self.mask_type == "node_and_edge":
-            assert args[0].shape[0] == 1, "Dimension 0 of input should be 1"
             assert len(args[1:]) >= 1, "Expects at least edge_index as args."
 
-        # Set edge mask:
-        if self.mask_type == 'edge':
-            set_masks(self.model, mask.squeeze(0), args[1],
-                      apply_sigmoid=False)
-        elif self.mask_type == 'node_and_edge':
-            set_masks(self.model, args[0].squeeze(0), args[1],
-                      apply_sigmoid=False)
+        # TODO (ramona): pass arguments with keyword and remove the following
+        if self.mask_type == 'node':
+            x_s, edge_indices = mask, args[0]
             args = args[1:]
-
-        if self.mask_type == 'edge':
-            x = self.model(*args)
-
-        elif self.mask_type == 'node':
-            x = self.model(mask.squeeze(0), *args)
-
+        elif self.mask_type == 'edge':
+            edge_masks, x_s, edge_indices = mask, args[0], args[1]
+            args = args[2:]
         else:
-            x = self.model(mask[0], *args)
+            edge_masks, x_s, edge_indices = args[0], mask, args[1]
+            args = args[2:]
+
+        # Merge disjoint graphs into a single graph:
+        data_list = []
+        for i in range(mask.shape[0]):
+            data_list.append(
+                Data(
+                    x=x_s[i].squeeze(0) if self.mask_type != 'edge' else x_s,
+                    edge_index=edge_indices,
+                    edge_mask=edge_masks[i].squeeze(0)
+                    if 'edge' in self.mask_type else None,
+                ))
+        batch = Batch.from_data_list(data_list)
+
+        # Set edge mask:
+        if 'edge' in self.mask_type:
+            set_masks(self.model, batch.edge_mask, batch.edge_index,
+                      apply_sigmoid=False)
+
+        x = self.model(batch.x, batch.edge_index, *args)
 
         # Clear mask:
         if self.mask_type in ['edge', 'node_and_edge']:
             clear_masks(self.model)
 
         if self.output_idx is not None:
-            x = x[self.output_idx].unsqueeze(0)
+            x = x[batch.ptr[:-1] + torch.tensor(self.output_idx * batch_size)]
 
         return x
 
@@ -155,10 +172,13 @@ def _raise_on_invalid_mask_type(mask_type: str):
         raise ValueError(f"Invalid mask type (got {mask_type})")
 
 
-def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
-                    edge_index: Union[Tensor, Dict[EdgeType,
-                                                   Tensor]], mask_type: str,
-                    *args) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
+def to_captum_input(
+    x: Union[Tensor, Dict[EdgeType, Tensor]],
+    edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+    mask_type: str,
+    n_samples: int = 1,
+    additional_forward_args: List[Any] = [],
+) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
     r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
     to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
@@ -176,24 +196,28 @@ def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
-        *args: Additional forward arguments of the model being explained
-            which will be added to :obj:`additonal_forward_args`.
-            For :class:`Data` this is arguments other than :obj:`x` and
-            :obj:`edge_index`. For :class:`HeteroData` this is arguments other
-            than :obj:`x_dict` and :obj:`edge_index_dict`.
+        n_samples (int): The number of samples to explain. (default: :obj:`1`)
+        additional_forward_args: Additional forward arguments of the model
+            being explained which will be added to the generated
+            :obj:`additional_forward_args`. For :class:`Data` this is
+            arguments other than :obj:`x` and :obj:`edge_index`. For
+            :class:`HeteroData` this is arguments other than :obj:`x_dict` and
+            :obj:`edge_index_dict`.
     """
     _raise_on_invalid_mask_type(mask_type)
+    additional_forward_args = additional_forward_args[:]
+    additional_forward_args.insert(0, edge_index)
 
-    additional_forward_args = []
     if isinstance(x, Tensor) and isinstance(edge_index, Tensor):
-        if mask_type == "node":
-            inputs = [x.unsqueeze(0)]
-        elif mask_type == "edge":
-            inputs = [_to_edge_mask(edge_index).unsqueeze(0)]
-            additional_forward_args.append(x)
-        else:
-            inputs = [x.unsqueeze(0), _to_edge_mask(edge_index).unsqueeze(0)]
-        additional_forward_args.append(edge_index)
+        inputs = []
+        if "node" in mask_type:
+            inputs.append(torch.cat([x.unsqueeze(0)] * n_samples, dim=0))
+        if "edge" in mask_type:
+            inputs.append(
+                torch.cat([_to_edge_mask(edge_index).unsqueeze(0)] * n_samples,
+                          dim=0))
+        if mask_type == "edge":
+            additional_forward_args.insert(0, x)
 
     elif isinstance(x, Dict) and isinstance(edge_index, Dict):
         node_types = x.keys()
@@ -205,19 +229,17 @@ def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
         elif mask_type == "edge":
             for key in edge_types:
                 inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
-            additional_forward_args.append(x)
+            additional_forward_args.insert(0, x)
         else:
             for key in node_types:
                 inputs.append(x[key].unsqueeze(0))
             for key in edge_types:
                 inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
-        additional_forward_args.append(edge_index)
 
     else:
         raise ValueError(
             "'x' and 'edge_index' need to be either"
             f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})")
-    additional_forward_args.extend(args)
     return tuple(inputs), tuple(additional_forward_args)
 
 
