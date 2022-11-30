@@ -27,6 +27,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
+        is_hetero: bool = False,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -44,6 +45,8 @@ class ExplainerAlgorithm(torch.nn.Module):
                 in a multi-task learning scenario. Should be kept to
                 :obj:`None` in case the model only returns a single output
                 tensor. (default: :obj:`None`)
+            is_hetero (bool, optional): Whether the input graph is
+                heterogeneous. (default: :obj:`False`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """

@@ -18,12 +18,13 @@ class AllExplainerAlgorithm(ExplainerAlgorithm):
 
 class HomoExplainerAlgorithm(ExplainerAlgorithm):
     def supports(self) -> bool:
-        return not self._is_hetero
+        return not (self._is_hetero is True)
 
 
 class HeteroExplainerAlgorithm(ExplainerAlgorithm):
     def supports(self) -> bool:
-        return self._is_hetero
+        # Must be careful to allow None, which is the default value
+        return not (self._is_hetero is False)
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -65,10 +66,11 @@ class HeteroSAGE(torch.nn.Module):
 def test_supports_hetero():
     data = hetero_data()
     model = HeteroSAGE(data.metadata())
-    Explainer(
+
+    explainer = Explainer(
         model=model, algorithm=AllExplainerAlgorithm(),
         explainer_config=ExplainerConfig(
-            explanation_type="phenomenon",
+            explanation_type="model",
             node_mask_type="object",
             edge_mask_type=None,
         ), model_config=ModelConfig(
@@ -76,11 +78,13 @@ def test_supports_hetero():
             task_level="node",
         ))
 
+    explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+
     with pytest.raises(ValueError):
-        Explainer(
+        explainer = Explainer(
             model=model, algorithm=HomoExplainerAlgorithm(),
             explainer_config=ExplainerConfig(
-                explanation_type="phenomenon",
+                explanation_type="model",
                 node_mask_type="object",
                 edge_mask_type=None,
             ), model_config=ModelConfig(
@@ -88,13 +92,17 @@ def test_supports_hetero():
                 task_level="node",
             ))
 
-    Explainer(
+        explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+
+    explainer = Explainer(
         model=model, algorithm=HeteroExplainerAlgorithm(),
         explainer_config=ExplainerConfig(
-            explanation_type="phenomenon",
+            explanation_type="model",
             node_mask_type="object",
             edge_mask_type=None,
         ), model_config=ModelConfig(
             mode="regression",
             task_level="node",
         ))
+
+    explainer(data.x_dict, data.edge_index_dict, is_hetero=True)

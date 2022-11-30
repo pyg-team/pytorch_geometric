@@ -95,6 +95,7 @@ class DummyExplainer(ExplainerAlgorithm):
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         edge_attr: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
+        is_hetero: bool = False,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Returns random explanations based on the shape of the inputs.
@@ -107,12 +108,14 @@ class DummyExplainer(ExplainerAlgorithm):
                 The edge indices.
             edge_attr (Union[torch.Tensor, Dict[EdgeType, torch.Tensor]],
                 optional): The edge attributes. (default: :obj:`None`)
+            is_hetero (bool, optional): Whether the input graph is
+                heterogeneous. (default: :obj:`False`)
 
         Returns:
             Union[Explanation, HeteroExplanation]: A random explanation based
                 on the shape of the inputs.
         """
-        if self._is_hetero:
+        if is_hetero:
             return self._forward_hetero(model, x, edge_index, edge_attr,
                                         **kwargs)
         return self._forward(model, x, edge_index, edge_attr, **kwargs)

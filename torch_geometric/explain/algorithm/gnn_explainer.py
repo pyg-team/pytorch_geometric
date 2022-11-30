@@ -115,6 +115,7 @@ class GNNExplainer(ExplainerAlgorithm):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
+        is_hetero: bool = False,
         **kwargs,
     ) -> Explanation:
         hard_node_mask = hard_edge_mask = None

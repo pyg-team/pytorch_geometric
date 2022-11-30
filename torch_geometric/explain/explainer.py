@@ -44,17 +44,14 @@ class Explainer:
         self.model = model
         self.algorithm = algorithm
 
-        # check if model is heterogeneous
-        self.is_hetero = False
-        for _, module in self.model.named_modules():
-            if isinstance(module, torch.nn.ModuleDict):
-                self.is_hetero = True
-                break
+        # is_hetero is set to None, overwritten in __call__
+        self.is_hetero = None
 
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
+        # is_hetero is set to False, overwritten in __call__ if True
         self.algorithm.connect(self.explainer_config, self.model_config,
                                self.is_hetero)
 
@@ -92,6 +89,7 @@ class Explainer:
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
+        is_hetero: bool = False,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -120,8 +118,15 @@ class Explainer:
                 in a multi-task learning scenario. Should be kept to
                 :obj:`None` in case the model only returns a single output
                 tensor. (default: :obj:`None`)
+            is_hetero (bool, optional): Whether the input graph is
+                heterogeneous. (default: :obj:`False`)
             **kwargs: additional arguments to pass to the GNN.
         """
+        # Checks new is_hetero value and updates self.is_hetero
+        self.is_hetero = is_hetero
+        self.algorithm.connect(self.explainer_config, self.model_config,
+                               self.is_hetero)
+
         # Choose the `target` depending on the explanation type:
         explanation_type = self.explainer_config.explanation_type
         if explanation_type == ExplanationType.phenomenon:
@@ -146,6 +151,7 @@ class Explainer:
             target=target,
             index=index,
             target_index=target_index,
+            is_hetero=is_hetero,
             **kwargs,
         )
 
