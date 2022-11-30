@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-12-01
 ### Added
-- Added `Aggregation.validation_context` method that creates context-manager for managing the validation of aggregation layers ([]())
+- Added `Aggregation.validation_context` method that creates context-manager for managing the validation of aggregation layers ([#6100](https://github.com/pyg-team/pytorch_geometric/pull/6100))
 - Extended `GNNExplainer` to support edge level explanations ([#6056](https://github.com/pyg-team/pytorch_geometric/pull/6056))
 - Added CPU affinitization for `NodeLoader` ([#6005](https://github.com/pyg-team/pytorch_geometric/pull/6005))
 - Added triplet sampling in `LinkNeighborLoader` ([#6004](https://github.com/pyg-team/pytorch_geometric/pull/6004))
