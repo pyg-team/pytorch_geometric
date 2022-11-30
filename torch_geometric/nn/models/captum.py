@@ -19,7 +19,7 @@ from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
 
 class CaptumModel(torch.nn.Module):
     def __init__(self, model: torch.nn.Module, mask_type: str = "edge",
-                 output_idx: Optional[int] = None):
+                 output_idx: Optional[Union[int, List[int]]] = None):
         super().__init__()
         assert mask_type in ['edge', 'node', 'node_and_edge']
 
@@ -312,7 +312,8 @@ def to_captum(
 
 def to_captum_model(
     model: torch.nn.Module, mask_type: str = "edge",
-    output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
+    output_idx: Optional[Union[int, List[int]]] = None,
+    metadata: Optional[Metadata] = None
 ) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
@@ -387,10 +388,11 @@ def to_captum_model(
         mask_type (str, optional): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`. (default: :obj:`"edge"`)
-        output_idx (int, optional): Index of the output element (node or link
-            index) to be explained. With :obj:`output_idx` set, the forward
-            function will return the output of the model for the element at
-            the index specified. (default: :obj:`None`)
+        output_idx (Union[int, List[int]], optional): Index of the output
+            element(s) (node or link index) to be explained. With
+            :obj:`output_idx` set, the forward function will return only the
+            output of the model for the element at the index specified.
+            (default: :obj:`None`)
         metadata (Metadata, optional): The metadata of the heterogeneous graph.
             Only required if explaning over a `HeteroData` object.
             (default: :obj: `None`)

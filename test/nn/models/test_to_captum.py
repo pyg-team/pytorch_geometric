@@ -38,7 +38,7 @@ def test_to_captum(model, mask_type, output_idx, batch_size):
     captum_model = to_captum_model(model, mask_type=mask_type,
                                    output_idx=output_idx)
     batch = Batch.from_data_list(
-        [Data(x=x, edge_index=edge_index) for i in range(batch_size)])
+        [Data(x=x, edge_index=edge_index) for _ in range(batch_size)])
 
     pre_out = model(batch.x, batch.edge_index)
     if mask_type == 'node':
