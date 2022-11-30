@@ -1,5 +1,5 @@
 import copy
-import functools
+import warnings
 from typing import Optional, Union
 
 import torch
@@ -11,42 +11,9 @@ from torch_geometric.explain.config import (
     ExplanationType,
     ModelConfig,
     ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
     ThresholdConfig,
     ThresholdType,
 )
-
-
-def decorate_link_prediction_model(model, index, model_config: ModelConfig):
-    if model_config.return_type == ModelReturnType.raw:
-
-        def get_complement_and_out(out):
-            out = out.sigmoid()
-            complement = 1 - out
-            return torch.stack((complement, out), dim=-1)
-
-        model_config.return_type = ModelReturnType.probs
-    elif model_config.return_type == ModelReturnType.log_probs:
-
-        def get_complement_and_out(out):
-            complement = torch.log(1 + torch.exp((torch.log(-out))))
-            return torch.stack((complement, out), dim=-1)
-    elif model_config.return_type == ModelReturnType.probs:
-
-        def get_complement_and_out(out):
-            complement = 1 - out
-            return torch.stack((complement, out), dim=-1)
-    else:
-        raise NotImplementedError
-
-    @functools.wraps(model)
-    def wrapper(*args, **kwargs):
-        out = model(*args, edge_label_index=index, **kwargs)
-        out = get_complement_and_out(out)
-        return out
-
-    return wrapper
 
 
 class Explainer:
@@ -76,15 +43,9 @@ class Explainer:
         self.model_config = ModelConfig.cast(model_config)
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        if not self.algorithm.supports(
-                self.explainer_config,
-                self.model_config,
-        ):
-            raise ValueError(
-                f"The explanation algorithm "
-                f"'{self.algorithm.__class__.__name__}' does not support the "
-                f"given explanation settings.")
+        self.algorithm.connect(self.explainer_config, self.model_config)
 
+    @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
@@ -98,10 +59,16 @@ class Explainer:
             **kwargs (optional): Additional keyword arguments passed to the
                 model.
         """
+        training = self.model.training
+        self.model.eval()
+
         with torch.no_grad():
             out = self.model(*args, **kwargs)
         if self.model_config.mode == ModelMode.classification:
-            return out.argmax(dim=-1)
+            out = out.argmax(dim=-1)
+
+        self.model.train(training)
+
         return out
 
     def __call__(
@@ -111,7 +78,7 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -135,47 +102,41 @@ class Explainer:
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int or torch.Tensor, optional): The target indices to
-                explain in case targets are multi-dimensional.
-                (default: :obj:`None`)
+            target_index (int, optional): The index of the model outputs to
+                reference in case the model returns a list of tensors, *e.g.*,
+                in a multi-task learning scenario. Should be kept to
+                :obj:`None` in case the model only returns a single output
+                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
-        if self.model_config.task_level == ModelTaskLevel.edge:
-            # decorate the model forward function to make its output match the
-            # node classification format
-            self.model.forward = decorate_link_prediction_model(
-                self.model.forward, index, self.model_config)
-            assert isinstance(index, Tensor) and len(index.shape) == 1 or (
-                len(index.shape) == 2 and index.shape[0] == 1
-            ), "Explainer only supports single edge index expressed as a "
-            "tensor for now"
-            index = 0
-
         # Choose the `target` depending on the explanation type:
-        if (self.explainer_config.explanation_type ==
-                ExplanationType.phenomenon):
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
-                    f"The target has to be provided for the explanation type "
-                    f"'{self.explainer_config.explanation_type.value}'")
-        else:
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+        elif explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{explanation_type.value}'")
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
+        training = self.model.training
+        self.model.eval()
+
         explanation = self.algorithm(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            explainer_config=self.explainer_config,
-            model_config=self.model_config,
+            self.model,
+            x,
+            edge_index,
             target=target,
             index=index,
             target_index=target_index,
             **kwargs,
         )
 
-        if self.model_config.task_level == ModelTaskLevel.edge:
-            # restore original forward function in the model
-            self.model.forward = self.model.forward.__wrapped__
+        self.model.train(training)
 
         return self._post_process(explanation)
 
