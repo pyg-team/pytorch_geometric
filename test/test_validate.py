@@ -6,10 +6,14 @@ from torch_geometric import (
 
 
 def test_validate():
-    set_validation(False)
-    assert not is_validation_enabled()
+    try:
+        prev = is_validation_enabled()
+        set_validation(False)
+        assert not is_validation_enabled()
 
-    with optional_validation(True):
-        assert is_validation_enabled()
+        with optional_validation(True):
+            assert is_validation_enabled()
 
-    assert not is_validation_enabled()
+        assert not is_validation_enabled()
+    finally:
+        set_validation(prev)
