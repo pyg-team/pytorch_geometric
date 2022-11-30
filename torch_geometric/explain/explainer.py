@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -203,3 +203,54 @@ class Explainer:
             explanation[key] = mask
 
         return explanation
+
+    def visualize_feature_importance(
+        self,
+        explanation: Explanation,
+        index: int,
+        feat_labels: Optional[List[str]] = None,
+        n_features: int = 20,
+    ):
+        r"""Creates a bar plot of the node features importance given
+        a :attr:`node_feat_mask`
+
+        Args:
+            node_feat_mask (Tensor): The node feature mask to plot.
+            feat_labels (List[str], optional): Optional labels for features.
+            n_features (int, optional): Top N features to plot.
+                (default: :int:`20`)
+        :rtype: :class:`matplotlib.axes.Axes`
+        """
+        import matplotlib.pyplot as plt
+        import pandas as pd
+
+        node_feature_explanation = explanation.node_feat_mask[index]
+        node_feature_explanation = node_feature_explanation.numpy()
+
+        if feat_labels is None:
+            feat_labels = [
+                str(i) for i in range(len(node_feature_explanation))
+            ]
+
+        assert len(feat_labels) == len(node_feature_explanation)
+
+        df = pd.DataFrame({'feat_importance': node_feature_explanation},
+                          index=feat_labels)
+
+        df_filtered = df\
+            .sort_values("feat_importance", ascending=False)\
+            .head(n_features)
+
+        ax = df_filtered.plot(
+            kind='barh',
+            figsize=(10, 7),
+            title=f"Feature importance for top {len(df_filtered)} features",
+            xlabel='Feature importance',
+            ylabel='Feature label',
+            xlim=[0, max(node_feature_explanation) + 0.1],
+            legend=False,
+        )
+        plt.gca().invert_yaxis()
+        ax.bar_label(container=ax.containers[0], label_type='edge')
+
+        return ax
