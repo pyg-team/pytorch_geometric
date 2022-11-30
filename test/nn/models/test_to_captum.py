@@ -199,22 +199,23 @@ def test_to_captum_input(mask_type, n_samples):
     data['author'].x = x2
     data['paper', 'to', 'author'].edge_index = edge_index
     data['author', 'to', 'paper'].edge_index = edge_index.flip([0])
-    inputs, additional_forward_args = to_captum_input(
-        data.x_dict, data.edge_index_dict, mask_type,
-        additional_forward_args=args)
+    inputs, additional_forward_args = to_captum_input(data.x_dict,
+                                                      data.edge_index_dict,
+                                                      mask_type, n_samples,
+                                                      args)
     if mask_type == 'node':
         assert len(inputs) == 2
-        assert inputs[0].shape == (1, num_nodes, num_node_feats)
-        assert inputs[1].shape == (1, num_nodes, num_node_feats)
+        assert inputs[0].shape == (n_samples, num_nodes, num_node_feats)
+        assert inputs[1].shape == (n_samples, num_nodes, num_node_feats)
         assert len(additional_forward_args) == 2
         for key in data.edge_types:
             torch.allclose(additional_forward_args[0][key],
                            data[key].edge_index)
     elif mask_type == 'edge':
         assert len(inputs) == 2
-        assert inputs[0].shape == (1, num_edges)
-        assert inputs[1].shape == (1, num_edges)
-        assert inputs[1].sum() == inputs[0].sum() == num_edges
+        assert inputs[0].shape == (n_samples, num_edges)
+        assert inputs[1].shape == (n_samples, num_edges)
+        assert inputs[1].sum() == inputs[0].sum() == num_edges * n_samples
         assert len(additional_forward_args) == 3
         for key in data.node_types:
             torch.allclose(additional_forward_args[0][key], data[key].x)
@@ -223,11 +224,11 @@ def test_to_captum_input(mask_type, n_samples):
                            data[key].edge_index)
     else:
         assert len(inputs) == 4
-        assert inputs[0].shape == (1, num_nodes, num_node_feats)
-        assert inputs[1].shape == (1, num_nodes, num_node_feats)
-        assert inputs[2].shape == (1, num_edges)
-        assert inputs[3].shape == (1, num_edges)
-        assert inputs[3].sum() == inputs[2].sum() == num_edges
+        assert inputs[0].shape == (n_samples, num_nodes, num_node_feats)
+        assert inputs[1].shape == (n_samples, num_nodes, num_node_feats)
+        assert inputs[2].shape == (n_samples, num_edges)
+        assert inputs[3].shape == (n_samples, num_edges)
+        assert inputs[3].sum() == inputs[2].sum() == num_edges * n_samples
         assert len(additional_forward_args) == 2
         for key in data.edge_types:
             torch.allclose(additional_forward_args[0][key],

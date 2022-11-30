@@ -172,6 +172,10 @@ def _raise_on_invalid_mask_type(mask_type: str):
         raise ValueError(f"Invalid mask type (got {mask_type})")
 
 
+def _expand_input(input: Tensor, n_samples: int) -> Tensor:
+    return input.repeat(n_samples, *[1] * input.dim())
+
+
 def to_captum_input(
     x: Union[Tensor, Dict[EdgeType, Tensor]],
     edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
@@ -211,11 +215,9 @@ def to_captum_input(
     if isinstance(x, Tensor) and isinstance(edge_index, Tensor):
         inputs = []
         if "node" in mask_type:
-            inputs.append(torch.cat([x.unsqueeze(0)] * n_samples, dim=0))
+            inputs.append(_expand_input(x, n_samples))
         if "edge" in mask_type:
-            inputs.append(
-                torch.cat([_to_edge_mask(edge_index).unsqueeze(0)] * n_samples,
-                          dim=0))
+            inputs.append(_expand_input(_to_edge_mask(edge_index), n_samples))
         if mask_type == "edge":
             additional_forward_args.insert(0, x)
 
@@ -225,16 +227,18 @@ def to_captum_input(
         inputs = []
         if mask_type == "node":
             for key in node_types:
-                inputs.append(x[key].unsqueeze(0))
+                inputs.append(_expand_input(x[key], n_samples))
         elif mask_type == "edge":
             for key in edge_types:
-                inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
+                inputs.append(
+                    _expand_input(_to_edge_mask(edge_index[key]), n_samples))
             additional_forward_args.insert(0, x)
         else:
             for key in node_types:
-                inputs.append(x[key].unsqueeze(0))
+                inputs.append(_expand_input(x[key], n_samples))
             for key in edge_types:
-                inputs.append(_to_edge_mask(edge_index[key]).unsqueeze(0))
+                inputs.append(
+                    _expand_input(_to_edge_mask(edge_index[key]), n_samples))
 
     else:
         raise ValueError(

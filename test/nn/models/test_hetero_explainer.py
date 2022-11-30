@@ -70,7 +70,10 @@ class HeteroSAGE(torch.nn.Module):
 @withPackage('captum')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
-def test_captum_attribution_methods_hetero(mask_type, method):
+@pytest.mark.parametrize('batch_size, output_idx',
+                         ([1, None], [2, None], [1, 1], [2, [0, 1]]))
+def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
+                                           output_idx):
     from captum import attr  # noqa
     data = get_hetero_data()
     metadata = data.metadata()
@@ -80,9 +83,10 @@ def test_captum_attribution_methods_hetero(mask_type, method):
     assert isinstance(captum_model, CaptumHeteroModel)
 
     args = ['additional_arg1']
-    input, additional_forward_args = to_captum_input(data.x_dict,
-                                                     data.edge_index_dict,
-                                                     mask_type, *args)
+    n_sample = len(output_idx) if output_idx is not None else 1
+    input, additional_forward_args = to_captum_input(
+        data.x_dict, data.edge_index_dict, mask_type, n_sample,
+        additional_forward_args=args)
     if mask_type == 'node':
         sliding_window_shapes = ((3, 3), (3, 3))
     elif mask_type == 'edge':
@@ -92,14 +96,14 @@ def test_captum_attribution_methods_hetero(mask_type, method):
 
     if method == 'IntegratedGradients':
         attributions, delta = explainer.attribute(
-            input, target=0, internal_batch_size=1,
+            input, target=0, internal_batch_size=batch_size,
             additional_forward_args=additional_forward_args,
             return_convergence_delta=True)
     elif method == 'GradientShap':
         attributions, delta = explainer.attribute(
             input, target=0, return_convergence_delta=True, baselines=input,
             n_samples=1, additional_forward_args=additional_forward_args)
-    elif method == 'DeepLiftShap' or method == 'DeepLift':
+    elif method in ['DeepLiftShap', 'DeepLift']:
         attributions, delta = explainer.attribute(
             input, target=0, return_convergence_delta=True, baselines=input,
             additional_forward_args=additional_forward_args)
