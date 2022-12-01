@@ -17,6 +17,7 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
+    - psutil
     - tqdm
     - jinja2
     - pyparsing
