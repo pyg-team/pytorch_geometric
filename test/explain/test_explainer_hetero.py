@@ -17,7 +17,8 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-def hetero_data():
+@pytest.fixture
+def data():
     data = HeteroData()
     data['paper'].x = torch.randn(8, 16)
     data['author'].x = torch.randn(10, 8)
@@ -47,8 +48,7 @@ class HeteroSAGE(torch.nn.Module):
         return self.graph_sage(x_dict, edge_index_dict)['paper']
 
 
-def test_get_prediction():
-    data = hetero_data()
+def test_get_prediction(data):
     model = HeteroSAGE(data.metadata())
     assert model.training
 
@@ -72,8 +72,7 @@ def test_get_prediction():
 
 @pytest.mark.parametrize('target', [None, torch.randn(2)])
 @pytest.mark.parametrize('explanation_type', [x for x in ExplanationType])
-def test_forward(target, explanation_type):
-    data = hetero_data()
+def test_forward(data, target, explanation_type):
     model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
@@ -103,8 +102,7 @@ def test_forward(target, explanation_type):
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_hard_threshold(threshold_value, node_mask_type):
-    data = hetero_data()
+def test_hard_threshold(data, threshold_value, node_mask_type):
     model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
@@ -138,8 +136,7 @@ def test_hard_threshold(threshold_value, node_mask_type):
 
 @pytest.mark.parametrize('threshold_value', list(range(1, 10)))
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_topk_threshold(threshold_value, node_mask_type):
-    data = hetero_data()
+def test_topk_threshold(data, threshold_value, node_mask_type):
     model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
@@ -174,8 +171,7 @@ def test_topk_threshold(threshold_value, node_mask_type):
 
 @pytest.mark.parametrize('threshold_value', list(range(1, 10)))
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_topk_hard_threshold(threshold_value, node_mask_type):
-    data = hetero_data()
+def test_topk_hard_threshold(data, threshold_value, node_mask_type):
     model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
