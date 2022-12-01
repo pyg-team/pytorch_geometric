@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Batch, Data
+from torch_geometric.data import Batch, Data, HeteroData
 from torch_geometric.deprecation import deprecated
 from torch_geometric.explain.algorithm.utils import (
     clear_masks,
@@ -96,17 +96,13 @@ class CaptumHeteroModel(CaptumModel):
         self.num_node_types = len(self.node_types)
         self.num_edge_types = len(self.edge_types)
 
-    def _captum_data_to_hetero_data(
-        self, *args
-    ) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[
-            EdgeType, Tensor]]]:
+    def _captum_data_to_hetero_data(self, *args) -> Batch:
         """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
-        `edge_mask_dict`."""
+        `edge_mask_dict` and merges them to a batch object."""
 
         if self.mask_type == 'node':
             node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
-            x_dict = dict(zip(self.node_types, node_tensors))
             edge_index_dict = args[self.num_node_types]
         elif self.mask_type == 'edge':
             edge_mask_tensors = args[:self.num_edge_types]
@@ -115,20 +111,42 @@ class CaptumHeteroModel(CaptumModel):
         else:
             node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
-            x_dict = dict(zip(self.node_types, node_tensors))
             edge_mask_tensors = args[self.num_node_types:self.num_node_types +
                                      self.num_edge_types]
             edge_index_dict = args[self.num_node_types + self.num_edge_types]
 
-        if 'edge' in self.mask_type:
-            edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
-            edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
-        else:
-            edge_mask_dict = None
-        return x_dict, edge_index_dict, edge_mask_dict
+        # Merge disjoint graphs into a single graph:
+        data_list = []
+        for i in range(args[0].shape[0]):
+            if self.mask_type != 'edge':
+                node_features = [mask.squeeze(0) for mask in node_tensors]
+                x_dict = dict(zip(self.node_types, node_features))
+            if 'edge' in self.mask_type:
+                edge_masks = [mask[i].squeeze(0) for mask in edge_mask_tensors]
+                edge_masks_dict = dict(zip(self.edge_types, edge_masks))
+            else:
+                edge_masks_dict = None
+            # Create HeteroData object:
+            data = HeteroData()
+            for key, value in edge_index_dict.items():
+                data[key].edge_index = value
+            for key, value in x_dict.items():
+                data[key].x = value
+            if edge_masks_dict is not None:
+                for key, value in edge_masks_dict.items():
+                    data[key].edge_mask = value
+            data_list.append(data)
+        return Batch.from_data_list(data_list)
 
     def forward(self, *args):
         # Validate args:
+        batch_size = args[0].shape[0]
+        if type(self.output_idx) == list:
+            msg = "`internal_batch_size` needs to be a multiple of the " \
+                  "number of objects to be evaluated."
+            assert args[0].shape[0] % (len(self.output_idx)) == 0, msg
+            batch_size = args[0].shape[0] // len(self.output_idx)
+
         if self.mask_type == "node":
             assert len(args) >= self.num_node_types + 1
             len_remaining_args = len(args) - (self.num_node_types + 1)
@@ -141,24 +159,28 @@ class CaptumHeteroModel(CaptumModel):
                                               self.num_edge_types + 1)
 
         # Get main args:
-        (x_dict, edge_index_dict,
-         edge_mask_dict) = self._captum_data_to_hetero_data(*args)
+        batch = self._captum_data_to_hetero_data(*args)
 
         if 'edge' in self.mask_type:
-            set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
+            set_hetero_masks(self.model, batch.edge_mask_dict,
+                             batch.edge_index_dict)
 
         if len_remaining_args > 0:
             # If there are args other than `x_dict` and `edge_index_dict`
-            x = self.model(x_dict, edge_index_dict,
+            x = self.model(batch.x_dict, batch.edge_index_dict,
                            *args[-len_remaining_args:])
         else:
-            x = self.model(x_dict, edge_index_dict)
+            x = self.model(batch.x_dict, batch.edge_index_dict)
 
         if 'edge' in self.mask_type:
             clear_masks(self.model)
 
         if self.output_idx is not None:
-            x = x[self.output_idx].unsqueeze(0)
+            # TODO (ramona): Remove this hacky solution
+            indices = torch.tensor(self.output_idx * batch_size, dtype=int)
+            x = x[torch.tensor(
+                [x.shape[0] / batch_size * (i)
+                 for i in range(batch_size)], dtype=int) + indices]
         return x
 
 
@@ -247,6 +269,7 @@ def to_captum_input(
     return tuple(inputs), tuple(additional_forward_args)
 
 
+# TODO (jinu/ramona): Rethink batch hetero output dicts
 def captum_output_to_dicts(
     captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
