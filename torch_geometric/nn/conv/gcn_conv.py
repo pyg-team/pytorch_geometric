@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -10,12 +10,12 @@ from torch_sparse import sum as sparsesum
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils import (
     add_remaining_self_loops,
-    is_sparse,
     is_torch_sparse_tensor,
     spmm,
+    to_torch_coo_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -23,7 +23,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
              add_self_loops=True, flow="source_to_target", dtype=None):
-    # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> PairTensor  # noqa
+    # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
@@ -39,13 +39,9 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
     fill_value = 2. if improved else 1.
 
-    if is_sparse(edge_index):
+    if isinstance(edge_index, SparseTensor):
         assert flow in ["source_to_target"]
         adj_t = edge_index
-        is_torch_sparse = is_torch_sparse_tensor(adj_t)
-        if is_torch_sparse:
-            adj_t = SparseTensor.from_torch_sparse_coo_tensor(adj_t)
-
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
         if add_self_loops:
@@ -56,11 +52,16 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
         adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
 
-        if is_torch_sparse:
-            adj_t = adj_t.to_torch_sparse_coo_tensor()
         return adj_t
-
     else:
+        is_torch_sparse = is_torch_sparse_tensor(edge_index)
+        if is_torch_sparse:
+            assert flow == "source_to_target"
+            flow = "target_to_source"
+            num_nodes = num_nodes if edge_index.size(0) is None else num_nodes
+            edge_index, edge_weight = edge_index._indices(
+            ), edge_index._values()
+
         assert flow in ["source_to_target", "target_to_source"]
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -79,7 +80,14 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg = scatter_add(edge_weight, idx, dim=0, dim_size=num_nodes)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+        edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+
+        if is_torch_sparse:
+            adj_t = to_torch_coo_tensor(edge_index, edge_weight,
+                                        size=num_nodes)
+            return adj_t, None
+        else:
+            return edge_index, edge_weight
 
 
 class GCNConv(MessagePassing):
@@ -139,7 +147,7 @@ class GCNConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, in_channels: int, out_channels: int,
@@ -181,7 +189,7 @@ class GCNConv(MessagePassing):
         """"""
 
         if self.normalize:
-            if is_sparse(edge_index):
+            if isinstance(edge_index, SparseTensor):
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
