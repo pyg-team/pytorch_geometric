@@ -541,21 +541,26 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
+        module_is_lin = isinstance(module, torch.nn.Linear) or isinstance(
+            module, torch_geometric.nn.dense.Linear)
+        if module_is_lin:
+            return HeteroModule(module, self.metadata, self.aggr)
+        else:
+            module_dict = torch.nn.ModuleDict()
+            for key in self.metadata[int(has_edge_level_target)]:
 
-        module_dict = torch.nn.ModuleDict()
-        for key in self.metadata[int(has_edge_level_target)]:
-            module_dict[key2str(key)] = copy.deepcopy(module)
-            if len(self.metadata[int(has_edge_level_target)]) <= 1:
-                continue
-            if hasattr(module, 'reset_parameters'):
-                module_dict[key2str(key)].reset_parameters()
-            elif sum([p.numel() for p in module.parameters()]) > 0:
-                warnings.warn(
-                    f"'{target}' will be duplicated, but its parameters "
-                    f"cannot be reset. To suppress this warning, add a "
-                    f"'reset_parameters()' method to '{target}'")
+                module_dict[key2str(key)] = copy.deepcopy(module)
+                if len(self.metadata[int(has_edge_level_target)]) <= 1:
+                    continue
+                if hasattr(module, 'reset_parameters'):
+                    module_dict[key2str(key)].reset_parameters()
+                elif sum([p.numel() for p in module.parameters()]) > 0:
+                    warnings.warn(
+                        f"'{target}' will be duplicated, but its parameters "
+                        f"cannot be reset. To suppress this warning, add a "
+                        f"'reset_parameters()' method to '{target}'")
 
-        return module_dict
+            return module_dict
 
     # Helper methods ##########################################################
 
