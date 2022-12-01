@@ -14,8 +14,8 @@ class ExplanationType(Enum):
 class MaskType(Enum):
     """Enum class for the mask type."""
     object = 'object'
+    common_attributes = 'common_attributes'
     attributes = 'attributes'
-    both = 'both'
 
 
 class ModelMode(Enum):
@@ -60,7 +60,7 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"phenomenon"`: Explains the phenomenon that the model
                   is trying to predict.
 
-            In practice this means that the explanation algorithm will either
+            In practice, this means that the explanation algorithm will either
             compute their losses with respect to the model output or the target
             output.
 
@@ -69,11 +69,11 @@ class ExplainerConfig(CastMixin):
 
                 - :obj:`None`: Will not apply any mask on nodes.
 
-                - :obj:`"object"`: Will mask the whole node.
+                - :obj:`"object"`: Will mask each node.
 
-                - :obj:`"attributes"`: Will mask the node attributes.
+                - :obj:`"common_attributes"`: Will mask each feature.
 
-                - :obj:`"both"`: Will mask both the node and its attributes..
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
             on edges. Same types as :obj:`node_mask_type`.
