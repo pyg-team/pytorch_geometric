@@ -32,7 +32,7 @@ def test_ppf_conv():
         '))')
     out = conv(x1, pos1, n1, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, pos1, n1, adj.t()), out)
+    assert torch.allclose(conv(x1, pos1, n1, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(OptTensor, Tensor, Tensor, Tensor) -> Tensor'
@@ -41,7 +41,7 @@ def test_ppf_conv():
 
         t = '(OptTensor, Tensor, Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, pos1, n1, adj.t()), out)
+        assert torch.allclose(jit(x1, pos1, n1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
     out = conv(x1, (pos1, pos2), (n1, n2), edge_index)
@@ -49,9 +49,9 @@ def test_ppf_conv():
     assert conv((x1, None), (pos1, pos2), (n1, n2),
                 edge_index).tolist() == out.tolist()
     assert torch.allclose(conv(x1, (pos1, pos2), (n1, n2), adj.t()), out,
-                          )
+                          atol=1e-6)
     assert torch.allclose(conv((x1, None), (pos1, pos2), (n1, n2), adj.t()),
-                          out)
+                          out, atol=1e-6)
 
     if is_full_test():
         t = '(PairOptTensor, PairTensor, PairTensor, Tensor) -> Tensor'
@@ -62,4 +62,4 @@ def test_ppf_conv():
         t = '(PairOptTensor, PairTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, None), (pos1, pos2), (n1, n2), adj.t()),
-                              out)
+                              out, atol=1e-6)

@@ -16,7 +16,7 @@ def test_pdn_conv():
     assert str(conv) == "PDNConv(16, 32)"
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
@@ -25,7 +25,7 @@ def test_pdn_conv():
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out)
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_pdn_conv_with_sparse_node_input_feature():

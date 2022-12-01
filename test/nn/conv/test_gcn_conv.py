@@ -6,6 +6,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import GCNConv
 from torch_geometric.testing import is_full_test
 
+
 def test_gcn_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -18,10 +19,10 @@ def test_gcn_conv():
     assert conv.__repr__() == 'GCNConv(16, 32)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
-    assert torch.allclose(conv(x, adj1.t()), out1)
+    assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
     out2 = conv(x, edge_index, value)
     assert out2.size() == (4, 32)
-    assert torch.allclose(conv(x, adj2.t()), out2)
+    assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
@@ -31,14 +32,14 @@ def test_gcn_conv():
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj1.t()), out1)
-        assert torch.allclose(jit(x, adj2.t()), out2)
+        assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)
     assert conv(x, edge_index).tolist() == out1.tolist()
     conv(x, adj1.t())
-    assert torch.allclose(conv(x, adj1.t()), out1)
+    assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
 
 
 def test_gcn_conv_with_decomposed_layers():
@@ -88,4 +89,4 @@ def test_gcn_conv_norm():
     out1 = conv(x, edge_index)
     conv.flow = "target_to_source"
     out2 = conv(x, edge_index.flip(0))
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)

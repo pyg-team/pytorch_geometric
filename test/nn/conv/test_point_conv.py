@@ -29,7 +29,7 @@ def test_point_net_conv():
         '))')
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, pos1, adj.t()), out)
+    assert torch.allclose(conv(x1, pos1, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(OptTensor, Tensor, Tensor) -> Tensor'
@@ -38,15 +38,15 @@ def test_point_net_conv():
 
         t = '(OptTensor, Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, pos1, adj.t()), out)
+        assert torch.allclose(jit(x1, pos1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
     out = conv(x1, (pos1, pos2), edge_index)
     assert out.size() == (2, 32)
     assert conv((x1, None), (pos1, pos2), edge_index).tolist() == out.tolist()
-    assert torch.allclose(conv(x1, (pos1, pos2), adj.t()), out)
+    assert torch.allclose(conv(x1, (pos1, pos2), adj.t()), out, atol=1e-6)
     assert torch.allclose(conv((x1, None), (pos1, pos2), adj.t()), out,
-                          )
+                          atol=1e-6)
 
     if is_full_test():
         t = '(PairOptTensor, PairTensor, Tensor) -> Tensor'
@@ -57,4 +57,4 @@ def test_point_net_conv():
         t = '(PairOptTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, None), (pos1, pos2), adj.t()), out,
-                              )
+                              atol=1e-6)

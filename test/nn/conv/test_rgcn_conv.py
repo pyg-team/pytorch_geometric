@@ -10,6 +10,7 @@ from torch_geometric.testing import is_full_test
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
 
+
 @pytest.mark.parametrize('conf', confs)
 def test_rgcn_conv_equality(conf):
     num_bases, num_blocks = conf
@@ -32,12 +33,12 @@ def test_rgcn_conv_equality(conf):
 
     out1 = conv1(x1, edge_index, edge_type)
     out2 = conv2(x1, edge_index, edge_type)
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     if num_blocks is None:
         out1 = conv1(None, edge_index, edge_type)
         out2 = conv2(None, edge_index, edge_type)
-        assert torch.allclose(out1, out2)
+        assert torch.allclose(out1, out2, atol=1e-6)
 
 
 @pytest.mark.parametrize('cls,conf', product(classes, confs))

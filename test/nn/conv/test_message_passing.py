@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
+
 from torch.sparse.matmul import spmm
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
@@ -46,6 +47,7 @@ class MyConv(MessagePassing):
                               x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
 
+
 def test_my_conv():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
@@ -75,7 +77,14 @@ def test_my_conv():
     conv.fuse = False
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
     conv.fuse = True
+
+    # Test backward compatibility for `torch.sparse` tensors:
+    conv.fuse = True
+    torch_adj = torch_adj.requires_grad_()
+    conv((x1, x2), torch_adj.t()).sum().backward()
+    assert torch_adj.grad is not None
 
 
 def test_my_conv_out_of_bounds():
@@ -106,14 +115,14 @@ def test_my_conv_jittable():
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, edge_index, value), out)
-    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out)
+    assert jit(x1, edge_index, value).tolist() == out.tolist()
+    assert jit(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
 
     t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, adj.t()), out)
+    assert jit(x1, adj.t()).tolist() == out.tolist()
     jit.fuse = False
-    assert torch.allclose(jit(x1, adj.t()), out)
+    assert jit(x1, adj.t()).tolist() == out.tolist()
     jit.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -123,22 +132,21 @@ def test_my_conv_jittable():
 
     t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), edge_index, value), out1)
-    assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out1)
-    assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)), out2)
+    assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
+    assert jit((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert jit((x1, None), edge_index, value, (4, 2)).tolist() == out2.tolist()
 
     t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
     jit.fuse = False
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
     jit.fuse = True
 
 
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])
-
 def test_my_conv_aggr(aggr):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -147,6 +155,7 @@ def test_my_conv_aggr(aggr):
     conv = MyConv(8, 32, aggr=aggr)
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (4, 32)
+
 
 def test_my_static_graph_conv():
     x1 = torch.randn(3, 4, 8)
@@ -159,18 +168,18 @@ def test_my_static_graph_conv():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (3, 4, 32)
-    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out)
-    assert torch.allclose(conv(x1, adj.t()), out, atol=1e-5)
+    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     assert out1.size() == (3, 2, 32)
-    assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
-    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-5)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     out2 = conv((x1, None), edge_index, value, (4, 2))
     assert out2.size() == (3, 2, 32)
-    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-5)
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
 
 
 class MyMultipleAggrConv(MessagePassing):
@@ -548,7 +557,7 @@ def test_message_passing_int32_edge_index():
     def cast_index_hook(module, inputs):
         input_dict = inputs[-1]
         input_dict['index'] = input_dict['index'].long()
-        return (input_dict)
+        return (input_dict, )
 
     conv = MyConv(8, 32)
     conv.register_aggregate_forward_pre_hook(cast_index_hook)

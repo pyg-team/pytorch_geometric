@@ -15,7 +15,7 @@ def test_appnp():
     assert conv.__repr__() == 'APPNP(K=10, alpha=0.1)'
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
@@ -24,4 +24,4 @@ def test_appnp():
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out)
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)

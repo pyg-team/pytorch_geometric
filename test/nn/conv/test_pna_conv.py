@@ -24,16 +24,16 @@ def test_pna_conv():
     assert conv.__repr__() == 'PNAConv(16, 32, towers=4, edge_dim=3)'
     out = conv(x, edge_index, value)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, edge_index, value), out)
+        assert torch.allclose(jit(x, edge_index, value), out, atol=1e-6)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out)
+        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_pna_conv_get_degree_histogram():

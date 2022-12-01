@@ -4,8 +4,8 @@ from packaging import version
 
 reductions = ['sum', 'add', 'mean', 'min', 'max']
 
-dtypes = [torch.half, torch.float, torch.double, torch.int, torch.long]
-grad_dtypes = [torch.half, torch.float, torch.double]
+dtypes = [torch.float, torch.double, torch.int, torch.long]
+grad_dtypes = [torch.float, torch.double]
 
 if version.parse(torch_scatter.__version__) > version.parse("2.0.9"):
     dtypes.append(torch.bfloat16)

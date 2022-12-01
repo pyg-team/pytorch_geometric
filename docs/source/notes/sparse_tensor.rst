@@ -113,7 +113,7 @@ With it, the :class:`~torch_geometric.nn.conv.GINConv` layer can now be implemen
 
 .. code-block:: python
 
-    from torch_sparse import matmul
+    from torch.sparse.matmul import matmul
 
     class GINConv(MessagePassing):
         def __init__(self):

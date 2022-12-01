@@ -13,8 +13,8 @@ from torch_geometric.nn import (
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges), dtype=torch.long)
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
     return torch.stack([row, col], dim=0)
 
 

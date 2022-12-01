@@ -44,7 +44,7 @@ def test_han_conv():
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              )
+                              atol=1e-6)
 
     # non zero dropout
     conv = HANConv(in_channels, 16, metadata, heads=2, dropout=0.1)
@@ -87,7 +87,7 @@ def test_han_conv_lazy():
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              )
+                              atol=1e-6)
 
 
 def test_han_conv_empty_tensor():

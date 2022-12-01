@@ -14,16 +14,16 @@ def test_arma_conv():
     assert conv.__repr__() == 'ARMAConv(16, 32, num_stacks=8, num_layers=4)'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x, adj.t()))
+    assert torch.allclose(conv(x, adj.t()), atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, edge_index))
+        assert torch.allclose(jit(x, edge_index), atol=1e-6)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()))
+        assert torch.allclose(jit(x, adj.t()), atol=1e-6)
 
 
 def test_lazy_arma_conv():

@@ -17,7 +17,7 @@ def test_gatv2_conv():
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
     assert torch.allclose(conv(x1, edge_index), out)
-    assert torch.allclose(conv(x1, adj.t()), out)
+    assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, NoneType) -> Tensor'
@@ -26,7 +26,7 @@ def test_gatv2_conv():
 
         t = '(Tensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj.t()), out)
+        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, return_attention_weights=True)
@@ -37,7 +37,7 @@ def test_gatv2_conv():
     assert conv._alpha is None
 
     result = conv(x1, adj.t(), return_attention_weights=True)
-    assert torch.allclose(result[0], out)
+    assert torch.allclose(result[0], out, atol=1e-6)
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
     assert conv._alpha is None
 
@@ -56,7 +56,7 @@ def test_gatv2_conv():
              'Tuple[Tensor, SparseTensor]')
         jit = torch.jit.script(conv.jittable(t))
         result = jit(x1, adj.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out)
+        assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
         assert conv._alpha is None
 
@@ -64,7 +64,7 @@ def test_gatv2_conv():
     out1 = conv((x1, x2), edge_index)
     assert out1.size() == (2, 64)
     assert torch.allclose(conv((x1, x2), edge_index), out1)
-    assert torch.allclose(conv((x1, x2), adj.t()), out1)
+    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, NoneType) -> Tensor'
@@ -73,7 +73,7 @@ def test_gatv2_conv():
 
         t = '(OptPairTensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1)
+        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
 
 
 def test_gatv2_conv_with_edge_attr():
