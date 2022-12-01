@@ -174,7 +174,7 @@ For a quick start, check out our [examples](https://github.com/pyg-team/pytorch_
 PyG provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
 It comprises of the following components:
 
-* The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data, *e.g.*, [`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse) and [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster).
+* The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data, *e.g.*, [`pyg-lib`](https://github.com/pyg-team/pyg-lib), [`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse) and [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster).
 * The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provides effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
 * The PyG **operators** bundle essential functionalities for implementing Graph Neural Networks. PyG supports important GNN building blocks that can be combined and applied to various parts of a GNN model, ensuring rich flexibility of GNN design.
 * Finally, PyG provides an abundant set of GNN **models**, and examples that showcase GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
@@ -297,7 +297,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[AttentiveFP](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.AttentiveFP)** from Xiong *et al.*: [Pushing the Boundaries of Molecular Representation for Drug Discovery with the Graph Attention Mechanism](https://pubs.acs.org/doi/10.1021/acs.jmedchem.9b00959) (J. Med. Chem. 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/attentive_fp.py)]
 * **[DeepGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DeepGCNLayer)** and the **[GENConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GENConv)** from Li *et al.*: [DeepGCNs: Can GCNs Go as Deep as CNNs?](https://arxiv.org/abs/1904.03751) (ICCV 2019) and [DeeperGCN: All You Need to Train Deeper GCNs](https://arxiv.org/abs/2006.07739) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_proteins_deepgcn.py)]
 * **[RECT](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.RECT_L)** from Wang *et al.*: [Network Embedding with Completely-imbalanced Labels](https://ieeexplore.ieee.org/document/8979355) (TKDE 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/rect.py)]
-* **[GNNExplainer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GNNExplainer)** from Ying *et al.*: [GNNExplainer: Generating Explanations for Graph Neural Networks](https://arxiv.org/abs/1903.03894) (NeurIPS 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py)]
+* **[GNNExplainer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.explain.GNNExplainer)** from Ying *et al.*: [GNNExplainer: Generating Explanations for Graph Neural Networks](https://arxiv.org/abs/1903.03894) (NeurIPS 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py)]
 * **Graph-less Neural Networks** from Zhang *et al.*: [Graph-less Neural Networks: Teaching Old MLPs New Tricks via Distillation](https://arxiv.org/abs/2110.08727) (CoRR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/glnn.py)]
 * **[LINKX](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LINKX)** from Lim *et al.*: [Large Scale Learning on Non-Homophilous Graphs:
 New Benchmarks and Strong Simple Methods](https://arxiv.org/abs/2110.14446) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/linkx.py)]
@@ -374,8 +374,7 @@ We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, 
 To install the binaries for PyTorch 1.13.0, simply run
 
 ```
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
+pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
 pip install torch-geometric
 ```
 
@@ -390,8 +389,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu116`, or `cu117` dependin
 For additional but optional functionality, run
 
 ```
-pip install torch-cluster -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
-pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
+pip install torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
 ```
 
 #### PyTorch 1.12
@@ -399,8 +397,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.h
 To install the binaries for PyTorch 1.12.0, simply run
 
 ```
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
 pip install torch-geometric
 ```
 
@@ -415,8 +412,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu102`, `cu113`, or `cu116`
 For additional but optional functionality, run
 
 ```
-pip install torch-cluster -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
-pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
 ```
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, and PyTorch 1.11.0 (following the same procedure).
@@ -425,7 +421,7 @@ You can look up the latest supported version number [here](https://data.pyg.org/
 
 ### Nightly and Master
 
-In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `torch-scatter` and `torch-sparse` are installed by [following the steps mentioned above](#pip-wheels), and install either the **nightly version** of PyG via
+In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `pyg-lib`, `torch-scatter` and `torch-sparse` are installed by [following the steps mentioned above](#pip-wheels), and install either the **nightly version** of PyG via
 
 ```
 pip install pyg-nightly

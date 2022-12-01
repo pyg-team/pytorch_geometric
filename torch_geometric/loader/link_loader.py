@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, List, Tuple, Union
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 
@@ -17,6 +17,7 @@ from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSamplingConfig,
     SamplerOutput,
 )
 from torch_geometric.typing import InputEdges, OptTensor
@@ -27,6 +28,10 @@ class LinkLoader(torch.utils.data.DataLoader):
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a :meth:`sample_from_edges` function and is
     supported on the provided input :obj:`data` object.
+
+    .. note::
+        Negative sampling is currently implemented in an approximate
+        way, *i.e.* negative edges may contain false negatives.
 
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
@@ -54,9 +59,38 @@ class LinkLoader(torch.utils.data.DataLoader):
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
-        neg_sampling_ratio (float, optional): the number of negative samples
-            to include as a ratio of the number of positive examples
-            (default: 0).
+        neg_sampling (NegativeSamplingConfig, optional): The negative sampling
+            strategy. Can be either :obj:`"binary"` or :obj:`"triplet"`, and
+            can be further customized by an additional :obj:`amount` argument
+            to control the ratio of sampled negatives to positive edges.
+            If set to :obj:`"binary"`, will randomly sample negative links
+            from the graph.
+            In case :obj:`edge_label` does not exist, it will be automatically
+            created and represents a binary classification task (:obj:`0` =
+            negative edge, :obj:`1` = positive edge).
+            In case :obj:`edge_label` does exist, it has to be a categorical
+            label from :obj:`0` to :obj:`num_classes - 1`.
+            After negative sampling, label :obj:`0` represents negative edges,
+            and labels :obj:`1` to :obj:`num_classes` represent the labels of
+            positive edges.
+            Note that returned labels are of type :obj:`torch.float` for binary
+            classification (to facilitate the ease-of-use of
+            :meth:`F.binary_cross_entropy`) and of type
+            :obj:`torch.long` for multi-class classification (to facilitate the
+            ease-of-use of :meth:`F.cross_entropy`).
+            If set to :obj:`"triplet"`, will randomly sample negative
+            destination nodes for each positive source node.
+            Samples can be accessed via the attributes :obj:`src_index`,
+            :obj:`dst_pos_index` and :obj:`dst_neg_index` in the respective
+            node types of the returned mini-batch.
+            :obj:`edge_label` needs to be :obj:`None` for
+            :obj:`"triplet"`-based negative sampling.
+            If set to :obj:`None`, no negative sampling strategy is applied.
+            (default: :obj:`None`)
+        neg_sampling_ratio (int or float, optional): The ratio of sampled
+            negative edges to the number of positive edges.
+            Deprecated in favor of the :obj:`neg_sampling` argument.
+            (default: :obj:`None`).
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -79,7 +113,8 @@ class LinkLoader(torch.utils.data.DataLoader):
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
-        neg_sampling_ratio: float = 0.0,
+        neg_sampling: Optional[NegativeSamplingConfig] = None,
+        neg_sampling_ratio: Optional[Union[int, float]] = None,
         transform: Callable = None,
         filter_per_worker: bool = False,
         **kwargs,
@@ -90,25 +125,41 @@ class LinkLoader(torch.utils.data.DataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
+        if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
+            # TODO: Deprecation warning.
+            neg_sampling = NegativeSamplingConfig("binary", neg_sampling_ratio)
+
         # Get edge type (or `None` for homogeneous graphs):
         edge_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
-        if edge_label is None:
-            edge_label = torch.zeros(edge_label_index.size(1),
-                                     device=edge_label_index.device)
 
         self.data = data
         self.edge_type = edge_type
         self.link_sampler = link_sampler
+        self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
+        self.transform = transform
+        self.filter_per_worker = filter_per_worker
+
+        if (self.neg_sampling is not None and self.neg_sampling.is_binary()
+                and edge_label is not None and edge_label.min() == 0):
+            # Increment labels such that `zero` now denotes "negative".
+            edge_label = edge_label + 1
+
+        if (self.neg_sampling is not None and self.neg_sampling.is_triplet()
+                and edge_label is not None):
+            raise ValueError("'edge_label' needs to be undefined for "
+                             "'triplet'-based negative sampling. Please use "
+                             "`src_index`, `dst_pos_index` and "
+                             "`neg_pos_index` of the returned mini-batch "
+                             "instead to differentiate between positive and "
+                             "negative samples.")
+
         self.input_data = InputData(
             edge_label_index[0].clone(),
             edge_label_index[1].clone(),
             edge_label,
             edge_label_time,
         )
-        self.neg_sampling_ratio = neg_sampling_ratio
-        self.transform = transform
-        self.filter_per_worker = filter_per_worker
 
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
@@ -116,10 +167,9 @@ class LinkLoader(torch.utils.data.DataLoader):
     def collate_fn(self, index: List[int]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: EdgeSamplerInput = self.input_data[index]
+
         out = self.link_sampler.sample_from_edges(
-            input_data,
-            negative_sampling_ratio=self.neg_sampling_ratio,
-        )
+            input_data, neg_sampling=self.neg_sampling)
 
         if self.filter_per_worker:  # Execute `filter_fn` in the worker process
             out = self.filter_fn(out)
@@ -140,9 +190,16 @@ class LinkLoader(torch.utils.data.DataLoader):
 
             data.batch = out.batch
             data.input_id = out.metadata[0]
-            data.edge_label_index = out.metadata[1]
-            data.edge_label = out.metadata[2]
-            data.edge_label_time = out.metadata[3]
+
+            if self.neg_sampling is None or self.neg_sampling.is_binary():
+                data.edge_label_index = out.metadata[1]
+                data.edge_label = out.metadata[2]
+                data.edge_label_time = out.metadata[3]
+            elif self.neg_sampling.is_triplet():
+                data.src_index = out.metadata[1]
+                data.dst_pos_index = out.metadata[2]
+                data.dst_neg_index = out.metadata[3]
+                data.seed_time = out.metadata[4]
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -155,10 +212,19 @@ class LinkLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
+
             data[self.edge_type].input_id = out.metadata[0]
-            data[self.edge_type].edge_label_index = out.metadata[1]
-            data[self.edge_type].edge_label = out.metadata[2]
-            data[self.edge_type].edge_label_time = out.metadata[3]
+
+            if self.neg_sampling is None or self.neg_sampling.is_binary():
+                data[self.edge_type].edge_label_index = out.metadata[1]
+                data[self.edge_type].edge_label = out.metadata[2]
+                data[self.edge_type].edge_label_time = out.metadata[3]
+            elif self.neg_sampling.is_triplet():
+                data[self.edge_type[0]].src_index = out.metadata[1]
+                data[self.edge_type[-1]].dst_pos_index = out.metadata[2]
+                data[self.edge_type[-1]].dst_neg_index = out.metadata[3]
+                data[self.edge_type[0]].seed_time = out.metadata[4]
+                data[self.edge_type[-1]].seed_time = out.metadata[4]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
