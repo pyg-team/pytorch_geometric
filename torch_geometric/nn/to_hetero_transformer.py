@@ -613,5 +613,4 @@ def key2str(key: Union[NodeType, EdgeType]) -> str:
 
 def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
-            module, torch_geometric.nn.dense.Linear)
-
+        module, torch_geometric.nn.dense.Linear)
