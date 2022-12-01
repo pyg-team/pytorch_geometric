@@ -142,15 +142,17 @@ class HeteroExplanation(HeteroData):
 
     Args:
         node_mask (Dict[NodeType, Tensor], optional): Dictionary of Node-level
-            mask with shape :obj:`[num_nodes]`. (default: :obj:`None`)
+            mask with  key `NodeType` and value `Tensor` of
+            shape :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Dict[EdgeType, Tensor], optional): Dictionary of Edge-level
-            mask with shape :obj:`[num_edges]`. (default: :obj:`None`)
+            mask with  key `EdgeType` and value `Tensor` of
+            shape :obj:`[num_edges]`. (default: :obj:`None`)
         node_feat_mask (Dict[NodeType, Tensor], optional): Dictionary of
-            Node-level feature mask with shape
-            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
+            Node-level feature mask with  key `NodeType` and value `Tensor` of
+            shape :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_feat_mask (Dict[EdgeType, Tensor], optional): Dictionary of
-            Edge-level feature mask with shape
-            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
+            Edge-level feature mask with  key `EdgeType` and value `Tensor` of
+            shape :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def __init__(

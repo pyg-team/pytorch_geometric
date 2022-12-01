@@ -51,7 +51,6 @@ class Explainer:
         self.model_config = ModelConfig.cast(model_config)
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        # is_hetero is set to False, overwritten in __call__ if True
         self.algorithm.connect(self.explainer_config, self.model_config,
                                self.is_hetero)
 
@@ -89,7 +88,6 @@ class Explainer:
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
-        is_hetero: bool = False,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -118,12 +116,10 @@ class Explainer:
                 in a multi-task learning scenario. Should be kept to
                 :obj:`None` in case the model only returns a single output
                 tensor. (default: :obj:`None`)
-            is_hetero (bool, optional): Whether the input graph is
-                heterogeneous. (default: :obj:`False`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Checks new is_hetero value and updates self.is_hetero
-        self.is_hetero = is_hetero
+        self.is_hetero = isinstance(x, dict)
         self.algorithm.connect(self.explainer_config, self.model_config,
                                self.is_hetero)
 
@@ -151,7 +147,6 @@ class Explainer:
             target=target,
             index=index,
             target_index=target_index,
-            is_hetero=is_hetero,
             **kwargs,
         )
 
@@ -172,9 +167,7 @@ class Explainer:
         explanation = self._threshold(explanation)
         return explanation
 
-    def _threshold_explanation(
-        self, explanation: Union[Explanation, HeteroExplanation]
-    ) -> Union[Explanation, HeteroExplanation]:
+    def _threshold_explanation(self, explanation: Explanation) -> Explanation:
         if self.threshold_config is None:
             return explanation
 

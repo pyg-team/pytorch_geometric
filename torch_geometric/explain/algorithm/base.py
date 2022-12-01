@@ -27,15 +27,17 @@ class ExplainerAlgorithm(torch.nn.Module):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
-        is_hetero: bool = False,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
 
         Args:
             model (torch.nn.Module): The model to explain.
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features. This is a dictionary in the heterogeneous case.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices. This is a dictionary in the heterogeneous
+                case.
             target (torch.Tensor): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
@@ -45,8 +47,6 @@ class ExplainerAlgorithm(torch.nn.Module):
                 in a multi-task learning scenario. Should be kept to
                 :obj:`None` in case the model only returns a single output
                 tensor. (default: :obj:`None`)
-            is_hetero (bool, optional): Whether the input graph is
-                heterogeneous. (default: :obj:`False`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """

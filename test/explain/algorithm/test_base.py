@@ -78,7 +78,7 @@ def test_supports_hetero():
             task_level="node",
         ))
 
-    explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+    explainer(data.x_dict, data.edge_index_dict)
 
     with pytest.raises(ValueError):
         explainer = Explainer(
@@ -92,7 +92,7 @@ def test_supports_hetero():
                 task_level="node",
             ))
 
-        explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+        explainer(data.x_dict, data.edge_index_dict)
 
     explainer = Explainer(
         model=model, algorithm=HeteroExplainerAlgorithm(),
@@ -105,4 +105,4 @@ def test_supports_hetero():
             task_level="node",
         ))
 
-    explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+    explainer(data.x_dict, data.edge_index_dict)

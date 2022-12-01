@@ -115,7 +115,6 @@ class GNNExplainer(ExplainerAlgorithm):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
-        is_hetero: bool = False,
         **kwargs,
     ) -> Explanation:
         hard_node_mask = hard_edge_mask = None
@@ -290,7 +289,7 @@ class GNNExplainer_:
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
-        self._explainer.connect(explainer_config, model_config)
+        self._explainer.connect(explainer_config, model_config, False)
 
     @torch.no_grad()
     def get_initial_prediction(self, *args, **kwargs) -> Tensor:

@@ -85,7 +85,7 @@ def test_forward():
         ),
     )
 
-    explanation = explainer(data.x_dict, data.edge_index_dict, is_hetero=True)
+    explanation = explainer(data.x_dict, data.edge_index_dict)
     assert isinstance(explanation, HeteroExplanation)
     # TODO: HeteroExplanation.available_explanations not working, unsure why
     # assert 'node_feat_mask' in explanation.available_explanations
