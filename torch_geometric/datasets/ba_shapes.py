@@ -14,7 +14,7 @@ def house():
     return edge_index, label
 
 
-@deprecated("use 'ba_graphs' with 'ExplainerDataset' instead")
+@deprecated("use 'BAGraph' with 'ExplainerDataset' instead")
 class BAShapes(InMemoryDataset):
     r"""The BA-Shapes dataset from the `"GNNExplainer: Generating Explanations
     for Graph Neural Networks" <https://arxiv.org/pdf/1903.03894.pdf>`_ paper,

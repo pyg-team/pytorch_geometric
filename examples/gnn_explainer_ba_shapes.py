@@ -4,12 +4,15 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from torch_geometric.datasets import BAShapes
+from torch_geometric.datasets import ExplainerDataset
+from torch_geometric.datasets.generators import BAGraph, Motif
 from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.nn import GCN
 from torch_geometric.utils import k_hop_subgraph
 
-dataset = BAShapes()
+motif = Motif('house')
+generator = BAGraph(motif=motif)
+dataset = ExplainerDataset(generator)
 data = dataset[0]
 
 idx = torch.arange(data.num_nodes)
