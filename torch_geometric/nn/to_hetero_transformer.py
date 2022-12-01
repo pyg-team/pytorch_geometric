@@ -146,8 +146,7 @@ class ToHeteroModule(Module):
         assert len(metadata) == 2
         assert aggr in self.aggrs.keys()
         # check wether module is linear
-        self.is_lin = isinstance(module, torch.nn.Linear) or isinstance(
-            module, torch_geometric.nn.dense.Linear)
+        self.is_lin = is_linear(module)
         # check metadata[0] has node types
         # check metadata[1] has edge types if module is MessagePassing
         assert len(metadata[0]) > 0 and (len(metadata[1]) > 0
@@ -554,8 +553,7 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        module_is_lin = isinstance(module, torch.nn.Linear) or isinstance(
-            module, torch_geometric.nn.dense.Linear)
+        module_is_lin = is_linear(module)
         if module_is_lin:
             return ToHeteroModule(module, self.metadata, self.aggr)
         else:
@@ -611,3 +609,9 @@ class ToHeteroTransformer(Transformer):
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
+
+
+def is_linear(module):
+    return isinstance(module, torch.nn.Linear) or isinstance(
+            module, torch_geometric.nn.dense.Linear)
+
