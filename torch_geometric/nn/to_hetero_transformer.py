@@ -557,7 +557,7 @@ class ToHeteroTransformer(Transformer):
         module_is_lin = isinstance(module, torch.nn.Linear) or isinstance(
             module, torch_geometric.nn.dense.Linear)
         if module_is_lin:
-            return HeteroModule(module, self.metadata, self.aggr)
+            return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
