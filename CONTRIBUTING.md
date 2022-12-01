@@ -20,10 +20,10 @@ To develop PyG on your machine, here are some tips:
    print(torch.__version__)
    ```
 
-2. Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `torch-scatter`, `torch-sparse`, `torch-cluster` and `torch-spline-conv` (if you haven't already):
+2. Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `pyg-lib`, `torch-scatter`, `torch-sparse`, `torch-cluster` and `torch-spline-conv` (if you haven't already):
 
    ```bash
-   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+   pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
    ```
 
    where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `1.12.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu` or `cu116`).
@@ -62,7 +62,7 @@ To develop PyG on your machine, here are some tips:
    pytest
    ```
 
-   In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
+   In case an error occurs, please first check if all sub-packages ([`pyg-lib`](https://github.com/pyg-team/pyg-lib), [`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
 
 8. Install pre-commit hooks:
 

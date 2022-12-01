@@ -1,3 +1,4 @@
+from .scatter import scatter
 from .degree import degree
 from .softmax import softmax
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
@@ -29,17 +30,17 @@ from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph
-from .smiles import from_smiles
+from .smiles import from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .train_test_split_edges import train_test_split_edges
-from .scatter import scatter
 from .spmm import spmm
 
 __all__ = [
+    'scatter',
     'degree',
     'softmax',
     'dropout_node',
@@ -88,6 +89,7 @@ __all__ = [
     'from_trimesh',
     'to_cugraph',
     'from_smiles',
+    'to_smiles',
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
@@ -96,7 +98,6 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'train_test_split_edges',
-    'scatter',
     'is_torch_sparse_tensor',
     'is_sparse',
     'to_torch_coo_tensor',
