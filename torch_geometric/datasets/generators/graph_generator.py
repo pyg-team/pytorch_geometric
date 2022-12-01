@@ -2,6 +2,8 @@ from typing import Callable, Optional
 
 import torch
 
+from torch_geometric.data import Data
+
 
 class GraphGenerator:
     def __init__(self, motif: Optional[Callable], num_nodes: int = 300):
@@ -12,6 +14,9 @@ class GraphGenerator:
         self.expl_mask = None
         self.node_label = None
         self.x = None
+
+    def generate_base_graph(self) -> Data:
+        raise NotImplementedError
 
     # TODO: FeatureGenerator (feature distribution...)
     def generate_feature(self, num_features: int = 10):
