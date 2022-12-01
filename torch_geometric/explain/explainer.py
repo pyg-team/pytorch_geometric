@@ -225,7 +225,7 @@ class Explainer:
         import pandas as pd
 
         node_feature_explanation = explanation.node_feat_mask[index]
-        node_feature_explanation = node_feature_explanation.numpy()
+        node_feature_explanation = node_feature_explanation.cpu().numpy()
 
         if feat_labels is None:
             feat_labels = [
