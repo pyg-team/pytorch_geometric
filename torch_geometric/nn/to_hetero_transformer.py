@@ -150,7 +150,8 @@ class ToHeteroModule(Module):
             module, torch_geometric.nn.dense.Linear)
         # check metadata[0] has node types
         # check metadata[1] has edge types if module is MessagePassing
-        assert len(metadata[0]) > 0 and (len(metadata[1]) > 0 or not self.is_lin)
+        assert len(metadata[0]) > 0 and (len(metadata[1]) > 0
+                                         or not self.is_lin)
         if self.is_lin:
             # make HeteroLinear layer based on metadata
             if isinstance(module, torch.nn.Linear):
