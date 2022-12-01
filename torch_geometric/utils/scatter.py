@@ -1,7 +1,10 @@
+import warnings
 from typing import Optional
 
 import torch
+import torch_scatter
 from torch import Tensor
+from torch_scatter import scatter_max, scatter_min, scatter_mul
 
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
 major, minor = int(major), int(minor)
@@ -9,86 +12,85 @@ has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
 
 if has_pytorch112:  # pragma: no cover
 
-    class ScatterHelpers:
-        @staticmethod
-        def broadcast(src: Tensor, other: Tensor, dim: int) -> Tensor:
-            dim = other.dim() + dim if dim < 0 else dim
-            if src.dim() == 1:
-                for _ in range(0, dim):
-                    src = src.unsqueeze(0)
-            for _ in range(src.dim(), other.dim()):
-                src = src.unsqueeze(-1)
-            src = src.expand(other.size())
-            return src
+    warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
-        @staticmethod
-        def generate_out(src: Tensor, index: Tensor, dim: int,
-                         dim_size: Optional[int]) -> Tensor:
-            size = list(src.size())
-            if dim_size is not None:
-                size[dim] = dim_size
-            elif index.numel() > 0:
-                size[dim] = int(index.max()) + 1
-            else:
-                size[dim] = 0
-            return src.new_zeros(size)
+    def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
+        size = [1] * ref.dim()
+        size[dim] = -1
+        return src.view(size).expand_as(ref)
 
-        @staticmethod
-        def scatter_mean(src: Tensor, index: Tensor, dim: int, out: Tensor,
-                         dim_size: Optional[int]) -> Tensor:
-            out.scatter_add_(dim, index, src)
+    def scatter(src: Tensor, index: Tensor, dim: int = 0,
+                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
 
-            index_dim = dim
-            if index_dim < 0:
-                # `index_dim` counts axes from the begining (0)
-                index_dim = index_dim + src.dim()
-            if index.dim() <= index_dim:
-                # in case `index` was broadcasted, `count` scatter should be
-                # performed over the last axis
-                index_dim = index.dim() - 1
+        if index.dim() != 1:
+            raise ValueError(f"The `index` argument must be one-dimensional "
+                             f"(got {index.dim()} dimensions)")
 
-            ones = torch.ones(index.size(), dtype=src.dtype, device=src.device)
-            count = ScatterHelpers.generate_out(ones, index, index_dim,
-                                                dim_size)
-            count.scatter_add_(index_dim, index, ones)
-            count[count < 1] = 1
-            count = ScatterHelpers.broadcast(count, out, dim)
-            if out.is_floating_point():
-                out.true_divide_(count)
-            else:
-                out.div_(count, rounding_mode='floor')
-            return out
+        dim = src.dim() + dim if dim < 0 else dim
 
-    def scatter(src: Tensor, index: Tensor, dim: int = -1,
-                out: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                reduce: str = 'sum') -> Tensor:
-        reduce = 'sum' if reduce == 'add' else reduce
-        reduce = 'prod' if reduce == 'mul' else reduce
-        reduce = 'amin' if reduce == 'min' else reduce
-        reduce = 'amax' if reduce == 'max' else reduce
+        if dim < 0 or dim >= src.dim():
+            raise ValueError(f"The `dim` argument must lay between 0 and "
+                             f"{src.dim() - 1} (got {dim})")
 
-        index = ScatterHelpers.broadcast(index, src, dim)
-        include_self = out is not None
+        if dim_size is None:
+            dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
-        if out is None:  # Generate `out` if not given:
-            out = ScatterHelpers.generate_out(src, index, dim, dim_size)
+        # For now, we maintain various different code paths, based on whether
+        # the input requires gradients and whether it lays on the CPU/GPU.
+        # For example, `torch_scatter` is usually faster than
+        # `torch.scatter_reduce` on GPU, while `torch.scatter_reduce` is faster
+        # on CPU.
+        # `torch.scatter_reduce` has a faster forward implementation for
+        # "min"/"max" reductions since it does not compute additional arg
+        # indices, but is therefore way slower in its backward implementation.
+        # More insights can be found in `test/utils/test_scatter.py`.
 
-        # explicit usage of `torch.scatter_add_` and switching to
-        # `torch_scatter` implementation of mean algorithm comes with
-        # significant performance boost.
-        # TODO: use only `torch.scatter_reduce_` after performance issue will
-        # be fixed on the PyTorch side.
+        size = list(src.size())
+        size[dim] = dim_size
+
+        # For "sum" and "mean" reduction, we make use of `scatter_add_`:
+        if reduce == 'sum' or reduce == 'add':
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_add_(dim, index, src)
+
         if reduce == 'mean':
-            return ScatterHelpers.scatter_mean(src, index, dim, out, dim_size)
-        elif reduce == 'sum':
-            return out.scatter_add_(dim, index, src)
-        return out.scatter_reduce_(dim, index, src, reduce,
-                                   include_self=include_self)
+            count = src.new_zeros(dim_size)
+            count.scatter_add_(0, index, src.new_ones(src.size(dim)))
+            count = count.clamp_(min=1)
+
+            index = broadcast(index, src, dim)
+            out = src.new_zeros(size).scatter_add_(dim, index, src)
+
+            return out / broadcast(count, out, dim)
+
+        # For "min" and "max" reduction, we prefer `scatter_reduce_` on CPU or
+        # in case the input does not require gradients:
+        if reduce == 'min' or reduce == 'max':
+            if not src.is_cuda or not src.requires_grad:
+                index = broadcast(index, src, dim)
+                return src.new_zeros(size).scatter_reduce_(
+                    dim, index, src, reduce=f'a{reduce}', include_self=False)
+
+            if reduce == 'min':
+                return scatter_min(src, index, dim, dim_size=dim_size)[0]
+            else:
+                return scatter_max(src, index, dim, dim_size=dim_size)[0]
+
+        # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
+        if reduce == 'mul':
+            if not src.is_cuda:
+                index = broadcast(index, src, dim)
+                # We initialize with `one` here to match `scatter_mul` output:
+                return src.new_ones(size).scatter_reduce_(
+                    dim, index, src, reduce='prod', include_self=True)
+            else:
+                return scatter_mul(src, index, dim, dim_size=dim_size)
+
+        raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
 
 else:
-    import torch_scatter
 
-    def scatter(src: Tensor, index: Tensor, dim: int = -1,
-                out: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                reduce: str = 'sum') -> Tensor:
-        return torch_scatter.scatter(src, index, dim, out, dim_size, reduce)
+    def scatter(src: Tensor, index: Tensor, dim: int = 0,
+                dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+        return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                     reduce=reduce)
