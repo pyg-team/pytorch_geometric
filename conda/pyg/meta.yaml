@@ -3,7 +3,7 @@ package:
   version: 2.2.0
 
 source:
-  url: https://files.pythonhosted.org/packages/bd/e3/3913bc65cb23db1dcc5a69a87f53206ebcdfebc28973535a4a64a0cb97cd/torch_geometric-2.2.0.tar.gz
+  url: https://files.pythonhosted.org/packages/de/29/dbefbb2b1349638bc9ec5a632d770e8e7fefc2455b8911d675b2ca82d9e1/torch_geometric-2.2.0.tar.gz
 
 requirements:
   host:
@@ -17,6 +17,7 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
+    - psutil
     - tqdm
     - jinja2
     - pyparsing
