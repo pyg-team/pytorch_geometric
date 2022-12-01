@@ -167,18 +167,8 @@ class Explainer:
         explanation = self._threshold(explanation)
         return explanation
 
-    def _threshold_explanation(self, explanation: Explanation) -> Explanation:
-        if self.threshold_config is None:
-            return explanation
-
-        # Avoid modification of the original explanation:
-        explanation = copy.copy(explanation)
-
-        mask_dict = {  # Get the available masks:
-            key: explanation[key]
-            for key in explanation.available_explanations
-        }
-
+    def _threshold_explanation(
+            self, mask_dict: Dict[str, Tensor]) -> Dict[str, Tensor]:
         if self.threshold_config.type == ThresholdType.hard:
             mask_dict = {
                 key: (mask > self.threshold_config.value).float()
@@ -210,19 +200,46 @@ class Explainer:
         else:
             raise NotImplementedError
 
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            explanation[key] = mask
-
-        return explanation
+        return mask_dict
 
     def _threshold_hetero_explanation(
-            self, explanation: HeteroExplanation) -> HeteroExplanation:
-        if self.threshold_config is None:
-            return explanation
+        self, mask_dict: Dict[str, Dict[Union[NodeType, EdgeType], Tensor]]
+    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
 
-        raise NotImplementedError
-        # TODO: Implement thresholding for hetero explanations.
+        if self.threshold_config.type == ThresholdType.hard:
+            mask_dict = {
+                key: {
+                    k: (v > self.threshold_config.value).float()
+                    for k, v in mask.items()
+                }
+                for key, mask in mask_dict.items()
+            }
+        elif self.threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
+        ]:
+            for key, mask in mask_dict.items():
+                for k, v in mask.items():
+                    if self.threshold_config.value >= v.numel():
+                        if self.threshold_config.type != ThresholdType.topk:
+                            mask_dict[key][k] = torch.ones_like(v)
+                        continue
+
+                    value, index = torch.topk(
+                        v.flatten(),
+                        k=self.threshold_config.value,
+                    )
+
+                    out = torch.zeros_like(v.flatten())
+                    if self.threshold_config.type == ThresholdType.topk:
+                        out[index] = value
+                    else:
+                        out[index] = 1.0
+                    mask_dict[key][k] = out.reshape(v.size())
+        else:
+            raise NotImplementedError
+
+        return mask_dict
 
     def _threshold(
         self, explanation: Union[Explanation, HeteroExplanation]
@@ -233,7 +250,24 @@ class Explainer:
             explanation (Explanation): The explanation to threshold.
         """
 
-        if isinstance(explanation, Explanation):
-            return self._threshold_explanation(explanation)
+        if self.threshold_config is None:
+            return explanation
 
-        return self._threshold_hetero_explanation(explanation)
+        # Avoid modification of the original explanation:
+        explanation = copy.copy(explanation)
+
+        mask_dict = {  # Get the available masks:
+            key: explanation[key]
+            for key in explanation.available_explanations
+        }
+
+        if isinstance(explanation, Explanation):
+            mask_dict = self._threshold_explanation(mask_dict)
+        else:
+            mask_dict = self._threshold_hetero_explanation(mask_dict)
+
+        # Update the explanation with the thresholded masks:
+        for key, mask in mask_dict.items():
+            explanation[key] = mask
+
+        return explanation
