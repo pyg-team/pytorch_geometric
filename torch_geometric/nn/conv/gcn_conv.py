@@ -56,14 +56,16 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     else:
         is_torch_sparse = is_torch_sparse_tensor(edge_index)
         if is_torch_sparse:
+            adj_t = edge_index
+            num_nodes = adj_t.size(0)
+            edge_index = adj_t._indices()
+            edge_weight = adj_t._values()
             assert flow == "source_to_target"
+            # `adj_t` is transposed
             flow = "target_to_source"
-            num_nodes = num_nodes if edge_index.size(0) is None else num_nodes
-            edge_index, edge_weight = edge_index._indices(
-            ), edge_index._values()
-
-        assert flow in ["source_to_target", "target_to_source"]
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+        else:
+            assert flow in ["source_to_target", "target_to_source"]
+            num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
