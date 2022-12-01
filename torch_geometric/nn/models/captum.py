@@ -269,7 +269,7 @@ def to_captum_input(
     return tuple(inputs), tuple(additional_forward_args)
 
 
-def captum_output_to_dicts_list(
+def captum_output_to_dicts(
     captum_attrs: Tuple[Tensor],
     mask_type: str,
     metadata: Metadata,
