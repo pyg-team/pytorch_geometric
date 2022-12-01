@@ -27,7 +27,7 @@ class BAGraph(GraphGenerator):
         self.num_motifs = num_motifs
         super().__init__(motif, num_nodes)
 
-    def generate_base_graph(self):
+    def generate_base_graph(self) -> Data:
         self.edge_index = barabasi_albert_graph(self.num_nodes, self.num_edges)
         if self.motif:
             self.attach_motif()
