@@ -1,25 +1,30 @@
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 
 
 class DummyExplainer(ExplainerAlgorithm):
     r"""A dummy explainer for testing purposes."""
-    def forward(self, x: Tensor, edge_index: Tensor,
-                edge_attr: Optional[Tensor] = None, **kwargs) -> Explanation:
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        **kwargs,
+    ) -> Explanation:
         r"""Returns random explanations based on the shape of the inputs.
 
         Args:
-            x (torch.Tensor): node features.
-            edge_index (torch.Tensor): edge indices.
-            edge_attr (torch.Tensor, optional): edge attributes.
-                Defaults to None.
+            model (torch.nn.Module): The model to explain.
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge attributes.
+                (default: :obj:`None`)
 
         Returns:
             Explanation: A random explanation based on the shape of the inputs.
@@ -32,7 +37,7 @@ class DummyExplainer(ExplainerAlgorithm):
         mask_dict['edge_mask'] = torch.rand(num_edges, device=x.device)
 
         if edge_attr is not None:
-            mask_dict["edge_features_mask"] = torch.rand_like(edge_attr)
+            mask_dict['edge_feat_mask'] = torch.rand_like(edge_attr)
 
         return Explanation(
             edge_index=edge_index,
@@ -41,12 +46,5 @@ class DummyExplainer(ExplainerAlgorithm):
             **mask_dict,
         )
 
-    def loss(self, y_hat: Tensor, y: Tensor) -> torch.Tensor:
-        return F.mse_loss(y_hat, y)
-
-    def supports(
-        self,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
-    ) -> bool:
+    def supports(self) -> bool:
         return True

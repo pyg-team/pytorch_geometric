@@ -16,6 +16,9 @@ loader:
 nn:
   - torch_geometric/nn/**/*
 
+explain:
+  - torch_geometric/explain/**/*
+
 transform:
   - torch_geometric/transforms/**/*
 
