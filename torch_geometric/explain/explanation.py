@@ -179,8 +179,8 @@ class HeteroExplanation(HeteroData):
     def available_explanations(self) -> List[str]:
         """Returns the available explanation masks."""
         return [
-            key for key in self.keys
-            if key.endswith('_mask') and self[key] is not None
+            key for key in self.keys if isinstance(key, str)
+            and key.endswith('_mask') and self[key] is not None
         ]
 
     # TODO: modify below functions to support heterogeneous graphs
