@@ -269,15 +269,18 @@ def to_captum_input(
     return tuple(inputs), tuple(additional_forward_args)
 
 
-# TODO (jinu/ramona): Rethink batch hetero output dicts
-def captum_output_to_dicts(
-    captum_attrs: Tuple[Tensor], mask_type: str, metadata: Metadata
-) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
-    r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
-    methods which is a tuple of attributions to two dictonaries with node and
-    edge attribution tensors. This function is used while explaining
-    :obj:`HeteroData` objects. See :obj:`torch_geometric.nn.to_captum_model`
-    for example usage.
+def captum_output_to_dicts_list(
+    captum_attrs: Tuple[Tensor],
+    mask_type: str,
+    metadata: Metadata,
+) -> Tuple[Optional[List[Dict[NodeType, Tensor]]], Optional[List[Dict[
+        EdgeType, Tensor]]]]:
+    """Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
+    methods which is a tuple of attributions to dictonaries with with node and
+    edge attribution tensors. If more than one object is explained, the
+    explanations are stored in a list of dictionaries. This function is used
+    while explaining :obj:`HeteroData` objects. See
+    :obj:`torch_geometric.nn.to_captum_model` for example usage.
 
     Args:
         captum_attrs (tuple[tensor]): The output of attribution methods.
@@ -286,37 +289,50 @@ def captum_output_to_dicts(
             and :obj:`"node_and_edge"`:
 
             1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge
-               attributions. The returned tuple has no node attributions and a
-               edge attribution dictionary with key `EdgeType` and value
-               edge mask tensor of shape :obj:`[num_edges]`.
+                attributions. The returned tuple has no node attributions but
+                one edge attribution dictionary or several dictionaries if
+                more than one object is explained. The edge attribution
+                dictionary has key `EdgeType` and value edge mask tensor of
+                shape :obj:`[num_edges]`.
 
             2. :obj:`"node"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple has node attribution dictonary
-               with key `NodeType` and value node mask tensor of shape
-               :obj:`[num_nodes, num_features]` and no edge attribution.
+                attributions. The returned tuple has one node attribution
+                dictonary or several dictionaries if more than one object is
+                explained. The node attribution dictionary has key `NodeType`
+                and value node mask tensor of shape
+                :obj:`[num_nodes, num_features]` and no edge attribution.
 
-            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple contains node attribution
-               dictionary followed by edge attribution dictionary.
+            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains both node
+                and edge attributions. The returned tuple contains one node
+                attribution dictionary followed by one edge attribution
+                dictionary or several dictionaries if more than one object
+                is explained.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
     _raise_on_invalid_mask_type(mask_type)
     node_types = metadata[0]
     edge_types = metadata[1]
-    x_attr_dict, edge_attr_dict = None, None
-    captum_attrs = [captum_attr.squeeze(0) for captum_attr in captum_attrs]
-    if mask_type == "node":
-        assert len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs))
-    elif mask_type == "edge":
-        assert len(edge_types) == len(captum_attrs)
-        edge_attr_dict = dict(zip(edge_types, captum_attrs))
-    elif mask_type == "node_and_edge":
-        assert len(edge_types) + len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
-        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
-    return x_attr_dict, edge_attr_dict
+    x_attr_dicts, edge_attr_dicts = [], []
+    for i in range(captum_attrs[0].shape[0]):
+        captum_attrs_i = [
+            captum_attr[i].squeeze(0) for captum_attr in captum_attrs
+        ]
+        if mask_type == "node":
+            assert len(node_types) == len(captum_attrs_i)
+            x_attr_dicts.append(dict(zip(node_types, captum_attrs_i)))
+        elif mask_type == "edge":
+            assert len(edge_types) == len(captum_attrs_i)
+            edge_attr_dicts.append(dict(zip(edge_types, captum_attrs_i)))
+        elif mask_type == "node_and_edge":
+            assert len(edge_types) + len(node_types) == len(captum_attrs_i)
+            x_attr_dicts.append(
+                dict(zip(node_types, captum_attrs_i[:len(node_types)])))
+            edge_attr_dicts.append(
+                dict(zip(edge_types, captum_attrs_i[len(node_types):])))
+    if len(x_attr_dicts) == 1:
+        x_attr_dicts = x_attr_dicts[0]
+    return x_attr_dicts, edge_attr_dicts
 
 
 @deprecated(details='Use `torch_geometric.nn.to_captum_model` instead')
