@@ -218,7 +218,7 @@ class Explainer:
             node_feat_mask (Tensor): The node feature mask to plot.
             feat_labels (List[str], optional): Optional labels for features.
             n_features (int, optional): Top N features to plot.
-                (default: :int:`20`)
+                (default: :obj:`20`)
         :rtype: :class:`matplotlib.axes.Axes`
         """
         import matplotlib.pyplot as plt
