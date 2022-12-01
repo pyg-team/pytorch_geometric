@@ -197,7 +197,6 @@ class HeteroExplanation(HeteroData):
                 edge_index_dict = value
             elif key == "edge_attr_dict":
                 edge_attr_dict = value
-                continue
 
         if 'node_mask' in self:
             for key in x_dict.keys():
