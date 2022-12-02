@@ -283,7 +283,7 @@ class GNNExplainer_:
         )
         model_config = ModelConfig(
             mode='regression'
-            if return_type == 'regression' else 'classification',
+            if return_type == 'regression' else 'multiclass_classification',
             task_level=ModelTaskLevel.node,
             return_type=self.conversion_return_type[return_type],
         )
@@ -300,7 +300,7 @@ class GNNExplainer_:
 
         out = self.model(*args, **kwargs)
         if self._explainer.model_config.mode == \
-                ModelMode.multitask_classification:
+                ModelMode.multiclass_classification:
             out = out.argmax(dim=-1)
 
         self.model.train(training)
