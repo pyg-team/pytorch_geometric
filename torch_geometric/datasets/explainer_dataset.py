@@ -21,5 +21,5 @@ class ExplainerDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
     ):
         super().__init__('.', transform)
-        data = generator.generate_base_graph()
-        self.data, self.slices = self.collate([data])
+        generator.generate_base_graph()
+        self.data, self.slices = self.collate([generator.data])
