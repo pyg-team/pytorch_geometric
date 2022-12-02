@@ -48,7 +48,7 @@ explainer = Explainer(
         edge_mask_type='object',
     ),
     model_config=dict(
-        mode='classification',
+        mode='multiclass_classification',
         task_level='node',
         return_type='log_probs',
     ),

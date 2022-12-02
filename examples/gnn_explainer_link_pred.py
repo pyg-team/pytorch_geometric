@@ -101,12 +101,9 @@ for epoch in range(1, 11):
 print(f'Final Test: {final_test_auc:.4f}')
 
 # explain the model output on an edge from the validation dataset
-model_config = ModelConfig(mode="classification", task_level="edge",
+model_config = ModelConfig(mode="binary_classification", task_level="edge",
                            return_type="probs")
-kwargs = {
-    "edge_label_index": val_data.edge_label_index[:, 0],
-    "cast_to_multiclass": True
-}
+edge_label_index = val_data.edge_label_index[:, 0]
 explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
     explainer_config=ExplainerConfig(explanation_type="model",
@@ -114,7 +111,8 @@ explainer = Explainer(
                                      edge_mask_type="object"),
     model_config=model_config)
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        index=0, target_index=None, **kwargs)
+                        index=0, target_index=None,
+                        edge_label_index=edge_label_index)
 print(explanation.available_explanations)
 
 # explain a phenomenon that the model should predict on an edge from the
@@ -127,5 +125,6 @@ explainer = Explainer(
     model_config=model_config)
 target = val_data.edge_label[0].unsqueeze(dim=0).long()
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        target=target, index=0, target_index=None, **kwargs)
+                        target=target, index=0, target_index=None,
+                        edge_label_index=edge_label_index)
 print(explanation.available_explanations)

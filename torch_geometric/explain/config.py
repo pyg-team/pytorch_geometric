@@ -20,7 +20,8 @@ class MaskType(Enum):
 
 class ModelMode(Enum):
     """Enum class for the model return type."""
-    classification = 'classification'
+    binary_classification = 'binary_classification'
+    multiclass_classification = 'multiclass_classification'
     regression = 'regression'
 
 
@@ -111,7 +112,11 @@ class ModelConfig(CastMixin):
         mode (ModelMode or str): The mode of the model. The possible values
             are:
 
-                - :obj:`"classification"`: A classification model.
+                - :obj:`"multiclass_classification"`: A multiclass
+                classification model.
+
+                - :obj:`"binary_classification"`: A binary classification
+                model.
 
                 - :obj:`"regression"`: A regression model.
 
@@ -149,12 +154,22 @@ class ModelConfig(CastMixin):
         if return_type is None and self.mode == ModelMode.regression:
             return_type = ModelReturnType.raw
 
+        if return_type is None \
+                and self.mode == ModelMode.binary_classification:
+            return_type = ModelReturnType.probs
+
         self.return_type = ModelReturnType(return_type)
 
         if (self.mode == ModelMode.regression
                 and self.return_type != ModelReturnType.raw):
             raise ValueError(f"A model for regression needs to return raw "
                              f"outputs (got {self.return_type.value})")
+
+        if (self.mode == ModelMode.binary_classification
+                and self.return_type != ModelReturnType.probs):
+            raise ValueError(
+                f"A model for binary classification needs to return probs "
+                f"outputs (got {self.return_type.value})")
 
 
 @dataclass

@@ -51,8 +51,9 @@ class Explainer:
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
-        If the model mode :obj:`"classification"`, the prediction is returned
-        as the predicted class label.
+        If the model mode is :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
 
         Args:
             *args: Arguments passed to the model.
@@ -64,8 +65,10 @@ class Explainer:
 
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.classification:
+        if self.model_config.mode == ModelMode.multiclass_classification:
             out = out.argmax(dim=-1)
+        elif self.model_config.mode == ModelMode.binary_classification:
+            out = (out > 0.5).long()
 
         self.model.train(training)
 

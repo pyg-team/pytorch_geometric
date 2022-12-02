@@ -201,7 +201,8 @@ class GNNExplainer(ExplainerAlgorithm):
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
         return F.mse_loss(y_hat, y)
 
-    def _loss_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+    def _loss_multiclass_classification(self, y_hat: Tensor,
+                                        y: Tensor) -> Tensor:
         if y.dim() == 0:  # `index` was given as an integer.
             y_hat, y = y_hat.unsqueeze(0), y.unsqueeze(0)
 
@@ -209,11 +210,16 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return (-y_hat).gather(1, y.view(-1, 1)).mean()
 
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        return F.binary_cross_entropy(y_hat, y.float())
+
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
-        elif self.model_config.mode == ModelMode.classification:
-            loss = self._loss_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            loss = self._loss_multiclass_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.binary_classification:
+            loss = self._loss_binary_classification(y_hat, y)
         else:
             raise NotImplementedError
 
@@ -293,7 +299,8 @@ class GNNExplainer_:
         self.model.eval()
 
         out = self.model(*args, **kwargs)
-        if self._explainer.model_config.mode == ModelMode.classification:
+        if self._explainer.model_config.mode == \
+                ModelMode.multitask_classification:
             out = out.argmax(dim=-1)
 
         self.model.train(training)
