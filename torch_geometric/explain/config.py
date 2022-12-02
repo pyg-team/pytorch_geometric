@@ -113,10 +113,10 @@ class ModelConfig(CastMixin):
             are:
 
                 - :obj:`"multiclass_classification"`: A multiclass
-                classification model.
+                  classification model.
 
                 - :obj:`"binary_classification"`: A binary classification
-                model.
+                  model.
 
                 - :obj:`"regression"`: A regression model.
 
