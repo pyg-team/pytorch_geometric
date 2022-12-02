@@ -78,6 +78,7 @@ from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
+from .taobao import Taobao
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -165,6 +166,7 @@ __all__ = [
     'EllipticBitcoinDataset',
     'DGraphFin',
     'HydroNet',
+    'Taobao',
 ]
 
 classes = __all__
