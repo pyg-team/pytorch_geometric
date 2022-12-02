@@ -207,7 +207,6 @@ class Explainer:
     def visualize_feature_importance(
         self,
         explanation: Explanation,
-        index: int,
         feat_labels: Optional[List[str]] = None,
         n_features: int = 20,
     ):
@@ -224,13 +223,14 @@ class Explainer:
         import matplotlib.pyplot as plt
         import pandas as pd
 
-        node_feature_explanation = explanation.node_feat_mask[index]
+        if 'node_feat_mask' not in explanation.available_explanations:
+            raise Exception("`node_feat_mask` not available in explanation.")
+
+        node_feature_explanation = explanation.node_feat_mask.sum(dim=-2)
         node_feature_explanation = node_feature_explanation.cpu().numpy()
 
         if feat_labels is None:
-            feat_labels = [
-                str(i) for i in range(len(node_feature_explanation))
-            ]
+            feat_labels = range(len(node_feature_explanation))
 
         assert len(feat_labels) == len(node_feature_explanation)
 
@@ -247,10 +247,10 @@ class Explainer:
             title=f"Feature importance for top {len(df_filtered)} features",
             xlabel='Feature importance',
             ylabel='Feature label',
-            xlim=[0, max(node_feature_explanation) + 0.1],
+            xlim=[0, max(node_feature_explanation) + 0.3],
             legend=False,
         )
         plt.gca().invert_yaxis()
         ax.bar_label(container=ax.containers[0], label_type='edge')
-
+        plt.savefig("explain.png")
         return ax
