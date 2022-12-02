@@ -3,6 +3,7 @@ from itertools import product
 import pytest
 import torch
 import torch_scatter
+from torch import Tensor
 from torch_sparse.matmul import spmm as sparse_spmm
 from torch_geometric.utils import spmm
 from torch_sparse.tensor import SparseTensor
@@ -11,7 +12,7 @@ from utils import devices, grad_dtypes, reductions
 @pytest.mark.parametrize('dtype,device,reduce',
                          product(grad_dtypes, ['cpu'], reductions))
 
-def test_torch_sparse_spmm(dtype, device, reduce):
+def test_backward_compatibility_spmm(dtype, device, reduce):
     m, n, k = 10, 8, 4
     _src = torch.randn((m, n), dtype=dtype, device=device)
     _src[2:4, :] = 0  # Remove multiple rows.
@@ -39,12 +40,12 @@ def test_torch_sparse_spmm(dtype, device, reduce):
     grad_out = torch.randn_like(expected)
     
     # Test against implementation in pytorch_sparse
-    out_ref = test_spmm(src_ref, other_ref, reduce, version="torch_sparse")
+    out_ref = compare_spmm(src_ref, other_ref, reduce, version="torch_sparse")
     out_ref.backward(grad_out)
-    out = test_spmm(src, other, reduce, version="torch.spmm")
+    out = compare_spmm(src, other, reduce, version="torch.spmm")
     out.backward(grad_out)
     
-    out_csr = test_spmm(csr, other_csr, reduce, version="torch.spmm")
+    out_csr = compare_spmm(csr, other_csr, reduce, version="torch.spmm")
     out_csr.backward(grad_out)
         
     assert torch.allclose(out_ref, out)
@@ -53,7 +54,7 @@ def test_torch_sparse_spmm(dtype, device, reduce):
                           atol=10-4) #? This passes
     assert torch.allclose(other_ref.grad, other.grad)
 
-def my_test_spmm(src: SparseTensor, other: torch.Tensor, reduce: str,
+def compare_spmm(src: SparseTensor, other: torch.Tensor, reduce: str,
              version: str) -> torch.Tensor:
 
     if version == "torch_sparse":
