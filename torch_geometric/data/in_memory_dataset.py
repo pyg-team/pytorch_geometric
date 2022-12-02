@@ -33,6 +33,8 @@ class InMemoryDataset(Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -42,11 +44,15 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter, log)
         self.data = None
         self.slices = None
         self._data_list: Optional[List[Data]] = None

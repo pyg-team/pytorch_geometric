@@ -1,10 +1,12 @@
 import pytest
 import torch
+from torch.optim.lr_scheduler import ConstantLR, LambdaLR, ReduceLROnPlateau
 
 import torch_geometric
 from torch_geometric.nn.resolver import (
     activation_resolver,
     aggregation_resolver,
+    lr_scheduler_resolver,
     normalization_resolver,
 )
 
@@ -54,3 +56,26 @@ def test_normalization_resolver(norm_tuple):
                       norm_module)
     assert isinstance(normalization_resolver(norm_repr, *norm_args),
                       norm_module)
+
+
+@pytest.mark.parametrize('scheduler_args', [
+    ("constant_with_warmup", LambdaLR),
+    ("linear_with_warmup", LambdaLR),
+    ("cosine_with_warmup", LambdaLR),
+    ("cosine_with_warmup_restarts", LambdaLR),
+    ("polynomial_with_warmup", LambdaLR),
+    ("constant", ConstantLR),
+    ('ReduceLROnPlateau', ReduceLROnPlateau),
+])
+def test_lr_scheduler_resolver(scheduler_args):
+    scheduler_name, scheduler_cls = scheduler_args
+
+    model = torch.nn.Linear(10, 5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+    lr_scheduler = lr_scheduler_resolver(
+        scheduler_name,
+        optimizer,
+        num_training_steps=100,
+    )
+    assert isinstance(lr_scheduler, scheduler_cls)

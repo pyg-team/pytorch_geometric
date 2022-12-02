@@ -104,13 +104,14 @@ def test_gen_conv(aggr):
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), edge_index, value), out1)
+        assert torch.allclose(jit((x1, x2), edge_index, value), out1,
+                              atol=1e-6)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
-                              out1)
+                              out1, atol=1e-6)
         assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
-                              out2)
+                              out2, atol=1e-6)
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1)
-        assert torch.allclose(jit((x1, None), adj.t()), out2)
+        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)

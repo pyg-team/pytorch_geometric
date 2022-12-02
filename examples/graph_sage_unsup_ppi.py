@@ -20,7 +20,7 @@ test_dataset = PPI(path, split='test')
 # Group all training graphs into a single graph to perform sampling:
 train_data = Batch.from_data_list(train_dataset)
 loader = LinkNeighborLoader(train_data, batch_size=2048, shuffle=True,
-                            neg_sampling_ratio=0.5, num_neighbors=[10, 10],
+                            neg_sampling_ratio=1.0, num_neighbors=[10, 10],
                             num_workers=6, persistent_workers=True)
 
 # Evaluation loaders (one datapoint corresponds to a graph)

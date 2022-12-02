@@ -5,6 +5,7 @@ import torch_geometric.data
 import torch_geometric.loader
 import torch_geometric.transforms
 import torch_geometric.utils
+import torch_geometric.explain
 import torch_geometric.profile
 
 from .seed import seed_everything
@@ -41,7 +42,7 @@ datasets = LazyLoader('datasets', globals(), 'torch_geometric.datasets')
 nn = LazyLoader('nn', globals(), 'torch_geometric.nn')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
-__version__ = '2.1.0'
+__version__ = '2.2.0'
 
 __all__ = [
     'seed_everything',

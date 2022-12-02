@@ -5,10 +5,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
+from torch_sparse import SparseTensor, fill_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import (
     add_self_loops,
     batched_negative_sampling,
@@ -177,7 +178,7 @@ class SuperGATConv(MessagePassing):
         glorot(self.att_r)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Tensor,
+    def forward(self, x: Tensor, edge_index: Adj,
                 neg_edge_index: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
         r"""
@@ -189,8 +190,11 @@ class SuperGATConv(MessagePassing):
         N, H, C = x.size(0), self.heads, self.out_channels
 
         if self.add_self_loops:
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index, num_nodes=N)
+            if isinstance(edge_index, SparseTensor):
+                edge_index = fill_diag(edge_index, 1.)
+            else:
+                edge_index, _ = remove_self_loops(edge_index)
+                edge_index, _ = add_self_loops(edge_index, num_nodes=N)
 
         x = self.lin(x).view(-1, H, C)
 
@@ -198,6 +202,9 @@ class SuperGATConv(MessagePassing):
         out = self.propagate(edge_index, x=x, size=None)
 
         if self.training:
+            if isinstance(edge_index, SparseTensor):
+                col, row, _ = edge_index.coo()
+                edge_index = torch.stack([row, col], dim=0)
             pos_edge_index = self.positive_sampling(edge_index)
 
             pos_att = self.get_attention(
