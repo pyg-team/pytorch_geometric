@@ -22,30 +22,29 @@ from torch_geometric.nn.pool import knn_graph
 from torch_geometric.nn.pool.decimation import decimation_indices
 from torch_geometric.utils import softmax
 
-# Default activation, BatchNorm, and resulting MLP used by RandLA-Net authors
-lrelu02_kwargs = {"negative_slope": 0.2}
-
-bn099_kwargs = {"momentum": 0.01, "eps": 1e-6}
+# Default activation and batch norm parameters used by RandLA-Net:
+lrelu02_kwargs = {'negative_slope': 0.2}
+bn099_kwargs = {'momentum': 0.01, 'eps': 1e-6}
 
 
 class SharedMLP(MLP):
     """SharedMLP following RandLA-Net paper."""
     def __init__(self, *args, **kwargs):
         # BN + Act always active even at last layer.
-        kwargs["plain_last"] = False
+        kwargs['plain_last'] = False
         # LeakyRelu with 0.2 slope by default.
-        kwargs["act"] = kwargs.get("act", "LeakyReLU")
-        kwargs["act_kwargs"] = kwargs.get("act_kwargs", lrelu02_kwargs)
+        kwargs['act'] = kwargs.get('act', 'LeakyReLU')
+        kwargs['act_kwargs'] = kwargs.get('act_kwargs', lrelu02_kwargs)
         # BatchNorm with 1 - 0.99 = 0.01 momentum
         # and 1e-6 eps by defaut (tensorflow momentum != pytorch momentum)
-        kwargs["norm_kwargs"] = kwargs.get("norm_kwargs", bn099_kwargs)
+        kwargs['norm_kwargs'] = kwargs.get('norm_kwargs', bn099_kwargs)
         super().__init__(*args, **kwargs)
 
 
 class LocalFeatureAggregation(MessagePassing):
     """Positional encoding of points in a neighborhood."""
     def __init__(self, channels):
-        super().__init__(aggr="add")
+        super().__init__(aggr='add')
         self.mlp_encoder = SharedMLP([10, channels // 2])
         self.mlp_attention = SharedMLP([channels, channels], bias=False,
                                        act=None, norm=None)
@@ -126,7 +125,7 @@ class DilatedResidualBlock(torch.nn.Module):
 
 
 def decimate(tensors, ptr: Tensor, decimation_factor: int):
-    """Decimate each element of the given tuple of tensors."""
+    """Decimates each element of the given tuple of tensors."""
     idx_decim, ptr_decim = decimation_indices(ptr, decimation_factor)
     tensors_decim = tuple(tensor[idx_decim] for tensor in tensors)
     return tensors_decim, ptr_decim
@@ -167,56 +166,53 @@ class Net(torch.nn.Module):
         x = self.mlp_classif(x)
         logits = self.fc_classif(x)
 
-        if self.return_logits:
-            return logits
-        probas = logits.log_softmax(dim=-1)
-        return probas
+        return logits if self.return_logits else logits.log_softmax(dim=-1)
 
 
 def train(epoch):
     model.train()
 
+    total_loss = 0
     for data in tqdm(train_loader):
         data = data.to(device)
         optimizer.zero_grad()
-        loss = F.nll_loss(model(data.x, data.pos, data.batch, data.ptr),
-                          data.y)
+        out = model(data.x, data.pos, data.batch, data.ptr)
+        loss = F.nll_loss(out, data.y)
         loss.backward()
         optimizer.step()
+        total_loss += data.num_graphs * float(loss)
+    return total_loss / len(train_loader.dataset)
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
 
     correct = 0
     for data in loader:
         data = data.to(device)
-        with torch.no_grad():
-            pred = model(data.x, data.pos, data.batch, data.ptr).argmax(dim=-1)
-        correct += pred.eq(data.y).sum().item()
+        out = model(data.x, data.pos, data.batch, data.ptr)
+        correct += int((out.argmax(dim=-1) == data.y).sum())
     return correct / len(loader.dataset)
 
 
-if __name__ == "__main__":
-    path = osp.join(osp.dirname(osp.realpath(__file__)), "..",
-                    "data/ModelNet10")
-    pre_transform, transform = T.NormalizeScale(), T.Compose(
-        [T.SamplePoints(1024)])
-    train_dataset = ModelNet(path, "10", True, transform, pre_transform)
-    test_dataset = ModelNet(path, "10", False, transform, pre_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,
-                              num_workers=6)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
-                             num_workers=6)
+if __name__ == '__main__':
+    path = osp.dirname(osp.realpath(__file__))
+    path = osp.join(path, '..', 'data/ModelNet10')
+    pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
+    train_dataset = ModelNet(path, '10', True, transform, pre_transform)
+    test_dataset = ModelNet(path, '10', False, transform, pre_transform)
+    train_loader = DataLoader(train_dataset, 32, shuffle=True, num_workers=6)
+    test_loader = DataLoader(test_dataset, 32, shuffle=False, num_workers=6)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net(3, train_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,
                                                 gamma=0.5)
 
     for epoch in range(1, 201):
-        train(epoch)
+        loss = train(epoch)
         test_acc = test(test_loader)
-        print(f"Epoch: {epoch:03d}, Test: {test_acc:.4f}")
+        print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Test: {test_acc:.4f}')
         scheduler.step()

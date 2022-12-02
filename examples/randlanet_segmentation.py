@@ -3,7 +3,6 @@ An implementation of RandLA-Net based on the paper:
 RandLA-Net: Efficient Semantic Segmentation of Large-Scale Point Clouds
 Reference: https://arxiv.org/abs/1911.11236
 """
-
 import os.path as osp
 
 import torch
@@ -19,9 +18,10 @@ from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import knn_interpolate
 
-category = "Airplane"  # Pass in `None` to train on all categories.
+category = 'Airplane'  # Pass in `None` to train on all categories.
 category_num_classes = 4  # 4 for Airplane - see ShapeNet for details
-path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "ShapeNet")
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
+
 transform = T.Compose([
     T.RandomJitter(0.01),
     T.RandomRotate(15, axis=0),
@@ -29,19 +29,23 @@ transform = T.Compose([
     T.RandomRotate(15, axis=2),
 ])
 pre_transform = T.NormalizeScale()
+
 train_dataset = ShapeNet(
     path,
     category,
-    split="trainval",
+    split='trainval',
     transform=transform,
     pre_transform=pre_transform,
 )
-test_dataset = ShapeNet(path, category, split="test",
-                        pre_transform=pre_transform)
-train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True,
-                          num_workers=6)
-test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
-                         num_workers=6)
+test_dataset = ShapeNet(
+    path,
+    category,
+    split='test',
+    pre_transform=pre_transform,
+)
+
+train_loader = DataLoader(train_dataset, 12, shuffle=True, num_workers=6)
+test_loader = DataLoader(test_dataset, 12, shuffle=False, num_workers=6)
 
 
 class FPModule(torch.nn.Module):
@@ -128,7 +132,7 @@ class Net(torch.nn.Module):
         return probas
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net(3, category_num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -149,8 +153,8 @@ def train():
         total_nodes += data.num_nodes
 
         if (i + 1) % 10 == 0:
-            print(f"[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} "
-                  f"Train Acc: {correct_nodes / total_nodes:.4f}")
+            print(f'[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} '
+                  f'Train Acc: {correct_nodes / total_nodes:.4f}')
             total_loss = correct_nodes = total_nodes = 0
 
 
@@ -186,11 +190,11 @@ def test(loader):
     iou = torch.tensor(ious, device=device)
     category = torch.cat(categories, dim=0)
 
-    mean_iou = scatter(iou, category, reduce="mean")  # Per-category IoU.
+    mean_iou = scatter(iou, category, reduce='mean')  # Per-category IoU.
     return float(mean_iou.mean())  # Global IoU.
 
 
 for epoch in range(1, 31):
     train()
     iou = test(test_loader)
-    print(f"Epoch: {epoch:02d}, Test IoU: {iou:.4f}")
+    print(f'Epoch: {epoch:02d}, Test IoU: {iou:.4f}')
