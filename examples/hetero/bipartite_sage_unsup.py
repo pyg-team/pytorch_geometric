@@ -1,3 +1,5 @@
+# An implementation of GraphSAGE in Alibaba recommendation system on user-item
+# bipartite graph
 import os.path as osp
 import tqdm
 
@@ -5,11 +7,11 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Embedding, Linear
 
-from torch_geometric.utils.convert import to_scipy_sparse_matrix
-from torch_geometric.loader import LinkNeighborLoader
 import torch_geometric.transforms as T
-from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Taobao
+from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.nn import SAGEConv
+from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
@@ -49,12 +51,14 @@ def to_u2i_mat(edge_index, u_num, i_num):
 
 def get_coocur_mat(train_mat, threshold):
     # Generate the co-occurrence matrix and top-k filtering
-    A = train_mat.T @ train_mat
-    A.setdiag(0)
-    A = (A >= threshold).nonzero()
-    A = torch.stack((torch.from_numpy(A[0]), torch.from_numpy(A[1])), dim=0)
+    comat = train_mat.T @ train_mat
+    comat.setdiag(0)
+    comat = (comat >= threshold).nonzero()
+    comat = torch.stack(
+        (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])),
+        dim=0)
 
-    return A
+    return comat
 
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', '2', 'item')],
@@ -74,8 +78,7 @@ train_loader = LinkNeighborLoader(data=train_data,
                                   neg_sampling_ratio=1.,
                                   batch_size=2048,
                                   num_workers=32,
-                                  pin_memory=True,
-)
+                                  pin_memory=True,)
 
 val_loader = LinkNeighborLoader(data=val_data,
                                 num_neighbors=[8, 4],
@@ -83,8 +86,7 @@ val_loader = LinkNeighborLoader(data=val_data,
                                 neg_sampling_ratio=1.,
                                 batch_size=2048,
                                 num_workers=32,
-                                pin_memory=True,
-)
+                                pin_memory=True,)
 
 test_loader = LinkNeighborLoader(data=test_data,
                                  num_neighbors=[8, 4],
@@ -92,14 +94,12 @@ test_loader = LinkNeighborLoader(data=test_data,
                                  neg_sampling_ratio=1.,
                                  batch_size=2048,
                                  num_workers=32,
-                                 pin_memory=True,
-)
+                                 pin_memory=True,)
 
 
 class ItemGNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
         super().__init__()
-
         self.conv1 = SAGEConv(-1, hidden_channels)
         self.conv2 = SAGEConv(hidden_channels, hidden_channels)
         self.lin = Linear(hidden_channels, out_channels)
@@ -154,12 +154,12 @@ class EdgeDecoder(torch.nn.Module):
 
 
 class Model(torch.nn.Module):
-    def __init__(self, user_input_size, item_input_size, hidden_channels, out_channels):
+    def __init__(self, num_users, num_items, hidden_channels, out_channels):
         super().__init__()
         self.user_emb = Embedding(
-            user_input_size, hidden_channels, device=device)
+            num_users, hidden_channels, device=device)
         self.item_emb = Embedding(
-            item_input_size, hidden_channels, device=device)
+            num_items, hidden_channels, device=device)
         self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.decoder = EdgeDecoder(hidden_channels)
@@ -205,7 +205,7 @@ def train():
 @torch.no_grad()
 def test(loader):
     model.eval()
-    total_acc, total_precision, total_recall, total_f1 = 0., 0., 0., 0.
+    accs, precisions, recalls, f1s = [], [], [], []
 
     for batch in tqdm.tqdm(loader):
         batch = batch.to(device)
@@ -213,18 +213,25 @@ def test(loader):
                     batch.edge_index_dict,
                     batch['user', 'item'].edge_label_index
         ).clamp(min=0, max=1).round().cpu()
-
         target = batch['user', 'item'].edge_label.round().cpu()
+        
         acc = accuracy_score(target, out)
         precision = precision_score(target, out)
         recall = recall_score(target, out)
         f1 = f1_score(target, out)
-        total_acc += acc
-        total_precision += precision
-        total_recall += recall
-        total_f1 += f1
+        accs.append(acc)
+        precisions.append(precision)
+        recalls.append(recall)
+        f1s.append(f1)
 
-    return float(total_acc), float(total_precision), float(total_recall), float(total_f1)
+    import numpy as np
+
+    total_acc = float(np.mean(accs))
+    total_precision = float(np.mean(precisions))
+    total_recall = float(np.mean(recalls))
+    total_f1 = float(np.mean(f1s))
+
+    return total_acc, total_precision, total_recall, total_f1
 
 
 for epoch in range(1, 51):
