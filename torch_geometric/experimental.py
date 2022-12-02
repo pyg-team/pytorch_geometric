@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-__experimental_flag__ = {'scatter_reduce': False}
+__experimental_flag__ = {}
 
 Options = Optional[Union[str, List[str]]]
 
@@ -36,11 +36,8 @@ class experimental_mode:
         ...     out = model(data.x, data.edge_index)
 
     Args:
-        options (str or list, optional): Possible option(s):
-
-            - :obj:`"torch_scatter"`: Enables the usage of
-              :meth:`torch.scatter_reduce` instead of
-              :meth:`torch_scatter.scatter`. Requires :obj:`torch>=1.12`.
+        options (str or list, optional): Currently there are no experimental
+            features.
     """
     def __init__(self, options: Options = None):
         self.options = get_options(options)

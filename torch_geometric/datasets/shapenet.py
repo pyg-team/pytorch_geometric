@@ -2,6 +2,7 @@ import json
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional, Union
 
 import torch
 
@@ -54,6 +55,22 @@ class ShapeNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 16,881
+              - ~2,616.2
+              - 0
+              - 3
+              - 50
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
@@ -97,9 +114,16 @@ class ShapeNet(InMemoryDataset):
         'Table': [47, 48, 49],
     }
 
-    def __init__(self, root, categories=None, include_normals=True,
-                 split='trainval', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        categories: Optional[Union[str, List[str]]] = None,
+        include_normals: bool = True,
+        split: str = 'trainval',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -129,15 +153,15 @@ class ShapeNet(InMemoryDataset):
             self.y_mask[i, labels] = 1
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         return self.y_mask.size(-1)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return list(self.category_ids.values()) + ['train_test_split']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
             osp.join(f'{cats}_{split}.pt')
@@ -152,7 +176,7 @@ class ShapeNet(InMemoryDataset):
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process_filenames(self, filenames):
+    def process_filenames(self, filenames: List[str]) -> List[Data]:
         data_list = []
         categories_ids = [self.category_ids[cat] for cat in self.categories]
         cat_idx = {categories_ids[i]: i for i in range(len(categories_ids))}

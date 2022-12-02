@@ -1,4 +1,5 @@
 import warnings
+from typing import List, Union
 
 import numpy as np
 import torch
@@ -6,7 +7,11 @@ import torch
 from torch_geometric.utils import remove_self_loops, to_undirected
 
 
-def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
+def erdos_renyi_graph(
+    num_nodes: int,
+    edge_prob: float,
+    directed: bool = False,
+) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a random Erdos-Renyi graph.
 
     Args:
@@ -49,7 +54,11 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
     return edge_index
 
 
-def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
+def stochastic_blockmodel_graph(
+    block_sizes: Union[List[int], torch.Tensor],
+    edge_probs: Union[List[List[float]], torch.Tensor],
+    directed: bool = False,
+) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a stochastic blockmodel graph.
 
     Args:
@@ -112,7 +121,7 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
     return edge_index
 
 
-def barabasi_albert_graph(num_nodes, num_edges):
+def barabasi_albert_graph(num_nodes: int, num_edges: int) -> torch.Tensor:
     r"""Returns the :obj:`edge_index` of a Barabasi-Albert preferential
     attachment model, where a graph of :obj:`num_nodes` nodes grows by
     attaching new nodes with :obj:`num_edges` edges that are preferentially

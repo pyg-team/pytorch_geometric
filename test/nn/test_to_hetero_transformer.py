@@ -16,9 +16,9 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.utils import dropout_adj
+from torch_geometric.utils import dropout_edge
 
-torch.fx.wrap('dropout_adj')
+torch.fx.wrap('dropout_edge')
 
 
 class Net1(torch.nn.Module):
@@ -140,7 +140,7 @@ class Net10(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         x = F.dropout(x, p=0.5, training=self.training)
-        edge_index, _ = dropout_adj(edge_index, p=0.5, training=self.training)
+        edge_index, _ = dropout_edge(edge_index, p=0.5, training=self.training)
         return self.conv(x, edge_index)
 
 
@@ -312,7 +312,7 @@ def test_to_hetero_with_basic_model():
 
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
-        super().__init__(aggr='mean')
+        super().__init__(aggr='sum')
         self.lin = Linear(in_channels, out_channels, bias=False)
 
     def reset_parameters(self):
@@ -351,7 +351,7 @@ def test_to_hetero_and_rgcn_equal_output():
     edge_type[(row >= 6) & (col < 6)] = 2
     assert edge_type.min() == 0
 
-    conv = RGCNConv(16, 32, num_relations=3)
+    conv = RGCNConv(16, 32, num_relations=3, aggr='sum')
     out1 = conv(x, edge_index, edge_type)
 
     # Run `to_hetero`:
@@ -455,3 +455,11 @@ def test_hetero_transformer_self_loop_error():
     with pytest.raises(ValueError, match="incorrect message passing"):
         to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
                                                        ('b', 'to', 'a')]))
+
+
+def test_to_hetero_validate():
+    model = Net1()
+    metadata = (['my test'], [('my test', 'rel', 'my test')])
+
+    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
+        model = to_hetero(model, metadata, debug=False)

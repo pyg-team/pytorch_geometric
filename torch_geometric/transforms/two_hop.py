@@ -1,6 +1,7 @@
 import torch
 from torch_sparse import coalesce, spspmm
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import remove_self_loops
@@ -10,7 +11,7 @@ from torch_geometric.utils import remove_self_loops
 class TwoHop(BaseTransform):
     r"""Adds the two hop edges to the edge indices
     (functional name: :obj:`two_hop`)."""
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         edge_index, edge_attr = data.edge_index, data.edge_attr
         N = data.num_nodes
 

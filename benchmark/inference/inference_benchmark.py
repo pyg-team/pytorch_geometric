@@ -1,9 +1,9 @@
 import argparse
+from contextlib import nullcontext
 
 import torch
-from utils import get_dataset, get_model
 
-from torch_geometric import set_experimental_mode
+from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -30,6 +30,10 @@ def run(args: argparse.ArgumentParser) -> None:
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
         degree = None
+
+        if args.num_layers != [1] and not hetero and args.num_steps != -1:
+            raise ValueError("Layer-wise inference requires `steps=-1`")
+
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
         else:
@@ -47,6 +51,12 @@ def run(args: argparse.ArgumentParser) -> None:
             print(f'Evaluation bench for {model_name}:')
 
             for batch_size in args.eval_batch_sizes:
+                num_nodes = data[
+                    'paper'].num_nodes if hetero else data.num_nodes
+                sampler = torch.utils.data.RandomSampler(
+                    range(num_nodes), num_samples=args.num_steps *
+                    batch_size) if args.num_steps != -1 else None
+
                 if not hetero:
                     subgraph_loader = NeighborLoader(
                         data,
@@ -55,6 +65,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         batch_size=batch_size,
                         shuffle=False,
                         num_workers=args.num_workers,
+                        sampler=sampler,
                     )
 
                 for layers in args.num_layers:
@@ -68,6 +79,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             batch_size=batch_size,
                             shuffle=False,
                             num_workers=args.num_workers,
+                            sampler=sampler,
                         )
 
                     for hidden_channels in args.num_hidden_channels:
@@ -98,57 +110,61 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
-                        with amp:
-                            with set_experimental_mode(args.experimental_mode):
-                                for _ in range(args.warmup):
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                                with timeit():
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                        # define context manager parameters
 
-                            if args.profile:
-                                with torch_profile():
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
-                                rename_profile_file(model_name, dataset_name,
-                                                    str(batch_size),
-                                                    str(layers),
-                                                    str(hidden_channels),
-                                                    str(num_neighbors))
+                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
+                        profile = torch_profile(
+                        ) if args.profile else nullcontext()
+                        itt = emit_itt(
+                        ) if args.vtune_profile else nullcontext()
+
+                        with cpu_affinity, amp, timeit() as time:
+                            for _ in range(args.warmup):
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+                            time.reset()
+                            with itt, profile:
+                                model.inference(subgraph_loader, device,
+                                                progress_bar=True)
+
+                        if args.profile:
+                            rename_profile_file(model_name, dataset_name,
+                                                str(batch_size), str(layers),
+                                                str(hidden_channels),
+                                                str(num_neighbors))
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
-    argparser.add_argument('--datasets', nargs='+',
-                           default=['ogbn-mag', 'ogbn-products',
-                                    'Reddit'], type=str)
-    argparser.add_argument(
-        '--use-sparse-tensor', action='store_true',
+    add = argparser.add_argument
+
+    add('--datasets', nargs='+',
+        default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
+    add('--use-sparse-tensor', action='store_true',
         help='use torch_sparse.SparseTensor as graph storage format')
-    argparser.add_argument(
-        '--models', nargs='+',
+    add('--models', nargs='+',
         default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
-    argparser.add_argument('--root', default='../../data', type=str,
-                           help='relative path to look for the datasets')
-    argparser.add_argument('--eval-batch-sizes', nargs='+',
-                           default=[512, 1024, 2048, 4096, 8192], type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+',
-                           default=[64, 128, 256], type=int)
-    argparser.add_argument(
-        '--num-heads', default=2, type=int,
+    add('--root', default='../../data', type=str,
+        help='relative path to look for the datasets')
+    add('--eval-batch-sizes', nargs='+', default=[512, 1024, 2048, 4096, 8192],
+        type=int)
+    add('--num-layers', nargs='+', default=[2, 3], type=int)
+    add('--num-hidden-channels', nargs='+', default=[64, 128, 256], type=int)
+    add('--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')
-    argparser.add_argument(
-        '--hetero-num-neighbors', default=10, type=int,
+    add('--hetero-num-neighbors', default=10, type=int,
         help='number of neighbors to sample per layer for hetero workloads')
-    argparser.add_argument('--num-workers', default=0, type=int)
-    argparser.add_argument('--experimental-mode', action='store_true',
-                           help='use experimental mode')
-    argparser.add_argument('--warmup', default=1, type=int)
-    argparser.add_argument('--profile', action='store_true')
-    argparser.add_argument('--bf16', action='store_true')
-
-    args = argparser.parse_args()
-
-    run(args)
+    add('--num-workers', default=0, type=int)
+    add('--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
+    add('--warmup', default=1, type=int)
+    add('--profile', action='store_true')
+    add('--vtune-profile', action='store_true')
+    add('--bf16', action='store_true')
+    add('--cpu-affinity', action='store_true',
+        help="Use DataLoader affinitzation.")
+    add('--loader-cores', nargs='+', default=[], type=int,
+        help="List of CPU core IDs to use for DataLoader workers.")
+    run(argparser.parse_args())

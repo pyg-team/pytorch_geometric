@@ -1,5 +1,6 @@
 import copy
 import re
+import warnings
 from collections import defaultdict, namedtuple
 from collections.abc import Mapping
 from itertools import chain
@@ -26,7 +27,11 @@ from torch_geometric.typing import (
     NodeType,
     QueryType,
 )
-from torch_geometric.utils import bipartite_subgraph, is_undirected
+from torch_geometric.utils import (
+    bipartite_subgraph,
+    contains_isolated_nodes,
+    is_undirected,
+)
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -320,6 +325,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             for key, store in self._edge_store_dict.items()
         }
 
+    def has_isolated_nodes(self) -> bool:
+        r"""Returns :obj:`True` if the graph contains isolated nodes."""
+        edge_index, _, _ = to_homogeneous_edge_index(self)
+        return contains_isolated_nodes(edge_index, num_nodes=self.num_nodes)
+
     def is_undirected(self) -> bool:
         r"""Returns :obj:`True` if graph edges are undirected."""
         edge_index, _, _ = to_homogeneous_edge_index(self)
@@ -347,6 +357,15 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     f"'num_nodes' is undefined in node type '{dst}' of "
                     f"'{cls_name}'", raise_on_error)
 
+            if 'edge_index' in store:
+                if (store.edge_index.dim() != 2
+                        or store.edge_index.size(0) != 2):
+                    status = False
+                    warn_or_raise(
+                        f"'edge_index' of edge type {edge_type} needs to be "
+                        f"of shape [2, num_edges] in '{cls_name}' (found "
+                        f"{store.edge_index.size()})", raise_on_error)
+
             if 'edge_index' in store and store.edge_index.numel() > 0:
                 if store.edge_index.min() < 0:
                     status = False
@@ -360,8 +379,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         and store.edge_index[0].max() >= num_src_nodes):
                     status = False
                     warn_or_raise(
-                        f"'edge_index' of edge type {edge_type} contains"
-                        f"larger source indices than the number of nodes"
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"larger source indices than the number of nodes "
                         f"({num_src_nodes}) of this node type in '{cls_name}' "
                         f"(found {int(store.edge_index[0].max())})",
                         raise_on_error)
@@ -370,8 +389,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         and store.edge_index[1].max() >= num_dst_nodes):
                     status = False
                     warn_or_raise(
-                        f"'edge_index' of edge type {edge_type} contains"
-                        f"larger destination indices than the number of nodes"
+                        f"'edge_index' of edge type {edge_type} contains "
+                        f"larger destination indices than the number of nodes "
                         f"({num_dst_nodes}) of this node type in '{cls_name}' "
                         f"(found {int(store.edge_index[1].max())})",
                         raise_on_error)
@@ -459,6 +478,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 mapping[subtype] = getattr(store, key)
         return mapping
 
+    def _check_type_name(self, name: str):
+        if '__' in name:
+            warnings.warn(f"The type '{name}' contains double underscores "
+                          f"('__') which may lead to unexpected behaviour. "
+                          f"To avoid any issues, ensure that your type names "
+                          f"only contain single underscores.")
+
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
         of a particular node type :attr:`key`.
@@ -473,6 +499,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         """
         out = self._node_store_dict.get(key, None)
         if out is None:
+            self._check_type_name(key)
             out = NodeStorage(_parent=self, _key=key)
             self._node_store_dict[key] = out
         return out
@@ -492,6 +519,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         key = (src, rel, dst)
         out = self._edge_store_dict.get(key, None)
         if out is None:
+            self._check_type_name(rel)
             out = EdgeStorage(_parent=self, _key=key)
             self._edge_store_dict[key] = out
         return out
@@ -624,10 +652,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 del data[node_type]
         return data
 
-    def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
-                       edge_attrs: Optional[List[str]] = None,
-                       add_node_type: bool = True,
-                       add_edge_type: bool = True) -> Data:
+    def to_homogeneous(
+        self,
+        node_attrs: Optional[List[str]] = None,
+        edge_attrs: Optional[List[str]] = None,
+        add_node_type: bool = True,
+        add_edge_type: bool = True,
+        dummy_values: bool = True,
+    ) -> Data:
         """Converts a :class:`~torch_geometric.data.HeteroData` object to a
         homogeneous :class:`~torch_geometric.data.Data` object.
         By default, all features with same feature dimensionality across
@@ -658,21 +690,63 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 add the edge-level vector :obj:`edge_type` to the returned
                 :class:`~torch_geometric.data.Data` object.
                 (default: :obj:`True`)
+            dummy_values (bool, optional): If set to :obj:`True`, will fill
+                attributes of remaining types with dummy values.
+                Dummy values are :obj:`NaN` for floating point attributes,
+                and :obj:`-1` for integers. (default: :obj:`True`)
         """
-        def _consistent_size(stores: List[BaseStorage]) -> List[str]:
+        def get_sizes(stores: List[BaseStorage]) -> Dict[str, List[Tuple]]:
             sizes_dict = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
-                    if key in ['edge_index', 'adj_t']:
+                    if key in ['edge_index', 'adj', 'adj_t']:
                         continue
                     if isinstance(value, Tensor):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
                         sizes_dict[key].append(tuple(size))
+            return sizes_dict
+
+        def fill_dummy_(stores: List[BaseStorage],
+                        keys: Optional[List[str]] = None):
+            sizes_dict = get_sizes(stores)
+
+            if keys is not None:
+                sizes_dict = {
+                    key: sizes
+                    for key, sizes in sizes_dict.items() if key in keys
+                }
+
+            sizes_dict = {
+                key: sizes
+                for key, sizes in sizes_dict.items() if len(set(sizes)) == 1
+            }
+
+            for store in stores:  # Fill stores with dummy features:
+                for key, sizes in sizes_dict.items():
+                    if key not in store:
+                        ref = list(self.collect(key).values())[0]
+                        dim = self.__cat_dim__(key, ref, store)
+                        dummy = float('NaN') if ref.is_floating_point() else -1
+                        if isinstance(store, NodeStorage):
+                            dim_size = store.num_nodes
+                        else:
+                            dim_size = store.num_edges
+                        shape = sizes[0][:dim] + (dim_size, ) + sizes[0][dim:]
+                        store[key] = torch.full(shape, dummy, dtype=ref.dtype,
+                                                device=ref.device)
+
+        def _consistent_size(stores: List[BaseStorage]) -> List[str]:
+            sizes_dict = get_sizes(stores)
             return [
-                k for k, sizes in sizes_dict.items()
+                key for key, sizes in sizes_dict.items()
                 if len(sizes) == len(stores) and len(set(sizes)) == 1
             ]
+
+        if dummy_values:
+            self = copy.copy(self)
+            fill_dummy_(self.node_stores, node_attrs)
+            fill_dummy_(self.edge_stores, edge_attrs)
 
         edge_index, node_slices, edge_slices = to_homogeneous_edge_index(self)
         device = edge_index.device if edge_index is not None else None

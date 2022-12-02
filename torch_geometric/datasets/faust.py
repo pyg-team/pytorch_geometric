@@ -41,6 +41,22 @@ class FAUST(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 10 10 10 10 10
+            :header-rows: 1
+
+            * - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - 100
+              - 6,890
+              - 41,328
+              - 3
+              - 10
     """
 
     url = 'http://faust.is.tue.mpg.de/'

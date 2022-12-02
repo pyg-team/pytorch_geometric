@@ -2,8 +2,8 @@ from typing import Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
+from torch_sparse import SparseTensor
 from .sparse import is_torch_sparse_tensor, is_sparse
 
 
@@ -37,7 +37,6 @@ def spmm(
 
     :rtype: :class:`Tensor`
     """
-   
 
     assert reduce in ['sum', 'add', 'mean', 'min', 'max'], f"Uknown reduction type {reduce}. Supported: ['sum','mean','max','min']"
     reduce = 'sum' if reduce == 'add' else reduce

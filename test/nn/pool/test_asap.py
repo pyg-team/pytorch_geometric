@@ -1,7 +1,10 @@
+import io
+
+import pytest
 import torch
 
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, onlyFullTest
 
 
 def test_asap():
@@ -33,3 +36,14 @@ def test_asap():
         out = pool(x, edge_index)
         assert out[0].size() == (2, in_channels)
         assert out[1].size() == (2, 2)
+
+
+@onlyFullTest
+def test_asap_jit_save():
+    pool = ASAPooling(in_channels=16)
+    pool_jit = pool.jittable()
+    model = torch.jit.script(pool_jit)
+    try:
+        torch.jit.save(model, io.BytesIO())
+    except RuntimeError:
+        pytest.fail('ASAP model serialization failed.')

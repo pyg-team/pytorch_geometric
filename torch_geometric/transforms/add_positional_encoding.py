@@ -69,6 +69,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         num_nodes = data.num_nodes
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
+            data.edge_weight,
             normalization='sym',
             num_nodes=num_nodes,
         )

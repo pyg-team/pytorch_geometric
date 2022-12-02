@@ -7,7 +7,7 @@ from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
 from torch_geometric.nn import HeteroLinear, Linear
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -68,6 +68,7 @@ def test_identical_linear_default_initialization(lazy):
     assert lin1(x).tolist() == lin2(x).tolist()
 
 
+@withPackage('torch<=1.12')
 def test_copy_unintialized_parameter():
     weight = UninitializedParameter()
     with pytest.raises(Exception):
@@ -94,7 +95,8 @@ def test_copy_linear(lazy):
         assert torch.allclose(copied_lin.weight, lin.weight)
     assert id(copied_lin.bias) != id(lin.bias)
     assert copied_lin.bias.data_ptr() != lin.bias.data_ptr()
-    assert torch.allclose(copied_lin.bias, lin.bias, atol=1e-6)
+    if int(torch.isnan(lin.bias).sum()) == 0:
+        assert torch.allclose(copied_lin.bias, lin.bias)
 
 
 def test_hetero_linear():

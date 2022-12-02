@@ -51,9 +51,13 @@ class JumpingKnowledge(torch.nn.Module):
             self.lstm = LSTM(channels, (num_layers * channels) // 2,
                              bidirectional=True, batch_first=True)
             self.att = Linear(2 * ((num_layers * channels) // 2), 1)
+            self.channels = channels
+            self.num_layers = num_layers
         else:
             self.lstm = None
             self.att = None
+            self.channels = None
+            self.num_layers = None
 
         self.reset_parameters()
 
@@ -82,4 +86,7 @@ class JumpingKnowledge(torch.nn.Module):
             return (x * alpha.unsqueeze(-1)).sum(dim=1)
 
     def __repr__(self) -> str:
+        if self.mode == 'lstm':
+            return (f'{self.__class__.__name__}({self.mode}, '
+                    f'channels={self.channels}, layers={self.num_layers})')
         return f'{self.__class__.__name__}({self.mode})'

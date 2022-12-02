@@ -5,7 +5,7 @@ from torch.nn import LayerNorm, Linear, ReLU
 from torch_scatter import scatter
 from tqdm import tqdm
 
-from torch_geometric.loader import RandomNodeSampler
+from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import DeepGCNLayer, GENConv
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../data')
@@ -24,9 +24,9 @@ for split in ['train', 'valid', 'test']:
     mask[splitted_idx[split]] = True
     data[f'{split}_mask'] = mask
 
-train_loader = RandomNodeSampler(data, num_parts=40, shuffle=True,
-                                 num_workers=5)
-test_loader = RandomNodeSampler(data, num_parts=5, num_workers=5)
+train_loader = RandomNodeLoader(data, num_parts=40, shuffle=True,
+                                num_workers=5)
+test_loader = RandomNodeLoader(data, num_parts=5, num_workers=5)
 
 
 class DeeperGCN(torch.nn.Module):

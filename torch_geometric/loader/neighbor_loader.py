@@ -6,7 +6,7 @@ from torch_geometric.data.graph_store import GraphStore
 from torch_geometric.loader.node_loader import NodeLoader
 from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputNodes, NumNeighbors
+from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
 
 
 class NeighborLoader(NodeLoader):
@@ -122,10 +122,28 @@ class NeighborLoader(NodeLoader):
             If set to :obj:`None`, all nodes will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the node type and node indices. (default: :obj:`None`)
+        input_time (torch.Tensor, optional): Optional values to override the
+            timestamp for the input nodes given in :obj:`input_nodes`. If not
+            set, will use the timestamps in :obj:`time_attr` as default (if
+            present). The :obj:`time_attr` needs to be set for this to work.
+            (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+            create its own disjoint subgraph.
+            If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
+            vector holding the mapping of nodes to their respective subgraph.
+            Will get automatically set to :obj:`True` in case of temporal
+            sampling. (default: :obj:`False`)
+        temporal_strategy (string, optional): The sampling strategy when using
+            temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
+            (default: :obj:`"uniform"`)
         time_attr (str, optional): The name of the attribute that denotes
             timestamps for the nodes in the graph.
             If set, temporal sampling will be used such that neighbors are
@@ -135,9 +153,11 @@ class NeighborLoader(NodeLoader):
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
-            :obj:`edge_index` is sorted by column. This avoids internal
-            re-sorting of the data and can improve runtime and memory
-            efficiency. (default: :obj:`False`)
+            :obj:`edge_index` is sorted by column.
+            If :obj:`time_attr` is set, additionally requires that rows are
+            sorted according to time within individual neighborhoods.
+            This avoids internal re-sorting of the data and can improve
+            runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -155,8 +175,11 @@ class NeighborLoader(NodeLoader):
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         input_nodes: InputNodes = None,
+        input_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
+        disjoint: bool = False,
+        temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         transform: Callable = None,
         is_sorted: bool = False,
@@ -164,10 +187,13 @@ class NeighborLoader(NodeLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # Get input type:
-        # TODO(manan): this computation is repeated twice, once here and once
-        # in NodeLoader:
+        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
         node_type, _ = get_input_nodes(data, input_nodes)
+
+        if input_time is not None and time_attr is None:
+            raise ValueError("Received conflicting 'input_time' and "
+                             "'time_attr' arguments: 'input_time' is set "
+                             "while 'time_attr' is not set.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
@@ -175,18 +201,19 @@ class NeighborLoader(NodeLoader):
                 num_neighbors=num_neighbors,
                 replace=replace,
                 directed=directed,
+                disjoint=disjoint,
+                temporal_strategy=temporal_strategy,
                 input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
             )
 
-        # A NeighborLoader is simply a NodeLoader that uses the NeighborSampler
-        # sampling implementation:
         super().__init__(
             data=data,
             node_sampler=neighbor_sampler,
             input_nodes=input_nodes,
+            input_time=input_time,
             transform=transform,
             filter_per_worker=filter_per_worker,
             **kwargs,

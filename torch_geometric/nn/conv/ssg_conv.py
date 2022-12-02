@@ -4,6 +4,7 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 from torch.sparse.matmul import matmul
 
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear

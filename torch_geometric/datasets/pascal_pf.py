@@ -2,6 +2,7 @@ import glob
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 
@@ -49,8 +50,14 @@ class PascalPF(InMemoryDataset):
         'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
     ]
 
-    def __init__(self, root, category, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         self.category = category.lower()
         assert self.category in self.categories
         super().__init__(root, transform, pre_transform, pre_filter)
@@ -58,11 +65,11 @@ class PascalPF(InMemoryDataset):
         self.pairs = torch.load(self.processed_paths[1])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['Annotations', 'parsePascalVOC.mat']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return [f'{self.category}.pt', f'{self.category}_pairs.pt']
 
     def download(self):

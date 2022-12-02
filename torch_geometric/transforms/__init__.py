@@ -45,7 +45,7 @@ from .svd_feature_reduction import SVDFeatureReduction
 from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
-from .add_metapaths import AddMetaPaths
+from .add_metapaths import AddMetaPaths, AddRandomMetaPaths
 from .rooted_subgraph import RootedEgoNets, RootedRWSubgraph
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
@@ -102,6 +102,7 @@ __all__ = [
     'RandomNodeSplit',
     'RandomLinkSplit',
     'AddMetaPaths',
+    'AddRandomMetaPaths',
     'RootedEgoNets',
     'RootedRWSubgraph',
     'LargestConnectedComponents',

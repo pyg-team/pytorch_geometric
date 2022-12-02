@@ -526,6 +526,14 @@ class Data(BaseData, FeatureStore, GraphStore):
             warn_or_raise(f"'num_nodes' is undefined in '{cls_name}'",
                           raise_on_error)
 
+        if 'edge_index' in self:
+            if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
+                status = False
+                warn_or_raise(
+                    f"'edge_index' needs to be of shape [2, num_edges] in "
+                    f"'{cls_name}' (found {self.edge_index.size()})",
+                    raise_on_error)
+
         if 'edge_index' in self and self.edge_index.numel() > 0:
             if self.edge_index.min() < 0:
                 status = False

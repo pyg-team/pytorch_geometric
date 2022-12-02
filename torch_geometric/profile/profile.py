@@ -109,8 +109,9 @@ class timeit(ContextDecorator):
             z = test(model, x, edge_index)
         time = t.duration
     """
-    def __init__(self, log: bool = True):
+    def __init__(self, log: bool = True, avg_time_divisor: int = 0):
         self.log = log
+        self.avg_time_divisor = avg_time_divisor
 
     def __enter__(self):
         if torch.cuda.is_available():
@@ -123,8 +124,18 @@ class timeit(ContextDecorator):
             torch.cuda.synchronize()
         self.t_end = time.time()
         self.duration = self.t_end - self.t_start
+        if self.avg_time_divisor > 1:
+            self.duration = self.duration / self.avg_time_divisor
         if self.log:
             print(f'Time: {self.duration:.8f}s', flush=True)
+
+    def reset(self):
+        r"""Prints the duration and resets current timer."""
+        if self.t_start is None:
+            raise Exception("Timer wasn't started.")
+        else:
+            self.__exit__()
+            self.__enter__()
 
 
 def get_stats_summary(stats_list: List[Stats]):

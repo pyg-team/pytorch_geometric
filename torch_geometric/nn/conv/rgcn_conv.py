@@ -113,7 +113,7 @@ class RGCNConv(MessagePassing):
     ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
-        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
+        self._WITH_PYG_LIB = _WITH_PYG_LIB
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '
@@ -226,7 +226,9 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if self._WITH_PYG_LIB and isinstance(edge_index, Tensor):
+            if (self._WITH_PYG_LIB and self.num_bases is None
+                    and x_l.is_floating_point()
+                    and isinstance(edge_index, Tensor)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = edge_type.sort()
@@ -262,6 +264,7 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
         if edge_type_ptr is not None:
+            # TODO Re-weight according to edge type degree for `aggr=mean`.
             return segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j

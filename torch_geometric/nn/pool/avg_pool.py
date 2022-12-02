@@ -1,19 +1,29 @@
-from typing import Optional
+from typing import Callable, Optional, Tuple
 
+from torch import Tensor
 from torch_scatter import scatter
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from torch_geometric.utils import add_self_loops
 
 from .consecutive import consecutive_cluster
 from .pool import pool_batch, pool_edge, pool_pos
 
 
-def _avg_pool_x(cluster, x, size: Optional[int] = None):
+def _avg_pool_x(
+    cluster: Tensor,
+    x: Tensor,
+    size: Optional[int] = None,
+) -> Tensor:
     return scatter(x, cluster, dim=0, dim_size=size, reduce='mean')
 
 
-def avg_pool_x(cluster, x, batch, size: Optional[int] = None):
+def avg_pool_x(
+    cluster: Tensor,
+    x: Tensor,
+    batch: Tensor,
+    size: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Average pools node features according to the clustering defined in
     :attr:`cluster`.
     See :meth:`torch_geometric.nn.pool.max_pool_x` for more details.
@@ -42,7 +52,11 @@ def avg_pool_x(cluster, x, batch, size: Optional[int] = None):
     return x, batch
 
 
-def avg_pool(cluster, data, transform=None):
+def avg_pool(
+    cluster: Tensor,
+    data: Data,
+    transform: Optional[Callable] = None,
+) -> Data:
     r"""Pools and coarsens a graph given by the
     :class:`torch_geometric.data.Data` object according to the clustering
     defined in :attr:`cluster`.
@@ -75,7 +89,10 @@ def avg_pool(cluster, data, transform=None):
     return data
 
 
-def avg_pool_neighbor_x(data, flow='source_to_target'):
+def avg_pool_neighbor_x(
+    data: Data,
+    flow: Optional[str] = 'source_to_target',
+) -> Data:
     r"""Average pools neighboring node features, where each feature in
     :obj:`data.x` is replaced by the average feature values from the central
     node and its neighbors.

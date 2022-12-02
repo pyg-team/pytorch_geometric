@@ -97,12 +97,121 @@ class MD17(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    Stats:
+        .. list-table::
+            :widths: 20 10 10 10 10 10
+            :header-rows: 1
+
+            * - Name
+              - #graphs
+              - #nodes
+              - #edges
+              - #features
+              - #classes
+            * - Benzene FHI-aims
+              - 49,863
+              - 12
+              - 0
+              - 0
+              - 0
+            * - Benzene
+              - 627,983
+              - 12
+              - 0
+              - 0
+              - 0
+            * - Benzene CCSD-T
+              - 1,500
+              - 12
+              - 0
+              - 0
+              - 0
+            * - Uracil
+              - 133,770
+              - 12
+              - 0
+              - 0
+              - 0
+            * - Naphthalene
+              - 326,250
+              - 10
+              - 0
+              - 0
+              - 0
+            * - Aspirin
+              - 211,762
+              - 21
+              - 0
+              - 0
+              - 0
+            * - Aspirin CCSD-T
+              - 1,500
+              - 21
+              - 0
+              - 0
+              - 0
+            * - Salicylic acid
+              - 320,231
+              - 16
+              - 0
+              - 0
+              - 0
+            * - Malonaldehyde
+              - 993,237
+              - 9
+              - 0
+              - 0
+              - 0
+            * - Malonaldehyde CCSD-T
+              - 1,500
+              - 9
+              - 0
+              - 0
+              - 0
+            * - Ethanol
+              - 555,092
+              - 9
+              - 0
+              - 0
+              - 0
+            * - Ethanol CCSD-T
+              - 2000
+              - 9
+              - 0
+              - 0
+              - 0
+            * - Toluene
+              - 442,790
+              - 15
+              - 0
+              - 0
+              - 0
+            * - Toluene CCSD-T
+              - 1,501
+              - 15
+              - 0
+              - 0
+              - 0
+            * - Paracetamol
+              - 106,490
+              - 20
+              - 0
+              - 0
+              - 0
+            * - Azobenzene
+              - 99,999
+              - 24
+              - 0
+              - 0
+              - 0
+
     """  # noqa: E501
     url = 'http://quantum-machine.org/gdml/data/npz'
 
     file_names = {
-        'benzene FHI-aims': 'benzene_dft.npz',
-        'benzene': 'benzene_old_dft.npz',
+        'benzene FHI-aims': 'benzene2018_dft.npz',
+        'benzene': 'benzene2017_dft.npz',
         'benzene CCSD(T)': 'benzene_ccsd_t.zip',
         'uracil': 'uracil_dft.npz',
         'napthalene': 'naphthalene_dft.npz',

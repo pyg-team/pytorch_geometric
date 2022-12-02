@@ -241,7 +241,7 @@ def k_hop_subgraph(
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],
         ...                            [2, 2, 4, 4, 6, 6]])
 
-        >>> # Center node 2, 2-hops
+        >>> # Center node 6, 2-hops
         >>> subset, edge_index, mapping, edge_mask = k_hop_subgraph(
         ...     6, 2, edge_index, relabel_nodes=True)
         >>> subset

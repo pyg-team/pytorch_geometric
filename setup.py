@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.1.0'
+__version__ = '2.2.0'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
@@ -11,6 +11,7 @@ install_requires = [
     'requests',
     'pyparsing',
     'scikit-learn',
+    'psutil>=5.8.0',
 ]
 
 graphgym_requires = [
@@ -21,6 +22,7 @@ graphgym_requires = [
 ]
 
 full_requires = graphgym_requires + [
+    'ase',
     'h5py',
     'numba',
     'sympy',
@@ -44,6 +46,8 @@ benchmark_requires = [
 test_requires = [
     'pytest',
     'pytest-cov',
+    'onnx',
+    'onnxruntime',
 ]
 
 dev_requires = test_requires + [

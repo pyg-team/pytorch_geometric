@@ -90,7 +90,12 @@ class MetaLayer(torch.nn.Module):
         op = MetaLayer(EdgeModel(), NodeModel(), GlobalModel())
         x, edge_attr, u = op(x, edge_index, edge_attr, u, batch)
     """
-    def __init__(self, edge_model=None, node_model=None, global_model=None):
+    def __init__(
+        self,
+        edge_model: Optional[torch.nn.Module] = None,
+        node_model: Optional[torch.nn.Module] = None,
+        global_model: Optional[torch.nn.Module] = None,
+    ):
         super().__init__()
         self.edge_model = edge_model
         self.node_model = node_model
@@ -104,9 +109,13 @@ class MetaLayer(torch.nn.Module):
                 item.reset_parameters()
 
     def forward(
-            self, x: Tensor, edge_index: Tensor,
-            edge_attr: Optional[Tensor] = None, u: Optional[Tensor] = None,
-            batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor, Tensor]:
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        u: Optional[Tensor] = None,
+        batch: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
         """"""
         row = edge_index[0]
         col = edge_index[1]

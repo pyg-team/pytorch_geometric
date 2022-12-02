@@ -1,13 +1,35 @@
 from typing import List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
 
 
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, Optional[bool], Optional[int], bool) -> Tensor  # noqa
+    pass
+
+
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, Tensor, Optional[int], bool) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, List[Tensor], Optional[int], bool) -> Tuple[Tensor, List[Tensor]]  # noqa
+    pass
+
+
 def sort_edge_index(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
     sort_by_row: bool = True,
 ) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
@@ -53,9 +75,9 @@ def sort_edge_index(
 
     edge_index = edge_index[:, perm]
 
-    if edge_attr is None:
-        return edge_index
-    elif isinstance(edge_attr, Tensor):
+    if isinstance(edge_attr, Tensor):
         return edge_index, edge_attr[perm]
-    else:
+    elif isinstance(edge_attr, (list, tuple)):
         return edge_index, [e[perm] for e in edge_attr]
+    else:
+        return edge_index

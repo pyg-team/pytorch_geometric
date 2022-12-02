@@ -1,4 +1,5 @@
 import copy
+import inspect
 import warnings
 from typing import Optional, Tuple, Union
 
@@ -8,16 +9,15 @@ from torch import Tensor
 from torch_geometric.data import Data, Dataset, HeteroData
 from torch_geometric.data.feature_store import FeatureStore
 from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader.dataloader import DataLoader
-from torch_geometric.loader.link_neighbor_loader import (
+from torch_geometric.loader import (
+    LinkLoader,
     LinkNeighborLoader,
-    get_edge_label_index,
-)
-from torch_geometric.loader.neighbor_loader import (
     NeighborLoader,
-    NeighborSampler,
-    get_input_nodes,
+    NodeLoader,
 )
+from torch_geometric.loader.dataloader import DataLoader
+from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
+from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
 try:
@@ -152,8 +152,8 @@ class LightningDataset(LightningDataModule):
         """"""
         from torch.utils.data import IterableDataset
         shuffle = (not isinstance(self.train_dataset, IterableDataset)
-                   and 'sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+                   and self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.train_dataset, shuffle=shuffle,
                                **self.kwargs)
@@ -238,6 +238,9 @@ class LightningNodeData(LightningDataModule):
             (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        node_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -254,12 +257,15 @@ class LightningNodeData(LightningDataModule):
         input_test_nodes: InputNodes = None,
         input_pred_nodes: InputNodes = None,
         loader: str = "neighbor",
+        node_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if node_sampler is not None:
+            loader = 'custom'
 
-        assert loader in ['full', 'neighbor']
+        assert loader in ['full', 'neighbor', 'custom']
 
         if input_train_nodes is None:
             input_train_nodes = infer_input_nodes(data, split='train')
@@ -306,16 +312,25 @@ class LightningNodeData(LightningDataModule):
         self.loader = loader
 
         if loader == 'neighbor':
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
+
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
                 input_type=get_input_nodes(data, input_train_nodes)[0],
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
+        elif node_sampler is not None:
+            # TODO Consider renaming to `self.node_sampler`
+            self.neighbor_sampler = node_sampler
+
         self.input_train_nodes = input_train_nodes
         self.input_val_nodes = input_val_nodes
         self.input_test_nodes = input_test_nodes
@@ -359,8 +374,16 @@ class LightningNodeData(LightningDataModule):
         if self.loader == 'neighbor':
             return NeighborLoader(
                 self.data,
-                input_nodes=input_nodes,
                 neighbor_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
+                **kwargs,
+            )
+
+        if self.loader == 'custom':
+            return NodeLoader(
+                self.data,
+                node_sampler=self.neighbor_sampler,
+                input_nodes=input_nodes,
                 **kwargs,
             )
 
@@ -368,8 +391,8 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = ('sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.input_train_nodes, shuffle=shuffle,
                                **self.kwargs)
@@ -457,6 +480,9 @@ class LightningLinkData(LightningDataModule):
             of test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
+        link_sampler (BaseSampler, optional): A custom sampler object to
+            generate mini-batches. If set, will ignore the :obj:`loader`
+            option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers: How many subprocesses to use for data loading.
@@ -478,12 +504,15 @@ class LightningLinkData(LightningDataModule):
         input_test_labels: Tensor = None,
         input_test_time: Tensor = None,
         loader: str = "neighbor",
+        link_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
     ):
+        if link_sampler is not None:
+            loader = 'custom'
 
-        assert loader in ['full', 'neighbor', 'link_neighbor']
+        assert loader in ['full', 'neighbor', 'link_neighbor', 'custom']
 
         if input_train_edges is None:
             raise NotImplementedError(f"'{self.__class__.__name__}' cannot "
@@ -520,18 +549,23 @@ class LightningLinkData(LightningDataModule):
         self.loader = loader
 
         if loader in ['neighbor', 'link_neighbor']:
-            input_type = get_edge_label_index(data, input_train_edges)[0]
+            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
+            sampler_args.pop('data')
+            sampler_args.pop('input_type')
+            sampler_args.pop('share_memory')
+            sampler_kwargs = {
+                key: kwargs.get(key, param.default)
+                for key, param in sampler_args.items()
+            }
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                num_neighbors=kwargs.get('num_neighbors', None),
-                replace=kwargs.get('replace', False),
-                directed=kwargs.get('directed', True),
-                input_type=input_type,
-                time_attr=kwargs.get('time_attr', None),
-                is_sorted=kwargs.get('is_sorted', False),
+                input_type=get_edge_label_index(data, input_train_edges)[0],
                 share_memory=num_workers > 0,
+                **sampler_kwargs,
             )
-            self.neg_sampling_ratio = kwargs.get('neg_sampling_ratio', 0.0)
+        elif link_sampler is not None:
+            # TODO Consider renaming to `self.link_sampler`
+            self.neighbor_sampler = link_sampler
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -583,11 +617,20 @@ class LightningLinkData(LightningDataModule):
         if self.loader in ['neighbor', 'link_neighbor']:
             return LinkNeighborLoader(
                 self.data,
+                neighbor_sampler=self.neighbor_sampler,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
-                neighbor_sampler=self.neighbor_sampler,
-                neg_sampling_ratio=self.neg_sampling_ratio,
+                **kwargs,
+            )
+
+        if self.loader == 'custom':
+            return LinkLoader(
+                self.data,
+                link_sampler=self.neighbor_sampler,
+                edge_label_index=input_edges,
+                edge_label=input_labels,
+                edge_label_time=input_time,
                 **kwargs,
             )
 
@@ -595,8 +638,8 @@ class LightningLinkData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = ('sampler' not in self.kwargs
-                   and 'batch_sampler' not in self.kwargs)
+        shuffle = (self.kwargs.get('sampler', None) is None
+                   and self.kwargs.get('batch_sampler', None) is None)
 
         return self.dataloader(self.input_train_edges, self.input_train_labels,
                                self.input_train_time, shuffle=shuffle,

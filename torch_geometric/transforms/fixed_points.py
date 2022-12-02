@@ -4,6 +4,7 @@ import re
 import numpy as np
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -26,12 +27,17 @@ class FixedPoints(BaseTransform):
             In case :obj:`allow_duplicates` is :obj:`True`, the number of
             duplicated points are kept to a minimum. (default: :obj:`False`)
     """
-    def __init__(self, num, replace=True, allow_duplicates=False):
+    def __init__(
+        self,
+        num: int,
+        replace: bool = True,
+        allow_duplicates: bool = False,
+    ):
         self.num = num
         self.replace = replace
         self.allow_duplicates = allow_duplicates
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         num_nodes = data.num_nodes
 
         if self.replace:

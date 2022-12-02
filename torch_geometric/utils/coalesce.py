@@ -7,9 +7,30 @@ from torch_scatter import scatter
 from .num_nodes import maybe_num_nodes
 
 
+@torch.jit._overload
+def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
+             is_sorted=False, sort_by_row=True):
+    # type: (Tensor, Optional[bool], Optional[int], str, bool, bool) -> Tensor  # noqa
+    pass
+
+
+@torch.jit._overload
+def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
+             is_sorted=False, sort_by_row=True):
+    # type: (Tensor, Tensor, Optional[int], str, bool, bool) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
+             is_sorted=False, sort_by_row=True):
+    # type: (Tensor, List[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, List[Tensor]]  # noqa
+    pass
+
+
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
     reduce: str = "add",
     is_sorted: bool = False,
@@ -74,18 +95,21 @@ def coalesce(
     if not is_sorted:
         idx[1:], perm = idx[1:].sort()
         edge_index = edge_index[:, perm]
-        if edge_attr is not None and isinstance(edge_attr, Tensor):
+        if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
-        elif edge_attr is not None:
+        elif isinstance(edge_attr, (list, tuple)):
             edge_attr = [e[perm] for e in edge_attr]
 
     mask = idx[1:] > idx[:-1]
 
     # Only perform expensive merging in case there exists duplicates:
     if mask.all():
-        return edge_index if edge_attr is None else (edge_index, edge_attr)
+        if isinstance(edge_attr, (Tensor, list, tuple)):
+            return edge_index, edge_attr
+        return edge_index
 
     edge_index = edge_index[:, mask]
+
     if edge_attr is None:
         return edge_index
 
@@ -95,9 +119,11 @@ def coalesce(
 
     if isinstance(edge_attr, Tensor):
         edge_attr = scatter(edge_attr, idx, 0, None, dim_size, reduce)
-    else:
+        return edge_index, edge_attr
+    elif isinstance(edge_attr, (list, tuple)):
         edge_attr = [
             scatter(e, idx, 0, None, dim_size, reduce) for e in edge_attr
         ]
+        return edge_index, edge_attr
 
-    return edge_index, edge_attr
+    return edge_index

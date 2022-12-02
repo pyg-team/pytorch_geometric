@@ -8,9 +8,21 @@ from torch_geometric.utils import coalesce, sort_edge_index
 from .num_nodes import maybe_num_nodes
 
 
+@torch.jit._overload
+def is_undirected(edge_index, edge_attr=None, num_nodes=None):
+    # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
+    pass
+
+
+@torch.jit._overload
+def is_undirected(edge_index, edge_attr=None, num_nodes=None):
+    # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
+    pass
+
+
 def is_undirected(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -42,31 +54,56 @@ def is_undirected(
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    edge_attr = [] if edge_attr is None else edge_attr
-    edge_attr = [edge_attr] if isinstance(edge_attr, Tensor) else edge_attr
+    edge_attrs: List[Tensor] = []
+    if isinstance(edge_attr, Tensor):
+        edge_attrs.append(edge_attr)
+    elif isinstance(edge_attr, (list, tuple)):
+        edge_attrs = edge_attr
 
-    edge_index1, edge_attr1 = sort_edge_index(
+    edge_index1, edge_attrs1 = sort_edge_index(
         edge_index,
-        edge_attr,
+        edge_attrs,
         num_nodes=num_nodes,
         sort_by_row=True,
     )
-    edge_index2, edge_attr2 = sort_edge_index(
-        edge_index1,
-        edge_attr1,
+    edge_index2, edge_attrs2 = sort_edge_index(
+        edge_index,
+        edge_attrs,
         num_nodes=num_nodes,
         sort_by_row=False,
     )
 
-    return (bool(torch.all(edge_index1[0] == edge_index2[1]))
-            and bool(torch.all(edge_index1[1] == edge_index2[0])) and all([
-                torch.all(e == e_T) for e, e_T in zip(edge_attr1, edge_attr2)
-            ]))
+    if not torch.equal(edge_index1[0], edge_index2[1]):
+        return False
+    if not torch.equal(edge_index1[1], edge_index2[0]):
+        return False
+    for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2):
+        if not torch.equal(edge_attr1, edge_attr2):
+            return False
+    return True
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, Optional[bool], Optional[int], str) -> Tensor  # noqa
+    pass
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, Tensor, Optional[int], str) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+    # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
+    pass
 
 
 def to_undirected(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
     reduce: str = "add",
 ) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
@@ -116,13 +153,13 @@ def to_undirected(
         edge_attr = None
         num_nodes = edge_attr
 
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
     edge_index = torch.stack([row, col], dim=0)
 
-    if edge_attr is not None and isinstance(edge_attr, Tensor):
+    if isinstance(edge_attr, Tensor):
         edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-    elif edge_attr is not None:
+    elif isinstance(edge_attr, (list, tuple)):
         edge_attr = [torch.cat([e, e], dim=0) for e in edge_attr]
 
     return coalesce(edge_index, edge_attr, num_nodes, reduce)

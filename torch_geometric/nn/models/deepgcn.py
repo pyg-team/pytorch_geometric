@@ -1,5 +1,9 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import Module
 from torch.utils.checkpoint import checkpoint
 
 
@@ -48,8 +52,15 @@ class DeepGCNLayer(torch.nn.Module):
             memory. Set this to :obj:`True` in case you encounter out-of-memory
             errors while going deep. (default: :obj:`False`)
     """
-    def __init__(self, conv=None, norm=None, act=None, block='res+',
-                 dropout=0., ckpt_grad=False):
+    def __init__(
+        self,
+        conv: Optional[Module] = None,
+        norm: Optional[Module] = None,
+        act: Optional[Module] = None,
+        block: str = 'res+',
+        dropout: float = 0.,
+        ckpt_grad: bool = False,
+    ):
         super().__init__()
 
         self.conv = conv
@@ -64,7 +75,7 @@ class DeepGCNLayer(torch.nn.Module):
         self.conv.reset_parameters()
         self.norm.reset_parameters()
 
-    def forward(self, *args, **kwargs):
+    def forward(self, *args, **kwargs) -> Tensor:
         """"""
         args = list(args)
         x = args.pop(0)

@@ -2,13 +2,17 @@ import math
 
 import torch
 
+import torch_geometric
 from torch_geometric.deprecation import deprecated
 from torch_geometric.utils import to_undirected
 
 
 @deprecated("use 'transforms.RandomLinkSplit' instead")
-def train_test_split_edges(data, val_ratio: float = 0.05,
-                           test_ratio: float = 0.1):
+def train_test_split_edges(
+    data: 'torch_geometric.data.Data',
+    val_ratio: float = 0.05,
+    test_ratio: float = 0.1,
+) -> 'torch_geometric.data.Data':
     r"""Splits the edges of a :class:`torch_geometric.data.Data` object
     into positive and negative train/val/test edges.
     As such, it will replace the :obj:`edge_index` attribute with

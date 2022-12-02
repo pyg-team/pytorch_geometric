@@ -67,6 +67,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
+from .lrgb import LRGBDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -75,6 +76,8 @@ from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
+from .dgraph import DGraphFin
+from .hydro_net import HydroNet
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -151,6 +154,7 @@ __all__ = [
     'Twitch',
     'Airports',
     'BAShapes',
+    'LRGBDataset',
     'MalNetTiny',
     'OMDB',
     'PolBlogs',
@@ -159,6 +163,8 @@ __all__ = [
     'RandomPartitionGraphDataset',
     'LINKXDataset',
     'EllipticBitcoinDataset',
+    'DGraphFin',
+    'HydroNet',
 ]
 
 classes = __all__

@@ -1,9 +1,9 @@
 package:
   name: pyg
-  version: 2.1.0
+  version: 2.2.0
 
 source:
-  path: ../..
+  url: https://files.pythonhosted.org/packages/de/29/dbefbb2b1349638bc9ec5a632d770e8e7fefc2455b8911d675b2ca82d9e1/torch_geometric-2.2.0.tar.gz
 
 requirements:
   host:
@@ -17,6 +17,7 @@ requirements:
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
+    - psutil
     - tqdm
     - jinja2
     - pyparsing
@@ -34,7 +35,6 @@ test:
     - torch_scatter
     - torch_sparse
     - torch_cluster
-    - torch_spline_conv
     - torch_geometric
     - torch_geometric.nn
     - torch_geometric.data

@@ -13,7 +13,7 @@ from torch_sparse import SparseTensor
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
-from torch_geometric.loader import RandomNodeSampler
+from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
 from torch_geometric.utils import index_to_mask
 
@@ -91,11 +91,11 @@ split_idx = dataset.get_idx_split()
 for split in ['train', 'valid', 'test']:
     data[f'{split}_mask'] = index_to_mask(split_idx[split], data.y.shape[0])
 
-train_loader = RandomNodeSampler(data, num_parts=10, shuffle=True,
-                                 num_workers=5)
+train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
+                                num_workers=5)
 # Increase the num_parts of the test loader if you cannot fit
 # the full batch graph into your GPU:
-test_loader = RandomNodeSampler(data, num_parts=1, num_workers=5)
+test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = RevGNN(

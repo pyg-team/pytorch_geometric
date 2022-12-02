@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
@@ -23,7 +24,7 @@ class NormalizeRotation(BaseTransform):
         self.max_points = max_points
         self.sort = sort
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         pos = data.pos
 
         if self.max_points > 0 and pos.size(0) > self.max_points:

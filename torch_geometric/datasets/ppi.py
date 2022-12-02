@@ -2,6 +2,7 @@ import json
 import os
 import os.path as osp
 from itertools import product
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -59,8 +60,14 @@ class PPI(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/ppi.zip'
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
 
         assert split in ['train', 'val', 'test']
 
@@ -74,13 +81,13 @@ class PPI(InMemoryDataset):
             self.data, self.slices = torch.load(self.processed_paths[2])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         splits = ['train', 'valid', 'test']
         files = ['feats.npy', 'graph_id.npy', 'graph.json', 'labels.npy']
         return [f'{split}_{name}' for split, name in product(splits, files)]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):

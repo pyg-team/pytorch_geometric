@@ -1,13 +1,18 @@
 from itertools import chain
+from typing import Any, Tuple, Union
 
 import torch
 from scipy.sparse.csgraph import minimum_spanning_tree
+from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.utils import to_undirected
 
 
-def tree_decomposition(mol, return_vocab=False):
+def tree_decomposition(
+    mol: Any,
+    return_vocab: bool = False,
+) -> Union[Tuple[Tensor, Tensor, int], Tuple[Tensor, Tensor, int, Tensor]]:
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.
@@ -16,12 +21,13 @@ def tree_decomposition(mol, return_vocab=False):
     of cliques.
 
     Args:
-        mol (rdkit.Chem.Mol): A :obj:`rdkit` molecule.
+        mol (rdkit.Chem.Mol): An :obj:`rdkit` molecule.
         return_vocab (bool, optional): If set to :obj:`True`, will return an
             identifier for each clique (ring, bond, bridged compounds, single).
             (default: :obj:`False`)
 
-    :rtype: (LongTensor, LongTensor, int)
+    :rtype: :obj:`(LongTensor, LongTensor, int)` if :obj:`return_vocab` is
+        :obj:`False`, else :obj:`(LongTensor, LongTensor, int, LongTensor)`
     """
     import rdkit.Chem as Chem
 

@@ -1,15 +1,21 @@
 from collections import defaultdict
-from typing import List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Tuple, Union
 
 import scipy.sparse
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
+import torch_geometric
+
 from .num_nodes import maybe_num_nodes
 
 
-def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
+def to_scipy_sparse_matrix(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> scipy.sparse.coo_matrix:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
@@ -44,7 +50,8 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
     return out
 
 
-def from_scipy_sparse_matrix(A):
+def from_scipy_sparse_matrix(
+        A: scipy.sparse.spmatrix) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
@@ -71,9 +78,14 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
-                to_undirected: Union[bool, str] = False,
-                remove_self_loops: bool = False):
+def to_networkx(
+    data: 'torch_geometric.data.Data',
+    node_attrs: Optional[Iterable[str]] = None,
+    edge_attrs: Optional[Iterable[str]] = None,
+    graph_attrs: Optional[Iterable[str]] = None,
+    to_undirected: Optional[Union[bool, str]] = False,
+    remove_self_loops: bool = False,
+) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
@@ -109,10 +121,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
     """
     import networkx as nx
 
-    if to_undirected:
-        G = nx.Graph()
-    else:
-        G = nx.DiGraph()
+    G = nx.Graph() if to_undirected else nx.DiGraph()
 
     G.add_nodes_from(range(data.num_nodes))
 
@@ -157,8 +166,11 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
     return G
 
 
-def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
-                  group_edge_attrs: Optional[Union[List[str], all]] = None):
+def from_networkx(
+    G: Any,
+    group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None,
+) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -236,7 +248,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         else:
             try:
                 data[key] = torch.tensor(value)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
 
     data['edge_index'] = edge_index.view(2, -1)
