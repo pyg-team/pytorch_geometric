@@ -23,6 +23,11 @@ def test_to_dense_adj():
         assert adj[0].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
         assert adj[1].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]
 
+    adj = to_dense_adj(edge_index, batch, max_num_nodes=2)
+    assert adj.size() == (2, 2, 2)
+    assert adj[0].tolist() == [[1, 1], [1, 0]]
+    assert adj[1].tolist() == [[0, 1], [0, 0]]
+
     adj = to_dense_adj(edge_index, batch, max_num_nodes=5)
     assert adj.size() == (2, 5, 5)
     assert adj[0][:3, :3].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
@@ -54,6 +59,9 @@ def test_to_dense_adj():
     adj = to_dense_adj(edge_index, max_num_nodes=10)
     assert adj.size() == (1, 10, 10)
     assert adj[0].nonzero(as_tuple=False).t().tolist() == edge_index.tolist()
+
+    adj = to_dense_adj(edge_index, batch, batch_size=4)
+    assert adj.size() == (4, 3, 3)
 
 
 def test_to_dense_adj_with_empty_edge_index():

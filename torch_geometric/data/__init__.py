@@ -1,7 +1,9 @@
+from .feature_store import FeatureStore, TensorAttr
+from .graph_store import GraphStore, EdgeAttr
 from .data import Data
 from .hetero_data import HeteroData
-from .temporal import TemporalData
 from .batch import Batch
+from .temporal import TemporalData
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
 from .lightning_datamodule import (
@@ -16,13 +18,17 @@ from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 __all__ = [
     'Data',
     'HeteroData',
-    'TemporalData',
     'Batch',
+    'TemporalData',
     'Dataset',
     'InMemoryDataset',
     'LightningDataset',
     'LightningNodeData',
     'LightningLinkData',
+    'FeatureStore',
+    'TensorAttr',
+    'GraphStore',
+    'EdgeAttr',
     'makedirs',
     'download_url',
     'extract_tar',
