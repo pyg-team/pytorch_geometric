@@ -1,5 +1,5 @@
 import math
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, Optional, Tuple, Union
@@ -147,7 +147,6 @@ class BaseSampler(ABC):
         As such, it is recommended to limit the amount of information stored in
         the sampler.
     """
-    @abstractmethod
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
@@ -162,9 +161,8 @@ class BaseSampler(ABC):
         2. The node indices to start sampling from
         3. The timestamps of the given seed nodes (optional)
         """
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
@@ -181,7 +179,7 @@ class BaseSampler(ABC):
         4. The labels of the seed links (optional)
         5. The timestamps of the given seed nodes (optional)
         """
-        pass
+        raise NotImplementedError
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:

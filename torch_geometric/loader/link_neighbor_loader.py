@@ -72,9 +72,10 @@ class LinkNeighborLoader(LinkLoader):
         way, *i.e.* negative edges may contain false negatives.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
@@ -162,7 +163,8 @@ class LinkNeighborLoader(LinkLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
