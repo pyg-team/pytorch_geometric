@@ -31,7 +31,7 @@ While this method adds stochasticity to the learning process, it reduces the mem
 
   **Figure 1:** The classical mini-batch GNN training paradigm.
 
-However, while minibatch training reduces the memory requirements of the chosen accelerator, it is not a silver bullet for all graph learning scalability problems.
+However, while mini-batch training reduces the memory requirements of the chosen accelerator, it is not a silver bullet for all graph learning scalability problems.
 In particular, since one must sample subgraphs to pass to the accelerator at each iteration of the learning process, the graph and features are traditionally required to be stored in the CPU DRAM of a user's machine.
 At large scale, this requirement can become quite burdensome:
 
