@@ -209,12 +209,14 @@ class NodeLoader(torch.utils.data.DataLoader):
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
-                raise ValueError('ERROR: affinity should be used with at '
-                                 'least one DL worker')
+                raise ValueError(
+                    f"'enable_cpu_affinity' should be used with at least one "
+                    f"worker (got {self.num_workers})")
             if loader_cores and len(loader_cores) != self.num_workers:
-                raise Exception('ERROR: cpu_affinity incorrect '
-                                f'number of loader_cores={loader_cores} '
-                                f'for num_workers={self.num_workers}')
+                raise ValueError(
+                    f"The number of loader cores (got {len(loader_cores)}) "
+                    f"in 'enable_cpu_affinity' should match with the number "
+                    f"of workers (got {self.num_workers})")
 
             worker_init_fn_old = self.worker_init_fn
             affinity_old = psutil.Process().cpu_affinity()
@@ -244,18 +246,18 @@ class NodeLoader(torch.utils.data.DataLoader):
                     raise Exception(
                         f'More workers than available cores {node0_cores[1:]}')
 
-                # set default loader core ids
+                # Set default loader core IDs:
                 loader_cores = node0_cores[1:self.num_workers + 1]
 
             try:
-                # set cpu affinity for dataloader
+                # Set CPU affinity for dataloader:
                 self.worker_init_fn = init_fn
                 self.cpu_affinity_enabled = True
                 logging.info(f'{self.num_workers} DataLoader workers '
                              f'are assigned to CPUs {loader_cores}')
                 yield
             finally:
-                # restore omp_num_threads and cpu affinity
+                # Restore omp_num_threads and cpu affinity:
                 psutil.Process().cpu_affinity(affinity_old)
                 torch.set_num_threads(nthreads_old)
                 self.worker_init_fn = worker_init_fn_old
