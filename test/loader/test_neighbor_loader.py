@@ -600,6 +600,5 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
                 ['taskset', '-c', '-p', f'{worker.pid}'],
                 stdout=subprocess.PIPE)
             stdout = process.communicate()[0].decode('utf-8')
-            print(stdout)
             out.append(int(stdout.split(':')[1].strip()))
     assert out == [1, 2][:num_workers]
