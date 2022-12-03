@@ -1,6 +1,6 @@
 import logging
 from scipy.special import softmax
-from typing import Optional, Tuple, Union, Dict
+from typing import Optional, Tuple, Union, Dict, List
 import numpy as np
 import torch
 from torch import Tensor
@@ -18,12 +18,10 @@ from torch_geometric.explain.config import (
 from torch_geometric.explain.explanations import Explanation
 from torch_geometric.utils import to_dense_adj
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import k_hop_subgraph
 
 from scipy.special import softmax
-# from pgmpy.estimators import PC as ConstraintBasedEstimator
 from pgmpy.estimators.CITests import chi_square
-from pgmpy.estimators import HillClimbSearch, BicScore
+from pgmpy.estimators import HillClimbSearch, BicScore, PC
 from pgmpy.models import BayesianModel
 from pgmpy.inference import VariableElimination
 from scipy import stats
@@ -46,7 +44,6 @@ Explanations for Graph Neural Networks"
 
     def __init__(
             self,
-            # num_layers: int = None, # part of model
             perturb_feature_list=None,
             perturb_mode="mean",  # mean, zero, max or uniform
             perturb_indicator="diff",  # diff or abs
@@ -68,8 +65,10 @@ Explanations for Graph Neural Networks"
             self,
             feature_matrix: torch.Tensor,
             node_idx: int,
+            pertubation_mode="randint",
             is_random: bool = False,
-            is_pertubation_scaled: bool = False):
+            is_pertubation_scaled: bool = False,
+            perturb_feature_list=None):
         r"""
         pertub node feature matrix. This allows for checking how much influence
         neighbouring nodes has on the output
@@ -77,7 +76,7 @@ Explanations for Graph Neural Networks"
             feature_matrix: node feature matrix of the input graph
                 of shape [num_nodes, num_features]
             node_idx: index of the node we are calculating the explanation for
-            is_random: whether to use the original feature matrix or a random number
+            pertubation_mode: how to pertube the features. must be one of [random, zero, mean, max]
             is_pertubation_scaled: whether to scale the pertubed matrix
                 with the original feature matrix
 
@@ -88,20 +87,34 @@ Explanations for Graph Neural Networks"
         # random = is_random for nothing, True for random.randint.
         # is_pertubation_scaled=True, "scale" for scaling with original feature
 
-        X_perturb = feature_matrix
-        if not is_pertubation_scaled:
-            if not is_random == 0:
-                perturb_array = X_perturb[node_idx]
-            else:
-                perturb_array = torch.randint(low=0, high=2, size=X_perturb[node_idx].shape[0])
-            X_perturb[node_idx] = perturb_array
-        elif is_pertubation_scaled:
-            if not is_random == 0:
-                perturb_array = X_perturb[node_idx]
-            else:
-                perturb_array = torch.multiply(X_perturb[node_idx],
-                                               torch.rand(size=X_perturb[node_idx].shape[0])) * 2
-            X_perturb[node_idx] = perturb_array
+        X_perturb = feature_matrix.detach().clone()
+        perturb_array = X_perturb[node_idx].clone()
+        epsilon = 0.05 * torch.max(feature_matrix, dim=0).values
+
+        if is_random:
+            if not is_pertubation_scaled:
+                if pertubation_mode=="randint":
+                    perturb_array = torch.randint(low=0, high=2, size=X_perturb[node_idx].shape[0])
+                # graph explainers
+                for i in range(perturb_array.shape([0])):
+                    if i in perturb_feature_list:
+                        if pertubation_mode == "mean":
+                            perturb_array[i] = torch.mean(feature_matrix[:, i])
+                        elif pertubation_mode == "zero":
+                            perturb_array[i] = 0
+                        elif pertubation_mode == "max":
+                            perturb_array[i] = torch.max(feature_matrix[:, i])
+                        elif pertubation_mode == "uniform":
+                            perturb_array[i] = perturb_array[i] + torch.tensor(np.random.uniform(low=-epsilon[i], high=epsilon[i]))
+                            if perturb_array[i] < 0:
+                                perturb_array[i] = 0
+                            elif perturb_array[i] > torch.max(feature_matrix, dim=0)[i]:
+                                perturb_array[i] = torch.max(feature_matrix, dim=0)[i]
+
+            elif is_pertubation_scaled:
+                    perturb_array = torch.multiply(X_perturb[node_idx],
+                                                   torch.rand(size=X_perturb[node_idx].shape[0])) * 2
+        X_perturb[node_idx] = perturb_array
         return X_perturb
 
     def forward(
@@ -118,6 +131,21 @@ Explanations for Graph Neural Networks"
             **kwargs,
     ) -> Explanation:
 
+        if isinstance(index, Tensor):
+            if index.numel() > 1:
+                raise NotImplementedError(
+                    f"'{self.__class__.__name}' only supports a single "
+                    f"`index` for now")
+            index = index.item()
+
+        if isinstance(target_index, Tensor):
+            if target_index.numel() > 1:
+                raise NotImplementedError(
+                    f"'{self.__class__.__name__}' only supports a single "
+                    f"`target_index` for now")
+            target_index = target_index.item()
+
+
         assert model_config.task_level in [
             ModelTaskLevel.graph, ModelTaskLevel.node
         ]
@@ -131,25 +159,33 @@ Explanations for Graph Neural Networks"
         edge_weight = kwargs.get('edge_weight')
         if model_config.task_level == ModelTaskLevel.node:
 
-            neighbors, pgm_explanation, marginal_prob, pgm_stats, pgm_nodes, data_pgm = self._explain_node(
+            neighbors, pgm_stats = self._explain_node(
                 model,x, index,
-            edge_index,
-            edge_weight,
-            explainer_config,
-            model_config,
-            target[index],
-            num_samples= 100,
-            top_node = None,
-                                          significance_threshold = 0.05,
-                                                                   pred_threshold = 0.1)
+                edge_index,
+                edge_weight,
+                explainer_config,
+                model_config,
+                target[index],
+                num_samples= 100,
+                top_node = None,
+                significance_threshold = 0.05,
+                pred_threshold = 0.1)
             print(node_feature_mask, 'here')
         elif model_config.task_level == ModelTaskLevel.graph:
             pass
             # TODO
-            # node_mask, edge_mask = self._explain_graph(model, x, edge_index,
-            #                                            explainer_config,
-            #                                            model_config, target,
-            #                                            target_index, **kwargs)
+            pgm_nodes, p_values, candidate_nodes = self._explain_graph(
+                model, x, index,
+                edge_index,
+                edge_weight,
+                explainer_config,
+                model_config,
+                target[index],
+                num_samples=100,
+                top_node=None,
+                significance_threshold=0.05,
+                pred_threshold=0.1,
+                               **kwargs)
 
         # if explainer_config.node_mask_type == MaskType.object:
         #     node_feat_mask = None
@@ -161,37 +197,19 @@ Explanations for Graph Neural Networks"
         return Explanation(
             x=x, edge_index=edge_index,
             markov_blanket=neighbors,
-            pgm_explation=pgm_explanation,
-            marginal_probability=marginal_prob,
-            pgm_stats=pgm_stats, pgm_nodes=pgm_nodes, data_pgm=data_pgm)
-
-    def n_hops_adj(self, n_hops, edge_index):
-        # edge_index is the sparse representation of the adj matrix
-        # Compute the n-hops adjacency matrix
-        # adj = to_dense_adj(edge_index) # todo might not need this??
-
-        n_hop_adjacency = power_adj = edge_index
-        for i in range(n_hops - 1):
-            power_adj = power_adj @ edge_index
-            n_hop_adjacency = n_hop_adjacency + power_adj
-            n_hop_adjacency = (n_hop_adjacency > 0).int()
-        return n_hop_adjacency
-    #
-    # def extract_n_hops_neighbors(self, edge_index, node_idx):
-    #     # Return the n-hops neighbors of a node
-    #     node_adjacency = edge_index[node_idx]
-    #     neighbors = torch.nonzero(node_adjacency)[0]
-    #     node_idx_new = sum(node_adjacency[:node_idx])
-    #     sub_A = self.A[neighbors][:, neighbors]
-    #     sub_X = self.X[neighbors]
-    #     return node_idx_new, sub_A, sub_X, neighbors
+            # pgm_explation=pgm_explanation,
+            # marginal_probability=marginal_prob,
+            pgm_stats=pgm_stats,
+        )
 
     def batch_perturb_features_on_node(self, num_samples, index_to_perturb,
-        X_features, edge_features, percentage, p_threshold, pred_threshold):
+        X_features, edge_features, model, percentage, p_threshold, pred_threshold, snorm_node, snorm_edge):
+        # for pertubing a batch of graphs for graph classification tasks
+
         X_torch = torch.tensor(X_features, dtype=torch.float)
         E_torch = torch.tensor(self.edge_features, dtype=torch.float)
 
-        pred_torch = self.model.forward(self.graph, X_torch, E_torch, self.snorm_n, self.snorm_e)
+        pred_torch = model(self.graph, X_features, edge_features, snorm_node, snorm_edge)
         soft_pred = np.asarray(softmax(np.asarray(pred_torch[0].data)))
         pred_label = np.argmax(soft_pred)
         num_nodes = self.X_feat.shape[0]
@@ -233,6 +251,196 @@ Explanations for Graph Neural Networks"
                 Samples[i, num_nodes] = 0
 
         return Samples
+
+
+    def _explain_graph(
+            self,
+            # model: torch.nn.Module,
+            # x: Tensor,
+            # edge_feature: Tensor,
+            # explainer_config: ExplainerConfig,
+            # model_config: ModelConfig,
+            # target: Tensor,
+            # edge_index: Optional[Union[int, Tensor]] = None,
+            # edge_weight: Optional[Union[int, Tensor]] = None,
+            # target_index: Optional[Union[int, Tensor]] = None,
+
+            model, x, index,
+            edge_index,
+            edge_weight,
+            explainer_config,
+            model_config,
+            target,
+            num_samples = 100,
+    top_node = None,
+    significance_threshold = 0.05,
+    pred_threshold = 0.1,
+
+            **kwargs,
+    ) -> Tuple[Tensor, Optional[Tensor]]:
+        num_nodes = x.shape[0]
+        if top_node == None:
+            top_node = int(num_nodes / 20)
+
+        #         Round 1
+        Samples = self.batch_perturb_features_on_node(int(num_samples / 2), range(num_nodes), percentage,
+                                                      significance_threshold, pred_threshold)
+
+        data = pd.DataFrame(Samples)
+        # est = PC(data)
+
+        p_values = []
+
+        target = num_nodes  # The entry for the graph classification data is at "num_nodes"
+        for node in range(num_nodes):
+            chi2, p = chi_square(node, target, [], data)
+            p_values.append(p)
+
+        number_candidates = int(top_node * 4)
+        candidate_nodes = np.argpartition(p_values, number_candidates)[0:number_candidates]
+
+        #         Round 2
+        Samples = self.batch_perturb_features_on_node(num_samples, candidate_nodes, percentage,
+                                                      significance_threshold, pred_threshold)
+
+        # todo the PC estimator is in the code but it does nothing??
+        data = pd.DataFrame(Samples)
+        # est = PC(data)
+
+        p_values = []
+        dependent_nodes = []
+
+        target = num_nodes
+        for node in range(num_nodes):
+            chi2, p = chi_square(node, target, [], data)
+            p_values.append(p)
+            if p < significance_threshold:
+                dependent_nodes.append(node)
+
+        top_p = np.min((top_node, num_nodes - 1))
+        ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
+        pgm_nodes = list(ind_top_p)
+
+        return pgm_nodes, p_values, candidate_nodes
+
+    def _explain_node(
+            self,
+            model: torch.nn.Module,
+            x: Tensor, # [num_rows x num_features]
+            node_index: int,
+            edge_index: Tensor,
+            edge_weight: Tensor,
+            explainer_config: ExplainerConfig,
+            model_config: ModelConfig,
+            target: Tensor,
+            num_samples: int = 100,
+            top_node: int =None,
+            significance_threshold=0.05,
+            pred_threshold=0.1
+
+    ):
+        logging.info(f'Explaining node: {node_index}')
+
+        x_new, edge_index_new, mapping, neighbors, edge_mask_new, kwargs = self.subgraph(
+            model=model,
+            node_idx=node_index,
+            x=x,
+            edge_index=edge_index)
+
+        # neighbors = neighbors.cpu().detach().numpy()
+
+        if node_index not in neighbors:
+            neighbors = torch.cat([neighbors, node_index], dim=1)
+
+        pred_model = model(x, edge_index, edge_weight)
+
+        softmax_pred = torch.softmax(pred_model, dim=1)
+        # prediction of the node we want to get explanation for
+        prediction_selected_node = pred_model[node_index].data
+        label_node = torch.argmax(prediction_selected_node)
+        # softmax_prediction_selected_node = softmax_pred[node_index]
+
+        Samples = []
+        Pred_Samples = []
+
+        for iteration in range(num_samples):
+            # pertubation array
+            X_perturb = x.detach().clone()
+
+            sample = []
+            for node in neighbors:
+                seed = np.random.choice([1, 0])
+                if seed == 1:
+                    pertubation_mode="random"
+                else:
+                    pertubation_mode="zero"
+                X_perturb = self.perturb_features_on_node(X_perturb, node, pertubation_mode=pertubation_mode)
+                sample.append(seed)
+
+            # X_perturb = X_perturb.to(model.device)
+            # prediction after pertubation
+            pred_perturb = model(X_perturb, edge_index, edge_weight)
+            softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
+
+            sample_bool = []
+            for node in neighbors:
+                if (softmax_pred_perturb[node, target] + pred_threshold) < softmax_pred[node, target]:
+                    sample_bool.append(1)
+                else:
+                    sample_bool.append(0)
+
+            Samples.append(sample)
+            Pred_Samples.append(sample_bool)
+
+        Samples = np.asarray(Samples)
+        Pred_Samples = np.asarray(Pred_Samples)
+        Combine_Samples = (Samples * 10 + Pred_Samples) + 1
+
+        neighbors = np.array(neighbors.detach().cpu())
+        data_pgm = pd.DataFrame(Combine_Samples)
+        data_pgm = data_pgm.rename(columns={0: "A", 1: "B"})  # Trick to use chi_square test on first two data columns
+        index_original_to_subgraph = dict(zip(neighbors, list(data_pgm.columns)))
+        index_subgraph_to_original = dict(zip(list(data_pgm.columns), neighbors))
+        p_values = []
+
+        dependent_neighbors = []
+        dependent_neighbors_p_values = []
+        for node in neighbors:
+            if node == node_index:
+                p = 0  # p<0.05 => we are confident that we can reject the null hypothesis (i.e. the prediction is the same after perturbing the neighbouring node
+                # => this neighbour has no influence on the prediction - should not be in the explanation)
+            else:
+                chi2, p, _ = chi_square(
+                    index_original_to_subgraph[node], index_original_to_subgraph[node_index], [],
+                    data_pgm, boolean=False, significance_level=significance_threshold
+                )
+            p_values.append(p)
+            if p < significance_threshold:
+                dependent_neighbors.append(node)
+                dependent_neighbors_p_values.append(p)
+        # dict of node_id: p_value of whether it influences the prediction of target node
+        pgm_stats = dict(zip(neighbors, p_values))
+
+        if top_node is None:
+            pgm_nodes = dependent_neighbors
+        else:
+            top_p = np.min((top_node, len(neighbors) - 1))
+            ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
+            pgm_nodes = [index_subgraph_to_original[node] for node in ind_top_p]
+        # todo not sure what this is doing?
+        data_pgm = data_pgm.rename(columns={"A": 0, "B": 1}).rename(columns=index_subgraph_to_original)
+
+        return pgm_nodes, pgm_stats
+
+        # pgm_explanation = self.pgm_generate(target, data_pgm, pgm_stats, neighbors)
+        # marginal_probs = []
+        # for num_of_evidence in range(len(neighbors) - 1):
+        #     cond_prob = self.pgm_conditional_prob(node_index, pgm_explanation,
+        #                                                neighbors[0:num_of_evidence + 1])
+        #     marginal_probs.append(dict(
+        #         conditional_probability=cond_prob,
+        #         conditioned_on_nodes=neighbors[0:num_of_evidence + 1]))
+        return neighbors, pgm_stats
 
     def generalize_target(self, x):
         if x > 10:
@@ -437,147 +645,9 @@ Explanations for Graph Neural Networks"
                             elimination_order=elimination_order, show_progress=False)
         return q.values[0]
 
-    def get_model_layers(self, model):
-        r"""
-        get the number of message passing layers in the model-- in PGM only the nodes reachable by
-        message passing is considered for the explanation
-        Args:
-            model:
 
-        Returns:
 
-        """
-        return [module for module in model.modules() if not isinstance(module, MessagePassing)]
-
-    def _explain_graph(
-            self,
-            model: torch.nn.Module,
-            x: Tensor,
-            edge_index: Tensor,
-            explainer_config: ExplainerConfig,
-            model_config: ModelConfig,
-            target: Tensor,
-            target_index: Optional[Union[int, Tensor]] = None,
-            **kwargs,
-    ) -> Tuple[Tensor, Optional[Tensor]]:
-        pass
-
-    def _explain_node(
-            self,
-            model: torch.nn.Module,
-            x: Tensor, # [num_rows x num_features]
-            node_index: int,
-            edge_index: Tensor,
-            edge_weight: Tensor,
-            explainer_config: ExplainerConfig,
-            model_config: ModelConfig,
-            target: Tensor,
-            num_samples: int = 100,
-            top_node: int =None,
-            significance_threshold=0.05,
-            pred_threshold=0.1
-
-    ):
-        logging.info(f'Explaining node: {node_index}')
-        # we only need to consider the effects of neighbours out to the
-        # number of GNN layers, so the subgraph num_hops is set to this
-        num_hops = len(self.get_model_layers(model))
-        neighbors, edge_index_new, mapping, edge_mask = k_hop_subgraph(
-            node_index, num_hops=num_hops, edge_index=edge_index, relabel_nodes=True)
-
-        neighbors = neighbors.cpu().detach().numpy()
-
-        if node_index not in neighbors:
-            neighbors = np.append(neighbors, node_index)
-
-        pred_model = model(x, edge_index, edge_weight)
-
-        softmax_pred = np.asarray([softmax(np.asarray(pred_model[node_].data.cpu())) for node_ in range(x.shape[0])])
-        pred_single_node = pred_model[node_index].data
-        # label_node = torch.argmax(pred_single_node)
-        # soft_pred_single_node = torch.softmax(pred_single_node)
-
-        Samples = []
-        Pred_Samples = []
-
-        for iteration in range(num_samples):
-
-            X_perturb = x.cpu().detach().numpy()
-            sample = []
-            for node in neighbors:
-                seed = np.random.choice([1, 0])
-                if seed == 1:
-                    X_perturb = self.perturb_features_on_node(X_perturb, node, is_random=True)
-                sample.append(seed)
-
-            X_perturb_torch = torch.tensor(X_perturb, dtype=torch.float).to(edge_index.device)
-            pred_perturb_torch = model(X_perturb_torch, edge_index, edge_weight).cpu()
-            softmax_pred_perturb = np.asarray(
-                [softmax(np.asarray(pred_perturb_torch[node_].data)) for node_ in range(x.shape[0])]
-            )
-
-            sample_bool = []
-            for node in neighbors:
-                if (softmax_pred_perturb[node, np.argmax(softmax_pred[node])] + pred_threshold) < np.max(softmax_pred[node]):
-                    sample_bool.append(1)
-                else:
-                    sample_bool.append(0)
-
-            Samples.append(sample)
-            Pred_Samples.append(sample_bool)
-
-        Samples = np.asarray(Samples)
-        Pred_Samples = np.asarray(Pred_Samples)
-        Combine_Samples = Samples - Samples
-        for s in range(Samples.shape[0]):
-            Combine_Samples[s] = np.asarray(
-                [Samples[s, i] * 10 + Pred_Samples[s, i] + 1 for i in range(Samples.shape[1])]
-            )
-
-        data_pgm = pd.DataFrame(Combine_Samples)
-        data_pgm = data_pgm.rename(columns={0: "A", 1: "B"})  # Trick to use chi_square test on first two data columns
-        ind_ori_to_sub = dict(zip(neighbors, list(data_pgm.columns)))
-        ind_sub_to_ori = dict(zip(list(data_pgm.columns), neighbors))
-        p_values = []
-
-        dependent_neighbors = []
-        dependent_neighbors_p_values = []
-        for node in neighbors:
-            if node == node_index:
-                p = 0  # p<0.05 => we are confident that we can reject the null hypothesis (i.e. the prediction is the same after perturbing the neighbouring node
-                # => this neighbour has no influence on the prediction - should not be in the explanation)
-            else:
-                chi2, p, _ = chi_square(
-                    ind_ori_to_sub[node], ind_ori_to_sub[node_index], [],
-                    data_pgm, boolean=False, significance_level=significance_threshold
-                )
-            p_values.append(p)
-            if p < significance_threshold:
-                dependent_neighbors.append(node)
-                dependent_neighbors_p_values.append(p)
-        # dict of node_id: p_value of whether it influences the prediction of target node
-        pgm_stats = dict(zip(neighbors, p_values))
-
-        if top_node == None:
-            pgm_nodes = dependent_neighbors
-        else:
-            top_p = np.min((top_node, len(neighbors) - 1))
-            ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
-            pgm_nodes = [ind_sub_to_ori[node] for node in ind_top_p]
-
-        data_pgm = data_pgm.rename(columns={"A": 0, "B": 1})
-        data_pgm = data_pgm.rename(columns=ind_sub_to_ori)
-
-        pgm_explanation = self.pgm_generate(target, data_pgm, pgm_stats, neighbors)
-        marginal_probs = []
-        for num_of_evidence in range(len(neighbors) - 1):
-            cond_prob = self.pgm_conditional_prob(node_index, pgm_explanation,
-                                                       neighbors[0:num_of_evidence + 1])
-            marginal_probs.append(dict(
-                conditional_probability=cond_prob,
-                conditioned_on_nodes=neighbors[0:num_of_evidence + 1]))
-
-        return neighbors, pgm_explanation, marginal_probs, pgm_stats, pgm_nodes, data_pgm
+        # return neighbors, pgm_explanation, marginal_probs, pgm_stats, pgm_nodes, data_pgm
 
     def supports(
             self,
