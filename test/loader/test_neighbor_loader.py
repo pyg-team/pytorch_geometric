@@ -580,7 +580,6 @@ def test_memmap_neighbor_loader():
 @pytest.mark.parametrize('num_workers,loader_cores', [
     (1, None),
     (1, [1]),
-    (2, [1, 2]),
 ])
 def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
