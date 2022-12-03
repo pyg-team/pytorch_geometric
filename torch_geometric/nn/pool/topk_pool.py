@@ -52,12 +52,13 @@ def topk(
             k = (float(ratio) * num_nodes.to(x.dtype)).ceil().to(torch.long)
 
         if isinstance(ratio, int) and (k == ratio).all():
-            mask = torch.arange(ratio, dtype=torch.long,
-                                device=x.device).repeat(batch_size)
-            mask += (torch.arange(batch_size, dtype=torch.long,
-                                  device=x.device).repeat_interleave(ratio) *
-                     max_num_nodes)
+            # If all graphs have exactly `ratio` or more than `ratio` entries,
+            # we can just pick the first entries in `perm` batch-wise:
+            mask = torch.arange(batch_size, device=x.device) * max_num_nodes
+            mask = mask.view(-1, 1).repeat(1, ratio).view(-1)
+            mask += torch.arange(ratio, device=x.device).repeat(batch_size)
         else:
+            # Otherwise, compute indices per graph:
             mask = [
                 torch.arange(k[i], dtype=torch.long, device=x.device) +
                 i * max_num_nodes for i in range(batch_size)
