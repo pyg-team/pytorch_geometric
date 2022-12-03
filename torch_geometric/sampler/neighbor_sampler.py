@@ -12,13 +12,15 @@ from torch_geometric.data import (
     remote_backend_utils,
 )
 from torch_geometric.data.graph_store import EdgeLayout
-from torch_geometric.sampler.base import (
+from torch_geometric.sampler import (
     BaseSampler,
-    EdgeSamplerInput,
     HeteroSamplerOutput,
+    SamplerOutput,
+)
+from torch_geometric.sampler.base import (
+    EdgeSamplerInput,
     NegativeSamplingConfig,
     NodeSamplerInput,
-    SamplerOutput,
 )
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
