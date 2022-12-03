@@ -577,8 +577,11 @@ def test_memmap_neighbor_loader():
 
 
 @onlyUnix
-@pytest.mark.parametrize('num_workers', [1, 2])
-@pytest.mark.parametrize('loader_cores', [None, [1, 2]])
+@pytest.mark.parametrize('num_workers,loader_cores', [
+    (1, None),
+    (1, [1]),
+    (2, None),
+])
 def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
@@ -593,7 +596,7 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
         iterator = loader._get_iterator().iterator
         workers = iterator._workers
         for worker in workers:
-            sleep(1)  # gives time for worker to init
+            sleep(1)  # Gives time for worker to initialize.
             process = subprocess.Popen(
                 ['taskset', '-c', '-p', f'{worker.pid}'],
                 stdout=subprocess.PIPE)

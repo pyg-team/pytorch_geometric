@@ -227,8 +227,8 @@ class NodeLoader(torch.utils.data.DataLoader):
                 try:
                     psutil.Process().cpu_affinity([loader_cores[worker_id]])
                 except IndexError:
-                    raise Exception('ERROR: cannot use affinity'
-                                    f'id={worker_id} cpu={loader_cores}')
+                    raise ValueError(f"Cannot use CPU affinity for worker ID "
+                                     f"{worker_id} on CPU {loader_cores}")
 
                 worker_init_fn_old(worker_id)
 
@@ -237,14 +237,15 @@ class NodeLoader(torch.utils.data.DataLoader):
                 numa_info = get_numa_nodes_cores()
 
                 if numa_info and len(numa_info[0]) > self.num_workers:
-                    # take one thread per each node 0 core
+                    # Take one thread per each node 0 core:
                     node0_cores = [cpus[0] for core_id, cpus in numa_info[0]]
                 else:
                     node0_cores = list(range(psutil.cpu_count(logical=False)))
 
                 if len(node0_cores) - 1 < self.num_workers:
-                    raise Exception(
-                        f'More workers than available cores {node0_cores[1:]}')
+                    raise ValueError(
+                        f"More workers (got {self.num_workers}) than "
+                        f"available cores (got {len(node0_cores) - 1})")
 
                 # Set default loader core IDs:
                 loader_cores = node0_cores[1:self.num_workers + 1]
@@ -253,7 +254,7 @@ class NodeLoader(torch.utils.data.DataLoader):
                 # Set CPU affinity for dataloader:
                 self.worker_init_fn = init_fn
                 self.cpu_affinity_enabled = True
-                logging.info(f'{self.num_workers} DataLoader workers '
+                logging.info(f'{self.num_workers} data loader workers '
                              f'are assigned to CPUs {loader_cores}')
                 yield
             finally:
