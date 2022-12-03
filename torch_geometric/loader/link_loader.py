@@ -2,9 +2,7 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
     InputData,

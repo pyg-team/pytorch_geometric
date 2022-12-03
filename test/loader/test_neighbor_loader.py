@@ -12,9 +12,12 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import onlyUnix, withPackage
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyUnix,
+    withPackage,
+)
 from torch_geometric.utils import k_hop_subgraph
 
 try:

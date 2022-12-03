@@ -5,9 +5,7 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 import psutil
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
     InputData,
@@ -17,12 +15,12 @@ from torch_geometric.loader.utils import (
     get_input_nodes,
     get_numa_nodes_cores,
 )
-from torch_geometric.sampler.base import (
+from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
-    NodeSamplerInput,
     SamplerOutput,
 )
+from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.typing import InputNodes, OptTensor
 
 

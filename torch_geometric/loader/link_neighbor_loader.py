@@ -1,8 +1,6 @@
 from typing import Callable, Optional, Tuple, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
 from torch_geometric.loader.utils import get_edge_label_index
 from torch_geometric.sampler import NeighborSampler

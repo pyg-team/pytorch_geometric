@@ -2,12 +2,10 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
 
-from torch_geometric.data import HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
-from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.data import FeatureStore, GraphStore, HeteroData
+from torch_geometric.loader import NodeLoader
 from torch_geometric.loader.utils import get_input_nodes
-from torch_geometric.sampler.hgt_sampler import HGTSampler
+from torch_geometric.sampler import HGTSampler
 from torch_geometric.typing import NodeType
 
 
