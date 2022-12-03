@@ -3,12 +3,9 @@ from dataclasses import dataclass
 import pytest
 import torch
 
-from torch_geometric.data.feature_store import (
-    AttrView,
-    TensorAttr,
-    _field_status,
-)
-from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.data import TensorAttr
+from torch_geometric.data.feature_store import AttrView, _field_status
+from torch_geometric.testing import MyFeatureStore
 
 
 @dataclass

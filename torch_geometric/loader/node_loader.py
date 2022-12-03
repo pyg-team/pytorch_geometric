@@ -5,9 +5,7 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 import psutil
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
     InputData,
@@ -17,32 +15,35 @@ from torch_geometric.loader.utils import (
     get_input_nodes,
     get_numa_nodes_cores,
 )
-from torch_geometric.sampler.base import (
+from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
-    NodeSamplerInput,
     SamplerOutput,
 )
+from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.typing import InputNodes, OptTensor
 
 
 class NodeLoader(torch.utils.data.DataLoader):
-    r"""A data loader that performs neighbor sampling from node information,
+    r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
-    implementation that defines a :meth:`sample_from_nodes` function and is
-    supported on the provided input :obj:`data` object.
+    implementation that defines a
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes` function and
+    is supported on the provided input :obj:`data` object.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         node_sampler (torch_geometric.sampler.BaseSampler): The sampler
-            implementation to be used with this loader. Note that the
-            sampler implementation must be compatible with the input data
-            object.
+            implementation to be used with this loader.
+            Needs to implement
+            :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+            The sampler implementation must be compatible with the input
+            :obj:`data` object.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
-            indices of nodes for which neighbors are sampled to create
-            mini-batches.
+            indices of seed nodes to start sampling from.
             Needs to be either given as a :obj:`torch.LongTensor` or
             :obj:`torch.BoolTensor`.
             If set to :obj:`None`, all nodes will be considered.
@@ -59,7 +60,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.

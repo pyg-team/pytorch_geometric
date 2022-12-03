@@ -1,3 +1,5 @@
+from .feature_store import FeatureStore, TensorAttr
+from .graph_store import GraphStore, EdgeAttr
 from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
@@ -9,8 +11,6 @@ from .lightning_datamodule import (
     LightningLinkData,
     LightningNodeData,
 )
-from .feature_store import FeatureStore, TensorAttr
-from .graph_store import GraphStore, EdgeAttr
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
