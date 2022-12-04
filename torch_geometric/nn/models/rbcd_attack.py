@@ -109,7 +109,7 @@ class PRBCDAttack(torch.nn.Module):
             if loss == 'masked':
                 self.loss = self._masked_cross_entropy
             elif loss == 'margin':
-                self.loss = self._margin
+                self.loss = self._margin_loss
             elif loss == 'prob_margin':
                 self.loss = self._probability_margin_loss
             elif loss == 'tanh_margin':
