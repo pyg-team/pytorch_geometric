@@ -10,9 +10,14 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData, remote_backend_utils
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    TensorAttr,
+    remote_backend_utils,
+)
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     FeatureTensorType,
