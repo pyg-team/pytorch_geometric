@@ -1,8 +1,10 @@
 import pytest
 import torch
+
 from torch_geometric.data import Data
-from torch_geometric.utils import erdos_renyi_graph
 from torch_geometric.datasets.generators import ERGraph, Motif
+from torch_geometric.utils import erdos_renyi_graph
+
 
 @pytest.mark.parametrize('num_nodes', [10, 50, 100])
 @pytest.mark.parametrize('edge_prob', [0.1, 0.2, 0.9])
@@ -10,9 +12,8 @@ from torch_geometric.datasets.generators import ERGraph, Motif
 def test(num_nodes, edge_prob, num_motifs):
     # check if initializes correctly
     motif = Motif(structure="house")
-    er_graph_gen = ERGraph(
-        motif=motif, num_nodes=num_nodes, edge_prob=edge_prob, num_motifs=num_motifs
-    )
+    er_graph_gen = ERGraph(motif=motif, num_nodes=num_nodes,
+                           edge_prob=edge_prob, num_motifs=num_motifs)
 
     # check if it has `generate_base_graph()` method
     assert hasattr(er_graph_gen, 'generate_base_graph')
