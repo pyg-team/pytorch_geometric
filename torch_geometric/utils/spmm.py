@@ -8,8 +8,8 @@ try:
     from torch_sparse import matmul as torch_sparse_matmul
 except ImportError:
 
-    def torch_spare_matmul(src: SparseTensor, other: Tensor,
-                           reduce: str = "sum") -> Tensor:
+    def torch_sparse_matmul(src: SparseTensor, other: Tensor,
+                            reduce: str = "sum") -> Tensor:
         raise NotImplementedError
 
 
