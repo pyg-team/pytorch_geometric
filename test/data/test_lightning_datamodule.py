@@ -13,9 +13,13 @@ from torch_geometric.data import (
 )
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.sampler import BaseSampler, NeighborSampler
-from torch_geometric.testing import onlyCUDA, onlyFullTest, withPackage
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyCUDA,
+    onlyFullTest,
+    withPackage,
+)
 
 try:
     from pytorch_lightning import LightningModule
