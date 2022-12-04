@@ -19,7 +19,7 @@ class ERGraph(GraphGenerator):
     def __init__(
         self,
         motif: Callable,
-        num_nodes: int,
+        num_nodes: int = 300,
         edge_prob: float = 5,
         num_motifs: int = 80,
     ):
@@ -32,12 +32,10 @@ class ERGraph(GraphGenerator):
         self.attach_motif()
         self.generate_feature()
 
-        data = Data(
+        return Data(
             x=self.x,
             edge_index=self.edge_index,
             y=self.node_label,
             expl_mask=self.expl_mask,
             edge_label=self.edge_label,
         )
-
-        return data
