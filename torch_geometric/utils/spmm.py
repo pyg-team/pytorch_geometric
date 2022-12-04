@@ -4,6 +4,14 @@ from torch import Tensor
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import is_torch_sparse_tensor
 
+try:
+    from torch_sparse import matmul as torch_sparse_matmul
+except ImportError:
+
+    def torch_spare_matmul(src: SparseTensor, other: Tensor,
+                           reduce: str = "sum") -> Tensor:
+        raise NotImplementedError
+
 
 @torch.jit._overload
 def spmm(src, other, reduce):
@@ -34,8 +42,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     assert reduce in ['sum', 'add', 'mean', 'min', 'max']
 
     if isinstance(src, SparseTensor):
-        from torch_sparse import matmul
-        return matmul(src, other, reduce)
+        return torch_sparse_matmul(src, other, reduce)
 
     if not is_torch_sparse_tensor(src):
         raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
