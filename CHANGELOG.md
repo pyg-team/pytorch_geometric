@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added `GRBCD` and `PRBCD` adversarial attack ([#5972](https://github.com/pyg-team/pytorch_geometric/pull/5972))
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 ### Changed
@@ -15,7 +16,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-12-01
 ### Added
-- Added `GRBCD` and `PRBCD` adversarial attack ([#5972](https://github.com/pyg-team/pytorch_geometric/pull/5972))
 - Extended `GNNExplainer` to support edge level explanations ([#6056](https://github.com/pyg-team/pytorch_geometric/pull/6056))
 - Added CPU affinitization for `NodeLoader` ([#6005](https://github.com/pyg-team/pytorch_geometric/pull/6005))
 - Added triplet sampling in `LinkNeighborLoader` ([#6004](https://github.com/pyg-team/pytorch_geometric/pull/6004))
