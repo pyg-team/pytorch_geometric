@@ -175,8 +175,8 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
 
 
-model = Model(user_input_size=data['user'].num_nodes,
-              item_input_size=data['item'].num_nodes,
+model = Model(num_users=data['user'].num_nodes,
+              num_items=data['item'].num_nodes,
               hidden_channels=64,
               out_channels=64)
 model = model.to(device)
@@ -206,15 +206,17 @@ def train():
 def test(loader):
     model.eval()
     accs, precisions, recalls, f1s = [], [], [], []
-
+    i = 0
     for batch in tqdm.tqdm(loader):
+        if i >= 1000:
+            break
         batch = batch.to(device)
         out = model(batch.x_dict,
                     batch.edge_index_dict,
                     batch['user', 'item'].edge_label_index
         ).clamp(min=0, max=1).round().cpu()
         target = batch['user', 'item'].edge_label.round().cpu()
-        
+
         acc = accuracy_score(target, out)
         precision = precision_score(target, out)
         recall = recall_score(target, out)
@@ -223,6 +225,7 @@ def test(loader):
         precisions.append(precision)
         recalls.append(recall)
         f1s.append(f1)
+        i += 1
 
     import numpy as np
 
@@ -241,7 +244,7 @@ for epoch in range(1, 51):
     test_acc, test_precision, test_recall, test_f1 = test(test_loader)
 
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
-    print(f'Eval Index: | Accuracy | Precision | Recall | F1_score')
+    print(f'Eval Index: Accuracy | Precision | Recall | F1_score')
     print(f'Train: {train_acc:.4f} | {train_precision:.4f} | {train_recall:.4f} \
           | {train_f1:.4f}')
     print(f'Val:   {val_acc:.4f} | {val_precision:.4f} | {val_recall:.4f} \
