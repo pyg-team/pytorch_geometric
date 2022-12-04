@@ -1,7 +1,10 @@
 from typing import Optional
 
+import torch
 from torch import Tensor
-from torch_scatter import gather_csr, scatter, segment_csr
+from torch_scatter import gather_csr, segment_csr
+
+from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -54,17 +57,21 @@ def softmax(
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
         ptr = ptr.view(size)
-        src_max = gather_csr(segment_csr(src, ptr, reduce='max'), ptr)
+        with torch.no_grad():
+            src_max = segment_csr(src, ptr, reduce='max')
+            src_max = gather_csr(src_max, ptr)
         out = (src - src_max).exp()
-        out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
+        out_sum = segment_csr(out, ptr, reduce='sum') + 1e-16
+        out_sum = gather_csr(out_sum, ptr)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
-        src_max = scatter(src, index, dim, dim_size=N, reduce='max')
-        src_max = src_max.index_select(dim, index)
+        with torch.no_grad():
+            src_max = scatter(src, index, dim, dim_size=N, reduce='max')
+            src_max = src_max.index_select(dim, index)
         out = (src - src_max).exp()
-        out_sum = scatter(out, index, dim, dim_size=N, reduce='sum')
+        out_sum = scatter(out, index, dim, dim_size=N, reduce='sum') + 1e-16
         out_sum = out_sum.index_select(dim, index)
     else:
         raise NotImplementedError
 
-    return out / (out_sum + 1e-16)
+    return out / out_sum

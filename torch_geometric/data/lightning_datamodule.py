@@ -6,16 +6,20 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, Dataset, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import (
+    Data,
+    Dataset,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+)
 from torch_geometric.loader import (
+    DataLoader,
     LinkLoader,
     LinkNeighborLoader,
     NeighborLoader,
     NodeLoader,
 )
-from torch_geometric.loader.dataloader import DataLoader
 from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
 from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
