@@ -196,7 +196,6 @@ class PRBCDAttack(torch.nn.Module):
 
         return perturbed_edge_index, flipped_edges
 
-    @torch.no_grad()
     def _prepare(self, budget: int) -> Iterable[int]:
         """Prepare attack."""
         # For early stopping (not explicitly covered by pseudo code)
@@ -710,9 +709,7 @@ class GRBCDAttack(PRBCDAttack):
         return steps
 
     @torch.no_grad()
-    def _update(self, step_size: int, gradient: Tensor, x: Tensor,
-                labels: Tensor, budget: int,
-                idx_attack: Optional[Tensor] = None,
+    def _update(self, step_size: int, gradient: Tensor, *args,
                 **kwargs) -> Dict[str, Any]:
         """Update edge weights given gradient."""
         _, topk_edge_index = torch.topk(gradient, step_size)
@@ -752,7 +749,6 @@ class GRBCDAttack(PRBCDAttack):
         }
         return scalars
 
-    @torch.no_grad()
     def _close(self, *args, **kwargs) -> Tuple[Tensor, Tensor]:
         """Clean up and prepare return argument."""
         return self.edge_index, self.flipped_edges
