@@ -2,9 +2,9 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-from torch_sparse import SparseTensor, coalesce
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import coalesce
 
 
 class Actor(InMemoryDataset):
@@ -53,7 +53,6 @@ class Actor(InMemoryDataset):
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
     def process(self):
-
         with open(self.raw_paths[0], 'r') as f:
             data = [x.split('\t') for x in f.read().split('\n')[1:-1]]
 
@@ -62,8 +61,10 @@ class Actor(InMemoryDataset):
                 col = [int(x) for x in col.split(',')]
                 rows += [int(n_id)] * len(col)
                 cols += col
-            x = SparseTensor(row=torch.tensor(rows), col=torch.tensor(cols))
-            x = x.to_dense()
+            row, col = torch.tensor(rows), torch.tensor(cols)
+
+            x = torch.zeros(int(row.max()) + 1, int(col.max()) + 1)
+            x[row, col] = 1.
 
             y = torch.empty(len(data), dtype=torch.long)
             for n_id, _, label in data:
@@ -73,7 +74,7 @@ class Actor(InMemoryDataset):
             data = f.read().split('\n')[1:-1]
             data = [[int(v) for v in r.split('\t')] for r in data]
             edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
-            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+            edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         train_masks, val_masks, test_masks = [], [], []
         for f in self.raw_paths[2:]:
