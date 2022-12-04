@@ -12,6 +12,7 @@ def to_dense_adj(
     batch: OptTensor = None,
     edge_attr: OptTensor = None,
     max_num_nodes: Optional[int] = None,
+    batch_size: Optional[int] = None,
 ) -> Tensor:
     r"""Converts batched sparse adjacency matrices given by edge indices and
     edge attributes to a single dense batched adjacency matrix.
@@ -25,6 +26,7 @@ def to_dense_adj(
             features. (default: :obj:`None`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
+        batch_size (int, optional) The batch size. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
 
@@ -60,7 +62,9 @@ def to_dense_adj(
         num_nodes = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
         batch = edge_index.new_zeros(num_nodes)
 
-    batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
+    if batch_size is None:
+        batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
+
     one = batch.new_ones(batch.size(0))
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='add')
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
