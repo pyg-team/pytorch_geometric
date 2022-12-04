@@ -2,9 +2,9 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import coalesce
 
 
 class Airports(InMemoryDataset):
@@ -83,7 +83,7 @@ class Airports(InMemoryDataset):
                 src, dst = row.split()
                 edge_indices.append([index_map[int(src)], index_map[int(dst)]])
         edge_index = torch.tensor(edge_indices).t().contiguous()
-        edge_index, _ = coalesce(edge_index, None, y.size(0), y.size(0))
+        edge_index = coalesce(edge_index, num_nodes=y.size(0))
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data = data if self.pre_transform is None else self.pre_transform(data)

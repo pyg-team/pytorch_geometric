@@ -5,7 +5,6 @@ from typing import Callable, List, Optional
 import numpy as np
 import scipy.sparse as sp
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import (
     Data,
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.utils import coalesce
 
 
 class Reddit(InMemoryDataset):
@@ -80,7 +80,7 @@ class Reddit(InMemoryDataset):
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
-        edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+        edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data.train_mask = split == 1
