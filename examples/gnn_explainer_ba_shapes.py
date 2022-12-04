@@ -4,13 +4,12 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-import torch_geometric.transforms as T
 from torch_geometric.datasets import BAShapes
 from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.nn import GCN
 from torch_geometric.utils import k_hop_subgraph
 
-dataset = BAShapes(transform=T.GCNNorm())
+dataset = BAShapes()
 data = dataset[0]
 
 idx = torch.arange(data.num_nodes)
@@ -19,7 +18,7 @@ train_idx, test_idx = train_test_split(idx, train_size=0.8, stratify=data.y)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 data = data.to(device)
 model = GCN(data.num_node_features, hidden_channels=20, num_layers=3,
-            out_channels=dataset.num_classes, normalize=False).to(device)
+            out_channels=dataset.num_classes).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 
 
@@ -77,18 +76,17 @@ for explanation_type in ['phenomenon', 'model']:
 
     # Explanation ROC AUC over all test nodes:
     targets, preds = [], []
-    non_loop_mask = data.edge_index[0] != data.edge_index[1]
     node_indices = data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
+        target = data.y if explanation_type == 'phenomenon' else None
         explanation = explainer(data.x, data.edge_index, index=node_index,
-                                target=data.y, edge_weight=data.edge_weight)
+                                target=target, edge_weight=data.edge_weight)
 
-        subgraph = k_hop_subgraph(node_index, num_hops=3,
-                                  edge_index=data.edge_index)
-        expl_edge_mask = explanation.edge_mask[non_loop_mask]
-        subgraph_edge_mask = subgraph[3][non_loop_mask]
-        targets.append(data.edge_label[subgraph_edge_mask].cpu())
-        preds.append(expl_edge_mask[subgraph_edge_mask].cpu())
+        _, _, _, hard_edge_mask = k_hop_subgraph(node_index, num_hops=3,
+                                                 edge_index=data.edge_index)
+
+        targets.append(data.edge_label[hard_edge_mask].cpu())
+        preds.append(explanation.edge_mask[hard_edge_mask].cpu())
 
     auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
     print(f'Mean ROC AUC (explanation type {explanation_type:10}): {auc:.4f}')
