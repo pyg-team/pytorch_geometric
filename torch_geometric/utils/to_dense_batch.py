@@ -98,11 +98,17 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
                             dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
+    filter_nodes = False
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
+    elif num_nodes.max() > max_num_nodes:
+        filter_nodes = True
 
-    idx = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
-    idx = (idx - cum_nodes[batch]) + (batch * max_num_nodes)
+    tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]
+    idx = tmp + (batch * max_num_nodes)
+    if filter_nodes:
+        mask = tmp < max_num_nodes
+        x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
     out = x.new_full(size, fill_value)

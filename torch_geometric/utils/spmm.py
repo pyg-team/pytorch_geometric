@@ -1,10 +1,16 @@
-from typing import Union
-
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
 
-from .sparse import is_torch_sparse_tensor
+from torch_geometric.typing import Adj, SparseTensor
+from torch_geometric.utils import is_torch_sparse_tensor
+
+try:
+    from torch_sparse import matmul as torch_sparse_matmul
+except ImportError:
+
+    def torch_sparse_matmul(src: SparseTensor, other: Tensor,
+                            reduce: str = "sum") -> Tensor:
+        raise NotImplementedError
 
 
 @torch.jit._overload
@@ -19,11 +25,7 @@ def spmm(src, other, reduce):
     pass
 
 
-def spmm(
-    src: Union[SparseTensor, Tensor],
-    other: Tensor,
-    reduce: str = "sum",
-) -> Tensor:
+def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:
@@ -40,7 +42,7 @@ def spmm(
     assert reduce in ['sum', 'add', 'mean', 'min', 'max']
 
     if isinstance(src, SparseTensor):
-        return matmul(src, other, reduce)
+        return torch_sparse_matmul(src, other, reduce)
 
     if not is_torch_sparse_tensor(src):
         raise ValueError("`src` must be a `torch_sparse.SparseTensor` "

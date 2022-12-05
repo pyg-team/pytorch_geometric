@@ -2,7 +2,15 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+try:
+    from torch_sparse import SparseTensor
+except ImportError:
+
+    class SparseTensor:
+        def __init__(self, *args, **kwargs):
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
 
 # Types for accessing data ####################################################
 
