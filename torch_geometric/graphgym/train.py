@@ -2,7 +2,6 @@ from typing import Optional
 
 from torch.utils.data import DataLoader
 
-from torch_geometric.data.lightning_datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import cfg
@@ -11,7 +10,7 @@ from torch_geometric.graphgym.logger import LoggerCallback
 from torch_geometric.graphgym.model_builder import GraphGymModule
 
 
-class GraphGymDataModule(LightningDataModule):
+class GraphGymDataModule(pl.LightningDataModule):
     def __init__(self):
         self.loaders = create_loader()
         super().__init__(has_val=True, has_test=True)

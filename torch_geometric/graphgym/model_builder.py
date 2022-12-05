@@ -4,7 +4,7 @@ from typing import Any, Dict, Tuple
 import torch
 
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.imports import LightningModule
+from torch_geometric.graphgym.imports import pl
 from torch_geometric.graphgym.loss import compute_loss
 from torch_geometric.graphgym.models.gnn import GNN
 from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
@@ -13,7 +13,7 @@ from torch_geometric.graphgym.register import network_dict, register_network
 register_network('gnn', GNN)
 
 
-class GraphGymModule(LightningModule):
+class GraphGymModule(pl.LightningModule):
     def __init__(self, dim_in, dim_out, cfg):
         super().__init__()
         self.cfg = cfg
