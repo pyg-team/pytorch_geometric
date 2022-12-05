@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 
 import torch_geometric.transforms as T
@@ -49,7 +50,6 @@ class Net(torch.nn.Module):
 
 model = Net(dataset.num_features, 128, 64).to(device)
 optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
-criterion = torch.nn.BCEWithLogitsLoss()
 
 
 def train():
@@ -71,7 +71,7 @@ def train():
     ], dim=0)
 
     out = model(train_data.x, train_data.edge_index, edge_label_index)
-    loss = criterion(out, edge_label)
+    loss = F.binary_cross_entropy_with_logits(out, edge_label)
     loss.backward()
     optimizer.step()
     return loss
