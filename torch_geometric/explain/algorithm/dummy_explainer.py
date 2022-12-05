@@ -102,11 +102,13 @@ class DummyExplainer(ExplainerAlgorithm):
         Args:
             model (torch.nn.Module): The model to explain.
             x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The node
-                features.
+                features. This is a dictionary in the heterogeneous case.
             edge_index (Union[torch.Tensor, Dict[EdgeType, torch.Tensor]]):
-                The edge indices.
+                The edge indices. This is a dictionary in the heterogeneous
+                case.
             edge_attr (Union[torch.Tensor, Dict[EdgeType, torch.Tensor]],
-                optional): The edge attributes. (default: :obj:`None`)
+                optional): The edge attributes. (default: :obj:`None`). This is
+                a dictionary in the heterogeneous case.
 
         Returns:
             Union[Explanation, HeteroExplanation]: A random explanation based

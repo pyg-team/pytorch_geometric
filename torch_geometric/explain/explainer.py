@@ -205,40 +205,8 @@ class Explainer:
     def _threshold_hetero_explanation(
         self, mask_dict: Dict[str, Dict[Union[NodeType, EdgeType], Tensor]]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-
-        if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = {
-                key: {
-                    k: (v > self.threshold_config.value).float()
-                    for k, v in mask.items()
-                }
-                for key, mask in mask_dict.items()
-            }
-        elif self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            for key, mask in mask_dict.items():
-                for k, v in mask.items():
-                    if self.threshold_config.value >= v.numel():
-                        if self.threshold_config.type != ThresholdType.topk:
-                            mask_dict[key][k] = torch.ones_like(v)
-                        continue
-
-                    value, index = torch.topk(
-                        v.flatten(),
-                        k=self.threshold_config.value,
-                    )
-
-                    out = torch.zeros_like(v.flatten())
-                    if self.threshold_config.type == ThresholdType.topk:
-                        out[index] = value
-                    else:
-                        out[index] = 1.0
-                    mask_dict[key][k] = out.reshape(v.size())
-        else:
-            raise NotImplementedError
-
+        for key, mask in mask_dict.items():
+            mask_dict[key] = self._threshold_explanation(mask)
         return mask_dict
 
     def _threshold(

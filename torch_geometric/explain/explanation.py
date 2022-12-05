@@ -296,21 +296,14 @@ class HeteroExplanation(HeteroData):
     ) -> 'HeteroExplanation':
         out = copy.copy(self)
 
-        edge_index_dict = None
-        edge_attr_dict = None
-        for key, value in out.node_items():
-            if key == "edge_index_dict":
-                edge_index_dict = value
-            elif key == "edge_attr_dict":
-                edge_attr_dict = value
-
         if edge_mask is not None:
-            for key, value in self.edge_mask.items():
-                edge_index_dict[key] = edge_index_dict[key][:, value]
-                edge_attr_dict[key] = edge_attr_dict[key][value]
-
-        out.edge_index_dict.update(edge_index_dict)
-        out.edge_attr_dict.update(edge_attr_dict)
+            for edge_type in self.edge_types:
+                if edge_type not in edge_mask:
+                    continue
+                value = edge_mask[edge_type]
+                out[edge_type].edge_index = out[edge_type].edge_index[:, value]
+                if out[edge_type].edge_attr is not None:
+                    out[edge_type].edge_attr = out[edge_type].edge_attr[value]
 
         if node_mask is not None:
             out = out.subgraph(node_mask)

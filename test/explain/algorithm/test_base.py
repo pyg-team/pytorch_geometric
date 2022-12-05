@@ -11,11 +11,6 @@ from torch_geometric.explain import (
 from torch_geometric.nn import SAGEConv, to_hetero
 
 
-class AllExplainerAlgorithm(ExplainerAlgorithm):
-    def supports(self) -> bool:
-        return True
-
-
 class HomoExplainerAlgorithm(ExplainerAlgorithm):
     def supports(self) -> bool:
         return not (self._is_hetero is True)
@@ -67,19 +62,6 @@ def test_supports_hetero():
     data = hetero_data()
     model = HeteroSAGE(data.metadata())
 
-    explainer = Explainer(
-        model=model, algorithm=AllExplainerAlgorithm(),
-        explainer_config=ExplainerConfig(
-            explanation_type="model",
-            node_mask_type="object",
-            edge_mask_type=None,
-        ), model_config=ModelConfig(
-            mode="regression",
-            task_level="node",
-        ))
-
-    explainer(data.x_dict, data.edge_index_dict)
-
     with pytest.raises(ValueError):
         explainer = Explainer(
             model=model, algorithm=HomoExplainerAlgorithm(),
@@ -94,15 +76,6 @@ def test_supports_hetero():
 
         explainer(data.x_dict, data.edge_index_dict)
 
-    explainer = Explainer(
-        model=model, algorithm=HeteroExplainerAlgorithm(),
-        explainer_config=ExplainerConfig(
-            explanation_type="model",
-            node_mask_type="object",
-            edge_mask_type=None,
-        ), model_config=ModelConfig(
-            mode="regression",
-            task_level="node",
-        ))
+    explainer.algorithm = HeteroExplainerAlgorithm()
 
     explainer(data.x_dict, data.edge_index_dict)
