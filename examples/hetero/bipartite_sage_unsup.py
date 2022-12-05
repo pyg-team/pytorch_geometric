@@ -1,5 +1,5 @@
-# An implementation of GraphSAGE in Alibaba recommendation system on user-item
-# bipartite graph
+# An implementation of unsupervised bipartite GraphSAGE using the Alibaba Taobao
+# dataset.
 import os.path as osp
 import tqdm
 
@@ -43,7 +43,7 @@ train_data, val_data, test_data = T.RandomLinkSplit(
 )(data)
 
 def to_u2i_mat(edge_index, u_num, i_num):
-    # Convert bipartite edge_index format to matrix format
+    # Convert the bipartite edge_index format to the csr matrix format
     u2imat = to_scipy_sparse_matrix(edge_index).tocsr()
 
     return u2imat[:u_num, :i_num]
@@ -57,9 +57,7 @@ def get_coocur_mat(train_mat, threshold):
     comat = torch.stack(
         (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])),
         dim=0)
-
     return comat
-
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', '2', 'item')],
                      train_data['user'].num_nodes,
@@ -70,7 +68,6 @@ i2i_edge_index = get_coocur_mat(u2i_mat, 3)
 train_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
 val_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
 test_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
-
 
 train_loader = LinkNeighborLoader(data=train_data,
                                   num_neighbors=[8, 4],
@@ -108,7 +105,6 @@ class ItemGNNEncoder(torch.nn.Module):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index).relu()
         return self.lin(x)
-
 
 
 class UserGNNEncoder(torch.nn.Module):
@@ -206,10 +202,8 @@ def train():
 def test(loader):
     model.eval()
     accs, precisions, recalls, f1s = [], [], [], []
-    i = 0
+
     for batch in tqdm.tqdm(loader):
-        if i >= 1000:
-            break
         batch = batch.to(device)
         out = model(batch.x_dict,
                     batch.edge_index_dict,
@@ -225,7 +219,6 @@ def test(loader):
         precisions.append(precision)
         recalls.append(recall)
         f1s.append(f1)
-        i += 1
 
     import numpy as np
 
