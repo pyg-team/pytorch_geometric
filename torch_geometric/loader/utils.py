@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import (
     Data,
@@ -24,6 +23,7 @@ from torch_geometric.typing import (
     InputEdges,
     InputNodes,
     OptTensor,
+    SparseTensor,
 )
 
 

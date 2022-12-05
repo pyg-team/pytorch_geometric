@@ -4,9 +4,8 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import (
-    Data,
-    HeteroData,
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.lightning import (
     LightningDataset,
     LightningLinkData,
     LightningNodeData,

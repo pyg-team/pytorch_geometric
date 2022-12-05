@@ -3,7 +3,8 @@ from typing import Optional  # noqa
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor  # noqa
+
+from torch_geometric.typing import SparseTensor  # noqa
 
 
 @torch.jit._overload
