@@ -1,38 +1,43 @@
-from typing import Callable, Optional
+from abc import abstractmethod
+from typing import Callable, Optional, final
 
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.seed import seed_everything
 
 
 class GraphGenerator:
-    def __init__(
-        self,
-        num_nodes: int = 300,
-        motif: Optional[Callable] = None,
-    ):
+    def __init__(self, num_nodes: int = 300, motif: Optional[Callable] = None,
+                 seed: int = None):
         self.num_nodes = num_nodes
         self.motif = motif
+        self.seed = seed
         self._edge_index = None
         self._edge_label = None
         self._expl_mask = None
         self._node_label = None
         self._x = None
 
+    @abstractmethod
     def generate_base_graph(self) -> Data:
         raise NotImplementedError
+
+    @final
+    def generate_graph(self):
+        seed_everything(self.seed)
+        self.generate_base_graph()
 
     @property
     def data(self):
         return Data(x=self._x, edge_index=self._edge_index, y=self._node_label,
                     expl_mask=self._expl_mask, edge_label=self._edge_label)
 
-    # TODO: FeatureGenerator (feature distribution...)
-    def generate_feature(self, num_features: int = 10):
+    def generate_feature(self, num_features: int = 10) -> None:
         self._x = torch.ones((self.num_nodes, num_features), dtype=torch.float)
 
-    def attach_motif(self, num_motifs=80):
-        if not self.motif:
+    def attach_motif(self, num_motifs=80) -> None:
+        if self.motif is None:
             return
 
         connecting_nodes = torch.randperm(self.num_nodes)[:num_motifs]

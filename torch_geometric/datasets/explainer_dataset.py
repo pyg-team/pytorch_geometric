@@ -17,9 +17,9 @@ class ExplainerDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        generator: Callable,
+        generator,
         transform: Optional[Callable] = None,
     ):
         super().__init__('.', transform)
-        generator.generate_base_graph()
+        generator.generate_graph()
         self.data, self.slices = self.collate([generator.data])
