@@ -1,10 +1,13 @@
 from types import ModuleType
 from importlib import import_module
 
+import torch_geometric.utils
 import torch_geometric.data
+import torch_geometric.sampler
 import torch_geometric.loader
 import torch_geometric.transforms
-import torch_geometric.utils
+import torch_geometric.datasets
+import torch_geometric.nn
 import torch_geometric.explain
 import torch_geometric.profile
 
@@ -38,8 +41,6 @@ class LazyLoader(ModuleType):
         return dir(module)
 
 
-datasets = LazyLoader('datasets', globals(), 'torch_geometric.datasets')
-nn = LazyLoader('nn', globals(), 'torch_geometric.nn')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
 __version__ = '2.2.0'
