@@ -37,7 +37,7 @@ full_requires = graphgym_requires + [
     'pytorch-memlab',
     'torchmetrics>=0.7',
     'pgmpy',
-    'opt_einsum', # required for pgmpy
+    'opt_einsum',  # required for pgmpy
     'statsmodels',
 ]
 

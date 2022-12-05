@@ -29,11 +29,12 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net().to(device)
     data = data.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=5e-4)
     x, edge_index, edge_weight, target = data.x, data.edge_index, data.edge_weight, data.y
 
     for epoch in range(1, 20):
@@ -43,7 +44,6 @@ if __name__=="__main__":
         loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
         loss.backward()
         optimizer.step()
-
 
     explainer = Explainer(
         model=model, algorithm=PGMExplainer(),

@@ -9,9 +9,9 @@ from torch_geometric.explain import ExplainerAlgorithm, Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
-    ModelReturnType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
     ThresholdConfig,
     ThresholdType,
 )
