@@ -20,6 +20,12 @@ class HGTSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
+        try:
+            import torch_sparse  # noqa
+        except ImportError:
+            raise ImportError(
+                f"'{self.__class__.__name__}' requires 'torch-sparse'")
+
         if isinstance(data, Data) or isinstance(data, tuple):
             raise NotImplementedError(
                 f'{self.__class__.__name__} does not support a data object of '
