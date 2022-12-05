@@ -262,6 +262,7 @@ class NeighborSampler(BaseSampler):
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
+                import torch_sparse  # noqa
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
@@ -312,6 +313,7 @@ class NeighborSampler(BaseSampler):
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
+                import torch_sparse  # noqa
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,

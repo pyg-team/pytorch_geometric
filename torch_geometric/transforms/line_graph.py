@@ -36,12 +36,12 @@ class LineGraph(BaseTransform):
         self.force_directed = force_directed
 
     def __call__(self, data: Data) -> Data:
-        num_nodes = data.num_nodes
+        N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
         if edge_attr is None:
-            edge_index = coalesce(edge_index, num_nodes=num_nodes)
+            edge_index = coalesce(edge_index, num_nodes=N)
         else:
-            edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
+            edge_index, edge_attr = coalesce(edge_index, edge_attr, N)
         row, col = edge_index
 
         if self.force_directed or data.is_directed():
@@ -75,7 +75,7 @@ class LineGraph(BaseTransform):
                     torch.cat([col, row], dim=0)
                 ], dim=0),
                 torch.cat([i, i], dim=0),
-                num_nodes,
+                N,
             )
 
             # Compute new edge indices according to `i`.
@@ -92,7 +92,7 @@ class LineGraph(BaseTransform):
             joints = torch.cat(joints, dim=1)
             joints, _ = remove_self_loops(joints)
             N = row.size(0) // 2
-            joints = coalesce(joints, num_nodes=num_nodes)
+            joints = coalesce(joints, num_nodes=N)
 
             if edge_attr is not None:
                 data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
