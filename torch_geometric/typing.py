@@ -8,7 +8,8 @@ try:
 except ImportError:
 
     class SparseTensor:
-        pass
+        def __init__(self, *args, **kwargs):
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################
