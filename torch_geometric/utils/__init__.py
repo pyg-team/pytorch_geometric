@@ -21,11 +21,11 @@ from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_coo_tensor)
+from .spmm import spmm
 from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
-from .tree_decomposition import tree_decomposition
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
@@ -36,8 +36,8 @@ from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
 from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
+from .tree_decomposition import tree_decomposition
 from .train_test_split_edges import train_test_split_edges
-from .spmm import spmm
 
 __all__ = [
     'scatter',
@@ -75,12 +75,15 @@ __all__ = [
     'to_dense_batch',
     'to_dense_adj',
     'dense_to_sparse',
+    'is_torch_sparse_tensor',
+    'is_sparse',
+    'to_torch_coo_tensor',
+    'spmm',
     'unbatch',
     'unbatch_edge_index',
     'normalized_cut',
     'grid',
     'geodesic_distance',
-    'tree_decomposition',
     'to_scipy_sparse_matrix',
     'from_scipy_sparse_matrix',
     'to_networkx',
@@ -97,11 +100,8 @@ __all__ = [
     'batched_negative_sampling',
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
+    'tree_decomposition',
     'train_test_split_edges',
-    'is_torch_sparse_tensor',
-    'is_sparse',
-    'to_torch_coo_tensor',
-    'spmm',
 ]
 
 classes = __all__

@@ -2,7 +2,6 @@ import logging
 import math
 import sys
 import time
-import warnings
 from typing import Any, Dict, Optional
 
 import torch
@@ -10,18 +9,9 @@ import torch
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.graphgym.imports import Callback, pl
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
-
-try:
-    import pytorch_lightning as pl
-    from pytorch_lightning import Callback
-
-except ImportError:
-    pl = None
-    Callback = object
-    warnings.warn("Please install 'pytorch_lightning' for using the GraphGym "
-                  "experiment manager via 'pip install pytorch_lightning'")
 
 
 def set_printing():
