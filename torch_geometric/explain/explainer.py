@@ -224,7 +224,7 @@ class Explainer:
         import pandas as pd
 
         if 'node_feat_mask' not in explanation.available_explanations:
-            raise Exception("`node_feat_mask` not available in explanation.")
+            raise ValueError("'node_feat_mask' not available in 'explanation'.")
 
         node_feature_explanation = explanation.node_feat_mask.sum(dim=0)
         node_feature_explanation = node_feature_explanation.cpu().numpy()
