@@ -2,10 +2,10 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
+from torch_geometric.typing import SparseTensor
 
 
 def separate(cls, batch: BaseData, idx: int, slice_dict: Any,

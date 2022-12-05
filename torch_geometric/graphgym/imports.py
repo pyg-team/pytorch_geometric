@@ -4,9 +4,9 @@ import torch
 
 try:
     import pytorch_lightning as pl
-    from pytorch_lightning import Callback, LightningModule
+    LightningModule = pl.LightningModule
+    Callback = pl.Callback
 except ImportError:
-    # define fallbacks
     pl = object
     LightningModule = torch.nn.Module
     Callback = object

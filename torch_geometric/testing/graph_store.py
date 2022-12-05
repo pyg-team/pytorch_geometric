@@ -2,11 +2,8 @@ from typing import Dict, Optional, Tuple
 
 from torch import Tensor
 
-from torch_geometric.data.graph_store import (
-    EdgeAttr,
-    EdgeTensorType,
-    GraphStore,
-)
+from torch_geometric.data import EdgeAttr, GraphStore
+from torch_geometric.typing import EdgeTensorType
 
 
 class MyGraphStore(GraphStore):

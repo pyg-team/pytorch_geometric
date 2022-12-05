@@ -2,7 +2,8 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+from torch_geometric.typing import SparseTensor
 
 
 class EdgeIndex(NamedTuple):
@@ -77,15 +78,15 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
     Args:
         edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
-            :obj:`torch_sparse.SparseTensor` that defines the underlying graph
-            connectivity/message passing flow.
+            :class:`torch_sparse.SparseTensor` that defines the underlying
+            graph connectivity/message passing flow.
             :obj:`edge_index` holds the indices of a (sparse) symmetric
             adjacency matrix.
             If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its shape
             must be defined as :obj:`[2, num_edges]`, where messages from nodes
             :obj:`edge_index[0]` are sent to nodes in :obj:`edge_index[1]`
             (in case :obj:`flow="source_to_target"`).
-            If :obj:`edge_index` is of type :obj:`torch_sparse.SparseTensor`,
+            If :obj:`edge_index` is of type :class:`torch_sparse.SparseTensor`,
             its sparse indices :obj:`(row, col)` should relate to
             :obj:`row = edge_index[1]` and :obj:`col = edge_index[0]`.
             The major difference between both formats is that we need to input
