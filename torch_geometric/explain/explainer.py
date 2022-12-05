@@ -39,6 +39,7 @@ class Explainer:
     ):
         self.model = model
         self.algorithm = algorithm
+        self.base_explanation = None
 
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
@@ -139,11 +140,13 @@ class Explainer:
 
         self.model.train(training)
 
+        # store unprocessed explanation
+        self.base_explanation = explanation
         return self._post_process(explanation)
 
     def evaluate(self, explanation: Explanation, metric: ExplanationMetric,
                  **kwargs):
-        r""" Evaluate the explanation with respect to an
+        r""" Evaluate the explanation with respect to an ExplanationMetric
         """
         return metric(self, explanation, **kwargs)
 
@@ -210,3 +213,8 @@ class Explainer:
             explanation[key] = mask
 
         return explanation
+
+    @property
+    def base_explanation(self) -> Explanation:
+        r"""Returns the base (unthresholded) explanation."""
+        return self.base_explanation
