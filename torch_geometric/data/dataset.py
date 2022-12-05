@@ -309,7 +309,7 @@ class Dataset(torch.utils.data.Dataset):
         print(str(self.get_summary()))
 
     @classmethod
-    def to_datapipe(cls, **kwargs):
+    def to_datapipe(cls, *args, **kwargs):
         r"""Convert a dataset class into a :obj:`DataPipe`
 
         The returned instance can be used with PyG's built-in DataPipes for
@@ -331,7 +331,7 @@ class Dataset(torch.utils.data.Dataset):
         """
         from torch_geometric.data.datapipes import DatasetAdapter
 
-        return DatasetAdapter(cls, **kwargs)
+        return DatasetAdapter(cls, *args, **kwargs)
 
 
 def to_list(value: Any) -> Sequence:

@@ -74,18 +74,23 @@ class SMILESParser(IterDataPipe):
 
 
 class DatasetAdapter(IterDataPipe):
-    def __init__(self, cls, **kwargs):
+    def __init__(self, cls, *args, **kwargs):
         super().__init__()
         self.cls = cls
+        self.args = args
         self.kwargs = kwargs
+        self.length = len(cls(*args, **kwargs))
 
     @cached_property
     def dataset(self):
-        return self.cls(**self.kwargs)
+        return self.cls(*self.args, **self.kwargs)
 
     def __iter__(self):
         for d in self.dataset:
             yield d
+
+    def __len__(self):
+        return self.length
 
 
 def functional_transform(name: str) -> Callable:
