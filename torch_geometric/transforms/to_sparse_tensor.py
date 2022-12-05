@@ -1,7 +1,5 @@
 from typing import Optional, Union
 
-from torch_sparse import SparseTensor
-
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -18,9 +16,9 @@ class ToSparseTensor(BaseTransform):
     .. note::
 
         In case of composing multiple transforms, it is best to convert the
-        :obj:`data` object to a :obj:`SparseTensor` as late as possible, since
-        there exist some transforms that are only able to operate on
-        :obj:`data.edge_index` for now.
+        :obj:`data` object to a :class:`~torch_sparse.SparseTensor` as late as
+        possible, since there exist some transforms that are only able to
+        operate on :obj:`data.edge_index` for now.
 
     Args:
         attr (str, optional): The name of the attribute to add as a value to
@@ -30,7 +28,8 @@ class ToSparseTensor(BaseTransform):
             :obj:`edge_index` tensor will not be removed.
             (default: :obj:`True`)
         fill_cache (bool, optional): If set to :obj:`False`, will not fill the
-            underlying :obj:`SparseTensor` cache. (default: :obj:`True`)
+            underlying :class:`~torch_sparse.SparseTensor` cache.
+            (default: :obj:`True`)
     """
     def __init__(self, attr: Optional[str] = 'edge_weight',
                  remove_edge_index: bool = True, fill_cache: bool = True):
@@ -42,6 +41,8 @@ class ToSparseTensor(BaseTransform):
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
+        from torch_sparse import SparseTensor
+
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue

@@ -4,9 +4,12 @@ from typing import Any, Tuple, Union
 import torch
 from scipy.sparse.csgraph import minimum_spanning_tree
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import (
+    from_scipy_sparse_matrix,
+    to_scipy_sparse_matrix,
+    to_undirected,
+)
 
 
 def tree_decomposition(
@@ -107,13 +110,11 @@ def tree_decomposition(
 
     if len(edges) > 0:
         edge_index_T, weight = zip(*edges.items())
-        row, col = torch.tensor(edge_index_T).t()
+        edge_index = torch.tensor(edge_index_T).t()
         inv_weight = 100 - torch.tensor(weight)
-        clique_graph = SparseTensor(row=row, col=col, value=inv_weight,
-                                    sparse_sizes=(len(cliques), len(cliques)))
-        junc_tree = minimum_spanning_tree(clique_graph.to_scipy('csr'))
-        row, col, _ = SparseTensor.from_scipy(junc_tree).coo()
-        edge_index = torch.stack([row, col], dim=0)
+        graph = to_scipy_sparse_matrix(edge_index, inv_weight, len(cliques))
+        junc_tree = minimum_spanning_tree(graph)
+        edge_index, _ = from_scipy_sparse_matrix(junc_tree)
         edge_index = to_undirected(edge_index, num_nodes=len(cliques))
     else:
         edge_index = torch.empty((2, 0), dtype=torch.long)

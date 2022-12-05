@@ -2,7 +2,7 @@ from typing import Optional
 
 from torch.utils.data import DataLoader
 
-from torch_geometric.data.lightning_datamodule import LightningDataModule
+from torch_geometric.data.lightning.datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import cfg
