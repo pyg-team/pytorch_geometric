@@ -3,7 +3,6 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, fill_diag, mul
 from torch_sparse import sum as sparsesum
 
@@ -14,6 +13,7 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils import (
     add_remaining_self_loops,
     is_torch_sparse_tensor,
+    scatter,
     spmm,
     to_torch_coo_tensor,
 )
@@ -79,7 +79,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
         row, col = edge_index[0], edge_index[1]
         idx = col if flow == "source_to_target" else row
-        deg = scatter_add(edge_weight, idx, dim=0, dim_size=num_nodes)
+        deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
