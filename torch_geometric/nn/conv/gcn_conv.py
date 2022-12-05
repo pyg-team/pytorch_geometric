@@ -54,15 +54,15 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
         return adj_t
     else:
-        is_torch_sparse = is_torch_sparse_tensor(edge_index)
-        if is_torch_sparse:
+        is_sparse_tensor = is_torch_sparse_tensor(edge_index)
+        if is_sparse_tensor:
+            assert flow == "source_to_target"
+            # `adj_t` is transposed
+            flow = "target_to_source"
             adj_t = edge_index
             num_nodes = adj_t.size(0)
             edge_index = adj_t._indices()
             edge_weight = adj_t._values()
-            assert flow == "source_to_target"
-            # `adj_t` is transposed
-            flow = "target_to_source"
         else:
             assert flow in ["source_to_target", "target_to_source"]
             num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -84,7 +84,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-        if is_torch_sparse:
+        if is_sparse_tensor:
             adj_t = to_torch_coo_tensor(edge_index, edge_weight,
                                         size=num_nodes)
             return adj_t, None
