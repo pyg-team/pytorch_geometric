@@ -415,7 +415,7 @@ class EdgeStorage(BaseStorage):
                 num_nodes=max(self.size(0), self.size(1)),
             )
             return (self.edge_index.numel() == new_edge_index.numel()
-                    and torch.equal(self.edge_index == new_edge_index))
+                    and torch.equal(self.edge_index, new_edge_index))
 
         return True
 
