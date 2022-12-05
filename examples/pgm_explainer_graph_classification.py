@@ -1,59 +1,119 @@
 import os.path as osp
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
-from torch_geometric.datasets import TUDataset, MNISTSuperpixels
-from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig
+from torch_geometric.datasets import MNISTSuperpixels
+from torch_geometric.explain import Explainer
 from torch_geometric.explain.algorithm import PGMExplainer
-from torch_geometric.nn import GCNConv,GATv2Conv
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (
+    NNConv,
+    global_mean_pool,
+    graclus,
+    max_pool,
+    max_pool_x,
+)
+from torch_geometric.utils import normalized_cut
 
-dataset = 'PROTEINS'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TUDataset')
-transform = T.Compose([T.GCNNorm(), T.NormalizeFeatures()])
-dataset = TUDataset(path, dataset, transform=transform, use_edge_attr=True ,use_node_attr=True)
-loader = DataLoader(dataset, batch_size=32, shuffle=True)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
+transform = T.Cartesian(cat=False)
+train_dataset = MNISTSuperpixels(path, True, transform=transform)
+test_dataset = MNISTSuperpixels(path, False, transform=transform)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+d = train_dataset
 
 
-class Net(torch.nn.Module):
+def normalized_cut_2d(edge_index, pos):
+    row, col = edge_index
+    edge_attr = torch.norm(pos[row] - pos[col], p=2, dim=1)
+    return normalized_cut(edge_index, edge_attr, num_nodes=pos.size(0))
+
+
+class Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = GATv2Conv(dataset.num_features, 16)
-        self.conv2 = GATv2Conv(16, dataset.num_classes, normalize=False)
+        nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(),
+                            nn.Linear(25, d.num_features * 32))
+        self.conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')
 
-    def forward(self, x, edge_index, edge_attr):
-        x = F.relu(self.conv1(x, edge_index, edge_attr))
+        nn2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(),
+                            nn.Linear(25, 32 * 64))
+        self.conv2 = NNConv(32, 64, nn2, aggr='mean')
+
+        self.fc1 = torch.nn.Linear(64, 128)
+        self.fc2 = torch.nn.Linear(128, d.num_classes)
+
+    def forward(self, x, data, **kwargs):
+        data = data.detach().clone()
+        x = F.elu(self.conv1(x, data.edge_index, data.edge_attr))
+        weight = normalized_cut_2d(data.edge_index, data.pos)
+        cluster = graclus(data.edge_index, weight, x.size(0))
+        data.edge_attr = None
+        data.x = x
+        data = max_pool(cluster, data, transform=transform)
+
+        data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
+        weight = normalized_cut_2d(data.edge_index, data.pos)
+        cluster = graclus(data.edge_index, weight, data.x.size(0))
+        x, batch = max_pool_x(cluster, data.x, data.batch)
+
+        x = global_mean_pool(x, batch)
+        x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index, edge_attr)
-        return F.log_softmax(x, dim=1)
+        return F.log_softmax(self.fc2(x), dim=1)
 
 
-if __name__=="__main__":
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net().to(device)
-    data = dataset.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
-    x, edge_index, edge_weight, target = data.x, data.edge_index, data.edge_weight, data.y
+def train(model, dataloader, epoch):
+    model.train()
 
-    for epoch in range(1, 20):
-        model.train()
+    if epoch == 16:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
+    if epoch == 26:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
+
+    for data in dataloader:
+        data = data.to(device)
         optimizer.zero_grad()
-        log_logits = model(x, edge_index, edge_weight)
-        loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
-        loss.backward()
+        F.nll_loss(model(data.x, data), data.y).backward()
         optimizer.step()
 
 
+if __name__ == "__main__":
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = Net().to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+    # for epoch in range(2):
+    #     train(model, test_loader, epoch)
+
     explainer = Explainer(
-        model=model, algorithm=PGMExplainer(),
-        explainer_config=ExplainerConfig(explanation_type="phenomenon",
-                                         node_mask_type="attributes",
-                                         edge_mask_type="object"),
-        model_config=ModelConfig(mode="classification", task_level="node",
-                                 return_type="raw"))
-    node_idx = 10
-    explanation = explainer(x=data.x, edge_index=edge_index, index=node_idx,
-                            target=target, edge_weight=edge_weight)
-    print(explanation.available_explanations)
+        model=model, algorithm=PGMExplainer(perturb_feature_list=[0]),
+        explainer_config=dict(explanation_type="phenomenon",
+                              node_mask_type="attributes",
+                              edge_mask_type="object"),
+        model_config=dict(mode="classification", task_level="graph",
+                          return_type="raw"))
+    i = 0
+    # todo bit of a hack--nicer to find a way to get the correct
+    #  graph with the collate?
+    # somthing like explain_dataset[10]is wrong shape for model??
+    for explain_dataset in test_loader:
+        explain_dataset.to(device)
+        node_idx = 10
+        explanation = explainer(x=explain_dataset.x,
+                                edge_index=explain_dataset.edge_index,
+                                index=node_idx, target=explain_dataset.y,
+                                edge_attr=explain_dataset.edge_attr,
+                                data=explain_dataset)
+        print(explanation.available_explanations)
+        i += 1
+        if i > 2:
+            break
