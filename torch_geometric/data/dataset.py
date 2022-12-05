@@ -310,6 +310,25 @@ class Dataset(torch.utils.data.Dataset):
 
     @classmethod
     def to_datapipe(cls, **kwargs):
+        r"""Convert a dataset class into a :obj:`DataPipe`
+
+        The returned instance can be used with PyG's built-in DataPipes for
+        baching graphs as follows:
+
+        .. code-block:: python
+
+            from torch_geometric.datasets import QM9
+
+            dp = QM9.to_datapipe(root='./data/QM9/')
+            dp = dp.batch_graphs(batch_size=2, drop_last=True)
+
+            for batch in dp:
+                ...
+
+        See the `PyTorch tutorial
+        <https://pytorch.org/data/main/tutorial.html>`_ for further background
+        on DataPipes.
+        """
         from torch_geometric.data.datapipes import DatasetAdapter
 
         return DatasetAdapter(cls, **kwargs)
