@@ -253,5 +253,5 @@ class Explainer:
         )
         plt.gca().invert_yaxis()
         ax.bar_label(container=ax.containers[0], label_type='edge')
-        plt.savefig("explain.png")
+
         return ax
