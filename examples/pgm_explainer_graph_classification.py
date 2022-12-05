@@ -91,8 +91,8 @@ if __name__ == "__main__":
     model = Net().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    # for epoch in range(2):
-    #     train(model, test_loader, epoch)
+    for epoch in range(2):
+        train(model, test_loader, epoch)
 
     explainer = Explainer(
         model=model, algorithm=PGMExplainer(perturb_feature_list=[0]),
@@ -113,7 +113,9 @@ if __name__ == "__main__":
                                 index=node_idx, target=explain_dataset.y,
                                 edge_attr=explain_dataset.edge_attr,
                                 data=explain_dataset)
-        print(explanation.available_explanations)
+        for k in explanation.available_explanations:
+            print(explanation[k])
+        print()
         i += 1
         if i > 2:
             break

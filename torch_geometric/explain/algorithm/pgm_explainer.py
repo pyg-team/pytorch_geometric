@@ -276,7 +276,8 @@ class PGMExplainer(ExplainerAlgorithm):
         # https://github.com/vunhatminh/PGMExplainer/blob/715402aa9a014403815f518c4c7d9258eb49bbe9/PGM_Graph/pgm_explainer_graph.py#L138 # noqa
         # sets target = num_nodes, which doesnt seem correct?
         for node in range(num_nodes):
-            chi2, p, _ = chi_square(node, target, [], data, boolean=False,
+            chi2, p, _ = chi_square(node, int(target.detach().cpu()), [], data,
+                                    boolean=False,
                                     significance_level=significance_threshold)
             p_values.append(p)
 
