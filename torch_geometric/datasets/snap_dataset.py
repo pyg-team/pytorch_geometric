@@ -4,7 +4,6 @@ from typing import Any, Callable, List, Optional
 
 import numpy as np
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import (
     Data,
@@ -14,6 +13,7 @@ from torch_geometric.data import (
     extract_tar,
 )
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.utils import coalesce
 
 
 class EgoData(Data):
@@ -108,8 +108,8 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         row = torch.cat([row, row_ego, col_ego], dim=0)
         col = torch.cat([col, col_ego, row_ego], dim=0)
         edge_index = torch.stack([row, col], dim=0)
+        edge_index = coalesce(edge_index, num_nodes=N)
 
-        edge_index, _ = coalesce(edge_index, None, N, N)
         data = EgoData(x=x, edge_index=edge_index, circle=circle,
                        circle_batch=circle_batch)
 

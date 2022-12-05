@@ -3,12 +3,11 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import EdgeType
+from torch_geometric.typing import EdgeType, SparseTensor
 from torch_geometric.utils import coalesce, degree
 
 

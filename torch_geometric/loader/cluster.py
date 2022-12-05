@@ -5,7 +5,8 @@ from typing import Optional
 
 import torch
 import torch.utils.data
-from torch_sparse import SparseTensor, cat
+
+from torch_geometric.typing import SparseTensor
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -140,6 +141,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
                          **kwargs)
 
     def __collate__(self, batch):
+        from torch_sparse import cat
+
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 

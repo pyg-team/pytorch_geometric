@@ -1,7 +1,6 @@
 import torch
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import coalesce, degree
 
 from .to_dense_adj import to_dense_adj

@@ -1,11 +1,10 @@
 import torch
 from torch_scatter import scatter_add
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.utils import coalesce, remove_self_loops
 
 
 @functional_transform('line_graph')
@@ -39,7 +38,11 @@ class LineGraph(BaseTransform):
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        (row, col), edge_attr = coalesce(edge_index, edge_attr, N, N)
+        if edge_attr is None:
+            edge_index = coalesce(edge_index, num_nodes=N)
+        else:
+            edge_index, edge_attr = coalesce(edge_index, edge_attr, N)
+        row, col = edge_index
 
         if self.force_directed or data.is_directed():
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
@@ -70,7 +73,10 @@ class LineGraph(BaseTransform):
                 torch.stack([
                     torch.cat([row, col], dim=0),
                     torch.cat([col, row], dim=0)
-                ], dim=0), torch.cat([i, i], dim=0), N, N)
+                ], dim=0),
+                torch.cat([i, i], dim=0),
+                N,
+            )
 
             # Compute new edge indices according to `i`.
             count = scatter_add(torch.ones_like(row), row, dim=0,
@@ -86,7 +92,7 @@ class LineGraph(BaseTransform):
             joints = torch.cat(joints, dim=1)
             joints, _ = remove_self_loops(joints)
             N = row.size(0) // 2
-            joints, _ = coalesce(joints, None, N, N)
+            joints = coalesce(joints, num_nodes=N)
 
             if edge_attr is not None:
                 data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)

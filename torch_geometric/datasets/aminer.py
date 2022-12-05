@@ -4,7 +4,6 @@ import shutil
 from typing import Callable, List, Optional
 
 import torch
-from torch_sparse import coalesce, transpose
 
 from torch_geometric.data import (
     HeteroData,
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.utils import coalesce
 
 
 class AMiner(InMemoryDataset):
@@ -100,12 +100,11 @@ class AMiner(InMemoryDataset):
         paper_author = torch.from_numpy(paper_author.values)
         paper_author = paper_author.t().contiguous()
         M, N = int(paper_author[0].max() + 1), int(paper_author[1].max() + 1)
-        paper_author, _ = coalesce(paper_author, None, M, N)
-        author_paper, _ = transpose(paper_author, None, M, N)
+        paper_author = coalesce(paper_author, num_nodes=max(M, N))
         data['paper'].num_nodes = M
         data['author'].num_nodes = N
         data['paper', 'written_by', 'author'].edge_index = paper_author
-        data['author', 'writes', 'paper'].edge_index = author_paper
+        data['author', 'writes', 'paper'].edge_index = paper_author.flip([0])
 
         # Get paper<->venue connectivity.
         path = osp.join(self.raw_dir, 'paper_conf.txt')
@@ -113,11 +112,10 @@ class AMiner(InMemoryDataset):
         paper_venue = torch.from_numpy(paper_venue.values)
         paper_venue = paper_venue.t().contiguous()
         M, N = int(paper_venue[0].max() + 1), int(paper_venue[1].max() + 1)
-        paper_venue, _ = coalesce(paper_venue, None, M, N)
-        venue_paper, _ = transpose(paper_venue, None, M, N)
+        paper_venue = coalesce(paper_venue, num_nodes=max(M, N))
         data['venue'].num_nodes = N
         data['paper', 'published_in', 'venue'].edge_index = paper_venue
-        data['venue', 'publishes', 'paper'].edge_index = venue_paper
+        data['venue', 'publishes', 'paper'].edge_index = paper_venue.flip([0])
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
