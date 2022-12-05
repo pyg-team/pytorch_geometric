@@ -208,15 +208,15 @@ class Explainer:
         self,
         explanation: Explanation,
         feat_labels: Optional[List[str]] = None,
-        n_features: int = 20,
+        top_k: int = 20,
     ):
         r"""Creates a bar plot of the node features importance given
         a :attr:`node_feat_mask`
 
         Args:
-            node_feat_mask (Tensor): The node feature mask to plot.
+            explanation (Explanation): The explanation object.
             feat_labels (List[str], optional): Optional labels for features.
-            n_features (int, optional): Top N features to plot.
+            top_k (int, optional): Top K features to plot.
                 (default: :obj:`20`)
         :rtype: :class:`matplotlib.axes.Axes`
         """
@@ -224,7 +224,8 @@ class Explainer:
         import pandas as pd
 
         if 'node_feat_mask' not in explanation.available_explanations:
-            raise ValueError("'node_feat_mask' not available in 'explanation'.")
+            raise ValueError(
+                "'node_feat_mask' not available in 'explanation'.")
 
         node_feature_explanation = explanation.node_feat_mask.sum(dim=0)
         node_feature_explanation = node_feature_explanation.cpu().numpy()
@@ -239,7 +240,7 @@ class Explainer:
 
         df_filtered = df\
             .sort_values("feat_importance", ascending=False)\
-            .head(n_features)
+            .head(top_k)
 
         ax = df_filtered.plot(
             kind='barh',
