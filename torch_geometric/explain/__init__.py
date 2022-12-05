@@ -1,5 +1,5 @@
 from .config import ExplainerConfig, ModelConfig, ThresholdConfig
-from .explanations import Explanation
+from .explanation import Explanation
 from .algorithm import *  # noqa
 from .explainer import Explainer
 

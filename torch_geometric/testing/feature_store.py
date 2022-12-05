@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
+from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.typing import FeatureTensorType
 
 

@@ -60,7 +60,7 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"phenomenon"`: Explains the phenomenon that the model
                   is trying to predict.
 
-            In practice this means that the explanation algorithm will either
+            In practice, this means that the explanation algorithm will either
             compute their losses with respect to the model output or the target
             output.
 
@@ -175,7 +175,7 @@ class ThresholdConfig(CastMixin):
                   The top obj:`value` elements of each mask are kept, the
                   others are set to :obj:`0`.
 
-                - :obj:`"topk_hard"`: Aame as :obj:`"topk"` but values are set
+                - :obj:`"topk_hard"`: Same as :obj:`"topk"` but values are set
                   to :obj:`1` for all elements which are kept.
 
         value (int or float, optional): The value to use when thresholding.

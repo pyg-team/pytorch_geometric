@@ -10,7 +10,8 @@ from torch_sparse import sum as sparsesum
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import PairTensor  # noqa
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 

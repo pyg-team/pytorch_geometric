@@ -12,9 +12,12 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import onlyUnix, withPackage
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyUnix,
+    withPackage,
+)
 from torch_geometric.utils import k_hop_subgraph
 
 try:
@@ -577,25 +580,28 @@ def test_memmap_neighbor_loader():
 
 
 @onlyUnix
-def test_cpu_affinity_neighbor_loader():
+@pytest.mark.parametrize('num_workers,loader_cores', [
+    (1, None),
+    (1, [1]),
+])
+def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
-    # test default core id [1] and custom [0,1] with 2 workers
-    num_workers = [1, 2]
-    loader_cores = [None, [0, 1]]
-    expected = [1, [0, 1]]
-    for i, nw in enumerate(num_workers):
-        output = []
-        loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
-                                num_workers=nw)
-        with loader.enable_cpu_affinity(loader_cores=loader_cores[i]):
-            iterator = loader._get_iterator().iterator
-            workers = iterator._workers
-            for worker in workers:
-                sleep(1)  # gives time for worker to init
-                process = subprocess.Popen(
-                    ['taskset', '-c', '-p', f'{worker.pid}'],
-                    stdout=subprocess.PIPE)
-                stdout = process.communicate()[0].decode('utf-8')
-                output.append(int(stdout.split(':')[1].strip()))
-        output = output[0] if nw == 1 else output
-        assert output == expected[i]
+    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
+                            num_workers=num_workers)
+    loader.is_cuda_available = False  # Force 'cpu_affinity'.
+
+    if isinstance(loader_cores, list):
+        loader_cores = loader_cores[:num_workers]
+
+    out = []
+    with loader.enable_cpu_affinity(loader_cores):
+        iterator = loader._get_iterator().iterator
+        workers = iterator._workers
+        for worker in workers:
+            sleep(1)  # Gives time for worker to initialize.
+            process = subprocess.Popen(
+                ['taskset', '-c', '-p', f'{worker.pid}'],
+                stdout=subprocess.PIPE)
+            stdout = process.communicate()[0].decode('utf-8')
+            out.append(int(stdout.split(':')[1].strip()))
+    assert out == list(range(1, num_workers + 1))

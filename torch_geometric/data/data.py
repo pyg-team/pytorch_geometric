@@ -17,19 +17,12 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.data.feature_store import (
-    FeatureStore,
-    FeatureTensorType,
-    TensorAttr,
-    _field_status,
-)
+from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
+from torch_geometric.data.feature_store import _field_status
 from torch_geometric.data.graph_store import (
     EDGE_LAYOUT_TO_ATTR_NAME,
-    EdgeAttr,
     EdgeLayout,
-    GraphStore,
     adj_type_to_edge_tensor_type,
     edge_tensor_type_to_adj_type,
 )
@@ -46,6 +39,7 @@ from torch_geometric.typing import (
     FeatureTensorType,
     NodeType,
     OptTensor,
+    SparseTensor,
 )
 from torch_geometric.utils import subgraph
 
