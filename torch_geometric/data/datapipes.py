@@ -71,11 +71,18 @@ class DatasetAdapter(IterDataPipe):
         self.args = args
         self.kwargs = kwargs
         self.length = len(cls(*args, **kwargs))
+        self.range = range(self.length)
+
+    def is_shardable(self):
+        return True
+
+    def apply_sharding(self, num_shards, shard_idx):
+        self.range = range(shard_idx, self.length, num_shards)
 
     def __iter__(self):
         dataset = self.cls(*self.args, **self.kwargs)
-        for d in dataset:
-            yield d
+        for idx in self.range:
+            yield dataset[idx]
 
     def __len__(self):
         return self.length
