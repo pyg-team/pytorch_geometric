@@ -69,11 +69,8 @@ def to_csc(
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time)
 
-        if hasattr(torch, '_convert_indices_from_coo_to_csr'):
-            colptr = torch._convert_indices_from_coo_to_csr(
-                col, data.size(1), out_int32=col.dtype == torch.int32)
-        else:  # pragma: no cover
-            colptr = torch.ops.torch_sparse.ind2ptr(col, data.size(1))
+        colptr = torch._convert_indices_from_coo_to_csr(
+            col, data.size(1), out_int32=col.dtype == torch.int32)
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
