@@ -3,12 +3,14 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
+
 from torch_geometric.data import (
     HeteroData,
     InMemoryDataset,
     download_url,
     extract_zip,
 )
+
 
 class Taobao(InMemoryDataset):
     r"""Taobao User Behavior is a dataset of user behaviors from Taobao offered
@@ -32,8 +34,12 @@ class Taobao(InMemoryDataset):
     """
     url = 'https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/UserBehavior.csv.zip'
 
-    def __init__(self, root, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,):
+    def __init__(
+        self,
+        root,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
 
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -58,21 +64,26 @@ class Taobao(InMemoryDataset):
         data = HeteroData()
 
         df = pd.read_csv(self.raw_paths[0])
-        df.columns = ['userId','itemId','categoryId','behaviorType','timestamp']
+        df.columns = [
+            'userId', 'itemId', 'categoryId', 'behaviorType', 'timestamp'
+        ]
 
         # Time representation (YYYY.MM.DD-HH:MM:SS -> Integer)
         # 1511539200 = 2017.11.25-00:00:00 1512316799 = 2017.12.03-23:59:59
-        df = df[(df["timestamp"]>=1511539200) & (df["timestamp"]<=1512316799)]
+        df = df[(df["timestamp"] >= 1511539200)
+                & (df["timestamp"] <= 1512316799)]
 
         df = df.drop_duplicates(
-            subset=['userId','itemId','categoryId','behaviorType','timestamp'],
-            keep='first')
+            subset=[
+                'userId', 'itemId', 'categoryId', 'behaviorType', 'timestamp'
+            ], keep='first')
 
         behavior_dict = {'pv': 0, 'cart': 1, 'buy': 2, 'fav': 3}
         df['behaviorType'] = df['behaviorType'].map(behavior_dict).values
         _, df['userId'] = np.unique(df[['userId']].values, return_inverse=True)
         _, df['itemId'] = np.unique(df[['itemId']].values, return_inverse=True)
-        _, df['categoryId'] = np.unique(df[['categoryId']].values, return_inverse=True)
+        _, df['categoryId'] = np.unique(df[['categoryId']].values,
+                                        return_inverse=True)
 
         data['user'].num_nodes = df['userId'].nunique()
         data['item'].num_nodes = df['itemId'].nunique()
@@ -80,9 +91,12 @@ class Taobao(InMemoryDataset):
         edge_feat, _ = np.unique(
             df[['userId', 'itemId', 'behaviorType', 'timestamp']].values,
             return_index=True, axis=0)
-        edge_feat = pd.DataFrame(edge_feat).drop_duplicates(subset=[0, 1], keep='last')
-        data['user', '2', 'item'].edge_index = torch.from_numpy(edge_feat[[0, 1]].values).T
-        data['user', '2', 'item'].edge_attr = torch.from_numpy(edge_feat[[2, 3]].values).T
+        edge_feat = pd.DataFrame(edge_feat).drop_duplicates(
+            subset=[0, 1], keep='last')
+        data['user', '2',
+             'item'].edge_index = torch.from_numpy(edge_feat[[0, 1]].values).T
+        data['user', '2',
+             'item'].edge_attr = torch.from_numpy(edge_feat[[2, 3]].values).T
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 

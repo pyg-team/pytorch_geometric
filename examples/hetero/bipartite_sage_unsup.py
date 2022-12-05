@@ -1,10 +1,16 @@
 # An implementation of unsupervised bipartite GraphSAGE using the Alibaba Taobao
 # dataset.
 import os.path as osp
-import tqdm
 
 import torch
 import torch.nn.functional as F
+import tqdm
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from torch.nn import Embedding, Linear
 
 import torch_geometric.transforms as T
@@ -13,9 +19,6 @@ from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
-
-
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
@@ -23,10 +26,8 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
 dataset = Taobao(path)
 data = dataset[0]
 
-data['user'].x = torch.LongTensor(torch.arange(
-    0, data['user'].num_nodes))
-data['item'].x = torch.LongTensor(torch.arange(
-    0, data['item'].num_nodes))
+data['user'].x = torch.LongTensor(torch.arange(0, data['user'].num_nodes))
+data['item'].x = torch.LongTensor(torch.arange(0, data['item'].num_nodes))
 
 # Add a reverse ('item', 'rev_2', 'user') relation for message passing:
 data = T.ToUndirected()(data)
@@ -42,6 +43,7 @@ train_data, val_data, test_data = T.RandomLinkSplit(
     rev_edge_types=[('item', 'rev_2', 'user')],
 )(data)
 
+
 def to_u2i_mat(edge_index, u_num, i_num):
     # Convert the bipartite edge_index format to the csr matrix format.
     u2imat = to_scipy_sparse_matrix(edge_index).tocsr()
@@ -55,10 +57,10 @@ def get_coocur_mat(train_mat, threshold):
     comat.setdiag(0)
     comat = (comat >= threshold).nonzero()
     comat = torch.stack(
-        (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])),
-        dim=0)
+        (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])), dim=0)
 
     return comat
+
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', '2', 'item')],
                      train_data['user'].num_nodes,
@@ -70,29 +72,35 @@ train_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
 val_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
 test_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
 
-train_loader = LinkNeighborLoader(data=train_data,
-                                  num_neighbors=[8, 4],
-                                  edge_label_index=['user', '2', 'item'],
-                                  neg_sampling_ratio=1.,
-                                  batch_size=2048,
-                                  num_workers=32,
-                                  pin_memory=True,)
+train_loader = LinkNeighborLoader(
+    data=train_data,
+    num_neighbors=[8, 4],
+    edge_label_index=['user', '2', 'item'],
+    neg_sampling_ratio=1.,
+    batch_size=2048,
+    num_workers=32,
+    pin_memory=True,
+)
 
-val_loader = LinkNeighborLoader(data=val_data,
-                                num_neighbors=[8, 4],
-                                edge_label_index=['user', '2', 'item'],
-                                neg_sampling_ratio=1.,
-                                batch_size=2048,
-                                num_workers=32,
-                                pin_memory=True,)
+val_loader = LinkNeighborLoader(
+    data=val_data,
+    num_neighbors=[8, 4],
+    edge_label_index=['user', '2', 'item'],
+    neg_sampling_ratio=1.,
+    batch_size=2048,
+    num_workers=32,
+    pin_memory=True,
+)
 
-test_loader = LinkNeighborLoader(data=test_data,
-                                 num_neighbors=[8, 4],
-                                 edge_label_index=['user', '2', 'item'],
-                                 neg_sampling_ratio=1.,
-                                 batch_size=2048,
-                                 num_workers=32,
-                                 pin_memory=True,)
+test_loader = LinkNeighborLoader(
+    data=test_data,
+    num_neighbors=[8, 4],
+    edge_label_index=['user', '2', 'item'],
+    neg_sampling_ratio=1.,
+    batch_size=2048,
+    num_workers=32,
+    pin_memory=True,
+)
 
 
 class ItemGNNEncoder(torch.nn.Module):
@@ -153,10 +161,8 @@ class EdgeDecoder(torch.nn.Module):
 class Model(torch.nn.Module):
     def __init__(self, num_users, num_items, hidden_channels, out_channels):
         super().__init__()
-        self.user_emb = Embedding(
-            num_users, hidden_channels, device=device)
-        self.item_emb = Embedding(
-            num_items, hidden_channels, device=device)
+        self.user_emb = Embedding(num_users, hidden_channels, device=device)
+        self.item_emb = Embedding(num_items, hidden_channels, device=device)
         self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.decoder = EdgeDecoder(hidden_channels)
@@ -173,8 +179,7 @@ class Model(torch.nn.Module):
 
 
 model = Model(num_users=data['user'].num_nodes,
-              num_items=data['item'].num_nodes,
-              hidden_channels=64,
+              num_items=data['item'].num_nodes, hidden_channels=64,
               out_channels=64)
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.002)
@@ -186,9 +191,10 @@ def train():
     for batch in tqdm.tqdm(train_loader):
         batch = batch.to(device)
         optimizer.zero_grad()
-        pred = model(batch.x_dict,
-                     batch.edge_index_dict,
-                     batch['user', 'item'].edge_label_index,
+        pred = model(
+            batch.x_dict,
+            batch.edge_index_dict,
+            batch['user', 'item'].edge_label_index,
         )
         target = batch['user', 'item'].edge_label
         loss = F.binary_cross_entropy_with_logits(pred, target)
@@ -206,10 +212,10 @@ def test(loader):
 
     for batch in tqdm.tqdm(loader):
         batch = batch.to(device)
-        out = model(batch.x_dict,
-                    batch.edge_index_dict,
-                    batch['user', 'item'].edge_label_index
-        ).clamp(min=0, max=1).round().cpu()
+        out = model(batch.x_dict, batch.edge_index_dict,
+                    batch['user',
+                          'item'].edge_label_index).clamp(min=0,
+                                                          max=1).round().cpu()
         target = batch['user', 'item'].edge_label.round().cpu()
 
         acc = accuracy_score(target, out)
@@ -239,7 +245,8 @@ for epoch in range(1, 51):
 
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
     print(f'Eval Index: Accuracy | Precision | Recall | F1_score')
-    print(f'Train: {train_acc:.4f} | {train_precision:.4f} | {train_recall:.4f} \
+    print(
+        f'Train: {train_acc:.4f} | {train_precision:.4f} | {train_recall:.4f} \
           | {train_f1:.4f}')
     print(f'Val:   {val_acc:.4f} | {val_precision:.4f} | {val_recall:.4f} \
           | {val_f1:.4f}')
