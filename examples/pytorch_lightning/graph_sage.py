@@ -7,7 +7,7 @@ from torch.nn import BatchNorm1d
 from torchmetrics import Accuracy
 
 from torch_geometric import seed_everything
-from torch_geometric.data import LightningNodeData
+from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.datasets import Reddit
 from torch_geometric.nn import GraphSAGE
 
