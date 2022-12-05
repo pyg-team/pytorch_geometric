@@ -4,12 +4,12 @@ from torch_geometric.data import InMemoryDataset
 
 
 class ExplainerDataset(InMemoryDataset):
-    r"""Generate custom synthetic dataset from Graph Generators
+    r"""Generate a custom synthetic dataset from Graph Generators.
 
     Args:
-        generator (Generator): The graph generator to be used:
-        :obj:`torch.geometric.datasets.generators.ba_graph`,
-        :obj:`torch.geometric.datasets.generators.er_graph`.
+        generator (GraphGenerator): The graph generator instance object
+            to be used: :obj:`torch.geometric.datasets.generators.BAGraph`,
+            :obj:`torch.geometric.datasets.generators.ERGraph`.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

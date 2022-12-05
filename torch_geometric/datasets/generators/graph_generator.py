@@ -8,6 +8,17 @@ from torch_geometric.seed import seed_everything
 
 
 class GraphGenerator:
+    r"""Base class for generating benchmark datasets. It contains
+        `generate_feature` and `attach_motif` methods used to generate
+        features and attach motifs to base graph. The motifs are
+        currently attached in random order.
+
+    Args:
+        num_nodes (int): The number of nodes used to attach the motifs.
+        motif (:obj:`toch_geometric.datasets.generators.Motif`, Optional):
+            Motif object to be attached to the base graph.
+        seed (int, Optional): seed number for the generator.
+    """
     def __init__(self, num_nodes: int = 300, motif: Optional[Callable] = None,
                  seed: int = None):
         self.num_nodes = num_nodes
@@ -18,6 +29,9 @@ class GraphGenerator:
         self._expl_mask = None
         self._node_label = None
         self._x = None
+
+    r"""Abstracted method to be implemented by a specific GraphGenerator.
+    """
 
     @abstractmethod
     def generate_base_graph(self) -> Data:
