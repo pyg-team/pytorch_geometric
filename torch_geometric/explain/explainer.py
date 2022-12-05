@@ -14,6 +14,7 @@ from torch_geometric.explain.config import (
     ThresholdConfig,
     ThresholdType,
 )
+from torch_geometric.explain.metrics import ExplanationMetric
 
 
 class Explainer:
@@ -139,6 +140,12 @@ class Explainer:
         self.model.train(training)
 
         return self._post_process(explanation)
+
+    def evaluate(self, explanation: Explanation, metric: ExplanationMetric,
+                 **kwargs):
+        r""" Evaluate the explanation with respect to an
+        """
+        return metric(self, explanation, **kwargs)
 
     def _post_process(self, explanation: Explanation) -> Explanation:
         R"""Post-processes the explanation mask according to the thresholding
