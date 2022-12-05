@@ -16,15 +16,6 @@ except ImportError:
         return lambda cls: cls
 
 
-try:
-    from functools import cached_property
-except ImportError:  # Python 3.7 support.
-    from functools import lru_cache
-
-    def cached_property(func):
-        return property(fget=lru_cache(maxsize=1)(func))
-
-
 @functional_datapipe('batch_graphs')
 class Batcher(IterBatcher):
     def __init__(
@@ -81,12 +72,9 @@ class DatasetAdapter(IterDataPipe):
         self.kwargs = kwargs
         self.length = len(cls(*args, **kwargs))
 
-    @cached_property
-    def dataset(self):
-        return self.cls(*self.args, **self.kwargs)
-
     def __iter__(self):
-        for d in self.dataset:
+        dataset = self.cls(*self.args, **self.kwargs)
+        for d in dataset:
             yield d
 
     def __len__(self):
