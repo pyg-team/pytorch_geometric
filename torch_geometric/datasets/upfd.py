@@ -5,7 +5,6 @@ from typing import Callable, List, Optional
 import numpy as np
 import scipy.sparse as sp
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import (
     Data,
@@ -14,6 +13,7 @@ from torch_geometric.data import (
     extract_zip,
 )
 from torch_geometric.io import read_txt_array
+from torch_geometric.utils import coalesce
 
 
 class UPFD(InMemoryDataset):
@@ -131,7 +131,7 @@ class UPFD(InMemoryDataset):
 
         edge_index = read_txt_array(osp.join(self.raw_dir, 'A.txt'), sep=',',
                                     dtype=torch.long).t()
-        edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+        edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         y = np.load(osp.join(self.raw_dir, 'graph_labels.npy'))
         y = torch.from_numpy(y).to(torch.long)

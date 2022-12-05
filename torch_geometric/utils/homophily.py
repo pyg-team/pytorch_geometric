@@ -3,9 +3,8 @@ from typing import Union
 import torch
 from torch import Tensor
 from torch_scatter import scatter_mean
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import degree
 
 
