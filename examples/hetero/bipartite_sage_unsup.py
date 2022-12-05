@@ -43,20 +43,21 @@ train_data, val_data, test_data = T.RandomLinkSplit(
 )(data)
 
 def to_u2i_mat(edge_index, u_num, i_num):
-    # Convert the bipartite edge_index format to the csr matrix format
+    # Convert the bipartite edge_index format to the csr matrix format.
     u2imat = to_scipy_sparse_matrix(edge_index).tocsr()
 
     return u2imat[:u_num, :i_num]
 
 
 def get_coocur_mat(train_mat, threshold):
-    # Generate the co-occurrence matrix and top-k filtering
+    # Generate the co-occurrence matrix with weight filtering.
     comat = train_mat.T @ train_mat
     comat.setdiag(0)
     comat = (comat >= threshold).nonzero()
     comat = torch.stack(
         (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])),
         dim=0)
+
     return comat
 
 u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', '2', 'item')],
