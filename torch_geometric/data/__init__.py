@@ -10,6 +10,8 @@ from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
+from torch_geometric.lazy_loader import LazyLoader
+
 __all__ = classes = [
     'Data',
     'HeteroData',
@@ -28,6 +30,9 @@ __all__ = classes = [
     'extract_bz2',
     'extract_gz',
 ]
+
+lightning = LazyLoader('lightning', globals(),
+                       'torch_geometric.data.lightning')
 
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.loader import NeighborSampler  # noqa
