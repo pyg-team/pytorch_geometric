@@ -5,7 +5,12 @@ from sklearn.metrics import roc_auc_score
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig, GNNExplainer
+from torch_geometric.explain import (
+    Explainer,
+    ExplainerConfig,
+    GNNExplainer,
+    ModelConfig,
+)
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import negative_sampling
 
