@@ -1,6 +1,6 @@
 from .datamodule import LightningDataset, LightningNodeData, LightningLinkData
 
-__all__ = [
+__all__ = classes = [
     'LightningDataset',
     'LightningNodeData',
     'LightningLinkData',
