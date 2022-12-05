@@ -41,13 +41,9 @@ class Net(torch.nn.Module):
         src, dst = edge_label_index
         return (z[src] * z[dst]).sum(dim=-1)
 
-    def forward(self, x, edge_index, edge_label_index,
-                cast_to_multiclass=False):
+    def forward(self, x, edge_index, edge_label_index):
         z = model.encode(x, edge_index)
         out = model.decode(z, edge_label_index).view(-1)
-        if cast_to_multiclass:
-            out = out.sigmoid()
-            out = torch.stack((1 - out, out), dim=-1)
         return out
 
 
