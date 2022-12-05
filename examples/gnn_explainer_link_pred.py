@@ -5,8 +5,7 @@ from sklearn.metrics import roc_auc_score
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig
-from torch_geometric.explain.algorithm import GNNExplainer
+from torch_geometric.explain import Explainer, ExplainerConfig, ModelConfig, GNNExplainer
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import negative_sampling
 
@@ -20,9 +19,6 @@ transform = T.Compose([
                       add_negative_train_samples=False),
 ])
 dataset = Planetoid(path, dataset, transform=transform)
-# After applying the `RandomLinkSplit` transform, the data is transformed from
-# a data object to a list of tuples (train_data, val_data, test_data), with
-# each element representing the corresponding split.
 train_data, val_data, test_data = dataset[0]
 
 
@@ -95,12 +91,12 @@ for epoch in range(1, 11):
     if val_auc > best_val_auc:
         best_val_auc = val_auc
         final_test_auc = test_auc
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
 
 print(f'Final Test: {final_test_auc:.4f}')
 
-# explain the model output on an edge from the validation dataset
+# Explain model output for an edge
 model_config = ModelConfig(mode="binary_classification", task_level="edge",
                            return_type="probs")
 edge_label_index = val_data.edge_label_index[:, 0]
@@ -115,8 +111,7 @@ explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
                         edge_label_index=edge_label_index)
 print(explanation.available_explanations)
 
-# explain a phenomenon that the model should predict on an edge from the
-# validation dataset
+# Explain a selected target (phenomenon) for an edge
 explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
     explainer_config=ExplainerConfig(explanation_type="phenomenon",
