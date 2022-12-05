@@ -4,10 +4,10 @@ from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, cat
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
+from torch_geometric.typing import SparseTensor
 
 
 def collate(
@@ -156,6 +156,8 @@ def _collate(
         return value, slices, incs
 
     elif isinstance(elem, SparseTensor) and increment:
+        from torch_sparse import cat
+
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
