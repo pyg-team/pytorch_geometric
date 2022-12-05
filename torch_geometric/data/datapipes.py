@@ -16,6 +16,15 @@ except ImportError:
         return lambda cls: cls
 
 
+try:
+    from functools import cached_property
+except ImportError:  # Python 3.7 support.
+    from functools import lru_cache
+
+    def cached_property(func):
+        return property(fget=lru_cache(maxsize=1)(func))
+
+
 @functional_datapipe('batch_graphs')
 class Batcher(IterBatcher):
     def __init__(
@@ -62,6 +71,21 @@ class SMILESParser(IterDataPipe):
                     f"a dict as input (got '{type(d)}')")
 
             yield data
+
+
+class DatasetAdapter(IterDataPipe):
+    def __init__(self, cls, **kwargs):
+        super().__init__()
+        self.cls = cls
+        self.kwargs = kwargs
+
+    @cached_property
+    def dataset(self):
+        return self.cls(**self.kwargs)
+
+    def __iter__(self):
+        for d in self.dataset:
+            yield d
 
 
 def functional_transform(name: str) -> Callable:

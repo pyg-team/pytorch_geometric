@@ -308,6 +308,12 @@ class Dataset(torch.utils.data.Dataset):
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
+    @classmethod
+    def to_datapipe(cls, **kwargs):
+        from torch_geometric.data.datapipes import DatasetAdapter
+
+        return DatasetAdapter(cls, **kwargs)
+
 
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):
