@@ -12,7 +12,7 @@ def test_layer_norm(affine, mode):
     batch = torch.zeros(100, dtype=torch.long)
 
     norm = LayerNorm(16, affine=affine, mode=mode)
-    assert norm.__repr__() == f'LayerNorm(16, mode={mode})'
+    assert norm.__repr__() == f'LayerNorm(16, affine={affine}, mode={mode})'
 
     if is_full_test():
         torch.jit.script(norm)

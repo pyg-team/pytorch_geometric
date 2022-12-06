@@ -2,7 +2,8 @@ from typing import Any, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+from torch_geometric.typing import SparseTensor
 
 
 def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:

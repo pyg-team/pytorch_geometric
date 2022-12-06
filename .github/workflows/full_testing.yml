@@ -16,33 +16,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
-        torch-version: [1.13.0]
-        include:
-          - torch-version: 1.13.0
-            torchvision-version: 0.14.0
-        exclude:
-          - os: windows-latest  # Complains about CUDA mismatch.
-            python-version: '3.7'
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup packages
+        uses: ./.github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
-        run: |
-          pip install torch==${{ matrix.torch-version }} torchvision==${{ matrix.torchvision-version}} --extra-index-url https://download.pytorch.org/whl/cpu
-
-      - name: Install internal dependencies
-        run: |
-          pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-
-      - name: Install pyg-lib
-        if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
-        run: |
-          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
 
       - name: Install main package
         run: |

@@ -1,9 +1,10 @@
 from copy import copy
-from typing import Optional
+from typing import Optional  # noqa
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+from torch_geometric.typing import SparseTensor  # noqa
 
 
 @torch.jit._overload
