@@ -1,14 +1,12 @@
 from typing import List
+
 import torch
 
 
 # From https://github.com/mims-harvard/GraphXAI/
-def perturb_node_features(x: torch.Tensor,
-                          node_idx: int,
-                          pert_feat: List[int] = [],
-                          bin_dims: List[int] = [],
-                          perturb_mode: str = 'gaussian',
-                          device="cpu"):
+def perturb_node_features(x: torch.Tensor, node_idx: int,
+                          pert_feat: List[int] = [], bin_dims: List[int] = [],
+                          perturb_mode: str = 'gaussian', device="cpu"):
     """
 
     Pick nodes with probability perturb_prob and perturb their features.
@@ -38,27 +36,34 @@ def perturb_node_features(x: torch.Tensor,
 
     if perturb_mode == 'scale':
         # Scale the continuous dims randomly
-        x_pert[node_idx, cont_dims] *= scale_mul * torch.rand(cont_dims).to(device)
+        x_pert[node_idx,
+               cont_dims] *= scale_mul * torch.rand(cont_dims).to(device)
     elif perturb_mode == 'gaussian':
         # Add a Gaussian noise
         sigma = torch.std(x[:, cont_dims], dim=0, keepdim=True).squeeze(0)
-        x_pert[node_idx, cont_dims] += sigma * torch.randn(len(cont_dims)).to(device)
+        x_pert[node_idx,
+               cont_dims] += sigma * torch.randn(len(cont_dims)).to(device)
     elif perturb_mode == 'uniform':
         # Add a uniform noise
         epsilon = 0.05 * max_val.squeeze(0)
-        x_pert[node_idx, cont_dims] += 2 * epsilon * (torch.rand(len(cont_dims)) - 0.5)
+        x_pert[node_idx,
+               cont_dims] += 2 * epsilon * (torch.rand(len(cont_dims)) - 0.5)
     elif perturb_mode == 'mean':
         # Set to mean values
         mu = torch.mean(x[:, cont_dims], dim=0, keepdim=True).squeeze(0)
         x_pert[node_idx, cont_dims] = mu.to(device)
     else:
-        raise ValueError("perturb_mode must be one of ['scale', 'gaussian', 'uniform', 'mean']")
+        raise ValueError(
+            "perturb_mode must be one of ['scale', 'gaussian', 'uniform', 'mean']"
+        )
 
     # Ensure feature value is between min_val and max_val
     min_val, _ = torch.min(x[:, cont_dims], dim=0, keepdim=True)
-    x_pert[node_idx, cont_dims] = torch.max(torch.min(x_pert[node_idx, cont_dims], max_val), min_val)
+    x_pert[node_idx, cont_dims] = torch.max(
+        torch.min(x_pert[node_idx, cont_dims], max_val), min_val)
 
     # Randomly flip the binary dims
-    x_pert[node_idx, bin_dims] = torch.randint(2, size=(1, len_bin)).float().to(device)
+    x_pert[node_idx,
+           bin_dims] = torch.randint(2, size=(1, len_bin)).float().to(device)
 
     return x_pert[node_idx, pert_feat]
