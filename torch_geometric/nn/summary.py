@@ -1,118 +1,131 @@
 from collections import defaultdict
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, List, Optional, Union
 
 import torch
-import torch.nn as nn
 from torch.jit import ScriptModule
+from torch.nn import Module
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 
 
 def summary(
-    model: nn.Module,
-    *inputs: Sequence[Any],
+    model: torch.nn.Module,
+    *args,
     max_depth: int = 3,
-    leaf_module: Union[nn.Module, Tuple[nn.Module],
-                       Optional[nn.Module]] = MessagePassing,
+    leaf_module: Optional[Union[Module, List[Module]]] = MessagePassing,
     **kwargs,
 ) -> str:
-    r"""Summarizes the given PyTorch model. Summarized information includes
-    (1) Layer names, (2) Input/output shapes, and (3) # of parameters.
+    r"""Summarizes a given :class:`torch.nn.Module`.
+    The summarized information includes (1) layer names, (2) input and output
+    shapes, and (3) the number of parameters.
 
     .. code-block:: python
 
         import torch
-        from torch_geometric.nn import summary
-        from torch_geometric.nn.models import GCN
+        from torch_geometric.nn import GCN, summary
 
-        model = GCN(128, 64, 2, out_channels=32)
+        model = GCN(128, 64, num_layers=2, out_channels=32)
         x = torch.randn(100, 128)
         edge_index = torch.randint(100, size=(2, 20))
+
         print(summary(model, x, edge_index))
 
+    .. code-block::
+
+        +---------------------+---------------------+--------------+--------+
+        | Layer               | Input Shape         | Output Shape | #Param |
+        |---------------------+---------------------+--------------+--------|
+        | GCN                 | [100, 128], [2, 20] | [100, 32]    | 10,336 |
+        | ├─(act)ReLU         | [100, 64]           | [100, 64]    | --     |
+        | ├─(convs)ModuleList | --                  | --           | 10,336 |
+        | │    └─(0)GCNConv   | [100, 128], [2, 20] | [100, 64]    | 8,256  |
+        | │    └─(1)GCNConv   | [100, 64], [2, 20]  | [100, 32]    | 2,080  |
+        +---------------------+---------------------+--------------+--------+
+
     Args:
-        model (nn.Module): PyTorch model to summarize.
-        inputs (Sequence[Any]): Arguments for the model's
-            forward pass.
-        max_depth (int): Depth of nested layers to display.
-            Nested layers below this depth will not be displayed
-            in the summary. (default: :obj:`"3"`)
-        leaf_module (Union[nn.Module, Tuple[nn.Module], Optional[nn.Module]]):
-            Modules to be treated as leaf ones, whose submodules are excluded
-            from the the summarized information.
-            (default: :obj:`"MessagePassing"`)
-        **kwargs: Other arguments used in `model.forward` function.
+        model (torch.nn.Module): The model to summarize.
+        *args: The arguments of the :obj:`model`.
+        max_depth (int, optional): The depth of nested layers to display.
+            Any layers deeper than this depth will not be displayed in the
+            summary. (default: :obj:`3`)
+        leaf_module (torch.nn.Module or [torch.nn.Module], optional): The
+            modules to be treated as leaf modules, whose submodules are
+            excluded from the summary.
+            (default: :class:`~torch_geometric.nn.conv.MessagePassing`)
+        **kwargs: Additional arguments of the :obj:`model`.
     """
     def register_hook(info):
-        def hook(module, input, output):
-            info['input_shape'].append(get_shape(input))
+        def hook(module, inputs, output):
+            info['input_shape'].append(get_shape(inputs))
             info['output_shape'].append(get_shape(output))
 
         return hook
 
     hooks = {}
     depth = 0
-    stack = [(get_name(model), model, depth)]
+    stack = [(model.__class__.__name__, model, depth)]
 
     info_list = []
     input_shape = defaultdict(list)
     output_shape = defaultdict(list)
     while stack:
-        var_name, module, depth = stack.pop()
+        name, module, depth = stack.pop()
+
+        if depth >= max_depth:
+            continue
 
         module_id = id(module)
-        if module_id in hooks:
+
+        if module_id in hooks:  # Avoid duplicated hooks.
             hooks[module_id].remove()
 
         info = {}
-        info['name'] = var_name
+        info['name'] = name
         info['input_shape'] = input_shape[module_id]
         info['output_shape'] = output_shape[module_id]
         info['depth'] = depth
-        para = sum(p.numel() for p in module.parameters())
-        info['#param'] = f"{para:,}" if para > 0 else "--"
+        num_params = sum(p.numel() for p in module.parameters())
+        info['#param'] = f'{num_params:,}' if num_params > 0 else '--'
         info_list.append(info)
+
         if not isinstance(module, ScriptModule):
             hooks[module_id] = module.register_forward_hook(
                 register_hook(info))
+
         if (leaf_module is not None and isinstance(module, leaf_module)):
             continue
+
         module_items = reversed(module._modules.items())
-        stack += [(f"({name}){get_name(mod)}", mod, depth + 1)
+        stack += [(f"({name}){mod.__class__.__name__}", mod, depth + 1)
                   for name, mod in module_items if mod is not None]
 
     training = model.training
     model.eval()
-    # make a forward pass
+
     with torch.no_grad():
-        model(*inputs, **kwargs)
+        model(*args, **kwargs)
+
     model.train(training)
 
-    # remove hooks
-    for h in hooks.values():
+    for h in hooks.values():  # Remove hooks.
         h.remove()
 
     info_list = postprocess(info_list)
-    body = make_table(info_list, max_depth=max_depth)
-    return body
+    return make_table(info_list, max_depth=max_depth)
 
 
-def get_shape(input: Union[Any, Tuple[Any]]) -> str:
-    if not isinstance(input, tuple):
-        input = (input, )
+def get_shape(inputs: Any) -> str:
+    if not isinstance(inputs, (tuple, list)):
+        inputs = (inputs, )
+
     out = []
-    for x in input:
+    for x in inputs:
         if isinstance(x, SparseTensor):
             out.append(str(list(x.sizes())))
         elif hasattr(x, 'size'):
             out.append(str(list(x.size())))
-    out = ', '.join(out)
-    return out
-
-
-def get_name(module: nn.Module) -> str:
-    return module.__class__.__name__
+    return ', '.join(out)
 
 
 def postprocess(info_list: List[dict]) -> List[dict]:
@@ -120,7 +133,7 @@ def postprocess(info_list: List[dict]) -> List[dict]:
         depth = info['depth']
         if idx > 0:  # root module (0) is exclued
             if depth == 1:
-                prefix = "├─"
+                prefix = '├─'
             else:
                 prefix = f"{'│    '*(depth-1)}└─"
             info['name'] = prefix + info['name']
@@ -129,8 +142,8 @@ def postprocess(info_list: List[dict]) -> List[dict]:
             info['input_shape'] = info['input_shape'].pop(0)
             info['output_shape'] = info['output_shape'].pop(0)
         else:
-            info['input_shape'] = "--"
-            info['output_shape'] = "--"
+            info['input_shape'] = '--'
+            info['output_shape'] = '--'
     return info_list
 
 
@@ -138,15 +151,10 @@ def make_table(info_list: List[dict], max_depth: int) -> str:
     from tabulate import tabulate
     content = [['Layer', 'Input Shape', 'Output Shape', '#Param']]
     for info in info_list:
-        depth = info['depth']
-        if depth > max_depth:
-            continue
-        row = [
+        content.append([
             info['name'],
             info['input_shape'],
             info['output_shape'],
             info['#param'],
-        ]
-        content.append(row)
-
+        ])
     return tabulate(content, headers='firstrow', tablefmt='psql')
