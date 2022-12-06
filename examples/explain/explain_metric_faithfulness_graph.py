@@ -6,23 +6,22 @@ import torch.nn.functional as F
 
 from torch_geometric.datasets import TUDataset
 from torch_geometric.explain import Explainer, GNNExplainer
+from torch_geometric.explain.metrics.faithfulness import get_faithfulness
 from torch_geometric.loader import DataLoader
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import MLP, GINConv, global_add_pool
-from torch_geometric.explain.metrics.faithfulness import get_faithfulness
-
 
 dataset = "MUTAG"
 batch_size = 128
 lr = 0.01
 epochs = 100
 hidden_channels = 32
-num_layers=5
+num_layers = 5
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-init_wandb(name=f'GIN-{dataset}', batch_size=batch_size, lr=lr,
-           epochs=epochs, hidden_channels=hidden_channels,
-           num_layers=num_layers, device=device)
+init_wandb(name=f'GIN-{dataset}', batch_size=batch_size, lr=lr, epochs=epochs,
+           hidden_channels=hidden_channels, num_layers=num_layers,
+           device=device)
 
 path = osp.join(osp.dirname(osp.realpath("__file__")), '..', 'data', 'TU')
 dataset = TUDataset(path, name=dataset).shuffle()
@@ -92,29 +91,25 @@ for epoch in range(1, epochs + 1):
     test_acc = test(test_loader)
     log(Epoch=epoch, Loss=loss, Train=train_acc, Test=test_acc)
 
-
 explainer = Explainer(
-        model=model,
-        algorithm=GNNExplainer(epochs=300),
-        explainer_config=dict(
-            explanation_type="model",
-            node_mask_type='object',
-            edge_mask_type='object',
-        ),
-        model_config=dict(
-            mode='classification',
-            task_level='graph',
-            return_type='raw',
-        ),
-    )
-
+    model=model,
+    algorithm=GNNExplainer(epochs=300),
+    explainer_config=dict(
+        explanation_type="model",
+        node_mask_type='object',
+        edge_mask_type='object',
+    ),
+    model_config=dict(
+        mode='classification',
+        task_level='graph',
+        return_type='raw',
+    ),
+)
 
 data = dataset.data.to(device)
-add_args = {
-    'batch': torch.zeros((1,)).long().to(device)
-}
+add_args = {'batch': torch.zeros((1, )).long().to(device)}
 
-explanation = explainer(x=data.x, edge_index=data.edge_index,**add_args)
+explanation = explainer(x=data.x, edge_index=data.edge_index, **add_args)
 
 graph_idx = 10
 gdata = dataset[graph_idx]
