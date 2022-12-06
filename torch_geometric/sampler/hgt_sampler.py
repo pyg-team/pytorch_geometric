@@ -3,12 +3,8 @@ from typing import Any, Dict, List, Optional, Union
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.sampler.base import (
-    BaseSampler,
-    EdgeSamplerInput,
-    HeteroSamplerOutput,
-    NodeSamplerInput,
-)
+from torch_geometric.sampler import BaseSampler, HeteroSamplerOutput
+from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
@@ -24,6 +20,12 @@ class HGTSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
+        try:
+            import torch_sparse  # noqa
+        except ImportError:
+            raise ImportError(
+                f"'{self.__class__.__name__}' requires 'torch-sparse'")
+
         if isinstance(data, Data) or isinstance(data, tuple):
             raise NotImplementedError(
                 f'{self.__class__.__name__} does not support a data object of '
@@ -79,14 +81,6 @@ class HGTSampler(BaseSampler):
             batch=batch,
             metadata=index,
         )
-
-    def sample_from_edges(
-        self,
-        index: EdgeSamplerInput,
-        **kwargs,
-    ) -> HeteroSamplerOutput:
-        # TODO(manan): implement
-        raise NotImplementedError
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
