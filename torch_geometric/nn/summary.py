@@ -13,7 +13,7 @@ def summary(
     model: torch.nn.Module,
     *args,
     max_depth: int = 3,
-    leaf_module: Optional[Union[Module, List[Module]]] = MessagePassing,
+    leaf_module: Optional[Union[Module, List[Module]]] = 'MessagePassing',
     **kwargs,
 ) -> str:
     r"""Summarizes a given :class:`torch.nn.Module`.
@@ -55,6 +55,10 @@ def summary(
             (default: :class:`~torch_geometric.nn.conv.MessagePassing`)
         **kwargs: Additional arguments of the :obj:`model`.
     """
+    # NOTE This is just for the doc-string to render nicely:
+    if leaf_module == 'MessagePassing':
+        leaf_module = MessagePassing
+
     def register_hook(info):
         def hook(module, inputs, output):
             info['input_shape'].append(get_shape(inputs))
@@ -71,10 +75,6 @@ def summary(
     output_shape = defaultdict(list)
     while stack:
         name, module, depth = stack.pop()
-
-        if depth > max_depth:
-            continue
-
         module_id = id(module)
 
         if module_id in hooks:  # Avoid duplicated hooks.
@@ -92,6 +92,9 @@ def summary(
         if not isinstance(module, ScriptModule):
             hooks[module_id] = module.register_forward_hook(
                 register_hook(info))
+
+        if depth >= max_depth:
+            continue
 
         if (leaf_module is not None and isinstance(module, leaf_module)):
             continue
