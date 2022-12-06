@@ -188,7 +188,6 @@ class HeteroExplanation(HeteroData):
         status = super().validate()
 
         if 'node_mask' in self:
-            print(self.x_dict)
             for key in self.x_dict.keys():
                 if key not in self.node_mask:
                     status = False
