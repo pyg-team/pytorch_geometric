@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, GNNExplainer
-from torch_geometric.explain.metrics.faithfulness import get_node_faithfulness
+from torch_geometric.explain.metrics.faithfulness import get_node_faithfulness, get_faithfulness
 from torch_geometric.nn import GCNConv
 
 
@@ -69,5 +69,5 @@ topk = 10
 for node_index in range(0,50):
       explanation = explainer(data.x, data.edge_index, index=node_index,
                         edge_weight=data.edge_weight)
-      _, node_feat_faithfulness = get_node_faithfulness(node_index, data, explanation, model, topk, device,**add_args)
+      _, node_feat_faithfulness = get_faithfulness(data, explanation, model, topk, node_index=node_index,**add_args)
       print(f'Faithfulness score with topk {topk} for node idx {node_index}  : {node_feat_faithfulness:.4f} ')

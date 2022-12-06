@@ -9,7 +9,7 @@ from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.loader import DataLoader
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import MLP, GINConv, global_add_pool
-from torch_geometric.explain.metrics.faithfulness import get_graph_faithfulness
+from torch_geometric.explain.metrics.faithfulness import get_faithfulness
 
 
 dataset = "MUTAG"
@@ -119,5 +119,5 @@ explanation = explainer(x=data.x, edge_index=data.edge_index,**add_args)
 graph_idx = 10
 gdata = dataset[graph_idx]
 topk = 4
-graph_faithfulness = get_graph_faithfulness(gdata, explanation, model, topk, device, **add_args)
-print(f'Faithfulness for graph {graph_idx} faithfulness:{graph_faithfulness:.4f}')
+score, _ = get_faithfulness(gdata, explanation, model, topk, **add_args)
+print(f'Faithfulness for graph {graph_idx} faithfulness:{score:.4f}')
