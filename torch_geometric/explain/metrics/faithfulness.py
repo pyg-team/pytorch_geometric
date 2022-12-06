@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
-from utils import perturb_node_features
+from torch_geometric.explain.metrics.utils import perturb_node_features
 
 
 def get_faithfulness(data: Data, explanation: Explanation, model: torch.nn.Module, topk: int, node_idx: int = None, **kwargs) -> Tuple[float, float]:
