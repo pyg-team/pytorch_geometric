@@ -187,75 +187,67 @@ class HeteroExplanation(HeteroData):
         r"""Validates the correctness of the explanation"""
         status = super().validate()
 
-        x_dict = None
-        edge_index_dict = None
-        edge_attr_dict = None
-        for key, value in self.node_items():
-            if key == "x_dict":
-                x_dict = value
-            elif key == "edge_index_dict":
-                edge_index_dict = value
-            elif key == "edge_attr_dict":
-                edge_attr_dict = value
-
         if 'node_mask' in self:
-            for key in x_dict.keys():
+            print(self.x_dict)
+            for key in self.x_dict.keys():
                 if key not in self.node_mask:
                     status = False
                     warn_or_raise(
                         f"Expected a 'node_mask' for node type {key}, but got "
                         f"none", raise_on_error)
-                elif x_dict[key].size(0) != self.node_mask[key].size(0):
+                elif self.x_dict[key].size(0) != self.node_mask[key].size(0):
                     status = False
                     warn_or_raise(
-                        f"Expected a 'node_mask' with {x_dict[key].size(0)} "
-                        f"nodes (got {self.node_mask[key].size(0)} nodes)",
+                        f"Expected a 'node_mask' with "
+                        f"{self.x_dict[key].size(0)} nodes (got "
+                        f"{self.node_mask[key].size(0)} nodes)",
                         raise_on_error)
 
         if 'edge_mask' in self:
-            for key in edge_index_dict.keys():
+            for key in self.edge_index_dict.keys():
                 if key not in self.edge_mask:
                     status = False
                     warn_or_raise(
                         f"Expected an 'edge_mask' for edge type {key}, but "
                         f"got none", raise_on_error)
-                elif edge_index_dict[key].size(1) != self.edge_mask[key].size(
-                        0):
+                elif self.edge_index_dict[key].size(
+                        1) != self.edge_mask[key].size(0):
                     status = False
                     warn_or_raise(
                         f"Expected an 'edge_mask' with "
-                        f"{edge_index_dict[key].size(1)} edges (got "
+                        f"{self.edge_index_dict[key].size(1)} edges (got "
                         f"{self.edge_mask[key].size(0)} edges)",
                         raise_on_error)
 
         if 'node_feat_mask' in self:
-            for key in x_dict.keys():
+            for key in self.x_dict.keys():
                 if key not in self.node_feat_mask:
                     status = False
                     warn_or_raise(
                         f"Expected a 'node_feat_mask' for node type {key}, "
                         f"but got none", raise_on_error)
-                elif x_dict[key].size() != self.node_feat_mask[key].size():
+                elif self.x_dict[key].size() != self.node_feat_mask[key].size(
+                ):
                     status = False
                     warn_or_raise(
                         f"Expected a 'node_feat_mask' of shape "
-                        f"{list(x_dict[key].size())} (got shape "
+                        f"{list(self.x_dict[key].size())} (got shape "
                         f"{list(self.node_feat_mask[key].size())})",
                         raise_on_error)
 
         if 'edge_feat_mask' in self:
-            for key in edge_attr_dict.keys():
+            for key in self.edge_attr_dict.keys():
                 if key not in self.edge_feat_mask:
                     status = False
                     warn_or_raise(
                         f"Expected an 'edge_feat_mask' for edge type {key}, "
                         f"but got none", raise_on_error)
-                elif edge_attr_dict[key].size(
+                elif self.edge_attr_dict[key].size(
                 ) != self.edge_feat_mask[key].size():
                     status = False
                     warn_or_raise(
                         f"Expected a 'edge_feat_mask' of shape "
-                        f"{list(edge_attr_dict[key].size())} (got shape "
+                        f"{list(self.edge_attr_dict[key].size())} (got shape "
                         f"{list(self.edge_feat_mask[key].size())})",
                         raise_on_error)
 

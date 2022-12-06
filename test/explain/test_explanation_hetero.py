@@ -60,15 +60,18 @@ def create_random_explanation(
         torch.rand(data[("paper", "to", "author")].edge_attr.size()),
     } if edge_feat_mask else None
 
-    return HeteroExplanation(  # Create explanation.
+    explanation = HeteroExplanation(
         node_mask=node_mask,
         edge_mask=edge_mask,
         node_feat_mask=node_feat_mask,
         edge_feat_mask=edge_feat_mask,
-        x_dict=data.x_dict,
-        edge_index_dict=data.edge_index_dict,
-        edge_attr_dict=data.edge_attr_dict,
     )
+
+    explanation.x_dict = data.x_dict
+    explanation.edge_index_dict = data.edge_index_dict
+    explanation.edge_attr_dict = data.edge_attr_dict
+
+    return explanation
 
 
 @pytest.mark.parametrize('node_mask', [True, False])
