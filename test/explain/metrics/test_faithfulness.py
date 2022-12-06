@@ -65,5 +65,5 @@ def test_faithfulness(data, topk, node_idx, node_mask, edge_mask,
     val1, val2 = get_faithfulness(data=data, explanation=explanation,
                                   model=model, topk=topk, node_idx=node_idx)
 
-    assert getattr(explanation, "node_mask", None) is None or (val1 >= 0)
-    assert getattr(explanation, "node_feat_mask", None) is None or (val2 >= 0)
+    assert val1 is None or (val1 >= 0)
+    assert val2 is None or (val2 >= 0)
