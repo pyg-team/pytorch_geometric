@@ -43,7 +43,7 @@ def create_random_explanation(
     )
 
 
-model = GCN(in_channels=3, hidden_channels=4, num_layers=3, out_channels=2)
+model = GCN(in_channels=3, hidden_channels=4, num_layers=2, out_channels=2)
 
 
 @pytest.mark.parametrize('topk', [1, 2])

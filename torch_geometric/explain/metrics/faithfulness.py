@@ -57,7 +57,7 @@ def get_faithfulness(data: Data, explanation: Explanation,
             else:
                 org_vec = model(data.x, data.edge_index, **kwargs)[node_idx]
 
-            org_softmax = F.softmax(org_vec[node_idx], dim=-1)
+            org_softmax = F.softmax(org_vec, dim=-1)
     except:
         raise Exception(
             "Not able to get get original predictions from model and data")
