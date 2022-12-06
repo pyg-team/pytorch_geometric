@@ -211,7 +211,12 @@ class GNNExplainer(ExplainerAlgorithm):
         return (-y_hat).gather(1, y.view(-1, 1)).mean()
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        return F.binary_cross_entropy(y_hat, y.float())
+        if self.model_config.return_type.value == 'raw':
+            return F.binary_cross_entropy_with_logits(y_hat, y.float())
+        if self.model_config.return_type.value == 'probs':
+            return F.binary_cross_entropy(y_hat, y.float())
+        elif self.model_config.return_type.value == 'log_probs':
+            return F.binary_cross_entropy(y_hat.exp(), y.float())
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.regression:
