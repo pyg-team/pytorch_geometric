@@ -1,7 +1,14 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Final, List, Optional, Tuple, Union
 
 import numpy as np
 from torch import Tensor
+
+try:
+    import pyg_lib  # noqa
+    WITH_PYG_LIB: Final[bool] = True
+except ImportError:
+    pyg_lib = object
+    WITH_PYG_LIB: Final[bool] = False
 
 try:
     from torch_sparse import SparseTensor

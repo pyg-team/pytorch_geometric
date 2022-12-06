@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data import (
     Data,
     FeatureStore,
@@ -24,12 +25,6 @@ from torch_geometric.sampler.base import (
 )
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
-
-try:
-    import pyg_lib  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
 
 
 class NeighborSampler(BaseSampler):
@@ -227,7 +222,7 @@ class NeighborSampler(BaseSampler):
         loaders."""
         # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            if _WITH_PYG_LIB:
+            if torch_geometric.typing.WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` should inherit the type of
                 # `colptr_dict` and `row_dict`.
@@ -285,7 +280,7 @@ class NeighborSampler(BaseSampler):
             )
 
         if issubclass(self.data_cls, Data):
-            if _WITH_PYG_LIB:
+            if torch_geometric.typing.WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` should inherit the type of
                 # `colptr` and `row`.
