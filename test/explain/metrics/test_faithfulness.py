@@ -1,10 +1,11 @@
 import pytest
-
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.metrics.faithfulness import get_faithfulness
 from torch_geometric.nn.models import GCN
+
 
 @pytest.fixture
 def data():
@@ -19,11 +20,11 @@ def data():
 
 
 def create_random_explanation(
-        data: Data,
-        node_mask: bool = True,
-        edge_mask: bool = True,
-        node_feat_mask: bool = True,
-        edge_feat_mask: bool = True,
+    data: Data,
+    node_mask: bool = True,
+    edge_mask: bool = True,
+    node_feat_mask: bool = True,
+    edge_feat_mask: bool = True,
 ):
     node_mask = torch.rand(data.x.size(0)) if node_mask else None
     edge_mask = torch.rand(data.edge_index.size(1)) if edge_mask else None
@@ -39,7 +40,6 @@ def create_random_explanation(
         x=data.x,
         edge_index=data.edge_index,
         edge_attr=data.edge_attr,
-
     )
 
 
@@ -52,8 +52,8 @@ model = GCN(in_channels=3, hidden_channels=4, num_layers=3, out_channels=2)
 @pytest.mark.parametrize('edge_mask', [True, False])
 @pytest.mark.parametrize('node_feat_mask', [True, False])
 @pytest.mark.parametrize('edge_feat_mask', [True, False])
-def test_faithfulness(topk, data, node_idx, node_mask, edge_mask, node_feat_mask,
-                      edge_feat_mask):
+def test_faithfulness(topk, data, node_idx, node_mask, edge_mask,
+                      node_feat_mask, edge_feat_mask):
     explanation = create_random_explanation(
         data,
         node_mask=node_mask,
