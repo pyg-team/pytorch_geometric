@@ -1,11 +1,9 @@
 import torch
 import torch.nn.functional as F
-# from pyg_lib.ops import broadcast_sub
 from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter
 
-from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import degree
 
@@ -98,56 +96,3 @@ class LayerNorm(torch.nn.Module):
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'affine={self.affine}, mode={self.mode})')
-
-
-class HeteroLayerNorm(torch.nn.Module):
-    def __init__(self, in_channels: int, num_types: int, eps: float = 1e-5,
-                 affine: bool = True, mode: str = 'graph'):
-        super().__init__()
-
-        self.num_types = num_types
-        self.fused_aggr = FusedAggregation(['mean', 'std'])
-
-        if affine:
-            self.weight = Parameter(torch.Tensor(num_types, in_channels))
-            self.bias = Parameter(torch.Tensor(num_types, in_channels))
-        else:
-            self.register_parameter('weight', None)
-            self.register_parameter('bias', None)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        self.fused_aggr.reset_parameters()
-        ones(self.weight)
-        zeros(self.bias)
-
-    def forward(self, x: Tensor, type_vec: Tensor,
-                batch: OptTensor = None) -> Tensor:
-        """"""
-        # x = x.view(10, -1, 64)
-        # with torch.no_grad():
-        #     mean = x.mean(dim=1, keepdim=True)
-        #     std = x.std(dim=1, keepdim=True)
-        # out = (x - mean) / std
-        # return out.view(-1, 64)
-
-        with torch.no_grad():
-            mean, std = self.fused_aggr(x, type_vec, dim_size=self.num_types)
-            # mean = mean[type_vec]
-            # std = std[type_vec]
-
-        # return (x - mean) / std
-
-        out = torch.ops.pyg.sampled_op(x, mean, None, type_vec, "sub")
-        out = torch.ops.pyg.sampled_op(out, std, None, type_vec, "div")
-        return out
-
-        # return broadcast_sub(broadcast_sub(x, mean, type_vec), std, type_vec)
-
-        # return (x - mean)
-
-    def __repr__(self):
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'num_types={self.num_types}, affine={self.affine}, '
-                f'mode={self.mode})')
