@@ -52,7 +52,7 @@ model = GCN(in_channels=3, hidden_channels=4, num_layers=3, out_channels=2)
 @pytest.mark.parametrize('edge_mask', [True, False])
 @pytest.mark.parametrize('node_feat_mask', [True, False])
 @pytest.mark.parametrize('edge_feat_mask', [True, False])
-def test_faithfulness( data,topk, node_idx, node_mask, edge_mask,
+def test_faithfulness(data, topk, node_idx, node_mask, edge_mask,
                       node_feat_mask, edge_feat_mask):
     explanation = create_random_explanation(
         data,
@@ -62,7 +62,8 @@ def test_faithfulness( data,topk, node_idx, node_mask, edge_mask,
         edge_feat_mask=edge_feat_mask,
     )
 
-    val1, val2 = get_faithfulness(data=data, explanation=explanation, model=model, topk=topk, node_idx=node_idx)
+    val1, val2 = get_faithfulness(data=data, explanation=explanation,
+                                  model=model, topk=topk, node_idx=node_idx)
 
     assert getattr(explanation, "node_mask", None) is None or (val1 >= 0)
     assert getattr(explanation, "node_feat_mask", None) is None or (val2 >= 0)
