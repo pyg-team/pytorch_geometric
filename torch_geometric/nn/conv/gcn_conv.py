@@ -40,7 +40,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
-        assert flow in ["source_to_target"]
+        assert flow == 'source_to_target'
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
@@ -53,43 +53,43 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
 
         return adj_t
+
+    # `edge_index` can be a `torch.LongTensor` or `torch.sparse.Tensor`:
+    is_sparse_tensor = is_torch_sparse_tensor(edge_index)
+    if is_sparse_tensor:
+        assert flow == 'source_to_target'
+        # Reverse `flow` since sparse tensors model transposed adjacencies:
+        flow = 'target_to_source'
+        adj_t = edge_index
+        num_nodes = adj_t.size(0)
+        edge_index = adj_t._indices()
+        edge_weight = adj_t._values()
     else:
-        is_sparse_tensor = is_torch_sparse_tensor(edge_index)
-        if is_sparse_tensor:
-            assert flow == "source_to_target"
-            # `adj_t` is transposed
-            flow = "target_to_source"
-            adj_t = edge_index
-            num_nodes = adj_t.size(0)
-            edge_index = adj_t._indices()
-            edge_weight = adj_t._values()
-        else:
-            assert flow in ["source_to_target", "target_to_source"]
-            num_nodes = maybe_num_nodes(edge_index, num_nodes)
+        assert flow in ["source_to_target", "target_to_source"]
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
-        if add_self_loops:
-            edge_index, tmp_edge_weight = add_remaining_self_loops(
-                edge_index, edge_weight, fill_value, num_nodes)
-            assert tmp_edge_weight is not None
-            edge_weight = tmp_edge_weight
+    if add_self_loops:
+        edge_index, tmp_edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, fill_value, num_nodes)
+        assert tmp_edge_weight is not None
+        edge_weight = tmp_edge_weight
 
-        row, col = edge_index[0], edge_index[1]
-        idx = col if flow == "source_to_target" else row
-        deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+    row, col = edge_index[0], edge_index[1]
+    idx = col if flow == "source_to_target" else row
+    deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes, reduce='sum')
+    deg_inv_sqrt = deg.pow_(-0.5)
+    deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+    edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-        if is_sparse_tensor:
-            adj_t = to_torch_coo_tensor(edge_index, edge_weight,
-                                        size=num_nodes)
-            return adj_t, None
-        else:
-            return edge_index, edge_weight
+    if is_sparse_tensor:
+        adj_t = to_torch_coo_tensor(edge_index, edge_weight, size=num_nodes)
+        return adj_t, None
+    else:
+        return edge_index, edge_weight
 
 
 class GCNConv(MessagePassing):

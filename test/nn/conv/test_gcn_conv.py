@@ -33,8 +33,6 @@ def test_gcn_conv():
         jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
         assert jit(x, edge_index, value).tolist() == out2.tolist()
-        assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-        assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
