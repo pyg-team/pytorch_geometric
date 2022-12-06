@@ -72,7 +72,7 @@ def summary(
     while stack:
         name, module, depth = stack.pop()
 
-        if depth >= max_depth:
+        if depth > max_depth:
             continue
 
         module_id = id(module)
