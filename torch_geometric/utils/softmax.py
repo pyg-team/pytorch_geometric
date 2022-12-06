@@ -4,6 +4,8 @@ import torch
 from torch import Tensor
 from torch_scatter import gather_csr, segment_csr
 
+import torch_geometric.typing
+from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
@@ -67,8 +69,12 @@ def softmax(
         N = maybe_num_nodes(index, num_nodes)
         with torch.no_grad():
             src_max = scatter(src, index, dim, dim_size=N, reduce='max')
-            src_max = src_max.index_select(dim, index)
-        out = (src - src_max).exp()
+        if (torch_geometric.typing.WITH_PYG_LIB and src.dim() == 2
+                and (dim == 0 or dim == -2)):
+            out = pyg_lib.ops.sampled_sub(src, src_max, right_index=index)
+        else:
+            out = src - src_max.index_select(dim, index)
+        out = out.exp()
         out_sum = scatter(out, index, dim, dim_size=N, reduce='sum') + 1e-16
         out_sum = out_sum.index_select(dim, index)
     else:
