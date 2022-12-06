@@ -244,11 +244,8 @@ for epoch in range(1, 51):
     test_acc, test_precision, test_recall, test_f1 = test(test_loader)
 
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
-    print(f'Eval Index: Accuracy | Precision | Recall | F1_score')
+    print(f'Eval: Accuracy | Precision | Recall | F1 score')
     print(
-        f'Train: {train_acc:.4f} | {train_precision:.4f} | {train_recall:.4f} \
-          | {train_f1:.4f}')
-    print(f'Val:   {val_acc:.4f} | {val_precision:.4f} | {val_recall:.4f} \
-          | {val_f1:.4f}')
-    print(f'Test:  {test_acc:.4f} | {test_precision:.4f} | {test_recall:.4f} \
-          | {test_f1:.4f}')
+        f'Train: {train_acc:.4f}  | {train_precision:.4f}   | {train_recall:.4f} | {train_f1:.4f}')
+    print(f'Val:   {val_acc:.4f}  | {val_precision:.4f}   | {val_recall:.4f} | {val_f1:.4f}')
+    print(f'Test:  {test_acc:.4f} | {test_precision:.4f}   | {test_recall:.4f} | {test_f1:.4f}')
