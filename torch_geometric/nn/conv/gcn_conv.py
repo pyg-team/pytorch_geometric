@@ -3,7 +3,9 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Parameter
+from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, fill_diag, mul
+from torch.sparse.matmul import matmul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing

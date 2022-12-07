@@ -1,16 +1,8 @@
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import is_torch_sparse_tensor
-
-try:
-    from torch_sparse import matmul as torch_sparse_matmul
-except ImportError:
-
-    def torch_sparse_matmul(src: SparseTensor, other: Tensor,
-                            reduce: str = "sum") -> Tensor:
-        raise NotImplementedError
+from torch_sparse import SparseTensor
+from .sparse import is_torch_sparse_tensor, is_sparse
 
 
 @torch.jit._overload
@@ -39,18 +31,36 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     :rtype: :class:`Tensor`
     """
-    assert reduce in ['sum', 'add', 'mean', 'min', 'max']
 
+    assert reduce in ['sum', 'add', 'mean', 'min', 'max'], f"Uknown reduction type {reduce}. Supported: ['sum','mean','max','min']"
+    reduce = 'sum' if reduce == 'add' else reduce
+    
+    # TODO: When torch.sparse.Tensor is available and use more strict        is_torch_sparse_tensor(src)
+    # if not is_sparse(src):
+    # 
+    #     raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
+    #                      f"or a `torch.sparse.Tensor` (got {type(src)}).")
+    
     if isinstance(src, SparseTensor):
-        return torch_sparse_matmul(src, other, reduce)
+        if other.requires_grad:
+            row = src.storage.row()
+            csr2csc = src.storage.csr2csc()
+            ccol_indices = src.storage.colptr()
+        csr = src.to_torch_sparse_csr_tensor(dtype=other.dtype)
+    
+    else:
+        csr = src
+        row = None
+        csr2csc = None
+        ccol_indices = None
+        
+    if not csr.layout == torch.sparse_csr:
+        raise ValueError(f"src must be a `torch.Tensor` with `torch.sparse_csr` layout {csr.layout}")
+    
+    if other.requires_grad:
+        return torch.sparse.spmm_reduce(csr, other, reduce, row, ccol_indices, csr2csc)
+    else:
+        return torch.sparse.spmm_reduce(csr, other, reduce)
 
-    if not is_torch_sparse_tensor(src):
-        raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
-                         f"or a `torch.sparse.Tensor` (got {type(src)}).")
-
-    if reduce in ['sum', 'add']:
-        return torch.sparse.mm(src, other)
-
-    # TODO: Support `mean` reduction for PyTorch SparseTensor
-    raise ValueError(f"`{reduce}` reduction is not supported for "
-                     f"`torch.sparse.Tensor`.")
+    
+SparseTensor.spmm = lambda self, other, reduce="sum": spmm(self, other, reduce)

@@ -7,7 +7,6 @@ from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
 from torch_sparse import SparseTensor
-
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import spmm
@@ -87,6 +86,12 @@ def test_my_conv():
     assert torch.allclose(conv((x1, None), adj.t()), out2)
     assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
     conv.fuse = True
+
+    # Test backward compatibility for `torch.sparse` tensors:
+    conv.fuse = True
+    torch_adj = torch_adj.requires_grad_()
+    conv((x1, x2), torch_adj.t()).sum().backward()
+    assert torch_adj.grad is not None
 
     # Test backward compatibility for `torch.sparse` tensors:
     conv.fuse = True
