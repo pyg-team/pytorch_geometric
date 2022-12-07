@@ -16,8 +16,10 @@ class GCN(torch.nn.Module):
         self.model_config = model_config
         self.multi_output = multi_output
 
-        out_channels = \
-            7 if model_config.mode.value == 'multiclass_classification' else 1
+        if model_config.mode.value == 'multiclass_classification':
+            out_channels = 7
+        else:
+            out_channels = 1
 
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, out_channels)
@@ -33,11 +35,8 @@ class GCN(torch.nn.Module):
             x = x[edge_label_index[0]] * x[edge_label_index[1]]
 
         if self.model_config.mode.value == 'binary_classification':
-            x = x[:, 0]
             if self.model_config.return_type.value == 'probs':
                 x = x.sigmoid()
-            elif self.model_config.return_type.value == 'log_probs':
-                x = x.sigmoid().log()
         else:
             if self.model_config.return_type.value == 'probs':
                 x = x.softmax(dim=-1)
@@ -151,7 +150,7 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('return_type', ['log_probs', 'probs', 'raw'])
+@pytest.mark.parametrize('return_type', ['log_probs', 'probs'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
 @pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_binary_classification(

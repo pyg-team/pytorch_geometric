@@ -21,8 +21,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([
     T.NormalizeFeatures(),
     T.ToDevice(device),
-    T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,
-                      add_negative_train_samples=False),
+    T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True),
 ])
 dataset = Planetoid(path, dataset, transform=transform)
 train_data, val_data, test_data = dataset[0]
@@ -44,8 +43,7 @@ class Net(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_label_index):
         z = model.encode(x, edge_index)
-        out = model.decode(z, edge_label_index).view(-1)
-        return out
+        return model.decode(z, edge_label_index).view(-1)
 
 
 model = Net(dataset.num_features, 128, 64).to(device)
@@ -56,25 +54,12 @@ def train():
     model.train()
     optimizer.zero_grad()
 
-    # We perform a new round of negative sampling for every training epoch:
-    neg_edge_index = negative_sampling(
-        edge_index=train_data.edge_index, num_nodes=train_data.num_nodes,
-        num_neg_samples=train_data.edge_label_index.size(1), method='sparse')
 
-    edge_label_index = torch.cat(
-        [train_data.edge_label_index, neg_edge_index],
-        dim=-1,
-    )
-    edge_label = torch.cat([
-        train_data.edge_label,
-        train_data.edge_label.new_zeros(neg_edge_index.size(1))
-    ], dim=0)
-
-    out = model(train_data.x, train_data.edge_index, edge_label_index)
-    loss = F.binary_cross_entropy_with_logits(out, edge_label)
+    out = model(train_data.x, train_data.edge_index, train_data.edge_label_index)
+    loss = F.binary_cross_entropy_with_logits(out, train_data.edge_label)
     loss.backward()
     optimizer.step()
-    return loss
+    return float(loss)
 
 
 @torch.no_grad()
@@ -89,9 +74,6 @@ for epoch in range(1, 11):
     loss = train()
     val_auc = test(val_data)
     test_auc = test(test_data)
-    if val_auc > best_val_auc:
-        best_val_auc = val_auc
-        final_test_auc = test_auc
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
 
@@ -99,16 +81,15 @@ print(f'Final Test: {final_test_auc:.4f}')
 
 # Explain model output for an edge
 model_config = ModelConfig(mode="binary_classification", task_level="edge",
-                           return_type="probs")
+                           return_type="raw")
 edge_label_index = val_data.edge_label_index[:, 0]
 explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
     explainer_config=ExplainerConfig(explanation_type="model",
                                      node_mask_type="attributes",
-                                     edge_mask_type="object"),
+                                     edge_mask_type="object", ),
     model_config=model_config)
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        index=0, target_index=None,
                         edge_label_index=edge_label_index)
 print(explanation.available_explanations)
 
@@ -117,10 +98,10 @@ explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
     explainer_config=ExplainerConfig(explanation_type="phenomenon",
                                      node_mask_type="attributes",
-                                     edge_mask_type="object"),
+                                     edge_mask_type="object", ),
     model_config=model_config)
 target = val_data.edge_label[0].unsqueeze(dim=0).long()
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        target=target, index=0, target_index=None,
+                        target=target,
                         edge_label_index=edge_label_index)
 print(explanation.available_explanations)
