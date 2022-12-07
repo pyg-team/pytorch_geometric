@@ -21,6 +21,13 @@ from torch_geometric.profile import (
 seed_everything(0)
 
 parser = argparse.ArgumentParser()
+parser.add_argument(
+    '--datasets', type=str, nargs='+',
+    default=['MUTAG', 'PROTEINS', 'IMDB-BINARY', 'REDDIT-BINARY'])
+parser.add_argument('--nets', type=str, nargs='+',
+                    default=['GCN', 'GraphSAGE', 'GIN'])
+parser.add_argument('--layers', type=int, nargs='+', default=[1, 2, 3])
+parser.add_argument('--hiddens', type=int, nargs='+', default=[16, 32])
 parser.add_argument('--epochs', type=int, default=100)
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
@@ -32,17 +39,6 @@ parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
 args = parser.parse_args()
-
-layers = [1, 2, 3]
-hiddens = [16, 32]
-
-datasets = ['MUTAG', 'PROTEINS', 'IMDB-BINARY', 'REDDIT-BINARY']
-
-nets = [
-    GCN,
-    GraphSAGE,
-    GIN,
-]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if torch.cuda.is_available():
@@ -69,12 +65,23 @@ def prepare_dataloader(dataset_name):
     return dataset, train_loader, val_loader, test_loader
 
 
+def prepare_model(net_name):
+    if net_name == 'GCN':
+        Net = GCN
+    if net_name == 'GraphSAGE':
+        Net = GraphSAGE
+    if net_name == 'GIN':
+        Net = GIN
+    return Net
+
+
 def run_train():
-    for dataset_name, Net in product(datasets, nets):
+    for dataset_name, net_name in product(args.datasets, args.nets):
         dataset, train_loader, val_loader, test_loader = prepare_dataloader(
             dataset_name)
+        Net = prepare_model(net_name)
 
-        for num_layers, hidden in product(layers, hiddens):
+        for num_layers, hidden in product(args.layers, args.hiddens):
             print(
                 f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
             )
@@ -103,10 +110,11 @@ def run_train():
 
 @torch.no_grad()
 def run_inference():
-    for dataset_name, Net in product(datasets, nets):
+    for dataset_name, net_name in product(args.datasets, args.nets):
         dataset, _, _, test_loader = prepare_dataloader(dataset_name)
+        Net = prepare_model(net_name)
 
-        for num_layers, hidden in product(layers, hiddens):
+        for num_layers, hidden in product(args.layers, args.hiddens):
             print(
                 f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
             )
