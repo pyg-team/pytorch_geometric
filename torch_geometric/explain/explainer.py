@@ -44,8 +44,8 @@ class Explainer:
         self.model = model
         self.algorithm = algorithm
 
-        # is_hetero is set to None, overwritten in __call__
-        self.is_hetero = None
+        # is_hetero is set to False, overwritten in __call__
+        self.is_hetero = False
 
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
@@ -167,7 +167,7 @@ class Explainer:
         explanation = self._threshold(explanation)
         return explanation
 
-    def _threshold_explanation(
+    def _threshold_homogeneous_explanation(
             self, mask_dict: Dict[str, Tensor]) -> Dict[str, Tensor]:
         if self.threshold_config.type == ThresholdType.hard:
             mask_dict = {
@@ -202,7 +202,7 @@ class Explainer:
 
         return mask_dict
 
-    def _threshold_hetero_explanation(
+    def _threshold_heterogeneous_explanation(
         self, mask_dict: Dict[str, Dict[Union[NodeType, EdgeType], Tensor]]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         for key, mask in mask_dict.items():
@@ -230,9 +230,9 @@ class Explainer:
         }
 
         if isinstance(explanation, Explanation):
-            mask_dict = self._threshold_explanation(mask_dict)
+            mask_dict = self._threshold_homogeneous_explanation(mask_dict)
         else:
-            mask_dict = self._threshold_hetero_explanation(mask_dict)
+            mask_dict = self._threshold_heterogeneous_explanation(mask_dict)
 
         # Update the explanation with the thresholded masks:
         for key, mask in mask_dict.items():
