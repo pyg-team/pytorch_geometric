@@ -327,7 +327,7 @@ def node_sample(
         seed = inputs.node
         seed_time = inputs.time
 
-    out = sample_fn(seed=seed, seed_time=seed_time)
+    out = sample_fn(seed, seed_time)
     out.metadata = inputs.input_id
 
     return out
@@ -449,7 +449,7 @@ def edge_sample(
                     input_type[0]: torch.cat([src_time, dst_time], dim=0),
                 }
 
-        out = sample_fn(seed=seed_dict, seed_time_dict=seed_time_dict)
+        out = sample_fn(seed_dict, seed_time_dict)
 
         # Enhance `out` by label information ##################################
         if disjoint:
@@ -518,7 +518,7 @@ def edge_sample(
         if edge_label_time is not None:  # Always disjoint.
             seed_time = torch.cat([src_time, dst_time])
 
-        out = sample_fn(seed=seed, seed_time=seed_time)
+        out = sample_fn(seed, seed_time)
 
         # Enhance `out` by label information ##################################
         if neg_sampling is None or neg_sampling.is_binary():
