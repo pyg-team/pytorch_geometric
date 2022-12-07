@@ -10,13 +10,7 @@ from train_eval import eval_acc, inference_run, train
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
-from torch_geometric.profile import (
-    get_stats_summary,
-    profileit,
-    rename_profile_file,
-    timeit,
-    torch_profile,
-)
+from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
 seed_everything(0)
 
@@ -89,10 +83,15 @@ def run_train():
             model = Net(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-            stats_list = []
+            loss_list = []
             acc_list = []
             for epoch in range(1, args.epochs + 1):
-                loss, stats = train(model, optimizer, train_loader)
+                if epoch == args.epochs:
+                    with timeit():
+                        loss = train(model, optimizer, train_loader)
+                else:
+                    loss = train(model, optimizer, train_loader)
+
                 with timeit(log=False) as t:
                     val_acc = eval_acc(model, val_loader)
                 val_time = t.duration
@@ -101,11 +100,14 @@ def run_train():
                 test_time = t.duration
 
                 if epoch >= args.warmup_profile:
-                    stats_list.append(stats)
+                    loss_list.append(loss)
                     acc_list.append([val_acc, val_time, test_acc, test_time])
 
-            stats_summary = get_stats_summary(stats_list)
-            print(stats_summary)
+            if args.profile:
+                with torch_profile():
+                    train(model, optimizer, train_loader)
+                rename_profile_file(Net.__name__, dataset_name,
+                                    str(num_layers), str(hidden), 'train')
 
 
 @torch.no_grad()
@@ -133,12 +135,11 @@ def run_inference():
                     with torch_profile():
                         inference_run(model, test_loader, args.bf16)
                     rename_profile_file(Net.__name__, dataset_name,
-                                        str(num_layers), str(hidden))
+                                        str(num_layers), str(hidden),
+                                        'inference')
 
 
 if not args.inference:
-    # Decorate train functions:
-    train = profileit()(train)
     run_train()
 else:
     run_inference()
