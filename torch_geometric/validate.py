@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from typing import Generator
 
 __validation__ = {'enabled': __debug__}
 
@@ -24,7 +25,7 @@ def set_validation(value: bool):
 
 
 @contextmanager
-def validate(value: bool):
+def validate(value: bool) -> Generator:
     r"""Creates a context-manager for managing whether any optional validation
     is enabled or disabled within a scope.
 
