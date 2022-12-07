@@ -230,6 +230,9 @@ class Explainer:
         node_feature_explanation = explanation.node_feat_mask.sum(dim=0)
         node_feature_explanation = node_feature_explanation.cpu().numpy()
 
+        if len(node_feature_explanation) <= top_k:
+            top_k = len(node_feature_explanation)
+
         if feat_labels is None:
             feat_labels = range(len(node_feature_explanation))
 
