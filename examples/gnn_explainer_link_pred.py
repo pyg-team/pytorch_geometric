@@ -54,8 +54,8 @@ def train():
     model.train()
     optimizer.zero_grad()
 
-
-    out = model(train_data.x, train_data.edge_index, train_data.edge_label_index)
+    out = model(train_data.x, train_data.edge_index,
+                train_data.edge_label_index)
     loss = F.binary_cross_entropy_with_logits(out, train_data.edge_label)
     loss.backward()
     optimizer.step()
@@ -85,10 +85,11 @@ model_config = ModelConfig(mode="binary_classification", task_level="edge",
 edge_label_index = val_data.edge_label_index[:, 0]
 explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
-    explainer_config=ExplainerConfig(explanation_type="model",
-                                     node_mask_type="attributes",
-                                     edge_mask_type="object", ),
-    model_config=model_config)
+    explainer_config=ExplainerConfig(
+        explanation_type="model",
+        node_mask_type="attributes",
+        edge_mask_type="object",
+    ), model_config=model_config)
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
                         edge_label_index=edge_label_index)
 print(explanation.available_explanations)
@@ -96,12 +97,12 @@ print(explanation.available_explanations)
 # Explain a selected target (phenomenon) for an edge
 explainer = Explainer(
     model=model, algorithm=GNNExplainer(epochs=200),
-    explainer_config=ExplainerConfig(explanation_type="phenomenon",
-                                     node_mask_type="attributes",
-                                     edge_mask_type="object", ),
-    model_config=model_config)
+    explainer_config=ExplainerConfig(
+        explanation_type="phenomenon",
+        node_mask_type="attributes",
+        edge_mask_type="object",
+    ), model_config=model_config)
 target = val_data.edge_label[0].unsqueeze(dim=0).long()
 explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        target=target,
-                        edge_label_index=edge_label_index)
+                        target=target, edge_label_index=edge_label_index)
 print(explanation.available_explanations)
