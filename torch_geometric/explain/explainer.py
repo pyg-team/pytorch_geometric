@@ -53,9 +53,9 @@ class Explainer:
         threshold_config: Optional[ThresholdConfig] = None,
     ):
         explainer_config = ExplainerConfig(
-            self.explanation_type,
-            self.node_mask_type,
-            self.edge_mask_type,
+            explanation_type=explanation_type,
+            node_mask_type=node_mask_type,
+            edge_mask_type=edge_mask_type,
         )
 
         self.model = model
