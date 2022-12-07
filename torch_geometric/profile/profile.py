@@ -67,7 +67,7 @@ def profileit():
                 if isinstance(arg, torch.Tensor):
                     device = arg.get_device()
                     break
-            if not device:
+            if device is None:
                 raise AttributeError(
                     "Could not infer CUDA device from the args in the "
                     "function being profiled")
