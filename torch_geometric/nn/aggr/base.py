@@ -109,11 +109,11 @@ class Aggregation(torch.nn.Module):
         try:
             return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
         except (IndexError, RuntimeError) as e:
-            if index is not None and index.numel() > 0 and dim_size <= int(
-                    index.max()):
-                raise ValueError(f"Encountered invalid 'dim_size' (got "
-                                 f"'{dim_size}' but expected "
-                                 f">= '{int(index.max()) + 1}')")
+            if index is not None:
+                if index.numel() > 0 and dim_size <= int(index.max()):
+                    raise ValueError(f"Encountered invalid 'dim_size' (got "
+                                     f"'{dim_size}' but expected "
+                                     f">= '{int(index.max()) + 1}')")
             raise e
 
     def __repr__(self) -> str:
