@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '--datasets', type=str, nargs='+',
     default=['MUTAG', 'PROTEINS', 'IMDB-BINARY', 'REDDIT-BINARY'])
-parser.add_argument('--nets', type=str, nargs='+',
+parser.add_argument('--models', type=str, nargs='+',
                     default=['GCN', 'GraphSAGE', 'GIN'])
 parser.add_argument('--layers', type=int, nargs='+', default=[1, 2, 3])
 parser.add_argument('--hiddens', type=int, nargs='+', default=[16, 32])
@@ -40,6 +40,12 @@ if torch.cuda.is_available():
 else:
     amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
+MODELS = {
+    'GCN': GCN,
+    'GraphSAGE': GraphSAGE,
+    'GIN': GIN,
+}
+
 
 def prepare_dataloader(dataset_name):
     dataset = get_dataset(dataset_name, sparse=True)
@@ -59,28 +65,17 @@ def prepare_dataloader(dataset_name):
     return dataset, train_loader, val_loader, test_loader
 
 
-def prepare_model(net_name):
-    if net_name == 'GCN':
-        Net = GCN
-    if net_name == 'GraphSAGE':
-        Net = GraphSAGE
-    if net_name == 'GIN':
-        Net = GIN
-    return Net
-
-
 def run_train():
-    for dataset_name, net_name in product(args.datasets, args.nets):
+    for dataset_name, model_name in product(args.datasets, args.models):
         dataset, train_loader, val_loader, test_loader = prepare_dataloader(
             dataset_name)
-        Net = prepare_model(net_name)
+        Model = MODELS[model_name]
 
         for num_layers, hidden in product(args.layers, args.hiddens):
-            print(
-                f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
-            )
+            print('--')
+            print(f'{dataset_name} - {model_name}- {num_layers} - {hidden}')
 
-            model = Net(dataset, num_layers, hidden).to(device)
+            model = Model(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
             loss_list = []
@@ -106,22 +101,21 @@ def run_train():
             if args.profile:
                 with torch_profile():
                     train(model, optimizer, train_loader)
-                rename_profile_file(Net.__name__, dataset_name,
-                                    str(num_layers), str(hidden), 'train')
+                rename_profile_file(model_name, dataset_name, str(num_layers),
+                                    str(hidden), 'train')
 
 
 @torch.no_grad()
 def run_inference():
-    for dataset_name, net_name in product(args.datasets, args.nets):
+    for dataset_name, model_name in product(args.datasets, args.models):
         dataset, _, _, test_loader = prepare_dataloader(dataset_name)
-        Net = prepare_model(net_name)
+        Model = MODELS[model_name]
 
         for num_layers, hidden in product(args.layers, args.hiddens):
-            print(
-                f'--\n{dataset_name} - {Net.__name__}- {num_layers} - {hidden}'
-            )
+            print('--')
+            print(f'{dataset_name} - {model_name}- {num_layers} - {hidden}')
 
-            model = Net(dataset, num_layers, hidden).to(device)
+            model = Model(dataset, num_layers, hidden).to(device)
 
             with amp:
                 for epoch in range(1, args.epochs + 1):
@@ -134,7 +128,7 @@ def run_inference():
                 if args.profile:
                     with torch_profile():
                         inference_run(model, test_loader, args.bf16)
-                    rename_profile_file(Net.__name__, dataset_name,
+                    rename_profile_file(model_name, dataset_name,
                                         str(num_layers), str(hidden),
                                         'inference')
 
