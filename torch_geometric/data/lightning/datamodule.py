@@ -20,7 +20,6 @@ from torch_geometric.loader import (
     NeighborLoader,
     NodeLoader,
 )
-from torch_geometric.loader.utils import get_edge_label_index, get_input_nodes
 from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes
 
@@ -318,7 +317,6 @@ class LightningNodeData(LightningDataModule):
         if loader == 'neighbor':
             sampler_args = dict(inspect.signature(NeighborSampler).parameters)
             sampler_args.pop('data')
-            sampler_args.pop('input_type')
             sampler_args.pop('share_memory')
             sampler_kwargs = {
                 key: kwargs.get(key, param.default)
@@ -327,7 +325,6 @@ class LightningNodeData(LightningDataModule):
 
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                input_type=get_input_nodes(data, input_train_nodes)[0],
                 share_memory=num_workers > 0,
                 **sampler_kwargs,
             )
@@ -555,7 +552,6 @@ class LightningLinkData(LightningDataModule):
         if loader in ['neighbor', 'link_neighbor']:
             sampler_args = dict(inspect.signature(NeighborSampler).parameters)
             sampler_args.pop('data')
-            sampler_args.pop('input_type')
             sampler_args.pop('share_memory')
             sampler_kwargs = {
                 key: kwargs.get(key, param.default)
@@ -563,7 +559,6 @@ class LightningLinkData(LightningDataModule):
             }
             self.neighbor_sampler = NeighborSampler(
                 data=data,
-                input_type=get_edge_label_index(data, input_train_edges)[0],
                 share_memory=num_workers > 0,
                 **sampler_kwargs,
             )
