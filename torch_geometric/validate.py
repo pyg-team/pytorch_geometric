@@ -24,7 +24,7 @@ def set_validation(value: bool):
 
 
 @contextmanager
-def optional_validation(value: bool):
+def validate(value: bool):
     r"""Creates a context-manager for managing whether any optional validation
     is enabled or disabled within a scope.
 
