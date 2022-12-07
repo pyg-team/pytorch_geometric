@@ -62,8 +62,22 @@ def profileit():
                 raise AttributeError(
                     'First argument for profiling needs to be torch.nn.Module')
 
+            device = None
+            for arg in list(args) + list(kwargs.values()):
+                if isinstance(arg, torch.Tensor):
+                    device = arg.get_device()
+                    break
+            if device is None:
+                raise AttributeError(
+                    "Could not infer CUDA device from the args in the "
+                    "function being profiled")
+            if device == -1:
+                raise RuntimeError(
+                    "The profiling decorator does not support profiling "
+                    "on non CUDA devices")
+
             # Init `pytorch_memlab` for analyzing the model forward pass:
-            line_profiler = LineProfiler()
+            line_profiler = LineProfiler(target_gpu=device)
             line_profiler.enable()
             line_profiler.add_function(args[0].forward)
 
@@ -83,7 +97,8 @@ def profileit():
             line_profiler.disable()
 
             # Get additional information from `nvidia-smi`:
-            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi()
+            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(
+                device=device)
 
             stats = Stats(time, max_allocated_cuda, max_reserved_cuda,
                           max_active_cuda, free_cuda, used_cuda)
