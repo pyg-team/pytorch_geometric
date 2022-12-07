@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Callable, Optional, final
+from typing import Callable, Optional
 
 import torch
 
@@ -37,7 +37,6 @@ class GraphGenerator:
     def generate_base_graph(self) -> Data:
         raise NotImplementedError
 
-    @final
     def generate_graph(self):
         if self.seed:
             seed_everything(self.seed)
