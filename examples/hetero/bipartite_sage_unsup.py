@@ -85,10 +85,8 @@ train_loader = LinkNeighborLoader(
 val_loader = LinkNeighborLoader(
     data=val_data,
     num_neighbors=[8, 4],
-    edge_label_index=(
-        ('user', '2', 'item'),
-        val_data[('user', '2', 'item')].edge_label_index
-    ),
+    edge_label_index=(('user', '2', 'item'),
+                      val_data[('user', '2', 'item')].edge_label_index),
     edge_label=val_data[('user', '2', 'item')].edge_label,
     batch_size=2048,
     shuffle=True,
@@ -99,10 +97,8 @@ val_loader = LinkNeighborLoader(
 test_loader = LinkNeighborLoader(
     data=test_data,
     num_neighbors=[8, 4],
-    edge_label_index=(
-        ('user', '2', 'item'),
-        test_data[('user', '2', 'item')].edge_label_index
-    ),
+    edge_label_index=(('user', '2', 'item'),
+                      test_data[('user', '2', 'item')].edge_label_index),
     edge_label=test_data[('user', '2', 'item')].edge_label,
     batch_size=2048,
     shuffle=True,
