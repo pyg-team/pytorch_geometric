@@ -17,8 +17,6 @@ from .validate import (is_validation_enabled, optional_validation,
                        set_validation)
 from .lazy_loader import LazyLoader
 
-
-
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
 __version__ = '2.2.0'
