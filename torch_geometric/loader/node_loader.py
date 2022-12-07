@@ -8,7 +8,7 @@ import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
-    InputData,
+    NodeInputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -18,9 +18,9 @@ from torch_geometric.loader.utils import (
 from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
+    NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.typing import InputNodes, OptTensor
 
 
@@ -87,12 +87,11 @@ class NodeLoader(torch.utils.data.DataLoader):
             del kwargs['collate_fn']
 
         # Get node type (or `None` for homogeneous graphs):
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
+        input_type, input_nodes = get_input_nodes(data, input_nodes)
 
         self.data = data
-        self.node_type = node_type
         self.node_sampler = node_sampler
-        self.input_data = InputData(input_nodes, input_time)
+        self.input_data = NodeInputData(input_nodes, input_time, input_type)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
 

@@ -9,23 +9,37 @@ from torch import Tensor
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
-# An input to a node-based sampler consists of two tensors:
-#  * The example indices
-#  * The node indices
-#  * The timestamps of the given node indices (optional)
-NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 
-# An input to an edge-based sampler consists of four tensors:
-#   * The example indices
-#   * The row of the edge index in COO format
-#   * The column of the edge index in COO format
-#   * The labels of the edges (optional)
-#   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, OptTensor, OptTensor]
+@dataclass
+class NodeSamplerInput(CastMixin):
+    r"""TODO: Add doc-string."""
+    #  * The example indices
+    #  * The node indices
+    #  * The timestamps of the given node indices (optional)
+    input_id: Tensor
+    node: Tensor
+    time: OptTensor = None
+    input_type: Optional[NodeType] = None
 
 
 @dataclass
-class SamplerOutput:
+class EdgeSamplerInput(CastMixin):
+    r"""TODO: Add doc-string."""
+    #   * The example indices
+    #   * The row of the edge index in COO format
+    #   * The column of the edge index in COO format
+    #   * The labels of the edges (optional)
+    #   * The time attribute corresponding to the edge label (optional)
+    input_id: Tensor
+    row: Tensor
+    col: Tensor
+    label: OptTensor = None
+    time: OptTensor = None
+    input_type: Optional[EdgeType] = None
+
+
+@dataclass
+class SamplerOutput(CastMixin):
     r"""The sampling output of a :class:`BaseSampler` on homogeneous graphs.
 
     Args:
@@ -57,7 +71,7 @@ class SamplerOutput:
 
 
 @dataclass
-class HeteroSamplerOutput:
+class HeteroSamplerOutput(CastMixin):
     r"""The sampling output of a :class:`BaseSampler` on heterogeneous graphs.
 
     Args:

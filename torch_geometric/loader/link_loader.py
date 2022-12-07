@@ -13,13 +13,11 @@ from torch_geometric.loader.utils import (
 )
 from torch_geometric.sampler import (
     BaseSampler,
+    EdgeSamplerInput,
     HeteroSamplerOutput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import (
-    EdgeSamplerInput,
-    NegativeSamplingConfig,
-)
+from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, OptTensor
 
 

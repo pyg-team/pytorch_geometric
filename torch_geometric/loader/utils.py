@@ -18,6 +18,7 @@ from torch_geometric.data import (
     remote_backend_utils,
 )
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
+from torch_geometric.sampler import NodeSamplerInput
 from torch_geometric.typing import (
     FeatureTensorType,
     InputEdges,
@@ -27,18 +28,20 @@ from torch_geometric.typing import (
 )
 
 
-class InputData:
-    def __init__(self, *args):
-        self.args = args
+class NodeInputData:
+    def __init__(self, *args, **kwargs):
+        self.args = NodeSamplerInput.cast(None, *args, **kwargs)
 
-    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
+    def __getitem__(self, index: Union[Tensor, List[int]]) -> NodeSamplerInput:
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
 
-        outs = [index]
-        for arg in self.args:
-            outs.append(arg[index] if arg is not None else None)
-        return tuple(outs)
+        return NodeSamplerInput(
+            self.args.input_id[index] if self.args.input_id else index,
+            self.args.node[index],
+            self.args.time[index] if self.args.time else None,
+            self.args.input_type,
+        )
 
 
 def index_select(value: FeatureTensorType, index: Tensor,
