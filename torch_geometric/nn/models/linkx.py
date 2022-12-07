@@ -3,8 +3,8 @@ import math
 import torch
 from torch import Tensor
 from torch.nn import BatchNorm1d, Parameter
-from torch_sparse import SparseTensor
 from torch.sparse.matmul import matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn import inits
 from torch_geometric.nn.conv import MessagePassing

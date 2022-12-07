@@ -14,7 +14,6 @@ class RemoveDuplicateSelfLoops(BaseTransform):
     <https://ogb.stanford.edu/docs/nodeprop/#:~:text=Note%3A%20A%20very%20small%20number%20of%20self%2Dconnecting%20edges%20are%20repeated%20(see%20here)%3B%20you%20may%20remove%20them%20if%20necessary>
     (functional name: :obj:`remove_duplicate_self_loops`).
     """
-
     def __call__(
         self,
         data: Union[Data, HeteroData],
@@ -23,18 +22,22 @@ class RemoveDuplicateSelfLoops(BaseTransform):
             if store.is_bipartite() or 'edge_index' not in store:
                 continue
 
-            (edge_index, edge_weight, loop_edge_index, loop_edge_attr) = segregate_self_loops(store.edge_index, getattr(store, 'edge_weight', None))
-            
+            (edge_index, edge_weight, loop_edge_index,
+             loop_edge_attr) = segregate_self_loops(
+                 store.edge_index, getattr(store, 'edge_weight', None))
+
             loop_edge_index = torch.unique(loop_edge_index[0])
-            loop_edge_index = torch.stack((loop_edge_index, loop_edge_index), dim=0)
+            loop_edge_index = torch.stack((loop_edge_index, loop_edge_index),
+                                          dim=0)
 
             edge_index = torch.cat((edge_index, loop_edge_index), dim=1)
             setattr(store, 'edge_index', edge_index)
-            
+
             if edge_weight is not None:
                 loop_edge_attr = torch.unique(loop_edge_attr[0])
-                loop_edge_attr = torch.stack((loop_edge_attr, loop_edge_attr), dim=0) 
+                loop_edge_attr = torch.stack((loop_edge_attr, loop_edge_attr),
+                                             dim=0)
                 torch.cat((edge_weight, loop_edge_attr), dim=1)
                 setattr(store, 'edge_weight', edge_weight)
-        
+
         return data

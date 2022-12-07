@@ -3,8 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 from torch.sparse.matmul import matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear

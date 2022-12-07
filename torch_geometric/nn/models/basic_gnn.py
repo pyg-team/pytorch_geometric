@@ -227,7 +227,7 @@ class BasicGNN(torch.nn.Module):
                 else:
                     edge_index = batch.edge_index.to(device)
                 x = self.convs[i](x, edge_index)[:batch.batch_size]
-                
+
                 if i == self.num_layers - 1 and self.jk_mode is None:
                     xs.append(x.cpu())
                     if progress_bar:

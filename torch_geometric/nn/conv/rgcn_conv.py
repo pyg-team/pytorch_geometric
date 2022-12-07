@@ -5,9 +5,9 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
+from torch.sparse.matmul import matmul
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz
-from torch.sparse.matmul import matmul
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
