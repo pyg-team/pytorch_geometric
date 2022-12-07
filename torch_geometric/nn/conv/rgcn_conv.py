@@ -8,19 +8,11 @@ from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, pyg_lib
 
 from ..inits import glorot, zeros
-
-try:
-    from pyg_lib.ops import segment_matmul  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
-
-    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
-        raise NotImplementedError
 
 
 @torch.jit._overload
@@ -112,7 +104,6 @@ class RGCNConv(MessagePassing):
     ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
-        self._WITH_PYG_LIB = _WITH_PYG_LIB
 
         if num_bases is not None and num_blocks is not None:
             raise ValueError('Can not apply both basis-decomposition and '
@@ -225,7 +216,7 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (self._WITH_PYG_LIB and self.num_bases is None
+            if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
                     and x_l.is_floating_point()
                     and isinstance(edge_index, Tensor)):
                 if not self.is_sorted:
@@ -264,7 +255,7 @@ class RGCNConv(MessagePassing):
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
         if edge_type_ptr is not None:
             # TODO Re-weight according to edge type degree for `aggr=mean`.
-            return segment_matmul(x_j, edge_type_ptr, self.weight)
+            return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 
         return x_j
 

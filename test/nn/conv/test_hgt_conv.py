@@ -144,3 +144,51 @@ def test_hgt_conv_out_of_place():
 
     assert x_dict['author'].size() == (4, 16)
     assert x_dict['paper'].size() == (6, 32)
+
+
+if __name__ == '__main__':
+    import argparse
+    import time
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    args = parser.parse_args()
+
+    num_nodes, num_edges, num_feats, num_heads = 30000, 300000, 64, 4
+
+    x_dict = {
+        'paper': torch.randn(num_nodes, num_feats, device=args.device),
+        'author': torch.randn(num_nodes, num_feats, device=args.device),
+    }
+    edge_index_dict = {
+        ('paper', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('author', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('paper', 'to', 'author'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+    }
+
+    conv = HGTConv(
+        in_channels=64,
+        out_channels=64,
+        metadata=(list(x_dict.keys()), list(edge_index_dict.keys())),
+        heads=num_heads,
+    ).to(args.device)
+
+    num_warmups, num_steps = 50, 100
+    if args.device == 'cpu':
+        num_warmups, num_steps = num_warmups // 10, num_steps // 10
+
+    t_forward = 0
+    for i in range(num_warmups + num_steps):
+        torch.cuda.synchronize()
+        t_start = time.perf_counter()
+
+        out_dict = conv(x_dict, edge_index_dict)
+
+        torch.cuda.synchronize()
+        if i >= num_warmups:
+            t_forward += time.perf_counter() - t_start
+
+    print(f'Forward: {t_forward:.4f}s')
