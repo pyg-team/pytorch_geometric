@@ -14,8 +14,7 @@ from torch_geometric.explain.config import (
     ThresholdConfig,
     ThresholdType,
 )
-from torch_geometric.explain.metrics import ExplanationMetric
-from torch_geometric.explain.metrics.util import hard_threshold, topk_threshold
+from torch_geometric.explain.util import hard_threshold, topk_threshold
 
 
 class Explainer:
@@ -113,18 +112,7 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        explanation_type = self.explainer_config.explanation_type
-        if explanation_type == ExplanationType.phenomenon:
-            if target is None:
-                raise ValueError(
-                    f"The 'target' has to be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-        elif explanation_type == ExplanationType.model:
-            if target is not None:
-                warnings.warn(
-                    f"The 'target' should not be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+        target = self.get_target(target, x, edge_index, **kwargs)
 
         training = self.model.training
         self.model.eval()
@@ -143,13 +131,25 @@ class Explainer:
 
         # store unprocessed explanation
         self.base_explanation = explanation
+
         return self._post_process(explanation)
 
-    def evaluate(self, explanation: Explanation, metric: ExplanationMetric,
-                 **kwargs):
-        r""" Evaluate the explanation with respect to an ExplanationMetric
-        """
-        return metric(self, explanation, **kwargs)
+    def get_target(self, target, x, edge_index, **kwargs) -> Tensor:
+        explanation_type = self.explainer_config.explanation_type
+
+        if explanation_type == ExplanationType.phenomenon:
+            if target is None:
+                raise ValueError(
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+        elif explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+
+        return target
 
     def _post_process(self, explanation: Explanation) -> Explanation:
         R"""Post-processes the explanation mask according to the thresholding
@@ -197,8 +197,3 @@ class Explainer:
             explanation[key] = mask
 
         return explanation
-
-    @property
-    def base_explanation(self) -> Explanation:
-        r"""Returns the base (unthresholded) explanation."""
-        return self.base_explanation

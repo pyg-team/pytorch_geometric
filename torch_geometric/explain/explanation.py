@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from torch import Tensor
 
@@ -14,6 +14,9 @@ class Explanation(Data):
     also hold the original graph if needed.
 
     Args:
+        index (Union[int, Tensor], optional): The index of the model
+                output that the explanation explains. Can be a single
+                index or a tensor of indices. (default: :obj:`None`)
         node_mask (Tensor, optional): Node-level mask with shape
             :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape
@@ -26,6 +29,7 @@ class Explanation(Data):
     """
     def __init__(
         self,
+        index: Optional[Union[int, Tensor]] = None,
         node_mask: Optional[Tensor] = None,
         edge_mask: Optional[Tensor] = None,
         node_feat_mask: Optional[Tensor] = None,
@@ -33,6 +37,7 @@ class Explanation(Data):
         **kwargs,
     ):
         super().__init__(
+            index=index,
             node_mask=node_mask,
             edge_mask=edge_mask,
             node_feat_mask=node_feat_mask,
@@ -52,6 +57,7 @@ class Explanation(Data):
         r"""Validates the correctness of the explanation"""
         status = super().validate()
 
+        # TODO check that index is in node_mask
         if 'node_mask' in self and self.num_nodes != self.node_mask.size(0):
             status = False
             warn_or_raise(
