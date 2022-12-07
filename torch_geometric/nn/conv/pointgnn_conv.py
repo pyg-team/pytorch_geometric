@@ -2,9 +2,9 @@ from typing import List, Optional, Union
 
 import torch
 
+from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn import MLP
 
 
 class PointGNNConv(MessagePassing):
@@ -17,7 +17,7 @@ class PointGNNConv(MessagePassing):
         state_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         MLP_h (MLP): Calculate alignment off-set  :math:`\Delta` x
-        MLP_f (MLP): Calculate edge update using relative coordinates, alignment off-set 
+        MLP_f (MLP): Calculate edge update using relative coordinates, alignment off-set
             and neighbor feature.
         MLP_g (MLP): Transforms aggregated messages.
         **kwargs (optional): Additional arguments of
@@ -27,32 +27,26 @@ class PointGNNConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
           node coordinates :math:`(|\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,   
+          edge indices :math:`(2, |\mathcal{E}|)`,
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(
-        self,
-        state_channels: int,
-        MLP_h: MLP,
-        MLP_f: MLP,
-        MLP_g: MLP,
-        aggr: Optional[Union[str, List[str], Aggregation]] = "max",
-        **kwargs
-    ):
+    def __init__(self, state_channels: int, MLP_h: MLP, MLP_f: MLP, MLP_g: MLP,
+                 aggr: Optional[Union[str, List[str],
+                                      Aggregation]] = "max", **kwargs):
         self.state_channels = state_channels
 
         super().__init__(aggr, **kwargs)
 
-        self.lin_h  = MLP_h 
-        self.lin_f = MLP_f 
-        self.lin_g = MLP_g 
+        self.lin_h = MLP_h
+        self.lin_f = MLP_f
+        self.lin_g = MLP_g
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin_h.reset_parameters()
         self.lin_f.reset_parameters()
-        self.lin_g.reset_parameters() 
+        self.lin_g.reset_parameters()
 
     def forward(self, x, pos, edge_index):
         out = self.propagate(edge_index, x=x, pos=pos)
