@@ -206,7 +206,7 @@ class Explainer:
         self, mask_dict: Dict[str, Dict[Union[NodeType, EdgeType], Tensor]]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         for key, mask in mask_dict.items():
-            mask_dict[key] = self._threshold_explanation(mask)
+            mask_dict[key] = self._threshold_homogeneous_explanation(mask)
         return mask_dict
 
     def _threshold(
