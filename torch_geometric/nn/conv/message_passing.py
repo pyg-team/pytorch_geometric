@@ -196,9 +196,7 @@ class MessagePassing(torch.nn.Module):
             the_size[1] = edge_index.size(0)
             return the_size
         elif isinstance(edge_index, Tensor):
-            int_dtypes = (torch.uint8, torch.int8, torch.int32, torch.int64)
-
-            if edge_index.dtype not in int_dtypes:
+            if torch.is_floating_point(edge_index):
                 raise ValueError(f"Expected 'edge_index' to be of integer "
                                  f"type (got '{edge_index.dtype}')")
             if edge_index.dim() != 2:
