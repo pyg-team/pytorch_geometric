@@ -4,7 +4,6 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader import NodeLoader
-from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import HGTSampler
 from torch_geometric.typing import NodeType
 
@@ -106,12 +105,9 @@ class HGTLoader(NodeLoader):
         filter_per_worker: bool = False,
         **kwargs,
     ):
-        node_type, _ = get_input_nodes(data, input_nodes)
-
         hgt_sampler = HGTSampler(
             data,
             num_samples=num_samples,
-            input_type=node_type,
             is_sorted=is_sorted,
             share_memory=kwargs.get('num_workers', 0) > 0,
         )
