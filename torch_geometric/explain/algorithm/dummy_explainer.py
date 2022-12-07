@@ -82,11 +82,9 @@ class DummyExplainer(ExplainerAlgorithm):
                 mask_dicts['edge_feat_mask'][edge_type] = torch.rand_like(
                     edge_attr_dict[edge_type])
 
-        explanation = HeteroExplanation(**mask_dicts)
-        explanation.x_dict = x_dict
-        explanation.edge_index_dict = edge_index_dict
-        explanation.edge_attr_dict = edge_attr_dict
-        return explanation
+        return HeteroExplanation(x_dict=x_dict,
+                                 edge_index_dict=edge_index_dict,
+                                 edge_attr_dict=edge_attr_dict, **mask_dicts)
 
     def forward(
         self,

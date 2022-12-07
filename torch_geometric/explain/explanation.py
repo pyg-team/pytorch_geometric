@@ -141,6 +141,15 @@ class HeteroExplanation(HeteroData):
     feature-attribution. It can also hold the original graph if needed.
 
     Args:
+        x_dict (Dict[NodeType, Tensor]): Dictionary of Node-level features
+            with  key `NodeType` and value `Tensor` of shape
+            :obj:`[num_nodes, num_node_features]`.
+        edge_index_dict (Dict[EdgeType, Tensor]): Dictionary of Edge-level
+            indices with  key `EdgeType` and value `Tensor` of shape
+            :obj:`[2, num_edges]`.
+        edge_attr_dict (Dict[EdgeType, Tensor], optional): Dictionary of
+            Edge-level features with  key `EdgeType` and value `Tensor` of
+            shape :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         node_mask (Dict[NodeType, Tensor], optional): Dictionary of Node-level
             mask with  key `NodeType` and value `Tensor` of
             shape :obj:`[num_nodes]`. (default: :obj:`None`)
@@ -157,6 +166,9 @@ class HeteroExplanation(HeteroData):
     """
     def __init__(
         self,
+        x_dict: Optional[Dict[NodeType, Tensor]] = None,
+        edge_index_dict: Optional[Dict[EdgeType, Tensor]] = None,
+        edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
         node_mask: Optional[Dict[NodeType, Tensor]] = None,
         edge_mask: Optional[Dict[EdgeType, Tensor]] = None,
         node_feat_mask: Optional[Dict[NodeType, Tensor]] = None,
@@ -165,7 +177,21 @@ class HeteroExplanation(HeteroData):
     ):
         super().__init__(**kwargs)
 
-        # HeteroData doesn't set all kwargs as attributes, so we need to do it
+        # x_dict and edge_index_dict marked optional to allow
+        # HeteroData.subgraph() to initialize an empty HeteroExplanation
+        # and then fill it with the subgraph. Users should always pass in
+        # x_dict and edge_index_dict when initializing a HeteroExplanation.
+
+        if x_dict is not None:
+            for key, val in x_dict.items():
+                self[key].x = val
+        if edge_index_dict is not None:
+            for key, val in edge_index_dict.items():
+                self[key].edge_index = val
+        if edge_attr_dict is not None:
+            for key, val in edge_attr_dict.items():
+                self[key].edge_attr = edge_attr_dict[key]
+
         if node_mask is not None:
             self.node_mask = node_mask
         if edge_mask is not None:
@@ -197,7 +223,7 @@ class HeteroExplanation(HeteroData):
                 elif self.x_dict[key].size(0) != self.node_mask[key].size(0):
                     status = False
                     warn_or_raise(
-                        f"Expected a 'node_mask' with "
+                        f"Expected a 'node_mask' for node type {key} with "
                         f"{self.x_dict[key].size(0)} nodes (got "
                         f"{self.node_mask[key].size(0)} nodes)",
                         raise_on_error)
@@ -213,7 +239,7 @@ class HeteroExplanation(HeteroData):
                         1) != self.edge_mask[key].size(0):
                     status = False
                     warn_or_raise(
-                        f"Expected an 'edge_mask' with "
+                        f"Expected a 'edge_mask' for edge type {key} with "
                         f"{self.edge_index_dict[key].size(1)} edges (got "
                         f"{self.edge_mask[key].size(0)} edges)",
                         raise_on_error)
@@ -229,8 +255,8 @@ class HeteroExplanation(HeteroData):
                 ):
                     status = False
                     warn_or_raise(
-                        f"Expected a 'node_feat_mask' of shape "
-                        f"{list(self.x_dict[key].size())} (got shape "
+                        f"Expected a 'node_feat_mask' for node type {key} of "
+                        f"shape {list(self.x_dict[key].size())} (got shape "
                         f"{list(self.node_feat_mask[key].size())})",
                         raise_on_error)
 
@@ -245,9 +271,9 @@ class HeteroExplanation(HeteroData):
                 ) != self.edge_feat_mask[key].size():
                     status = False
                     warn_or_raise(
-                        f"Expected a 'edge_feat_mask' of shape "
-                        f"{list(self.edge_attr_dict[key].size())} (got shape "
-                        f"{list(self.edge_feat_mask[key].size())})",
+                        f"Expected a 'edge_feat_mask' for edge type {key} of "
+                        f"shape {list(self.edge_attr_dict[key].size())} (got "
+                        f"shape {list(self.edge_feat_mask[key].size())})",
                         raise_on_error)
 
         return status
@@ -285,12 +311,10 @@ class HeteroExplanation(HeteroData):
         node_mask: Optional[Tensor] = None,
         edge_mask: Optional[Tensor] = None,
     ) -> 'HeteroExplanation':
-        out = copy.copy(self)
+        out = copy.deepcopy(self)
 
         if edge_mask is not None:
             for edge_type in self.edge_types:
-                if edge_type not in edge_mask:
-                    continue
                 value = edge_mask[edge_type]
                 out[edge_type].edge_index = out[edge_type].edge_index[:, value]
                 if out[edge_type].edge_attr is not None:
@@ -298,5 +322,12 @@ class HeteroExplanation(HeteroData):
 
         if node_mask is not None:
             out = out.subgraph(node_mask)
+
+        # Unlike Explanation, HeteroExplanation stores masks separately
+        # from the data, so we need to update the masks as well.
+        for expl in out.available_explanations:
+            update_mask = node_mask if "node" in expl else edge_mask
+            for key, value in getattr(out, expl).items():
+                out[expl][key] = value[update_mask[key]]
 
         return out
