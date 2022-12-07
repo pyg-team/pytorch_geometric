@@ -12,10 +12,18 @@ from torch_geometric.utils.mixin import CastMixin
 
 @dataclass
 class NodeSamplerInput(CastMixin):
-    r"""TODO: Add doc-string."""
-    #  * The example indices
-    #  * The node indices
-    #  * The timestamps of the given node indices (optional)
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+
+    Args:
+        input_id (torch.Tensor): The indices of the data loader input of the
+            current mini-batch.
+        node (torch.Tensor): The indices of seed nodes to start sampling from.
+        time (torch.Tensor, optional): The timestamp for the seed nodes.
+            (default: :obj:`None`)
+        input_type (str, optional): The input node type (in case of sampling in
+            a heterogeneous graph). (default: :obj:`None`)
+    """
     input_id: Tensor
     node: Tensor
     time: OptTensor = None
@@ -24,12 +32,23 @@ class NodeSamplerInput(CastMixin):
 
 @dataclass
 class EdgeSamplerInput(CastMixin):
-    r"""TODO: Add doc-string."""
-    #   * The example indices
-    #   * The row of the edge index in COO format
-    #   * The column of the edge index in COO format
-    #   * The labels of the edges (optional)
-    #   * The time attribute corresponding to the edge label (optional)
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        input_id (torch.Tensor): The indices of the data loader input of the
+            current mini-batch.
+        row (torch.Tensor): The source node indices of seed links to start
+            sampling from.
+        col (torch.Tensor): The destination node indices of seed links to start
+            sampling from.
+        label (torch.Tensor, optional): The label for the seed links.
+            (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamp for the seed links.
+            (default: :obj:`None`)
+        input_type (Tuple[str, str, str], optional): The input edge type (in
+            case of sampling in a heterogeneous graph). (default: :obj:`None`)
+    """
     input_id: Tensor
     row: Tensor
     col: Tensor
@@ -40,7 +59,8 @@ class EdgeSamplerInput(CastMixin):
 
 @dataclass
 class SamplerOutput(CastMixin):
-    r"""The sampling output of a :class:`BaseSampler` on homogeneous graphs.
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on homogeneous graphs.
 
     Args:
         node (torch.Tensor): The sampled nodes in the original graph.
@@ -72,7 +92,8 @@ class SamplerOutput(CastMixin):
 
 @dataclass
 class HeteroSamplerOutput(CastMixin):
-    r"""The sampling output of a :class:`BaseSampler` on heterogeneous graphs.
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on heterogeneous graphs.
 
     Args:
         node (Dict[str, torch.Tensor]): The sampled nodes in the original graph
