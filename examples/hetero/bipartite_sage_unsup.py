@@ -38,7 +38,7 @@ del data[('user', '2', 'item')].edge_attr
 train_data, val_data, test_data = T.RandomLinkSplit(
     num_val=0.1,
     num_test=0.1,
-    neg_sampling_ratio=0.0,
+    neg_sampling_ratio=1.0,
     edge_types=[('user', '2', 'item')],
     rev_edge_types=[('item', 'rev_2', 'user')],
 )(data)
@@ -85,9 +85,13 @@ train_loader = LinkNeighborLoader(
 val_loader = LinkNeighborLoader(
     data=val_data,
     num_neighbors=[8, 4],
-    edge_label_index=['user', '2', 'item'],
-    neg_sampling_ratio=1.,
+    edge_label_index=(
+        ('user', '2', 'item'),
+        val_data[('user', '2', 'item')].edge_label_index
+    ),
+    edge_label=val_data[('user', '2', 'item')].edge_label,
     batch_size=2048,
+    shuffle=True,
     num_workers=32,
     pin_memory=True,
 )
@@ -95,9 +99,13 @@ val_loader = LinkNeighborLoader(
 test_loader = LinkNeighborLoader(
     data=test_data,
     num_neighbors=[8, 4],
-    edge_label_index=['user', '2', 'item'],
-    neg_sampling_ratio=1.,
+    edge_label_index=(
+        ('user', '2', 'item'),
+        test_data[('user', '2', 'item')].edge_label_index
+    ),
+    edge_label=test_data[('user', '2', 'item')].edge_label,
     batch_size=2048,
+    shuffle=True,
     num_workers=32,
     pin_memory=True,
 )
