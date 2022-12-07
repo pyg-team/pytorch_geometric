@@ -13,7 +13,6 @@ from torch_geometric.explain import (
     ModelConfig,
 )
 from torch_geometric.nn import GCNConv
-from torch_geometric.utils import negative_sampling
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -69,15 +68,12 @@ def test(data):
     return roc_auc_score(data.edge_label.cpu().numpy(), out.cpu().numpy())
 
 
-best_val_auc = final_test_auc = 0
 for epoch in range(1, 11):
     loss = train()
     val_auc = test(val_data)
     test_auc = test(test_data)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
-
-print(f'Final Test: {final_test_auc:.4f}')
 
 # Explain model output for an edge
 model_config = ModelConfig(mode="binary_classification", task_level="edge",
