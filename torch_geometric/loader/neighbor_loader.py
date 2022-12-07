@@ -2,7 +2,6 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.node_loader import NodeLoader
-from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
 
@@ -187,9 +186,6 @@ class NeighborLoader(NodeLoader):
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        node_type, _ = get_input_nodes(data, input_nodes)
-
         if input_time is not None and time_attr is None:
             raise ValueError("Received conflicting 'input_time' and "
                              "'time_attr' arguments: 'input_time' is set "
@@ -203,7 +199,6 @@ class NeighborLoader(NodeLoader):
                 directed=directed,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,

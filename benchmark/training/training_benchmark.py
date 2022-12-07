@@ -80,6 +80,10 @@ def run(args: argparse.ArgumentParser) -> None:
         else:
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
+        inputs_channels = data[
+            'paper'].num_features if dataset_name == 'ogbn-mag' \
+            else data.num_features
+
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:
                 print(f'Configuration of {dataset_name} + {model_name} '
@@ -124,6 +128,7 @@ def run(args: argparse.ArgumentParser) -> None:
                               f'Sparse tensor={args.use_sparse_tensor}')
 
                         params = {
+                            'inputs_channels': inputs_channels,
                             'hidden_channels': hidden_channels,
                             'output_channels': num_classes,
                             'num_heads': args.num_heads,
