@@ -12,7 +12,7 @@ from torch_geometric.utils import segregate_self_loops
 class RemoveDuplicateSelfLoops(BaseTransform):
     r"""Removes duplicate self-loops to the given homogeneous or heterogeneous graph. It will change the original order of dataset by concatenating unique self-looping edges at the end of the dataset. It can be used to clean up known issue with ogbn-products dataset:
     <https://ogb.stanford.edu/docs/nodeprop/#:~:text=Note%3A%20A%20very%20small%20number%20of%20self%2Dconnecting%20edges%20are%20repeated%20(see%20here)%3B%20you%20may%20remove%20them%20if%20necessary>
-    (functional name: :obj:`remove_self_loops`).
+    (functional name: :obj:`remove_duplicate_self_loops`).
     """
 
     def __call__(
