@@ -150,7 +150,7 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('return_type', ['log_probs', 'probs'])
+@pytest.mark.parametrize('return_type', ['probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
 @pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_binary_classification(
@@ -180,7 +180,10 @@ def test_gnn_explainer_binary_classification(
     if explanation_type == 'phenomenon':
         with torch.no_grad():
             out = model(x, edge_index, batch, edge_label_index)
-            target = (out > 0.5).long()
+            if model_config.return_type.value == 'raw':
+                target = (out > 0).long()
+            if model_config.return_type.value == 'probs':
+                target = (out > 0.5).long()
 
     explainer = Explainer(
         model=model,

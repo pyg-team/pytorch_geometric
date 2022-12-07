@@ -161,6 +161,12 @@ class ModelConfig(CastMixin):
             raise ValueError(f"A model for regression needs to return raw "
                              f"outputs (got {self.return_type.value})")
 
+        if (self.mode == ModelMode.binary_classification and self.return_type
+                not in [ModelReturnType.raw, ModelReturnType.probs]):
+            raise ValueError(
+                f"A model for binary classification needs to return raw or "
+                f"probs outputs (got {self.return_type.value})")
+
 
 @dataclass
 class ThresholdConfig(CastMixin):

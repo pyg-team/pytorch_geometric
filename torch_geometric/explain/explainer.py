@@ -1,5 +1,4 @@
 import copy
-import math
 import warnings
 from typing import Optional, Union
 
@@ -69,12 +68,11 @@ class Explainer:
         if self.model_config.mode == ModelMode.multiclass_classification:
             out = out.argmax(dim=-1)
         elif self.model_config.mode == ModelMode.binary_classification:
+            # TODO: allow customization of the thresholds used below
             if self.model_config.return_type.value == 'raw':
                 out = (out > 0).long()
             if self.model_config.return_type.value == 'probs':
                 out = (out > 0.5).long()
-            elif self.model_config.return_type.value == 'log_probs':
-                out = (out > math.log(0.5)).long()
 
         self.model.train(training)
 
