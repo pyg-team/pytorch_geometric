@@ -176,6 +176,7 @@ def expand_left(ptr: Tensor, dim: int, dims: int) -> Tensor:
 
 
 def is_validation_enabled() -> bool:
+    # Lazy-import to avoid circular reference
     from torch_geometric import is_validation_enabled
 
     return is_validation_enabled()
