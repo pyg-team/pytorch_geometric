@@ -1,18 +1,12 @@
 import copy
 import math
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.data import (
-    Data,
-    FeatureStore,
-    GraphStore,
-    HeteroData,
-    remote_backend_utils,
-)
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.sampler import (
     BaseSampler,

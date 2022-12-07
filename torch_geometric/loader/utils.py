@@ -3,7 +3,7 @@ import glob
 import math
 import os
 from collections.abc import Sequence
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -18,7 +18,7 @@ from torch_geometric.data import (
     remote_backend_utils,
 )
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.sampler import NodeSamplerInput
+from torch_geometric.sampler import EdgeSamplerInput, NodeSamplerInput
 from torch_geometric.typing import (
     FeatureTensorType,
     InputEdges,
@@ -30,7 +30,7 @@ from torch_geometric.typing import (
 
 class NodeInputData:
     def __init__(self, *args, **kwargs):
-        self.args = NodeSamplerInput.cast(None, *args, **kwargs)
+        self.args = NodeSamplerInput(None, *args, **kwargs)
 
     def __getitem__(self, index: Union[Tensor, List[int]]) -> NodeSamplerInput:
         if not isinstance(index, Tensor):
@@ -39,6 +39,24 @@ class NodeInputData:
         return NodeSamplerInput(
             self.args.input_id[index] if self.args.input_id else index,
             self.args.node[index],
+            self.args.time[index] if self.args.time else None,
+            self.args.input_type,
+        )
+
+
+class EdgeInputData:
+    def __init__(self, *args, **kwargs):
+        self.args = EdgeSamplerInput(None, *args, **kwargs)
+
+    def __getitem__(self, index: Union[Tensor, List[int]]) -> EdgeSamplerInput:
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return EdgeSamplerInput(
+            self.args.input_id[index] if self.args.input_id else index,
+            self.args.row[index],
+            self.args.col[index],
+            self.args.label[index] if self.args.label else None,
             self.args.time[index] if self.args.time else None,
             self.args.input_type,
         )

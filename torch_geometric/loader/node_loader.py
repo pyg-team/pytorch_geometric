@@ -91,9 +91,10 @@ class NodeLoader(torch.utils.data.DataLoader):
 
         self.data = data
         self.node_sampler = node_sampler
-        self.input_data = NodeInputData(input_nodes, input_time, input_type)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
+
+        self.input_data = NodeInputData(input_nodes, input_time, input_type)
 
         # TODO: Unify DL affinitization in `BaseDataLoader` class
         # CPU Affinitization for loader and compute cores
