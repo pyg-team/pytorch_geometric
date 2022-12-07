@@ -210,8 +210,8 @@ class Explainer:
         feat_labels: Optional[List[str]] = None,
         top_k: int = 20,
     ):
-        r"""Creates a bar plot of the node features importance given
-        a :attr:`node_feat_mask`
+        r"""Creates a bar plot of the node features importance by
+        summing up :attr:`explanation.node_feat_mask` across all nodes.
 
         Args:
             explanation (Explanation): The explanation object.
