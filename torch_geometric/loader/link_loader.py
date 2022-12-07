@@ -5,7 +5,6 @@ import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
-    EdgeInputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -155,12 +154,13 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "instead to differentiate between positive and "
                              "negative samples.")
 
-        self.input_data = EdgeInputData(
-            edge_label_index[0].clone(),
-            edge_label_index[1].clone(),
-            edge_label,
-            edge_label_time,
-            input_type,
+        self.input_data = EdgeSamplerInput(
+            input_id=None,
+            row=edge_label_index[0].clone(),
+            col=edge_label_index[1].clone(),
+            label=edge_label,
+            time=edge_label_time,
+            input_type=input_type,
         )
 
         iterator = range(edge_label_index.size(1))

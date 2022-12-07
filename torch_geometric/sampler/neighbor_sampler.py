@@ -82,7 +82,7 @@ class NeighborSampler(BaseSampler):
             feature_store, graph_store = data
 
             # Obtain graph metadata:
-            node_attrs = feature_store.get_all_node_attrs()
+            node_attrs = feature_store.get_all_tensor_attrs()
             self.node_types = list(set(attr.group_name for attr in node_attrs))
 
             edge_attrs = graph_store.get_all_edge_attrs()
@@ -94,6 +94,7 @@ class NeighborSampler(BaseSampler):
 
             self._process_hetero_num_neighbors()
 
+            self.node_time = None
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -176,7 +177,7 @@ class NeighborSampler(BaseSampler):
 
         if isinstance(num_neighbors, (list, tuple)):
             num_neighbors = {k: num_neighbors for k in self.edge_types}
-        if not isinstance(self.num_neighbors, dict):
+        if not isinstance(num_neighbors, dict):
             raise ValueError(f"Expected 'num_neighbors' to be a dictionary "
                              f"(got {type(self.num_neighbors)})")
 
@@ -193,7 +194,7 @@ class NeighborSampler(BaseSampler):
     def _sample(
         self,
         seed: Union[Tensor, Dict[NodeType, Tensor]],
-        seed_time: Optional[Union[Tensor, Dict[NodeType, Tensor]]],
+        seed_time: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
