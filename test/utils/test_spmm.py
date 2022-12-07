@@ -49,7 +49,6 @@ def test_backward_compatibility_spmm(dtype, device, reduce):
     out_csr.backward(grad_out)
         
     assert torch.allclose(out_ref, out)
-    #assert torch.allclose(value_ref.grad, value.grad) #! This fails
     assert torch.allclose(value_ref.grad, csr.grad.values(),
                           atol=10-4) #? This passes
     assert torch.allclose(other_ref.grad, other.grad)
@@ -61,41 +60,36 @@ def compare_spmm(src: SparseTensor, other: torch.Tensor, reduce: str,
         return sparse_spmm(src, other, reduce)
     if version == "torch.spmm":
         return spmm(src, other, reduce)
-        
-def test_spmm():
-    src = torch.randn(5, 4)
-    other = torch.randn(4, 8)
-
-    out1 = src @ other
-    out2 = spmm(src.to_sparse(), other, reduce='sum')
-    out3 = spmm(SparseTensor.from_dense(src), other, reduce='sum')
-    assert out1.size() == (5, 8)
-    assert torch.allclose(out1, out2)
-    assert torch.allclose(out1, out3)
-
-    for reduce in ['mean', 'min', 'max']:
+    
+@pytest.mark.parametrize('dtype,reduce',
+                         product(grad_dtypes, reductions))        
+def test_spmm(dtype, reduce):
+    
+    if reduce in ['mean','min','max']:
+        src = torch.tensor([[1, 1],
+                           [0, 0]], dtype = dtype)
+        other = torch.tensor([[1, -1],
+                             [99, -99]], dtype = dtype)
         out = spmm(SparseTensor.from_dense(src), other, reduce)
-        assert out.size() == (5, 8)
+        if reduce == 'mean':
+            assert out.sum() == 0
+        elif reduce == 'max':
+            assert out.sum() > 0
+        elif reduce == 'max':
+            assert out.sum() < 0
 
-        with pytest.raises(ValueError, match="not supported"):
-            spmm(src.to_sparse(), other, reduce)
+    elif reduce in ['sum', 'add']:
+        src = torch.randn(5, 4, dtype=dtype)
+        other = torch.randn(4, 8, dtype=dtype)
 
-def test_spmm():
-    @torch.jit.script
-    def jit_torch_sparse(src: SparseTensor, other: Tensor) -> Tensor:
-        return spmm(src, other)
+        out1 = src @ other
+        src = SparseTensor.from_dense(src)
+        out2 = spmm(src, other, reduce=reduce)
+        src = src.to_torch_sparse_csr_tensor(dtype=other)
+        out3 = spmm(src, other, reduce=reduce)
+        assert out1.size() == (5, 8)
+        assert torch.allclose(out1, out2)
+        assert torch.allclose(out1, out3)
+        
 
-    @torch.jit.script
-    def jit_torch(src: Tensor, other: Tensor) -> Tensor:
-        return spmm(src, other, reduce='sum')
-
-    src = torch.randn(5, 4)
-    other = torch.randn(4, 8)
-
-    out1 = src @ other
-    out2 = jit_torch_sparse(SparseTensor.from_dense(src), other)
-    out3 = jit_torch(src.to_sparse(), other)
-    assert out1.size() == (5, 8)
-    assert torch.allclose(out1, out2)
-    assert torch.allclose(out1, out3)
 
