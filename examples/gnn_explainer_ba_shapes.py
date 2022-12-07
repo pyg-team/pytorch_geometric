@@ -11,7 +11,7 @@ from torch_geometric.nn import GCN
 from torch_geometric.utils import k_hop_subgraph
 
 motif = Motif('house')
-generator = BAGraph(motif=motif)
+generator = BAGraph(num_nodes=300, num_motifs=80, motif=motif)
 dataset = ExplainerDataset(generator)
 data = dataset[0]
 
