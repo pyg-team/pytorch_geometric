@@ -176,7 +176,7 @@ if __name__ == '__main__':
         heads=num_heads,
     ).to(args.device)
 
-    num_warmups, num_steps = 500, 1000
+    num_warmups, num_steps = 50, 100
     if args.device == 'cpu':
         num_warmups, num_steps = num_warmups // 10, num_steps // 10
 
