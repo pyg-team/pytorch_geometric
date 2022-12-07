@@ -35,9 +35,9 @@ class NodeSamplerInput(CastMixin):
             index = torch.tensor(index, dtype=torch.long)
 
         return NodeSamplerInput(
-            self.input_id[index] if self.input_id else index,
+            self.input_id[index] if self.input_id is not None else index,
             self.node[index],
-            self.time[index] if self.time else None,
+            self.time[index] if self.time is not None else None,
             self.input_type,
         )
 
@@ -73,11 +73,11 @@ class EdgeSamplerInput(CastMixin):
             index = torch.tensor(index, dtype=torch.long)
 
         return EdgeSamplerInput(
-            self.input_id[index] if self.input_id else index,
+            self.input_id[index] if self.input_id is not None else index,
             self.row[index],
             self.col[index],
-            self.label[index] if self.label else None,
-            self.time[index] if self.time else None,
+            self.label[index] if self.label is not None else None,
+            self.time[index] if self.time is not None else None,
             self.input_type,
         )
 

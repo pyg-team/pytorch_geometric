@@ -71,10 +71,7 @@ class NeighborSampler(BaseSampler):
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time)
-            self.num_nodes = {
-                edge_type[-1]: colptr.numel() - 1
-                for edge_type, colptr in colptr_dict.items()
-            }
+            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
@@ -330,21 +327,30 @@ def node_sample(
 
 
 def edge_sample(
-    index: EdgeSamplerInput,
+    inputs: EdgeSamplerInput,
     sample_fn: Callable,
-    num_src_nodes: int,
-    num_dst_nodes: int,
+    num_nodes: Union[int, Dict[NodeType, int]],
     disjoint: bool,
-    input_type: Optional[Tuple[str, str, str]] = None,
     node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
     neg_sampling: Optional[NegativeSamplingConfig] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
-    index, src, dst, edge_label, edge_label_time = index
-    src_time = dst_time = edge_label_time
+    input_id = inputs.input_id
+    src = inputs.row
+    dst = inputs.col
+    edge_label = inputs.label
+    edge_label_time = inputs.time
+    input_type = inputs.input_type
 
+    src_time = dst_time = edge_label_time
     assert edge_label_time is None or disjoint
+
+    if not isinstance(num_nodes, dict):
+        num_src_nodes = num_dst_nodes = num_nodes
+    else:
+        num_src_nodes = num_nodes[input_type[0]]
+        num_dst_nodes = num_nodes[input_type[-1]]
 
     num_pos = src.numel()
     num_neg = 0
@@ -460,7 +466,7 @@ def edge_sample(
                 else:
                     edge_label_index = inverse_seed.view(2, -1)
 
-            out.metadata = (index, edge_label_index, edge_label, src_time)
+            out.metadata = (input_id, edge_label_index, edge_label, src_time)
 
         elif neg_sampling.is_triplet():
             if disjoint:
@@ -489,7 +495,7 @@ def edge_sample(
 
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (index, src_index, dst_pos_index, dst_neg_index,
+            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
                             src_time)
 
     # Homogeneus Neighborhood Sampling ########################################
@@ -515,7 +521,7 @@ def edge_sample(
             else:
                 edge_label_index = inverse_seed.view(2, -1)
 
-            out.metadata = (index, edge_label_index, edge_label, seed_time)
+            out.metadata = (input_id, edge_label_index, edge_label, seed_time)
 
         elif neg_sampling.is_triplet():
             if disjoint:
@@ -532,7 +538,7 @@ def edge_sample(
                 dst_neg_index = inverse_seed[2 * num_pos:]
             dst_neg_index = dst_neg_index.view(num_pos, -1).squeeze(-1)
 
-            out.metadata = (index, src_index, dst_pos_index, dst_neg_index,
+            out.metadata = (input_id, src_index, dst_pos_index, dst_neg_index,
                             src_time)
 
     return out

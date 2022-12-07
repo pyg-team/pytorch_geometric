@@ -215,18 +215,19 @@ class LinkLoader(torch.utils.data.DataLoader):
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
 
-            data[self.edge_type].input_id = out.metadata[0]
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
-                data[self.edge_type].edge_label_index = out.metadata[1]
-                data[self.edge_type].edge_label = out.metadata[2]
-                data[self.edge_type].edge_label_time = out.metadata[3]
+                data[input_type].edge_label_index = out.metadata[1]
+                data[input_type].edge_label = out.metadata[2]
+                data[input_type].edge_label_time = out.metadata[3]
             elif self.neg_sampling.is_triplet():
-                data[self.edge_type[0]].src_index = out.metadata[1]
-                data[self.edge_type[-1]].dst_pos_index = out.metadata[2]
-                data[self.edge_type[-1]].dst_neg_index = out.metadata[3]
-                data[self.edge_type[0]].seed_time = out.metadata[4]
-                data[self.edge_type[-1]].seed_time = out.metadata[4]
+                data[input_type[0]].src_index = out.metadata[1]
+                data[input_type[-1]].dst_pos_index = out.metadata[2]
+                data[input_type[-1]].dst_neg_index = out.metadata[3]
+                data[input_type[0]].seed_time = out.metadata[4]
+                data[input_type[-1]].seed_time = out.metadata[4]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

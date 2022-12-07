@@ -17,7 +17,8 @@ def unique_edge_pairs(edge_index):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-@pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
+@pytest.mark.parametrize('neg_sampling_ratio', [None])
+# @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     pos_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index = get_edge_index(100, 50, 500)

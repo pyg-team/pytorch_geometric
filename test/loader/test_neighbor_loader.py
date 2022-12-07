@@ -38,7 +38,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_homogeneous_neighbor_loader_basic(directed, dtype):
+def test_homogeneous_neighbor_loader(directed, dtype):
     if dtype != torch.int64 and not torch_geometric.typing.WITH_PYG_LIB:
         return
 
