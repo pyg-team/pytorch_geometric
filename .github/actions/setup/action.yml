@@ -3,7 +3,7 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.9'
+    default: '3.7'
   torch-version:
     required: false
     default: '1.13.0'
