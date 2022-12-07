@@ -83,7 +83,7 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
     assert isinstance(captum_model, CaptumHeteroModel)
 
     args = ['additional_arg1']
-    n_sample = len(output_idx) if output_idx is not None else 1
+    n_sample = len(output_idx) if type(output_idx) == list else 1
     input, additional_forward_args = to_captum_input(
         data.x_dict, data.edge_index_dict, mask_type, n_sample,
         additional_forward_args=args)
@@ -94,17 +94,18 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
     else:
         sliding_window_shapes = ((3, 3), (3, 3), (5, ), (5, ), (5, ))
 
+    # Compute attributions.
     if method == 'IntegratedGradients':
-        attributions, delta = explainer.attribute(
+        attributions, _ = explainer.attribute(
             input, target=0, internal_batch_size=batch_size,
             additional_forward_args=additional_forward_args,
             return_convergence_delta=True)
     elif method == 'GradientShap':
-        attributions, delta = explainer.attribute(
+        attributions, _ = explainer.attribute(
             input, target=0, return_convergence_delta=True, baselines=input,
             n_samples=1, additional_forward_args=additional_forward_args)
     elif method in ['DeepLiftShap', 'DeepLift']:
-        attributions, delta = explainer.attribute(
+        attributions, _ = explainer.attribute(
             input, target=0, return_convergence_delta=True, baselines=input,
             additional_forward_args=additional_forward_args)
     elif method == 'Occlusion':
@@ -115,30 +116,46 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
         attributions = explainer.attribute(
             input, target=0, additional_forward_args=additional_forward_args)
 
+    # Check attributions and transform to dicts.
     if mask_type == 'node':
         assert len(attributions) == len(metadata[0])
-        x_attr_dict, _ = captum_output_to_dicts(attributions, mask_type,
-                                                metadata)
-        for node_type in metadata[0]:
-            num_nodes = data[node_type].num_nodes
-            num_node_feats = data[node_type].x.shape[1]
-            assert x_attr_dict[node_type].shape == (num_nodes, num_node_feats)
+        x_attr_dicts, _ = captum_output_to_dicts(
+            attributions,
+            mask_type,
+            metadata,
+        )
     elif mask_type == 'edge':
         assert len(attributions) == len(metadata[1])
-        _, edge_attr_dict = captum_output_to_dicts(attributions, mask_type,
-                                                   metadata)
-        for edge_type in metadata[1]:
-            num_edges = data[edge_type].edge_index.shape[1]
-            assert edge_attr_dict[edge_type].shape == (num_edges, )
+        _, edge_attr_dicts = captum_output_to_dicts(
+            attributions,
+            mask_type,
+            metadata,
+        )
     else:
         assert len(attributions) == len(metadata[0]) + len(metadata[1])
-        x_attr_dict, edge_attr_dict = captum_output_to_dicts(
-            attributions, mask_type, metadata)
-        for edge_type in metadata[1]:
-            num_edges = data[edge_type].edge_index.shape[1]
-            assert edge_attr_dict[edge_type].shape == (num_edges, )
+        x_attr_dicts, edge_attr_dicts = captum_output_to_dicts(
+            attributions,
+            mask_type,
+            metadata,
+        )
 
+    # Check dicts to have correct shapes.
+    if 'node' in mask_type:
         for node_type in metadata[0]:
             num_nodes = data[node_type].num_nodes
             num_node_feats = data[node_type].x.shape[1]
-            assert x_attr_dict[node_type].shape == (num_nodes, num_node_feats)
+            if output_idx is None or type(output_idx) == int:
+                assert x_attr_dicts[node_type].shape == (num_nodes,
+                                                         num_node_feats)
+            else:
+                assert all(item[node_type].shape == (num_nodes, num_node_feats)
+                           for item in x_attr_dicts)
+
+    if 'edge' in mask_type:
+        for edge_type in metadata[1]:
+            num_edges = data[edge_type].edge_index.shape[1]
+            if output_idx is None or type(output_idx) == int:
+                assert edge_attr_dicts[edge_type].shape == (num_edges, )
+            else:
+                assert all(item[edge_type].shape == (num_edges, )
+                           for item in edge_attr_dicts)

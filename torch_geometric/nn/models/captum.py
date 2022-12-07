@@ -102,7 +102,6 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.mask_type == 'node':
             node_tensors = args[:self.num_node_types]
-            node_tensors = [mask.squeeze(0) for mask in node_tensors]
             edge_index_dict = args[self.num_node_types]
         elif self.mask_type == 'edge':
             edge_mask_tensors = args[:self.num_edge_types]
@@ -110,7 +109,6 @@ class CaptumHeteroModel(CaptumModel):
             edge_index_dict = args[self.num_edge_types + 1]
         else:
             node_tensors = args[:self.num_node_types]
-            node_tensors = [mask.squeeze(0) for mask in node_tensors]
             edge_mask_tensors = args[self.num_node_types:self.num_node_types +
                                      self.num_edge_types]
             edge_index_dict = args[self.num_node_types + self.num_edge_types]
@@ -119,7 +117,7 @@ class CaptumHeteroModel(CaptumModel):
         data_list = []
         for i in range(args[0].shape[0]):
             if self.mask_type != 'edge':
-                node_features = [mask.squeeze(0) for mask in node_tensors]
+                node_features = [mask[i].squeeze(0) for mask in node_tensors]
                 x_dict = dict(zip(self.node_types, node_features))
             if 'edge' in self.mask_type:
                 edge_masks = [mask[i].squeeze(0) for mask in edge_mask_tensors]
@@ -332,6 +330,8 @@ def captum_output_to_dicts(
                 dict(zip(edge_types, captum_attrs_i[len(node_types):])))
     if len(x_attr_dicts) == 1:
         x_attr_dicts = x_attr_dicts[0]
+    if len(edge_attr_dicts) == 1:
+        edge_attr_dicts = edge_attr_dicts[0]
     return x_attr_dicts, edge_attr_dicts
 
 
