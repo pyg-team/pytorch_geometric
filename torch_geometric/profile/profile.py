@@ -63,9 +63,10 @@ def profileit():
                     'First argument for profiling needs to be torch.nn.Module')
 
             device = None
-            for arg in list(kwargs.values()) + list(args):
+            for arg in list(args) + list(kwargs.values()):
                 if isinstance(arg, torch.Tensor):
                     device = arg.get_device()
+                    break
             if not device:
                 raise AttributeError(
                     "Could not infer CUDA device from the args in the "
