@@ -1,5 +1,4 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -35,6 +34,8 @@ class SIGN(BaseTransform):
         self.K = K
 
     def __call__(self, data: Data) -> Data:
+        from torch_sparse import SparseTensor
+
         assert data.edge_index is not None
         row, col = data.edge_index
         adj_t = SparseTensor(row=col, col=row,

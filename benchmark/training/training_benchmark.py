@@ -69,9 +69,8 @@ def run(args: argparse.ArgumentParser) -> None:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
-        dataset, num_classes = get_dataset(dataset_name, args.root,
-                                           args.use_sparse_tensor, args.bf16)
-        data = dataset.to(device)
+        data, num_classes = get_dataset(dataset_name, args.root,
+                                        args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', data['paper'].train_mask
                 ) if dataset_name == 'ogbn-mag' else data.train_mask
@@ -83,7 +82,7 @@ def run(args: argparse.ArgumentParser) -> None:
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
-            else dataset.num_features
+            else data.num_features
 
         for model_name in args.models:
             if model_name not in supported_sets[dataset_name]:

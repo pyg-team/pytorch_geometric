@@ -69,11 +69,8 @@ def to_csc(
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time)
 
-        if hasattr(torch, '_convert_indices_from_coo_to_csr'):
-            colptr = torch._convert_indices_from_coo_to_csr(
-                col, data.size(1), out_int32=col.dtype == torch.int32)
-        else:  # pragma: no cover
-            colptr = torch.ops.torch_sparse.ind2ptr(col, data.size(1))
+        colptr = torch._convert_indices_from_coo_to_csr(
+            col, data.size(1), out_int32=col.dtype == torch.int32)
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
@@ -112,48 +109,6 @@ def to_hetero_csc(
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
-
-
-# Edge-based Sampling Utilities ###############################################
-
-
-def add_negative_samples(
-    edge_label_index,
-    edge_label,
-    edge_label_time,
-    num_src_nodes: int,
-    num_dst_nodes: int,
-    negative_sampling_ratio: float,
-):
-    """Add negative samples and their `edge_label` and `edge_time`
-    if `neg_sampling_ratio > 0`"""
-    num_pos_edges = edge_label_index.size(1)
-    num_neg_edges = int(num_pos_edges * negative_sampling_ratio)
-
-    if num_neg_edges == 0:
-        return edge_label_index, edge_label, edge_label_time
-
-    neg_row = torch.randint(num_src_nodes, (num_neg_edges, ))
-    neg_col = torch.randint(num_dst_nodes, (num_neg_edges, ))
-    neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
-
-    if edge_label_time is not None:
-        perm = torch.randperm(num_pos_edges)
-        edge_label_time = torch.cat(
-            [edge_label_time, edge_label_time[perm[:num_neg_edges]]])
-
-    edge_label_index = torch.cat([
-        edge_label_index,
-        neg_edge_label_index,
-    ], dim=1)
-
-    pos_edge_label = edge_label + 1 if edge_label.min() == 0 else edge_label
-    neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
-                                          edge_label.size()[1:])
-
-    edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
-
-    return edge_label_index, edge_label, edge_label_time
 
 
 ###############################################################################

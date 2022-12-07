@@ -4,18 +4,21 @@ import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import (
-    Data,
-    HeteroData,
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.lightning import (
     LightningDataset,
     LightningLinkData,
     LightningNodeData,
 )
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.sampler import BaseSampler, NeighborSampler
-from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyCUDA,
+    onlyFullTest,
+    withPackage,
+)
 
 try:
     from pytorch_lightning import LightningModule
@@ -66,7 +69,7 @@ class LinearGraphModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
-@withCUDA
+@onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
@@ -157,7 +160,7 @@ class LinearNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
-@withCUDA
+@onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
@@ -252,7 +255,7 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
-@withCUDA
+@onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_node_data(get_dataset):
@@ -303,7 +306,7 @@ def test_lightning_data_custom_sampler():
     assert isinstance(datamodule.neighbor_sampler, DummySampler)
 
 
-@withCUDA
+@onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data():
@@ -329,9 +332,7 @@ def test_lightning_hetero_link_data():
     )
     assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
     for batch in datamodule.train_dataloader():
-        assert 'edge_label' in batch['author', 'paper']
         assert 'edge_label_index' in batch['author', 'paper']
-        break
 
     data['author'].time = torch.arange(data['author'].num_nodes)
     data['paper'].time = torch.arange(data['paper'].num_nodes)
@@ -349,10 +350,8 @@ def test_lightning_hetero_link_data():
     )
 
     for batch in datamodule.train_dataloader():
-        assert 'edge_label' in batch['author', 'paper']
         assert 'edge_label_index' in batch['author', 'paper']
         assert 'edge_label_time' in batch['author', 'paper']
-        break
 
 
 @withPackage('pytorch_lightning')
@@ -388,5 +387,4 @@ def test_lightning_hetero_link_data_custom_store():
     )
 
     batch = next(iter(datamodule.train_dataloader()))
-    assert 'edge_label' in batch['author', 'paper']
     assert 'edge_label_index' in batch['author', 'paper']
