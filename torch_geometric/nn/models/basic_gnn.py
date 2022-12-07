@@ -220,7 +220,7 @@ class BasicGNN(torch.nn.Module):
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
-            for idx, batch in enumerate(loader):
+            for batch in loader:
                 x = x_all[batch.n_id].to(device)
                 if hasattr(batch, 'adj_t'):
                     edge_index = batch.adj_t.to(device)

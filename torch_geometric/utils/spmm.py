@@ -2,8 +2,6 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from .sparse import is_sparse, is_torch_sparse_tensor
-
 
 @torch.jit._overload
 def spmm(src, other, reduce):
@@ -17,7 +15,7 @@ def spmm(src, other, reduce):
     pass
 
 
-def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
+def spmm(src: SparseTensor, other: Tensor, reduce: str = "sum") -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:
