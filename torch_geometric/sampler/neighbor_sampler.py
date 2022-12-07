@@ -4,25 +4,27 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data, HeteroData, remote_backend_utils
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import EdgeLayout, GraphStore
-from torch_geometric.sampler.base import (
+import torch_geometric.typing
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    remote_backend_utils,
+)
+from torch_geometric.data.graph_store import EdgeLayout
+from torch_geometric.sampler import (
     BaseSampler,
-    EdgeSamplerInput,
     HeteroSamplerOutput,
+    SamplerOutput,
+)
+from torch_geometric.sampler.base import (
+    EdgeSamplerInput,
     NegativeSamplingConfig,
     NodeSamplerInput,
-    SamplerOutput,
 )
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
-
-try:
-    import pyg_lib  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
 
 
 class NeighborSampler(BaseSampler):
@@ -220,7 +222,7 @@ class NeighborSampler(BaseSampler):
         loaders."""
         # TODO(manan): remote backends only support heterogeneous graphs:
         if self.data_cls == 'custom' or issubclass(self.data_cls, HeteroData):
-            if _WITH_PYG_LIB:
+            if torch_geometric.typing.WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` should inherit the type of
                 # `colptr_dict` and `row_dict`.
@@ -255,6 +257,7 @@ class NeighborSampler(BaseSampler):
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
+                import torch_sparse  # noqa
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
@@ -277,7 +280,7 @@ class NeighborSampler(BaseSampler):
             )
 
         if issubclass(self.data_cls, Data):
-            if _WITH_PYG_LIB:
+            if torch_geometric.typing.WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` should inherit the type of
                 # `colptr` and `row`.
@@ -305,6 +308,7 @@ class NeighborSampler(BaseSampler):
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
+                import torch_sparse  # noqa
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,

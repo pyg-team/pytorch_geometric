@@ -34,8 +34,10 @@ def contains_self_loops(edge_index: Tensor) -> bool:
     return mask.sum().item() > 0
 
 
-def remove_self_loops(edge_index: Tensor,
-                      edge_attr: OptTensor = None) -> Tuple[Tensor, OptTensor]:
+def remove_self_loops(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Removes every self-loop in the graph given by :attr:`edge_index`, so
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 

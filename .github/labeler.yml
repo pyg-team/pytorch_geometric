@@ -8,7 +8,11 @@ data:
   - torch_geometric/data/**/*
 
 dataset:
+  - torch_geometric/io/**/*
   - torch_geometric/datasets/**/*
+
+sampler:
+  - torch_geometric/sampler/**/*
 
 loader:
   - torch_geometric/loader/**/*

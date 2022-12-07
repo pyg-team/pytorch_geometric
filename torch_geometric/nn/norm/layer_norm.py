@@ -42,6 +42,7 @@ class LayerNorm(torch.nn.Module):
 
         self.in_channels = in_channels
         self.eps = eps
+        self.affine = affine
         self.mode = mode
 
         if affine:
@@ -94,4 +95,4 @@ class LayerNorm(torch.nn.Module):
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'mode={self.mode})')
+                f'affine={self.affine}, mode={self.mode})')
