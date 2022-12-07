@@ -6,7 +6,13 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    remote_backend_utils,
+)
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.sampler import (
     BaseSampler,
@@ -66,12 +72,12 @@ class NeighborSampler(BaseSampler):
             self._process_hetero_num_neighbors()
 
             self.node_time = data.collect(time_attr) if time_attr else None
+            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             # Convert the graph data into a suitable format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time)
-            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
@@ -121,12 +127,13 @@ class NeighborSampler(BaseSampler):
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
 
+            self.num_nodes = {
+                remote_backend_utils.size(*data, node_type)
+                for node_type in self.node_types
+            }
+
             # Obtain CSC representations for in-memory sampling:
             row_dict, colptr_dict, self.perm = graph_store.csc()
-            self.num_nodes = {
-                edge_type[-1]: colptr.numel() - 1
-                for edge_type, colptr in colptr_dict.items()
-            }
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
