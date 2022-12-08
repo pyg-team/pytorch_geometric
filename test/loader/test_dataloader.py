@@ -109,3 +109,25 @@ def test_heterogeneous_dataloader(num_workers):
 
         for store in batch.stores:
             assert id(batch) == id(store._parent())
+
+
+if __name__ == '__main__':
+    import argparse
+    import time
+
+    from torch_geometric.datasets import QM9
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_workers', type=int, default=0)
+    args = parser.parse_args()
+
+    dataset = QM9('/tmp/QM9')
+    loader = DataLoader(dataset, batch_size=128, shuffle=True,
+                        num_workers=args.num_workers)
+
+    for _ in range(2):
+        print(f'Start loading {len(loader)} mini-batches ... ', end='')
+        t = time.perf_counter()
+        for batch in loader:
+            pass
+        print(f'Done! [{time.perf_counter() - t:.4f}s]')
