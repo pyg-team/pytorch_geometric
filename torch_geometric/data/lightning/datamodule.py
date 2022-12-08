@@ -635,7 +635,7 @@ class LightningLinkData(LightningDataModule):
     def dataloader(
         self,
         input_edges: InputEdges,
-        input_labels: OptTensor,
+        input_labels: OptTensor = None,
         input_time: OptTensor = None,
         input_id: OptTensor = None,
         **kwargs,
