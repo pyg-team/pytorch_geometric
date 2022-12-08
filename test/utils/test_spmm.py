@@ -4,8 +4,8 @@ import pytest
 import torch
 import torch_scatter
 from torch import Tensor
-from torch_sparse.matmul import spmm as sparse_spmm
 from torch_sparse import SparseTensor
+from torch_sparse.matmul import spmm as sparse_spmm
 from utils import devices, grad_dtypes, reductions
 
 from torch_geometric.utils import spmm
