@@ -5,7 +5,6 @@ import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -13,13 +12,11 @@ from torch_geometric.loader.utils import (
 )
 from torch_geometric.sampler import (
     BaseSampler,
+    EdgeSamplerInput,
     HeteroSamplerOutput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import (
-    EdgeSamplerInput,
-    NegativeSamplingConfig,
-)
+from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, OptTensor
 
 
@@ -134,11 +131,10 @@ class LinkLoader(torch.utils.data.DataLoader):
             neg_sampling = NegativeSamplingConfig("binary", neg_sampling_ratio)
 
         # Get edge type (or `None` for homogeneous graphs):
-        edge_type, edge_label_index = get_edge_label_index(
+        input_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
 
         self.data = data
-        self.edge_type = edge_type
         self.link_sampler = link_sampler
         self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
         self.transform = transform
@@ -158,11 +154,13 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "instead to differentiate between positive and "
                              "negative samples.")
 
-        self.input_data = InputData(
-            edge_label_index[0].clone(),
-            edge_label_index[1].clone(),
-            edge_label,
-            edge_label_time,
+        self.input_data = EdgeSamplerInput(
+            input_id=None,
+            row=edge_label_index[0].clone(),
+            col=edge_label_index[1].clone(),
+            label=edge_label,
+            time=edge_label_time,
+            input_type=input_type,
         )
 
         iterator = range(edge_label_index.size(1))
@@ -217,18 +215,19 @@ class LinkLoader(torch.utils.data.DataLoader):
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
 
-            data[self.edge_type].input_id = out.metadata[0]
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
-                data[self.edge_type].edge_label_index = out.metadata[1]
-                data[self.edge_type].edge_label = out.metadata[2]
-                data[self.edge_type].edge_label_time = out.metadata[3]
+                data[input_type].edge_label_index = out.metadata[1]
+                data[input_type].edge_label = out.metadata[2]
+                data[input_type].edge_label_time = out.metadata[3]
             elif self.neg_sampling.is_triplet():
-                data[self.edge_type[0]].src_index = out.metadata[1]
-                data[self.edge_type[-1]].dst_pos_index = out.metadata[2]
-                data[self.edge_type[-1]].dst_neg_index = out.metadata[3]
-                data[self.edge_type[0]].seed_time = out.metadata[4]
-                data[self.edge_type[-1]].seed_time = out.metadata[4]
+                data[input_type[0]].src_index = out.metadata[1]
+                data[input_type[-1]].dst_pos_index = out.metadata[2]
+                data[input_type[-1]].dst_neg_index = out.metadata[3]
+                data[input_type[0]].seed_time = out.metadata[4]
+                data[input_type[-1]].seed_time = out.metadata[4]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
