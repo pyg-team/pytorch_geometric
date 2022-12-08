@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Any, Dict, Optional, Union, List
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
