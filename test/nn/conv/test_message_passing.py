@@ -94,6 +94,7 @@ def test_my_conv():
     conv((x1, x2), torch_adj.t()).sum().backward()
     assert torch_adj.grad is not None
 
+
 def test_my_conv_out_of_bounds():
     x = torch.randn(3, 8)
     value = torch.randn(4)
