@@ -135,8 +135,9 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
 
 
 @pytest.mark.parametrize('threshold_value', list(range(1, 10)))
+@pytest.mark.parametrize('threshold_type', ['topk', 'topk_hard'])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_topk_threshold(data, threshold_value, node_mask_type):
+def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
@@ -151,7 +152,7 @@ def test_topk_threshold(data, threshold_value, node_mask_type):
             mode='regression',
             task_level='graph',
         ),
-        threshold_config=('topk', threshold_value),
+        threshold_config=(threshold_type, threshold_value),
     )
     explanation = explainer(data.x_dict, data.edge_index_dict)
 
@@ -164,41 +165,11 @@ def test_topk_threshold(data, threshold_value, node_mask_type):
     for key in explanation.available_explanations:
         masks = explanation[key]
         for mask in masks.values():
-            assert (mask > 0).sum() == min(mask.numel(), threshold_value)
-            assert ((mask == 0).sum() == mask.numel() -
-                    min(mask.numel(), threshold_value))
-
-
-@pytest.mark.parametrize('threshold_value', list(range(1, 10)))
-@pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_topk_hard_threshold(data, threshold_value, node_mask_type):
-    model = HeteroSAGE(data.metadata())
-
-    explainer = Explainer(
-        model,
-        algorithm=DummyExplainer(),
-        explainer_config=dict(
-            explanation_type='model',
-            node_mask_type=node_mask_type,
-            edge_mask_type='object',
-        ),
-        model_config=dict(
-            mode='regression',
-            task_level='graph',
-        ),
-        threshold_config=('topk_hard', threshold_value),
-    )
-    explanation = explainer(data.x_dict, data.edge_index_dict)
-
-    if node_mask_type == 'object':
-        assert 'node_mask' in explanation.available_explanations
-    elif node_mask_type == 'attributes':
-        assert 'node_feat_mask' in explanation.available_explanations
-    assert 'edge_mask' in explanation.available_explanations
-
-    for key in explanation.available_explanations:
-        masks = explanation[key]
-        for mask in masks.values():
-            assert (mask == 1).sum() == min(mask.numel(), threshold_value)
-            assert ((mask == 0).sum() == mask.numel() -
-                    min(mask.numel(), threshold_value))
+            if threshold_type == 'topk':
+                assert (mask > 0).sum() == min(mask.numel(), threshold_value)
+                assert ((mask == 0).sum() == mask.numel() -
+                        min(mask.numel(), threshold_value))
+            else:
+                assert (mask == 1).sum() == min(mask.numel(), threshold_value)
+                assert ((mask == 0).sum() == mask.numel() -
+                        min(mask.numel(), threshold_value))

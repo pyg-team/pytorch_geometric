@@ -180,9 +180,6 @@ def test_edge_mask(data):
         ("paper", "to", "author"): torch.ones(10),
     }
 
-    for key in edge_mask.keys():
-        print(key, data[key].size(), edge_mask[key].size())
-
     edge_mask[("paper", "to", "paper")][0] = 0
     edge_mask[("paper", "to", "paper")][1] = 0
     edge_mask[("paper", "to", "author")][4] = 0

@@ -62,18 +62,18 @@ def test_supports_hetero():
     data = hetero_data()
     model = HeteroSAGE(data.metadata())
 
-    with pytest.raises(ValueError):
-        explainer = Explainer(
-            model=model, algorithm=HomoExplainerAlgorithm(),
-            explainer_config=ExplainerConfig(
-                explanation_type="model",
-                node_mask_type="object",
-                edge_mask_type=None,
-            ), model_config=ModelConfig(
-                mode="regression",
-                task_level="node",
-            ))
+    explainer = Explainer(
+        model=model, algorithm=HomoExplainerAlgorithm(),
+        explainer_config=ExplainerConfig(
+            explanation_type="model",
+            node_mask_type="object",
+            edge_mask_type=None,
+        ), model_config=ModelConfig(
+            mode="regression",
+            task_level="node",
+        ))
 
+    with pytest.raises(ValueError):
         explainer(data.x_dict, data.edge_index_dict)
 
     explainer.algorithm = HeteroExplainerAlgorithm()

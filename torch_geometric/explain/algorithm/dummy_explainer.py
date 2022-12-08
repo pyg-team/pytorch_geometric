@@ -59,10 +59,12 @@ class DummyExplainer(ExplainerAlgorithm):
 
         Args:
             model (torch.nn.Module): The model to explain.
-            x (Dict[NodeType, torch.Tensor]): The node features.
-            edge_index (Dict[EdgeType, torch.Tensor]): The edge indices.
-            edge_attr (Dict[EdgeType, torch.Tensor], optional): The edge
-                attributes. (default: :obj:`None`)
+            x_dict (Dict[NodeType, torch.Tensor]): The node features for each
+                node type.
+            edge_index_dict (Dict[EdgeType, torch.Tensor]): The edge indices
+                for each edge type.
+            edge_attr_dict (Dict[EdgeType, torch.Tensor], optional): The edge
+                attributes for each edge type. (default: :obj:`None`)
 
         Returns:
             HeteroExplanation: A random explanation based on the shape of the

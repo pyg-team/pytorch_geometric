@@ -44,8 +44,8 @@ class Explainer:
         self.model = model
         self.algorithm = algorithm
 
-        # is_hetero is set to False, overwritten in __call__
-        self.is_hetero = False
+        # is_hetero is set to None, overwritten in __call__
+        self.is_hetero = None
 
         self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.model_config = ModelConfig.cast(model_config)
@@ -100,8 +100,11 @@ class Explainer:
             was computed with :meth:`torch.no_grad`.
 
         Args:
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features. This is a dictionary in the heterogeneous case.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices. This is a dictionary in the heterogeneous
+                case.
             target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
@@ -119,9 +122,10 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Checks new is_hetero value and updates self.is_hetero
-        self.is_hetero = isinstance(x, dict)
-        self.algorithm.connect(self.explainer_config, self.model_config,
-                               self.is_hetero)
+        if self.is_hetero is None:
+            self.is_hetero = isinstance(x, dict)
+            self.algorithm.connect(self.explainer_config, self.model_config,
+                                   self.is_hetero)
 
         # Choose the `target` depending on the explanation type:
         explanation_type = self.explainer_config.explanation_type
@@ -157,7 +161,7 @@ class Explainer:
     def _post_process(
         self, explanation: Union[Explanation, HeteroExplanation]
     ) -> Union[Explanation, HeteroExplanation]:
-        R"""Post-processes the explanation mask according to the thresholding
+        r"""Post-processes the explanation mask according to the thresholding
         method and the user configuration.
 
         Args:
@@ -215,7 +219,8 @@ class Explainer:
         """Threshold the explanation mask according to the thresholding method.
 
         Args:
-            explanation (Explanation): The explanation to threshold.
+            explanation (Explanation or HeteroExplanation): The explanation to
+                threshold.
         """
 
         if self.threshold_config is None:
