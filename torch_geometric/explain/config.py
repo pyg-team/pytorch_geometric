@@ -61,8 +61,8 @@ class ExplainerConfig(CastMixin):
                   is trying to predict.
 
             In practice, this means that the explanation algorithm will either
-            compute their losses with respect to the model output or the target
-            output.
+            compute their losses with respect to the model output
+            (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
 
         node_mask_type (MaskType or str, optional): The type of mask to apply
             on nodes. The possible values are (default: :obj:`None`):
@@ -76,7 +76,7 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"attributes"`: Will mask each feature across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
-            on edges. Same types as :obj:`node_mask_type`.
+            on edges. Has the sample possible values as :obj:`node_mask_type`.
             (default: :obj:`None`)
     """
     explanation_type: ExplanationType
