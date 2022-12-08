@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
-from torch.sparse.matmul import matmul
+from torch_geometric.utils.matmul import matmul import matmul
 from torch_sparse import SparseTensor  # , matmul
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation

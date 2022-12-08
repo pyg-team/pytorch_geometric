@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch.sparse.matmul import matmul
+from torch_geometric.utils.matmul import matmul import matmul
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, fill_diag
 
