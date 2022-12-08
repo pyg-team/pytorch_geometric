@@ -43,12 +43,7 @@ benchmark_requires = [
     'wandb',
 ]
 
-test_requires = [
-    'pytest',
-    'pytest-cov',
-    'onnx',
-    'onnxruntime',
-]
+test_requires = ['pytest', 'pytest-cov', 'onnx', 'onnxruntime', 'matplotlib']
 
 dev_requires = test_requires + [
     'pre-commit',
