@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 from torch import Tensor
@@ -9,6 +9,7 @@ from torch_geometric.explain import ExplainerAlgorithm, Explanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
+    MaskType,
     ModelConfig,
     ModelMode,
     ThresholdConfig,
@@ -23,27 +24,64 @@ class Explainer:
     Args:
         model (torch.nn.Module): The model to explain.
         algorithm (ExplainerAlgorithm): The explanation algorithm.
-        explainer_config (ExplainerConfig): The explainer configuration.
+        explanation_type (ExplanationType or str): The type of explanation to
+            compute. The possible values are:
+
+                - :obj:`"model"`: Explains the model prediction.
+
+                - :obj:`"phenomenon"`: Explains the phenomenon that the model
+                  is trying to predict.
+
+            In practice, this means that the explanation algorithm will either
+            compute their losses with respect to the model output
+            (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
         model_config (ModelConfig): The model configuration.
+            See :class:`~torch_geometric.explain.config.ModelConfig` for
+            available options. (default: :obj:`None`)
+        node_mask_type (MaskType or str, optional): The type of mask to apply
+            on nodes. The possible values are (default: :obj:`None`):
+
+                - :obj:`None`: Will not apply any mask on nodes.
+
+                - :obj:`"object"`: Will mask each node.
+
+                - :obj:`"common_attributes"`: Will mask each feature.
+
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
+
+        edge_mask_type (MaskType or str, optional): The type of mask to apply
+            on edges. Has the sample possible values as :obj:`node_mask_type`.
+            (default: :obj:`None`)
         threshold_config (ThresholdConfig, optional): The threshold
-            configuration. (default: :obj:`None`)
+            configuration.
+            See :class:`~torch_geometric.explain.config.ThresholdConfig` for
+            available options. (default: :obj:`None`)
     """
     def __init__(
         self,
         model: torch.nn.Module,
         algorithm: ExplainerAlgorithm,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
+        explanation_type: Union[ExplanationType, str],
+        model_config: Union[ModelConfig, Dict[str, Any]],
+        node_mask_type: Optional[Union[MaskType, str]] = None,
+        edge_mask_type: Optional[Union[MaskType, str]] = None,
         threshold_config: Optional[ThresholdConfig] = None,
     ):
+        explainer_config = ExplainerConfig(
+            explanation_type=explanation_type,
+            node_mask_type=node_mask_type,
+            edge_mask_type=edge_mask_type,
+        )
+
         self.model = model
         self.algorithm = algorithm
-
-        self.explainer_config = ExplainerConfig.cast(explainer_config)
+        self.explanation_type = explainer_config.explanation_type
         self.model_config = ModelConfig.cast(model_config)
+        self.node_mask_type = explainer_config.node_mask_type
+        self.edge_mask_type = explainer_config.edge_mask_type
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        self.algorithm.connect(self.explainer_config, self.model_config)
+        self.algorithm.connect(explainer_config, self.model_config)
 
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
@@ -110,17 +148,16 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        explanation_type = self.explainer_config.explanation_type
-        if explanation_type == ExplanationType.phenomenon:
+        if self.explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
                     f"The 'target' has to be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-        elif explanation_type == ExplanationType.model:
+                    f"type '{self.explanation_type.value}'")
+        elif self.explanation_type == ExplanationType.model:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{explanation_type.value}'")
+                    f"type '{self.explanation_type.value}'")
             target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
 
         training = self.model.training

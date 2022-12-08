@@ -8,7 +8,6 @@ import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -18,9 +17,9 @@ from torch_geometric.loader.utils import (
 from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
+    NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.typing import InputNodes, OptTensor
 
 
@@ -87,14 +86,19 @@ class NodeLoader(torch.utils.data.DataLoader):
             del kwargs['collate_fn']
 
         # Get node type (or `None` for homogeneous graphs):
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
+        input_type, input_nodes = get_input_nodes(data, input_nodes)
 
         self.data = data
-        self.node_type = node_type
         self.node_sampler = node_sampler
-        self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
         self.filter_per_worker = filter_per_worker
+
+        self.input_data = NodeSamplerInput(
+            input_id=None,
+            node=input_nodes,
+            time=input_time,
+            input_type=input_type,
+        )
 
         # TODO: Unify DL affinitization in `BaseDataLoader` class
         # CPU Affinitization for loader and compute cores
@@ -144,8 +148,9 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.node_type].input_id = out.metadata
-            data[self.node_type].batch_size = out.metadata.size(0)
+
+            data[self.input_data.input_type].input_id = out.metadata
+            data[self.input_data.input_type].batch_size = out.metadata.size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

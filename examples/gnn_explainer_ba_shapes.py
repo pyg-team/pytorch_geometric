@@ -62,11 +62,9 @@ for explanation_type in ['phenomenon', 'model']:
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=300),
-        explainer_config=dict(
-            explanation_type=explanation_type,
-            node_mask_type='attributes',
-            edge_mask_type='object',
-        ),
+        explanation_type=explanation_type,
+        node_mask_type='attributes',
+        edge_mask_type='object',
         model_config=dict(
             mode='classification',
             task_level='node',
