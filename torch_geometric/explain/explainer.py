@@ -25,22 +25,37 @@ class Explainer:
         model (torch.nn.Module): The model to explain.
         algorithm (ExplainerAlgorithm): The explanation algorithm.
         explanation_type (ExplanationType or str): The type of explanation to
-            compute (:obj:`"model"` or :obj:`"phenomenon"`).
-            See :class:`~torch_geometric.explain.ExplainerConfig` for more
-            information.
+            compute. The possible values are:
+
+                - :obj:`"model"`: Explains the model prediction.
+
+                - :obj:`"phenomenon"`: Explains the phenomenon that the model
+                  is trying to predict.
+
+            In practice, this means that the explanation algorithm will either
+            compute their losses with respect to the model output
+            (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
         model_config (ModelConfig): The model configuration.
+            See :class:`~torch_geometric.explain.ModelConfig` for available
+            options. (default: :obj:`None`)
         node_mask_type (MaskType or str, optional): The type of mask to apply
-            on nodes (:obj:`None`, :obj:`"object"`, :obj:`"common_attributes"`
-            or :obj:`"attributes"`).
-            See :class:`~torch_geometric.explain.ExplainerConfig` for more
-            information. (default: :obj:`None`)
+            on nodes. The possible values are (default: :obj:`None`):
+
+                - :obj:`None`: Will not apply any mask on nodes.
+
+                - :obj:`"object"`: Will mask each node.
+
+                - :obj:`"common_attributes"`: Will mask each feature.
+
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
+
         edge_mask_type (MaskType or str, optional): The type of mask to apply
-            on edges (:obj:`None`, :obj:`"object"`, :obj:`"common_attributes"`
-            or :obj:`"attributes"`).
-            See :class:`~torch_geometric.explain.ExplainerConfig` for more
-            information. (default: :obj:`None`)
+            on edges. Has the sample possible values as :obj:`node_mask_type`.
+            (default: :obj:`None`)
         threshold_config (ThresholdConfig, optional): The threshold
-            configuration. (default: :obj:`None`)
+            configuration.
+            See :class:`~torch_geometric.explain.ThresholdConfig` for available
+            options. (default: :obj:`None`)
     """
     def __init__(
         self,
