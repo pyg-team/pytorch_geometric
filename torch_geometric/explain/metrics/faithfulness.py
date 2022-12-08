@@ -8,9 +8,9 @@ from torch_geometric.explain import Explanation
 from torch_geometric.explain.metrics.utils import perturb_node_features
 
 
-
-
-def get_faithfulness_with_subgraph(explanation: Explanation, model: torch.nn.Module, topk: float, **kwargs) -> Tuple[float, float]:
+def get_faithfulness_with_subgraph(explanation: Explanation,
+                                   model: torch.nn.Module, topk: float,
+                                   **kwargs) -> Tuple[float, float]:
     r"""
 
     Faithfulness sore for explainability
@@ -61,12 +61,14 @@ def get_faithfulness_with_subgraph(explanation: Explanation, model: torch.nn.Mod
 
     if getattr(explanation, 'node_mask', None) is not None:
         # getting top k important nodes according to explanation
-        top_k_nodes = subgraph.node_mask.topk(int(subgraph.node_mask.shape[0]*topk))[1]
+        top_k_nodes = subgraph.node_mask.topk(
+            int(subgraph.node_mask.shape[0] * topk))[1]
 
         pert_x = subgraph.x.clone()
         # removing not top-k
         rem_nodes = [
-            node for node in range(subgraph.x.shape[0]) if node not in top_k_nodes
+            node for node in range(subgraph.x.shape[0])
+            if node not in top_k_nodes
         ]
         pert_x[rem_nodes] = torch.zeros_like(pert_x[rem_nodes]).to(device)
 
@@ -81,7 +83,8 @@ def get_faithfulness_with_subgraph(explanation: Explanation, model: torch.nn.Mod
     if getattr(explanation, 'edge_mask', None) is not None:
 
         # Identifying the top_k edges in the explanation subgraph to keep all the rest will be removed
-        top_k_edges = subgraph.edge_mask.topk(int(subgraph.edge_mask.shape[0] * topk))[1]
+        top_k_edges = subgraph.edge_mask.topk(
+            int(subgraph.edge_mask.shape[0] * topk))[1]
 
         subgraph_mask = torch.zeros(subgraph.edge_mask.shape[0]).bool()
         subgraph_mask[top_k_edges] = True
@@ -91,7 +94,8 @@ def get_faithfulness_with_subgraph(explanation: Explanation, model: torch.nn.Mod
         pert_vec = model(subgraph.x, edge_index.to(device), **kwargs)
         pert_softmax = F.softmax(pert_vec, dim=-1)
 
-        edge_faitfulness = 1 - torch.exp(-F.kl_div(org_softmax.log(), pert_softmax, None, None, 'sum')).item()
+        edge_faitfulness = 1 - torch.exp(-F.kl_div(
+            org_softmax.log(), pert_softmax, None, None, 'sum')).item()
 
     return node_faithfulness, edge_faitfulness
 
