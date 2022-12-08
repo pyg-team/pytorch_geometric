@@ -322,7 +322,9 @@ def node_sample(
     input. Returns the output of this sampling procedure."""
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
-        seed_time = {inputs.input_type: inputs.time} if inputs.time else None
+        seed_time = None
+        if inputs.time is not None:
+            seed_time = {inputs.input_type: inputs.time}
     else:  # Homogeneous sampling:
         seed = inputs.node
         seed_time = inputs.time
