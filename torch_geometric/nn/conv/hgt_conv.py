@@ -182,7 +182,7 @@ class HGTConv(MessagePassing):
                 for i, node_type in enumerate(v_list)
             }
 
-            out_dict = {node_type: []}
+            out_dict = {node_type: [] for node_type in node_types}
 
             # parallelize over edge-types
             edge_types, e_idxs = edge_index_dict.items(
@@ -210,7 +210,7 @@ class HGTConv(MessagePassing):
             for i, dst_type in enumerate(dst_types):
                 out = self.propagate(e_idxs[i], k=k_outs[i],
                                      q=q_dict[dst_type], v=v_outs[i],
-                                     rel=self.p_rel[edge_type], size=None)
+                                     rel=self.p_rel[edge_types[i]], size=None)
                 out_dict[dst_type].append(out)
         else:
             # Iterate over node-types:
@@ -231,7 +231,8 @@ class HGTConv(MessagePassing):
                 m_rel = self.m_rel[edge_type]
                 v = (v_dict[src_type].transpose(0, 1) @ m_rel).transpose(1, 0)
 
-                # propagate_type: (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
+                # propagate_type:
+                #     (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
                 out = self.propagate(edge_index, k=k, q=q_dict[dst_type], v=v,
                                      rel=self.p_rel[edge_type], size=None)
                 out_dict[dst_type].append(out)
