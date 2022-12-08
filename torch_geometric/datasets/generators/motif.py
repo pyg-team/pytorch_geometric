@@ -16,7 +16,7 @@ class MotifGenerator:
 
     .. code-block:: python
 
-        from torch_geometric.datasets import MotifGenerator
+        from torch_geometric.datasets.generators import MotifGenerator
 
         generator = MotifGenerator(structure='house')
         generator.motif # get the motif
@@ -57,7 +57,7 @@ class MotifGenerator:
         elif isinstance(self.structure, Graph):
             return from_networkx(self.structure)
         elif isinstance(self.structure, Data):
-            return Data
+            return self.structure
         else:
             raise ValueError(f"Not supported structure. We currently support "
                              f"`torch_geometric.data.Data`, `networkx.Graph`, "
