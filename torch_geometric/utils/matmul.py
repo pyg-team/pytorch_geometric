@@ -1,13 +1,12 @@
 import torch
+from packaging import version
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spspmm
-from packaging import version
 
 if version.parse(torch.__version__) <= version.parse('1.13'):
     from torch_sparse.matmul import spmm
 else:
     from .spmm import spmm
-    
 
 
 @torch.jit._overload  # noqa: F811
