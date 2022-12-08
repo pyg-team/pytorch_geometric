@@ -62,10 +62,17 @@ def compare_spmm(src: SparseTensor, other: torch.Tensor, reduce: str,
     if version == "torch.spmm":
         return spmm(src, other, reduce)
 
-
 @pytest.mark.parametrize('dtype,reduce', product(grad_dtypes, reductions))
 def test_spmm(dtype, reduce):
+    
+    @torch.jit.script
+    def jit_torch_sparse(src: SparseTensor, other: Tensor) -> Tensor:
+        return spmm(src, other)
 
+    @torch.jit.script
+    def jit_torch(src: Tensor, other: Tensor) -> Tensor:
+        return spmm(src, other, reduce='sum')
+    
     if reduce in ['mean', 'min', 'max']:
         src = torch.tensor([[1, 1], [0, 0]], dtype=dtype)
         other = torch.tensor([[1, -1], [99, -99]], dtype=dtype)
@@ -83,9 +90,9 @@ def test_spmm(dtype, reduce):
 
         out1 = src @ other
         src = SparseTensor.from_dense(src)
-        out2 = spmm(src, other, reduce=reduce)
+        out2 = jit_torch_sparse(src, other, reduce=reduce)
         src = src.to_torch_sparse_csr_tensor(dtype=other)
-        out3 = spmm(src, other, reduce=reduce)
+        out3 = jit_torch(src, other, reduce=reduce)
         assert out1.size() == (5, 8)
         assert torch.allclose(out1, out2)
         assert torch.allclose(out1, out3)
