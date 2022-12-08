@@ -178,7 +178,7 @@ class Explainer:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
                     f"type '{self.explanation_type.value}'")
-            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+            target = self.get_prediction(x, edge_index, **kwargs)
 
         training = self.model.training
         self.model.eval()

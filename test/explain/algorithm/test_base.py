@@ -2,12 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data.hetero_data import HeteroData
-from torch_geometric.explain import (
-    Explainer,
-    ExplainerAlgorithm,
-    ExplainerConfig,
-    ModelConfig,
-)
+from torch_geometric.explain import Explainer, ExplainerAlgorithm, ModelConfig
 from torch_geometric.nn import SAGEConv, to_hetero
 
 
@@ -64,11 +59,8 @@ def test_supports_hetero():
 
     explainer = Explainer(
         model=model, algorithm=HomoExplainerAlgorithm(),
-        explainer_config=ExplainerConfig(
-            explanation_type="model",
-            node_mask_type="object",
-            edge_mask_type=None,
-        ), model_config=ModelConfig(
+        explanation_type="model", node_mask_type="object", edge_mask_type=None,
+        model_config=ModelConfig(
             mode="regression",
             task_level="node",
         ))

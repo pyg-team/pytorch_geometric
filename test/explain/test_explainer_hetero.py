@@ -55,10 +55,8 @@ def test_get_prediction(data):
     explainer = Explainer(
         model,
         algorithm=DummyExplainer(),
-        explainer_config=dict(
-            explanation_type='phenomenon',
-            node_mask_type='object',
-        ),
+        explanation_type='phenomenon',
+        node_mask_type='object',
         model_config=dict(
             mode='regression',
             task_level='graph',
@@ -78,10 +76,8 @@ def test_forward(data, target, explanation_type):
     explainer = Explainer(
         model,
         algorithm=DummyExplainer(),
-        explainer_config=dict(
-            explanation_type=explanation_type,
-            node_mask_type='attributes',
-        ),
+        explanation_type=explanation_type,
+        node_mask_type='attributes',
         model_config=dict(
             mode='regression',
             task_level='graph',
@@ -108,11 +104,9 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
     explainer = Explainer(
         model,
         algorithm=DummyExplainer(),
-        explainer_config=dict(
-            explanation_type='model',
-            node_mask_type=node_mask_type,
-            edge_mask_type='object',
-        ),
+        explanation_type='model',
+        node_mask_type=node_mask_type,
+        edge_mask_type='object',
         model_config=dict(
             mode='regression',
             task_level='graph',
@@ -143,11 +137,9 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     explainer = Explainer(
         model,
         algorithm=DummyExplainer(),
-        explainer_config=dict(
-            explanation_type='model',
-            node_mask_type=node_mask_type,
-            edge_mask_type='object',
-        ),
+        explanation_type='model',
+        node_mask_type=node_mask_type,
+        edge_mask_type='object',
         model_config=dict(
             mode='regression',
             task_level='graph',
