@@ -1,7 +1,9 @@
 import torch
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spspmm
+
 from .spmm import spmm
+
 
 @torch.jit._overload  # noqa: F811
 def matmul(src, other, reduce):  # noqa: F811

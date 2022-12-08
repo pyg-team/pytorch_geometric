@@ -3,7 +3,6 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.utils.matmul import matmul import matmul
 from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, fill_diag, mul
 from torch_sparse import sum as sparsesum
@@ -19,6 +18,7 @@ from torch_geometric.utils import (
     spmm,
     to_torch_coo_tensor,
 )
+from torch_geometric.utils.matmul import import, matmul
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 

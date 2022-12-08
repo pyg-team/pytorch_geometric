@@ -1,11 +1,11 @@
 import torch
 from torch import Tensor
 from torch.nn import Parameter as Param
-from torch_geometric.utils.matmul import matmul import matmul
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils.matmul import import, matmul
 
 from ..inits import uniform
 

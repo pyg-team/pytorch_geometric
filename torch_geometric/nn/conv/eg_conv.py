@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.utils.matmul import matmul import matmul
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, fill_diag
 
@@ -13,6 +12,7 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils.matmul import import, matmul
 
 
 class EGConv(MessagePassing):
