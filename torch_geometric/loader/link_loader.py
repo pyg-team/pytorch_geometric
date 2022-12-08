@@ -94,6 +94,9 @@ class LinkLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -116,7 +119,8 @@ class LinkLoader(torch.utils.data.DataLoader):
         edge_label_time: OptTensor = None,
         neg_sampling: Optional[NegativeSamplingConfig] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -138,6 +142,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.link_sampler = link_sampler
         self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
         self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
@@ -186,6 +191,9 @@ class LinkLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
+        if self.transform_sampler_output:
+            out = self.transform_sampler_output(out)
+
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
