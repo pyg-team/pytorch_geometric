@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Union
 
 import torch
 from networkx import Graph
@@ -37,14 +37,9 @@ class MotifGenerator:
         structure: Union[Data, str, Graph, ],
     ):
         self.structure = structure
-
-    @property
-    def motif(self) -> Optional[Data]:
-        return self.__build_motif()
-
-    def __build_motif(self):
-        if self.structure == "house":
-            return Data(
+        self.registered_structures = {
+            "house":
+            Data(
                 num_nodes=5,
                 edge_index=torch.tensor([
                     [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
@@ -52,9 +47,18 @@ class MotifGenerator:
                 ]),
                 y=torch.tensor([1, 1, 2, 2, 3]),
             )
+        }
+
+    @property
+    def motif(self) -> Data:
+        if (isinstance(self.structure, str)
+                and self.structure in self.registered_structures.keys()):
+            return self.registered_structures[self.structure]
         elif isinstance(self.structure, Graph):
             return from_networkx(self.structure)
         elif isinstance(self.structure, Data):
             return Data
         else:
-            return None
+            raise ValueError(f"Not supported structure. We currently support "
+                             f"`torch_geometric.data.Data`, `networkx.Graph`, "
+                             f"{', '.join(self.registered_structures.keys())}")
