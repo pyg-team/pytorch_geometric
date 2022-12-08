@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
-from torch_geometric.utils.matmul import matmul import matmul
+from torch_geometric.utils.matmul import matmul
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz
 

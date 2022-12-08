@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-from torch_geometric.utils.matmul import matmul import matmul
+from torch_geometric.utils.matmul import matmul
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, fill_diag, index_select, remove_diag
 from torch_sparse import t as transpose

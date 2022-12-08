@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.utils.matmul import matmul import matmul
+from torch_geometric.utils.matmul import matmul
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
