@@ -1,10 +1,10 @@
 from torch import Tensor
-from torch_geometric.utils.matmul import matmul
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils.matmul import matmul
 
 
 class LGConv(MessagePassing):

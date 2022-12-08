@@ -1,12 +1,12 @@
 import torch
 from torch import Tensor
 from torch.nn import Linear, Parameter, ReLU, Sequential, Sigmoid
-from torch_geometric.utils.matmul import matmul
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils.matmul import matmul
 
 from ..inits import glorot, zeros
 
