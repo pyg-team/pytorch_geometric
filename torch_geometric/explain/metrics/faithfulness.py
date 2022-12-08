@@ -8,9 +8,9 @@ from torch_geometric.explain import Explanation
 from torch_geometric.explain.metrics.utils import perturb_node_features
 
 
-def get_faithfulness(data: Data, explanation: Explanation,
-                     model: torch.nn.Module, topk: int, node_idx: int = None,
-                     **kwargs) -> Tuple[float, float]:
+
+
+def get_faithfulness_with_subgraph(explanation: Explanation, model: torch.nn.Module, topk: float, **kwargs) -> Tuple[float, float]:
     r"""
 
     Faithfulness sore for explainability
@@ -48,6 +48,58 @@ def get_faithfulness(data: Data, explanation: Explanation,
         kwargs (dict, optional): Any additional arguments to the forward method
             of model, other than x and edge_index.
     """
+    node_faithfulness = edge_faitfulness = None
+    device = explanation.x.device
+    subgraph = explanation.get_explanation_subgraph()
+    try:
+        with torch.no_grad():
+            org_vec = model(subgraph.x, subgraph.edge_index, **kwargs)
+            org_softmax = F.softmax(org_vec, dim=-1)
+    except:
+        raise Exception(
+            "Not able to get get original predictions from model and data")
+
+    if getattr(explanation, 'node_mask', None) is not None:
+        # getting top k important nodes according to explanation
+        top_k_nodes = subgraph.node_mask.topk(int(subgraph.node_mask.shape[0]*topk))[1]
+
+        pert_x = subgraph.x.clone()
+        # removing not top-k
+        rem_nodes = [
+            node for node in range(subgraph.x.shape[0]) if node not in top_k_nodes
+        ]
+        pert_x[rem_nodes] = torch.zeros_like(pert_x[rem_nodes]).to(device)
+
+        # getting predictions of explainer
+        pert_vec = model(pert_x, subgraph.edge_index, **kwargs)
+        pert_softmax = F.softmax(pert_vec, dim=-1)
+
+        # calculation faithfulness
+        node_faithfulness = 1 - torch.exp(-F.kl_div(
+            org_softmax.log(), pert_softmax, None, None, 'sum')).item()
+
+    if getattr(explanation, 'edge_mask', None) is not None:
+
+        # Identifying the top_k edges in the explanation subgraph to keep all the rest will be removed
+        top_k_edges = subgraph.edge_mask.topk(int(subgraph.edge_mask.shape[0] * topk))[1]
+
+        subgraph_mask = torch.zeros(subgraph.edge_mask.shape[0]).bool()
+        subgraph_mask[top_k_edges] = True
+
+        edge_index = subgraph.edge_index[:, subgraph_mask]
+
+        pert_vec = model(subgraph.x, edge_index.to(device), **kwargs)
+        pert_softmax = F.softmax(pert_vec, dim=-1)
+
+        edge_faitfulness = 1 - torch.exp(-F.kl_div(org_softmax.log(), pert_softmax, None, None, 'sum')).item()
+
+    return node_faithfulness, edge_faitfulness
+
+
+def get_faithfulness(data: Data, explanation: Explanation,
+                     model: torch.nn.Module, topk: int, node_idx: int = None,
+                     **kwargs) -> Tuple[float, float]:
+
     node_faithfulness = node_feat_faithfulness = None
     device = data.x.device
     try:
@@ -87,33 +139,33 @@ def get_faithfulness(data: Data, explanation: Explanation,
         # calculation faithfulness
         node_faithfulness = 1 - torch.exp(-F.kl_div(
             org_softmax.log(), pert_softmax, None, None, 'sum')).item()
-
-    if getattr(explanation, 'node_feat_mask', None) is not None:
-
-        if topk > explanation.node_feat_mask.shape[1]:
-            raise ValueError(
-                "Topk cannot be greater than feature dimension, take also in consideration threshold config in explainer"
-            )
-
-        # getting the top_k features in the node attribute feature vector based on explanation
-        top_k_features = explanation.node_feat_mask[node_idx].topk(topk)[1]
-        pert_x = data.x.clone().to(device)
-
-        # Perturbing the unimportant node features
-        rem_features = torch.Tensor([
-            i for i in range(data.x.shape[1]) if i not in top_k_features
-        ]).long().to(device)
-
-        pert_x[node_idx,
-               rem_features] = perturb_node_features(x=pert_x,
-                                                     node_idx=node_idx,
-                                                     pert_feat=rem_features,
-                                                     device=device)
-
-        pert_vec = model(pert_x, data.edge_index, **kwargs)[node_idx]
-        pert_softmax = F.softmax(pert_vec, dim=-1)
-
-        node_feat_faithfulness = 1 - torch.exp(-F.kl_div(
-            org_softmax.log(), pert_softmax, None, None, 'sum')).item()
+    #
+    # if getattr(explanation, 'node_feat_mask', None) is not None:
+    #
+    #     if topk > explanation.node_feat_mask.shape[1]:
+    #         raise ValueError(
+    #             "Topk cannot be greater than feature dimension, take also in consideration threshold config in explainer"
+    #         )
+    #
+    #     # getting the top_k features in the node attribute feature vector based on explanation
+    #     top_k_features = explanation.node_feat_mask[node_idx].topk(topk)[1]
+    #     pert_x = data.x.clone().to(device)
+    #
+    #     # Perturbing the unimportant node features
+    #     rem_features = torch.Tensor([
+    #         i for i in range(data.x.shape[1]) if i not in top_k_features
+    #     ]).long().to(device)
+    #
+    #     pert_x[node_idx,
+    #            rem_features] = perturb_node_features(x=pert_x,
+    #                                                  node_idx=node_idx,
+    #                                                  pert_feat=rem_features,
+    #                                                  device=device)
+    #
+    #     pert_vec = model(pert_x, data.edge_index, **kwargs)[node_idx]
+    #     pert_softmax = F.softmax(pert_vec, dim=-1)
+    #
+    #     node_feat_faithfulness = 1 - torch.exp(-F.kl_div(
+    #         org_softmax.log(), pert_softmax, None, None, 'sum')).item()
 
     return node_faithfulness, node_feat_faithfulness
