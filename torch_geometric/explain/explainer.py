@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Any, Dict, Optional, Union, List
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -245,7 +245,7 @@ class Explainer:
         self,
         explanation: Explanation,
         feat_labels: Optional[List[str]] = None,
-        top_k: int = 20,
+        top_k: Optional[int] = None,
     ):
         r"""Creates a bar plot of the node features importance by
         summing up :attr:`explanation.node_feat_mask` across all nodes.
@@ -268,9 +268,6 @@ class Explainer:
         node_feature_explanation = explanation.node_feat_mask.sum(dim=0)
         node_feature_explanation = node_feature_explanation.cpu().numpy()
 
-        if len(node_feature_explanation) <= top_k:
-            top_k = len(node_feature_explanation)
-
         if feat_labels is None:
             feat_labels = range(len(node_feature_explanation))
 
@@ -279,9 +276,10 @@ class Explainer:
         df = pd.DataFrame({'feat_importance': node_feature_explanation},
                           index=feat_labels)
 
-        df_filtered = df\
-            .sort_values("feat_importance", ascending=False)\
-            .head(top_k)
+        df_filtered = df.sort_values("feat_importance", ascending=False)
+
+        if top_k:
+            df_filtered = df_filtered.head(top_k)
 
         ax = df_filtered.plot(
             kind='barh',
