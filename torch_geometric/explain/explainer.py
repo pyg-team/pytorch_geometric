@@ -253,6 +253,7 @@ class Explainer:
         Args:
             explanation (Explanation): The explanation object.
             feat_labels (List[str], optional): Optional labels for features.
+                (default :obj:`None`)
             top_k (int, optional): Top K features to plot.
                 (default: :obj:`20`)
         :rtype: :class:`matplotlib.axes.Axes`
