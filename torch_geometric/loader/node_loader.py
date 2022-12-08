@@ -135,10 +135,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
-        print('filter_fn', self.transform_sampler_output)
         if self.transform_sampler_output:
             out = self.transform_sampler_output(out)
-        print('=====================')
 
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
