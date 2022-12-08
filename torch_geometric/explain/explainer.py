@@ -36,8 +36,8 @@ class Explainer:
             compute their losses with respect to the model output
             (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
         model_config (ModelConfig): The model configuration.
-            See :class:`~torch_geometric.explain.ModelConfig` for available
-            options. (default: :obj:`None`)
+            See :class:`~torch_geometric.explain.config.ModelConfig` for
+            available options. (default: :obj:`None`)
         node_mask_type (MaskType or str, optional): The type of mask to apply
             on nodes. The possible values are (default: :obj:`None`):
 
@@ -54,8 +54,8 @@ class Explainer:
             (default: :obj:`None`)
         threshold_config (ThresholdConfig, optional): The threshold
             configuration.
-            See :class:`~torch_geometric.explain.ThresholdConfig` for available
-            options. (default: :obj:`None`)
+            See :class:`~torch_geometric.explain.config.ThresholdConfig` for
+            available options. (default: :obj:`None`)
     """
     def __init__(
         self,
