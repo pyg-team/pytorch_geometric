@@ -155,7 +155,7 @@ class HGTConv(MessagePassing):
             # compute K
             k_wts = [self.k_lin[node_type].weight for node_type in node_types]
             k_biases = [self.k_lin[node_type].bias for node_type in node_types]
-            k_list = self.grouped_matmul(inputs=xs, others=k_wts,
+            k_list = pyg_lib.grouped_matmul(inputs=xs, others=k_wts,
                                          biases=k_biases)
             k_dict = {
                 node_type: k_list[i].view(-1, H, D)
@@ -165,7 +165,7 @@ class HGTConv(MessagePassing):
             # compute Q
             q_wts = [self.q_lin[node_type].weight for node_type in node_types]
             q_biases = [self.q_lin[node_type].bias for node_type in node_types]
-            q_list = self.grouped_matmul(inputs=xs, others=q_wts,
+            q_list = pyg_lib.grouped_matmul(inputs=xs, others=q_wts,
                                          biases=q_biases)
             q_dict = {
                 node_type: q_list[i].view(-1, H, D)
