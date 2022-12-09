@@ -231,6 +231,22 @@ def test_hetero_data_subgraph():
     assert out.node_types == ['paper', 'author']
     assert out.edge_types == [('paper', 'to', 'author')]
 
+    subset = {
+        ('paper', 'to', 'paper'): torch.arange(4),
+    }
+
+    out = data.edge_subgraph(subset)
+    assert out.node_types == data.node_types
+    assert out.edge_types == data.edge_types
+    assert data['paper'] == out['paper']
+    assert data['author'] == out['author']
+    assert data['paper', 'author'] == out['paper', 'author']
+    assert data['author', 'paper'] == out['author', 'paper']
+
+    assert out['paper', 'paper'].num_edges == 4
+    assert out['paper', 'paper'].edge_index.size() == (2, 4)
+    assert out['paper', 'paper'].edge_attr.size() == (4, 8)
+
 
 def test_copy_hetero_data():
     data = HeteroData()

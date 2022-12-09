@@ -150,19 +150,36 @@ def test_data_subgraph():
 
     out = data.subgraph(torch.tensor([1, 2, 3]))
     assert len(out) == 5
-    assert torch.allclose(out.x, torch.arange(1, 4))
-    assert torch.allclose(out.y, y)
+    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 
     out = data.subgraph(torch.tensor([False, False, False, True, True]))
     assert len(out) == 5
-    assert torch.allclose(out.x, torch.arange(3, 5))
-    assert torch.allclose(out.y, y)
+    assert torch.equal(out.x, torch.arange(3, 5))
+    assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[0, 1], [1, 0]]
-    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(6, 8)])
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(6, 8)])
     assert out.num_nodes == 2
+
+    out = data.edge_subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 5
+    assert out.num_nodes == data.num_nodes
+    assert torch.equal(out.x, data.x)
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
+
+    out = data.edge_subgraph(
+        torch.tensor([False, True, True, True, False, False, False, False]))
+    assert len(out) == 5
+    assert out.num_nodes == data.num_nodes
+    assert torch.equal(out.x, data.x)
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
 
 
 def test_copy_data():
