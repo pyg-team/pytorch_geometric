@@ -622,8 +622,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         self,
         subset_dict: Dict[EdgeType, Tensor],
     ) -> 'HeteroData':
-        r"""Returns the induced subgraph containing the edge types and
-        corresponding edges in :obj:`subset_dict`.
+        r"""Returns the induced subgraph given by the edge indices in
+        :obj:`subset_dict` for certain edge types.
+        Will currently preserve all the nodes in the graph, even if they are
+        isolated after subgraph computation.
 
         Args:
             subset_dict (Dict[Tuple[str, str, str], LongTensor or BoolTensor]):
