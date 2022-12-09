@@ -128,7 +128,7 @@ class NeighborSampler(BaseSampler):
                 }
 
             self.num_nodes = {
-                remote_backend_utils.size(*data, node_type)
+                node_type: remote_backend_utils.size(*data, node_type)
                 for node_type in self.node_types
             }
 
@@ -355,6 +355,7 @@ def edge_sample(
     src_time = dst_time = edge_label_time
     assert edge_label_time is None or disjoint
 
+    assert isinstance(num_nodes, (dict, int))
     if not isinstance(num_nodes, dict):
         num_src_nodes = num_dst_nodes = num_nodes
     else:
