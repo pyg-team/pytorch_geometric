@@ -8,7 +8,6 @@ import torch
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
@@ -18,9 +17,9 @@ from torch_geometric.loader.utils import (
 from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
+    NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NodeSamplerInput
 from torch_geometric.typing import InputNodes, OptTensor
 
 
@@ -57,6 +56,9 @@ class NodeLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -76,7 +78,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         node_sampler: BaseSampler,
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -87,14 +90,20 @@ class NodeLoader(torch.utils.data.DataLoader):
             del kwargs['collate_fn']
 
         # Get node type (or `None` for homogeneous graphs):
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
+        input_type, input_nodes = get_input_nodes(data, input_nodes)
 
         self.data = data
-        self.node_type = node_type
         self.node_sampler = node_sampler
-        self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
+
+        self.input_data = NodeSamplerInput(
+            input_id=None,
+            node=input_nodes,
+            time=input_time,
+            input_type=input_type,
+        )
 
         # TODO: Unify DL affinitization in `BaseDataLoader` class
         # CPU Affinitization for loader and compute cores
@@ -126,6 +135,9 @@ class NodeLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
+        if self.transform_sampler_output:
+            out = self.transform_sampler_output(out)
+
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
@@ -144,8 +156,9 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.node_type].input_id = out.metadata
-            data[self.node_type].batch_size = out.metadata.size(0)
+
+            data[self.input_data.input_type].input_id = out.metadata
+            data[self.input_data.input_type].batch_size = out.metadata.size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

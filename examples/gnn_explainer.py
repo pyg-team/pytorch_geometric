@@ -42,11 +42,9 @@ for epoch in range(1, 201):
 explainer = Explainer(
     model=model,
     algorithm=GNNExplainer(epochs=200),
-    explainer_config=dict(
-        explanation_type='model',
-        node_mask_type='attributes',
-        edge_mask_type='object',
-    ),
+    explanation_type='model',
+    node_mask_type='attributes',
+    edge_mask_type='object',
     model_config=dict(
         mode='classification',
         task_level='node',

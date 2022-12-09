@@ -2,31 +2,90 @@ import math
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
-# An input to a node-based sampler consists of two tensors:
-#  * The example indices
-#  * The node indices
-#  * The timestamps of the given node indices (optional)
-NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 
-# An input to an edge-based sampler consists of four tensors:
-#   * The example indices
-#   * The row of the edge index in COO format
-#   * The column of the edge index in COO format
-#   * The labels of the edges (optional)
-#   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, OptTensor, OptTensor]
+@dataclass
+class NodeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        node (torch.Tensor): The indices of seed nodes to start sampling from.
+        time (torch.Tensor, optional): The timestamp for the seed nodes.
+            (default: :obj:`None`)
+        input_type (str, optional): The input node type (in case of sampling in
+            a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    node: Tensor
+    time: OptTensor = None
+    input_type: Optional[NodeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return NodeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.node[index],
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
 
 
 @dataclass
-class SamplerOutput:
-    r"""The sampling output of a :class:`BaseSampler` on homogeneous graphs.
+class EdgeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        row (torch.Tensor): The source node indices of seed links to start
+            sampling from.
+        col (torch.Tensor): The destination node indices of seed links to start
+            sampling from.
+        label (torch.Tensor, optional): The label for the seed links.
+            (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamp for the seed links.
+            (default: :obj:`None`)
+        input_type (Tuple[str, str, str], optional): The input edge type (in
+            case of sampling in a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    row: Tensor
+    col: Tensor
+    label: OptTensor = None
+    time: OptTensor = None
+    input_type: Optional[EdgeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return EdgeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.row[index],
+            self.col[index],
+            self.label[index] if self.label is not None else None,
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
+
+
+@dataclass
+class SamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on homogeneous graphs.
 
     Args:
         node (torch.Tensor): The sampled nodes in the original graph.
@@ -57,8 +116,9 @@ class SamplerOutput:
 
 
 @dataclass
-class HeteroSamplerOutput:
-    r"""The sampling output of a :class:`BaseSampler` on heterogeneous graphs.
+class HeteroSamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on heterogeneous graphs.
 
     Args:
         node (Dict[str, torch.Tensor]): The sampled nodes in the original graph

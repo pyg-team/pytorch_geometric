@@ -2,11 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.explain import Explainer, Explanation, GNNExplainer
-from torch_geometric.explain.config import (
-    ExplainerConfig,
-    MaskType,
-    ModelConfig,
-)
+from torch_geometric.explain.config import MaskType, ModelConfig
 from torch_geometric.nn import GCNConv, global_add_pool
 
 
@@ -106,12 +102,6 @@ def test_gnn_explainer_classification(
         return_type=return_type,
     )
 
-    explainer_config = ExplainerConfig(
-        explanation_type=explanation_type,
-        node_mask_type=node_mask_type,
-        edge_mask_type=edge_mask_type,
-    )
-
     model = GCN(model_config, multi_output)
 
     target = None
@@ -122,7 +112,9 @@ def test_gnn_explainer_classification(
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=2),
-        explainer_config=explainer_config,
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
         model_config=model_config,
     )
 
@@ -158,12 +150,6 @@ def test_gnn_explainer_regression(
         task_level=task_level,
     )
 
-    explainer_config = ExplainerConfig(
-        explanation_type=explanation_type,
-        node_mask_type=node_mask_type,
-        edge_mask_type=edge_mask_type,
-    )
-
     model = GCN(model_config, multi_output)
 
     target = None
@@ -174,7 +160,9 @@ def test_gnn_explainer_regression(
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=2),
-        explainer_config=explainer_config,
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
         model_config=model_config,
     )
 
