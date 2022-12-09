@@ -56,4 +56,5 @@ run(dataset, Net(dataset), args.runs, args.epochs, args.lr, args.weight_decay,
 
 if args.profile:
     rename_profile_file('citation', GATConv.__name__, args.dataset,
-                        str(args.random_splits))
+                        str(args.random_splits),
+                        'inference' if args.inference else 'train')

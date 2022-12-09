@@ -16,7 +16,7 @@ from .homophily import homophily
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
-from .mask import index_to_mask, mask_to_index
+from .mask import mask_select, index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
@@ -70,6 +70,7 @@ __all__ = [
     'assortativity',
     'get_laplacian',
     'get_mesh_laplacian',
+    'mask_select',
     'index_to_mask',
     'mask_to_index',
     'to_dense_batch',

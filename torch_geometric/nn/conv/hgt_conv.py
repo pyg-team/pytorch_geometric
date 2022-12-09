@@ -176,21 +176,21 @@ class HGTConv(MessagePassing):
         if self.use_gmm:
             # compute K
             k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
-                                         biases=k_biases)
+                                                biases=k_biases)
             k_dict = {
                 node_type: k_list[i].view(-1, H, D)
                 for i, node_type in enumerate(k_list)
             }
             # compute Q
             q_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=q_wts,
-                                         biases=q_biases)
+                                                biases=q_biases)
             q_dict = {
                 node_type: q_list[i].view(-1, H, D)
                 for i, node_type in enumerate(q_list)
             }
             # compute V
             v_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=v_wts,
-                                            biases=v_biases)
+                                                biases=v_biases)
             v_dict = {
                 node_type: v_list[i].view(-1, H, D)
                 for i, node_type in enumerate(v_list)
