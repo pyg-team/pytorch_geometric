@@ -1,25 +1,30 @@
 from abc import abstractmethod
-from typing import Callable, Optional
+from typing import Optional
 
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.seed import seed_everything
 
+from .motif import Motif
+
 
 class GraphGenerator:
     r"""Base class for generating benchmark datasets. It contains
-        `generate_feature` and `attach_motif` methods used to generate
+        :meth:`generate_feature` and :meth:`attach_motif` to generate
         features and attach motifs to base graph. The motifs are
         currently attached in random order.
 
     Args:
-        num_nodes (int): The number of nodes used to attach the motifs.
+        num_nodes (int): Number of nodes in the base graph.
+            (default: :obj:`300`)
         motif (:obj:`toch_geometric.datasets.generators.Motif`, Optional):
             Motif object to be attached to the base graph.
+            (default: :obj:`None`)
         seed (int, Optional): seed number for the generator.
+            (default: :obj:`None`)
     """
-    def __init__(self, num_nodes: int = 300, motif: Optional[Callable] = None,
+    def __init__(self, num_nodes: int = 300, motif: Optional[Motif] = None,
                  seed: int = None):
         self.num_nodes = num_nodes
         self.motif = motif
@@ -30,12 +35,13 @@ class GraphGenerator:
         self._node_label = None
         self._x = None
 
-    r"""Abstracted method to be implemented by a specific GraphGenerator.
-    """
+    r"""To be implemented by :class:`GraphGenerator` subclasses."""
 
     @abstractmethod
     def generate_base_graph(self) -> Data:
         raise NotImplementedError
+
+    r"""Final method, to not be overridden in a subclass."""
 
     def generate_graph(self):
         if self.seed:
@@ -43,14 +49,26 @@ class GraphGenerator:
         self.generate_base_graph()
 
     @property
-    def data(self):
+    def data(self) -> Data:
         return Data(x=self._x, edge_index=self._edge_index, y=self._node_label,
                     expl_mask=self._expl_mask, edge_label=self._edge_label)
 
-    def generate_feature(self, num_features: int = 10) -> None:
+    r"""To be used by :class:`GraphGenerator` subclass to generate uniform
+        features.
+    Args:
+        num_features (int): Number of features. (default: :obj:`10`)
+    """
+
+    def generate_feature(self, num_features: int = 10):
         self._x = torch.ones((self.num_nodes, num_features), dtype=torch.float)
 
-    def attach_motif(self, num_motifs=80) -> None:
+    r"""To be used by :class:`GraphGenerator` subclass to attach a motif
+        to the base graph.
+    Args:
+        num_motifs (int): Number of motifs to attach. (default: :obj:`80`)
+    """
+
+    def attach_motif(self, num_motifs: int = 80):
         if self.motif is None:
             return
 

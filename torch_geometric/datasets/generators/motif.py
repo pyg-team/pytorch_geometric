@@ -14,7 +14,7 @@ class Motif:
         self.num_nodes = None
         self.__build_motif(structure)
 
-    def __build_motif(self, structure):
+    def __build_motif(self, structure: str):
         if structure == 'house':
             self.__build_house()
 
