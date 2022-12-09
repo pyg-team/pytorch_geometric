@@ -44,7 +44,8 @@ class Explainer:
         self.algorithm.connect(self.explainer_config, self.model_config)
 
     @torch.no_grad()
-    def get_prediction(self, *args, **kwargs) -> torch.Tensor:
+    def get_prediction(self, *args, raw: bool = False,
+                       **kwargs) -> torch.Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
@@ -63,7 +64,8 @@ class Explainer:
         with torch.no_grad():
             out = self.model(*args, **kwargs)
         if self.model_config.mode == ModelMode.classification:
-            out = out.argmax(dim=-1)
+            if not raw:
+                out = out.argmax(dim=-1)
 
         self.model.train(training)
 
@@ -109,17 +111,14 @@ class Explainer:
         """
         # Choose the `target` depending on the explanation type:
         explanation_type = self.explainer_config.explanation_type
-        if explanation_type == ExplanationType.phenomenon:
-            if target is None:
-                raise ValueError(
-                    f"The 'target' has to be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-        elif explanation_type == ExplanationType.model:
-            if target is not None:
-                warnings.warn(
-                    f"The 'target' should not be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+        target = self.get_target(
+            x=x,
+            edge_index=edge_index,
+            explanation_type=explanation_type,
+            target=target,
+            raw=False,
+            **kwargs,
+        )
 
         training = self.model.training
         self.model.eval()
@@ -137,6 +136,31 @@ class Explainer:
         self.model.train(training)
 
         return self._post_process(explanation)
+
+    def get_target(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        explanation_type: ExplanationType,
+        raw: bool = False,
+        target: Optional[Tensor] = None,
+        **kwargs,
+    ):
+
+        if explanation_type == ExplanationType.phenomenon:
+            if target is None:
+                raise ValueError(
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+        elif explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{explanation_type.value}'")
+            target = self.get_prediction(x=x, edge_index=edge_index, raw=raw,
+                                         **kwargs)
+
+        return target
 
     def _post_process(self, explanation: Explanation) -> Explanation:
         R"""Post-processes the explanation mask according to the thresholding
