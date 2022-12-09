@@ -5,11 +5,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import (
-    ExplainerConfig,
-    ModelConfig,
-    ModelReturnType,
-)
+from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph
 
@@ -162,17 +158,3 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
-
-    def _to_log_prob(self, y: Tensor) -> Tensor:
-        r"""Converts the model output to log-probabilities.
-
-        Args:
-            y (Tensor): The output of the model.
-        """
-        if self.model_config.return_type == ModelReturnType.probs:
-            return y.log()
-        if self.model_config.return_type == ModelReturnType.raw:
-            return y.log_softmax(dim=-1)
-        if self.model_config.return_type == ModelReturnType.log_probs:
-            return y
-        raise NotImplementedError

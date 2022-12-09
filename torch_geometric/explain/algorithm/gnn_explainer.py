@@ -198,22 +198,44 @@ class GNNExplainer(ExplainerAlgorithm):
         elif edge_mask_type is not None:
             raise NotImplementedError
 
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.binary_cross_entropy_with_logits
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.binary_cross_entropy
+        else:
+            raise NotImplementedError
+
+        return loss_fn(y_hat.view_as(y), y.float())
+
+    def _loss_multiclass_classification(
+        self,
+        y_hat: Tensor,
+        y: Tensor,
+    ) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.cross_entropy
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.nll_loss
+            y_hat = y_hat.log()
+        elif self.model_config.return_type.value == 'log_probs':
+            loss_fn = F.nll_loss
+        else:
+            raise NotImplementedError
+
+        return loss_fn(y_hat, y)
+
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        assert self.model_config.return_type.value == 'raw'
         return F.mse_loss(y_hat, y)
 
-    def _loss_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if y.dim() == 0:  # `index` was given as an integer.
-            y_hat, y = y_hat.unsqueeze(0), y.unsqueeze(0)
-
-        y_hat = self._to_log_prob(y_hat)
-
-        return (-y_hat).gather(1, y.view(-1, 1)).mean()
-
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.mode == ModelMode.regression:
+        if self.model_config.mode == ModelMode.binary_classification:
+            loss = self._loss_binary_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            loss = self._loss_multiclass_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
-        elif self.model_config.mode == ModelMode.classification:
-            loss = self._loss_classification(y_hat, y)
         else:
             raise NotImplementedError
 
@@ -277,7 +299,7 @@ class GNNExplainer_:
         )
         model_config = ModelConfig(
             mode='regression'
-            if return_type == 'regression' else 'classification',
+            if return_type == 'regression' else 'multiclass_classification',
             task_level=ModelTaskLevel.node,
             return_type=self.conversion_return_type[return_type],
         )
@@ -293,7 +315,8 @@ class GNNExplainer_:
         self.model.eval()
 
         out = self.model(*args, **kwargs)
-        if self._explainer.model_config.mode == ModelMode.classification:
+        if (self._explainer.model_config.mode ==
+                ModelMode.multiclass_classification):
             out = out.argmax(dim=-1)
 
         self.model.train(training)
