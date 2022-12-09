@@ -2,22 +2,28 @@ import torch
 from torch import Tensor
 
 
-def get_characterization_score(weights: Tensor,
-                               fidelities: Tensor) -> 'Tensor':
-    r"""Returns the componentwise characterization score of
-    fidelities[0] and fidelities[1]
+def get_characterization_score(fidelity: Tensor, weights: Tensor) -> 'Tensor':
+    r"""Returns the componentwise characterization score where fidelity[0]
+    is the tensor containing F_{+} and fidelity[1] is the tensor
+    containing F_{-}.
+
+    The characterization score is calculated as
+     .. math::
+      charac = \frac{w_+ + w_-}{\frac{w_+}{fid_+}+\frac{w_-}{fid_-}}
 
 
     Args:
-        weights (Tensor): Tensor containing the two weights
-        fidelities (Tensor): Tensor containing fidelities of shape [2, n]
+        weights (Tensor): Tensor containing the two weights of shape [2]
+        fidelity (Tensor): Tensor containing fidelities of shape [2, n]
 
     Returns:
-        Tensor: componentwise characterization score
+        Tensor: Tensor containing componentwise characterization
+        score of shape [n]
     """
-    components = torch.stack([fidelities[0], 1 - fidelities[1]])
+    components = torch.stack([fidelity[0], 1 - fidelity[1]])
+    normed_weights = weights.div(weights.sum())
 
-    return _weighted_harmonic_mean(weights, components)
+    return _weighted_harmonic_mean(normed_weights, components)
 
 
 def get_fidelity_curve_auc(fidelities: Tensor, x: Tensor) -> 'Tensor':
@@ -58,6 +64,18 @@ def _auc(x: Tensor, y: Tensor) -> 'Tensor':
 
 
 def _weighted_harmonic_mean(weights: Tensor, components: Tensor) -> 'Tensor':
+    """Computes the weighted harmonic mean of the two rows in components.
+    Assumes the two weights are normalized.
+
+    Args:
+        weights (Tensor): Tensor containing the two weights of shape [2]
+        components (Tensor): Tensor containing components of shape [2, n]
+
+    Returns:
+        Tensor: Tensor containing pairwise weighted harmonic means of shape [n]
+    """
+    if round(weights.sum().item(), 2) != 1:
+        raise ValueError('weights must add up to 1')
 
     return torch.div(torch.prod(components, 0),
                      torch.flip(weights, [0]).matmul(components))
