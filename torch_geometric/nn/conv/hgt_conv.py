@@ -12,12 +12,7 @@ from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import (
-    EdgeType,
-    Metadata,
-    NodeType,
-    pyg_lib,
-)
+from torch_geometric.typing import EdgeType, Metadata, NodeType, pyg_lib
 from torch_geometric.utils import softmax
 
 
@@ -171,7 +166,6 @@ class HGTConv(MessagePassing):
             k_wt = torch.cat(k_wts)
             k_bias = torch.cat([b_i.reshape(-1, 1) for b_i in k_biases])
 
-                
         # compute K, Q, V over node-types
         if self.use_gmm:
             # compute K
@@ -197,21 +191,21 @@ class HGTConv(MessagePassing):
             }
         else:
             k = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=k_wt,
-                                         biases=k_bias)
+                                           biases=k_bias)
             k_dict = {
-                node_type: k[ptr[i]:ptr[i+1]].view(-1, H, D)
+                node_type: k[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
             }
             q = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=q_wt,
-                                         biases=q_bias)
+                                           biases=q_bias)
             q_dict = {
-                node_type: q[ptr[i]:ptr[i+1]].view(-1, H, D)
+                node_type: q[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
             }
             v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
-                                         biases=v_bias)
+                                           biases=v_bias)
             v_dict = {
-                node_type: v[ptr[i]:ptr[i+1]].view(-1, H, D)
+                node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
             }
 
@@ -220,12 +214,8 @@ class HGTConv(MessagePassing):
         src_types = [edge_type[0] for edge_type in edge_types]
         a_rels = [self.a_rel[edge_type] for edge_type in edge_types]
         m_rels = [self.m_rel[edge_type] for edge_type in edge_types]
-        k_ins = [
-            k_dict[src_type].transpose(0, 1) for src_type in src_types
-        ]
-        v_ins = [
-            v_dict[src_type].transpose(0, 1) for src_type in src_types
-        ]
+        k_ins = [k_dict[src_type].transpose(0, 1) for src_type in src_types]
+        v_ins = [v_dict[src_type].transpose(0, 1) for src_type in src_types]
         if self.use_gmm:
             k_outs = [
                 k_o_i.transpose(1, 0)
@@ -235,7 +225,10 @@ class HGTConv(MessagePassing):
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            increment_dict = {src_type:k_outs[i].shape[0] for i, src_type in enumerate(src_types)}
+            increment_dict = {
+                src_type: k_outs[i].shape[0]
+                for i, src_type in enumerate(src_types)
+            }
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -245,9 +238,14 @@ class HGTConv(MessagePassing):
             for k_i in k_ins:
                 count += k_i.size(0)
                 trans_ptr.append(count)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr, a_rel).transpose(1, 0)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr, m_rel).transpose(1, 0)
-            increment_dict = {src_type:k_out[trans_ptr[i]:trans_ptr[i+1]].shape[0] for i, src_type in enumerate(src_types)}
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+                                               a_rel).transpose(1, 0)
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+                                               m_rel).transpose(1, 0)
+            increment_dict = {
+                src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                for i, src_type in enumerate(src_types)
+            }
 
         etypes_list = []
         q_list = []
@@ -255,8 +253,10 @@ class HGTConv(MessagePassing):
         for e_type in edge_types:
             src_type, dst_type = e_type[0], e_type[-1]
             if torch.numel(edge_index_dict[e_type]) != 0:
-                edge_index_dict[e_type][0, :] = edge_index_dict[e_type][0, :] + increment_dict[src_type]
-                edge_index_dict[e_type][1, :] = edge_index_dict[e_type][1, :] + increment_dict[dst_type]
+                edge_index_dict[e_type][0, :] = edge_index_dict[e_type][
+                    0, :] + increment_dict[src_type]
+                edge_index_dict[e_type][1, :] = edge_index_dict[e_type][
+                    1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel[edge_type])
         q = torch.cat(q_list)
