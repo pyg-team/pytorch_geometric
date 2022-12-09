@@ -1,9 +1,9 @@
-import networkx as nx
 import pytest
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.datasets.generators import MotifGenerator
+from torch_geometric.testing import withPackage
 
 
 def test_house_motif():
@@ -32,7 +32,10 @@ def test_custom_pyg_motif():
     assert triangle.num_nodes == data.num_nodes
 
 
+@withPackage("networkx")
 def test_custom_networkx_motif():
+    import networkx as nx
+
     graph = nx.gnm_random_graph(5, 10, seed=2000)
     generator = MotifGenerator(structure=graph)
     erdos_renyi = generator.motif
