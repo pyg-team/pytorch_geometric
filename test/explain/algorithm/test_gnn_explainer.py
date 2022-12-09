@@ -33,7 +33,7 @@ class GCN(torch.nn.Module):
         if self.model_config.mode.value == 'binary_classification':
             if self.model_config.return_type.value == 'probs':
                 x = x.sigmoid()
-        else:
+        elif self.model_config.mode.value == 'multiclass_classification':
             if self.model_config.return_type.value == 'probs':
                 x = x.softmax(dim=-1)
             elif self.model_config.return_type.value == 'log_probs':
@@ -91,10 +91,10 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('return_type', ['log_probs', 'probs', 'raw'])
+@pytest.mark.parametrize('return_type', ['probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False, True])
-def test_gnn_explainer_multiclass_classification(
+@pytest.mark.parametrize('multi_output', [False])
+def test_gnn_explainer_binary_classification(
     edge_mask_type,
     node_mask_type,
     explanation_type,
@@ -104,7 +104,7 @@ def test_gnn_explainer_multiclass_classification(
     multi_output,
 ):
     model_config = ModelConfig(
-        mode='multiclass_classification',
+        mode='binary_classification',
         task_level=task_level,
         return_type=return_type,
     )
@@ -114,7 +114,11 @@ def test_gnn_explainer_multiclass_classification(
     target = None
     if explanation_type == 'phenomenon':
         with torch.no_grad():
-            target = model(x, edge_index, batch, edge_label_index).argmax(-1)
+            out = model(x, edge_index, batch, edge_label_index)
+            if model_config.return_type.value == 'raw':
+                target = (out > 0).long().view(-1)
+            if model_config.return_type.value == 'probs':
+                target = (out > 0.5).long().view(-1)
 
     explainer = Explainer(
         model=model,
@@ -142,10 +146,10 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('return_type', ['probs', 'raw'])
+@pytest.mark.parametrize('return_type', ['log_probs', 'probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
 @pytest.mark.parametrize('multi_output', [False, True])
-def test_gnn_explainer_binary_classification(
+def test_gnn_explainer_multiclass_classification(
     edge_mask_type,
     node_mask_type,
     explanation_type,
@@ -155,7 +159,7 @@ def test_gnn_explainer_binary_classification(
     multi_output,
 ):
     model_config = ModelConfig(
-        mode='binary_classification',
+        mode='multiclass_classification',
         task_level=task_level,
         return_type=return_type,
     )
@@ -165,11 +169,7 @@ def test_gnn_explainer_binary_classification(
     target = None
     if explanation_type == 'phenomenon':
         with torch.no_grad():
-            out = model(x, edge_index, batch, edge_label_index)
-            if model_config.return_type.value == 'raw':
-                target = (out > 0).long()
-            if model_config.return_type.value == 'probs':
-                target = (out > 0.5).long()
+            target = model(x, edge_index, batch, edge_label_index).argmax(-1)
 
     explainer = Explainer(
         model=model,

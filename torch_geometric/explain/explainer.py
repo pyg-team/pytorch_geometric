@@ -108,9 +108,9 @@ class Explainer:
         elif self.model_config.mode == ModelMode.binary_classification:
             # TODO: allow customization of the thresholds used below
             if self.model_config.return_type.value == 'raw':
-                out = (out > 0).long()
+                out = (out > 0).long().view(-1)
             if self.model_config.return_type.value == 'probs':
-                out = (out > 0.5).long()
+                out = (out > 0.5).long().view(-1)
 
         self.model.train(training)
 
